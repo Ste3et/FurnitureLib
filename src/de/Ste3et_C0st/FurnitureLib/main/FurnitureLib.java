@@ -2,8 +2,8 @@ package de.Ste3et_C0st.FurnitureLib.main;
 
 import java.util.logging.Logger;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -11,10 +11,10 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.ListenerPriority;
 import com.comphenix.protocol.events.PacketAdapter;
-import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
-import com.comphenix.protocol.reflect.StructureModifier;
+import com.comphenix.protocol.wrappers.EnumWrappers.EntityUseAction;
 
+import de.Ste3et_C0st.FurnitureLib.Events.FurnitureBreakEvent;
 import de.Ste3et_C0st.FurnitureLib.Events.FurnitureClickEvent;
 
 public class FurnitureLib extends JavaPlugin {
@@ -31,23 +31,32 @@ public class FurnitureLib extends JavaPlugin {
 		this.lUtil = new LocationUtil();
 		this.manager = new FurnitureManager();
 		
-		ProtocolLibrary.getProtocolManager().addPacketListener(new PacketAdapter(this, ListenerPriority.HIGHEST, PacketType.Play.Client.ENTITY_ACTION) {
-			@SuppressWarnings("deprecation")
-			@Override
-			public void onPacketReceiving(PacketEvent event){
-				if(event.getPacket() == null){return;}
-				PacketContainer container = event.getPacket();
-				StructureModifier<Integer> integers = container.getIntegers();
-				if(!integers.read(1).equals((int) EntityType.ARMOR_STAND.getTypeId())){return;}
-				if(!FurnitureLib.getInstance().getFurnitureManager().isArmorStand(integers.read(0))){return;}
-				Player p = event.getPlayer();
-				ArmorStandPacket packet = FurnitureLib.getInstance().getFurnitureManager().getArmorStandPacketByID(integers.read(0));
-				ObjectID id = FurnitureLib.getInstance().getFurnitureManager().getObjectIDByID(integers.read(0));
-				Location loc = packet.getLocation();
-				FurnitureClickEvent cevent = new FurnitureClickEvent(p, packet, id, loc);
-				this.plugin.getServer().getPluginManager().callEvent(cevent);
-			}
-		});
+		ProtocolLibrary.getProtocolManager().addPacketListener(
+                new PacketAdapter(this, ListenerPriority.NORMAL, PacketType.Play.Client.USE_ENTITY) {
+                    public void onPacketReceiving(PacketEvent event) {
+                        if (event.getPacketType() == PacketType.Play.Client.USE_ENTITY) {
+                        	Integer PacketID = event.getPacket().getIntegers().read(0);
+                            if(getFurnitureManager().isFromPlugin(PacketID)){
+                            	ArmorStandPacket asPacket = getFurnitureManager().getArmorStandPacketByID(PacketID);
+                            	ObjectID objID = getFurnitureManager().getObjectIDByID(PacketID);
+                            	Location loc = asPacket.getLocation();
+                            	Player p = event.getPlayer();
+                            	EntityUseAction action = event.getPacket().getEntityUseActions().read(0);
+                            	switch (action) {
+								case ATTACK:
+									FurnitureBreakEvent bEvent = new FurnitureBreakEvent(p, asPacket, objID, loc);
+									Bukkit.getServer().getPluginManager().callEvent(bEvent);
+									break;
+								case INTERACT_AT:
+									FurnitureClickEvent cEvent = new FurnitureClickEvent(p, asPacket, objID, loc);
+									Bukkit.getServer().getPluginManager().callEvent(cEvent);
+									break;
+								default: break;
+								}
+                            }
+                        }
+                    }
+        });
 	}
 	
 	@Override

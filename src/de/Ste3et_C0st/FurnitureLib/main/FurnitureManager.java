@@ -1,5 +1,6 @@
 package de.Ste3et_C0st.FurnitureLib.main;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -13,7 +14,7 @@ public class FurnitureManager {
 
 	private Integer i = 407;
 	private HashMap<ObjectID,List<ArmorStandPacket>> furnitureList = new HashMap<ObjectID,List<ArmorStandPacket>>();
-	
+	private List<Integer> entityList = new ArrayList<Integer>();
 	public void addFurniture(ObjectID id, List<ArmorStandPacket> asP){
 		furnitureList.put(id, asP);
 	}
@@ -54,6 +55,7 @@ public class FurnitureManager {
 	public ArmorStandPacket createArmorStand(Location loc){
 		i++;
 		ArmorStandPacket packet = new ArmorStandPacket(loc, i);
+		this.entityList.add(i);
 		return packet;
 	}
 	
@@ -71,6 +73,11 @@ public class FurnitureManager {
 	
 	public void setPose(ArmorStandPacket packet, EulerAngle angle, BodyPart part){
 		packet.setPose(angle, part);
+	}
+	
+	public boolean isFromPlugin(Integer entityID){
+		if(entityList.contains(entityID)) return true;
+		return false;
 	}
 
 	public ArmorStandPacket getArmorStandPacketByID(Integer entityID) {
