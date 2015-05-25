@@ -197,7 +197,7 @@ public class ArmorStandPacket{
 	
 	public void setItemInHand(ItemStack is, int Slot){
 		this.inventory.getIntegers().write(1, Slot);
-		this.inventory.getIntegers().write(2, is.getData().hashCode());
+		this.inventory.getIntegers().write(2, is.hashCode());
 	}
 	
 	public void send(Player p){

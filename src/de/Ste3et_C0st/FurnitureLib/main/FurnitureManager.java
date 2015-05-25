@@ -25,7 +25,7 @@ public class FurnitureManager {
 		}
 	}
 	
-	public void send(ObjectID id, Player[] pList){
+	public void send(ObjectID id, List<Player> pList){
 		if(!furnitureList.containsKey(id)){FurnitureLib.getInstance().getLogger().warning("[FurnitureLib] Object not found"); return;}
 		for(Player p : pList){
 			for(ArmorStandPacket packet : furnitureList.get(id)){
@@ -34,7 +34,7 @@ public class FurnitureManager {
 		}
 	}
 	
-	public void kill(ObjectID id, Player[] plist){
+	public void kill(ObjectID id, List<Player> pList){
 		
 	}
 	
