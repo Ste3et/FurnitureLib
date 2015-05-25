@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
 
 import de.Ste3et_C0st.FurnitureLib.main.Type.BodyPart;
@@ -34,13 +33,27 @@ public class FurnitureManager {
 		}
 	}
 	
+	public boolean isArmorStand(Integer entityID){
+		if(furnitureList.isEmpty()){return false;}
+		for(ObjectID id : furnitureList.keySet()){
+			if(furnitureList.get(id)!=null){
+				for(ArmorStandPacket packet : furnitureList.get(id)){
+					if(packet.getID() == entityID){
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+	
 	public void kill(ObjectID id, List<Player> pList){
 		
 	}
 	
-	public ArmorStandPacket createArmorStand(Location loc, BodyPart part, ItemStack is){
+	public ArmorStandPacket createArmorStand(Location loc){
 		i++;
-		ArmorStandPacket packet = new ArmorStandPacket(loc, part, i);
+		ArmorStandPacket packet = new ArmorStandPacket(loc, i);
 		return packet;
 	}
 	
@@ -56,7 +69,35 @@ public class FurnitureManager {
 		packet.setNameVasibility(Show);
 	}
 	
-	public void setPose(ArmorStandPacket packet, EulerAngle angle){
-		packet.setPose(angle);
+	public void setPose(ArmorStandPacket packet, EulerAngle angle, BodyPart part){
+		packet.setPose(angle, part);
+	}
+
+	public ArmorStandPacket getArmorStandPacketByID(Integer entityID) {
+		if(furnitureList.isEmpty()){return null;}
+		for(ObjectID id : furnitureList.keySet()){
+			if(furnitureList.get(id)!=null){
+				for(ArmorStandPacket packet : furnitureList.get(id)){
+					if(packet.getID() == entityID){
+						return packet;
+					}
+				}
+			}
+		}
+		return null;
+	}
+
+	public ObjectID getObjectIDByID(Integer entityID) {
+		if(furnitureList.isEmpty()){return null;}
+		for(ObjectID id : furnitureList.keySet()){
+			if(furnitureList.get(id)!=null){
+				for(ArmorStandPacket packet : furnitureList.get(id)){
+					if(packet.getID() == entityID){
+						return id;
+					}
+				}
+			}
+		}
+		return null;
 	}
 }

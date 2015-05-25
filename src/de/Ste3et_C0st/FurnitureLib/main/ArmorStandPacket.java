@@ -26,7 +26,6 @@ public class ArmorStandPacket{
 	private Location location;
 	private BodyPart part;
 	private EulerAngle angle;
-	private ItemStack is;
 	private boolean mini, invisible, arms, basePlate, graviti;
 	private WrappedDataWatcher watcher;
 	private PacketContainer container;
@@ -35,8 +34,9 @@ public class ArmorStandPacket{
 	public Location getLocation(){return this.location;}
 	public PacketContainer getContainer(){return this.container;}
 	public BodyPart getBodyPart(){return this.part;}
-	public ItemStack getItemStack(){return this.is;}
 	public EulerAngle getAngle(){return this.angle;}
+	public ItemStack getItemStack(){return this.inventory.getItemModifier().read(0);}
+	public int getID() {return this.ID;}
 	public boolean isInvisible(){return this.invisible;}
 	public boolean isMini(){return this.mini;}
 	public boolean hasArms(){return this.arms;}
@@ -44,9 +44,8 @@ public class ArmorStandPacket{
 	public boolean hasGraviti(){return this.graviti;}
 	private int getFixedPoint(Double d){return (int) (d*32D);}
 	
-	public ArmorStandPacket(Location l, BodyPart part, int ID){
+	public ArmorStandPacket(Location l, int ID){
 		this.location = l;
-		this.part = part;
 		this.watcher = getDefaultWatcher(l.getWorld(), EntityType.ARMOR_STAND);
 		this.ID = ID;
 		create();
@@ -87,7 +86,7 @@ public class ArmorStandPacket{
 		if (b)
 			b0 = (byte)(b0 | 0x1);
 		else {
-			b0 = (byte)(b0 & 0xFFFFFFFB);
+			b0 = (byte)(b0 & 0xFFFFFFFE);
 		}
 		
 		this.watcher.setObject(10, Byte.valueOf(b0));
@@ -115,7 +114,7 @@ public class ArmorStandPacket{
 		if (b)
 			b0 = (byte)(b0 | 0x02);
 		else {
-			b0 = (byte)(b0 & 0xFFFFFFFB);
+			b0 = (byte)(b0 & 0xFFFFFFFD);
 		}
 		
 		this.watcher.setObject(10, Byte.valueOf(b0));
@@ -129,7 +128,7 @@ public class ArmorStandPacket{
 		if (b)
 			b0 = (byte)(b0 | 0x08);
 		else {
-			b0 = (byte)(b0 & 0xFFFFFFFB);
+			b0 = (byte)(b0 & 0xFFFFFFF7);
 		}
 		
 		this.watcher.setObject(10, Byte.valueOf(b0));
@@ -151,9 +150,10 @@ public class ArmorStandPacket{
 		this.container.getDataWatcherModifier().write(0, this.watcher);
 	}
 	
-	public void setPose(EulerAngle angle){
+	public void setPose(EulerAngle angle, BodyPart part){
 		if(angle==null){return;}
-		if(this.part==null){return;}
+		if(part==null){return;}
+		this.part = part;
 		this.angle = angle;
 		Vector3f vector = new Vector3f((float) angle.getX(), (float) angle.getY(), (float) angle.getZ());
 		switch (part) {
@@ -162,23 +162,23 @@ public class ArmorStandPacket{
 			this.container.getDataWatcherModifier().write(0, this.watcher);
 			break;
 		case BODY:
-			this.watcher.setObject(11, vector);
+			this.watcher.setObject(12, vector);
 			this.container.getDataWatcherModifier().write(0, this.watcher);
 			break;
 		case LEFT_ARM:
-			this.watcher.setObject(11, vector);
+			this.watcher.setObject(13, vector);
 			this.container.getDataWatcherModifier().write(0, this.watcher);
 			break;
 		case RIGHT_ARM:
-			this.watcher.setObject(11, vector);
+			this.watcher.setObject(14, vector);
 			this.container.getDataWatcherModifier().write(0, this.watcher);
 			break;
 		case LEFT_LEG:
-			this.watcher.setObject(11, vector);
+			this.watcher.setObject(15, vector);
 			this.container.getDataWatcherModifier().write(0, this.watcher);
 			break;
 		case RIGHT_LEG:
-			this.watcher.setObject(11, vector);
+			this.watcher.setObject(16, vector);
 			this.container.getDataWatcherModifier().write(0, this.watcher);
 			break;
 		default:return;
@@ -195,14 +195,18 @@ public class ArmorStandPacket{
 		this.container.getDataWatcherModifier().write(0, this.watcher);
 	}
 	
-	public void setItemInHand(ItemStack is, int Slot){
-		this.inventory.getIntegers().write(1, Slot);
-		this.inventory.getIntegers().write(2, is.hashCode());
+	public void setSlot(short Slot){
+		this.inventory.getIntegers().write(1, (int) Slot);
+	}
+	
+	public void giveItem(ItemStack is){
+		this.inventory.getItemModifier().write(0, is);
 	}
 	
 	public void send(Player p){
 		try {
             ProtocolLibrary.getProtocolManager().sendServerPacket(p, container);
+            ProtocolLibrary.getProtocolManager().sendServerPacket(p, inventory);
         } catch (InvocationTargetException e) {
             e.printStackTrace();
         }
