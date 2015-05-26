@@ -36,6 +36,9 @@ public class ArmorStandPacket{
 	public BodyPart getBodyPart(){return this.part;}
 	public EulerAngle getAngle(){return this.angle;}
 	public ItemStack getItemStack(){return this.inventory.getItemModifier().read(0);}
+	public void setNameVasibility(boolean b){this.watcher.setObject(3, (byte)(b?1:0));}
+	public void setSlot(short Slot){this.inventory.getIntegers().write(1, (int) Slot);}
+	public void giveItem(ItemStack is){this.inventory.getItemModifier().write(0, is);}
 	public int getID() {return this.ID;}
 	public boolean isInvisible(){return this.invisible;}
 	public boolean isMini(){return this.mini;}
@@ -71,7 +74,6 @@ public class ArmorStandPacket{
 		integers.write(5, (int) ((this.location.getYaw() * 256.0F) / 360.0F));
 		integers.write(6, (int) ((this.location.getPitch() * 256.0F) / 360.0F));
 		integers.write(7, 0);
-		container.getDataWatcherModifier().write(0, this.watcher);
 		this.container = container;
 		
 		PacketContainer entityInventory = new PacketContainer(PacketType.Play.Server.ENTITY_EQUIPMENT);
@@ -91,7 +93,6 @@ public class ArmorStandPacket{
 		
 		this.watcher.setObject(10, Byte.valueOf(b0));
 		this.mini = b;
-		this.container.getDataWatcherModifier().write(0, this.watcher);
 	}
 	
 	public void setArms(boolean b) {
@@ -105,7 +106,6 @@ public class ArmorStandPacket{
 		
 		this.watcher.setObject(10, Byte.valueOf(b0));
 		this.arms = b;
-		this.container.getDataWatcherModifier().write(0, this.watcher);
 	}
 	
 	public void setGrafiti(boolean b) {
@@ -119,7 +119,6 @@ public class ArmorStandPacket{
 		
 		this.watcher.setObject(10, Byte.valueOf(b0));
 		this.graviti = b;
-		this.container.getDataWatcherModifier().write(0, this.watcher);
 	}
 	
 	public void setBasePlate(boolean b) {
@@ -133,7 +132,6 @@ public class ArmorStandPacket{
 		
 		this.watcher.setObject(10, Byte.valueOf(b0));
 		this.basePlate = b;
-		this.container.getDataWatcherModifier().write(0, this.watcher);
 	}
 	
 	public void setInvisible(boolean b) {
@@ -146,8 +144,7 @@ public class ArmorStandPacket{
 		}
 		
 		this.watcher.setObject(0, Byte.valueOf(b0));
-		this.basePlate = b;
-		this.container.getDataWatcherModifier().write(0, this.watcher);
+		this.invisible = b;
 	}
 	
 	public void setPose(EulerAngle angle, BodyPart part){
@@ -159,27 +156,21 @@ public class ArmorStandPacket{
 		switch (part) {
 		case HEAD:
 			this.watcher.setObject(11, vector);
-			this.container.getDataWatcherModifier().write(0, this.watcher);
 			break;
 		case BODY:
 			this.watcher.setObject(12, vector);
-			this.container.getDataWatcherModifier().write(0, this.watcher);
 			break;
 		case LEFT_ARM:
 			this.watcher.setObject(13, vector);
-			this.container.getDataWatcherModifier().write(0, this.watcher);
 			break;
 		case RIGHT_ARM:
 			this.watcher.setObject(14, vector);
-			this.container.getDataWatcherModifier().write(0, this.watcher);
 			break;
 		case LEFT_LEG:
 			this.watcher.setObject(15, vector);
-			this.container.getDataWatcherModifier().write(0, this.watcher);
 			break;
 		case RIGHT_LEG:
 			this.watcher.setObject(16, vector);
-			this.container.getDataWatcherModifier().write(0, this.watcher);
 			break;
 		default:return;
 		}
@@ -190,21 +181,9 @@ public class ArmorStandPacket{
 		this.watcher.setObject(2, str);
 	}
 	
-	public void setNameVasibility(boolean b){
-		this.watcher.setObject(3, (byte)(b?1:0));
-		this.container.getDataWatcherModifier().write(0, this.watcher);
-	}
-	
-	public void setSlot(short Slot){
-		this.inventory.getIntegers().write(1, (int) Slot);
-	}
-	
-	public void giveItem(ItemStack is){
-		this.inventory.getItemModifier().write(0, is);
-	}
-	
 	public void send(Player p){
 		try {
+			this.container.getDataWatcherModifier().write(0, this.watcher);
             ProtocolLibrary.getProtocolManager().sendServerPacket(p, container);
             ProtocolLibrary.getProtocolManager().sendServerPacket(p, inventory);
         } catch (InvocationTargetException e) {

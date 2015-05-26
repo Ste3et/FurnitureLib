@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.util.EulerAngle;
@@ -14,10 +15,24 @@ public class FurnitureManager {
 
 	private Integer i = 407;
 	private HashMap<ObjectID,List<ArmorStandPacket>> furnitureList = new HashMap<ObjectID,List<ArmorStandPacket>>();
+	private HashMap<Chunk, List<ArmorStandPacket>> chunkArmorStandList = new HashMap<Chunk, List<ArmorStandPacket>>();
 	private List<Integer> entityList = new ArrayList<Integer>();
+	
 	public void addFurniture(ObjectID id, List<ArmorStandPacket> asP){
 		furnitureList.put(id, asP);
+		for(ArmorStandPacket packet : asP){
+			Chunk c = packet.getLocation().getChunk();
+			List<ArmorStandPacket> packets = new ArrayList<ArmorStandPacket>();
+			if(chunkArmorStandList.containsKey(c)){
+				packets = chunkArmorStandList.get(c);
+			}
+			
+			if(!packets.contains(packet)){packets.add(packet);}
+			chunkArmorStandList.put(c, packets);
+		}
 	}
+	
+	public HashMap<Chunk, List<ArmorStandPacket>> getArmorStandPacketsFromChunk(){return this.chunkArmorStandList;}
 
 	public void removeFurniture(ObjectID id){
 		if(furnitureList.containsKey(id)){

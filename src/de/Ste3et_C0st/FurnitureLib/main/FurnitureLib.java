@@ -14,6 +14,7 @@ import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.EnumWrappers.EntityUseAction;
 
+import de.Ste3et_C0st.FurnitureLib.Events.ChunkOnLoad;
 import de.Ste3et_C0st.FurnitureLib.Events.FurnitureBreakEvent;
 import de.Ste3et_C0st.FurnitureLib.Events.FurnitureClickEvent;
 
@@ -30,7 +31,7 @@ public class FurnitureLib extends JavaPlugin {
 		instance = this;
 		this.lUtil = new LocationUtil();
 		this.manager = new FurnitureManager();
-		
+		getServer().getPluginManager().registerEvents(new ChunkOnLoad(), this);
 		ProtocolLibrary.getProtocolManager().addPacketListener(
                 new PacketAdapter(this, ListenerPriority.NORMAL, PacketType.Play.Client.USE_ENTITY) {
                     public void onPacketReceiving(PacketEvent event) {
