@@ -1,10 +1,10 @@
 package de.Ste3et_C0st.FurnitureLib.main;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.Collections;
 import java.util.List;
 
-import org.bukkit.Chunk;
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.util.EulerAngle;
@@ -14,63 +14,91 @@ import de.Ste3et_C0st.FurnitureLib.main.Type.BodyPart;
 public class FurnitureManager {
 
 	private Integer i = 407;
-	private HashMap<ObjectID,List<ArmorStandPacket>> furnitureList = new HashMap<ObjectID,List<ArmorStandPacket>>();
-	private HashMap<Chunk, List<ArmorStandPacket>> chunkArmorStandList = new HashMap<Chunk, List<ArmorStandPacket>>();
-	private List<Integer> entityList = new ArrayList<Integer>();
+	private List<ArmorStandPacket> asPackets = new ArrayList<ArmorStandPacket>();
 	
-	public void addFurniture(ObjectID id, List<ArmorStandPacket> asP){
-		furnitureList.put(id, asP);
-		for(ArmorStandPacket packet : asP){
-			Chunk c = packet.getLocation().getChunk();
-			List<ArmorStandPacket> packets = new ArrayList<ArmorStandPacket>();
-			if(chunkArmorStandList.containsKey(c)){
-				packets = chunkArmorStandList.get(c);
+	public void updatePlayerView(Player player) {
+		if(this.asPackets.isEmpty()){return;}
+		for(ArmorStandPacket asp : asPackets){
+			if(asp.isInRange(player)){
+				asp.send(player);
+			}else{
+				asp.destroy(player);
 			}
-			
-			if(!packets.contains(packet)){packets.add(packet);}
-			chunkArmorStandList.put(c, packets);
 		}
 	}
 	
-	public HashMap<Chunk, List<ArmorStandPacket>> getArmorStandPacketsFromChunk(){return this.chunkArmorStandList;}
+	public void updateFurniture(ObjectID obj) {
+		if(this.asPackets.isEmpty()){return;}
+		for(ArmorStandPacket packet : asPackets){
+			if(packet.getObjectID().equals(obj)){
+				for(Player player : Bukkit.getOnlinePlayers()){
+					if(packet.isInRange(player)){
+						packet.send(player);
+					}
+				}
+			}
+		}
+	}
 
 	public void removeFurniture(ObjectID id){
-		if(furnitureList.containsKey(id)){
-			furnitureList.remove(id);
+		if(this.asPackets.isEmpty()){return;}
+		List<ArmorStandPacket> aspClone = new ArrayList<ArmorStandPacket>();
+		Collections.copy(asPackets, aspClone);
+		for(ArmorStandPacket asp : aspClone){
+			if(asp.getObjectID().equals(id)){
+				asPackets.remove(id);
+			}
 		}
 	}
 	
-	public void send(ObjectID id, List<Player> pList){
-		if(!furnitureList.containsKey(id)){FurnitureLib.getInstance().getLogger().warning("[FurnitureLib] Object not found"); return;}
-		for(Player p : pList){
-			for(ArmorStandPacket packet : furnitureList.get(id)){
-				packet.send(p);
+	public void save(){
+		/*Connection con = FurnitureLib.getInstance().getConnection();
+		try {
+			long objID = SaveObject.writeJavaObject(con, this.asPackets);
+			FurnitureLib.getInstance().getConfig().set("Furniture.save.dataID", objID);
+			FurnitureLib.getInstance().saveConfig();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}*/
+	}
+	
+	public void load(){
+		/*Connection con = FurnitureLib.getInstance().getConnection();
+		SaveObject.createTable(con);
+		if(FurnitureLib.getInstance().getConfig().isSet("Furniture.save.dataID")){
+			long objID = FurnitureLib.getInstance().getConfig().getLong("Furniture.save.dataID");
+			try {
+				this.asPackets = (List<ArmorStandPacket>) SaveObject.readJavaObject(con, objID);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}*/
+		
+	}
+	
+	public void send(ObjectID id){
+		if(this.asPackets.isEmpty()){return;}
+		for(ArmorStandPacket packet : asPackets){
+			if(packet.getObjectID().equals(id)){
+				for(Player p : Bukkit.getOnlinePlayers()){
+					packet.send(p);
+				}
 			}
 		}
 	}
 	
 	public boolean isArmorStand(Integer entityID){
-		if(furnitureList.isEmpty()){return false;}
-		for(ObjectID id : furnitureList.keySet()){
-			if(furnitureList.get(id)!=null){
-				for(ArmorStandPacket packet : furnitureList.get(id)){
-					if(packet.getID() == entityID){
-						return true;
-					}
-				}
-			}
+		if(this.asPackets.isEmpty()){return false;}
+		for(ArmorStandPacket asp : this.asPackets){
+			if(asp.getID() == entityID) return true;
 		}
 		return false;
 	}
 	
-	public void kill(ObjectID id, List<Player> pList){
-		
-	}
-	
-	public ArmorStandPacket createArmorStand(Location loc){
+	public ArmorStandPacket createArmorStand(ObjectID id, Location loc){
 		i++;
-		ArmorStandPacket packet = new ArmorStandPacket(loc, i);
-		this.entityList.add(i);
+		ArmorStandPacket packet = new ArmorStandPacket(loc, i, id);
+		this.asPackets.add(packet);
 		return packet;
 	}
 	
@@ -89,37 +117,33 @@ public class FurnitureManager {
 	public void setPose(ArmorStandPacket packet, EulerAngle angle, BodyPart part){
 		packet.setPose(angle, part);
 	}
-	
-	public boolean isFromPlugin(Integer entityID){
-		if(entityList.contains(entityID)) return true;
-		return false;
-	}
 
 	public ArmorStandPacket getArmorStandPacketByID(Integer entityID) {
-		if(furnitureList.isEmpty()){return null;}
-		for(ObjectID id : furnitureList.keySet()){
-			if(furnitureList.get(id)!=null){
-				for(ArmorStandPacket packet : furnitureList.get(id)){
-					if(packet.getID() == entityID){
-						return packet;
-					}
-				}
-			}
+		if(this.asPackets.isEmpty()){return null;}
+		for(ArmorStandPacket asp : this.asPackets){
+			if(asp.getID() == entityID) return asp;
 		}
 		return null;
 	}
 
 	public ObjectID getObjectIDByID(Integer entityID) {
-		if(furnitureList.isEmpty()){return null;}
-		for(ObjectID id : furnitureList.keySet()){
-			if(furnitureList.get(id)!=null){
-				for(ArmorStandPacket packet : furnitureList.get(id)){
-					if(packet.getID() == entityID){
-						return id;
-					}
-				}
-			}
+		if(this.asPackets.isEmpty()){return null;}
+		for(ArmorStandPacket asp : this.asPackets){
+			if(asp.getID() == entityID) return asp.getObjectID();
 		}
 		return null;
+	}
+
+	public void removeFurniture(Player player) {
+		if(this.asPackets.isEmpty()){return;}
+		for(ArmorStandPacket packet : asPackets){
+			packet.destroy(player);
+		}
+		
+	}
+
+	public void remove(ArmorStandPacket armorStandPacket) {
+		if(!this.asPackets.contains(armorStandPacket)) return;
+		this.asPackets.remove(armorStandPacket);
 	}
 }
