@@ -1,5 +1,13 @@
 package de.Ste3et_C0st.Furniture.Sql;
 
+/*
+ * mysql> CREATE TABLE java_objects ( 
+ * id INT AUTO_INCREMENT, 
+ * name varchar(128), 
+ * object_value BLOB, 
+ * primary key (id));
+ **/
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
@@ -9,7 +17,7 @@ import java.sql.Statement;
 
 public class SaveObject {
 	static final String WRITE_OBJECT_SQL = "INSERT INTO furniture_objects(name, object_value) VALUES (?, ?)";
-	static final String CREATE_TABLE_SQL = "CREATE TABLE furniture_objects(name Long, object_value BLOB);";
+	static final String CREATE_TABLE_SQL = "CREATE TABLE furniture_objects(id INT AUTO_INCREMENT, name varchar(128), object_value BLOB, primary key (id));";
 	
 	  static final String READ_OBJECT_SQL = "SELECT object_value FROM furniture_objects WHERE id = ?";
 

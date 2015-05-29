@@ -56,6 +56,7 @@ public class FurnitureLib extends JavaPlugin {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+		
 		getFurnitureManager().load();
 		getServer().getPluginManager().registerEvents(new ChunkOnLoad(), this);
 		ProtocolLibrary.getProtocolManager().addPacketListener(
@@ -91,6 +92,7 @@ public class FurnitureLib extends JavaPlugin {
 		
 	}
 	
+	public String getBukkitVersion() {return Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3];}
 	public static FurnitureLib getInstance(){return instance;}
 	public LocationUtil getLocationUtil(){return this.lUtil;}
 	public FurnitureManager getFurnitureManager(){return this.manager;}

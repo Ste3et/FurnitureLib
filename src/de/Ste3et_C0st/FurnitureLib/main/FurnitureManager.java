@@ -1,5 +1,6 @@
 package de.Ste3et_C0st.FurnitureLib.main;
 
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -9,6 +10,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.util.EulerAngle;
 
+import de.Ste3et_C0st.Furniture.Sql.SaveObject;
 import de.Ste3et_C0st.FurnitureLib.main.Type.BodyPart;
 
 public class FurnitureManager {
@@ -30,7 +32,7 @@ public class FurnitureManager {
 	public void updateFurniture(ObjectID obj) {
 		if(this.asPackets.isEmpty()){return;}
 		for(ArmorStandPacket packet : asPackets){
-			if(packet.getObjectID().equals(obj)){
+			if(packet.getObjectId().equals(obj)){
 				for(Player player : Bukkit.getOnlinePlayers()){
 					if(packet.isInRange(player)){
 						packet.send(player);
@@ -45,25 +47,26 @@ public class FurnitureManager {
 		List<ArmorStandPacket> aspClone = new ArrayList<ArmorStandPacket>();
 		Collections.copy(asPackets, aspClone);
 		for(ArmorStandPacket asp : aspClone){
-			if(asp.getObjectID().equals(id)){
+			if(asp.getObjectId().equals(id)){
 				asPackets.remove(id);
 			}
 		}
 	}
 	
 	public void save(){
-		/*Connection con = FurnitureLib.getInstance().getConnection();
+		Connection con = FurnitureLib.getInstance().getConnection();
 		try {
 			long objID = SaveObject.writeJavaObject(con, this.asPackets);
 			FurnitureLib.getInstance().getConfig().set("Furniture.save.dataID", objID);
 			FurnitureLib.getInstance().saveConfig();
 		} catch (Exception e) {
 			e.printStackTrace();
-		}*/
+		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void load(){
-		/*Connection con = FurnitureLib.getInstance().getConnection();
+		Connection con = FurnitureLib.getInstance().getConnection();
 		SaveObject.createTable(con);
 		if(FurnitureLib.getInstance().getConfig().isSet("Furniture.save.dataID")){
 			long objID = FurnitureLib.getInstance().getConfig().getLong("Furniture.save.dataID");
@@ -72,14 +75,14 @@ public class FurnitureManager {
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-		}*/
+		}
 		
 	}
 	
 	public void send(ObjectID id){
 		if(this.asPackets.isEmpty()){return;}
 		for(ArmorStandPacket packet : asPackets){
-			if(packet.getObjectID().equals(id)){
+			if(packet.getObjectId().equals(id)){
 				for(Player p : Bukkit.getOnlinePlayers()){
 					packet.send(p);
 				}
@@ -90,7 +93,7 @@ public class FurnitureManager {
 	public boolean isArmorStand(Integer entityID){
 		if(this.asPackets.isEmpty()){return false;}
 		for(ArmorStandPacket asp : this.asPackets){
-			if(asp.getID() == entityID) return true;
+			if(asp.getEntityId() == entityID) return true;
 		}
 		return false;
 	}
@@ -121,7 +124,7 @@ public class FurnitureManager {
 	public ArmorStandPacket getArmorStandPacketByID(Integer entityID) {
 		if(this.asPackets.isEmpty()){return null;}
 		for(ArmorStandPacket asp : this.asPackets){
-			if(asp.getID() == entityID) return asp;
+			if(asp.getEntityId() == entityID) return asp;
 		}
 		return null;
 	}
@@ -129,7 +132,7 @@ public class FurnitureManager {
 	public ObjectID getObjectIDByID(Integer entityID) {
 		if(this.asPackets.isEmpty()){return null;}
 		for(ArmorStandPacket asp : this.asPackets){
-			if(asp.getID() == entityID) return asp.getObjectID();
+			if(asp.getEntityId() == entityID) return asp.getObjectId();
 		}
 		return null;
 	}
