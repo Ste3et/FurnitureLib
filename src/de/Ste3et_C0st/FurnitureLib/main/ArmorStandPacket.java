@@ -55,7 +55,7 @@ public class ArmorStandPacket{
 	public boolean hasGraviti(){return this.graviti;}
 	public boolean isInRange(Player player) {return getLocation().getWorld() == player.getLocation().getWorld() && (getLocation().distance(player.getLocation()) <= 48D);}
 	private int getFixedPoint(Double d){return (int) (d*32D);}
-	private byte getCompressedAngle(float value) {return (byte)(int)(value * 256.0F / 360.0F);}
+	private int getCompressedAngle(float value) {return (int)(value * 256.0F / 360.0F);}
 	
 	public ArmorStandPacket(Location l, int ID, ObjectID id){
 		this.location = l;
@@ -89,8 +89,8 @@ public class ArmorStandPacket{
 		.write(2, getFixedPoint(this.location.getX()))
 		.write(3, getFixedPoint(this.location.getY()))
 		.write(4, getFixedPoint(this.location.getZ()))
-		.write(5, 0)
-		.write(6, 0)
+		.write(5, getCompressedAngle(this.location.getYaw()))
+		.write(6, getCompressedAngle(this.location.getYaw()))
 		.write(7, 0);
 		this.container = container;
 		this.inventory = new ArmorStandInventory();
@@ -99,7 +99,7 @@ public class ArmorStandPacket{
 	public void setYaw(Player player, double yaw) {
 		PacketContainer packet = this.manager.createPacket(PacketType.Play.Server.ENTITY_HEAD_ROTATION);
 		packet.getIntegers().write(0, this.getEntityId());
-		packet.getBytes().write(0, getCompressedAngle((float) yaw));
+		packet.getBytes().write(0,(byte) getCompressedAngle((float) getLocation().getYaw()));
 		player.sendMessage(getCompressedAngle(getLocation().getYaw()) + "");
 		try {
 			this.manager.sendServerPacket(player, packet);
@@ -123,7 +123,6 @@ public class ArmorStandPacket{
 		else {
 			b0 = (byte)(b0 & 0xFFFFFFFE);
 		}
-		
 		this.watcher.setObject(10, Byte.valueOf(b0));
 		this.mini = b;
 	}
@@ -136,7 +135,6 @@ public class ArmorStandPacket{
 		else {
 			b0 = (byte)(b0 & 0xFFFFFFFB);
 		}
-		
 		this.watcher.setObject(10, Byte.valueOf(b0));
 		this.arms = b;
 	}
@@ -149,7 +147,6 @@ public class ArmorStandPacket{
 		else {
 			b0 = (byte)(b0 & 0xFFFFFFFD);
 		}
-		
 		this.watcher.setObject(10, Byte.valueOf(b0));
 		this.graviti = b;
 	}
@@ -162,7 +159,6 @@ public class ArmorStandPacket{
 		else {
 			b0 = (byte)(b0 & 0xFFFFFFF7);
 		}
-		
 		this.watcher.setObject(10, Byte.valueOf(b0));
 		this.basePlate = b;
 	}
@@ -175,7 +171,6 @@ public class ArmorStandPacket{
 		else {
 			b0 = (byte)(b0 & 0xFFFFFFFB);
 		}
-		
 		this.watcher.setObject(0, Byte.valueOf(b0));
 		this.invisible = b;
 	}
@@ -187,7 +182,6 @@ public class ArmorStandPacket{
 		else {
 			b0 = (byte)(b0 & 0xFFFFFFFE);
 		}
-		
 		this.watcher.setObject(0, Byte.valueOf(b0));
 		this.fire = b;
 	}
@@ -201,27 +195,7 @@ public class ArmorStandPacket{
 			Class<?> Vector3f = Class.forName("net.minecraft.server." + FurnitureLib.getInstance().getBukkitVersion() + ".Vector3f");
 			Constructor<?> ctor = Vector3f.getConstructors()[0];
 			ctor.newInstance((float) angle.getX(), (float) angle.getY(), (float) angle.getZ());
-			switch (part) {
-			case HEAD:
-				this.watcher.setObject(11, ctor.newInstance((float) angle.getX(), (float) angle.getY(), (float) angle.getZ()));
-				break;
-			case BODY:
-				this.watcher.setObject(12, ctor.newInstance((float) angle.getX(), (float) angle.getY(), (float) angle.getZ()));
-				break;
-			case LEFT_ARM:
-				this.watcher.setObject(13, ctor.newInstance((float) angle.getX(), (float) angle.getY(), (float) angle.getZ()));
-				break;
-			case RIGHT_ARM:
-				this.watcher.setObject(14, ctor.newInstance((float) angle.getX(), (float) angle.getY(), (float) angle.getZ()));
-				break;
-			case LEFT_LEG:
-				this.watcher.setObject(15, ctor.newInstance((float) angle.getX(), (float) angle.getY(), (float) angle.getZ()));
-				break;
-			case RIGHT_LEG:
-				this.watcher.setObject(16, ctor.newInstance((float) angle.getX(), (float) angle.getY(), (float) angle.getZ()));
-				break;
-			default:return;
-			}
+			this.watcher.setObject(part.getField(), ctor.newInstance((float) angle.getX(), (float) angle.getY(), (float) angle.getZ()));
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
