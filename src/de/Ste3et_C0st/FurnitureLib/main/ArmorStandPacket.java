@@ -3,7 +3,11 @@ package de.Ste3et_C0st.FurnitureLib.main;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+
+import javax.persistence.Id;
+import javax.persistence.Table;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -14,6 +18,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
 
+import com.avaje.ebean.validation.NotNull;
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
@@ -22,13 +27,14 @@ import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 
 import de.Ste3et_C0st.FurnitureLib.main.Type.BodyPart;
 
+@javax.persistence.Entity
+@Table(name="AsP")
 public class ArmorStandPacket{
-
-	private Integer ID;
-	private ObjectID objID;
-	private Location location;
-	private BodyPart part;
-	private EulerAngle angle;
+	
+	@Id private Integer ID;
+	@NotNull private ObjectID objID;
+	@NotNull private Location location;
+	private HashMap<BodyPart, EulerAngle> angle = new HashMap<Type.BodyPart, EulerAngle>();
 	private boolean mini, invisible, arms, basePlate, graviti, customname, fire;
 	private WrappedDataWatcher watcher;
 	private PacketContainer container;
@@ -36,12 +42,15 @@ public class ArmorStandPacket{
 	private String name = "";
 	private ProtocolManager manager;
 	private List<Player> loadedPlayers = new ArrayList<Player>();
+	private Entity pessanger;
 	
+	/**
+	 * @return Location
+	 */
 	public Location getLocation(){return this.location;}
-	public PacketContainer getContainer(){return this.container;}
-	public BodyPart getBodyPart(){return this.part;}
-	public EulerAngle getAngle(){return this.angle;}
+	public EulerAngle getAngle(BodyPart part){if(!angle.containsKey(part)){return new EulerAngle(0, 0, 0);} return angle.get(part);}
 	public String getName(){return this.name;}
+	public Entity getPessanger(){return this.pessanger;}
 	public ObjectID getObjectId(){return this.objID;}
 	public ArmorStandInventory getInventory() {return this.inventory;}
 	public void setNameVasibility(boolean b){this.watcher.setObject(3, (byte)(b?1:0));this.customname=b;}
@@ -57,6 +66,11 @@ public class ArmorStandPacket{
 	private int getFixedPoint(Double d){return (int) (d*32D);}
 	private int getCompressedAngle(float value) {return (int)(value * 256.0F / 360.0F);}
 	
+	/**
+	 * @param l
+	 * @param ID
+	 * @param id
+	 */
 	public ArmorStandPacket(Location l, int ID, ObjectID id){
 		this.location = l;
 		this.watcher = getDefaultWatcher(l.getWorld(), EntityType.ARMOR_STAND);
@@ -66,13 +80,40 @@ public class ArmorStandPacket{
 		create();
 	}
 	
+	
+	/**
+	 * @param inv
+	 */
 	public void setInventory(ArmorStandInventory inv) {
 		this.inventory = inv;
-		if (this.inventory == null)
-		this.inventory = new ArmorStandInventory();
+		if (this.inventory == null) this.inventory = new ArmorStandInventory();
 	}
 
-	public WrappedDataWatcher getDefaultWatcher(World world, EntityType type) {
+	/**
+	 * @param e
+	 */
+	public void setPessanger(Entity e){
+		PacketContainer container = new PacketContainer(PacketType.Play.Server.ATTACH_ENTITY);
+		container.getIntegers()
+		.write(0, 0)
+		.write(1, e.getEntityId())
+		.write(2, getEntityId());
+		try {
+			for(Player p : loadedPlayers){
+				this.manager.sendServerPacket(p, container);
+			}
+			this.pessanger = e;
+		} catch (InvocationTargetException e1) {
+			e1.printStackTrace();
+		}
+	}
+
+	/**
+	 * @param world
+	 * @param type
+	 * @return
+	 */
+	private WrappedDataWatcher getDefaultWatcher(World world, EntityType type) {
         Entity entity = world.spawnEntity(new Location(world, 0, 256, 0), type);
         WrappedDataWatcher watcher = WrappedDataWatcher.getEntityWatcher(entity).deepClone();
         entity.remove();
@@ -89,23 +130,14 @@ public class ArmorStandPacket{
 		.write(2, getFixedPoint(this.location.getX()))
 		.write(3, getFixedPoint(this.location.getY()))
 		.write(4, getFixedPoint(this.location.getZ()))
-		.write(5, getCompressedAngle(this.location.getYaw()))
-		.write(6, getCompressedAngle(this.location.getYaw()))
+		.write(5, 0)
+		.write(6, 0)
 		.write(7, 0);
+		container.getBytes()
+		.write(0, (byte) getCompressedAngle(this.location.getYaw()))
+		.write(1, (byte) getCompressedAngle(this.location.getPitch()));
 		this.container = container;
 		this.inventory = new ArmorStandInventory();
-	}
-	
-	public void setYaw(Player player, double yaw) {
-		PacketContainer packet = this.manager.createPacket(PacketType.Play.Server.ENTITY_HEAD_ROTATION);
-		packet.getIntegers().write(0, this.getEntityId());
-		packet.getBytes().write(0,(byte) getCompressedAngle((float) getLocation().getYaw()));
-		player.sendMessage(getCompressedAngle(getLocation().getYaw()) + "");
-		try {
-			this.manager.sendServerPacket(player, packet);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
 	}
 	
 	public void delete(){
@@ -115,6 +147,9 @@ public class ArmorStandPacket{
 		FurnitureLib.getInstance().getFurnitureManager().remove(this);
 	}
 	
+	/**
+	 * @param b
+	 */
 	public void setSmall(boolean b){
 		byte b0 = this.watcher.getByte(10);
 
@@ -127,6 +162,9 @@ public class ArmorStandPacket{
 		this.mini = b;
 	}
 	
+	/**
+	 * @param b
+	 */
 	public void setArms(boolean b) {
 		byte b0 = this.watcher.getByte(10);
 
@@ -139,6 +177,9 @@ public class ArmorStandPacket{
 		this.arms = b;
 	}
 	
+	/**
+	 * @param b
+	 */
 	public void setGrafiti(boolean b) {
 		byte b0 = this.watcher.getByte(10);
 
@@ -151,6 +192,9 @@ public class ArmorStandPacket{
 		this.graviti = b;
 	}
 	
+	/**
+	 * @param b
+	 */
 	public void setBasePlate(boolean b) {
 		byte b0 = this.watcher.getByte(10);
 
@@ -163,6 +207,9 @@ public class ArmorStandPacket{
 		this.basePlate = b;
 	}
 	
+	/**
+	 * @param b
+	 */
 	public void setInvisible(boolean b) {
 		byte b0 = this.watcher.getByte(0);
 
@@ -175,6 +222,9 @@ public class ArmorStandPacket{
 		this.invisible = b;
 	}
 	
+	/**
+	 * @param b
+	 */
 	public void setFire(boolean b){
 		byte b0 = this.watcher.getByte(0);
 		if (b)
@@ -186,11 +236,14 @@ public class ArmorStandPacket{
 		this.fire = b;
 	}
 	
+	/**
+	 * @param angle
+	 * @param part
+	 */
 	public void setPose(EulerAngle angle, BodyPart part){
 		if(angle==null){return;}
 		if(part==null){return;}
-		this.part = part;
-		this.angle = angle;
+		this.angle.put(part, angle);
 		try {
 			Class<?> Vector3f = Class.forName("net.minecraft.server." + FurnitureLib.getInstance().getBukkitVersion() + ".Vector3f");
 			Constructor<?> ctor = Vector3f.getConstructors()[0];
@@ -201,6 +254,9 @@ public class ArmorStandPacket{
 		}
 	}
 	
+	/**
+	 * @param str
+	 */
 	public void setName(String str){
 		if(str==null){return;}
 		this.watcher.setObject(2, str);
@@ -238,12 +294,12 @@ public class ArmorStandPacket{
 	public void update(Player p){
 		PacketContainer update = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
 		update.getIntegers().write(0, getEntityId());
-		update.getWatchableCollectionModifier().write(0, this.watcher.getWatchableObjects());
+		update.getWatchableCollectionModifier().write(0, watcher.getWatchableObjects());
 		 try
          {
                 this.manager.sendServerPacket(p, update);
                 this.sendInventoryPacket(p);
-                this.setYaw(p, getLocation().getYaw());
+                if(getPessanger()!=null){setPessanger(getPessanger());}
          }
          catch (InvocationTargetException e){e.printStackTrace();}
 	}
@@ -251,14 +307,14 @@ public class ArmorStandPacket{
 	public void update(){
 		PacketContainer update = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
 		update.getIntegers().write(0, getEntityId());
-		update.getWatchableCollectionModifier().write(0, this.watcher.getWatchableObjects());
+		update.getWatchableCollectionModifier().write(0, watcher.getWatchableObjects());
 		 try
          {
 			 for(Player p : this.loadedPlayers){
 	                this.manager.sendServerPacket(p, update);
 	                this.sendInventoryPacket(p);
-	                this.setYaw(p, getLocation().getYaw());
 			 }
+			 if(getPessanger()!=null){setPessanger(getPessanger());}
          }catch (InvocationTargetException e){e.printStackTrace();}	 
 	}
 	
@@ -267,8 +323,21 @@ public class ArmorStandPacket{
 		PacketContainer destroy = new PacketContainer(PacketType.Play.Server.ENTITY_DESTROY);
 		destroy.getIntegerArrays().write(0, new int[] {this.ID});
 		try {
+			unleash();
 			this.manager.sendServerPacket(p, destroy);
 			if(this.loadedPlayers.contains(p)){this.loadedPlayers.remove(p);}
+		} catch (InvocationTargetException e) {e.printStackTrace();}
+	}
+	
+	public void destroy(){
+		PacketContainer destroy = new PacketContainer(PacketType.Play.Server.ENTITY_DESTROY);
+		destroy.getIntegerArrays().write(0, new int[] {this.ID});
+		try {
+			unleash();
+			 for(Player p : this.loadedPlayers){
+					this.manager.sendServerPacket(p, destroy);
+			 }
+			 this.loadedPlayers.clear();
 		} catch (InvocationTargetException e) {e.printStackTrace();}
 	}
 	
@@ -277,11 +346,28 @@ public class ArmorStandPacket{
 		if (this.manager == null) return;
 		if (this.container == null) return;
 		try {
-			this.container.getDataWatcherModifier().write(0, this.watcher);
-            this.manager.sendServerPacket(p, container.deepClone());
+			this.container.getDataWatcherModifier().write(0, watcher);
+            this.manager.sendServerPacket(p, container);
             this.loadedPlayers.add(p);
             this.sendInventoryPacket(p);
-            this.setYaw(p, getLocation().getYaw());
+            if(getPessanger()!=null){setPessanger(getPessanger());}
         } catch (InvocationTargetException e) { e.printStackTrace();}
+	}
+	
+	public void unleash() {
+		if(pessanger==null) return;
+		PacketContainer packet = new PacketContainer(PacketType.Play.Server.ATTACH_ENTITY);
+		packet.getIntegers()
+        .write(0, 0)
+        .write(1, pessanger.getEntityId())
+        .write(2, -1);
+		try {
+			for(Player p : loadedPlayers){
+				manager.sendServerPacket(p, packet);
+			}
+			this.pessanger = null;
+		} catch (InvocationTargetException e1) {
+			e1.printStackTrace();
+		}
 	}
 }

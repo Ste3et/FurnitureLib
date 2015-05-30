@@ -1,6 +1,5 @@
 package de.Ste3et_C0st.FurnitureLib.main;
 
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -10,13 +9,16 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.util.EulerAngle;
 
-import de.Ste3et_C0st.Furniture.Sql.SaveObject;
 import de.Ste3et_C0st.FurnitureLib.main.Type.BodyPart;
 
 public class FurnitureManager {
 
 	private Integer i = 407;
 	private List<ArmorStandPacket> asPackets = new ArrayList<ArmorStandPacket>();
+	
+	public List<ArmorStandPacket> getAsList(){
+		return this.asPackets;
+	}
 	
 	public void updatePlayerView(Player player) {
 		if(this.asPackets.isEmpty()){return;}
@@ -51,32 +53,6 @@ public class FurnitureManager {
 				asPackets.remove(id);
 			}
 		}
-	}
-	
-	public void save(){
-		Connection con = FurnitureLib.getInstance().getConnection();
-		try {
-			long objID = SaveObject.writeJavaObject(con, this.asPackets);
-			FurnitureLib.getInstance().getConfig().set("Furniture.save.dataID", objID);
-			FurnitureLib.getInstance().saveConfig();
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-	
-	@SuppressWarnings("unchecked")
-	public void load(){
-		Connection con = FurnitureLib.getInstance().getConnection();
-		SaveObject.createTable(con);
-		if(FurnitureLib.getInstance().getConfig().isSet("Furniture.save.dataID")){
-			long objID = FurnitureLib.getInstance().getConfig().getLong("Furniture.save.dataID");
-			try {
-				this.asPackets = (List<ArmorStandPacket>) SaveObject.readJavaObject(con, objID);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-		}
-		
 	}
 	
 	public void send(ObjectID id){
