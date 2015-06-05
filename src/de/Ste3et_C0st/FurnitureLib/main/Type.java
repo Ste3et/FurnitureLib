@@ -1,5 +1,8 @@
 package de.Ste3et_C0st.FurnitureLib.main;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class Type {
 	public enum BodyPart{
 		HEAD("Head",11), 
@@ -24,5 +27,10 @@ public class Type {
         public int getField(){
             return field;
         }
+
+		public static List<BodyPart> getList() {
+			List<BodyPart> parts = Arrays.asList(BodyPart.HEAD, BodyPart.BODY, BodyPart.LEFT_ARM, BodyPart.RIGHT_ARM, BodyPart.LEFT_LEG, BodyPart.RIGHT_LEG);
+			return parts;
+		}
 	}
 }

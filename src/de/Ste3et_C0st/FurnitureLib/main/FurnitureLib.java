@@ -1,13 +1,16 @@
 package de.Ste3et_C0st.FurnitureLib.main;
 
 import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.logging.Logger;
+
+import lib.PatPeter.SQLibrary.Database;
+import lib.PatPeter.SQLibrary.SQLite;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Listener;
 import org.bukkit.plugin.java.JavaPlugin;
 
 import com.comphenix.protocol.PacketType;
@@ -17,11 +20,12 @@ import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.EnumWrappers.EntityUseAction;
 
+import de.Ste3et_C0st.FurnitureLib.Database.Save;
 import de.Ste3et_C0st.FurnitureLib.Events.ChunkOnLoad;
 import de.Ste3et_C0st.FurnitureLib.Events.FurnitureBreakEvent;
 import de.Ste3et_C0st.FurnitureLib.Events.FurnitureClickEvent;
 
-public class FurnitureLib extends JavaPlugin implements Listener {
+public class FurnitureLib extends JavaPlugin{
 
 	@SuppressWarnings("unused")
 	private Logger logger = Logger.getLogger("Minecraft");
@@ -30,14 +34,16 @@ public class FurnitureLib extends JavaPlugin implements Listener {
 	private FurnitureManager manager;
 	private Connection con;
 	private Save save;
+	private Database sql;
 	
 	@SuppressWarnings("deprecation")
 	@Override
 	public void onEnable(){
 		instance = this;
+		createDatabase();
 		this.lUtil = new LocationUtil();
 		this.manager = new FurnitureManager();
-		this.save = new Save();
+		this.save = new Save(this);
 		try{
 			getConfig().addDefaults(YamlConfiguration.loadConfiguration(getResource("config.yml")));
 			getConfig().options().copyDefaults(true);
@@ -45,8 +51,6 @@ public class FurnitureLib extends JavaPlugin implements Listener {
 		}catch(Exception e){
 			e.printStackTrace();
 		}
-		
-		getServer().getPluginManager().registerEvents(new ChunkOnLoad(), this);
 		
 		ProtocolLibrary.getProtocolManager().addPacketListener(
                 new PacketAdapter(this, ListenerPriority.NORMAL, PacketType.Play.Client.USE_ENTITY) {
@@ -92,7 +96,24 @@ public class FurnitureLib extends JavaPlugin implements Listener {
                         }
                     }
         });
+		
+		getServer().getPluginManager().registerEvents(new ChunkOnLoad(), this);
+		
 	}
+	
+	private void createDatabase(){
+		sql = new SQLite(
+				Logger.getLogger("Minecraft"),
+				"[FurnitureLib]", 
+				getDataFolder().getAbsolutePath(), 
+				"Furniture", 
+				".sqlite");
+		if (!sql.isOpen()) {
+		    sql.open();
+		}
+	}
+	
+	public Database getDB(){return this.sql;}
 	
 	@Override
 	public void onDisable(){
@@ -100,6 +121,17 @@ public class FurnitureLib extends JavaPlugin implements Listener {
 			for(ArmorStandPacket as : getFurnitureManager().getAsList()){
 				as.destroy();
 			}
+		}
+	}
+	
+	public void save(ArmorStandPacket asPacket){
+		try {
+			this.save.saveAsPacket(asPacket);
+		} catch (SQLException e) {
+			getLogger().warning("AsPacket cannot saving");
+			getLogger().warning("===============================================================");
+			e.printStackTrace();
+			getLogger().warning("===============================================================");
 		}
 	}
 	

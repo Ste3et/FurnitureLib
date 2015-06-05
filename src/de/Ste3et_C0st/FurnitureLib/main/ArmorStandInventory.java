@@ -23,6 +23,7 @@ public class ArmorStandInventory {
 	public void setLeggings(ItemStack item) {this.setSlot(2, item);}
 	public void setChestPlate(ItemStack item) {this.setSlot(3, item);}
 	public void setHelmet(ItemStack item) {this.setSlot(4, item);}
+	public ItemStack[] getIS(){return this.items;}
 	
 	public ItemStack getSlot(int slot) {
 		if (slot < 0 || slot >= this.items.length) {
@@ -30,6 +31,16 @@ public class ArmorStandInventory {
 		}
 
 		return this.items[slot];
+	}
+	
+	public Integer getSlot(ItemStack is){
+		if(is==null){return null;}
+		for(int l = 0; l<=getIS().length;l++){
+			if(getIS()[l]!=null&&getIS()[l].equals(is)){
+				return l;
+			}
+		}
+		return null;
 	}
 
 	public void setSlot(int slot, ItemStack item) {
