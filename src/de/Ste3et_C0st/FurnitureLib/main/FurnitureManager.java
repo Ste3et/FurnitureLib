@@ -81,10 +81,10 @@ public class FurnitureManager {
 		return packet;
 	}
 	
-	public void setMetadata(ArmorStandPacket packet, boolean Arms, boolean Invisible, boolean BasePlate, boolean Grafiti){
+	public void setMetadata(ArmorStandPacket packet, boolean Arms, boolean Invisible, boolean BasePlate, boolean Gravity){
 		packet.setArms(Arms);
 		packet.setBasePlate(BasePlate);
-		packet.setGrafiti(Grafiti);
+		packet.setGravity(Gravity);
 		packet.setInvisible(Invisible);
 	}
 	
@@ -103,6 +103,15 @@ public class FurnitureManager {
 			if(asp.getEntityId() == entityID) return asp;
 		}
 		return null;
+	}
+	
+	public List<ArmorStandPacket> getArmorStandPacketByObjectID(ObjectID id) {
+		List<ArmorStandPacket> aspList = new ArrayList<ArmorStandPacket>();
+		if(this.asPackets.isEmpty()){return null;}
+		for(ArmorStandPacket asp : this.asPackets){
+			if(asp.getObjectId().equals(id)) aspList.add(asp);
+		}
+		return aspList;
 	}
 
 	public ObjectID getObjectIDByID(Integer entityID) {
@@ -124,5 +133,25 @@ public class FurnitureManager {
 	public void remove(ArmorStandPacket armorStandPacket) {
 		if(!this.asPackets.contains(armorStandPacket)) return;
 		this.asPackets.remove(armorStandPacket);
+	}
+	
+	public void remove(ObjectID id){
+		try{
+			for(ArmorStandPacket as : cloneList(asPackets)){
+				if(as.getObjectId().equals(id)){
+					as.destroy();
+					as.delete();
+				}
+			}
+			FurnitureLib.getInstance().removeObjFromDB(id);
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+	
+	public static List<ArmorStandPacket> cloneList(List<ArmorStandPacket> list) {
+	    List<ArmorStandPacket> clone = new ArrayList<ArmorStandPacket>(list.size());
+	    for(ArmorStandPacket item: list) clone.add(item);
+	    return clone;
 	}
 }

@@ -1,11 +1,7 @@
 package de.Ste3et_C0st.FurnitureLib.main;
 
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.logging.Logger;
-
-import lib.PatPeter.SQLibrary.Database;
-import lib.PatPeter.SQLibrary.SQLite;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -20,7 +16,8 @@ import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.EnumWrappers.EntityUseAction;
 
-import de.Ste3et_C0st.FurnitureLib.Database.Save;
+import de.Ste3et_C0st.FurnitureLib.Database.SQLite;
+import de.Ste3et_C0st.FurnitureLib.Database.Serialize;
 import de.Ste3et_C0st.FurnitureLib.Events.ChunkOnLoad;
 import de.Ste3et_C0st.FurnitureLib.Events.FurnitureBreakEvent;
 import de.Ste3et_C0st.FurnitureLib.Events.FurnitureClickEvent;
@@ -33,17 +30,18 @@ public class FurnitureLib extends JavaPlugin{
 	private static FurnitureLib instance;
 	private FurnitureManager manager;
 	private Connection con;
-	private Save save;
-	private Database sql;
+	private SQLite sql;
+	private Serialize serialize;
 	
 	@SuppressWarnings("deprecation")
 	@Override
 	public void onEnable(){
 		instance = this;
-		createDatabase();
 		this.lUtil = new LocationUtil();
 		this.manager = new FurnitureManager();
-		this.save = new Save(this);
+		this.serialize = new Serialize();
+		this.sql = new SQLite(this);
+		this.sql.load();
 		try{
 			getConfig().addDefaults(YamlConfiguration.loadConfiguration(getResource("config.yml")));
 			getConfig().options().copyDefaults(true);
@@ -99,21 +97,12 @@ public class FurnitureLib extends JavaPlugin{
 		
 		getServer().getPluginManager().registerEvents(new ChunkOnLoad(), this);
 		
+		this.sql.loadALL();
+		
+			for(ArmorStandPacket asP : getFurnitureManager().getAsList()){
+				getFurnitureManager().send(asP.getObjectId());
+			}
 	}
-	
-	private void createDatabase(){
-		sql = new SQLite(
-				Logger.getLogger("Minecraft"),
-				"[FurnitureLib]", 
-				getDataFolder().getAbsolutePath(), 
-				"Furniture", 
-				".sqlite");
-		if (!sql.isOpen()) {
-		    sql.open();
-		}
-	}
-	
-	public Database getDB(){return this.sql;}
 	
 	@Override
 	public void onDisable(){
@@ -124,23 +113,16 @@ public class FurnitureLib extends JavaPlugin{
 		}
 	}
 	
-	public void save(ArmorStandPacket asPacket){
-		try {
-			this.save.saveAsPacket(asPacket);
-		} catch (SQLException e) {
-			getLogger().warning("AsPacket cannot saving");
-			getLogger().warning("===============================================================");
-			e.printStackTrace();
-			getLogger().warning("===============================================================");
-		}
+	public void save(ObjectID id){
+		sql.save(id);
 	}
-	
+	public void removeObjFromDB(ObjectID obj){this.sql.delete(obj);}
+	public Serialize getSerialize(){ return this.serialize;}
 	public String getBukkitVersion() {return Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3];}
 	public static FurnitureLib getInstance(){return instance;}
 	public LocationUtil getLocationUtil(){return this.lUtil;}
 	public FurnitureManager getFurnitureManager(){return this.manager;}
 	public Connection getConnection(){return this.con;}
-	public ObjectID getObjectID(Class<?> c){return new ObjectID(c);}
-	public Save getSaveManager(){return save;}
+	public ObjectID getObjectID(String c){return new ObjectID(c);}
 	
 }

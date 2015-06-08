@@ -35,7 +35,7 @@ public class ArmorStandPacket{
 	@NotNull private ObjectID objID;
 	@NotNull private Location location;
 	private HashMap<BodyPart, EulerAngle> angle = new HashMap<Type.BodyPart, EulerAngle>();
-	private boolean mini, invisible, arms, basePlate, graviti, customname, fire;
+	private boolean mini, invisible, arms, basePlate, gravity, customname, fire;
 	private WrappedDataWatcher watcher;
 	private PacketContainer container;
 	private ArmorStandInventory inventory;
@@ -61,7 +61,7 @@ public class ArmorStandPacket{
 	public boolean isMini(){return this.mini;}
 	public boolean hasArms(){return this.arms;}
 	public boolean hasBasePlate(){return this.basePlate;}
-	public boolean hasGraviti(){return this.graviti;}
+	public boolean hasGravity(){return this.gravity;}
 	public boolean isInRange(Player player) {return getLocation().getWorld() == player.getLocation().getWorld() && (getLocation().distance(player.getLocation()) <= 48D);}
 	private int getFixedPoint(Double d){return (int) (d*32D);}
 	private int getCompressedAngle(float value) {return (int)(value * 256.0F / 360.0F);}
@@ -180,7 +180,7 @@ public class ArmorStandPacket{
 	/**
 	 * @param b
 	 */
-	public void setGrafiti(boolean b) {
+	public void setGravity(boolean b) {
 		byte b0 = this.watcher.getByte(10);
 
 		if (b)
@@ -189,7 +189,7 @@ public class ArmorStandPacket{
 			b0 = (byte)(b0 & 0xFFFFFFFD);
 		}
 		this.watcher.setObject(10, Byte.valueOf(b0));
-		this.graviti = b;
+		this.gravity = b;
 	}
 	
 	/**
@@ -259,6 +259,7 @@ public class ArmorStandPacket{
 	 */
 	public void setName(String str){
 		if(str==null){return;}
+		if(str==""){setNameVasibility(false);return;}
 		this.watcher.setObject(2, str);
 		this.name = str;
 	}
