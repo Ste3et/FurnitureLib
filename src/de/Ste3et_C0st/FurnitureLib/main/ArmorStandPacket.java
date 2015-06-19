@@ -48,7 +48,7 @@ public class ArmorStandPacket{
 	 * @return Location
 	 */
 	public Location getLocation(){return this.location;}
-	public EulerAngle getAngle(BodyPart part){if(!angle.containsKey(part)){return new EulerAngle(0, 0, 0);} return angle.get(part);}
+	public EulerAngle getAngle(BodyPart part){if(!angle.containsKey(part)){return part.getDefAngle();}return angle.get(part);}
 	public String getName(){return this.name;}
 	public Entity getPessanger(){return this.pessanger;}
 	public ObjectID getObjectId(){return this.objID;}

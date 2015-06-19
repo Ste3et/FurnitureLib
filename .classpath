@@ -4,5 +4,14 @@
 	<classpathentry kind="con" path="org.eclipse.jdt.launching.JRE_CONTAINER/org.eclipse.jdt.internal.debug.ui.launcher.StandardVMType/JavaSE-1.8"/>
 	<classpathentry kind="lib" path="C:/Plugins/jars/spigot.jar"/>
 	<classpathentry kind="lib" path="C:/Plugins/jars/ProtocolLib.jar"/>
+	<classpathentry kind="lib" path="C:/Plugins/jars/worldguard-5.9.jar"/>
+	<classpathentry kind="lib" path="C:/Plugins/jars/Plotz.jar"/>
+	<classpathentry kind="lib" path="C:/Plugins/jars/PlotMe15.jar"/>
+	<classpathentry kind="lib" path="C:/Plugins/jars/PlotSquared.jar"/>
+	<classpathentry kind="lib" path="C:/Plugins/jars/Landlord.jar"/>
+	<classpathentry kind="lib" path="C:/Plugins/jars/GriefPrevention.jar"/>
+	<classpathentry kind="lib" path="C:/Plugins/jars/PreciousStones.jar"/>
+	<classpathentry kind="lib" path="C:/Plugins/jars/Residence.jar"/>
+	<classpathentry kind="lib" path="C:/Plugins/jars/Towny.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

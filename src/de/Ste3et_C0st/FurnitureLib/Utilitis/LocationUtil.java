@@ -1,4 +1,4 @@
-package de.Ste3et_C0st.FurnitureLib.main;
+package de.Ste3et_C0st.FurnitureLib.Utilitis;
 
 import java.util.Arrays;
 import java.util.List;

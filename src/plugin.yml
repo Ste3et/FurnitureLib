@@ -4,4 +4,9 @@ description: FurnitureLib
 author: Ste3et_C0st
 website: http://dicecraft.de
 depend: [ProtocolLib, SQLibrary]
+softdepend: [WorldGuard,PlotMe,Plotz]
 main: de.Ste3et_C0st.FurnitureLib.main.FurnitureLib
+commands: 
+  furniture:
+    description: Furniture Command
+    usage:  /<command>

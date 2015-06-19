@@ -1,4 +1,4 @@
-package de.Ste3et_C0st.FurnitureLib.main;
+package de.Ste3et_C0st.FurnitureLib.Utilitis;
 
 public class RandomStringGenerator {
 	

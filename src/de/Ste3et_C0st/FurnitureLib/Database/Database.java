@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.HashMap;
 import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
@@ -82,17 +83,13 @@ public abstract class Database {
     
     public void loadALL(){
     	FurnitureManager manager = FurnitureLib.getInstance().getFurnitureManager();
-    	String query = "SELECT * FROM ArmorStand_Info";
     	try {
-            ResultSet rs = statement.executeQuery(query);
+            ResultSet rs = statement.executeQuery("SELECT * FROM ArmorStand_Info");
+            HashMap<Integer, ArmorStandPacket> asList = new HashMap<Integer, ArmorStandPacket>();
     		while (rs.next()) {
-    			ObjectID ObjID = new ObjectID("new");
+    			ObjectID ObjID = new ObjectID("new", "new");
     			ObjID.setID(rs.getString("ObjID"));
     			Integer ID = rs.getInt("ArmorID");
-    			String q2 = "SELECT * FROM ArmorStand_Rotation WHERE ArmorID =" + ID;
-    			String q3 = "SELECT * FROM ArmorStand_Inventory WHERE ArmorID =" + ID;
-    			String q4 = "SELECT * FROM ArmorStand_Metadata WHERE ArmorID =" + ID;
-    			
     			String name = rs.getString("Name");
     			Double X = rs.getDouble("X");
     			Double Y = rs.getDouble("Y");
@@ -103,42 +100,59 @@ public abstract class Database {
     			Location loc = new Location(w, X, Y, Z);
     			loc.setYaw(Yaw);
     			loc.setPitch(Pitch);
-    			
+    			manager.setLastID(ID);
     			ArmorStandPacket asPacket = manager.createArmorStand(ObjID, loc);
     			asPacket.setName(name);
-
-    			ResultSet rs4 = statement.executeQuery(q4);
-    			asPacket.setArms(intToBool(rs4.getInt("Arms")));
-    			asPacket.setSmall(intToBool(rs4.getInt("Small")));
-    			asPacket.setGravity(intToBool(rs4.getInt("Gravity")));
-    			asPacket.setBasePlate(intToBool(rs4.getInt("BasePlate")));
-    			asPacket.setInvisible(intToBool(rs4.getInt("Invisible")));
-    			asPacket.setNameVasibility(intToBool(rs4.getInt("Customname")));
-    			asPacket.setFire(intToBool(rs4.getInt("Fire")));
-    			
-    			ResultSet rs2 = statement.executeQuery(q2);
-    			while (rs2.next()) {
-    				BodyPart part = BodyPart.valueOf(rs2.getString("BodyPart"));
-    				Double x = rs2.getDouble("X");
-    				Double y = rs2.getDouble("Y");
-    				Double z = rs2.getDouble("Z");
-    				asPacket.setPose(new EulerAngle(x, y, z), part);
-				}
-    			
-    			
-    			ResultSet rs3 = statement.executeQuery(q3);
-    			while (rs3.next()) {
-    				Integer slot = rs3.getInt("Slot");
-    				String base64 = rs3.getString("ItemStack");
-    				ItemStack is = FurnitureLib.getInstance().getSerialize().fromBase64(base64);
-    				asPacket.getInventory().setSlot(slot, is);
-    			}
+    			asList.put(ID, asPacket);
     		}
-    		return;
+    		rs.close();
+    		
+    		for(Integer i : asList.keySet()){
+    			loadMetadata(asList.get(i), i);
+    			loadInventory(asList.get(i), i);
+    			loadRotataion(asList.get(i), i);
+    		}
     	} catch (Exception ex) {
             ex.printStackTrace();
         }
         return;  
+    }
+    
+    private void loadRotataion(ArmorStandPacket packet, Integer ID) throws SQLException{
+    	ResultSet result = statement.executeQuery("SELECT * FROM ArmorStand_Rotation WHERE ArmorID =" + ID);
+    	
+    	while (result.next()) {
+    		BodyPart part = BodyPart.valueOf(result.getString("BodyPart"));
+			Double x = result.getDouble("X");
+			Double y = result.getDouble("Y");
+			Double z = result.getDouble("Z");
+			packet.setPose(new EulerAngle(x, y, z), part);
+		}
+    	result.close();
+    }
+    
+    private void loadInventory(ArmorStandPacket packet, Integer ID) throws SQLException{
+    	ResultSet result = statement.executeQuery("SELECT * FROM ArmorStand_Inventory WHERE ArmorID =" + ID);
+    	
+    	while (result.next()) {
+			Integer slot = result.getInt("Slot");
+			String base64 = result.getString("ItemStack");
+			ItemStack is = FurnitureLib.getInstance().getSerialize().fromBase64(base64);
+			packet.getInventory().setSlot(slot, is);
+		}
+    	result.close();
+    }
+    
+    private void loadMetadata(ArmorStandPacket packet, Integer ID) throws SQLException{
+    	ResultSet result = statement.executeQuery("SELECT * FROM ArmorStand_Metadata WHERE ArmorID =" + ID);
+    	packet.setArms(intToBool(result.getInt("Arms")));
+    	packet.setSmall(intToBool(result.getInt("Small")));
+    	packet.setGravity(intToBool(result.getInt("Gravity")));
+    	packet.setBasePlate(intToBool(result.getInt("BasePlate")));
+    	packet.setInvisible(intToBool(result.getInt("Invisible")));
+    	packet.setNameVasibility(intToBool(result.getInt("Customname")));
+    	packet.setFire(intToBool(result.getInt("Fire")));
+    	result.close();
     }
 
     private void setPacketMetadata(ArmorStandPacket asPacket) {

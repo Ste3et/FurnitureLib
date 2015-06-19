@@ -16,11 +16,14 @@ import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.EnumWrappers.EntityUseAction;
 
+import de.Ste3et_C0st.FurnitureLib.Command.command;
 import de.Ste3et_C0st.FurnitureLib.Database.SQLite;
 import de.Ste3et_C0st.FurnitureLib.Database.Serialize;
 import de.Ste3et_C0st.FurnitureLib.Events.ChunkOnLoad;
 import de.Ste3et_C0st.FurnitureLib.Events.FurnitureBreakEvent;
 import de.Ste3et_C0st.FurnitureLib.Events.FurnitureClickEvent;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.LocationUtil;
+import de.Ste3et_C0st.FurnitureLib.main.Protection.ProtectionManager;
 
 public class FurnitureLib extends JavaPlugin{
 
@@ -32,6 +35,7 @@ public class FurnitureLib extends JavaPlugin{
 	private Connection con;
 	private SQLite sql;
 	private Serialize serialize;
+	private ProtectionManager Pmanager;
 	
 	@SuppressWarnings("deprecation")
 	@Override
@@ -96,12 +100,10 @@ public class FurnitureLib extends JavaPlugin{
         });
 		
 		getServer().getPluginManager().registerEvents(new ChunkOnLoad(), this);
-		
+		getCommand("furniture").setExecutor(new command(manager, this));
 		this.sql.loadALL();
-		
-			for(ArmorStandPacket asP : getFurnitureManager().getAsList()){
-				getFurnitureManager().send(asP.getObjectId());
-			}
+		this.Pmanager = new ProtectionManager(instance);
+		getFurnitureManager().sendAll();
 	}
 	
 	@Override
@@ -113,16 +115,43 @@ public class FurnitureLib extends JavaPlugin{
 		}
 	}
 	
-	public void save(ObjectID id){
-		sql.save(id);
-	}
+	  public Boolean isDouble(String s){
+		  try{
+			  Double.parseDouble(s);
+			  return true;
+		  }catch(NumberFormatException e){
+			  return false;
+		  }
+	  }
+	  
+	  public Boolean isBoolean(String s){
+		  try {
+			  s = s.toLowerCase();
+			  Boolean.parseBoolean(s);
+			  return true;
+		} catch (Exception e) {
+			return false;
+		}
+	  }
+	  
+	  public Boolean isInt(String s){
+		  try{
+			  Integer.parseInt(s);
+			  return true;
+		  }catch(NumberFormatException e){
+			  return false;
+		  }
+	  }
+	
+	public void saveObjToDB(ObjectID obj){sql.save(obj);}
 	public void removeObjFromDB(ObjectID obj){this.sql.delete(obj);}
+	public void updateObjInDB(ObjectID obj){this.sql.delete(obj);this.sql.save(obj);}
 	public Serialize getSerialize(){ return this.serialize;}
 	public String getBukkitVersion() {return Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3];}
 	public static FurnitureLib getInstance(){return instance;}
 	public LocationUtil getLocationUtil(){return this.lUtil;}
 	public FurnitureManager getFurnitureManager(){return this.manager;}
 	public Connection getConnection(){return this.con;}
-	public ObjectID getObjectID(String c){return new ObjectID(c);}
-	
+	public ObjectID getObjectID(String c, String plugin){return new ObjectID(c, plugin);}
+	public boolean canBuild(Player p, Location loc){return Pmanager.canBuild(p, loc);}
 }
