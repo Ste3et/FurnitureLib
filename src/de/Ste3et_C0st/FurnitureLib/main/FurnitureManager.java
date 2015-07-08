@@ -17,12 +17,15 @@ public class FurnitureManager {
 	private Integer i = 407;
 	private List<ArmorStandPacket> asPackets = new ArrayList<ArmorStandPacket>();
 	private List<ObjectID> objecte = new ArrayList<ObjectID>();
+	private List<ObjectID> removeList = new ArrayList<ObjectID>();
+	private List<ObjectID> updateList = new ArrayList<ObjectID>();
 	private List<Project> projects = new ArrayList<Project>();
 	
 	public void setLastID(Integer i){this.i = i;}
 	public List<ArmorStandPacket> getAsList(){return this.asPackets;}
+	public List<ObjectID> getRemoveList(){return this.removeList;}
 	public List<ObjectID> getObjectList(){return this.objecte;}
-	
+	public List<ObjectID> getUpdateList(){return this.objecte;}
 	public void updatePlayerView(Player player) {
 		if(this.asPackets.isEmpty()){return;}
 		for(ArmorStandPacket asp : asPackets){
@@ -41,6 +44,7 @@ public class FurnitureManager {
 				for(Player player : Bukkit.getOnlinePlayers()){
 					if(packet.isInRange(player)){
 						packet.update(player);
+						updateList.add(obj);
 					}
 				}
 			}
@@ -64,7 +68,7 @@ public class FurnitureManager {
 				asp.delete();
 			}
 		}
-		FurnitureLib.getInstance().removeObjFromDB(id);
+		removeList.add(id);
 		objecte.remove(id);
 	}
 	
@@ -77,6 +81,13 @@ public class FurnitureManager {
 				}
 			}
 		}
+	}
+	
+	public void send(ArmorStandPacket asp){
+		if(this.asPackets.isEmpty()){return;}
+			for(Player p : Bukkit.getOnlinePlayers()){
+				asp.send(p);
+			}
 	}
 	
 	public boolean isArmorStand(Integer entityID){
@@ -156,7 +167,9 @@ public class FurnitureManager {
 	}
 	
 	public void addProject(Project project){
-		projects.add(project);
+		if(!projects.contains(project)){
+			projects.add(project);
+		}
 	}
 	
 	public List<Project> getProjects(){

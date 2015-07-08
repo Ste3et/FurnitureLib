@@ -1,5 +1,8 @@
 package de.Ste3et_C0st.FurnitureLib.Events;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -16,11 +19,12 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
-
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 
 public class ChunkOnLoad implements Listener{
+	
+	public List<Player> eventList = new ArrayList<Player>();
 	
 	@EventHandler
 	public void onPlayerMove(PlayerMoveEvent event) {
@@ -90,17 +94,40 @@ public class ChunkOnLoad implements Listener{
 	}
 	
 	@EventHandler
-	public void onClick(PlayerInteractEvent event){
+	public void onClick(final PlayerInteractEvent event){
 		if(event.getAction().equals(Action.RIGHT_CLICK_BLOCK)){
 			if(event.getClickedBlock()==null||event.getItem()==null){return;}
 			Player p = event.getPlayer();
 			ItemStack is = event.getItem();
 			if(getProjectByItem(is)==null){return;}
+			if(eventList.contains(event.getPlayer())) return;
+			eventList.add(p);
+			event.setCancelled(true);
 			Project pro = getProjectByItem(is);
-			Location l = event.getClickedBlock().getLocation();
-			FurnitureItemEvent e = new FurnitureItemEvent(p, is, pro, l);
-			Bukkit.getPluginManager().callEvent(e);
+			final Player player = p;
+			final ItemStack itemstack = is;
+			final Project project = pro;
+			Bukkit.getScheduler().scheduleSyncDelayedTask(FurnitureLib.getInstance(), new Runnable() {
+				@Override
+				public void run() {
+					Location l = event.getClickedBlock().getLocation();
+					FurnitureItemEvent e = new FurnitureItemEvent(player, itemstack, project, l);
+					Bukkit.getPluginManager().callEvent(e);
+				}
+			});
+			removePlayer(p);
 		}
+	}
+	
+	private void removePlayer(final Player p){
+		Bukkit.getScheduler().runTaskLater(FurnitureLib.getInstance(), new Runnable() {
+			@Override
+			public void run() {
+				if(eventList!=null&&!eventList.isEmpty()&&p!=null&&p.isOnline()&&eventList.contains(p)){
+					eventList.remove(p);
+				}
+			}
+		}, 1);
 	}
 	
 	private Project getProjectByItem(ItemStack is){

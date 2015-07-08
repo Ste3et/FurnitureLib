@@ -227,10 +227,12 @@ public class ArmorStandPacket{
 	 */
 	public void setFire(boolean b){
 		byte b0 = this.watcher.getByte(0);
-		if (b)
+		if (b){
 			b0 = (byte)(b0 | 0x01);
-		else {
+			FurnitureLib.getInstance().getLightManager().addLight(getLocation(), 15);
+		}else {
 			b0 = (byte)(b0 & 0xFFFFFFFE);
+			FurnitureLib.getInstance().getLightManager().removeLight(getLocation());
 		}
 		this.watcher.setObject(0, Byte.valueOf(b0));
 		this.fire = b;
@@ -244,6 +246,7 @@ public class ArmorStandPacket{
 		if(angle==null){return;}
 		if(part==null){return;}
 		this.angle.put(part, angle);
+		angle = FurnitureLib.getInstance().getLocationUtil().Radtodegress(angle);
 		try {
 			Class<?> Vector3f = Class.forName("net.minecraft.server." + FurnitureLib.getInstance().getBukkitVersion() + ".Vector3f");
 			Constructor<?> ctor = Vector3f.getConstructors()[0];
@@ -264,12 +267,12 @@ public class ArmorStandPacket{
 		this.name = str;
 	}
 	
-	public void sendInventoryPacket(Player player) {
+	public void sendInventoryPacket(final Player player) {
 		List<PacketContainer> packets = this.inventory.createPackets(this.getEntityId());
 		if (packets.isEmpty()) return;
 		
 		try {
-			for (PacketContainer packet : packets){
+			for (final PacketContainer packet : packets){
 				if(packet.getItemModifier().read(0)!=null){
 					this.manager.sendServerPacket(player, packet);
 					ItemStack is = packet.getItemModifier().read(0);

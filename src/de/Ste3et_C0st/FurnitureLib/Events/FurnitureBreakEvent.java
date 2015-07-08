@@ -1,12 +1,14 @@
 package de.Ste3et_C0st.FurnitureLib.Events;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
 import de.Ste3et_C0st.FurnitureLib.main.ArmorStandPacket;
+import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 
 public final class FurnitureBreakEvent extends Event implements Cancellable {
@@ -30,6 +32,7 @@ public final class FurnitureBreakEvent extends Event implements Cancellable {
     public Location getLocation(){return this.l;}
 	public HandlerList getHandlers() {return handlers;}
 	public static HandlerList getHandlerList() {return handlers;}
+	public boolean canBuild(Material m){return FurnitureLib.getInstance().canBuild(p, l, m);}
 	public boolean isCancelled() {return cancelled;}
 	public void setCancelled(boolean arg0) {cancelled = arg0;}
 }

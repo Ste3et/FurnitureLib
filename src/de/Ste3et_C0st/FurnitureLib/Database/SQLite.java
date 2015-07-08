@@ -33,6 +33,17 @@ public class SQLite extends Database{
             "`World` STRING NOT NULL" +
             ");";
     
+    public String SQLiteCreateArmorStandObjectIDS = "CREATE TABLE IF NOT EXISTS ArmorStand_ObjectIDS (" +
+    		"`ID` INTEGER PRIMARY KEY AUTOINCREMENT," +
+    		"`ObjID` STRING NOT NULL," +
+            "`X` DOUBLE NOT NULL," +
+            "`Y` DOUBLE NOT NULL," +
+            "`Z` DOUBLE NOT NULL," +
+            "`Yaw` FLOAT NOT NULL," +
+            "`Pitch` FLOAT NOT NULL," +
+            "`World` STRING NOT NULL" +
+            ");";
+    
     public String SQLiteCreateArmorStandMetadata = "CREATE TABLE IF NOT EXISTS ArmorStand_Metadata (" +
             "`ID` INTEGER PRIMARY KEY AUTOINCREMENT," +
             "`ArmorID` INT NOT NULL," +
@@ -97,6 +108,7 @@ public class SQLite extends Database{
             s.executeUpdate(SQLiteCreateArmorStandMetadata);
             s.executeUpdate(SQLiteCreateArmorStandRotation);
             s.executeUpdate(SQLiteCreateArmorStandInventory);
+            s.executeUpdate(SQLiteCreateArmorStandObjectIDS);
             s.close();
         } catch (SQLException e) {
             e.printStackTrace();

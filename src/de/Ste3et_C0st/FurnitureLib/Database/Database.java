@@ -48,6 +48,10 @@ public abstract class Database {
             rs = ps.executeQuery();
             close(ps,rs);
             
+            ps = connection.prepareStatement("SELECT * FROM ArmorStand_ObjectIDS WHERE ID = ?");
+            rs = ps.executeQuery();
+            close(ps,rs);
+            
             ps = connection.prepareStatement("SELECT * FROM ArmorStand_Metadata WHERE ID = ?");
             rs = ps.executeQuery();
             close(ps,rs);
@@ -57,6 +61,7 @@ public abstract class Database {
     }
     
     public void save(ObjectID id){
+    	setObjIDLocation(id);
     	FurnitureManager manager = FurnitureLib.getInstance().getFurnitureManager();
     	for(ArmorStandPacket as : manager.getArmorStandPacketByObjectID(id)){
     		setPacketInfo(as);
@@ -72,10 +77,11 @@ public abstract class Database {
     
     public void delete(ObjectID objID){
     	try {
-			statement.execute("DELETE FROM ArmorStand_Info WHERE ObjID ='" + objID.getID() + "'");
-			statement.execute("DELETE FROM ArmorStand_Rotation WHERE ObjID ='" + objID.getID() + "'");
-			statement.execute("DELETE FROM ArmorStand_Inventory WHERE ObjID ='" + objID.getID() + "'");
-			statement.execute("DELETE FROM ArmorStand_Metadata WHERE ObjID ='" + objID.getID() + "'");
+			statement.execute("DELETE * FROM ArmorStand_Info WHERE ObjID ='" + objID.getID() + "'");
+			statement.execute("DELETE * FROM ArmorStand_Rotation WHERE ObjID ='" + objID.getID() + "'");
+			statement.execute("DELETE * FROM ArmorStand_Inventory WHERE ObjID ='" + objID.getID() + "'");
+			statement.execute("DELETE * FROM ArmorStand_Metadata WHERE ObjID ='" + objID.getID() + "'");
+			statement.execute("DELETE * FROM ArmorStand_ObjectIDS WHERE ObjID ='" + objID.getID() + "'");
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}
@@ -87,7 +93,8 @@ public abstract class Database {
             ResultSet rs = statement.executeQuery("SELECT * FROM ArmorStand_Info");
             HashMap<Integer, ArmorStandPacket> asList = new HashMap<Integer, ArmorStandPacket>();
     		while (rs.next()) {
-    			ObjectID ObjID = new ObjectID("new", "new");
+    			//Location
+    			ObjectID ObjID = new ObjectID("new", "new", null);
     			ObjID.setID(rs.getString("ObjID"));
     			Integer ID = rs.getInt("ArmorID");
     			String name = rs.getString("Name");
@@ -107,11 +114,17 @@ public abstract class Database {
     		}
     		rs.close();
     		
+    		for(ObjectID id : manager.getObjectList()){
+    			loadObjIDLocation(id);
+    		}
+    		
     		for(Integer i : asList.keySet()){
     			loadMetadata(asList.get(i), i);
     			loadInventory(asList.get(i), i);
     			loadRotataion(asList.get(i), i);
     		}
+    		
+
     	} catch (Exception ex) {
             ex.printStackTrace();
         }
@@ -155,6 +168,47 @@ public abstract class Database {
     	result.close();
     }
 
+    private void setObjIDLocation(ObjectID id){
+    	try{
+    		String qString = "REPLACE INTO ArmorStand_ObjectIDS (`ID`,`ObjID`, `X`,`Y`,`Z`,`Yaw`,`Pitch`,`World`) VALUES(" +
+    		null + ", " +
+    		"'" + id.getID() + "', " +
+    		id.getStartLocation().getX() + ", " +
+    		id.getStartLocation().getY() + ", " +
+    		id.getStartLocation().getZ() + ", " +
+    		id.getStartLocation().getYaw() + ", " +
+    		id.getStartLocation().getPitch() + ", " +
+    		"'" + id.getStartLocation().getWorld().getName() + "');";
+    		statement.executeUpdate(qString);
+    		return;
+    	}catch(Exception e){
+    		e.printStackTrace();
+    	}
+    }
+    
+    private void loadObjIDLocation(ObjectID id){
+    	if(id.getStartLocation()!=null){return;}
+    	try {
+    		ResultSet result = statement.executeQuery("SELECT * FROM ArmorStand_ObjectIDS WHERE ObjID ='" + id.getID() + "'");
+			while (result.next()) {
+				World w = Bukkit.getWorld(result.getString("World"));
+				Double x = result.getDouble("X");
+				Double y = result.getDouble("Y");
+				Double z = result.getDouble("Z");
+				Float yaw = result.getFloat("Yaw");
+				Float pitch = result.getFloat("Pitch");
+				Location loc = new Location(w, x, y, z);
+				loc.setYaw(yaw);
+				loc.setPitch(pitch);
+				id.setStartLocation(loc);
+			}
+			result.close();
+			return;
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+    }
+    
     private void setPacketMetadata(ArmorStandPacket asPacket) {
         try {
             String qString = "REPLACE INTO ArmorStand_Metadata (`ID`,`ArmorID`,`ObjID`,`Arms`,`Small`,`Gravity`,`BasePlate`,`Invisible`,`Customname`,`Fire`) VALUES(" +

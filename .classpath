@@ -13,5 +13,6 @@
 	<classpathentry kind="lib" path="C:/Plugins/jars/PreciousStones.jar"/>
 	<classpathentry kind="lib" path="C:/Plugins/jars/Residence.jar"/>
 	<classpathentry kind="lib" path="C:/Plugins/jars/Towny.jar"/>
+	<classpathentry kind="lib" path="C:/Plugins/jars/LightAPI.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>

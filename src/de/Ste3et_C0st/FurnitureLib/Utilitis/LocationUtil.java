@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
+import org.bukkit.Color;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -15,10 +16,9 @@ import org.bukkit.util.Vector;
 
 public class LocationUtil {
 
-    private final BlockFace[] axis = { BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST };
-    @SuppressWarnings("unused")
-	private List<BlockFace> axisList = Arrays.asList(BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST);
-    private final BlockFace[] radial = { BlockFace.NORTH, BlockFace.NORTH_EAST, BlockFace.EAST, BlockFace.SOUTH_EAST, BlockFace.SOUTH, BlockFace.SOUTH_WEST, BlockFace.WEST, BlockFace.NORTH_WEST };
+	public final BlockFace[] axis = { BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST };
+	public List<BlockFace> axisList = Arrays.asList(BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST);
+    public final BlockFace[] radial = { BlockFace.NORTH, BlockFace.NORTH_EAST, BlockFace.EAST, BlockFace.SOUTH_EAST, BlockFace.SOUTH, BlockFace.SOUTH_WEST, BlockFace.WEST, BlockFace.NORTH_WEST };
 
     //Return the all BlockFaces with 45 degress
     public BlockFace yawToFaceRadial(float yaw) {
@@ -60,6 +60,46 @@ public class LocationUtil {
             default: return 0;
         }
     }
+    
+	public short getFromDey(short s){
+		if(s==15){return 0;}
+		if(s==14){return 1;}
+		if(s==13){return 2;}
+		if(s==12){return 3;}
+		if(s==11){return 4;}
+		if(s==10){return 5;}
+		if(s==9){return 6;}
+		if(s==8){return 7;}
+		if(s==7){return 8;}
+		if(s==6){return 9;}
+		if(s==5){return 10;}
+		if(s==4){return 11;}
+		if(s==3){return 12;}
+		if(s==2){return 13;}
+		if(s==1){return 14;}
+		if(s==0){return 15;}
+		return 0;
+	}
+	
+	public Color getDyeFromDurability(short s){
+		if(s==0){return Color.fromRGB(25, 25, 25);}
+		if(s==1){return Color.fromRGB(153, 51, 51);}
+		if(s==2){return Color.fromRGB(102, 127, 51);}
+		if(s==3){return Color.fromRGB(102, 76, 51);}
+		if(s==4){return Color.fromRGB(51, 76, 178);}
+		if(s==5){return Color.fromRGB(127, 63, 178);}
+		if(s==6){return Color.fromRGB(76, 127, 153);}
+		if(s==7){return Color.fromRGB(153, 153, 153);}
+		if(s==8){return Color.fromRGB(76, 76, 76);}
+		if(s==9){return Color.fromRGB(242, 127, 165);}
+		if(s==10){return Color.fromRGB(127, 204, 25);}
+		if(s==11){return Color.fromRGB(229, 229, 51);}
+		if(s==12){return Color.fromRGB(102, 153, 216);}
+		if(s==13){return Color.fromRGB(178, 76, 216);}
+		if(s==14){return Color.fromRGB(216, 127, 51);}
+		if(s==15){return Color.fromRGB(255, 255, 255);}
+		return Color.fromRGB(255, 255, 255);
+	}
     
     public boolean isDay(World w) {
         long time = w.getTime();
@@ -130,56 +170,54 @@ public class LocationUtil {
     }
     
     @SuppressWarnings("deprecation")
-    public void setBed(BlockFace face, Location l) {
-    	if(face == BlockFace.NORTH){
-    		l.getBlock().setType(Material.AIR);
+    public Location setBed(BlockFace face, Location l) {
+		Block block = l.getBlock();
+        BlockState bedFoot = block.getState();
+        BlockState bedHead = bedFoot.getBlock().getRelative(face.getOppositeFace()).getState();
+    	
+    	switch (face) {
+		case NORTH:
+			l.getBlock().setType(Material.AIR);
     		l.getBlock().setType(Material.BED_BLOCK);
-    		Block block = l.getBlock();
-            BlockState bedFoot = block.getState();
-            BlockState bedHead = bedFoot.getBlock().getRelative(BlockFace.SOUTH).getState();
             bedFoot.setType(Material.BED_BLOCK);
             bedHead.setType(Material.BED_BLOCK);
             bedFoot.setRawData((byte) 0);
             bedHead.setRawData((byte) 8);
             bedFoot.update(true, false);
             bedHead.update(true, true);
-    	}else if(face == BlockFace.EAST){
-    		l.getBlock().setType(Material.AIR);
+			return bedHead.getLocation();
+		case EAST:
+			l.getBlock().setType(Material.AIR);
     		l.getBlock().setType(Material.BED_BLOCK);
-    		Block block = l.getBlock();
-    		BlockState bedFoot = block.getState();
-            BlockState bedHead = bedFoot.getBlock().getRelative(BlockFace.WEST).getState();
             bedFoot.setType(Material.BED_BLOCK);
             bedHead.setType(Material.BED_BLOCK);
             bedFoot.setRawData((byte) 1);
             bedHead.setRawData((byte) 9);
             bedFoot.update(true, false);
             bedHead.update(true, true);
-    	}else if(face == BlockFace.SOUTH){
+            return bedHead.getLocation();
+		case SOUTH:
     		l.getBlock().setType(Material.AIR);
     		l.getBlock().setType(Material.BED_BLOCK);
-    		Block block = l.getBlock();
-    		BlockState bedFoot = block.getState();
-            BlockState bedHead = bedFoot.getBlock().getRelative(BlockFace.NORTH).getState();
             bedFoot.setType(Material.BED_BLOCK);
             bedHead.setType(Material.BED_BLOCK);
             bedFoot.setRawData((byte) 2);
             bedHead.setRawData((byte) 10);
             bedFoot.update(true, false);
             bedHead.update(true, true);
-    	}else if(face == BlockFace.WEST){
+            return bedHead.getLocation();
+		case WEST:
     		l.getBlock().setType(Material.AIR);
     		l.getBlock().setType(Material.BED_BLOCK);
-    		Block block = l.getBlock();
-    		BlockState bedFoot = block.getState();
-            BlockState bedHead = bedFoot.getBlock().getRelative(BlockFace.EAST).getState();
             bedFoot.setType(Material.BED_BLOCK);
             bedHead.setType(Material.BED_BLOCK);
             bedFoot.setRawData((byte) 3);
             bedHead.setRawData((byte) 11);
             bedFoot.update(true, false);
             bedHead.update(true, true);
-    	}
+            return bedHead.getLocation();
+		default: return null;
+		}
     }
     
     @SuppressWarnings("deprecation")

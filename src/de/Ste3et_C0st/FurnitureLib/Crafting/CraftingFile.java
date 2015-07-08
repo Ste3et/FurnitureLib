@@ -22,6 +22,7 @@ public class CraftingFile {
 	private FileConfiguration file;
 	private String name;
 	private ShapedRecipe recipe;
+	private boolean isDisable;
 	public ShapedRecipe getRecipe(){return this.recipe;}
 	
 	@SuppressWarnings("deprecation")
@@ -37,14 +38,17 @@ public class CraftingFile {
 	
 	private void loadCrafting(String s){
 		try{
+				this.isDisable = file.getBoolean(name+".crafting.disable");
 				this.recipe = new ShapedRecipe(returnResult(s)).shape(returnFragment(s)[0], returnFragment(s)[1], returnFragment(s)[2]);
 				for(Character c : returnMaterial(s).keySet()){
 					if(!returnMaterial(s).get(c).equals(Material.AIR)){
 						this.recipe.setIngredient(c.charValue(), returnMaterial(s).get(c));
 					}
 				}
-				Bukkit.getServer().addRecipe(this.recipe);
 				
+				if(!isDisable){
+					Bukkit.getServer().addRecipe(this.recipe);
+				}
 		}catch(Exception e){
 			e.printStackTrace();
 		}

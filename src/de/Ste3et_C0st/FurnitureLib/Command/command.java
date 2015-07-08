@@ -18,6 +18,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 
+import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.Events.FurnitureClickEvent;
 import de.Ste3et_C0st.FurnitureLib.main.ArmorStandPacket;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
@@ -109,10 +110,18 @@ public class command implements CommandExecutor, Listener{
 							}
 							return true;
 						}
+					}else if(args[0].equalsIgnoreCase("give")){
+						give(sender, p, args[1]);
 					}
 					return true;
 				}else if(args.length==3){
-					
+					if(args[1].equalsIgnoreCase("give")){
+						if(Bukkit.getPlayer(args[1]) == null || !Bukkit.getPlayer(args[1]).isOnline()){
+							sender.sendMessage("The player : " + args[1] + " is not Online");
+							return true;
+						}
+						give(sender, Bukkit.getPlayer(args[1]), args[2]);
+					}
 					return true;
 				}else{
 					sendHelp(p);
@@ -125,6 +134,22 @@ public class command implements CommandExecutor, Listener{
 		return false;
 	}
 	
+	private void give(CommandSender sender, Player p2, String string) {
+		if(!(sender.hasPermission("furniture.admin") || sender.isOp())){ sender.sendMessage("§cYou don't have permissions to do this"); return;}
+		Project project = null;
+		for(Project pro : manager.getProjects()){
+			if(pro.getName().equalsIgnoreCase(string)) project = pro;
+		}
+		if(project==null){
+			sender.sendMessage("§cThe project" + string + " deos not exist"); 
+			return;
+		}
+		
+		p2.getInventory().addItem(project.getCraftingFile().getRecipe().getResult());
+		if(sender instanceof Player && sender.equals(p2)){return;}
+		sender.sendMessage("The Player " + p2.getName() + " becomes: " + project.getName());
+	}
+
 	private void getList(String option, Player p){
 		String s = "§7§m+--------------------------------------------------+";
 		p.sendMessage(s);
@@ -150,6 +175,15 @@ public class command implements CommandExecutor, Listener{
 					String toolTip = "§aObjects: " + getPlugin(plugin).size() + "\n" + "§aPlugin: " + plugin;
 					new FancyMessage("§6- " +id.getProject()).tooltip(toolTip).send(p);
 					types.add(id.getProject());
+				}
+			}
+			
+			for(Project pro : manager.getProjects()){
+				if(!types.contains(pro.getName())){
+					String plugin = pro.getPlugin().getName();
+					String toolTip = "§aObjects: " + getPlugin(plugin).size() + "\n" + "§aPlugin: " + plugin;
+					new FancyMessage("§6- " + pro.getName()).tooltip(toolTip).send(p);
+					types.add(pro.getName());
 				}
 			}
 		}else if(option.equalsIgnoreCase("world")){
@@ -225,7 +259,6 @@ public class command implements CommandExecutor, Listener{
 	private List<ObjectID> getType(String type){
 		List<ObjectID> objList = new ArrayList<ObjectID>();
 		for(ObjectID obj : manager.getObjectList()){
-			Bukkit.broadcastMessage(obj.getProject());
 			if(obj.getProject().equalsIgnoreCase(type)){
 				objList.add(obj);
 			}
