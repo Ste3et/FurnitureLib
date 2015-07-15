@@ -1,10 +1,10 @@
 name: FurnitureLib
-version: 0.1
+version: 0.4
 description: FurnitureLib
 author: Ste3et_C0st
 website: http://dicecraft.de
 depend: [ProtocolLib]
-softdepend: [WorldGuard,PlotMe,Plotz,GriefPrevention,Landlord,LightAPI,PlotSquared,PreciousStones,Residence,Towny,Multiverse,Multiverse-Core,Multiworld]
+softdepend: [WorldGuard,PlotMe,Plotz,GriefPrevention,Landlord,LightAPI,PlotSquared,PreciousStones,Residence,Towny,Multiverse,Multiverse-Core,Multiworld,Vault,CoreProtect]
 main: de.Ste3et_C0st.FurnitureLib.main.FurnitureLib
 commands: 
   furniture:

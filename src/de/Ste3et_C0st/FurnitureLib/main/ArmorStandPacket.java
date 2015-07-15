@@ -25,6 +25,7 @@ import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 
+import de.Ste3et_C0st.FurnitureLib.Utilitis.EntityID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.BodyPart;
 
 @javax.persistence.Entity
@@ -32,6 +33,7 @@ import de.Ste3et_C0st.FurnitureLib.main.Type.BodyPart;
 public class ArmorStandPacket{
 	
 	@Id private Integer ID;
+	private Integer ArmorID;
 	@NotNull private ObjectID objID;
 	@NotNull private Location location;
 	private HashMap<BodyPart, EulerAngle> angle = new HashMap<Type.BodyPart, EulerAngle>();
@@ -43,7 +45,6 @@ public class ArmorStandPacket{
 	private ProtocolManager manager;
 	private List<Player> loadedPlayers = new ArrayList<Player>();
 	private Entity pessanger;
-	
 	/**
 	 * @return Location
 	 */
@@ -53,8 +54,10 @@ public class ArmorStandPacket{
 	public Entity getPessanger(){return this.pessanger;}
 	public ObjectID getObjectId(){return this.objID;}
 	public ArmorStandInventory getInventory() {return this.inventory;}
-	public void setNameVasibility(boolean b){this.watcher.setObject(3, (byte)(b?1:0));this.customname=b;}
+	public void setNameVasibility(boolean b){this.watcher.setObject(3, (byte)(b?1:0));this.customname=b;
+	}
 	public int getEntityId() {return this.ID;}
+	public int getArmorID(){return this.ArmorID;}
 	public boolean isFire(){return this.fire;}
 	public boolean isNameVisible(){return this.customname;}
 	public boolean isInvisible(){return this.invisible;}
@@ -71,15 +74,21 @@ public class ArmorStandPacket{
 	 * @param ID
 	 * @param id
 	 */
-	public ArmorStandPacket(Location l, int ID, ObjectID id){
-		this.location = l;
-		this.watcher = getDefaultWatcher(l.getWorld(), EntityType.ARMOR_STAND);
-		this.ID = ID;
-		this.manager = ProtocolLibrary.getProtocolManager();
-		this.objID = id;
-		create();
+	public ArmorStandPacket(Location l, ObjectID id, Integer i){
+		try{
+			this.location = l;
+			this.watcher = getDefaultWatcher(l.getWorld(), EntityType.ARMOR_STAND);
+			this.ID = EntityID.nextEntityId();
+			this.ArmorID = i;
+			this.manager = ProtocolLibrary.getProtocolManager();
+			this.objID = id;
+			create();
+		}catch(Exception e){
+			e.printStackTrace();
+		}
 	}
 	
+	public void setID(int Int) {this.ArmorID=Int;}
 	
 	/**
 	 * @param inv
@@ -374,4 +383,6 @@ public class ArmorStandPacket{
 			e1.printStackTrace();
 		}
 	}
+	
+	
 }

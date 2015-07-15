@@ -18,63 +18,26 @@ public class SQLite extends Database{
         super(instance);
         dbname = plugin.getConfig().getString("SQLite.Filename", "furniture");
     }
-
-    //(ID,ArmorID,ObjID,Name,X,Y,Z,Yaw,Pitch,World)
-    public String SQLiteCreateArmorStandInfoTable = "CREATE TABLE IF NOT EXISTS ArmorStand_Info (" +
-            "`ID` INTEGER PRIMARY KEY AUTOINCREMENT," +
-            "`ArmorID` INT NOT NULL," +
-            "`ObjID` STRING NOT NULL," +
-            "`Name` STRING NOT NULL," +
-            "`X` DOUBLE NOT NULL," +
-            "`Y` DOUBLE NOT NULL," +
-            "`Z` DOUBLE NOT NULL," +
-            "`Yaw` FLOAT NOT NULL," +
-            "`Pitch` FLOAT NOT NULL," +
-            "`World` STRING NOT NULL" +
-            ");";
     
-    public String SQLiteCreateArmorStandObjectIDS = "CREATE TABLE IF NOT EXISTS ArmorStand_ObjectIDS (" +
-    		"`ID` INTEGER PRIMARY KEY AUTOINCREMENT," +
-    		"`ObjID` STRING NOT NULL," +
-            "`X` DOUBLE NOT NULL," +
-            "`Y` DOUBLE NOT NULL," +
-            "`Z` DOUBLE NOT NULL," +
-            "`Yaw` FLOAT NOT NULL," +
-            "`Pitch` FLOAT NOT NULL," +
-            "`World` STRING NOT NULL" +
-            ");";
-    
-    public String SQLiteCreateArmorStandMetadata = "CREATE TABLE IF NOT EXISTS ArmorStand_Metadata (" +
-            "`ID` INTEGER PRIMARY KEY AUTOINCREMENT," +
-            "`ArmorID` INT NOT NULL," +
+    public String ArmorStandTable = "CREATE TABLE IF NOT EXISTS FurnitureLib_ArmorStand (" +
+    		"`ID` STRING NOT NULL," +
             "`ObjID` STRING NOT NULL," +
-            "`Arms` INT NOT NULL," +
-            "`Small` INT NOT NULL," +
-            "`Gravity` INT NOT NULL," +
-            "`BasePlate` INT NOT NULL," +
-            "`Invisible` INT NOT NULL," +
-            "`Customname` INT NOT NULL," +
-            "`Fire` INT NOT NULL" +
-            ");";
-    
-    public String SQLiteCreateArmorStandRotation = "CREATE TABLE IF NOT EXISTS ArmorStand_Rotation (" +
-    		"`ID` INTEGER PRIMARY KEY AUTOINCREMENT," +
-    		"`ArmorID` INT NOT NULL," +
-            "`ObjID` STRING NOT NULL," +
-    		"`BodyPart` STRING NOT NULL," +
-    		"`X` DOUBLE NOT NULL," +
-    		"`Y` DOUBLE NOT NULL," +
-    		"`Z` DOUBLE NOT NULL" +
-            ");";
-    
-    public String SQLiteCreateArmorStandInventory = "CREATE TABLE IF NOT EXISTS ArmorStand_Inventory (" +
-    		"`ID` INTEGER PRIMARY KEY AUTOINCREMENT," +
-    		"`ArmorID` INT NOT NULL," +
-            "`ObjID` STRING NOT NULL," +
-    		"`Slot` INT NOT NULL," +
-    		"`ItemStack` STRING NOT NULL" + 
+    		"`Metadata` STRING NOT NULL," +
+    		"`Boolean` STRING NOT NULL," + 
+    		"`Location` STRING NOT NULL," + 
+    		"`ObjIDLocation` STRING NOT NULL," + 
+    		"`InHand` STRING NOT NULL," + 
+    		"`boots` STRING NOT NULL," + 
+    		"`chestplate` STRING NOT NULL," + 
+    		"`leggings` STRING NOT NULL," + 
+    		"`helm` STRING NOT NULL," + 
+    		"`EA_Head` STRING NOT NULL," + 
+    		"`EA_Body` STRING NOT NULL," + 
+    		"`EA_Left_Arm` STRING NOT NULL," + 
+    		"`EA_Right_Arm` STRING NOT NULL," + 
+    		"`EA_Left_Leg` STRING NOT NULL," + 
+    		"`EA_Right_Leg` STRING NOT NULL" + 
     		");";
-    
 
     public Connection getSQLConnection() {
         File dataFolder = new File(plugin.getDataFolder(), dbname+".db");
@@ -104,11 +67,7 @@ public class SQLite extends Database{
         connection = getSQLConnection();     
         try {
             Statement s = connection.createStatement();
-            s.executeUpdate(SQLiteCreateArmorStandInfoTable);
-            s.executeUpdate(SQLiteCreateArmorStandMetadata);
-            s.executeUpdate(SQLiteCreateArmorStandRotation);
-            s.executeUpdate(SQLiteCreateArmorStandInventory);
-            s.executeUpdate(SQLiteCreateArmorStandObjectIDS);
+            s.executeUpdate(ArmorStandTable);
             s.close();
         } catch (SQLException e) {
             e.printStackTrace();

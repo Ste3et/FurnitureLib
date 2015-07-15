@@ -5,21 +5,23 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 
-import com.intellectualcrafters.plot.api.PlotAPI;
-import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
+import com.intellectualcrafters.plot.PS;
+import com.intellectualcrafters.plot.object.Plot;
+import com.intellectualcrafters.plot.util.MainUtil;
+import com.intellectualcrafters.plot.util.bukkit.BukkitUtil;
 
 public class IPlotSquare {
-
-	PlotAPI api;
+	PluginManager manager;
 	
-	@SuppressWarnings("deprecation")
-	public IPlotSquare(PluginManager manager){
-		api = new PlotAPI(FurnitureLib.getInstance());
-	}
+	public IPlotSquare(PluginManager manager){this.manager= manager;}
 	
 	public boolean canBuild(Player p, Location loc){
-		if(api.getPlotManager(loc.getWorld().getName())==null) return true;
-		if(api.getPlot(loc)== null || api.getPlot(loc).isAdded(p.getUniqueId()) || api.getPlot(loc).isOwner(p.getUniqueId())) return true;
+		if(!PS.get().isPlotWorld(loc.getWorld().getName())){return true;}
+		com.intellectualcrafters.plot.object.Location ploc = BukkitUtil.getLocation(loc);
+		Plot plot = MainUtil.getPlot(ploc);
+		if(plot==null){return false;}
+		if(plot.isOwner(p.getUniqueId())){return true;}
+		if(plot.isAdded(p.getUniqueId())){return true;}
 		return false;
 	}
 }

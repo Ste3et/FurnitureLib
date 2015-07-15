@@ -13,19 +13,22 @@ import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.main.Type.BodyPart;
 
 public class FurnitureManager {
-
-	private Integer i = 407;
+	private Integer i = 0;
 	private List<ArmorStandPacket> asPackets = new ArrayList<ArmorStandPacket>();
+	
 	private List<ObjectID> objecte = new ArrayList<ObjectID>();
+	private List<ObjectID> preLoadet = new ArrayList<ObjectID>();
 	private List<ObjectID> removeList = new ArrayList<ObjectID>();
 	private List<ObjectID> updateList = new ArrayList<ObjectID>();
 	private List<Project> projects = new ArrayList<Project>();
 	
 	public void setLastID(Integer i){this.i = i;}
 	public List<ArmorStandPacket> getAsList(){return this.asPackets;}
-	public List<ObjectID> getRemoveList(){return this.removeList;}
+	public List<ObjectID> getPreLoadetList(){return this.preLoadet;}
 	public List<ObjectID> getObjectList(){return this.objecte;}
-	public List<ObjectID> getUpdateList(){return this.objecte;}
+	public List<ObjectID> getUpdateList(){return this.updateList;}
+	public List<ObjectID> getRemoveList(){return this.removeList;}
+	
 	public void updatePlayerView(Player player) {
 		if(this.asPackets.isEmpty()){return;}
 		for(ArmorStandPacket asp : asPackets){
@@ -39,12 +42,13 @@ public class FurnitureManager {
 	
 	public void updateFurniture(ObjectID obj) {
 		if(this.asPackets.isEmpty()){return;}
+		preLoadet.remove(obj);
+		updateList.add(obj);
 		for(ArmorStandPacket packet : asPackets){
 			if(packet.getObjectId().equals(obj)){
 				for(Player player : Bukkit.getOnlinePlayers()){
 					if(packet.isInRange(player)){
 						packet.update(player);
-						updateList.add(obj);
 					}
 				}
 			}
@@ -60,6 +64,7 @@ public class FurnitureManager {
 	@SuppressWarnings("unchecked")
 	public void remove(ObjectID id){
 		if(this.asPackets.isEmpty()){return;}
+		removeList.add(id);
 		List<ArmorStandPacket> aspClone = ((List<ArmorStandPacket>) ((ArrayList<ArmorStandPacket>) asPackets).clone());
 		Collections.copy(asPackets, aspClone);
 		for(ArmorStandPacket asp : aspClone){
@@ -68,7 +73,8 @@ public class FurnitureManager {
 				asp.delete();
 			}
 		}
-		removeList.add(id);
+		if(getPreLoadetList().contains(id)) getPreLoadetList().remove(id);
+		updateList.remove(id);
 		objecte.remove(id);
 	}
 	
@@ -100,8 +106,10 @@ public class FurnitureManager {
 	
 	public ArmorStandPacket createArmorStand(ObjectID id, Location loc){
 		i++;
-		ArmorStandPacket packet = new ArmorStandPacket(loc, i, id);
-		this.objecte.add(id);
+		ArmorStandPacket packet = new ArmorStandPacket(loc, id, i);
+		if(!objecte.contains(id)){
+			this.objecte.add(id);
+		}
 		this.asPackets.add(packet);
 		return packet;
 	}
@@ -183,5 +191,9 @@ public class FurnitureManager {
 			}
 		}
 		return null;
+	}
+	
+	public int getLastID() {
+		return i;
 	}
 }

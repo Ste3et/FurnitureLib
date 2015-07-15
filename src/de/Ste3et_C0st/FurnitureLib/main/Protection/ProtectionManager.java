@@ -31,7 +31,7 @@ public class ProtectionManager {
 		this.WorldGuard = isEnable("WorldGuard");
 		this.PlotME = isEnable("PlotME");
 		this.Plotz = isEnable("Plotz");
-		this.PlotSquare = isEnable("PlotSquare");
+		this.PlotSquare = isEnable("PlotSquared");
 		this.LandLord = isEnable("LandLord");
 		this.GriefPrevention = isEnable("GriefPrevention");
 		this.PreciousStones = isEnable("PreciousStones");
@@ -64,16 +64,23 @@ public class ProtectionManager {
 			}
 		}
 		if(p.isOp()) return true;
-		if(p.hasPermission("furniture.bypass.protection")) return true;
-		if(worldGuard!=null) return worldGuard.canBuild(p, loc);
-		if(plotMe!=null) return plotMe.canBuild(p, loc);
-		if(plotz!=null) return plotz.canBuild(p, loc);
-		if(ploSquare!=null) return ploSquare.canBuild(p, loc);
-		if(griefPrevention!=null) return griefPrevention.canBuild(p, loc);
-		if(preciousStones!=null) return preciousStones.canBuild(p, loc);
-		if(towny!=null) return towny.canBuild(p, loc);
-		if(residence!=null) return residence.canBuild(p, loc);
+		if(p.hasPermission("furniture.bypass.protection") || p.hasPermission("furniture.admin")) return true;
 		
-		return true;
+		boolean wg = true, pm = true, pz = true, ps = true, gp = true, pst = true, to = true, re = true;
+		
+		if(worldGuard!=null) wg= worldGuard.canBuild(p, loc);
+		if(plotMe!=null) pm= plotMe.canBuild(p, loc);
+		if(plotz!=null) pz= plotz.canBuild(p, loc);
+		if(ploSquare!=null) ps= ploSquare.canBuild(p, loc);
+		if(griefPrevention!=null) gp= griefPrevention.canBuild(p, loc);
+		if(preciousStones!=null) pst= preciousStones.canBuild(p, loc);
+		if(towny!=null) to= towny.canBuild(p, loc);
+		if(residence!=null) re= residence.canBuild(p, loc);
+		
+		if(wg&&pm&&ps&&gp&&pst&&to&&re&&pz){
+			return true;
+		}else{
+			return false;
+		}
 	}
 }

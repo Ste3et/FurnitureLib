@@ -19,6 +19,7 @@ public class ObjectID {
 			if(s.contains(":")){
 				String[] l = s.split(":");
 				this.Project=l[0];
+				this.serial=l[1];
 				this.plugin=l[2];
 			}
 		}catch(Exception e){

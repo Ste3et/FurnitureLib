@@ -7,6 +7,7 @@ import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
 
+import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.main.ArmorStandPacket;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
@@ -34,5 +35,9 @@ public final class FurnitureBreakEvent extends Event implements Cancellable {
 	public static HandlerList getHandlerList() {return handlers;}
 	public boolean canBuild(Material m){return FurnitureLib.getInstance().canBuild(p, l, m);}
 	public boolean isCancelled() {return cancelled;}
+	public void remove(){
+		Project pro = FurnitureLib.getInstance().getFurnitureManager().getProject(o.getProject());
+		FurnitureLib.getInstance().getLimitationManager().remove(o.getStartLocation(), pro, p);
+	}
 	public void setCancelled(boolean arg0) {cancelled = arg0;}
 }

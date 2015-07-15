@@ -1,5 +1,6 @@
 package de.Ste3et_C0st.FurnitureLib.Utilitis;
 
+import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
@@ -62,23 +63,7 @@ public class LocationUtil {
     }
     
 	public short getFromDey(short s){
-		if(s==15){return 0;}
-		if(s==14){return 1;}
-		if(s==13){return 2;}
-		if(s==12){return 3;}
-		if(s==11){return 4;}
-		if(s==10){return 5;}
-		if(s==9){return 6;}
-		if(s==8){return 7;}
-		if(s==7){return 8;}
-		if(s==6){return 9;}
-		if(s==5){return 10;}
-		if(s==4){return 11;}
-		if(s==3){return 12;}
-		if(s==2){return 13;}
-		if(s==1){return 14;}
-		if(s==0){return 15;}
-		return 0;
+		return (short) (15-s);
 	}
 	
 	public Color getDyeFromDurability(short s){
@@ -254,9 +239,18 @@ public class LocationUtil {
 		return null;
     }
     
+    private Double round(Double d){
+    	BigDecimal b = new BigDecimal(d);
+    	b = b.setScale(2,BigDecimal.ROUND_HALF_UP);
+    	return b.doubleValue();
+    }
+    
 	public Location getRelativ(Location loc, BlockFace b, Double z, Double x){
-		Location l = new Location(loc.getWorld(), loc.getX(), loc.getY(), loc.getZ());
+		Location l = loc.clone();
 		l.setYaw(FaceToYaw(b));
+		x = round(x);
+		z = round(z);
+
 		switch (b) {
 		case NORTH:
 			l.add(x,0,z);

@@ -28,7 +28,9 @@ public class LightManager {
 	public void removeLight(Location location){
 		if(!enable){return;}
 		if(!locationlist.contains(location)){return;}
+		System.out.println("location found");
 		LightAPI.deleteLight(location);
+		LightAPI.updateChunks(location);
 		locationlist.remove(location);
 	}
 	
@@ -37,6 +39,7 @@ public class LightManager {
 		if(locationlist.isEmpty()){return;}
 		for(Location l : locationlist){
 			LightAPI.deleteLight(l);
+			LightAPI.updateChunks(l);
 		}
 		locationlist.clear();
 	}

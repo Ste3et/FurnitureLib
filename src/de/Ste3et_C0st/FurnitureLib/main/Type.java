@@ -7,12 +7,12 @@ import org.bukkit.util.EulerAngle;
 
 public class Type {
 	public enum BodyPart{
-		HEAD("Head",11, new EulerAngle(0,0,0)), 
-		BODY("Body",12, new EulerAngle(0,0,0)), 
-		LEFT_ARM("Left_Arm",13, new EulerAngle(-10.0F, 0.0F, -10.0F)), 
-		RIGHT_ARM("Right_Arm",14, new EulerAngle(-15.0F, 0.0F, 10.0F)), 
-		LEFT_LEG("Left_Leg",15, new EulerAngle(-1.0F, 0.0F, -1.0F)), 
-		RIGHT_LEG("Right_Leg",16, new EulerAngle(1.0F, 0.0F, 1.0F));
+		HEAD("Head",11, new EulerAngle(0D,0D,0D)), 
+		BODY("Body",12, new EulerAngle(0D,0D,0D)), 
+		LEFT_ARM("Left_Arm",13, new EulerAngle((double)-10.0F, 0.0D, (double)-10.0F)), 
+		RIGHT_ARM("Right_Arm",14, new EulerAngle((double)-15.0F, 0.0D, (double)10.0F)), 
+		LEFT_LEG("Left_Leg",15, new EulerAngle((double)-1.0F, 0.0D, (double)-1.0F)), 
+		RIGHT_LEG("Right_Leg",16, new EulerAngle((double)1.0F, 0.0D, (double)1.0F));
 		
 		String name;
 		EulerAngle angle;

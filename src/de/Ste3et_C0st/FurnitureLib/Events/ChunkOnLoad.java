@@ -19,6 +19,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
+
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 
@@ -59,14 +60,24 @@ public class ChunkOnLoad implements Listener{
 	
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent event) {
-		Player player = event.getPlayer();
-		FurnitureLib.getInstance().getFurnitureManager().updatePlayerView(player);
+		final Player player = event.getPlayer();
+		Bukkit.getScheduler().runTaskLater(FurnitureLib.getInstance(), new Runnable() {
+			@Override
+			public void run() {
+				FurnitureLib.getInstance().getFurnitureManager().updatePlayerView(player);
+			}
+		}, 5L);
 	}
 	
 	@EventHandler
 	public void onPlayerChangedWorld(PlayerChangedWorldEvent event) {
-		Player player = event.getPlayer();
-		FurnitureLib.getInstance().getFurnitureManager().updatePlayerView(player);
+		final Player player = event.getPlayer();
+		Bukkit.getScheduler().runTaskLater(FurnitureLib.getInstance(), new Runnable() {
+			@Override
+			public void run() {
+				FurnitureLib.getInstance().getFurnitureManager().updatePlayerView(player);
+			}
+		}, 5L);
 	}
 	
 	@EventHandler

@@ -24,7 +24,7 @@ public class CraftingFile {
 	private ShapedRecipe recipe;
 	private boolean isDisable;
 	public ShapedRecipe getRecipe(){return this.recipe;}
-	
+	public boolean isEnable(){return this.isDisable;}
 	@SuppressWarnings("deprecation")
 	public CraftingFile(String name,InputStream file){
 		this.c = new config(FurnitureLib.getInstance());

@@ -1,11 +1,19 @@
 package de.Ste3et_C0st.FurnitureLib.main;
 
+import java.io.IOException;
+import java.lang.reflect.Constructor;
 import java.sql.Connection;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
+import net.milkbowl.vault.Metrics;
+
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -18,11 +26,14 @@ import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.EnumWrappers.EntityUseAction;
 
 import de.Ste3et_C0st.FurnitureLib.Command.command;
+import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.Database.SQLite;
 import de.Ste3et_C0st.FurnitureLib.Database.Serialize;
 import de.Ste3et_C0st.FurnitureLib.Events.ChunkOnLoad;
 import de.Ste3et_C0st.FurnitureLib.Events.FurnitureBreakEvent;
 import de.Ste3et_C0st.FurnitureLib.Events.FurnitureClickEvent;
+import de.Ste3et_C0st.FurnitureLib.Limitation.LimitationManager;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.CraftingInv;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.LocationUtil;
 import de.Ste3et_C0st.FurnitureLib.main.Bed.sleepAnimation;
 import de.Ste3et_C0st.FurnitureLib.main.Protection.ProtectionManager;
@@ -40,6 +51,9 @@ public class FurnitureLib extends JavaPlugin{
 	private ProtectionManager Pmanager;
 	private LightManager lightMgr;
 	private sleepAnimation animation;
+	private Boolean Donate = true;
+	private LimitationManager limitationMgr;
+	private CraftingInv craftingInv;
 	
 	public LightManager getLightManager(){return this.lightMgr;}
 	public sleepAnimation getSleepManager(){return this.animation;}
@@ -55,6 +69,7 @@ public class FurnitureLib extends JavaPlugin{
 		this.serialize = new Serialize();
 		this.sql = new SQLite(this);
 		this.lightMgr = new LightManager();
+		this.limitationMgr = new LimitationManager(instance);
 		this.sql.load();
 		try{
 			getConfig().addDefaults(YamlConfiguration.loadConfiguration(getResource("config.yml")));
@@ -62,6 +77,15 @@ public class FurnitureLib extends JavaPlugin{
 			saveConfig();
 		}catch(Exception e){
 			e.printStackTrace();
+		}
+		
+		if ((getServer().getPluginManager().isPluginEnabled("Vault")) && (getConfig().getBoolean("config.UseMetrics"))) {
+		      try
+		      {
+		        Metrics metrics = new Metrics(this);
+		        metrics.start();
+		      }
+		      catch (IOException localIOException) {}
 		}
 		
 		ProtocolLibrary.getProtocolManager().addPacketListener(
@@ -77,6 +101,8 @@ public class FurnitureLib extends JavaPlugin{
                             	EntityUseAction action = event.getPacket().getEntityUseActions().read(0);
                             	switch (action) {
 								case ATTACK:
+									if(p.getGameMode().equals(GameMode.ADVENTURE)) return;
+									if(p.getGameMode().equals(GameMode.SPECTATOR)) return;
 									final Player player = p;
 									final ArmorStandPacket packet = asPacket;
 									final ObjectID objectID = objID;
@@ -90,6 +116,7 @@ public class FurnitureLib extends JavaPlugin{
 									});
 									break;
 								case INTERACT_AT:
+									if(p.getGameMode().equals(GameMode.SPECTATOR)) return;
 									final Player player2 = p;
 									final ArmorStandPacket packet2 = asPacket;
 									final ObjectID objectID2 = objID;
@@ -129,35 +156,47 @@ public class FurnitureLib extends JavaPlugin{
 		
 		getServer().getPluginManager().registerEvents(new ChunkOnLoad(), this);
 		getCommand("furniture").setExecutor(new command(manager, this));
-		
+		this.Pmanager = new ProtectionManager(instance);
 		getLogger().info("==========================================");
 		getLogger().info("furniture load start, it can laggs");
-		this.sql.loadALL();
+		this.sql.loadAll();
 		getLogger().info("furniture load finish");
 		getLogger().info("==========================================");
-		
-		this.Pmanager = new ProtectionManager(instance);
-		getFurnitureManager().sendAll();
+		this.craftingInv = new CraftingInv(this);
 	}
 	
 	@Override
 	public void onDisable(){
+		if(Donate) getLimitationManager().save();
 		getLogger().info("==========================================");
 		getLogger().info("furniture start save all ArmorStandPackets into the Database");
 		if(!getFurnitureManager().getObjectList().isEmpty()){
-			for(ObjectID obj : getFurnitureManager().getObjectList()){
-				if(!getFurnitureManager().getRemoveList().contains(obj)){
-					saveObjToDB(obj);
-					continue;
-				}else if(getFurnitureManager().getUpdateList().contains(obj)){
-					removeObjToDB(obj);
-					saveObjToDB(obj);
-					continue;
-				}else if(getFurnitureManager().getRemoveList().contains(obj)){
-					removeObjToDB(obj);
-					continue;
+			List<ObjectID> objList = new ArrayList<ObjectID>();
+			for(ObjectID obj : getFurnitureManager().getUpdateList()){
+				if(!getFurnitureManager().getPreLoadetList().contains(obj)){
+					if(getFurnitureManager().getUpdateList().contains(obj)){
+						sql.delete(obj);
+						saveObjToDB(obj);
+						objList.add(obj);
+					}
 				}
 			}
+			for(ObjectID obj : getFurnitureManager().getObjectList()){
+				if(!objList.contains(obj)){
+					if(!getFurnitureManager().getPreLoadetList().contains(obj)){
+							saveObjToDB(obj);
+							objList.add(obj);
+					}
+				}
+			}
+			for(ObjectID obj : getFurnitureManager().getRemoveList()){
+				sql.delete(obj);
+			}
+		}else{
+			for(ObjectID obj : getFurnitureManager().getRemoveList()){
+				sql.delete(obj);
+			}
+			getLogger().info("ObjectList Empty");
 		}
 		getLogger().info("ArmorStandPackets saved");
 		getLogger().info("ArmorStands delete from all worlds startet");
@@ -198,14 +237,54 @@ public class FurnitureLib extends JavaPlugin{
 		  }
 	  }
 	
+		public boolean canPlace(Location l, Project pro, Player p){
+			for(ObjectID obj : manager.getObjectList()){
+				if(obj.getStartLocation().equals(l)){
+					p.sendMessage("§aon this Position is already an furniture");
+					return false;
+				}
+			}
+			Integer i = (int) l.getY();
+			BlockFace b = lUtil.yawToFace(l.getYaw());
+			for(int x = 0; x<pro.getWitdh();x++){
+				for(int y = 0; y<pro.getHeight();y++){
+					for(int z = 0; z<pro.getLength();z++){
+						Location loc = lUtil.getRelativ(l, b,(double) z,(double) -x).add(0, y, 0);
+						Integer integer = (int) loc.getY();
+						if(integer!=i){
+							if(loc.getBlock().getType()!=null&&!loc.getBlock().getType().equals(Material.AIR)){
+									p.sendMessage("§anot enauth Space");
+									return false;
+							}
+						}
+
+					}
+				}
+			}
+			return true;
+		}
+		
+	public void spawn(Project pro, Location l){
+		Class<?> c = pro.getclass();
+		if(c==null ){return;}
+		Constructor<?> ctor = c.getConstructors()[0];
+			try {
+			ctor.newInstance(l, FurnitureLib.getInstance(), pro.getName(), pro.getPlugin(), null);
+		} catch (Exception e) {}
+	}
+	
+	public CraftingInv getCraftingInv(){return this.craftingInv;}
+	public boolean isDonate(){return this.Donate;}
 	private void saveObjToDB(ObjectID obj){sql.save(obj);}
-	private void removeObjToDB(ObjectID obj){sql.delete(obj);}
 	public Serialize getSerialize(){ return this.serialize;}
 	public String getBukkitVersion() {return Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3];}
 	public static FurnitureLib getInstance(){return instance;}
 	public LocationUtil getLocationUtil(){return this.lUtil;}
 	public FurnitureManager getFurnitureManager(){return this.manager;}
+	public LimitationManager getLimitationManager(){return this.limitationMgr;}
 	public Connection getConnection(){return this.con;}
 	public ObjectID getObjectID(String c, String plugin, Location loc){return new ObjectID(c, plugin, loc);}
-	public boolean canBuild(Player p, Location loc, Material m){return Pmanager.canBuild(p, loc, m);}
+	public boolean canBuild(Player p, Location loc, Material m){
+		return Pmanager.canBuild(p, loc, m);
+	}
 }

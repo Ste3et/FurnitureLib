@@ -10,6 +10,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.BlockFace;
+import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -59,23 +60,34 @@ public class command implements CommandExecutor, Listener{
 					return true;
 				}else if(args.length==1){
 					if(args[0].equalsIgnoreCase("list")){
-						getList(null, p);
+						if(!p.hasPermission("furniture.list") && !p.hasPermission("furniture.admin")) return true;
+						getList("type", p);
 						return true;
 					}else if(args[0].equalsIgnoreCase("debug")){
+						if(!p.hasPermission("furniture.debug") && !p.hasPermission("furniture.admin")) return true;
 						playerList.add(p);
+					}else{
+						sendHelp(p);
+						return true;
 					}
 				}else if(args.length==2){
 					if(args[0].equalsIgnoreCase("list")){
+						if(!p.hasPermission("furniture.list") && !p.hasPermission("furniture.admin")) return true;
 						if(args[1].equalsIgnoreCase("plugin")){
+							if(!p.hasPermission("furniture.list.plugin") && !p.hasPermission("furniture.admin")) return true;
 							getList(null, p);
 						}else if(args[1].equalsIgnoreCase("type")){
+							if(!p.hasPermission("furniture.list.type") && !p.hasPermission("furniture.admin")) return true;
 							getList("type", p);
 						}else if(args[1].equalsIgnoreCase("world")){
+							if(!p.hasPermission("furniture.list.world") && !p.hasPermission("furniture.admin")) return true;
 							getList("world", p);
 						}
 						return true;
 					}else if(args[0].equalsIgnoreCase("remove")){
+						if(!p.hasPermission("furniture.remove") && !p.hasPermission("furniture.admin")) return true;
 						if(FurnitureLib.getInstance().isInt(args[1])){
+							if(!p.hasPermission("furniture.remove.Distance") && !p.hasPermission("furniture.admin")) return true;
 							Integer Distance = Integer.parseInt(args[1]);
 							List<ObjectID> objList = getFromDistance(Distance, p.getLocation());
 							if(objList!=null&&!objList.isEmpty()){
@@ -83,27 +95,32 @@ public class command implements CommandExecutor, Listener{
 							}
 							return true;
 						}else if(getID(args[1])!=null){
+							if(!p.hasPermission("furniture.remove.obj") && !p.hasPermission("furniture.admin")) return true;
 							ObjectID id = getID(args[1]);
 							if(id!=null){
 								manager.remove(id);
 							}
 							return true;
 						}else if(!getPlugin(args[1]).isEmpty()){
+							if(!p.hasPermission("furniture.remove.plugin") && !p.hasPermission("furniture.admin")) return true;
 							List<ObjectID> objList = getPlugin(args[1]);
 							if(objList!=null){
 								removeListObj(objList);
 							}
 							return true;
 						}else if(!getType(args[1]).isEmpty()){
+							if(!p.hasPermission("furniture.remove.type") && !p.hasPermission("furniture.admin")) return true;
 							List<ObjectID> objList = getType(args[1]);
 							if(objList!=null){
 								removeListObj(objList);
 							}
 							return true;
 						}else if(args[1].equalsIgnoreCase("all")){
+							if(!p.hasPermission("furniture.remove.all") && !p.hasPermission("furniture.admin")) return true;
 							removeListObj(manager.getObjectList());
 							return true;
 						}else if(args[1].equalsIgnoreCase("lookat")){
+							if(!p.hasPermission("furniture.remove.lookat") && !p.hasPermission("furniture.admin")) return true;
 							ObjectID obj = getFromSight(p.getLocation());
 							if(obj!=null){
 								manager.remove(obj);
@@ -111,16 +128,27 @@ public class command implements CommandExecutor, Listener{
 							return true;
 						}
 					}else if(args[0].equalsIgnoreCase("give")){
+						if(!p.hasPermission("furniture.give") && !p.hasPermission("furniture.admin")) return true;
 						give(sender, p, args[1]);
+					}else if(args[0].equalsIgnoreCase("recipe")){
+						if(!p.hasPermission("furniture.recipe") && !p.hasPermission("furniture.admin")) return true;
+						FurnitureLib.getInstance().getCraftingInv().openCrafting(p, args[1]);
+					}else{
+						sendHelp(p);
+						return true;
 					}
 					return true;
 				}else if(args.length==3){
 					if(args[1].equalsIgnoreCase("give")){
+						if(!p.hasPermission("furniture.give.player") && !p.hasPermission("furniture.admin")) return true;
 						if(Bukkit.getPlayer(args[1]) == null || !Bukkit.getPlayer(args[1]).isOnline()){
 							sender.sendMessage("The player : " + args[1] + " is not Online");
 							return true;
 						}
 						give(sender, Bukkit.getPlayer(args[1]), args[2]);
+					}else{
+						sendHelp(p);
+						return true;
 					}
 					return true;
 				}else{
@@ -130,8 +158,67 @@ public class command implements CommandExecutor, Listener{
 				
 				return true;
 			}
+		}else if(sender instanceof BlockCommandSender){
+			if(FurnitureLib.getInstance().isDonate()){
+				if(cmd.getName().equalsIgnoreCase("furniture")){
+					BlockCommandSender bs = (BlockCommandSender) sender;
+					//Furniture spawn x y z yaw type
+					//Furniture crafting player type
+					if(args.length==6){
+						if(args[0].equalsIgnoreCase("spawn")){
+							Boolean Yaw = FurnitureLib.getInstance().isInt(args[4]);
+							if(FurnitureLib.getInstance().getFurnitureManager().getProject(args[5])!=null){
+								Integer x = Integer.parseInt(relativ((BlockCommandSender) sender, args[1], 0));
+								Integer y = Integer.parseInt(relativ((BlockCommandSender) sender, args[2], 1));
+								Integer z = Integer.parseInt(relativ((BlockCommandSender) sender, args[3], 2));
+								Integer yaw = 0;
+								
+								if(Yaw){
+									yaw = Integer.parseInt(args[4]);
+								}
+								
+									World w = bs.getBlock().getWorld();
+									Location l = new Location(w, x, y, z).getBlock().getLocation();
+									l.setYaw(yaw);
+									Project pro = FurnitureLib.getInstance().getFurnitureManager().getProject(args[5]);
+									FurnitureLib.getInstance().spawn(pro, l);
+							}
+						}
+					}else if(args.length==3){
+						if(args[0].equalsIgnoreCase("crafting")){
+							if(Bukkit.getPlayer(args[1])==null){return true;}
+							if(FurnitureLib.getInstance().getFurnitureManager().getProject(args[2])==null){return true;}
+							FurnitureLib.getInstance().getCraftingInv().openCrafting(Bukkit.getPlayer(args[1]), args[2]);
+						}
+					}
+				}
+			}
 		}
 		return false;
+	}
+	
+	private String relativ(BlockCommandSender sender, String s, int i){
+		Location l = sender.getBlock().getLocation();
+		Integer j = 0;
+		if(s.startsWith("~")){
+			s = s.replace("~", "");
+			if(i==0) j = (int) l.getX();
+			if(i==1) j = (int) l.getY();
+			if(i==2) j = (int) l.getZ();
+			if(s.isEmpty()) return j+"";
+			if(s.startsWith("-")){
+				s = s.replace("-", "");
+				if(!FurnitureLib.getInstance().isInt(s)) return j+"";
+				j-=Integer.parseInt(s);
+			}else if(s.startsWith("+")){
+				s = s.replace("+", "");
+				if(!FurnitureLib.getInstance().isInt(s)) return j+"";
+				j+=Integer.parseInt(s);
+			}
+		}else{
+			return s;
+		}
+		return j+"";
 	}
 	
 	private void give(CommandSender sender, Player p2, String string) {
@@ -207,6 +294,7 @@ public class command implements CommandExecutor, Listener{
 	}
 	
 	private void sendHelp(Player player){
+		if(!player.hasPermission("furniture.help")) return;
 		new FancyMessage("§7§m+--------------------§7[")
 		.then("§2Furniture").tooltip("")
 		.then("§7]§m---------------------+\n")
@@ -270,7 +358,7 @@ public class command implements CommandExecutor, Listener{
 		List<ObjectID> objList = new ArrayList<ObjectID>();
 		for(ArmorStandPacket packet : manager.getAsList()){
 			if(packet.getLocation().getWorld().getName().equalsIgnoreCase(l.getWorld().getName())){
-				if(packet.getLocation().getDirection().distance(l.getDirection())<=i){
+				if(packet.getLocation().toVector().distance(l.toVector())<=i){
 					objList.add(packet.getObjectId());
 				}
 			}
@@ -285,8 +373,11 @@ public class command implements CommandExecutor, Listener{
 			Location loc = FurnitureLib.getInstance().getLocationUtil().getRelativ(l, face,(double) j, 0D);
 			if(loc.getBlock()!=null&&loc.getBlock().getType()!=Material.AIR){return null;}
 			for(ArmorStandPacket packet : manager.getAsList()){
-				if(packet.getLocation().distance(loc)<=1){
-					return packet.getObjectId();
+				if(packet.getLocation().getWorld().getName().equalsIgnoreCase(loc.getWorld().getName())){
+					Double d = packet.getLocation().toVector().distanceSquared(loc.toVector());
+					if(d<=2.0){
+						return packet.getObjectId();
+					}
 				}
 			}
 		}
