@@ -41,4 +41,8 @@ public class Type {
 			return parts;
 		}
 	}
+	
+	public enum DataBaseType{
+		MySQL, SQLite;
+	}
 }

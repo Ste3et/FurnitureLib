@@ -74,8 +74,10 @@ public class FurnitureManager {
 			}
 		}
 		if(getPreLoadetList().contains(id)) getPreLoadetList().remove(id);
+		FurnitureLib.getInstance().getLimitationManager().remove(id.getStartLocation(), getProject(id.getProject()));
 		updateList.remove(id);
 		objecte.remove(id);
+		
 	}
 	
 	public void send(ObjectID id){
@@ -132,7 +134,9 @@ public class FurnitureManager {
 
 	public ArmorStandPacket getArmorStandPacketByID(Integer entityID) {
 		if(this.asPackets.isEmpty()){return null;}
+		if(entityID==null) return null;
 		for(ArmorStandPacket asp : this.asPackets){
+			if(asp==null) continue;
 			if(asp.getEntityId() == entityID) return asp;
 		}
 		return null;

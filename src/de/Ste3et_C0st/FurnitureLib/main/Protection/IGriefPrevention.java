@@ -20,6 +20,8 @@ public class IGriefPrevention {
 		Claim claim = GriefPrevention.instance.dataStore.getClaimAt(l, false, null);
 		if(claim==null || claim.ownerID == null){return true;}
 		if(claim.ownerID.equals(p.getUniqueId())){return true;}
+		String noBuildReason = GriefPrevention.instance.allowBreak(p, l.getBlock(), l);
+		if(noBuildReason == null){return true;}
 		return false;
 	}
 }

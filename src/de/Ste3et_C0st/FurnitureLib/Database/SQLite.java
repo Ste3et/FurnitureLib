@@ -9,14 +9,18 @@ import java.sql.Statement;
 import java.util.logging.Level;
 
 
+
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
+import de.Ste3et_C0st.FurnitureLib.main.Type.DataBaseType;
 
 
 public class SQLite extends Database{
     String dbname;
-    public SQLite(FurnitureLib instance){
+    private DataBaseType type = DataBaseType.SQLite;
+    
+    public SQLite(FurnitureLib instance, String dbName){
         super(instance);
-        dbname = plugin.getConfig().getString("SQLite.Filename", "furniture");
+        this.dbname = dbName;
     }
     
     public String ArmorStandTable = "CREATE TABLE IF NOT EXISTS FurnitureLib_ArmorStand (" +
@@ -74,4 +78,15 @@ public class SQLite extends Database{
         }
         initialize();
     }
+    
+    public void close(){
+    	try {
+			connection.close();
+			connection = null;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+    }
+
+	public DataBaseType getType() {return this.type;}
 }

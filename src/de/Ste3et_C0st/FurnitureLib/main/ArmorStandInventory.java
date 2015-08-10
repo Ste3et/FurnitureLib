@@ -12,12 +12,22 @@ import org.bukkit.inventory.ItemStack;
 public class ArmorStandInventory {
 	
 	private ItemStack[] items = new ItemStack[5];
-
+	private String[] itemString = new String[5];
+	
 	public ItemStack getItemInHand() {return this.items[0];}
 	public ItemStack getBoots() {return this.items[1];}
 	public ItemStack getLeggings() {return this.items[2];}
 	public ItemStack getChestPlate() {return this.items[3];}
 	public ItemStack getHelmet() {return this.items[4];}
+	
+	public String[] getStringInv(){return this.itemString;}
+	
+	public ArmorStandInventory(){
+		for(int i = 0; i<itemString.length;i++){
+			itemString[i] = FurnitureLib.getInstance().getSerialize().toBase64(new ItemStack(Material.AIR));
+		}
+	}
+	
 	public void setItemInHand(ItemStack item) {this.setSlot(0, item);}
 	public void setBoots(ItemStack item) {this.setSlot(1, item);}
 	public void setLeggings(ItemStack item) {this.setSlot(2, item);}
@@ -51,8 +61,8 @@ public class ArmorStandInventory {
 		if (slot < 0 || slot >= this.items.length) {
 			return;
 		}
-
 		this.items[slot] = item;
+		this.itemString[slot] = FurnitureLib.getInstance().getSerialize().toBase64(item);
 	}
 	
 	public List<PacketContainer> createPackets(int entityId) {

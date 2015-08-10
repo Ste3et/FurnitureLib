@@ -11,6 +11,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.entity.PlayerDeathEvent;
+import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.player.PlayerJoinEvent;
@@ -115,18 +116,38 @@ public class ChunkOnLoad implements Listener{
 			eventList.add(p);
 			event.setCancelled(true);
 			Project pro = getProjectByItem(is);
+			
 			final Player player = p;
 			final ItemStack itemstack = is;
 			final Project project = pro;
+			final Location l = event.getClickedBlock().getLocation();
+			l.setYaw(p.getLocation().getYaw());
 			Bukkit.getScheduler().scheduleSyncDelayedTask(FurnitureLib.getInstance(), new Runnable() {
 				@Override
 				public void run() {
-					Location l = event.getClickedBlock().getLocation();
 					FurnitureItemEvent e = new FurnitureItemEvent(player, itemstack, project, l);
 					Bukkit.getPluginManager().callEvent(e);
 				}
 			});
 			removePlayer(p);
+		}
+	}
+	
+	@EventHandler
+	private void onCrafting(PrepareItemCraftEvent e){
+		if(FurnitureLib.getInstance().getFurnitureManager().getProjects().isEmpty()){return;}
+		Player p = (Player) e.getView().getPlayer();
+		if(p.isOp()) return;
+		if(e.getInventory()==null) return;
+		if(e.getInventory().getResult()==null) return;
+		ItemStack is = e.getInventory().getResult().clone();
+		is.setAmount(1);
+		for(Project pro : FurnitureLib.getInstance().getFurnitureManager().getProjects()){
+			if(is.equals(pro.getCraftingFile().getRecipe().getResult())){
+				if(!p.hasPermission("furniture.craft." + pro.getName()) && !p.hasPermission("furniture.player") && !p.hasPermission("furniture.admin")){
+					e.getInventory().setResult(null);
+				}
+			}
 		}
 	}
 	

@@ -11,7 +11,7 @@ import ru.BeYkeRYkt.LightAPI.LightAPI;
 public class LightManager {
 
 	List<Location> locationlist = new ArrayList<Location>();
-	Boolean enable;
+	Boolean enable=false;
 	
 	public LightManager(){
 		if(Bukkit.getPluginManager().isPluginEnabled("LightAPI")){

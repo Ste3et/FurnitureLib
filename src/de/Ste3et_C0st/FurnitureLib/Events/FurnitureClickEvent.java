@@ -1,7 +1,6 @@
 package de.Ste3et_C0st.FurnitureLib.Events;
 
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
@@ -32,7 +31,7 @@ public final class FurnitureClickEvent extends Event implements Cancellable {
     public Location getLocation(){return this.l;}
 	public HandlerList getHandlers() {return handlers;}
 	public static HandlerList getHandlerList() {return handlers;}
-	public boolean canBuild(Material m){return FurnitureLib.getInstance().canBuild(p, l, m);}
+	public boolean canBuild(){return FurnitureLib.getInstance().canBuild(p, l);}
 	public boolean isCancelled() {return cancelled;}
 	public void setCancelled(boolean arg0) {cancelled = arg0;}
 }

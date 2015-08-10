@@ -13,6 +13,7 @@ import de.Ste3et_C0st.FurnitureLib.main.ArmorStandPacket;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
+import de.Ste3et_C0st.FurnitureLib.main.Type.DataBaseType;
 
 public abstract class Database {
     FurnitureLib plugin;
@@ -21,16 +22,17 @@ public abstract class Database {
     public Database(FurnitureLib instance){
         plugin = instance;
     }
-
+    
     public abstract Connection getSQLConnection();
 
     public abstract void load();
+    public abstract DataBaseType getType();
     
     public void initialize(){
         connection = getSQLConnection();
         try{
         	statement = connection.createStatement();
-            PreparedStatement ps = connection.prepareStatement("SELECT * FROM FurnitureLib_ArmorStand WHERE ID = ?");
+            PreparedStatement ps = connection.prepareStatement("SELECT * FROM FurnitureLib_ArmorStand");
             ResultSet rs = ps.executeQuery();
             close(ps,rs);
         } catch (SQLException ex) {
@@ -42,6 +44,7 @@ public abstract class Database {
     	FurnitureManager manager = FurnitureLib.getInstance().getFurnitureManager();
     	for(ArmorStandPacket as : manager.getArmorStandPacketByObjectID(id)){
     		set(as);
+    		
     	}
     }
     
@@ -72,7 +75,7 @@ public abstract class Database {
     	}
     }
     
-    public void loadAll(){
+    public void loadAll(Boolean b){
     	try{
     		ResultSet rs = statement.executeQuery("SELECT * FROM FurnitureLib_ArmorStand");
     		List<String[]> asList = new ArrayList<String[]>();
@@ -87,9 +90,15 @@ public abstract class Database {
 				}
 				
 			}
+    		plugin.getLogger().info("FurnitureLib load " + asList.size()  +  " ArmorStandPackets from: " + getType().name() + " Database");
+    		
     		rs.close();
     		for(String[] l : asList){
     			FurnitureLib.getInstance().getSerialize().fromArmorStandString(l);
+    		}
+    		
+    		if(b){
+    			plugin.getFurnitureManager().getPreLoadetList().clear();
     		}
     	}catch(Exception e){
     		e.printStackTrace();

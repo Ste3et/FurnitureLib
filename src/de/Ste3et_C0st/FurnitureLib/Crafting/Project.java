@@ -17,9 +17,9 @@ public class Project {
 	private CraftingFile file;
 	private Plugin plugin;
 	private Class<?> clas;
-	private Integer witdh;
-	private Integer height;
-	private Integer length;
+	private Integer witdh = 0;
+	private Integer height = 0;
+	private Integer length = 0;
 	private config limitationConfig;
 	private FileConfiguration limitationFile;
 	private HashMap<World, Integer> limitationWorld = new HashMap<World, Integer>();
@@ -52,14 +52,13 @@ public class Project {
 		this.plugin = plugin;
 		this.clas = clas;
 		FurnitureLib.getInstance().getFurnitureManager().addProject(this);
-		if(!FurnitureLib.getInstance().isDonate()) return;
 		addDefaultWorld();
 		addDefault("plot");
 		addDefault("chunk");
-		addDefault("player");
+		//addDefault("player");
 		this.plotLimit = getDefault("plot");
 		this.chunkLimit = getDefault("chunk");
-		this.playerLimit = getDefault("player");
+		//this.playerLimit = getDefault("player");
 	}
 	
 	public boolean hasPermissions(Player p){
@@ -70,21 +69,19 @@ public class Project {
 	}
 	
 	private void addDefaultWorld(){
-		if(!FurnitureLib.getInstance().isDonate()) return;
 		this.limitationConfig = new config(FurnitureLib.getInstance());
 		this.limitationFile = this.limitationConfig.getConfig("gobal", "/limitation/");
 		for(World w : Bukkit.getWorlds()){
 			this.limitationFile.addDefault("Projects." + w.getName() + "." + getName(), -1);
 		}
 		this.limitationFile.options().copyDefaults(true);
-		this.limitationConfig.saveConfig("gobal", this.limitationFile, "/limitation/");
+		this.limitationConfig.saveConfig("world", this.limitationFile, "/limitation/");
 		getAmountWorld();
 	}
 	
 	private void getAmountWorld(){
-		if(!FurnitureLib.getInstance().isDonate()) return;
 		this.limitationConfig = new config(FurnitureLib.getInstance());
-		this.limitationFile = this.limitationConfig.getConfig("gobal", "/limitation/");
+		this.limitationFile = this.limitationConfig.getConfig("world", "/limitation/");
 		for(World w : Bukkit.getWorlds()){
 			Integer i = this.limitationFile.getInt("Projects." + w.getName() + "." + getName());
 			limitationWorld.put(w, i);

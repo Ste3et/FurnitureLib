@@ -8,18 +8,14 @@ import org.bukkit.plugin.PluginManager;
 
 public class IPlotz {
 
-	Plotz plotz;
 	
-	public IPlotz(PluginManager manager){
-		plotz = (Plotz) manager.getPlugin("Plotz");
-	}
+	public IPlotz(PluginManager manager){}
 	
-	@SuppressWarnings("static-access")
 	public boolean canBuild(Player p, Location loc){
-		if(plotz.getPlotByLocation(loc)==null) return true;
-		if(plotz.getPlotByLocation(loc).isOwner(p)) return true;
-		if(plotz.getPlotByLocation(loc).isAllowed(p)) return true;
-		if(plotz.getPlotByLocation(loc).isAdmin(p)) return true;
+		if(Plotz.getPlotByLocation(loc)==null) return true;
+		if(Plotz.getPlotByLocation(loc).isOwner(p)) return true;
+		if(Plotz.getPlotByLocation(loc).isAllowed(p)) return true;
+		if(Plotz.getPlotByLocation(loc).isAdmin(p)) return true;
 		return false;
 	}
 }

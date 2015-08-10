@@ -1,2 +1,17 @@
 config:
    UseMetrics: true
+   #Avaible EN_en = english; DE_de = german
+   Language: EN_en
+   #Remove spawn eggs and Material in gamemode 1
+   NormalGamemodeRemove: true
+   Database:
+      type: SQLite
+      database: "furniture"
+      user: ROOT
+      password: 123abcdefg
+      port: 3306
+      host: localhost
+      importCheck: false
+   timer:
+      Enable: false
+      time: 300

@@ -27,8 +27,11 @@ public class IPlotME {
 		if(world==null||!api.isPlotWorld(world)) return true;
 		ILocation location = new BukkitLocation(loc);
 		String plotID = api.getPlotId(location);
-		if(plotID==null||plotID.isEmpty()) return true;
+		if(plotID==null) return true;
 		Plot plot = api.getPlotById(plotID, world);
-		return plot.isAllowed(p.getUniqueId());
+		if(!plot.isProtect()) return true;
+		if(plot.getOwnerId().equals(p.getUniqueId())) return true;
+		if(plot.isAllowed(p.getUniqueId())) return true;
+		return false;
 	}
 }

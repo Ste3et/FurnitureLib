@@ -1,8 +1,7 @@
 package de.Ste3et_C0st.FurnitureLib.Events;
 
-
+import org.bukkit.GameMode;
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
@@ -33,16 +32,30 @@ public final class FurnitureItemEvent extends Event implements Cancellable {
     public Location getLocation(){return this.l;}
 	public HandlerList getHandlers() {return handlers;}
 	public static HandlerList getHandlerList() {return handlers;}
-	public boolean canBuild(Material m){
+	
+	public boolean canBuild(){
 		if(!FurnitureLib.getInstance().canPlace(l, pro, p)){return false;}
-		if(p.isOp())return true;
-		if(!p.hasPermission("furniture.item." + pro.getName())){return false;}
+		if(p.isOp()) return true;
+		if(!p.hasPermission("furniture.item." + pro.getName()) && !p.hasPermission("furniture.place." + pro.getName()) && !p.hasPermission("furniture.player")){
+			p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("NoPermissions"));
+			return false;}
 		if(!FurnitureLib.getInstance().getLimitationManager().canPlace(l, pro, p)){
 			if(p.hasPermission("furniture.baypass.limitation") || p.hasPermission("furniture.admin")) return true;
+			p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("LimitReached"));
 			return false;
 		}
-		return FurnitureLib.getInstance().canBuild(p, l, m);
+		return FurnitureLib.getInstance().canBuild(p, l);
 	}
 	public boolean isCancelled() {return cancelled;}
 	public void setCancelled(boolean arg0) {cancelled = arg0;}
+	
+	public void removeItem(){
+		Boolean useGameMode = FurnitureLib.getInstance().useGamemode();
+		if(useGameMode&&p.getGameMode().equals(GameMode.CREATIVE)){return;}
+		Integer slot = p.getInventory().getHeldItemSlot();
+		ItemStack itemStack = is.clone();
+		itemStack.setAmount(itemStack.getAmount()-1);
+		p.getInventory().setItem(slot, itemStack);
+		p.updateInventory();
+	}
 }

@@ -104,7 +104,6 @@ public class ArmorStandPacket{
 	public void setPessanger(Entity e){
 		PacketContainer container = new PacketContainer(PacketType.Play.Server.ATTACH_ENTITY);
 		container.getIntegers()
-		.write(0, 0)
 		.write(1, e.getEntityId())
 		.write(2, getEntityId());
 		try {
@@ -129,6 +128,23 @@ public class ArmorStandPacket{
         return watcher;
     }
 	
+	public void teleport(Location loc){
+		this.location = loc;
+		PacketContainer container = new PacketContainer(PacketType.Play.Server.ENTITY_TELEPORT);
+		container.getIntegers()
+		.write(0, getEntityId())
+		.write(1, getFixedPoint(loc.getX()))
+		.write(2, getFixedPoint(loc.getY()))
+		.write(3, getFixedPoint(loc.getZ()));
+		
+		for(Player p : loadedPlayers){
+			try {
+				this.manager.sendServerPacket(p, container);
+			} catch (InvocationTargetException e) {
+				e.printStackTrace();
+			}
+		}
+	}
 
 	@SuppressWarnings("deprecation")
 	private void create(){
@@ -238,10 +254,10 @@ public class ArmorStandPacket{
 		byte b0 = this.watcher.getByte(0);
 		if (b){
 			b0 = (byte)(b0 | 0x01);
-			FurnitureLib.getInstance().getLightManager().addLight(getLocation(), 15);
+			if(Bukkit.getPluginManager().isPluginEnabled("LightAPI")) FurnitureLib.getInstance().getLightManager().addLight(getLocation(), 15);
 		}else {
 			b0 = (byte)(b0 & 0xFFFFFFFE);
-			FurnitureLib.getInstance().getLightManager().removeLight(getLocation());
+			if(Bukkit.getPluginManager().isPluginEnabled("LightAPI")) FurnitureLib.getInstance().getLightManager().removeLight(getLocation());
 		}
 		this.watcher.setObject(0, Byte.valueOf(b0));
 		this.fire = b;
@@ -369,17 +385,19 @@ public class ArmorStandPacket{
 	
 	public void unleash() {
 		if(pessanger==null) return;
+		Integer id = pessanger.getEntityId();
 		PacketContainer packet = new PacketContainer(PacketType.Play.Server.ATTACH_ENTITY);
 		packet.getIntegers()
-        .write(0, 0)
-        .write(1, pessanger.getEntityId())
-        .write(2, -1);
+		.write(1, id)
+		.write(2, -1);
 		try {
 			for(Player p : loadedPlayers){
-				manager.sendServerPacket(p, packet);
+				if(p.isOnline()){
+					manager.sendServerPacket(p, packet);
+				}
 			}
 			this.pessanger = null;
-		} catch (InvocationTargetException e1) {
+		} catch (Exception e1) {
 			e1.printStackTrace();
 		}
 	}

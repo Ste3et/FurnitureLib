@@ -79,16 +79,8 @@ public void openCrafting(final Player p, String n)
   }
   
   @EventHandler
-  private void onClick(InventoryClickEvent e){
-	  if(playerList.contains((Player) e.getWhoClicked())){
-		  e.setCancelled(true);
-	  }
-  }
+  private void onClick(InventoryClickEvent e){if(playerList.contains((Player) e.getWhoClicked())){e.setCancelled(true);}}
   
   @EventHandler
-  private void onClose(InventoryCloseEvent e){
-	  if(playerList.contains(e.getPlayer())){
-		  playerList.remove(e.getPlayer());
-	  }
-  }
+  private void onClose(InventoryCloseEvent e){if(playerList.contains(e.getPlayer())){playerList.remove(e.getPlayer());}}
 }

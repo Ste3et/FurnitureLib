@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Random;
 
 import org.bukkit.Color;
+import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -85,6 +86,8 @@ public class LocationUtil {
 		if(s==15){return Color.fromRGB(255, 255, 255);}
 		return Color.fromRGB(255, 255, 255);
 	}
+	
+	
     
     public boolean isDay(World w) {
         long time = w.getTime();
@@ -338,10 +341,6 @@ public class LocationUtil {
         return randomNum;
     }
     
-    public EulerAngle FaceEuler(final BlockFace face, Double x, Double y, Double z) {
-    	return new EulerAngle(x,y,z);
-    }
-    
     public Location getCenter(Location loc) {
         return new Location(loc.getWorld(),
             getRelativeCoord(loc.getBlockX()),
@@ -349,14 +348,32 @@ public class LocationUtil {
             getRelativeCoord(loc.getBlockZ()));
     }
     
-    public Location getLocationCopy(Location l){
-    	return new Location(l.getWorld(), l.getX(), l.getY(), l.getZ());
-    }
-    
     private static double getRelativeCoord(int i) {
         double d = i;
         if(d<0){d+=.5;}else{d+=.5;}
         return d;
+    }
+    
+    public short getfromDyeColor(DyeColor c){
+    	switch (c) {
+		case BLACK: return 0;
+		case BLUE: return 4;
+		case BROWN: return 3;
+		case CYAN: return 6;
+		case GRAY: return 8;
+		case SILVER: return 7;
+		case WHITE: return 15;
+		case GREEN: return 2;
+		case LIGHT_BLUE: return 12;
+		case LIME: return 10;
+		case MAGENTA: return 13;
+		case ORANGE: return 14;
+		case PINK: return 9;
+		case PURPLE: return 5;
+		case RED: return 1;
+		case YELLOW: return 11;
+		default: return 15;
+		}
     }
     
 }

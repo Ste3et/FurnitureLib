@@ -14,7 +14,7 @@ public class LimitationManager {
 	PlotMeLimit plotmeLimit;
 	PlotzLimit plotzLimit;
 	ChunkLimit chunkLimit;
-	PlayerLimiter playerLimit;
+	//PlayerLimiter playerLimit;
 	
 	public LimitationManager(Plugin plugin){
 		wLimit = new worldLimit(plugin);
@@ -22,25 +22,25 @@ public class LimitationManager {
 		if(Bukkit.getPluginManager().isPluginEnabled("PlotME")) plotmeLimit = new PlotMeLimit(plugin);
 		if(Bukkit.getPluginManager().isPluginEnabled("Plotz")) plotzLimit = new PlotzLimit(plugin);
 		chunkLimit = new ChunkLimit(plugin);
-		playerLimit = new PlayerLimiter(plugin);
+		//playerLimit = new PlayerLimiter(plugin);
 	}
 	
-	public void add(Location loc, Project pro, Player p){
+	public void add(Location loc, Project pro){
 		wLimit.add(loc.getWorld(), pro);
 		if(plotSqLimit!=null) plotSqLimit.add(loc, pro);
 		if(plotmeLimit!=null) plotmeLimit.add(loc, pro);
 		if(plotzLimit!=null) plotzLimit.add(loc, pro);
 		chunkLimit.add(loc, pro);
-		playerLimit.add(p, pro);
+		//playerLimit.add(p, pro);
 	}
 	
-	public void remove(Location loc, Project pro, Player p){
+	public void remove(Location loc, Project pro){
 		wLimit.remove(loc.getWorld(), pro);
 		if(plotSqLimit!=null) plotSqLimit.remove(loc, pro);
 		if(plotmeLimit!=null) plotmeLimit.remove(loc, pro);
 		if(plotzLimit!=null) plotzLimit.remove(loc, pro);
 		chunkLimit.remove(loc, pro);
-		playerLimit.remove(p, pro);
+		//playerLimit.remove(p, pro);
 	}
 
 	public void save() {
@@ -49,7 +49,7 @@ public class LimitationManager {
 		if(plotmeLimit!=null) plotmeLimit.save();
 		if(plotzLimit!=null) plotzLimit.save();
 		chunkLimit.save();
-		playerLimit.save();
+		//playerLimit.save();
 	}
 
 	public boolean canPlace(Location loc, Project pro, Player p) {
@@ -63,8 +63,8 @@ public class LimitationManager {
 		if(plotzLimit!=null) plotSQ = plotzLimit.canPlace(loc, pro);
 		
 		boolean chunkLimi = chunkLimit.canPlace(loc, pro);
-		boolean playerLimi = playerLimit.canPlace(p, pro);
-		if(wL&&plotSQ&&plotMe&&plotzL&&chunkLimi&&playerLimi){
+		//boolean playerLimi = playerLimit.canPlace(p, pro);
+		if(wL&&plotSQ&&plotMe&&plotzL&&chunkLimi){
 			return true;
 		}
 		return false;

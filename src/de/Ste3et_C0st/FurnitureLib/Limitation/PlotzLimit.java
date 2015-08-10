@@ -23,13 +23,11 @@ public class PlotzLimit {
 	FileConfiguration file;
 	Plugin plugin;
 	List<LimitationObject> limitList = new ArrayList<LimitationObject>();
-	Plotz plotz;
 	
 	public PlotzLimit(Plugin plugin){
 		this.plugin = plugin;
-		if(Bukkit.getPluginManager().isPluginEnabled("PlotMe")){
+		if(Bukkit.getPluginManager().isPluginEnabled("Plotz")){
 			enbale=true;
-			plotz = (Plotz) Bukkit.getPluginManager().getPlugin("Plotz");
 		}
 	}
 	

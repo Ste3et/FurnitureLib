@@ -52,7 +52,7 @@ public class Serialize{
 	  ObjectID objID = as.getObjectId();
 	  
 	  Location loc = as.getLocation();
-	  ItemStack[] inventory = as.getInventory().getIS();
+	  String[] inventory = as.getInventory().getStringInv();
 	  Boolean a = as.hasArms();
 	  Boolean b = as.hasBasePlate();
 	  Boolean c = as.hasGravity();
@@ -73,9 +73,8 @@ public class Serialize{
 	  s[4] = locationObjectID;
 	  
 	  int i=0;
-	  for(ItemStack is : inventory){
-		  String serialize =  toBase64(is);
-		  s[5+i] = serialize;
+	  for(String str : inventory){
+		  s[5+i] = str;
 		  i++;
 	  }
 	  
