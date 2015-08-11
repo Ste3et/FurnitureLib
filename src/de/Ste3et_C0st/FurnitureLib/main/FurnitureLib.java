@@ -203,7 +203,7 @@ public class FurnitureLib extends JavaPlugin{
 		if(c==null ){return;}
 		Constructor<?> ctor = c.getConstructors()[0];
 			try {
-			ctor.newInstance(l, FurnitureLib.getInstance(), pro.getName(), pro.getPlugin(), null);
+			ctor.newInstance(l, FurnitureLib.getInstance(), pro.getName(), pro.getPlugin(), null, null);
 		} catch (Exception e) {}
 	}
 	

@@ -22,10 +22,11 @@ public class ProtectionManager {
 	IPreciousStones preciousStones;
 	IResidence residence;
 	ITowny towny;
+	IFactions factions;
 	IDiceChunk diceChunk;
 	FurnitureLib lib;
 	
-	boolean WorldGuard,PlotME,Plotz,PlotSquare,LandLord,GriefPrevention,PreciousStones,Residence,Towny,DiceChunk;
+	boolean WorldGuard,PlotME,Plotz,PlotSquare,LandLord,GriefPrevention,PreciousStones,Residence,Towny,DiceChunk, Factions;
 	
 	public ProtectionManager(Plugin plugin){
 		this.lib = FurnitureLib.getInstance();
@@ -41,6 +42,7 @@ public class ProtectionManager {
 		this.Residence = isEnable("Residence");
 		this.Towny = isEnable("Towny");
 		this.DiceChunk = isEnable("DiceChunk");
+		this.Factions = isEnable("factions");
 		
 		if(this.WorldGuard) this.worldGuard = new IWorldGuard(manager);
 		if(this.PlotME) this.plotMe = new IPlotME(manager);
@@ -52,6 +54,7 @@ public class ProtectionManager {
 		if(this.Towny) this.towny = new ITowny(manager);
 		if(this.Residence) this.residence = new IResidence(manager);
 		if(this.DiceChunk) this.diceChunk = new IDiceChunk(manager);
+		if(this.Factions) this.factions = new IFactions(manager);
 	}
 	
 	private boolean isEnable(String plugin){
@@ -133,7 +136,7 @@ public class ProtectionManager {
 		if(p.hasPermission("furniture.bypass.protection") || p.hasPermission("furniture.admin")) return true;
 		
 		boolean wg = true, pm = true, pz = true, ps = true, gp = true, pst = true, to = true, re = true;
-		boolean land = true, diceC = true;
+		boolean land = true, diceC = true, fact = true;
 		
 		if(WorldGuard) wg= worldGuard.canBuild(p, loc);
 		if(PlotME) pm= plotMe.canBuild(p, loc);
@@ -145,7 +148,9 @@ public class ProtectionManager {
 		if(Residence) re= residence.canBuild(p, loc);
 		if(LandLord) land = landlord.check(p, loc);
 		if(DiceChunk) diceC = diceChunk.check(p, loc);
-		if(wg&&pm&&ps&&gp&&pst&&to&&re&&pz&&land&&diceC){
+		if(Factions) fact = factions.canBuild(p, loc);
+		
+		if(wg&&pm&&ps&&gp&&pst&&to&&re&&pz&&land&&diceC&&fact){
 			return true;
 		}else{
 			return false;

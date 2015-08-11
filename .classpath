@@ -16,5 +16,7 @@
 	<classpathentry kind="lib" path="C:/Plugins/jars/Vault.jar"/>
 	<classpathentry kind="lib" path="C:/Plugins/jars/PlotMe15.jar"/>
 	<classpathentry kind="lib" path="C:/Plugins/jars/DiceChunk.jar"/>
+	<classpathentry kind="lib" path="C:/Plugins/jars/Factions.jar"/>
+	<classpathentry kind="lib" path="C:/Plugins/jars/MassiveCore.jar"/>
 	<classpathentry kind="output" path="bin"/>
 </classpath>
