@@ -164,7 +164,7 @@ public class Serialize{
 	  
 	  ObjID.setID(objI);
 	  ObjID.setStartLocation(locationObjectID);
-	  
+	  ObjID.setFinish();
 	  ArmorStandPacket asPacket = FurnitureLib.getInstance().getFurnitureManager().createArmorStand(ObjID, location);
 	  asPacket.setID(Integer.parseInt(id));
 	  asPacket.setName(metdata);

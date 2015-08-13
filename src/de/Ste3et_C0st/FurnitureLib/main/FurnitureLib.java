@@ -16,6 +16,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.util.Vector;
 
 import de.Ste3et_C0st.FurnitureLib.Command.command;
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
@@ -89,7 +90,7 @@ public class FurnitureLib extends JavaPlugin{
 		getLogger().info("Furniture Website: " + this.getDescription().getWebsite());
 		getLogger().info("Furniture start load");
 		this.sqlManager = new SQLManager(instance);
-		//Loading
+		this.sqlManager.loadALL();
 		getLogger().info("Furniture load finish");
 		getLogger().info("==========================================");
 		this.craftingInv = new CraftingInv(this);
@@ -156,16 +157,11 @@ public class FurnitureLib extends JavaPlugin{
 		public boolean canPlace(Location l, Project pro, Player p){
 			BlockFace b = lUtil.yawToFace(l.getYaw()).getOppositeFace();
 			for(ObjectID obj : manager.getObjectList()){
-				if(obj.getProject().equalsIgnoreCase(pro.getName())){
-					Location l1 = obj.getStartLocation().clone();
-					Location l2 = l.clone();
-					l1.setY(l1.getY()-1);
-					l1.setYaw(0);l2.setYaw(0);
-					l1.setPitch(0);l2.setPitch(0);
-					if(l1.equals(l2)){
-						p.sendMessage(getLangManager().getString("FurnitureOnThisPlace"));
-						return false;
-					}
+				Vector v1 = obj.getStartLocation().toVector();
+				Vector v2 = l.toVector();
+				if(v1.equals(v2)){
+					p.sendMessage(getLangManager().getString("FurnitureOnThisPlace"));
+					return false;
 				}
 			}
 			

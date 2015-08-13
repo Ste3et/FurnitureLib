@@ -44,7 +44,6 @@ public abstract class Database {
     	FurnitureManager manager = FurnitureLib.getInstance().getFurnitureManager();
     	for(ArmorStandPacket as : manager.getArmorStandPacketByObjectID(id)){
     		set(as);
-    		
     	}
     }
     
@@ -123,5 +122,14 @@ public abstract class Database {
         } catch (SQLException ex) {
             ex.printStackTrace();
         }
+    }
+    
+    public void close(){
+    	try {
+			connection.close();
+			connection = null;
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
     }
 }

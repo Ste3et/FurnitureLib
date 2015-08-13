@@ -82,6 +82,7 @@ public class FurnitureManager {
 	
 	public void send(ObjectID id){
 		if(this.asPackets.isEmpty()){return;}
+		if(id==null){System.out.println("OBJID not found");return;}
 		for(ArmorStandPacket packet : asPackets){
 			if(packet.getObjectId().equals(id)){
 				for(Player p : Bukkit.getOnlinePlayers()){
@@ -179,9 +180,23 @@ public class FurnitureManager {
 	}
 	
 	public void addProject(Project project){
+		if(isExist(project.getName())){
+			//pl.getLogger().info("Project: " + project.getName() + " from PL " + project.getPlugin() + " found");
+			return;
+		}
 		if(!projects.contains(project)){
+			//pl.getLogger().info("new Project: " + project.getName() + " from PL " + project.getPlugin() + " registred");
 			projects.add(project);
 		}
+	}
+	
+	private boolean isExist(String s){
+		for(Project project : projects){
+			if(project.getName().equals(s)){
+				return true;
+			}
+		}
+		return false;
 	}
 	
 	public List<Project> getProjects(){

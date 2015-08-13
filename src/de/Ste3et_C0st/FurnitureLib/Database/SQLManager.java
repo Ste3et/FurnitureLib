@@ -1,6 +1,8 @@
 package de.Ste3et_C0st.FurnitureLib.Database;
 
 import java.io.File;
+import java.sql.Connection;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -15,12 +17,19 @@ public class SQLManager {
 	SQLite sqlite;
 	FurnitureLib plugin;
 	Integer sqlSaveIntervall;
+	Connection con;
 	
 	public SQLManager(FurnitureLib plugin){
-		this.plugin = plugin;
+		this.plugin = plugin;initialize();
+		initialize();
+	}
+	
+	public void initialize(){
 		if(plugin.getConfig().getString("config.Database.type").equalsIgnoreCase("SQLite")){
 			String database = plugin.getConfig().getString("config.Database.database");
 			this.sqlite = new SQLite(plugin, database);
+			this.sqlite.load();
+			this.con = this.sqlite.getSQLConnection();
 		}else if(plugin.getConfig().getString("config.Database.type").equalsIgnoreCase("Mysql")){
 			isExist();
 			String database = plugin.getConfig().getString("config.Database.database");
@@ -29,19 +38,22 @@ public class SQLManager {
 			String port = plugin.getConfig().getString("config.Database.port");
 			String host = plugin.getConfig().getString("config.Database.host");
 			this.mysql = new MySQL(plugin, host, database, password, user, port);
+			this.mysql.load();
+			this.con = this.mysql.getSQLConnection();
 		}else{
 			plugin.getLogger().warning("Database Type not supported: Plugin shutdown");
 			Bukkit.getPluginManager().disablePlugin(plugin);
 			return;
 		}
-		
+	}
+	
+	public void loadALL(){
 		if(this.sqlite!=null){
-			this.sqlite.load();
 			this.sqlite.loadAll(false);
 		}else if(this.mysql!=null){
-			this.mysql.load();
 			this.mysql.loadAll(false);
 		}
+		FurnitureLib.getInstance().getFurnitureManager().sendAll();
 	}
 	
 	private void isExist(){
@@ -68,8 +80,20 @@ public class SQLManager {
 		}
 	}
 	
+	public boolean isOpen(){
+		try {
+			if(!con.isClosed()){
+				return true;
+			}
+			return false;
+		} catch (SQLException e) {
+			return false;
+		}
+	}
+	
 	public void save(){
 		if(!plugin.getFurnitureManager().getObjectList().isEmpty()){
+			if(!isOpen()){initialize();}
 			List<ObjectID> objList = new ArrayList<ObjectID>();
 			for(ObjectID obj : plugin.getFurnitureManager().getUpdateList()){
 				if(!plugin.getFurnitureManager().getPreLoadetList().contains(obj)){
@@ -122,6 +146,7 @@ public class SQLManager {
 		sqlSaveIntervall=Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
 			@Override
 			public void run() {
+				if(!isOpen()){initialize();}
 				save();
 				plugin.getLogger().info("Furniture Saved");
 				plugin.getFurnitureManager().getRemoveList().clear();
@@ -135,6 +160,16 @@ public class SQLManager {
 		if(sqlSaveIntervall!=null){
 			plugin.getServer().getScheduler().cancelTask(sqlSaveIntervall);
 			sqlSaveIntervall = null;
+		}
+	}
+
+	public void close() {
+		if(this.sqlite!=null){
+			this.sqlite.close();
+			this.sqlite=null;
+		}else if(this.mysql!=null){
+			this.mysql.close();
+			this.mysql=null;
 		}
 	}
 	

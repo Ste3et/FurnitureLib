@@ -30,6 +30,7 @@ public class Project {
 	public String getName(){return project;}
 	public Plugin getPlugin(){ return plugin;}
 	public CraftingFile getCraftingFile(){return file;}
+	public void setCraftingFile(CraftingFile file){this.file = file;}
 	public Class<?> getclass(){return clas;}
 	public Integer getWitdh(){return this.witdh;}
 	public Integer getHeight(){return this.height;}

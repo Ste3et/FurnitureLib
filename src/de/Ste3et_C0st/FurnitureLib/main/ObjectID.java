@@ -15,12 +15,16 @@ import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 public class ObjectID {
 	private String ObjectID, serial, Project, plugin;
 	private Location loc;
+	private boolean finish=false;
 	public String getID(){return this.ObjectID;}
 	public String getProject(){return this.Project;}
 	public Project getProjectOBJ(){return FurnitureLib.getInstance().getFurnitureManager().getProject(getProject());}
 	public String getPlugin(){return this.plugin;}
 	public String getSerial(){return this.serial;}
 	public Location getStartLocation(){return this.loc;}
+	public boolean isFinish() {return this.finish;}
+	public void setFinish(){this.finish = true;}
+	public void setStartLocation(Location loc) {this.loc = loc;}
 	private FurnitureManager manager;
 	
 	public void setID(String s){
@@ -49,7 +53,7 @@ public class ObjectID {
 			e.printStackTrace();
 		}
 	}
-	public void setStartLocation(Location loc) {this.loc = loc;}
+	
 	
 	public void remove(Player p){
 		Location loc = getStartLocation();
@@ -70,8 +74,6 @@ public class ObjectID {
 		World w = loc.getWorld();
 		w.dropItemNaturally(loc, porject.getCraftingFile().getRecipe().getResult());
 	}
-	
-	
 	
 	public void deleteEffect(List<ArmorStandPacket> asList){
 		try{
