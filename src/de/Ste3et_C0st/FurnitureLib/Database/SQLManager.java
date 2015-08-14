@@ -2,7 +2,6 @@ package de.Ste3et_C0st.FurnitureLib.Database;
 
 import java.io.File;
 import java.sql.Connection;
-import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -80,20 +79,8 @@ public class SQLManager {
 		}
 	}
 	
-	public boolean isOpen(){
-		try {
-			if(!con.isClosed()){
-				return true;
-			}
-			return false;
-		} catch (SQLException e) {
-			return false;
-		}
-	}
-	
 	public void save(){
 		if(!plugin.getFurnitureManager().getObjectList().isEmpty()){
-			if(!isOpen()){initialize();}
 			List<ObjectID> objList = new ArrayList<ObjectID>();
 			for(ObjectID obj : plugin.getFurnitureManager().getUpdateList()){
 				if(!plugin.getFurnitureManager().getPreLoadetList().contains(obj)){
@@ -146,7 +133,6 @@ public class SQLManager {
 		sqlSaveIntervall=Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
 			@Override
 			public void run() {
-				if(!isOpen()){initialize();}
 				save();
 				plugin.getLogger().info("Furniture Saved");
 				plugin.getFurnitureManager().getRemoveList().clear();

@@ -1,69 +1,36 @@
 package de.Ste3et_C0st.FurnitureLib.main.Protection;
 
+import java.util.HashMap;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockBreakEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
+import de.Ste3et_C0st.FurnitureLib.main.Type.EventType;
 
 public class ProtectionManager {
 
 	Plugin plugin;
 	PluginManager manager;
-	IWorldGuard worldGuard;
-	IPlotME plotMe;
-	IPlotz plotz;
-	IPlotSquare ploSquare;
-	ILandLord landlord;
-	IGriefPrevention griefPrevention;
-	IPreciousStones preciousStones;
-	IResidence residence;
-	ITowny towny;
-	IFactions factions;
-	IDiceChunk diceChunk;
 	FurnitureLib lib;
-	
-	boolean WorldGuard,PlotME,Plotz,PlotSquare,LandLord,GriefPrevention,PreciousStones,Residence,Towny,DiceChunk, Factions;
+	HashMap<Player, EventType> playerList = new HashMap<Player, EventType>();
 	
 	public ProtectionManager(Plugin plugin){
 		this.lib = FurnitureLib.getInstance();
 		this.plugin = plugin;
 		this.manager = Bukkit.getPluginManager();
-		this.WorldGuard = isEnable("WorldGuard");
-		this.PlotME = isEnable("PlotME");
-		this.Plotz = isEnable("Plotz");
-		this.PlotSquare = isEnable("PlotSquared");
-		this.LandLord = isEnable("LandLord");
-		this.GriefPrevention = isEnable("GriefPrevention");
-		this.PreciousStones = isEnable("PreciousStones");
-		this.Residence = isEnable("Residence");
-		this.Towny = isEnable("Towny");
-		this.DiceChunk = isEnable("DiceChunk");
-		this.Factions = isEnable("factions");
-		
-		if(this.WorldGuard) this.worldGuard = new IWorldGuard(manager);
-		if(this.PlotME) this.plotMe = new IPlotME(manager);
-		if(this.Plotz) this.plotz = new IPlotz(manager);
-		if(this.PlotSquare) this.ploSquare = new IPlotSquare(manager);
-		if(this.LandLord) this.landlord = new ILandLord(manager);
-		if(this.GriefPrevention) this.griefPrevention = new IGriefPrevention(manager);
-		if(this.PreciousStones) this.preciousStones = new IPreciousStones(manager);
-		if(this.Towny) this.towny = new ITowny(manager);
-		if(this.Residence) this.residence = new IResidence(manager);
-		if(this.DiceChunk) this.diceChunk = new IDiceChunk(manager);
-		if(this.Factions) this.factions = new IFactions(manager);
 	}
 	
-	private boolean isEnable(String plugin){
-		if(manager.isPluginEnabled(plugin)){
-			FurnitureLib.getInstance().getLogger().fine("FurnitureLibary hook into " + plugin);
-			return true;
-		}
-		return false;
-	}
 	private boolean isSolid(Material m, int subID){if(!checkPlaceable(m, subID)) return false;return m.isSolid();}
 	
 	private boolean checkPlaceable(Material m, int subID){
@@ -130,30 +97,24 @@ public class ProtectionManager {
 	
 	
 	@SuppressWarnings("deprecation")
-	public boolean canBuild(Player p, Location loc){
+	public boolean canBuild(Player p, Location loc, EventType type){
+		Block b = loc.getBlock();
 		if(loc.getBlock()!=null&&!isSolid(loc.getBlock().getType(), loc.getBlock().getData())) return false;
-		if(p.isOp()) return true;
-		if(p.hasPermission("furniture.bypass.protection") || p.hasPermission("furniture.admin")) return true;
-		
-		boolean wg = true, pm = true, pz = true, ps = true, gp = true, pst = true, to = true, re = true;
-		boolean land = true, diceC = true, fact = true;
-		
-		if(WorldGuard) wg= worldGuard.canBuild(p, loc);
-		if(PlotME) pm= plotMe.canBuild(p, loc);
-		if(Plotz) pz= plotz.canBuild(p, loc);
-		if(PlotSquare) ps= ploSquare.canBuild(p, loc);
-		if(GriefPrevention) gp= griefPrevention.canBuild(p, loc);
-		if(PreciousStones) pst= preciousStones.canBuild(p, loc);
-		if(Towny) to= towny.canBuild(p, loc);
-		if(Residence) re= residence.canBuild(p, loc);
-		if(LandLord) land = landlord.check(p, loc);
-		if(DiceChunk) diceC = diceChunk.check(p, loc);
-		if(Factions) fact = factions.canBuild(p, loc);
-		
-		if(wg&&pm&&ps&&gp&&pst&&to&&re&&pz&&land&&diceC&&fact){
-			return true;
-		}else{
-			return false;
+		ItemStack is = p.getItemInHand();
+		switch(type){
+		case BREAK: 
+			BlockBreakEvent event = new BlockBreakEvent(b,p);
+			Bukkit.getPluginManager().callEvent(event);
+			return !event.isCancelled();
+		case PLACE:
+			BlockPlaceEvent ev = new BlockPlaceEvent(b, b.getState(), b, p.getItemInHand(), p, true);
+			Bukkit.getPluginManager().callEvent(ev);
+			return !ev.isCancelled();
+		case INTERACT:
+			PlayerInteractEvent e = new PlayerInteractEvent(p, Action.RIGHT_CLICK_BLOCK, is, b, b.getFace(b));
+			Bukkit.getPluginManager().callEvent(e);
+			return !e.isCancelled();
+		default: return true;
 		}
 	}
 }

@@ -45,4 +45,8 @@ public class Type {
 	public enum DataBaseType{
 		MySQL, SQLite;
 	}
+	
+	public enum EventType{
+		PLACE, BREAK, INTERACT
+	}
 }

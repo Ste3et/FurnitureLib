@@ -28,6 +28,7 @@ import de.Ste3et_C0st.FurnitureLib.Limitation.LimitationManager;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.CraftingInv;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.LanguageManager;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.LocationUtil;
+import de.Ste3et_C0st.FurnitureLib.main.Type.EventType;
 import de.Ste3et_C0st.FurnitureLib.main.Protection.ProtectionManager;
 
 public class FurnitureLib extends JavaPlugin{
@@ -212,6 +213,6 @@ public class FurnitureLib extends JavaPlugin{
 	public LimitationManager getLimitationManager(){return this.limitationMgr;}
 	public Connection getConnection(){return this.con;}
 	public ObjectID getObjectID(String c, String plugin, Location loc){return new ObjectID(c, plugin, loc);}
-	public boolean canBuild(Player p, Location loc){ return Pmanager.canBuild(p, loc);}
+	public boolean canBuild(Player p, Location loc, EventType type){ return Pmanager.canBuild(p, loc, type);}
 	public Boolean useGamemode() {return useGamemode;}
 }

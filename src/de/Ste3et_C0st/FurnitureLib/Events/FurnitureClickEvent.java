@@ -9,6 +9,7 @@ import org.bukkit.event.HandlerList;
 import de.Ste3et_C0st.FurnitureLib.main.ArmorStandPacket;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
+import de.Ste3et_C0st.FurnitureLib.main.Type.EventType;
 
 public final class FurnitureClickEvent extends Event implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
@@ -31,7 +32,7 @@ public final class FurnitureClickEvent extends Event implements Cancellable {
     public Location getLocation(){return this.l;}
 	public HandlerList getHandlers() {return handlers;}
 	public static HandlerList getHandlerList() {return handlers;}
-	public boolean canBuild(){return FurnitureLib.getInstance().canBuild(p, l);}
+	public boolean canBuild(){return FurnitureLib.getInstance().canBuild(p, l, EventType.INTERACT);}
 	public boolean isCancelled() {return cancelled;}
 	public void setCancelled(boolean arg0) {cancelled = arg0;}
 }

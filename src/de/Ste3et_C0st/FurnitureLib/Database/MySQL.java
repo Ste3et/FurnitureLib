@@ -49,7 +49,7 @@ public class MySQL extends Database{
                 return connection;
             }
             Class.forName("com.mysql.jdbc.Driver");
-            connection = DriverManager.getConnection("jdbc:mysql://"+host+":"+port+"/"+DBname+"?user="+DBuser+"&password=" + DBPsw);
+            connection = DriverManager.getConnection("jdbc:mysql://"+host+":"+port+"/"+DBname+"?user="+DBuser+"&password=" + DBPsw + "&autoReconnect=true");
             return connection;
         } catch (SQLException ex) {
             plugin.getLogger().log(Level.SEVERE,"MySQL exception on initialize", ex);
