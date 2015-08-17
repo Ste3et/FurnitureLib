@@ -5,7 +5,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
 import org.bukkit.event.Event;
 import org.bukkit.event.HandlerList;
+
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
+import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 
 public final class FurnitureLateSpawnEvent extends Event implements Cancellable {
@@ -22,6 +24,7 @@ public final class FurnitureLateSpawnEvent extends Event implements Cancellable 
     	this.pro = pro;
     	this.objID = objID;
     	this.l = l;
+    	FurnitureLib.getInstance().getLimitManager().addPlayer(p.getUniqueId(), objID);
     }
     
     public ObjectID getID(){return this.objID;}

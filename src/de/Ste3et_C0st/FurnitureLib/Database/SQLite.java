@@ -42,6 +42,14 @@ public class SQLite extends Database{
     		"`EA_Left_Leg` STRING NOT NULL," + 
     		"`EA_Right_Leg` STRING NOT NULL" + 
     		");";
+    
+    public String ObjectIDString = "CREATE TABLE IF NOT EXISTS FurnitureLib_ObjectID (" +
+    		"`ObjID` STRING NOT NULL," +
+    		"`PlayerUUID` STRING NOT NULL," +
+    		"`PublicMode` STRING NOT NULL," +
+    		"`Members` STRING NOT NULL," +
+    		"`EVMode` STRING NOT NULL" +
+    		");";
 
     public Connection getSQLConnection() {
         File dataFolder = new File(plugin.getDataFolder(), dbname+".db");
@@ -72,6 +80,7 @@ public class SQLite extends Database{
         try {
             Statement s = connection.createStatement();
             s.executeUpdate(ArmorStandTable);
+            s.executeUpdate(ObjectIDString);
             s.close();
         } catch (SQLException e) {
             e.printStackTrace();

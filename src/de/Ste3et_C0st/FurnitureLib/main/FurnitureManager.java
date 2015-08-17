@@ -29,6 +29,15 @@ public class FurnitureManager {
 	public List<ObjectID> getUpdateList(){return this.updateList;}
 	public List<ObjectID> getRemoveList(){return this.removeList;}
 	
+	public ObjectID getObjBySerial(String serial){
+		for(ObjectID obj : getObjectList()){
+			if(obj.getSerial().equalsIgnoreCase(serial)){
+				return obj;
+			}
+		}
+		return null;
+	}
+	
 	public void updatePlayerView(Player player) {
 		if(this.asPackets.isEmpty()){return;}
 		for(ArmorStandPacket asp : asPackets){
@@ -42,6 +51,7 @@ public class FurnitureManager {
 	
 	public void updateFurniture(ObjectID obj) {
 		if(this.asPackets.isEmpty()){return;}
+		if(removeList.contains(obj)){return;}
 		preLoadet.remove(obj);
 		updateList.add(obj);
 		for(ArmorStandPacket packet : asPackets){
@@ -74,7 +84,6 @@ public class FurnitureManager {
 			}
 		}
 		if(getPreLoadetList().contains(id)) getPreLoadetList().remove(id);
-		FurnitureLib.getInstance().getLimitationManager().remove(id.getStartLocation(), getProject(id.getProject()));
 		updateList.remove(id);
 		objecte.remove(id);
 		
@@ -158,6 +167,17 @@ public class FurnitureManager {
 			if(asp.getEntityId() == entityID) return asp.getObjectId();
 		}
 		return null;
+	}
+	
+	public ObjectID getObjectIDByString(String objID){
+		ObjectID obj = null;
+		for(ObjectID objects : objecte){
+			if(objects.getID().equalsIgnoreCase(objID)){
+				obj = objects;
+				break;
+			}
+		}
+		return obj;
 	}
 
 	public void removeFurniture(Player player) {

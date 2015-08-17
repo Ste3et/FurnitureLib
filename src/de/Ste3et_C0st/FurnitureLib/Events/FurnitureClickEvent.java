@@ -32,7 +32,7 @@ public final class FurnitureClickEvent extends Event implements Cancellable {
     public Location getLocation(){return this.l;}
 	public HandlerList getHandlers() {return handlers;}
 	public static HandlerList getHandlerList() {return handlers;}
-	public boolean canBuild(){return FurnitureLib.getInstance().canBuild(p, l, EventType.INTERACT);}
+	public boolean canBuild(){return FurnitureLib.getInstance().canBuild(p, o, EventType.INTERACT);}
 	public boolean isCancelled() {return cancelled;}
 	public void setCancelled(boolean arg0) {cancelled = arg0;}
 }

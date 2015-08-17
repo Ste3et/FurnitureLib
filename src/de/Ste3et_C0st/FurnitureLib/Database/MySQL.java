@@ -42,6 +42,14 @@ public class MySQL extends Database{
     		"`EA_Left_Leg` TEXT NOT NULL," + 
     		"`EA_Right_Leg` TEXT NOT NULL" + 
     		");";
+    
+    public String ObjectIDString = "CREATE TABLE IF NOT EXISTS FurnitureLib_ObjectID (" +
+    		"`ObjID` TEXT NOT NULL," +
+    		"`PlayerUUID` TEXT NOT NULL," +
+    		"`PublicMode` TEXT NOT NULL," +
+    		"`Members` TEXT NOT NULL," +
+    		"`EVMode` TEXT NOT NULL" +
+    		");";
 
     public Connection getSQLConnection() {
         try {
@@ -64,6 +72,7 @@ public class MySQL extends Database{
         try {
             Statement s = connection.createStatement();
             s.executeUpdate(ArmorStandTable);
+            s.executeUpdate(ObjectIDString);
             s.close();
         } catch (SQLException e) {
             e.printStackTrace();

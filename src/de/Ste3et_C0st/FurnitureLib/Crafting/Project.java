@@ -23,7 +23,6 @@ public class Project {
 	private config limitationConfig;
 	private FileConfiguration limitationFile;
 	private HashMap<World, Integer> limitationWorld = new HashMap<World, Integer>();
-	private Integer plotLimit = -1;
 	private Integer chunkLimit = -1;
 	private Integer playerLimit = -1;
 	
@@ -38,8 +37,20 @@ public class Project {
 	
 	public Integer getAmountWorld(World w){return limitationWorld.get(w);}
 	public Integer getAmountChunk(){return this.chunkLimit;}
-	public Integer getAmountPlot(){return this.plotLimit;}
 	public Integer getAmountPlayer(){return this.playerLimit;}
+	public Integer hasPermissionsAmount(Player p){
+		int i = 0;
+		if(!permissionList.isEmpty()){
+			for(String s : permissionList.keySet()){
+				if(p.hasPermission(s)){
+					int j = permissionList.get(s);
+					if(j>i){i = permissionList.get(s);}
+				}
+			}
+		}
+		return i;
+	}
+	public HashMap<String, Integer> permissionList = new HashMap<String, Integer>();
 	
 	public void setSize(Integer witdh, Integer height, Integer length){
 		this.witdh = witdh;
@@ -54,24 +65,23 @@ public class Project {
 		this.clas = clas;
 		FurnitureLib.getInstance().getFurnitureManager().addProject(this);
 		addDefaultWorld();
-		addDefault("plot");
 		addDefault("chunk");
-		//addDefault("player");
-		this.plotLimit = getDefault("plot");
+		addDefault("player");
 		this.chunkLimit = getDefault("chunk");
-		//this.playerLimit = getDefault("player");
+		this.playerLimit = getDefault("player");
 	}
 	
 	public boolean hasPermissions(Player p){
-		if(p.hasPermission("Furniture.Player") || p.hasPermission("Furniture.use." + project) || p.isOp()){
+		if(p.hasPermission("Furniture.Player") || p.hasPermission("Furniture.place." + project) || p.isOp() || p.hasPermission("Furniture.admin")){
 			return true;
 		}
+		p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("NoPermissions"));
 		return false;
 	}
 	
 	private void addDefaultWorld(){
 		this.limitationConfig = new config(FurnitureLib.getInstance());
-		this.limitationFile = this.limitationConfig.getConfig("gobal", "/limitation/");
+		this.limitationFile = this.limitationConfig.getConfig("world", "/limitation/");
 		for(World w : Bukkit.getWorlds()){
 			this.limitationFile.addDefault("Projects." + w.getName() + "." + getName(), -1);
 		}
@@ -93,6 +103,11 @@ public class Project {
 		this.limitationConfig = new config(FurnitureLib.getInstance());
 		this.limitationFile = this.limitationConfig.getConfig(conf, "/limitation/");
 		this.limitationFile.addDefault("Projects." + getName(), -1);
+		if(conf.equalsIgnoreCase("player")){
+			if(!this.limitationFile.isSet("Projects." + getName())){
+				this.limitationFile.addDefault("PermissionsLimit.test." + getName(), 10);
+			}
+		}
 		this.limitationFile.options().copyDefaults(true);
 		this.limitationConfig.saveConfig(conf, this.limitationFile, "/limitation/");
 	}
@@ -100,6 +115,19 @@ public class Project {
 	private Integer getDefault(String conf){
 		this.limitationConfig = new config(FurnitureLib.getInstance());
 		this.limitationFile = this.limitationConfig.getConfig(conf, "/limitation/");
+		if(conf.equalsIgnoreCase("player")){
+			if(this.limitationFile.isSet("PermissionsLimit")){
+				if(this.limitationFile.isConfigurationSection("PermissionsLimit")){
+					for(String s : this.limitationFile.getConfigurationSection("PermissionsLimit").getKeys(false)){
+						if(this.limitationFile.isSet("PermissionsLimit." + s + "." + getName())){
+							String permission = "furniture.limit." + s;
+							Integer i = this.limitationFile.getInt("PermissionsLimit." + s + "." + getName());
+							permissionList.put(permission, i);
+						}
+					}
+				}
+			}
+		}
 		return this.limitationFile.getInt("Projects." + getName());
 	}
 }

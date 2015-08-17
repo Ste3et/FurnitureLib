@@ -3,6 +3,10 @@ package de.Ste3et_C0st.FurnitureLib.Database;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -16,6 +20,8 @@ import de.Ste3et_C0st.FurnitureLib.main.ArmorStandPacket;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.BodyPart;
+import de.Ste3et_C0st.FurnitureLib.main.Type.EventType;
+import de.Ste3et_C0st.FurnitureLib.main.Type.PublicMode;
 
 public class Serialize{
   private final ItemStack AIR = new ItemStack(Material.AIR);
@@ -203,4 +209,59 @@ public class Serialize{
   	if(i==1) return true;
   	return false;
   }
+  
+  private String getMemberList(List<UUID> uuidList){
+  	String s = "";
+  	for(UUID uuid : uuidList){
+  		String uu = uuid.toString();
+  		if(uuidList.indexOf(uuid)==uuidList.size()-1){
+  			s+=uu;
+  		}else{
+  			s+=uu+",";
+  		}
+  	}
+  	return s;
+  }
+
+  public void fromArmorObjectString(String[] l) {
+	  String objID = l[0];
+	  String uuid = l[1];
+	  String publicMode = l[2];
+	  String members = l[3];
+	  String evMode = l[4];
+	  if(objID==null){return;}
+	  ObjectID id = FurnitureLib.getInstance().getFurnitureManager().getObjectIDByString(objID);
+	  if(id==null){return;}
+	  if(uuid!=null&&uuid!=""){id.setUUID(UUID.fromString(uuid));}
+	  if(publicMode!=null&&publicMode!=""){id.setPublicMode(PublicMode.valueOf(publicMode));}
+	  if(members!=null&&members!=""){id.setMemberList(getUUIDList(members));}
+	  if(evMode!=null&&evMode!=""){id.setEventTypeAccess(EventType.valueOf(evMode));}
+  }
+  
+  public List<UUID> getUUIDList(String s){
+	  List<UUID> uuidList = new ArrayList<UUID>();
+	  if(s==null||s==""){return uuidList;}
+	  String[] a = s.split(",");
+	  for(String l : a){
+		  UUID uuid = UUID.fromString(l);
+		  if(!uuidList.contains(uuid)){uuidList.add(uuid);}
+	  }
+	  return uuidList;
+  }
+
+  public String[] toObjectIDString(ObjectID obj) {
+	  String[] str = new String[5];
+	  String objID = obj.getID();
+	  String uuid = "";
+	  String publicMode = obj.getPublicMode().name();
+	  String members = getMemberList(obj.getMemberList());
+	  String evMode = obj.getEventType().name();
+	  if(obj.getUUID()!=null){uuid=obj.getUUID().toString();}
+	  str[0] = objID;
+	  str[1] = uuid;
+	  str[2] = publicMode;
+	  str[3] = members;
+	  str[4] = evMode;
+	  return str;
+	}
 }

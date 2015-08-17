@@ -26,6 +26,7 @@ public class FurnitureEvents {
                         if (event.getPacketType() == PacketType.Play.Client.USE_ENTITY) {
                         	Integer PacketID = event.getPacket().getIntegers().read(0);
                             if(manager.isArmorStand(PacketID)){
+                            	event.setCancelled(true);
                             	ArmorStandPacket asPacket = manager.getArmorStandPacketByID(PacketID);
                             	ObjectID objID = manager.getObjectIDByID(PacketID);
                             	Location loc = asPacket.getLocation();

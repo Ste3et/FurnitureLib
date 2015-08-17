@@ -42,8 +42,24 @@ public abstract class Database {
     
     public void save(ObjectID id){
     	FurnitureManager manager = FurnitureLib.getInstance().getFurnitureManager();
+    	set(id);
     	for(ArmorStandPacket as : manager.getArmorStandPacketByObjectID(id)){
     		set(as);
+    	}
+    }
+    
+    private void set(ObjectID obj){
+    	String[] a = FurnitureLib.getInstance().getSerialize().toObjectIDString(obj);
+    	String query = "REPLACE INTO FurnitureLib_ObjectID (`ObjID`,`PlayerUUID`,`PublicMode`,`Members`,`EVMode`) VALUES(" +
+    			"'" + a[0] + "', "
+    			+ "'" + a[1] + "', "
+    			+ "'" + a[2] + "', "
+    			+ "'" + a[3] + "', "
+    			+ "'" + a[4] + "');";
+    	try{
+    		statement.executeUpdate(query);
+    	}catch(Exception e){
+    		
     	}
     }
     
@@ -103,10 +119,35 @@ public abstract class Database {
     		e.printStackTrace();
     	}
     }
+    
+    public void loadAllObjIDs(){
+    	try {
+        	ResultSet rs = statement.executeQuery("SELECT * FROM FurnitureLib_ObjectID");
+        	List<String[]> objList = new ArrayList<String[]>();
+			while (rs.next()) {
+				String a[] = new String[5];
+				for(int i = 0; i<=4;i++){
+						a[i] = rs.getString(i+1);
+				}
+				
+				if(!objList.contains(a)){
+					objList.add(a);
+				}
+			}
+			rs.close();
+			
+			for(String[] l : objList){
+				FurnitureLib.getInstance().getSerialize().fromArmorObjectString(l);
+			}
+		}catch(Exception e){
+    		e.printStackTrace();
+    	}
+    }
 
     public void delete(ObjectID objID){
     	try {
 			statement.execute("DELETE FROM FurnitureLib_ArmorStand WHERE ObjID = '" + objID.getID() + "'");
+			statement.execute("DELETE FROM FurnitureLib_ObjectID WHERE ObjID = '" + objID.getID() + "'");
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

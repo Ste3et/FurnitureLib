@@ -1,22 +1,24 @@
 package de.Ste3et_C0st.FurnitureLib.main.Protection;
 
 import java.util.HashMap;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
-import org.bukkit.event.block.Action;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
+import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.EventType;
+import de.Ste3et_C0st.FurnitureLib.main.Type.PublicMode;
 
 public class ProtectionManager {
 
@@ -99,8 +101,14 @@ public class ProtectionManager {
 	@SuppressWarnings("deprecation")
 	public boolean canBuild(Player p, Location loc, EventType type){
 		Block b = loc.getBlock();
-		if(loc.getBlock()!=null&&!isSolid(loc.getBlock().getType(), loc.getBlock().getData())) return false;
+		BlockFace face = lib.getLocationUtil().yawToFace(p.getLocation().getYaw()).getOppositeFace();
+		if(b!=null&&!isSolid(loc.getBlock().getType(), loc.getBlock().getData())) return false;
 		ItemStack is = p.getItemInHand();
+		if(b==null){Bukkit.broadcastMessage("block=null");return true;}
+		if(is==null){Bukkit.broadcastMessage("is=null");return true;}
+		if(face==null){Bukkit.broadcastMessage("face=null");return true;}
+		if(type==null){Bukkit.broadcastMessage("type=null");return true;}
+		
 		switch(type){
 		case BREAK: 
 			BlockBreakEvent event = new BlockBreakEvent(b,p);
@@ -111,10 +119,40 @@ public class ProtectionManager {
 			Bukkit.getPluginManager().callEvent(ev);
 			return !ev.isCancelled();
 		case INTERACT:
-			PlayerInteractEvent e = new PlayerInteractEvent(p, Action.RIGHT_CLICK_BLOCK, is, b, b.getFace(b));
-			Bukkit.getPluginManager().callEvent(e);
-			return !e.isCancelled();
+			ev = new BlockPlaceEvent(b, b.getState(), b, p.getItemInHand(), p, true);
+			Bukkit.getPluginManager().callEvent(ev);
+			return !ev.isCancelled();
 		default: return true;
 		}
+	}
+	
+	public boolean canBuild(Player p, ObjectID id, EventType type){
+		if(p.isOp() || p.hasPermission("furniture.bypass.protection") || p.hasPermission("furniture.admin")){return true;}
+		PublicMode publicMode = id.getPublicMode();
+		UUID userID = p.getUniqueId();
+		UUID ownerID = id.getUUID();
+		if(ownerID!=null&&userID.equals(ownerID)){return true;}
+		
+		Boolean b = false;
+		if(publicMode.equals(PublicMode.PRIVATE)){
+			if(ownerID==null){b=false;}
+			if(!ownerID.equals(userID)){b=false;}
+		}else if(publicMode.equals(PublicMode.MEMBERS)){
+			if(id.getMemberList().isEmpty()){b=false;}
+			if(id.getMemberList().contains(userID)){
+				b = isEventType(id, type);
+			}
+		}else if(publicMode.equals(PublicMode.PUBLIC)){
+			b = isEventType(id, type);
+		}
+		if(!b){p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("NoPermissions"));}
+		return b;
+	}
+	
+	private boolean isEventType(ObjectID objID, EventType type){
+		if(objID.getEventType().equals(type)||objID.getEventType().equals(EventType.BREAK_INTERACT)){
+			return true;
+		}
+		return false;
 	}
 }

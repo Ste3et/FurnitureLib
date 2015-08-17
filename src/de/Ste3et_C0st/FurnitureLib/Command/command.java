@@ -2,7 +2,6 @@ package de.Ste3et_C0st.FurnitureLib.Command;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import mkremins.fanciful.FancyMessage;
 
 import org.bukkit.Bukkit;
@@ -23,6 +22,7 @@ import org.bukkit.plugin.Plugin;
 
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.Events.FurnitureClickEvent;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.ManageInv;
 import de.Ste3et_C0st.FurnitureLib.main.ArmorStandPacket;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
@@ -33,6 +33,7 @@ public class command implements CommandExecutor, Listener{
 	FurnitureManager manager;
 	Plugin plugin;
 	List<Player> playerList = new ArrayList<Player>();
+	List<Player> manageList = new ArrayList<Player>();
 	
 	public command(FurnitureManager manager, Plugin plugin){
 		this.manager = manager;
@@ -48,7 +49,22 @@ public class command implements CommandExecutor, Listener{
 			p.sendMessage("§6Furniture Info about§e " + e.getID().getSerial());
 			p.sendMessage("§6Plugin:§e " + e.getID().getPlugin());
 			p.sendMessage("§6Type:§e " + e.getID().getProject());
+			p.sendMessage("§6PublicMode:§e " + e.getID().getPublicMode().name().toLowerCase());
+			p.sendMessage("§6Owner: §2" + e.getID().getPlayerName());
+			p.sendMessage("§6PublicEventAccess: §e" + e.getID().getEventType().name().toLowerCase());
 			playerList.remove(p);
+		}else if(manageList.contains(e.getPlayer())){
+			e.setCancelled(true);
+			Player p = e.getPlayer();
+			manageList.remove(p);
+			if(!e.getID().getUUID().equals(p.getUniqueId())){
+				if(!p.hasPermission("furniture.admin") && !p.isOp() && !p.hasPermission("furniture.manage.other")){
+					p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("WrongOwner"));
+					return;
+				}
+			}
+			new ManageInv(p, e.getID());
+			
 		}
 	}
 	
@@ -78,6 +94,10 @@ public class command implements CommandExecutor, Listener{
 						if(!noPermissions(sender, "furniture.debug")) return true;
 						p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("DebugModeEntered"));
 						playerList.add(p);return true;
+					}else if(args[0].equalsIgnoreCase("manage")){
+						if(!noPermissions(sender, "furniture.manage") && !p.hasPermission("furniture.player")) return true;
+						p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("ManageModeEntered"));
+						manageList.add(p);return true;
 					}else{
 						sendHelp(p);
 						return true;
@@ -545,6 +565,7 @@ public class command implements CommandExecutor, Listener{
 					"§6if the Player set:\n" + 
 					"§cgive the player one furniture").suggest("/furniture give <FURNITURE> (player)")
 			.then("§6/furniture debug \n").tooltip("§6You can become some information about\n§6abaout the furniture you are rightclicked").suggest("/furniture debug")
+			.then("§6/furniture manage \n").tooltip("§6You can config the furniture\n§6that you are rightclicked").suggest("/furniture manage")
 			.then("§6/furniture recipe §e<type>\n").tooltip("§6View recipe from a furniture").suggest("/furniture recipe §e<type>")
 			.then("§6/furniture remove §e<type>\n").tooltip("§6It's remove only one type of the \n§6Furniture").suggest("/furniture remove <type>")
 			.then("§6/furniture remove §e<plugin>\n").tooltip("§6It's remove only all Furniture from one Plugin").suggest("/furniture remove <plugin>")
@@ -560,6 +581,7 @@ public class command implements CommandExecutor, Listener{
 			str+="§6/furniture list §e(Plugin/Type/World) §c(side) | list all available furniture\n";
 			str+="§6/furniture give §e<furniture> §c(player) §d(Amount)\n";
 			str+="§6/furniture debug | when you rightclick an furniture §6you become some infos about it\n";
+			str+="§6/furniture manage | when you rightclick an furniture §6you can config the furniture\n";
 			str+="§6/furniture recipe §e<type> §6| You become an crafting recipe about the Type\n";
 			str+="§6/furniture remove §e<type> §6| You can remove all furniture by type\n";
 			str+="§6/furniture remove §e<plugin> §6| You can remove all furniture by plugin\n";

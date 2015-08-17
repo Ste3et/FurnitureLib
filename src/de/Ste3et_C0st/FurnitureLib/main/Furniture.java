@@ -21,7 +21,7 @@ public abstract class Furniture implements Listener {
 	LocationUtil lutil;
 	Plugin plugin;
 	
-	public Furniture(Location location, FurnitureLib lib, Plugin plugin, ObjectID id){}
+	public Furniture(FurnitureLib lib, Plugin plugin, ObjectID id){}
 	
 	public abstract void spawn(Location location);
 	public abstract void onFurnitureBreak(FurnitureBreakEvent e);

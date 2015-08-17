@@ -49,8 +49,10 @@ public class SQLManager {
 	public void loadALL(){
 		if(this.sqlite!=null){
 			this.sqlite.loadAll(false);
+			this.sqlite.loadAllObjIDs();
 		}else if(this.mysql!=null){
 			this.mysql.loadAll(false);
+			this.mysql.loadAllObjIDs();
 		}
 		FurnitureLib.getInstance().getFurnitureManager().sendAll();
 	}

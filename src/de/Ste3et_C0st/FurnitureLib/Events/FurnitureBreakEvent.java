@@ -32,7 +32,7 @@ public final class FurnitureBreakEvent extends Event implements Cancellable {
     public Location getLocation(){return this.l;}
 	public HandlerList getHandlers() {return handlers;}
 	public static HandlerList getHandlerList() {return handlers;}
-	public boolean canBuild(){return FurnitureLib.getInstance().canBuild(p, l, EventType.BREAK);}
+	public boolean canBuild(){return FurnitureLib.getInstance().canBuild(p, o, EventType.BREAK);}
 	public boolean isCancelled() {return cancelled;}
 	public void setCancelled(boolean arg0) {cancelled = arg0;}
 	

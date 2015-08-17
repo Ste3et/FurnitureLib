@@ -8,6 +8,7 @@ message:
    WrongArgument: "&cThe command contains wrong arguments"
    GivePlayer: "&aThe Player #PLAYER# earned #PROJECT#(#AMOUNT#)"
    DebugModeEntered: "&aYou have entered the debug mode please rightclick an furniture"
+   ManageModeEntered: "&aYou have entered the manage mode please rightclick an furniture"
    RemoveDistance: "&eYou have removed #AMOUNT# furniture"
    RemoveID: "&eYou have removed #OBJID#"
    RemovePlugin: "&eYou have removed all furniture what are set from #PLUGIN#"
@@ -16,3 +17,4 @@ message:
    RemoveLookat: "&eYou have removed #SERIAL#"
    SideNotFound: "&cThis side deos not exist"
    SideNavigation: "&eType /furniture list <option> (0-#MAX#)"
+   WrongOwner: "&cThis is not yours"

@@ -24,12 +24,12 @@ import de.Ste3et_C0st.FurnitureLib.Database.SQLManager;
 import de.Ste3et_C0st.FurnitureLib.Database.Serialize;
 import de.Ste3et_C0st.FurnitureLib.Events.ChunkOnLoad;
 import de.Ste3et_C0st.FurnitureLib.Events.FurnitureEvents;
-import de.Ste3et_C0st.FurnitureLib.Limitation.LimitationManager;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.CraftingInv;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.LanguageManager;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.LocationUtil;
 import de.Ste3et_C0st.FurnitureLib.main.Type.EventType;
 import de.Ste3et_C0st.FurnitureLib.main.Protection.ProtectionManager;
+import de.Ste3et_C0st.LimitationManager.LimitationManager;
 
 public class FurnitureLib extends JavaPlugin{
 
@@ -43,15 +43,15 @@ public class FurnitureLib extends JavaPlugin{
 	private ProtectionManager Pmanager;
 	private LightManager lightMgr;
 	private Boolean useGamemode = true;
-	private LimitationManager limitationMgr;
 	private CraftingInv craftingInv;
 	private LanguageManager lmanager;
 	private SQLManager sqlManager;
+	private LimitationManager limitManager;
 	
 	public LanguageManager getLangManager(){return this.lmanager;}
 	public LightManager getLightManager(){return this.lightMgr;}
-	
-	
+	public ProtectionManager getPermManager(){return this.Pmanager;}
+	public LimitationManager getLimitManager(){return this.limitManager;}
 	@SuppressWarnings("deprecation")
 	@Override
 	public void onEnable(){
@@ -62,7 +62,6 @@ public class FurnitureLib extends JavaPlugin{
 		this.manager = new FurnitureManager();
 		this.serialize = new Serialize();
 		this.lightMgr = new LightManager();
-		this.limitationMgr = new LimitationManager(instance);
 		this.lmanager = new LanguageManager(instance, getConfig().getString("config.Language"));
 		this.useGamemode = getConfig().getBoolean("config.NormalGamemodeRemove");
 		try{
@@ -95,7 +94,7 @@ public class FurnitureLib extends JavaPlugin{
 		getLogger().info("Furniture load finish");
 		getLogger().info("==========================================");
 		this.craftingInv = new CraftingInv(this);
-		
+		this.limitManager = new LimitationManager(this);
 		if(getConfig().getBoolean("config.timer.Enable")){
 			int time = getConfig().getInt("config.timer.time");
 			sqlManager.saveIntervall(time);
@@ -103,8 +102,7 @@ public class FurnitureLib extends JavaPlugin{
 	}
 	
 	@Override
-	public void onDisable(){
-		getLimitationManager().save();		
+	public void onDisable(){	
 		getLogger().info("==========================================");
 		getLogger().info("Furniture shutdown started");
 		sqlManager.save();
@@ -210,9 +208,8 @@ public class FurnitureLib extends JavaPlugin{
 	public static FurnitureLib getInstance(){return instance;}
 	public LocationUtil getLocationUtil(){return this.lUtil;}
 	public FurnitureManager getFurnitureManager(){return this.manager;}
-	public LimitationManager getLimitationManager(){return this.limitationMgr;}
 	public Connection getConnection(){return this.con;}
 	public ObjectID getObjectID(String c, String plugin, Location loc){return new ObjectID(c, plugin, loc);}
-	public boolean canBuild(Player p, Location loc, EventType type){ return Pmanager.canBuild(p, loc, type);}
+	public boolean canBuild(Player p, ObjectID id, EventType type){ return Pmanager.canBuild(p, id, type);}
 	public Boolean useGamemode() {return useGamemode;}
 }
