@@ -136,7 +136,7 @@ public class ProtectionManager {
 		Boolean b = false;
 		if(publicMode.equals(PublicMode.PRIVATE)){
 			if(ownerID==null){b=false;}
-			if(!ownerID.equals(userID)){b=false;}
+			if(ownerID!=null&&userID!=null&&!ownerID.equals(userID)){b=false;}
 		}else if(publicMode.equals(PublicMode.MEMBERS)){
 			if(id.getMemberList().isEmpty()){b=false;}
 			if(id.getMemberList().contains(userID)){

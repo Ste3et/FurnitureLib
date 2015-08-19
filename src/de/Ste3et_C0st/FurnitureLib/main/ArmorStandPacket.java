@@ -7,8 +7,6 @@ import java.util.HashMap;
 import java.util.List;
 
 import javax.persistence.Id;
-import javax.persistence.Table;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -17,7 +15,6 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
-
 import com.avaje.ebean.validation.NotNull;
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
@@ -28,26 +25,21 @@ import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.EntityID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.BodyPart;
 
-@javax.persistence.Entity
-@Table(name="AsP")
 public class ArmorStandPacket{
-	
 	@Id private Integer ID;
 	private Integer ArmorID;
-	@NotNull private ObjectID objID;
-	@NotNull private Location location;
-	private HashMap<BodyPart, EulerAngle> angle = new HashMap<Type.BodyPart, EulerAngle>();
+	@NotNull private transient ObjectID objID;
+	@NotNull private transient Location location;
+	private transient HashMap<BodyPart, EulerAngle> angle = new HashMap<Type.BodyPart, EulerAngle>();
 	private boolean mini, invisible, arms, basePlate, gravity, customname, fire;
-	private WrappedDataWatcher watcher;
-	private PacketContainer container;
-	private ArmorStandInventory inventory;
+	private transient WrappedDataWatcher watcher;
+	private transient PacketContainer container;
+	private transient ArmorStandInventory inventory;
 	private String name = "";
-	private ProtocolManager manager;
-	private List<Player> loadedPlayers = new ArrayList<Player>();
-	private Entity pessanger;
-	/**
-	 * @return Location
-	 */
+	private transient ProtocolManager manager;
+	private transient List<Player> loadedPlayers = new ArrayList<Player>();
+	private transient Entity pessanger;
+
 	public Location getLocation(){return this.location;}
 	public EulerAngle getAngle(BodyPart part){if(!angle.containsKey(part)){return part.getDefAngle();}return angle.get(part);}
 	public String getName(){return this.name;}
@@ -68,12 +60,7 @@ public class ArmorStandPacket{
 	public boolean isInRange(Player player) {return getLocation().getWorld() == player.getLocation().getWorld() && (getLocation().distance(player.getLocation()) <= 48D);}
 	private int getFixedPoint(Double d){return (int) (d*32D);}
 	private int getCompressedAngle(float value) {return (int)(value * 256.0F / 360.0F);}
-	
-	/**
-	 * @param l
-	 * @param ID
-	 * @param id
-	 */
+
 	public ArmorStandPacket(Location l, ObjectID id, Integer i){
 		try{
 			this.location = l;
@@ -89,18 +76,12 @@ public class ArmorStandPacket{
 	}
 	
 	public void setID(int Int) {this.ArmorID=Int;}
-	
-	/**
-	 * @param inv
-	 */
+
 	public void setInventory(ArmorStandInventory inv) {
 		this.inventory = inv;
 		if (this.inventory == null) this.inventory = new ArmorStandInventory();
 	}
 
-	/**
-	 * @param e
-	 */
 	public void setPessanger(Entity e){
 		PacketContainer container = new PacketContainer(PacketType.Play.Server.ATTACH_ENTITY);
 		container.getIntegers()
@@ -116,11 +97,6 @@ public class ArmorStandPacket{
 		}
 	}
 
-	/**
-	 * @param world
-	 * @param type
-	 * @return
-	 */
 	private WrappedDataWatcher getDefaultWatcher(World world, EntityType type) {
         Entity entity = world.spawnEntity(new Location(world, 0, 256, 0), type);
         WrappedDataWatcher watcher = WrappedDataWatcher.getEntityWatcher(entity).deepClone();
@@ -172,9 +148,6 @@ public class ArmorStandPacket{
 		FurnitureLib.getInstance().getFurnitureManager().remove(this);
 	}
 	
-	/**
-	 * @param b
-	 */
 	public void setSmall(boolean b){
 		byte b0 = this.watcher.getByte(10);
 
@@ -186,10 +159,7 @@ public class ArmorStandPacket{
 		this.watcher.setObject(10, Byte.valueOf(b0));
 		this.mini = b;
 	}
-	
-	/**
-	 * @param b
-	 */
+
 	public void setArms(boolean b) {
 		byte b0 = this.watcher.getByte(10);
 
@@ -201,10 +171,7 @@ public class ArmorStandPacket{
 		this.watcher.setObject(10, Byte.valueOf(b0));
 		this.arms = b;
 	}
-	
-	/**
-	 * @param b
-	 */
+
 	public void setGravity(boolean b) {
 		byte b0 = this.watcher.getByte(10);
 
@@ -216,10 +183,7 @@ public class ArmorStandPacket{
 		this.watcher.setObject(10, Byte.valueOf(b0));
 		this.gravity = b;
 	}
-	
-	/**
-	 * @param b
-	 */
+
 	public void setBasePlate(boolean b) {
 		byte b0 = this.watcher.getByte(10);
 
@@ -231,10 +195,7 @@ public class ArmorStandPacket{
 		this.watcher.setObject(10, Byte.valueOf(b0));
 		this.basePlate = b;
 	}
-	
-	/**
-	 * @param b
-	 */
+
 	public void setInvisible(boolean b) {
 		byte b0 = this.watcher.getByte(0);
 
@@ -246,10 +207,7 @@ public class ArmorStandPacket{
 		this.watcher.setObject(0, Byte.valueOf(b0));
 		this.invisible = b;
 	}
-	
-	/**
-	 * @param b
-	 */
+
 	public void setFire(boolean b){
 		byte b0 = this.watcher.getByte(0);
 		if (b){
@@ -262,11 +220,7 @@ public class ArmorStandPacket{
 		this.watcher.setObject(0, Byte.valueOf(b0));
 		this.fire = b;
 	}
-	
-	/**
-	 * @param angle
-	 * @param part
-	 */
+
 	public void setPose(EulerAngle angle, BodyPart part){
 		if(angle==null){return;}
 		if(part==null){return;}
@@ -281,10 +235,7 @@ public class ArmorStandPacket{
 			e.printStackTrace();
 		}
 	}
-	
-	/**
-	 * @param str
-	 */
+
 	public void setName(String str){
 		if(str==null){return;}
 		if(str==""){setNameVasibility(false);return;}
@@ -402,5 +353,8 @@ public class ArmorStandPacket{
 		}
 	}
 	
-	
+	@Override
+	public String toString(){
+		return this.ArmorID+"";
+	}
 }

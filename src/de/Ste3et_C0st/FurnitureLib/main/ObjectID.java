@@ -19,8 +19,7 @@ import de.Ste3et_C0st.FurnitureLib.main.Type.EventType;
 import de.Ste3et_C0st.FurnitureLib.main.Type.PublicMode;
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 
-public class ObjectID {
-	
+public class ObjectID{
 	private String ObjectID, serial, Project, plugin;
 	private Location loc;
 	private Chunk c;
@@ -51,7 +50,7 @@ public class ObjectID {
 	public void setUUID(UUID uuid){
 		if(this.uuid!=null&&!this.uuid.equals(uuid)){
 			if(FurnitureLib.getInstance().getLimitManager()!=null){
-				FurnitureLib.getInstance().getLimitManager().removePlayer(this.uuid, this);
+				FurnitureLib.getInstance().getLimitManager().removePlayer(this);
 			}
 		}
 		if(uuid!=null){
@@ -103,7 +102,7 @@ public class ObjectID {
 	
 	
 	public void remove(Player p){
-		FurnitureLib.getInstance().getLimitManager().removePlayer(p.getUniqueId(), this);
+		FurnitureLib.getInstance().getLimitManager().removePlayer(this);
 		Location loc = getStartLocation();
 		dropItem(p, loc.clone().add(0, 1, 0), getProjectOBJ());
 		deleteEffect(manager.getArmorStandPacketByObjectID(this));
@@ -111,7 +110,7 @@ public class ObjectID {
 	}
 	
 	public void remove(Player p,boolean dropItem, boolean deleteEffect){
-		FurnitureLib.getInstance().getLimitManager().removePlayer(p.getUniqueId(), this);
+		FurnitureLib.getInstance().getLimitManager().removePlayer(this);
 		Location loc = getStartLocation();
 		if(dropItem) dropItem(p, loc.clone().add(0, 1, 0), getProjectOBJ());
 		if(deleteEffect) deleteEffect(manager.getArmorStandPacketByObjectID(this));

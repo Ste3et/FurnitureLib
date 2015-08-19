@@ -3,6 +3,7 @@ package de.Ste3et_C0st.FurnitureLib.Database;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -38,6 +39,31 @@ public class Serialize{
 		}
 		return null;
   }
+  
+	public String SerializeArmorStand(ArmorStandPacket packet){
+		try{
+			ByteArrayOutputStream ByteOutputStream = new ByteArrayOutputStream();
+			ObjectOutputStream ObjectOutput = new ObjectOutputStream(ByteOutputStream);
+			ObjectOutput.defaultWriteObject();
+			ObjectOutput.writeObject(packet.getEntityId());
+			ObjectOutput.writeObject(packet.getArmorID());
+			ObjectOutput.writeObject(packet.getName());
+			ObjectOutput.writeObject(packet.getLocation().toString());
+			//EulerAngle
+			ObjectOutput.writeObject(packet.getAngle(BodyPart.HEAD).toString());
+			ObjectOutput.writeObject(packet.getAngle(BodyPart.BODY).toString());
+			ObjectOutput.writeObject(packet.getAngle(BodyPart.LEFT_ARM).toString());
+			ObjectOutput.writeObject(packet.getAngle(BodyPart.RIGHT_ARM).toString());
+			ObjectOutput.writeObject(packet.getAngle(BodyPart.LEFT_LEG).toString());
+			ObjectOutput.writeObject(packet.getAngle(BodyPart.RIGHT_LEG).toString());
+			
+			ObjectOutput.close();
+			return Base64Coder.encodeLines(ByteOutputStream.toByteArray());
+		}catch(Exception e){
+			e.printStackTrace();
+			return null;
+		}
+	}
 
   public ItemStack fromBase64(String s){
 		try {

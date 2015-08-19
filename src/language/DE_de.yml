@@ -18,3 +18,4 @@ message:
    SideNotFound: "&cDie Seite wurde nicht gefunen"
    SideNavigation: "&eBenutze /furniture list <option> (0-#MAX#)"
    WrongOwner: "&cDas ist nicht deins"
+   LimitAouncer: "&6Du hast &e#TYPE# &2#CURRENT#&6/&c#MAX# &6platziert."

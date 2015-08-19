@@ -1,4 +1,4 @@
-package de.Ste3et_C0st.LimitationManager;
+package de.Ste3et_C0st.FurnitureLib.LimitationManager;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -34,11 +34,22 @@ public class LimitationManager {
 		this.playerList.put(uuid, objList);
 	}
 	
-	public void removePlayer(UUID uuid, ObjectID obj){
-		List<ObjectID> objList = new ArrayList<ObjectID>();
-		if(playerList.containsKey(uuid)){objList = playerList.get(uuid);}else{return;}
-		objList.remove(obj);
-		this.playerList.put(uuid, objList);
+	public void removePlayer(ObjectID obj){
+		@SuppressWarnings("unchecked")
+		HashMap<UUID, List<ObjectID>> objList = (HashMap<UUID, List<ObjectID>>) playerList.clone();
+		List<ObjectID> objL = new ArrayList<ObjectID>();
+		UUID uui = null;
+		for(UUID uuid : objList.keySet()){
+			if(objList.get(uuid).contains(obj)){
+				objL = playerList.get(uuid);
+				objL.remove(obj);
+				uui = uuid;
+				break;
+			}
+		}
+		if(uui!=null&&objL!=null){
+			this.playerList.put(uui, objL);
+		}
 	}
 	
 	private Integer returnIntProject(Player p, Project pro){
@@ -83,6 +94,7 @@ public class LimitationManager {
 		Integer maxWorld = pro.getAmountWorld(obj.getWorld());
 		Integer maxChunk = pro.getAmountChunk();
 		Integer maxPlayer = pro.getAmountPlayer();
+		
 		if(p.isOp() || p.hasPermission("furniture.admin") || p.hasPermission("furniture.bypass.limit")){return true;}
 		if(world>=maxWorld){
 			if(maxWorld!=-1){return false;}
@@ -93,12 +105,49 @@ public class LimitationManager {
 		}
 		
 		if(player>=maxPlayer){
-			
 			if(maxPlayer!=-1){
 				if(player<perAmount){return true;}
 				return false;
 			}
 		}
 		return true;
+	}
+	
+	public void sendAuncer(Player p, ObjectID obj){
+		Project pro = obj.getProjectOBJ();
+		Integer world = returnProjectWorld(obj.getWorld(), pro);
+		Integer chunk = returnIntProjectChunk(obj.getChunk(), pro);
+		Integer player = returnIntProject(p, pro);
+		
+		Integer perAmount = pro.hasPermissionsAmount(p);
+		Integer maxWorld = pro.getAmountWorld(obj.getWorld());
+		Integer maxChunk = pro.getAmountChunk();
+		Integer maxPlayer = pro.getAmountPlayer();
+		
+		Integer max = -1;
+		Integer current = -1;
+		
+		if(maxWorld!=0&&maxWorld!=-1){
+			max=maxWorld;
+			current=world;
+		}
+		if((maxChunk!=0&&maxChunk!=-1)&&(maxChunk>max)){
+			max=maxChunk;
+			current=chunk;
+		}
+		if((maxPlayer!=0&&maxPlayer!=-1)&&(maxPlayer>max)){
+			max=maxPlayer;
+			current=player;
+		}
+		if((perAmount!=0&&perAmount!=-1)&&(perAmount>max)){
+			max=perAmount;
+			current=player;
+		}
+		
+		if(max!=-1&&current!=-1){
+			String s = lib.getLangManager().getString("LimitAouncer");
+			s = s.replace("#TYPE#", pro.getName()).replace("#CURRENT#", current+1+"").replace("#MAX#", max+"");
+			p.sendMessage(s);
+		}
 	}
 }

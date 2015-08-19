@@ -11,8 +11,7 @@ import org.bukkit.plugin.Plugin;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.config;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 
-public class Project {
-
+public class Project{
 	private String project;
 	private CraftingFile file;
 	private Plugin plugin;

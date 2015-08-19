@@ -45,6 +45,11 @@ public abstract class Database {
     	set(id);
     	for(ArmorStandPacket as : manager.getArmorStandPacketByObjectID(id)){
     		set(as);
+    		System.out.println(as.toString());
+//    		String s = FurnitureLib.getInstance().getSerialize().SerializeArmorStand(as);
+//    		System.out.println(s);
+//    		plugin.getConfig().set("Packet." + as.getArmorID(), s);
+//			plugin.saveConfig();
     	}
     }
     
@@ -111,6 +116,29 @@ public abstract class Database {
     		for(String[] l : asList){
     			FurnitureLib.getInstance().getSerialize().fromArmorStandString(l);
     		}
+    		
+//    		for(String s : plugin.getConfig().getConfigurationSection("Packet").getKeys(false)){
+//    			System.out.println(s);
+//    			if(s!=null){
+//    				System.out.println("OK");
+//    				String a = plugin.getConfig().getString("Packet." + s);
+//    				System.out.println(a);
+//        			ArmorStandPacket packet = FurnitureLib.getInstance().getSerialize().fArmorStandString(a);
+//        			//Bukkit.broadcastMessage("ObjID: " + packet.getObjectId().getID());
+//        			Bukkit.broadcastMessage("EntityID:" + packet.getEntityId());
+//        			Bukkit.broadcastMessage("ArmorID:" + packet.getArmorID());
+//        			Bukkit.broadcastMessage("Location: " + packet.getLocation());
+//        			Bukkit.broadcastMessage("Name: " + packet.getName());
+//        			Bukkit.broadcastMessage("Fire: " + packet.isFire());
+//        			Bukkit.broadcastMessage("Invisible: " + packet.isInvisible());
+//        			Bukkit.broadcastMessage("Mini: " + packet.isMini());
+//        			Bukkit.broadcastMessage("BasePlate: " + packet.hasBasePlate());
+//        			Bukkit.broadcastMessage("Arms: " + packet.hasArms());
+//        			Bukkit.broadcastMessage("Gravity: " + packet.hasGravity());
+//        			
+//        			//Bukkit.broadcastMessage("RightArm: " + packet.getAngle(BodyPart.RIGHT_ARM).toString());
+//    			}
+//    		}
     		
     		if(b){
     			plugin.getFurnitureManager().getPreLoadetList().clear();

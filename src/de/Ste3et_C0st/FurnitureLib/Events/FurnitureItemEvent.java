@@ -46,8 +46,13 @@ public final class FurnitureItemEvent extends Event implements Cancellable {
 		if(!pro.hasPermissions(p)){return false;}
 		if(!FurnitureLib.getInstance().getLimitManager().canPlace(p, obj)){
 			FurnitureLib.getInstance().getLangManager().getString("LimitReached");
-			return false;}
-		return FurnitureLib.getInstance().getPermManager().canBuild(p, l, EventType.PLACE);
+			return false;
+		}
+		if(FurnitureLib.getInstance().getPermManager().canBuild(p, l, EventType.PLACE)){
+			FurnitureLib.getInstance().getLimitManager().sendAuncer(p, obj);
+			return true;
+		}
+		return false;
 	}
 	public boolean isCancelled() {return cancelled;}
 	public void setCancelled(boolean arg0) {cancelled = arg0;}

@@ -24,12 +24,12 @@ import de.Ste3et_C0st.FurnitureLib.Database.SQLManager;
 import de.Ste3et_C0st.FurnitureLib.Database.Serialize;
 import de.Ste3et_C0st.FurnitureLib.Events.ChunkOnLoad;
 import de.Ste3et_C0st.FurnitureLib.Events.FurnitureEvents;
+import de.Ste3et_C0st.FurnitureLib.LimitationManager.LimitationManager;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.CraftingInv;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.LanguageManager;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.LocationUtil;
 import de.Ste3et_C0st.FurnitureLib.main.Type.EventType;
 import de.Ste3et_C0st.FurnitureLib.main.Protection.ProtectionManager;
-import de.Ste3et_C0st.LimitationManager.LimitationManager;
 
 public class FurnitureLib extends JavaPlugin{
 

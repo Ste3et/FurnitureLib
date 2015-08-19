@@ -3,15 +3,17 @@ package de.Ste3et_C0st.FurnitureLib.main;
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
-public class ArmorStandInventory {
-	
-	private ItemStack[] items = new ItemStack[5];
+public class ArmorStandInventory implements Serializable{
+
+	private static final long serialVersionUID = 818950767854793517L;
+	private transient ItemStack[] items = new ItemStack[5];
 	private String[] itemString = new String[5];
 	
 	public ItemStack getItemInHand() {return this.items[0];}
