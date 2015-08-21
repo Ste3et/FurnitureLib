@@ -14,6 +14,7 @@ import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.DataBaseType;
+import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 
 public abstract class Database {
     FurnitureLib plugin;
@@ -42,15 +43,13 @@ public abstract class Database {
     
     public void save(ObjectID id){
     	FurnitureManager manager = FurnitureLib.getInstance().getFurnitureManager();
-    	set(id);
     	for(ArmorStandPacket as : manager.getArmorStandPacketByObjectID(id)){
     		set(as);
-    		System.out.println(as.toString());
-//    		String s = FurnitureLib.getInstance().getSerialize().SerializeArmorStand(as);
-//    		System.out.println(s);
-//    		plugin.getConfig().set("Packet." + as.getArmorID(), s);
-//			plugin.saveConfig();
+//    		String s = FurnitureLib.getInstance().getNewSerialize().armorStandtoString(as);
+//    		FurnitureLib.getInstance().getConfig().set("test", s);
+//    		FurnitureLib.getInstance().saveConfig();
     	}
+    	set(id);
     }
     
     private void set(ObjectID obj){
@@ -95,7 +94,7 @@ public abstract class Database {
     	}
     }
     
-    public void loadAll(Boolean b){
+    public void loadAll(SQLAction action){
     	try{
     		ResultSet rs = statement.executeQuery("SELECT * FROM FurnitureLib_ArmorStand");
     		List<String[]> asList = new ArrayList<String[]>();
@@ -114,7 +113,7 @@ public abstract class Database {
     		
     		rs.close();
     		for(String[] l : asList){
-    			FurnitureLib.getInstance().getSerialize().fromArmorStandString(l);
+    			FurnitureLib.getInstance().getSerialize().fromArmorStandString(l, action);
     		}
     		
 //    		for(String s : plugin.getConfig().getConfigurationSection("Packet").getKeys(false)){
@@ -139,10 +138,6 @@ public abstract class Database {
 //        			//Bukkit.broadcastMessage("RightArm: " + packet.getAngle(BodyPart.RIGHT_ARM).toString());
 //    			}
 //    		}
-    		
-    		if(b){
-    			plugin.getFurnitureManager().getPreLoadetList().clear();
-    		}
     	}catch(Exception e){
     		e.printStackTrace();
     	}

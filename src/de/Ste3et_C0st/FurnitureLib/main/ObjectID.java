@@ -17,6 +17,7 @@ import org.bukkit.entity.Player;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.RandomStringGenerator;
 import de.Ste3et_C0st.FurnitureLib.main.Type.EventType;
 import de.Ste3et_C0st.FurnitureLib.main.Type.PublicMode;
+import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 
 public class ObjectID{
@@ -28,8 +29,9 @@ public class ObjectID{
 	private List<UUID> uuidList = new ArrayList<UUID>();
 	private PublicMode publicMode = PublicMode.PRIVATE;
 	private EventType memberType = EventType.INTERACT;
+	private SQLAction sqlAction = SQLAction.SAVE;
 	
-	private boolean finish=false;
+	private boolean finish=false, fixed=false;
 	public String getID(){return this.ObjectID;}
 	public String getProject(){return this.Project;}
 	public Project getProjectOBJ(){return FurnitureLib.getInstance().getFurnitureManager().getProject(getProject());}
@@ -37,9 +39,23 @@ public class ObjectID{
 	public String getSerial(){return this.serial;}
 	public Location getStartLocation(){return this.loc;}
 	public EventType getEventType(){return this.memberType;}
+	public SQLAction getSQLAction(){return this.sqlAction;}
+	public boolean isFixed(){return this.fixed;}
 	public boolean isFinish() {return this.finish;}
 	public void setFinish(){this.finish = true;}
 	public void setEventTypeAccess(EventType type){this.memberType = type;}
+	public void setSQLAction(SQLAction action){this.sqlAction=action;}
+	public void setFixed(boolean b){fixed=b;}
+	public void setMemberList(List<UUID> uuidList){this.uuidList=uuidList;}
+	public List<UUID> getMemberList(){return this.uuidList;}
+	public PublicMode getPublicMode(){return this.publicMode;}
+	public UUID getUUID(){return this.uuid;}
+	public World getWorld(){return this.w;}
+	public Chunk getChunk(){return this.c;}
+	public boolean isMember(UUID uuid) {return uuidList.contains(uuid);}
+	public void addMember(UUID uuid){uuidList.add(uuid);}
+	public void remMember(UUID uuid){uuidList.remove(uuid);}
+	
 	public void setStartLocation(Location loc) {
 		this.loc = loc;
 		this.w = loc.getWorld();
@@ -60,12 +76,6 @@ public class ObjectID{
 		}
 		this.uuid=uuid;
 	}
-	public void setMemberList(List<UUID> uuidList){this.uuidList=uuidList;}
-	public List<UUID> getMemberList(){return this.uuidList;}
-	public PublicMode getPublicMode(){return this.publicMode;}
-	public UUID getUUID(){return this.uuid;}
-	public World getWorld(){return this.w;}
-	public Chunk getChunk(){return this.c;}
 	
 	private FurnitureManager manager;
 	
@@ -81,8 +91,8 @@ public class ObjectID{
 		}catch(Exception e){
 			e.printStackTrace();
 		}
-
 	}
+
 	public ObjectID(String name, String plugin, Location startLocation){
 		try {
 			this.Project = name;
@@ -145,17 +155,5 @@ public class ObjectID{
 			name = p.getName();
 		}
 		return name;
-	}
-	
-	public boolean isMember(UUID uuid) {
-		return uuidList.contains(uuid);
-	}
-	
-	public void addMember(UUID uuid){
-		uuidList.add(uuid);
-	}
-	
-	public void remMember(UUID uuid){
-		uuidList.remove(uuid);
 	}
 }

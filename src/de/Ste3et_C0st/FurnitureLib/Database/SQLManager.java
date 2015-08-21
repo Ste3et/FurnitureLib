@@ -9,6 +9,7 @@ import org.bukkit.Bukkit;
 
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
+import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 
 public class SQLManager {
 
@@ -48,10 +49,10 @@ public class SQLManager {
 	
 	public void loadALL(){
 		if(this.sqlite!=null){
-			this.sqlite.loadAll(false);
+			this.sqlite.loadAll(SQLAction.NOTHING);
 			this.sqlite.loadAllObjIDs();
 		}else if(this.mysql!=null){
-			this.mysql.loadAll(false);
+			this.mysql.loadAll(SQLAction.NOTHING);
 			this.mysql.loadAllObjIDs();
 		}
 		FurnitureLib.getInstance().getFurnitureManager().sendAll();
@@ -71,7 +72,7 @@ public class SQLManager {
 		if(fileDB!=null){
 			this.sqlite = new SQLite(plugin, fileDB.getName().replace(".db", ""));
 			this.sqlite.load();
-			this.sqlite.loadAll(true);
+			this.sqlite.loadAll(SQLAction.SAVE);
 			plugin.getLogger().info("Import finish");
 			this.sqlite.close();
 			this.sqlite = null;
@@ -84,34 +85,18 @@ public class SQLManager {
 	public void save(){
 		if(!plugin.getFurnitureManager().getObjectList().isEmpty()){
 			List<ObjectID> objList = new ArrayList<ObjectID>();
-			for(ObjectID obj : plugin.getFurnitureManager().getUpdateList()){
-				if(!plugin.getFurnitureManager().getPreLoadetList().contains(obj)){
-					if(plugin.getFurnitureManager().getUpdateList().contains(obj)){
-						objList.add(obj);
-					}
-				}
-			}
 			for(ObjectID obj : plugin.getFurnitureManager().getObjectList()){
 				if(!objList.contains(obj)){
-					if(!plugin.getFurnitureManager().getPreLoadetList().contains(obj)){
-							objList.add(obj);
+					switch (obj.getSQLAction()) {
+					case UPDATE: remove(obj); save(obj); break;
+					case SAVE: save(obj); break;
+					case REMOVE: remove(obj); break;
+					case NOTHING: break;
 					}
+					if(!obj.getSQLAction().equals(SQLAction.REMOVE)){obj.setSQLAction(SQLAction.NOTHING);}
+					objList.add(obj);
 				}
 			}
-
-			
-			for(ObjectID obj : objList){
-				save(obj);
-			}
-			
-			for(ObjectID obj : plugin.getFurnitureManager().getRemoveList()){
-				remove(obj);
-			}
-		}else{
-			for(ObjectID obj : plugin.getFurnitureManager().getRemoveList()){
-				remove(obj);
-			}
-			plugin.getLogger().info("ObjectList Empty");
 		}
 	}
 	
@@ -137,9 +122,6 @@ public class SQLManager {
 			public void run() {
 				save();
 				plugin.getLogger().info("Furniture Saved");
-				plugin.getFurnitureManager().getRemoveList().clear();
-				plugin.getFurnitureManager().getPreLoadetList().clear();
-				plugin.getFurnitureManager().getPreLoadetList().addAll(plugin.getFurnitureManager().getObjectList());
 			}
 		}, 0, 20*time);
 	}

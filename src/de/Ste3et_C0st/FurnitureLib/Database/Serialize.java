@@ -2,8 +2,6 @@ package de.Ste3et_C0st.FurnitureLib.Database;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.io.IOException;
-import java.io.ObjectOutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -23,47 +21,23 @@ import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.BodyPart;
 import de.Ste3et_C0st.FurnitureLib.main.Type.EventType;
 import de.Ste3et_C0st.FurnitureLib.main.Type.PublicMode;
+import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 
 public class Serialize{
-  private final ItemStack AIR = new ItemStack(Material.AIR);
+  
   public String toBase64(ItemStack is){
 	  try {
   		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
 		BukkitObjectOutputStream dataOutput = new BukkitObjectOutputStream(outputStream);
-		if(is==null) is=AIR;
+		if(is==null) is=new ItemStack(Material.AIR);
 		dataOutput.writeObject(is);
 		dataOutput.close();
         return Base64Coder.encodeLines(outputStream.toByteArray());
-		} catch (IOException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 		return null;
   }
-  
-	public String SerializeArmorStand(ArmorStandPacket packet){
-		try{
-			ByteArrayOutputStream ByteOutputStream = new ByteArrayOutputStream();
-			ObjectOutputStream ObjectOutput = new ObjectOutputStream(ByteOutputStream);
-			ObjectOutput.defaultWriteObject();
-			ObjectOutput.writeObject(packet.getEntityId());
-			ObjectOutput.writeObject(packet.getArmorID());
-			ObjectOutput.writeObject(packet.getName());
-			ObjectOutput.writeObject(packet.getLocation().toString());
-			//EulerAngle
-			ObjectOutput.writeObject(packet.getAngle(BodyPart.HEAD).toString());
-			ObjectOutput.writeObject(packet.getAngle(BodyPart.BODY).toString());
-			ObjectOutput.writeObject(packet.getAngle(BodyPart.LEFT_ARM).toString());
-			ObjectOutput.writeObject(packet.getAngle(BodyPart.RIGHT_ARM).toString());
-			ObjectOutput.writeObject(packet.getAngle(BodyPart.LEFT_LEG).toString());
-			ObjectOutput.writeObject(packet.getAngle(BodyPart.RIGHT_LEG).toString());
-			
-			ObjectOutput.close();
-			return Base64Coder.encodeLines(ByteOutputStream.toByteArray());
-		}catch(Exception e){
-			e.printStackTrace();
-			return null;
-		}
-	}
 
   public ItemStack fromBase64(String s){
 		try {
@@ -79,6 +53,7 @@ public class Serialize{
 	}
   
   public String[] toArmorStandString(ArmorStandPacket as){
+	  if(as==null){return null;}
 	  String s[] = new String[16];
 	  
 	  ObjectID objID = as.getObjectId();
@@ -140,7 +115,7 @@ public class Serialize{
 	  }return null;
   }
   
-  public ArmorStandPacket fromArmorStandString(String[] s){
+  public ArmorStandPacket fromArmorStandString(String[] s, SQLAction action){
 
 	  String id = s[0];
 	  
@@ -218,7 +193,7 @@ public class Serialize{
 	  asPacket.setPose(Right_Arm, BodyPart.RIGHT_ARM);
 	  asPacket.setPose(Left_Leg, BodyPart.LEFT_LEG);
 	  asPacket.setPose(Right_Leg, BodyPart.RIGHT_LEG);
-	  FurnitureLib.getInstance().getFurnitureManager().getPreLoadetList().add(ObjID);
+	  ObjID.setSQLAction(action);
 	  return asPacket;
   }
   
@@ -276,6 +251,7 @@ public class Serialize{
   }
 
   public String[] toObjectIDString(ObjectID obj) {
+	  if(obj==null){return null;}
 	  String[] str = new String[5];
 	  String objID = obj.getID();
 	  String uuid = "";

@@ -53,6 +53,10 @@ public class Type {
 		MySQL, SQLite;
 	}
 	
+	public enum ColorType{
+		BLOCK, BANNER;
+	}
+	
 	public enum EventType{
 		PLACE(null, null, null, null),
 		BREAK(lang.getName("Break"), lang.getMaterial("Break"), lang.getShort("Break"), 1),
@@ -87,7 +91,11 @@ public class Type {
 	}
 	
 	public enum LimitationType{
-		PLAYER, CHUNK, WORLD, PLOT
+		PLAYER, CHUNK, WORLD, PLOT;
+	}
+	
+	public enum SQLAction{
+		SAVE, UPDATE, REMOVE, NOTHING;
 	}
 	
 	public enum PublicMode{

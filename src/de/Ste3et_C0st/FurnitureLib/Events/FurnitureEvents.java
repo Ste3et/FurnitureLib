@@ -32,6 +32,10 @@ public class FurnitureEvents {
                             	Location loc = asPacket.getLocation();
                             	Player p = event.getPlayer();
                             	EntityUseAction action = event.getPacket().getEntityUseActions().read(0);
+                            	if(objID==null) return;
+                            	if(loc==null) return;
+                            	if(p==null) return;
+                            	if(action==null) return;
                             	switch (action) {
 								case ATTACK:
 									if(p.getGameMode().equals(GameMode.ADVENTURE)) return;

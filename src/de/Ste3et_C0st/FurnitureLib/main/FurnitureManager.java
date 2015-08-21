@@ -11,28 +11,27 @@ import org.bukkit.util.EulerAngle;
 
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.main.Type.BodyPart;
+import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 
 public class FurnitureManager {
 	private Integer i = 0;
 	private List<ArmorStandPacket> asPackets = new ArrayList<ArmorStandPacket>();
-	
 	private List<ObjectID> objecte = new ArrayList<ObjectID>();
-	private List<ObjectID> preLoadet = new ArrayList<ObjectID>();
-	private List<ObjectID> removeList = new ArrayList<ObjectID>();
-	private List<ObjectID> updateList = new ArrayList<ObjectID>();
 	private List<Project> projects = new ArrayList<Project>();
 	
 	public void setLastID(Integer i){this.i = i;}
 	public List<ArmorStandPacket> getAsList(){return this.asPackets;}
-	public List<ObjectID> getPreLoadetList(){return this.preLoadet;}
 	public List<ObjectID> getObjectList(){return this.objecte;}
-	public List<ObjectID> getUpdateList(){return this.updateList;}
-	public List<ObjectID> getRemoveList(){return this.removeList;}
+	public void addProject(Project project){if(isExist(project.getName())){return;}if(!projects.contains(project)){projects.add(project);}}
+	public List<Project> getProjects(){return this.projects;}
+	public int getLastID() {return i;}
 	
 	public ObjectID getObjBySerial(String serial){
 		for(ObjectID obj : getObjectList()){
 			if(obj.getSerial().equalsIgnoreCase(serial)){
-				return obj;
+				if(!obj.getSQLAction().equals(SQLAction.REMOVE)){
+					return obj;
+				}
 			}
 		}
 		return null;
@@ -51,9 +50,7 @@ public class FurnitureManager {
 	
 	public void updateFurniture(ObjectID obj) {
 		if(this.asPackets.isEmpty()){return;}
-		if(removeList.contains(obj)){return;}
-		preLoadet.remove(obj);
-		updateList.add(obj);
+		obj.setSQLAction(SQLAction.UPDATE);
 		for(ArmorStandPacket packet : asPackets){
 			if(packet.getObjectId().equals(obj)){
 				for(Player player : Bukkit.getOnlinePlayers()){
@@ -67,14 +64,16 @@ public class FurnitureManager {
 	
 	public void sendAll(){
 		for(ObjectID objID : objecte){
-			send(objID);
+			if(!objID.getSQLAction().equals(SQLAction.REMOVE)){
+				send(objID);
+			}
 		}
 	}
 
 	@SuppressWarnings("unchecked")
 	public void remove(ObjectID id){
 		if(this.asPackets.isEmpty()){return;}
-		removeList.add(id);
+		id.setSQLAction(SQLAction.REMOVE);
 		List<ArmorStandPacket> aspClone = ((List<ArmorStandPacket>) ((ArrayList<ArmorStandPacket>) asPackets).clone());
 		Collections.copy(asPackets, aspClone);
 		for(ArmorStandPacket asp : aspClone){
@@ -83,10 +82,6 @@ public class FurnitureManager {
 				asp.delete();
 			}
 		}
-		if(getPreLoadetList().contains(id)) getPreLoadetList().remove(id);
-		updateList.remove(id);
-		objecte.remove(id);
-		
 	}
 	
 	public void send(ObjectID id){
@@ -155,6 +150,7 @@ public class FurnitureManager {
 	public List<ArmorStandPacket> getArmorStandPacketByObjectID(ObjectID id) {
 		List<ArmorStandPacket> aspList = new ArrayList<ArmorStandPacket>();
 		if(this.asPackets.isEmpty()){return null;}
+		if(id.getSQLAction().equals(SQLAction.REMOVE)){return aspList;}
 		for(ArmorStandPacket asp : this.asPackets){
 			if(asp.getObjectId().equals(id)) aspList.add(asp);
 		}
@@ -177,6 +173,7 @@ public class FurnitureManager {
 				break;
 			}
 		}
+		if(obj.getSQLAction().equals(SQLAction.REMOVE)){return null;}
 		return obj;
 	}
 
@@ -199,17 +196,6 @@ public class FurnitureManager {
 	    return clone;
 	}
 	
-	public void addProject(Project project){
-		if(isExist(project.getName())){
-			//pl.getLogger().info("Project: " + project.getName() + " from PL " + project.getPlugin() + " found");
-			return;
-		}
-		if(!projects.contains(project)){
-			//pl.getLogger().info("new Project: " + project.getName() + " from PL " + project.getPlugin() + " registred");
-			projects.add(project);
-		}
-	}
-	
 	private boolean isExist(String s){
 		for(Project project : projects){
 			if(project.getName().equals(s)){
@@ -217,10 +203,6 @@ public class FurnitureManager {
 			}
 		}
 		return false;
-	}
-	
-	public List<Project> getProjects(){
-		return this.projects;
 	}
 	
 	public Project getProject(String name){
@@ -232,7 +214,5 @@ public class FurnitureManager {
 		return null;
 	}
 	
-	public int getLastID() {
-		return i;
-	}
+	
 }

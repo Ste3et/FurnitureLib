@@ -1,45 +1,38 @@
 package de.Ste3et_C0st.FurnitureLib.main;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.plugin.Plugin;
 
 import ru.BeYkeRYkt.LightAPI.LightAPI;
+import ru.BeYkeRYkt.LightAPI.LightRegistry;
 
 public class LightManager {
 
-	List<Location> locationlist = new ArrayList<Location>();
 	Boolean enable=false;
+	LightRegistry registry;
+	Plugin plugin;
 	
-	public LightManager(){
+	public LightManager(Plugin plugin){
 		if(Bukkit.getPluginManager().isPluginEnabled("LightAPI")){
 			enable=true;
+			this.plugin = plugin;
+			registry = LightAPI.getRegistry(plugin);
+			if(registry.isAutoUpdate()) registry.startAutoUpdate(20);
 		}
 	}
 	
 	public void addLight(Location location, Integer size){
 		if(!enable){return;}
-		locationlist.add(location);
-		LightAPI.createLight(location, size);
+		registry.createLight(location, size);
+		registry.collectChunks(location);
+		registry.sendChunkChanges();
 	}
 	
 	public void removeLight(Location location){
 		if(!enable){return;}
-		if(!locationlist.contains(location)){return;}
-		LightAPI.deleteLight(location);
-		LightAPI.updateChunks(location);
-		locationlist.remove(location);
-	}
-	
-	public void clearAll(){
-		if(!enable){return;}
-		if(locationlist.isEmpty()){return;}
-		for(Location l : locationlist){
-			LightAPI.deleteLight(l);
-			LightAPI.updateChunks(l);
-		}
-		locationlist.clear();
+		registry.deleteLight(location);
+		registry.collectChunks(location);
+		registry.sendChunkChanges();
 	}
 }

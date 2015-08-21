@@ -25,6 +25,7 @@ import de.Ste3et_C0st.FurnitureLib.Database.Serialize;
 import de.Ste3et_C0st.FurnitureLib.Events.ChunkOnLoad;
 import de.Ste3et_C0st.FurnitureLib.Events.FurnitureEvents;
 import de.Ste3et_C0st.FurnitureLib.LimitationManager.LimitationManager;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.ColorUtil;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.CraftingInv;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.LanguageManager;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.LocationUtil;
@@ -47,11 +48,26 @@ public class FurnitureLib extends JavaPlugin{
 	private LanguageManager lmanager;
 	private SQLManager sqlManager;
 	private LimitationManager limitManager;
+	private ColorUtil colorManager;
+//	private NewSerialize serializeNew;
 	
 	public LanguageManager getLangManager(){return this.lmanager;}
 	public LightManager getLightManager(){return this.lightMgr;}
 	public ProtectionManager getPermManager(){return this.Pmanager;}
 	public LimitationManager getLimitManager(){return this.limitManager;}
+	public ColorUtil getColorManager(){return this.colorManager;}
+	public CraftingInv getCraftingInv(){return this.craftingInv;}
+	public Serialize getSerialize(){ return this.serialize;}
+	public String getBukkitVersion() {return Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3];}
+	public static FurnitureLib getInstance(){return instance;}
+	public LocationUtil getLocationUtil(){return this.lUtil;}
+	public FurnitureManager getFurnitureManager(){return this.manager;}
+	public Connection getConnection(){return this.con;}
+	public ObjectID getObjectID(String c, String plugin, Location loc){return new ObjectID(c, plugin, loc);}
+	public boolean canBuild(Player p, ObjectID id, EventType type){ return Pmanager.canBuild(p, id, type);}
+	public Boolean useGamemode() {return useGamemode;}
+//	public NewSerialize getNewSerialize(){return serializeNew;}
+	
 	@SuppressWarnings("deprecation")
 	@Override
 	public void onEnable(){
@@ -60,8 +76,10 @@ public class FurnitureLib extends JavaPlugin{
 		saveConfig();
 		this.lUtil = new LocationUtil();
 		this.manager = new FurnitureManager();
+		this.colorManager = new ColorUtil();
 		this.serialize = new Serialize();
-		this.lightMgr = new LightManager();
+//		this.serializeNew = new NewSerialize();
+		this.lightMgr = new LightManager(this);
 		this.lmanager = new LanguageManager(instance, getConfig().getString("config.Language"));
 		this.useGamemode = getConfig().getBoolean("config.NormalGamemodeRemove");
 		try{
@@ -195,21 +213,11 @@ public class FurnitureLib extends JavaPlugin{
 	
 	public void spawn(Project pro, Location l){
 		Class<?> c = pro.getclass();
+		ObjectID obj = new ObjectID(pro.getName(), pro.getPlugin().getName(), l);
 		if(c==null ){return;}
 		Constructor<?> ctor = c.getConstructors()[0];
 			try {
-			ctor.newInstance(l, FurnitureLib.getInstance(), pro.getName(), pro.getPlugin(), null, null);
+			ctor.newInstance(getInstance(), pro.getPlugin(), obj);
 		} catch (Exception e) {}
 	}
-	
-	public CraftingInv getCraftingInv(){return this.craftingInv;}
-	public Serialize getSerialize(){ return this.serialize;}
-	public String getBukkitVersion() {return Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3];}
-	public static FurnitureLib getInstance(){return instance;}
-	public LocationUtil getLocationUtil(){return this.lUtil;}
-	public FurnitureManager getFurnitureManager(){return this.manager;}
-	public Connection getConnection(){return this.con;}
-	public ObjectID getObjectID(String c, String plugin, Location loc){return new ObjectID(c, plugin, loc);}
-	public boolean canBuild(Player p, ObjectID id, EventType type){ return Pmanager.canBuild(p, id, type);}
-	public Boolean useGamemode() {return useGamemode;}
 }

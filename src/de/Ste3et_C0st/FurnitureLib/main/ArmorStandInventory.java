@@ -3,31 +3,32 @@ package de.Ste3et_C0st.FurnitureLib.main;
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Random;
 
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
-public class ArmorStandInventory implements Serializable{
-
-	private static final long serialVersionUID = 818950767854793517L;
-	private transient ItemStack[] items = new ItemStack[5];
-	private String[] itemString = new String[5];
+public class ArmorStandInventory{
 	
+	private ItemStack[] items = new ItemStack[5];
+	private String[] itemString = new String[5];
+	private int entityId = 0;
 	public ItemStack getItemInHand() {return this.items[0];}
 	public ItemStack getBoots() {return this.items[1];}
 	public ItemStack getLeggings() {return this.items[2];}
 	public ItemStack getChestPlate() {return this.items[3];}
 	public ItemStack getHelmet() {return this.items[4];}
+	public Random id = new Random(1*10000);
 	
 	public String[] getStringInv(){return this.itemString;}
 	
-	public ArmorStandInventory(){
+	public ArmorStandInventory(int entityId){
 		for(int i = 0; i<itemString.length;i++){
 			itemString[i] = FurnitureLib.getInstance().getSerialize().toBase64(new ItemStack(Material.AIR));
 		}
+		this.entityId = entityId;
 	}
 	
 	public void setItemInHand(ItemStack item) {this.setSlot(0, item);}
@@ -67,13 +68,12 @@ public class ArmorStandInventory implements Serializable{
 		this.itemString[slot] = FurnitureLib.getInstance().getSerialize().toBase64(item);
 	}
 	
-	public List<PacketContainer> createPackets(int entityId) {
+	public List<PacketContainer> createPackets() {
 		List<PacketContainer> packetList = new ArrayList<PacketContainer>();
 		for (int i = 0; i < 5; i++) {
 			ItemStack stack = this.getSlot(i);
-
 			PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_EQUIPMENT);
-			packet.getIntegers().write(0, entityId);
+			packet.getIntegers().write(0, this.entityId);
 			packet.getIntegers().write(1, i);
 			packet.getItemModifier().write(0, stack);
 
@@ -93,7 +93,7 @@ public class ArmorStandInventory implements Serializable{
 	
 	@Override
 	public ArmorStandInventory clone() {
-		ArmorStandInventory inv = new ArmorStandInventory();
+		ArmorStandInventory inv = new ArmorStandInventory(this.entityId);
 		for (int i = 0; i < 5; i++) {
 			inv.setSlot(i, this.getSlot(i));
 		}

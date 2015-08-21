@@ -6,16 +6,13 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import javax.persistence.Id;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
-import com.avaje.ebean.validation.NotNull;
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
@@ -26,19 +23,19 @@ import de.Ste3et_C0st.FurnitureLib.Utilitis.EntityID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.BodyPart;
 
 public class ArmorStandPacket{
-	@Id private Integer ID;
+	private Integer ID;
 	private Integer ArmorID;
-	@NotNull private transient ObjectID objID;
-	@NotNull private transient Location location;
-	private transient HashMap<BodyPart, EulerAngle> angle = new HashMap<Type.BodyPart, EulerAngle>();
+	private ObjectID objID;
+	private Location location;
+	private HashMap<BodyPart, EulerAngle> angle = new HashMap<Type.BodyPart, EulerAngle>();
 	private boolean mini, invisible, arms, basePlate, gravity, customname, fire;
-	private transient WrappedDataWatcher watcher;
-	private transient PacketContainer container;
-	private transient ArmorStandInventory inventory;
+	private WrappedDataWatcher watcher;
+	private PacketContainer container;
+	private ArmorStandInventory inventory;
 	private String name = "";
-	private transient ProtocolManager manager;
-	private transient List<Player> loadedPlayers = new ArrayList<Player>();
-	private transient Entity pessanger;
+	private ProtocolManager manager;
+	private List<Player> loadedPlayers = new ArrayList<Player>();
+	private Entity pessanger;
 
 	public Location getLocation(){return this.location;}
 	public EulerAngle getAngle(BodyPart part){if(!angle.containsKey(part)){return part.getDefAngle();}return angle.get(part);}
@@ -46,8 +43,7 @@ public class ArmorStandPacket{
 	public Entity getPessanger(){return this.pessanger;}
 	public ObjectID getObjectId(){return this.objID;}
 	public ArmorStandInventory getInventory() {return this.inventory;}
-	public void setNameVasibility(boolean b){this.watcher.setObject(3, (byte)(b?1:0));this.customname=b;
-	}
+	public void setNameVasibility(boolean b){this.watcher.setObject(3, (byte)(b?1:0));this.customname=b;}
 	public int getEntityId() {return this.ID;}
 	public int getArmorID(){return this.ArmorID;}
 	public boolean isFire(){return this.fire;}
@@ -69,6 +65,7 @@ public class ArmorStandPacket{
 			this.ArmorID = i;
 			this.manager = ProtocolLibrary.getProtocolManager();
 			this.objID = id;
+			this.inventory = new ArmorStandInventory(getEntityId());
 			create();
 		}catch(Exception e){
 			e.printStackTrace();
@@ -79,7 +76,6 @@ public class ArmorStandPacket{
 
 	public void setInventory(ArmorStandInventory inv) {
 		this.inventory = inv;
-		if (this.inventory == null) this.inventory = new ArmorStandInventory();
 	}
 
 	public void setPessanger(Entity e){
@@ -138,7 +134,6 @@ public class ArmorStandPacket{
 		.write(0, (byte) getCompressedAngle(this.location.getYaw()))
 		.write(1, (byte) getCompressedAngle(this.location.getPitch()));
 		this.container = container;
-		this.inventory = new ArmorStandInventory();
 	}
 	
 	public void delete(){
@@ -244,27 +239,20 @@ public class ArmorStandPacket{
 	}
 	
 	public void sendInventoryPacket(final Player player) {
-		List<PacketContainer> packets = this.inventory.createPackets(this.getEntityId());
+		List<PacketContainer> packets = this.inventory.createPackets();
 		if (packets.isEmpty()) return;
-		
 		try {
 			for (final PacketContainer packet : packets){
-				if(packet.getItemModifier().read(0)!=null){
+					if(player==null||packet==null||manager==null){return;}
 					this.manager.sendServerPacket(player, packet);
-					ItemStack is = packet.getItemModifier().read(0);
-					if(is.hasItemMeta()){
-						Bukkit.getScheduler().runTaskLater(FurnitureLib.getInstance(), new Runnable() {
-							@Override
-							public void run() {
-								try {
-									manager.sendServerPacket(player, packet);
-								} catch (InvocationTargetException e) {
-									e.printStackTrace();
-								}
-							}
-						}, 2);
-					}
-				}
+					Bukkit.getScheduler().runTaskLater(FurnitureLib.getInstance(), new Runnable() {
+					@Override
+						public void run() {
+							try {
+								manager.sendServerPacket(player, packet);
+							} catch (Exception e) {}
+						}
+					}, 2);
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -314,9 +302,7 @@ public class ArmorStandPacket{
 		destroy.getIntegerArrays().write(0, new int[] {this.ID});
 		try {
 			unleash();
-			 for(Player p : this.loadedPlayers){
-					this.manager.sendServerPacket(p, destroy);
-			 }
+			 for(Player p : this.loadedPlayers){this.manager.sendServerPacket(p, destroy);}
 			 this.loadedPlayers.clear();
 		} catch (InvocationTargetException e) {e.printStackTrace();}
 	}
@@ -343,18 +329,11 @@ public class ArmorStandPacket{
 		.write(2, -1);
 		try {
 			for(Player p : loadedPlayers){
-				if(p.isOnline()){
-					manager.sendServerPacket(p, packet);
-				}
+				if(p.isOnline()){manager.sendServerPacket(p, packet);}
 			}
 			this.pessanger = null;
 		} catch (Exception e1) {
 			e1.printStackTrace();
 		}
-	}
-	
-	@Override
-	public String toString(){
-		return this.ArmorID+"";
 	}
 }
