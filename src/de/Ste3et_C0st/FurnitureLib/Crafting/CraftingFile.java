@@ -1,3 +1,4 @@
+
 package de.Ste3et_C0st.FurnitureLib.Crafting;
 
 import java.io.InputStream;
@@ -13,8 +14,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.material.MaterialData;
-
 import de.Ste3et_C0st.FurnitureLib.Utilitis.config;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 
@@ -26,7 +25,6 @@ public class CraftingFile {
 	private boolean isDisable;
 	public ShapedRecipe getRecipe(){return this.recipe;}
 	public boolean isEnable(){return this.isDisable;}
-	
 	@SuppressWarnings("deprecation")
 	public CraftingFile(String name,InputStream file){
 		this.c = new config(FurnitureLib.getInstance());
@@ -41,15 +39,13 @@ public class CraftingFile {
 	private void loadCrafting(String s){
 		try{
 				this.isDisable = file.getBoolean(name+".crafting.disable");
-				if(file.isSet(name+".glow")){
-					//glow = file.getBoolean(name+".glow");
-				}
 				this.recipe = new ShapedRecipe(returnResult(s)).shape(returnFragment(s)[0], returnFragment(s)[1], returnFragment(s)[2]);
 				for(Character c : returnMaterial(s).keySet()){
 					if(!returnMaterial(s).get(c).equals(Material.AIR)){
 						this.recipe.setIngredient(c.charValue(), returnMaterial(s).get(c));
 					}
 				}
+				
 				if(!isDisable){
 					Bukkit.getServer().addRecipe(this.recipe);
 				}
@@ -72,20 +68,22 @@ public class CraftingFile {
 		ItemMeta im = is.getItemMeta();
 		im.setDisplayName(ChatColor.translateAlternateColorCodes('&', file.getString(path+".name")));
 		
-		if(file.isSet(path+".lore")&&file.isList(path+".lore")){
-			List<String> lore = file.getStringList(path+".lore");
-			int i = 0;
-			for(String str : lore){
-				lore.set(i, ChatColor.translateAlternateColorCodes('&', str));
-				i++;
+		if(file.isSet(path+".lore")){
+			if(file.isList(path+".lore")){
+				List<String> lore = file.getStringList(path+".lore");
+				int i = 0;
+				for(String str : lore){
+					String a = ChatColor.translateAlternateColorCodes('&', str);
+					lore.set(i, a);
+					i++;
+				}
+				im.setLore(lore);
 			}
-			im.setLore(lore);
 		}
 		
 		is.setItemMeta(im);
 		is.setDurability(durability);
 		is.setAmount(1);
-		//if(glow){is.addEnchantment(Enchantment.DAMAGE_UNDEAD, 1);}
 		return is;
 	}
 	
@@ -97,23 +95,13 @@ public class CraftingFile {
 	}
 	
 	@SuppressWarnings("deprecation")
-	private HashMap<Character,MaterialData> returnMaterial(String s){
-		String path = name;
+	private HashMap<Character,Material> returnMaterial(String s){
 		List<String> stringList = returnCharacters(s);
-		HashMap<Character, MaterialData> materialHash = new HashMap<Character, MaterialData>();
+		HashMap<Character, Material> materialHash = new HashMap<Character, Material>();
 		for(String str : stringList){
-			String string = this.file.getString(path+".crafting.index." + str);
-			byte subID = 0;
 			Character chars = str.charAt(0);
-			Integer MaterialID = 1;
-			if(!string.contains(":")){
-				MaterialID = Integer.parseInt(string);
-			}else{
-				String[] a = string.split(":");
-				MaterialID = Integer.parseInt(a[0]);
-				subID = (byte) Integer.parseInt(a[1]);
-			}
-			materialHash.put(chars, new MaterialData(Material.getMaterial(MaterialID), subID));
+			Material mat = Material.getMaterial(this.file.getInt(name+".crafting.index." + str));
+			materialHash.put(chars, mat);
 		}
 		return materialHash;
 	}

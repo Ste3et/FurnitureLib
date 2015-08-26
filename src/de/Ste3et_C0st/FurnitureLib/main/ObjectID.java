@@ -30,6 +30,7 @@ public class ObjectID{
 	private PublicMode publicMode = PublicMode.PRIVATE;
 	private EventType memberType = EventType.INTERACT;
 	private SQLAction sqlAction = SQLAction.SAVE;
+	private List<ArmorStandPacket> packetList = new ArrayList<ArmorStandPacket>();
 	
 	private boolean finish=false, fixed=false;
 	public String getID(){return this.ObjectID;}
@@ -55,6 +56,10 @@ public class ObjectID{
 	public boolean isMember(UUID uuid) {return uuidList.contains(uuid);}
 	public void addMember(UUID uuid){uuidList.add(uuid);}
 	public void remMember(UUID uuid){uuidList.remove(uuid);}
+	public List<ArmorStandPacket> getPacketList() {return packetList;}
+	public void setPacketList(List<ArmorStandPacket> packetList) {this.packetList = packetList;}
+	public boolean isInRange(Player player) {return getStartLocation().getWorld() == player.getLocation().getWorld() && (getStartLocation().distance(player.getLocation()) <= 48D);}
+	public void addArmorStand(ArmorStandPacket packet) {packetList.add(packet);}
 	
 	public void setStartLocation(Location loc) {
 		this.loc = loc;

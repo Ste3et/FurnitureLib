@@ -50,10 +50,8 @@ public class SQLManager {
 	public void loadALL(){
 		if(this.sqlite!=null){
 			this.sqlite.loadAll(SQLAction.NOTHING);
-			this.sqlite.loadAllObjIDs();
 		}else if(this.mysql!=null){
 			this.mysql.loadAll(SQLAction.NOTHING);
-			this.mysql.loadAllObjIDs();
 		}
 		FurnitureLib.getInstance().getFurnitureManager().sendAll();
 	}

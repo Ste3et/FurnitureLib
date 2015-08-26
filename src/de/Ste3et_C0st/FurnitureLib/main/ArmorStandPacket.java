@@ -13,6 +13,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.util.EulerAngle;
+
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
@@ -28,7 +29,7 @@ public class ArmorStandPacket{
 	private ObjectID objID;
 	private Location location;
 	private HashMap<BodyPart, EulerAngle> angle = new HashMap<Type.BodyPart, EulerAngle>();
-	private boolean mini, invisible, arms, basePlate, gravity, customname, fire;
+	private boolean mini, invisible, arms, basePlate, gravity, customname, fire, marker;
 	private WrappedDataWatcher watcher;
 	private PacketContainer container;
 	private ArmorStandInventory inventory;
@@ -53,7 +54,8 @@ public class ArmorStandPacket{
 	public boolean hasArms(){return this.arms;}
 	public boolean hasBasePlate(){return this.basePlate;}
 	public boolean hasGravity(){return this.gravity;}
-	public boolean isInRange(Player player) {return getLocation().getWorld() == player.getLocation().getWorld() && (getLocation().distance(player.getLocation()) <= 48D);}
+	public boolean hasMarker(){return this.marker;}
+	public void setArmorID(int i){this.ArmorID = i;}
 	private int getFixedPoint(Double d){return (int) (d*32D);}
 	private int getCompressedAngle(float value) {return (int)(value * 256.0F / 360.0F);}
 
@@ -201,6 +203,18 @@ public class ArmorStandPacket{
 		}
 		this.watcher.setObject(0, Byte.valueOf(b0));
 		this.invisible = b;
+	}
+	
+	public void setMarker(boolean b){
+		byte b0 = this.watcher.getByte(0);
+
+		if (b)
+			b0 = (byte)(b0 | 0x16);
+		else {
+			b0 = (byte)(b0 & 0xFFFFFFFE);
+		}
+		this.watcher.setObject(0, Byte.valueOf(b0));
+		this.marker = b;
 	}
 
 	public void setFire(boolean b){

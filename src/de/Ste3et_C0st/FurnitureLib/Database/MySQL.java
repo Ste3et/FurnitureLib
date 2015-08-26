@@ -22,33 +22,10 @@ public class MySQL extends Database{
         this.DBuser = DBUser;
         this.port = Port;
     }
-
-    public String ArmorStandTable = "CREATE TABLE IF NOT EXISTS FurnitureLib_ArmorStand (" +
-    		"`ID` TEXT NOT NULL," +
-            "`ObjID` TEXT NOT NULL," +
-    		"`Metadata` TEXT NOT NULL," +
-    		"`Boolean` TEXT NOT NULL," + 
-    		"`Location` TEXT NOT NULL," + 
-    		"`ObjIDLocation` TEXT NOT NULL," + 
-    		"`InHand` TEXT NOT NULL," + 
-    		"`boots` TEXT NOT NULL," + 
-    		"`chestplate` TEXT NOT NULL," + 
-    		"`leggings` TEXT NOT NULL," + 
-    		"`helm` TEXT NOT NULL," + 
-    		"`EA_Head` TEXT NOT NULL," + 
-    		"`EA_Body` TEXT NOT NULL," + 
-    		"`EA_Left_Arm` TEXT NOT NULL," + 
-    		"`EA_Right_Arm` TEXT NOT NULL," + 
-    		"`EA_Left_Leg` TEXT NOT NULL," + 
-    		"`EA_Right_Leg` TEXT NOT NULL" + 
-    		");";
     
-    public String ObjectIDString = "CREATE TABLE IF NOT EXISTS FurnitureLib_ObjectID (" +
+    public String Objects = "CREATE TABLE IF NOT EXISTS FurnitureLib_Objects (" +
     		"`ObjID` TEXT NOT NULL," +
-    		"`PlayerUUID` TEXT NOT NULL," +
-    		"`PublicMode` TEXT NOT NULL," +
-    		"`Members` TEXT NOT NULL," +
-    		"`EVMode` TEXT NOT NULL" +
+    		"`Data` TEXT NOT NULL" +
     		");";
 
     public Connection getSQLConnection() {
@@ -71,8 +48,7 @@ public class MySQL extends Database{
         connection = getSQLConnection();     
         try {
             Statement s = connection.createStatement();
-            s.executeUpdate(ArmorStandTable);
-            s.executeUpdate(ObjectIDString);
+            s.executeUpdate(Objects);
             s.close();
         } catch (SQLException e) {
             e.printStackTrace();

@@ -20,6 +20,8 @@ import org.bukkit.util.Vector;
 
 import de.Ste3et_C0st.FurnitureLib.Command.command;
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
+import de.Ste3et_C0st.FurnitureLib.Database.DeSerializer;
+import de.Ste3et_C0st.FurnitureLib.Database.Serializer;
 import de.Ste3et_C0st.FurnitureLib.Database.SQLManager;
 import de.Ste3et_C0st.FurnitureLib.Database.Serialize;
 import de.Ste3et_C0st.FurnitureLib.Events.ChunkOnLoad;
@@ -49,7 +51,8 @@ public class FurnitureLib extends JavaPlugin{
 	private SQLManager sqlManager;
 	private LimitationManager limitManager;
 	private ColorUtil colorManager;
-//	private NewSerialize serializeNew;
+	private Serializer serializeNew;
+	private DeSerializer deSerializerNew;
 	
 	public LanguageManager getLangManager(){return this.lmanager;}
 	public LightManager getLightManager(){return this.lightMgr;}
@@ -66,7 +69,8 @@ public class FurnitureLib extends JavaPlugin{
 	public ObjectID getObjectID(String c, String plugin, Location loc){return new ObjectID(c, plugin, loc);}
 	public boolean canBuild(Player p, ObjectID id, EventType type){ return Pmanager.canBuild(p, id, type);}
 	public Boolean useGamemode() {return useGamemode;}
-//	public NewSerialize getNewSerialize(){return serializeNew;}
+	public Serializer getSerializer(){return serializeNew;}
+	public DeSerializer getDeSerializer(){return deSerializerNew;}
 	
 	@SuppressWarnings("deprecation")
 	@Override
@@ -78,7 +82,8 @@ public class FurnitureLib extends JavaPlugin{
 		this.manager = new FurnitureManager();
 		this.colorManager = new ColorUtil();
 		this.serialize = new Serialize();
-//		this.serializeNew = new NewSerialize();
+		this.serializeNew = new Serializer();
+		this.deSerializerNew = new DeSerializer();
 		this.lightMgr = new LightManager(this);
 		this.lmanager = new LanguageManager(instance, getConfig().getString("config.Language"));
 		this.useGamemode = getConfig().getBoolean("config.NormalGamemodeRemove");
@@ -126,11 +131,14 @@ public class FurnitureLib extends JavaPlugin{
 		sqlManager.save();
 		sqlManager.stop();
 		getLogger().info("ArmorStandPackets saved");
-		if(!getFurnitureManager().getAsList().isEmpty()){
-			for(ArmorStandPacket as : getFurnitureManager().getAsList()){
-				as.destroy();
+		if(!getFurnitureManager().getObjectList().isEmpty()){
+			for(ObjectID obj : getFurnitureManager().getObjectList()){
+				for(ArmorStandPacket as : obj.getPacketList()){
+					as.destroy();
+				}
 			}
 		}
+		
 		getLogger().info("==========================================");
 	}
 	

@@ -109,7 +109,6 @@ public class LocationUtil {
     	case UP:v1.add(new Vector(0, x, 0));break;
 		default: v1.add(new Vector(x, 0, 0)); break;
     	}
-    	
     	return v1;
     }
     

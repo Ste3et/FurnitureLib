@@ -79,11 +79,15 @@ public class FurnitureEvents {
                         if (event.getPacketType() == PacketType.Play.Client.STEER_VEHICLE) {
                         	if(event.getPacket().getSpecificModifier(boolean.class).read(1)){
                         		Player p = event.getPlayer();
-                        		for(ArmorStandPacket packet : manager.getAsList()){
-                        			if(packet.getPessanger()!=null){
-                        				if(packet.getPessanger().equals(p)){
-                            				packet.unleash();
-                        				}
+                        		for(ObjectID obj : manager.getObjectList()){
+                        			if(obj.isInRange(p)){
+                                		for(ArmorStandPacket packet : obj.getPacketList()){
+                                			if(packet.getPessanger()!=null){
+                                				if(packet.getPessanger().equals(p)){
+                                    				packet.unleash();
+                                				}
+                                			}
+                                		}
                         			}
                         		}
                         	}

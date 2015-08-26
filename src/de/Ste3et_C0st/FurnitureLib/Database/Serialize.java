@@ -24,7 +24,7 @@ import de.Ste3et_C0st.FurnitureLib.main.Type.PublicMode;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 
 public class Serialize{
-  
+	
   public String toBase64(ItemStack is){
 	  try {
   		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
@@ -244,8 +244,10 @@ public class Serialize{
 	  if(s==null||s==""){return uuidList;}
 	  String[] a = s.split(",");
 	  for(String l : a){
-		  UUID uuid = UUID.fromString(l);
-		  if(!uuidList.contains(uuid)){uuidList.add(uuid);}
+		  try{
+			  UUID uuid = UUID.fromString(l);
+			  if(!uuidList.contains(uuid)){uuidList.add(uuid);}
+		  }catch(IllegalArgumentException e){}
 	  }
 	  return uuidList;
   }

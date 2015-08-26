@@ -607,8 +607,9 @@ public class command implements CommandExecutor, Listener{
 	
 	private Integer getWInt(String s){
 		Integer j = 0;
-		for(ArmorStandPacket aPacket : manager.getAsList()){
-			if(aPacket.getLocation().getWorld().getName().equalsIgnoreCase(s)){
+		if(manager.getObjectList().isEmpty()){return j;}
+		for(ObjectID obj : manager.getObjectList()){
+			if(obj.getStartLocation().getWorld().getName().equalsIgnoreCase(s)){
 				j++;
 			}
 		}
@@ -637,27 +638,29 @@ public class command implements CommandExecutor, Listener{
 	
 	private List<ObjectID> getFromDistance(Integer i, Location l){
 		List<ObjectID> objList = new ArrayList<ObjectID>();
-		for(ArmorStandPacket packet : manager.getAsList()){
-			if(packet.getLocation().getWorld().getName().equalsIgnoreCase(l.getWorld().getName())){
-				if(packet.getLocation().toVector().distance(l.toVector())<=i){
-					objList.add(packet.getObjectId());
-				}
+		if(manager.getObjectList().isEmpty()){return objList;}
+		for(ObjectID obj : manager.getObjectList()){
+			if(obj.getStartLocation().getWorld().getName().equalsIgnoreCase(l.getWorld().getName())){
+				objList.add(obj);
 			}
 		}
 		return objList;
 	}
 	
 	private ObjectID getFromSight(Location l){
+		if(manager.getObjectList().isEmpty()){return null;}
 		Integer i = 10;
 		BlockFace face = FurnitureLib.getInstance().getLocationUtil().yawToFace(l.getYaw());
 		for(int j = 0; j<=i;j++){
 			Location loc = FurnitureLib.getInstance().getLocationUtil().getRelativ(l, face,(double) j, 0D);
 			if(loc.getBlock()!=null&&loc.getBlock().getType()!=Material.AIR){return null;}
-			for(ArmorStandPacket packet : manager.getAsList()){
-				if(packet.getLocation().getWorld().getName().equalsIgnoreCase(loc.getWorld().getName())){
-					Double d = packet.getLocation().toVector().distanceSquared(loc.toVector());
-					if(d<=2.0){
-						return packet.getObjectId();
+			for(ObjectID obj : manager.getObjectList()){
+				for(ArmorStandPacket packet : obj.getPacketList()){
+					if(packet.getLocation().getWorld().getName().equalsIgnoreCase(loc.getWorld().getName())){
+						Double d = packet.getLocation().toVector().distanceSquared(loc.toVector());
+						if(d<=2.0){
+							return packet.getObjectId();
+						}
 					}
 				}
 			}

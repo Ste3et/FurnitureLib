@@ -1,7 +1,6 @@
 package de.Ste3et_C0st.FurnitureLib.main;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.bukkit.Bukkit;
@@ -15,12 +14,10 @@ import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 
 public class FurnitureManager {
 	private Integer i = 0;
-	private List<ArmorStandPacket> asPackets = new ArrayList<ArmorStandPacket>();
 	private List<ObjectID> objecte = new ArrayList<ObjectID>();
 	private List<Project> projects = new ArrayList<Project>();
 	
 	public void setLastID(Integer i){this.i = i;}
-	public List<ArmorStandPacket> getAsList(){return this.asPackets;}
 	public List<ObjectID> getObjectList(){return this.objecte;}
 	public void addProject(Project project){if(isExist(project.getName())){return;}if(!projects.contains(project)){projects.add(project);}}
 	public List<Project> getProjects(){return this.projects;}
@@ -38,23 +35,27 @@ public class FurnitureManager {
 	}
 	
 	public void updatePlayerView(Player player) {
-		if(this.asPackets.isEmpty()){return;}
-		for(ArmorStandPacket asp : asPackets){
-			if(asp.isInRange(player)){
-				asp.send(player);
+		if(this.objecte.isEmpty()){return;}
+		for(ObjectID obj : objecte){
+			if(obj.isInRange(player)){
+				for(ArmorStandPacket packet :obj.getPacketList()){
+					packet.send(player);
+				}
 			}else{
-				asp.destroy(player);
+				for(ArmorStandPacket packet :obj.getPacketList()){
+					packet.destroy(player);
+				}
 			}
 		}
 	}
 	
 	public void updateFurniture(ObjectID obj) {
-		if(this.asPackets.isEmpty()){return;}
+		if(this.objecte.isEmpty()){return;}
 		obj.setSQLAction(SQLAction.UPDATE);
-		for(ArmorStandPacket packet : asPackets){
+		for(ArmorStandPacket packet : obj.getPacketList()){
 			if(packet.getObjectId().equals(obj)){
 				for(Player player : Bukkit.getOnlinePlayers()){
-					if(packet.isInRange(player)){
+					if(obj.isInRange(player)){
 						packet.update(player);
 					}
 				}
@@ -72,11 +73,10 @@ public class FurnitureManager {
 
 	@SuppressWarnings("unchecked")
 	public void remove(ObjectID id){
-		if(this.asPackets.isEmpty()){return;}
+		if(this.objecte.isEmpty()){return;}
 		id.setSQLAction(SQLAction.REMOVE);
-		List<ArmorStandPacket> aspClone = ((List<ArmorStandPacket>) ((ArrayList<ArmorStandPacket>) asPackets).clone());
-		Collections.copy(asPackets, aspClone);
-		for(ArmorStandPacket asp : aspClone){
+		List<ArmorStandPacket> packetList = (List<ArmorStandPacket>) ((ArrayList<ArmorStandPacket>) id.getPacketList()).clone();
+		for(ArmorStandPacket asp : packetList){
 			if(asp.getObjectId().equals(id)){
 				asp.destroy();
 				asp.delete();
@@ -85,9 +85,9 @@ public class FurnitureManager {
 	}
 	
 	public void send(ObjectID id){
-		if(this.asPackets.isEmpty()){return;}
+		if(this.objecte.isEmpty()){return;}
 		if(id==null){System.out.println("OBJID not found");return;}
-		for(ArmorStandPacket packet : asPackets){
+		for(ArmorStandPacket packet : id.getPacketList()){
 			if(packet.getObjectId().equals(id)){
 				for(Player p : Bukkit.getOnlinePlayers()){
 					packet.send(p);
@@ -96,28 +96,21 @@ public class FurnitureManager {
 		}
 	}
 	
-	public void send(ArmorStandPacket asp){
-		if(this.asPackets.isEmpty()){return;}
-			for(Player p : Bukkit.getOnlinePlayers()){
-				asp.send(p);
-			}
-	}
-	
 	public boolean isArmorStand(Integer entityID){
-		if(this.asPackets.isEmpty()){return false;}
-		for(ArmorStandPacket asp : this.asPackets){
-			if(asp.getEntityId() == entityID) return true;
+		if(this.objecte.isEmpty()){return false;}
+		for(ObjectID obj : objecte){
+			for(ArmorStandPacket packet : obj.getPacketList()){
+				if(packet.getEntityId() == entityID) return true;
+			}
 		}
 		return false;
 	}
 	
 	public ArmorStandPacket createArmorStand(ObjectID id, Location loc){
+		if(!objecte.contains(id)){this.objecte.add(id);}
 		i++;
 		ArmorStandPacket packet = new ArmorStandPacket(loc, id, i);
-		if(!objecte.contains(id)){
-			this.objecte.add(id);
-		}
-		this.asPackets.add(packet);
+		id.addArmorStand(packet);
 		return packet;
 	}
 	
@@ -138,29 +131,32 @@ public class FurnitureManager {
 	}
 
 	public ArmorStandPacket getArmorStandPacketByID(Integer entityID) {
-		if(this.asPackets.isEmpty()){return null;}
+		if(this.objecte.isEmpty()){return null;}
 		if(entityID==null) return null;
-		for(ArmorStandPacket asp : this.asPackets){
-			if(asp==null) continue;
-			if(asp.getEntityId() == entityID) return asp;
+		for(ObjectID obj : objecte){
+			for(ArmorStandPacket packet : obj.getPacketList()){
+				if(packet.getEntityId() == entityID){
+					return packet;
+				}
+			}
 		}
 		return null;
 	}
 	
 	public List<ArmorStandPacket> getArmorStandPacketByObjectID(ObjectID id) {
-		List<ArmorStandPacket> aspList = new ArrayList<ArmorStandPacket>();
-		if(this.asPackets.isEmpty()){return null;}
-		if(id.getSQLAction().equals(SQLAction.REMOVE)){return aspList;}
-		for(ArmorStandPacket asp : this.asPackets){
-			if(asp.getObjectId().equals(id)) aspList.add(asp);
-		}
-		return aspList;
+		if(this.objecte.isEmpty()){return null;}
+		return id.getPacketList();
 	}
 
 	public ObjectID getObjectIDByID(Integer entityID) {
-		if(this.asPackets.isEmpty()){return null;}
-		for(ArmorStandPacket asp : this.asPackets){
-			if(asp.getEntityId() == entityID) return asp.getObjectId();
+		if(this.objecte.isEmpty()){return null;}
+		if(entityID==null) return null;
+		for(ObjectID obj : objecte){
+			for(ArmorStandPacket packet : obj.getPacketList()){
+				if(packet.getEntityId() == entityID){
+					return obj;
+				}
+			}
 		}
 		return null;
 	}
@@ -178,16 +174,21 @@ public class FurnitureManager {
 	}
 
 	public void removeFurniture(Player player) {
-		if(this.asPackets.isEmpty()){return;}
-		for(ArmorStandPacket packet : asPackets){
-			packet.destroy(player);
+		if(this.objecte.isEmpty()){return;}
+		for(ObjectID obj : objecte){
+			for(ArmorStandPacket packet : obj.getPacketList()){
+				packet.destroy(player);
+			}
 		}
-		
 	}
 
 	public void remove(ArmorStandPacket armorStandPacket) {
-		if(!this.asPackets.contains(armorStandPacket)) return;
-		this.asPackets.remove(armorStandPacket);
+		if(this.objecte.isEmpty()){return;}
+		for(ObjectID obj : objecte){
+			if(obj.getPacketList().contains(armorStandPacket)){
+				obj.getPacketList().remove(armorStandPacket);
+			}
+		}
 	}
 	
 	public static List<ArmorStandPacket> cloneList(List<ArmorStandPacket> list) {
