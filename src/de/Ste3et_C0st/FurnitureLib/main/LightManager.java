@@ -18,7 +18,7 @@ public class LightManager {
 			enable=true;
 			this.plugin = plugin;
 			registry = LightAPI.getRegistry(plugin);
-			if(registry.isAutoUpdate()) registry.startAutoUpdate(20);
+			if(registry.isAutoSend()) registry.startAutoSend(20);
 		}
 	}
 	

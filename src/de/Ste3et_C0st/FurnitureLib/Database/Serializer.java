@@ -1,25 +1,19 @@
 package de.Ste3et_C0st.FurnitureLib.Database;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
+import org.apache.commons.codec.binary.Base64;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
-import org.bukkit.util.io.BukkitObjectInputStream;
-import org.bukkit.util.io.BukkitObjectOutputStream;
-import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
-import com.comphenix.protocol.wrappers.nbt.NbtCompound;
-import com.comphenix.protocol.wrappers.nbt.NbtFactory;
-import com.comphenix.protocol.wrappers.nbt.NbtList;
-import com.comphenix.protocol.wrappers.nbt.io.NbtBinarySerializer;
-import com.comphenix.protocol.wrappers.nbt.io.NbtTextSerializer;
-
+import de.Ste3et_C0st.FurnitureLib.NBT.CraftItemStack;
+import de.Ste3et_C0st.FurnitureLib.NBT.NBTCompressedStreamTools;
+import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
+import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagList;
+import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagString;
 import de.Ste3et_C0st.FurnitureLib.main.ArmorStandInventory;
 import de.Ste3et_C0st.FurnitureLib.main.ArmorStandPacket;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
@@ -28,38 +22,52 @@ import de.Ste3et_C0st.FurnitureLib.main.Type.BodyPart;
 public class Serializer {
 
 	public String SerializeObjectID(ObjectID obj){
-		NbtCompound compound = NbtFactory.ofCompound("Object");
-		compound.put("EventType", obj.getEventType().toString());
-		compound.put("PublicMode", obj.getPublicMode().toString());
-		compound.put("Owner-UUID", getOwnerUUID(obj));
-		compound.put("Members",getMemberList(obj));
-		compound.put(getFromLocation(obj.getStartLocation()));
+		NBTTagCompound compound = new NBTTagCompound();
+		compound.setString("EventType", obj.getEventType().toString());
+		compound.setString("PublicMode", obj.getPublicMode().toString());
+		compound.setString("Owner-UUID", getOwnerUUID(obj));
+		compound.set("Members",getMemberList(obj));
+		compound.set("Location",getFromLocation(obj.getStartLocation()));
 		
-		NbtCompound armorStands = NbtFactory.ofCompound("ArmorStands");
+		NBTTagCompound armorStands = new NBTTagCompound();
 		for(ArmorStandPacket packet : obj.getPacketList()){
-			NbtCompound metadata = NbtFactory.ofCompound(packet.getArmorID()+"");
-			metadata.put("Name", packet.getName());
-			metadata.put(getFromLocation(packet.getLocation()));
-			metadata.put(getFromInventory(packet.getInventory()));
-			metadata.put(getEulerAngle(packet));
-			metadata.put("Arms", BtI(packet.hasArms()));
-			metadata.put("BasePlate", BtI(packet.hasBasePlate()));
-			metadata.put("Gravity", BtI(packet.hasGravity()));
-			metadata.put("Marker", BtI(packet.hasMarker()));
-			metadata.put("Fire", BtI(packet.isFire()));
-			metadata.put("Invisible", BtI(packet.isInvisible()));
-			metadata.put("Small", BtI(packet.isMini()));
-			metadata.put("NameVisible", BtI(packet.isNameVisible()));
-			armorStands.put(metadata);
+			NBTTagCompound metadata = new NBTTagCompound();
+			metadata.setString("Name", packet.getName());
+			metadata.set("Location",getFromLocation(packet.getLocation()));
+			metadata.set("Inventory",getFromInventory(packet.getInventory()));
+			metadata.set("EulerAngle",getEulerAngle(packet));
+			metadata.setInt("Arms", BtI(packet.hasArms()));
+			metadata.setInt("BasePlate", BtI(packet.hasBasePlate()));
+			metadata.setInt("Fire", BtI(packet.isFire()));
+			metadata.setInt("Invisible", BtI(packet.isInvisible()));
+			metadata.setInt("Small", BtI(packet.isMini()));
+			metadata.setInt("NameVisible", BtI(packet.isNameVisible()));
+			armorStands.set(packet.getArmorID()+"", metadata);
 		}
-		compound.put(armorStands); 
-		String string = NbtTextSerializer.DEFAULT.serialize(compound);
-		return string;
+		compound.set("ArmorStands", armorStands);
+		return Base64.encodeBase64String(armorStandtoBytes(compound));
+	}
+	
+	private byte[] armorStandtoBytes(NBTTagCompound compound) {
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		try {
+			NBTCompressedStreamTools.write(compound, out);
+			out.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new byte[0];
+		}
+		return out.toByteArray();
 	}
 	
 	private String getOwnerUUID(ObjectID obj){
 		String s = "NULL";
-		if(obj.getUUID()!=null) s = obj.getUUID().toString();
+		if(obj.getUUID()!=null){
+			try{
+				s = obj.getUUID().toString();
+			}catch(Exception e){}
+			
+		}
 		return s;
 	}
 	
@@ -68,72 +76,47 @@ public class Serializer {
 		return 0;
 	}
 	
-	public NbtList<String> getMemberList(ObjectID obj){
-		List<String> memberList = new ArrayList<String>();
-		for(UUID uuid : obj.getMemberList()){memberList.add(uuid.toString());}
-		NbtList<String> members = NbtFactory.ofList("Members", memberList);
-		return members;
+	private NBTTagList getMemberList(ObjectID obj){
+		NBTTagList memberList = new NBTTagList();
+		for(UUID uuid : obj.getMemberList()){NBTTagString string = new NBTTagString(uuid.toString());memberList.add(string);}
+		return memberList;
 	}
 	 
-	public NbtCompound getEulerAngle(ArmorStandPacket packet){
-		NbtCompound eulerAngle = NbtFactory.ofCompound("EulerAngle");
+	private NBTTagCompound getEulerAngle(ArmorStandPacket packet){
+		NBTTagCompound eulerAngle = new NBTTagCompound();
 		for(BodyPart part : BodyPart.getList()){
 			EulerAngle angle = packet.getAngle(part);
-			NbtCompound partAngle = NbtFactory.ofCompound(part.getName());
-			partAngle.put("X", angle.getX());
-			partAngle.put("Y", angle.getY());
-			partAngle.put("Z", angle.getZ());
-			eulerAngle.put(partAngle);
+			NBTTagCompound partAngle = new NBTTagCompound();
+			partAngle.setDouble("X", angle.getX());
+			partAngle.setDouble("Y", angle.getY());
+			partAngle.setDouble("Z", angle.getZ());
+			eulerAngle.set(part.toString(), partAngle);
 		}
 		return eulerAngle;
 	}
 	
-	public NbtCompound getFromLocation(Location loc){
-		NbtCompound location = NbtFactory.ofCompound("Location");
-		location.put("X", loc.getX());
-		location.put("Y", loc.getY());
-		location.put("Z", loc.getZ());
-		location.put("Yaw", loc.getYaw());
-		location.put("Pitch", loc.getPitch());
-		location.put("World", loc.getWorld().getName());
+	private NBTTagCompound getFromLocation(Location loc){
+		NBTTagCompound location = new NBTTagCompound();
+		location.setDouble("X", loc.getX());
+		location.setDouble("Y", loc.getY());
+		location.setDouble("Z", loc.getZ());
+		location.setFloat("Yaw", loc.getYaw());
+		location.setFloat("Pitch", loc.getPitch());
+		location.setString("World", loc.getWorld().getName());
 		return location;
 	}
 	
-	public NbtCompound getFromInventory(ArmorStandInventory inv){
-		NbtCompound inventory = NbtFactory.ofCompound("Inventory");
+	private NBTTagCompound getFromInventory(ArmorStandInventory inv){
+		NBTTagCompound inventory = new NBTTagCompound();
 		for(int i = 0; i<5; i++){
 			ItemStack is = inv.getSlot(i);
-			if(is==null||is.getType().equals(Material.AIR)){inventory.put(i+"", "NONE");}
-			inventory.put(i+"", toBase64(is));
-		}
-		return inventory;
-	}
-	
-	  public String toBase64(ItemStack is){
-		  try {
-	  		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-			BukkitObjectOutputStream dataOutput = new BukkitObjectOutputStream(outputStream);
-			if(is==null) is=new ItemStack(Material.AIR);
-			dataOutput.writeObject(is);
-			dataOutput.close();
-	        return Base64Coder.encodeLines(outputStream.toByteArray());
+			if(is==null||is.getType().equals(Material.AIR)){inventory.setString(i+"", "NONE");continue;}
+			try {
+				inventory.set(i+"", new CraftItemStack().getNBTTag(is));
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
-			return null;
-	  }
-
-	  public ItemStack fromBase64(String s){
-			try {
-	            ByteArrayInputStream inputStream = new ByteArrayInputStream(Base64Coder.decodeLines(s));
-	            BukkitObjectInputStream dataInput = new BukkitObjectInputStream(inputStream);
-	            ItemStack is = (ItemStack) dataInput.readObject();
-	            dataInput.close();
-	            return is;
-	        } catch (Exception e) {
-	            e.printStackTrace();
-	        }
-			return null;
 		}
-	
+		return inventory;
+	}
 }

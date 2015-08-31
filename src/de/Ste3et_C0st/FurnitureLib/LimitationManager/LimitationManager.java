@@ -104,11 +104,11 @@ public class LimitationManager {
 			if(maxChunk!=-1){return false;}
 		}
 		
-		if(player>=maxPlayer){
-			if(maxPlayer!=-1){
-				if(player<perAmount){return true;}
-				return false;
-			}
+		if(player>=maxPlayer){if(maxPlayer!=-1){if(player<perAmount){return true;}return false;}
+		
+		if(player>=perAmount){
+			if(perAmount!=-1){return false;}
+		}
 		}
 		return true;
 	}

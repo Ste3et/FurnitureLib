@@ -21,6 +21,7 @@ import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 
 public class ObjectID{
+	private FurnitureManager manager = FurnitureLib.getInstance().getFurnitureManager();
 	private String ObjectID, serial, Project, plugin;
 	private Location loc;
 	private Chunk c;
@@ -31,8 +32,7 @@ public class ObjectID{
 	private EventType memberType = EventType.INTERACT;
 	private SQLAction sqlAction = SQLAction.SAVE;
 	private List<ArmorStandPacket> packetList = new ArrayList<ArmorStandPacket>();
-	
-	private boolean finish=false, fixed=false;
+	private boolean finish=false, fixed=false, fromDatabase=false;
 	public String getID(){return this.ObjectID;}
 	public String getProject(){return this.Project;}
 	public Project getProjectOBJ(){return FurnitureLib.getInstance().getFurnitureManager().getProject(getProject());}
@@ -54,12 +54,15 @@ public class ObjectID{
 	public World getWorld(){return this.w;}
 	public Chunk getChunk(){return this.c;}
 	public boolean isMember(UUID uuid) {return uuidList.contains(uuid);}
+	public void setFromDatabase(){this.fromDatabase=true;}
+	public boolean isFromDatabase(){return this.fromDatabase;}
 	public void addMember(UUID uuid){uuidList.add(uuid);}
 	public void remMember(UUID uuid){uuidList.remove(uuid);}
 	public List<ArmorStandPacket> getPacketList() {return packetList;}
 	public void setPacketList(List<ArmorStandPacket> packetList) {this.packetList = packetList;}
 	public boolean isInRange(Player player) {return getStartLocation().getWorld() == player.getLocation().getWorld() && (getStartLocation().distance(player.getLocation()) <= 48D);}
 	public void addArmorStand(ArmorStandPacket packet) {packetList.add(packet);}
+	public void setPublicMode(PublicMode publicMode){this.publicMode = publicMode;}
 	
 	public void setStartLocation(Location loc) {
 		this.loc = loc;
@@ -67,7 +70,7 @@ public class ObjectID{
 		this.c = loc.getChunk();
 	}
 	
-	public void setPublicMode(PublicMode publicMode){this.publicMode = publicMode;}
+	
 	public void setUUID(UUID uuid){
 		if(this.uuid!=null&&!this.uuid.equals(uuid)){
 			if(FurnitureLib.getInstance().getLimitManager()!=null){
@@ -81,8 +84,6 @@ public class ObjectID{
 		}
 		this.uuid=uuid;
 	}
-	
-	private FurnitureManager manager;
 	
 	public void setID(String s){
 		this.ObjectID = s;
@@ -104,7 +105,6 @@ public class ObjectID{
 			this.plugin = plugin;
 			this.serial = RandomStringGenerator.generateRandomString(10,RandomStringGenerator.Mode.ALPHANUMERIC);
 			this.ObjectID = name+":"+this.serial+":"+plugin;
-			this.manager = FurnitureLib.getInstance().getFurnitureManager();
 			if(startLocation!=null){
 				this.loc = startLocation;
 				this.w = startLocation.getWorld();
@@ -122,6 +122,7 @@ public class ObjectID{
 		dropItem(p, loc.clone().add(0, 1, 0), getProjectOBJ());
 		deleteEffect(manager.getArmorStandPacketByObjectID(this));
 		manager.remove(this);
+		FurnitureLib.getInstance().getLimitManager().removePlayer(this);
 	}
 	
 	public void remove(Player p,boolean dropItem, boolean deleteEffect){
@@ -130,6 +131,7 @@ public class ObjectID{
 		if(dropItem) dropItem(p, loc.clone().add(0, 1, 0), getProjectOBJ());
 		if(deleteEffect) deleteEffect(manager.getArmorStandPacketByObjectID(this));
 		manager.remove(this);
+		FurnitureLib.getInstance().getLimitManager().removePlayer(this);
 	}
 	
 	public void dropItem(Player p, Location loc, Project porject){

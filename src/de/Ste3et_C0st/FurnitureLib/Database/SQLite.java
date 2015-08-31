@@ -10,6 +10,7 @@ import java.util.logging.Level;
 
 
 
+
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.Type.DataBaseType;
 
@@ -23,32 +24,9 @@ public class SQLite extends Database{
         this.dbname = dbName;
     }
     
-    public String ArmorStandTable = "CREATE TABLE IF NOT EXISTS FurnitureLib_ArmorStand (" +
-    		"`ID` STRING NOT NULL," +
-            "`ObjID` STRING NOT NULL," +
-    		"`Metadata` STRING NOT NULL," +
-    		"`Boolean` STRING NOT NULL," + 
-    		"`Location` STRING NOT NULL," + 
-    		"`ObjIDLocation` STRING NOT NULL," + 
-    		"`InHand` STRING NOT NULL," + 
-    		"`boots` STRING NOT NULL," + 
-    		"`chestplate` STRING NOT NULL," + 
-    		"`leggings` STRING NOT NULL," + 
-    		"`helm` STRING NOT NULL," + 
-    		"`EA_Head` STRING NOT NULL," + 
-    		"`EA_Body` STRING NOT NULL," + 
-    		"`EA_Left_Arm` STRING NOT NULL," + 
-    		"`EA_Right_Arm` STRING NOT NULL," + 
-    		"`EA_Left_Leg` STRING NOT NULL," + 
-    		"`EA_Right_Leg` STRING NOT NULL" + 
-    		");";
-    
-    public String ObjectIDString = "CREATE TABLE IF NOT EXISTS FurnitureLib_ObjectID (" +
+    public String Objects = "CREATE TABLE IF NOT EXISTS FurnitureLib_Objects (" +
     		"`ObjID` STRING NOT NULL," +
-    		"`PlayerUUID` STRING NOT NULL," +
-    		"`PublicMode` STRING NOT NULL," +
-    		"`Members` STRING NOT NULL," +
-    		"`EVMode` STRING NOT NULL" +
+    		"`Data` STRING NOT NULL" +
     		");";
 
     public Connection getSQLConnection() {
@@ -79,8 +57,7 @@ public class SQLite extends Database{
         connection = getSQLConnection();     
         try {
             Statement s = connection.createStatement();
-            s.executeUpdate(ArmorStandTable);
-            s.executeUpdate(ObjectIDString);
+            s.executeUpdate(Objects);
             s.close();
         } catch (SQLException e) {
             e.printStackTrace();

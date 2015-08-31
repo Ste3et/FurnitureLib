@@ -1,6 +1,5 @@
 package de.Ste3et_C0st.FurnitureLib.main;
 
-import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.sql.Connection;
 import java.util.logging.Logger;
@@ -8,16 +7,10 @@ import java.util.logging.Logger;
 import net.milkbowl.vault.Metrics;
 
 import org.bukkit.Bukkit;
-import org.bukkit.GameMode;
 import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.util.Vector;
-
 import de.Ste3et_C0st.FurnitureLib.Command.command;
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.Database.DeSerializer;
@@ -75,6 +68,7 @@ public class FurnitureLib extends JavaPlugin{
 	@SuppressWarnings("deprecation")
 	@Override
 	public void onEnable(){
+		if(!isEnable("ProtocolLib", true)){getLogger().warning("ProtocolLib not found");}
 		instance = this;
 		getConfig().options().copyDefaults(true);
 		saveConfig();
@@ -87,22 +81,10 @@ public class FurnitureLib extends JavaPlugin{
 		this.lightMgr = new LightManager(this);
 		this.lmanager = new LanguageManager(instance, getConfig().getString("config.Language"));
 		this.useGamemode = getConfig().getBoolean("config.NormalGamemodeRemove");
-		try{
-			getConfig().addDefaults(YamlConfiguration.loadConfiguration(getResource("config.yml")));
-			getConfig().options().copyDefaults(true);
-			saveConfig();
-		}catch(Exception e){
-			e.printStackTrace();
-		}
-		
-		if ((getServer().getPluginManager().isPluginEnabled("Vault")) && (getConfig().getBoolean("config.UseMetrics"))) {
-		      try
-		      {
-		        Metrics metrics = new Metrics(this);
-		        metrics.start();
-		      }
-		      catch (IOException localIOException) {}
-		}
+		getConfig().addDefaults(YamlConfiguration.loadConfiguration(getResource("config.yml")));
+		getConfig().options().copyDefaults(true);
+		saveConfig();
+		if(isEnable("Vault", false)){try{new Metrics(this).start();}catch(Exception e){e.printStackTrace();}}
 		new FurnitureEvents(instance, manager);
 		getServer().getPluginManager().registerEvents(new ChunkOnLoad(), this);
 		getCommand("furniture").setExecutor(new command(manager, this));
@@ -122,6 +104,15 @@ public class FurnitureLib extends JavaPlugin{
 			int time = getConfig().getInt("config.timer.time");
 			sqlManager.saveIntervall(time);
 		}
+	}
+	
+	private boolean isEnable(String plugin, boolean shutdown){
+		if(plugin.equalsIgnoreCase("Vault")){
+			if(!getConfig().getBoolean("config.UseMetrics")) return false;
+		}
+		boolean b = getServer().getPluginManager().isPluginEnabled(plugin);
+		if(!b && shutdown) getServer().getPluginManager().disablePlugin(this);
+		return b;
 	}
 	
 	@Override
@@ -169,55 +160,6 @@ public class FurnitureLib extends JavaPlugin{
 			  return false;
 		  }
 	  }
-	  
-	  public void removeItem(Player p){
-		  if(useGamemode()&&p.getGameMode().equals(GameMode.CREATIVE)){return;}
-		  Integer slot = p.getInventory().getHeldItemSlot();
-		  ItemStack itemStack = p.getInventory().getItemInHand().clone();
-		  itemStack.setAmount(itemStack.getAmount()-1);
-		  p.getInventory().setItem(slot, itemStack);
-		  p.updateInventory();
-	  }
-	
-		public boolean canPlace(Location l, Project pro, Player p){
-			BlockFace b = lUtil.yawToFace(l.getYaw()).getOppositeFace();
-			for(ObjectID obj : manager.getObjectList()){
-				Vector v1 = obj.getStartLocation().toVector();
-				Vector v2 = l.toVector();
-				if(v1.equals(v2)){
-					p.sendMessage(getLangManager().getString("FurnitureOnThisPlace"));
-					return false;
-				}
-			}
-			
-			Integer i = (int) l.getY();
-			for(int x = 0; x<=pro.getWitdh();x++){
-				for(int y = 0; y<=pro.getHeight();y++){
-					for(int z = 0; z<=pro.getLength();z++){
-						Location loc = lUtil.getRelativ(l, b,(double) -x,(double) z).add(0, y, 0);
-						Integer integer = (int) loc.getY();
-						if(!integer.equals(i)){
-							if(loc.getBlock().getType()!=null&&!loc.getBlock().getType().equals(Material.AIR)){
-									p.sendMessage(getLangManager().getString("NotEnoughSpace"));
-									return false;
-							}
-						}
-
-					}
-				}
-			}
-			
-			if(l.getBlock()!=null){
-				if(l.getBlock().getRelative(BlockFace.UP)!=null){
-					Material m = l.getBlock().getRelative(BlockFace.UP).getType();
-					if(!m.equals(Material.AIR)){
-						p.sendMessage(getLangManager().getString("NotEnoughSpace"));
-						return false;
-					}
-				}
-			}
-			return true;
-		}
 	
 	public void spawn(Project pro, Location l){
 		Class<?> c = pro.getclass();

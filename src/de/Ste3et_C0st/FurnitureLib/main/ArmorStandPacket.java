@@ -24,8 +24,8 @@ import de.Ste3et_C0st.FurnitureLib.Utilitis.EntityID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.BodyPart;
 
 public class ArmorStandPacket{
-	private Integer ID;
-	private Integer ArmorID;
+	private int ID;
+	private int ArmorID;
 	private ObjectID objID;
 	private Location location;
 	private HashMap<BodyPart, EulerAngle> angle = new HashMap<Type.BodyPart, EulerAngle>();
@@ -58,8 +58,10 @@ public class ArmorStandPacket{
 	public void setArmorID(int i){this.ArmorID = i;}
 	private int getFixedPoint(Double d){return (int) (d*32D);}
 	private int getCompressedAngle(float value) {return (int)(value * 256.0F / 360.0F);}
-
-	public ArmorStandPacket(Location l, ObjectID id, Integer i){
+	public void setID(int Int) {this.ArmorID=Int;}
+	public void setInventory(ArmorStandInventory inv) {this.inventory = inv;}
+	
+	public ArmorStandPacket(Location l, ObjectID id, int i){
 		try{
 			this.location = l;
 			this.watcher = getDefaultWatcher(l.getWorld(), EntityType.ARMOR_STAND);
@@ -72,12 +74,6 @@ public class ArmorStandPacket{
 		}catch(Exception e){
 			e.printStackTrace();
 		}
-	}
-	
-	public void setID(int Int) {this.ArmorID=Int;}
-
-	public void setInventory(ArmorStandInventory inv) {
-		this.inventory = inv;
 	}
 
 	public void setPessanger(Entity e){
@@ -336,7 +332,7 @@ public class ArmorStandPacket{
 	
 	public void unleash() {
 		if(pessanger==null) return;
-		Integer id = pessanger.getEntityId();
+		int id = pessanger.getEntityId();
 		PacketContainer packet = new PacketContainer(PacketType.Play.Server.ATTACH_ENTITY);
 		packet.getIntegers()
 		.write(1, id)

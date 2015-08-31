@@ -13,24 +13,22 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
+import org.bukkit.entity.Player;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
+
+import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
+import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
+import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 
 public class LocationUtil {
 
 	public final BlockFace[] axis = { BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST };
 	public List<BlockFace> axisList = Arrays.asList(BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST);
     public final BlockFace[] radial = { BlockFace.NORTH, BlockFace.NORTH_EAST, BlockFace.EAST, BlockFace.SOUTH_EAST, BlockFace.SOUTH, BlockFace.SOUTH_WEST, BlockFace.WEST, BlockFace.NORTH_WEST };
-
-    //Return the all BlockFaces with 45 degress
-    public BlockFace yawToFaceRadial(float yaw) {
-            return radial[Math.round(yaw / 45f) & 0x7];
-    }
-    
-    //Return the all BlockFaces with 90 degress
-    public BlockFace yawToFace(float yaw) {
-            return axis[Math.round(yaw / 90f) & 0x3];
-    }
+    public short getFromDey(short s){return (short) (15-s);}
+    public BlockFace yawToFaceRadial(float yaw) { return radial[Math.round(yaw / 45f) & 0x7];}
+    public BlockFace yawToFace(float yaw) {return axis[Math.round(yaw / 90f) & 0x3];}
     
     public BlockFace yawToFace(float yaw, float pitch) {
         if(pitch<-80){
@@ -62,10 +60,6 @@ public class LocationUtil {
             default: return 0;
         }
     }
-    
-	public short getFromDey(short s){
-		return (short) (15-s);
-	}
 	
 	public Color getDyeFromDurability(short s){
 		if(s==0){return Color.fromRGB(25, 25, 25);}
@@ -87,8 +81,56 @@ public class LocationUtil {
 		return Color.fromRGB(255, 255, 255);
 	}
 	
-	
-    
+	public boolean canPlace(Location l, Project pro, Player p, boolean front){
+		BlockFace b = yawToFace(l.getYaw()).getOppositeFace();
+		for(ObjectID obj : FurnitureLib.getInstance().getFurnitureManager().getObjectList()){
+			Vector v1 = obj.getStartLocation().toVector();
+			Vector v2 = l.toVector();
+			if(v1.equals(v2)){
+				p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("FurnitureOnThisPlace"));
+				return false;
+			}
+		}
+		
+		Integer i = (int) l.getY();
+		for(int x = 0; x<=pro.getWitdh();x++){
+			for(int y = 0; y<=pro.getHeight();y++){
+				for(int z = 0; z<=pro.getLength();z++){
+					Location loc = getRelativ(l, b,(double) -x,(double) z).add(0, y, 0);
+					Integer integer = (int) loc.getY();
+					if(!integer.equals(i)){
+						if(loc.getBlock().getType()!=null&&!loc.getBlock().getType().equals(Material.AIR)){
+								p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("NotEnoughSpace"));
+								return false;
+						}
+					}
+
+				}
+			}
+		}
+		
+		if(l.getBlock()!=null){
+			if(!front){
+				if(l.getBlock().getRelative(BlockFace.UP)!=null){
+					Material m = l.getBlock().getRelative(BlockFace.UP).getType();
+					if(!m.equals(Material.AIR)){
+						p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("NotEnoughSpace"));
+						return false;
+					}
+				}
+			}else{
+//				if(l.getBlock().getRelative(b)!=null){
+//					Material m = l.getBlock().getRelative(b).getType();
+//					if(!m.equals(Material.AIR)){
+//						p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("NotEnoughSpace"));
+//						return false;
+//					}
+//				}
+			}
+		}
+		return true;
+	}
+
     public boolean isDay(World w) {
         long time = w.getTime();
      
