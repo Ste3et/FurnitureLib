@@ -87,7 +87,7 @@ public final class ArrayWrapper<E> {
 			Collection coll = (Collection)list;
         	size = coll.size();
         }
-        
+        //
         
         if(size < 0){
         	size = 0;
