@@ -1,12 +1,41 @@
 name: FurnitureLib
-version: 1.1
+version: 1.2.4
 description: FurnitureLib is an Libary to make ArmorStand creations easer
 author: Ste3et_C0st
 website: http://dicecraft.de
-depend: [ProtocolLib]
-softdepend: [WorldGuard,LightAPI,Multiverse,Multiverse-Core,Multiworld,Vault]
+depend: [ProtocolLib, Vault]
+softdepend: [WorldGuard,LightAPI,Multiverse,Multiverse-Core,Multiworld]
 main: de.Ste3et_C0st.FurnitureLib.main.FurnitureLib
 commands: 
   furniture:
     description: Furniture Command
     usage:  /<command>
+
+permissions:
+  furniture.player:
+    children:
+      furniture.help: true
+      furniture.recipe: true
+      furniture.crafting.TYPE: true
+      furniture.place.TYPE: true
+      furniture.manage: true
+  furniture.admin:
+    children:
+      furniture.debug: true
+      furniture.list: true
+      furniture.list.plugin: true
+      furniture.list.type: true
+      furniture.list.world: true
+      furniture.remove: true
+      furniture.remove.distance: true
+      furniture.remove.obj: true
+      furniture.remove.plugin: true
+      furniture.remove.type: true
+      furniture.remove.all: true
+      furniture.remove.player: true
+      furniture.remove.world: true
+      furniture.remove.lookat: true
+      furniture.give: true
+      furniture.give.player: true
+      furniture.limit.bypass: true
+      furniture.manage.other: true

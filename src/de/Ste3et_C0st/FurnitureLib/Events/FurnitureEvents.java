@@ -16,6 +16,7 @@ import de.Ste3et_C0st.FurnitureLib.main.ArmorStandPacket;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
+import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 
 public class FurnitureEvents {
 
@@ -28,41 +29,36 @@ public class FurnitureEvents {
                             if(manager.isArmorStand(PacketID)){
                             	event.setCancelled(true);
                             	ArmorStandPacket asPacket = manager.getArmorStandPacketByID(PacketID);
+                            	if(asPacket==null){System.out.println("DEBUG#1");return;}
                             	ObjectID objID = manager.getObjectIDByID(PacketID);
+                            	if(objID==null){System.out.println("DEBUG#2");return;}
+                            	if(objID.getSQLAction().equals(SQLAction.REMOVE)){System.out.println("DEBUG#3");return;}
+                            	
                             	Location loc = asPacket.getLocation();
                             	Player p = event.getPlayer();
                             	EntityUseAction action = event.getPacket().getEntityUseActions().read(0);
-                            	if(objID==null) return;
-                            	if(loc==null) return;
-                            	if(p==null) return;
-                            	if(action==null) return;
+                            	
+                            	if(loc==null){System.out.println("DEBUG#4");return;}
+                            	if(p==null){System.out.println("DEBUG#5");return;}
+								final Player player = p;
+								final ArmorStandPacket packet = asPacket;
+								final ObjectID objectID = objID;
+								final Location location = loc;
                             	switch (action) {
 								case ATTACK:
-									if(p.getGameMode().equals(GameMode.ADVENTURE)) return;
-									if(p.getGameMode().equals(GameMode.SPECTATOR)) return;
-									final Player player = p;
-									final ArmorStandPacket packet = asPacket;
-									final ObjectID objectID = objID;
-									final Location location = loc;
-									Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+									Bukkit.getScheduler().scheduleSyncDelayedTask(FurnitureLib.getInstance(), new Runnable() {
 										@Override
 										public void run() {
-											FurnitureBreakEvent bEvent = new FurnitureBreakEvent(player, packet, objectID, location);
-											Bukkit.getServer().getPluginManager().callEvent(bEvent);
+											FurnitureLib.getInstance().getPluginManager().callEvent(new FurnitureBreakEvent(player, packet, objectID, location));
 										}
 									});
 									break;
 								case INTERACT_AT:
-									if(p.getGameMode().equals(GameMode.SPECTATOR)) return;
-									final Player player2 = p;
-									final ArmorStandPacket packet2 = asPacket;
-									final ObjectID objectID2 = objID;
-									final Location location2 = loc;
-									Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-										@Override
+									if(p.getGameMode().equals(GameMode.SPECTATOR)){return;}
+									Bukkit.getScheduler().scheduleSyncDelayedTask(FurnitureLib.getInstance(), new Runnable() {
+									@Override
 										public void run() {
-											FurnitureClickEvent cEvent = new FurnitureClickEvent(player2, packet2, objectID2, location2);
-											Bukkit.getServer().getPluginManager().callEvent(cEvent);
+											FurnitureLib.getInstance().getPluginManager().callEvent(new FurnitureClickEvent(player, packet, objectID, location));
 										}
 									});
 									break;

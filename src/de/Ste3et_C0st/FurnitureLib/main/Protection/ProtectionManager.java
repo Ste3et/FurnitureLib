@@ -127,7 +127,7 @@ public class ProtectionManager {
 	}
 	
 	public boolean canBuild(Player p, ObjectID id, EventType type){
-		if(p.isOp() || p.hasPermission("furniture.bypass.protection") || p.hasPermission("furniture.admin")){return true;}
+		if(p.isOp() || FurnitureLib.getInstance().hasPerm(p,"furniture.bypass.protection") || FurnitureLib.getInstance().hasPerm(p,"furniture.admin")){return true;}
 		PublicMode publicMode = id.getPublicMode();
 		UUID userID = p.getUniqueId();
 		UUID ownerID = id.getUUID();

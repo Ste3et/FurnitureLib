@@ -68,6 +68,11 @@ public class ChunkOnLoad implements Listener{
 				FurnitureLib.getInstance().getFurnitureManager().updatePlayerView(player);
 			}
 		}, 5L);
+		
+		if(player.isOp()){
+			FurnitureLib.getInstance().getUpdater().update();
+			FurnitureLib.getInstance().getUpdater().sendPlayer(player);
+		}
 	}
 	
 	@EventHandler
@@ -140,15 +145,12 @@ public class ChunkOnLoad implements Listener{
 		if(p.isOp()) return;
 		if(e.getInventory()==null) return;
 		if(e.getInventory().getResult()==null) return;
-		p.sendMessage("0");
 		ItemStack is = e.getInventory().getResult().clone();
 		is.setAmount(1);
 		for(Project pro : FurnitureLib.getInstance().getFurnitureManager().getProjects()){
 			if(is.equals(pro.getCraftingFile().getRecipe().getResult())){
-				p.sendMessage("1");
-				if(!p.hasPermission("furniture.craft." + pro.getName()) && !p.hasPermission("furniture.player") && !p.hasPermission("furniture.admin")){
+				if(!FurnitureLib.getInstance().hasPerm(p,"furniture.craft." + pro.getName()) && !FurnitureLib.getInstance().hasPerm(p,"furniture.player") && !FurnitureLib.getInstance().hasPerm(p,"furniture.admin")){
 					e.getInventory().setResult(null);
-					p.sendMessage("2");
 				}
 			}
 		}

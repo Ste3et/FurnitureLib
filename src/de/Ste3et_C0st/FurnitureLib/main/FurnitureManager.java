@@ -51,7 +51,7 @@ public class FurnitureManager {
 	
 	public void updateFurniture(ObjectID obj) {
 		if(this.objecte.isEmpty()){return;}
-		obj.setSQLAction(SQLAction.UPDATE);
+		if(obj.isFromDatabase()){obj.setSQLAction(SQLAction.UPDATE);}
 		for(ArmorStandPacket packet : obj.getPacketList()){
 			if(packet.getObjectId().equals(obj)){
 				for(Player player : Bukkit.getOnlinePlayers()){

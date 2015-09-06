@@ -15,6 +15,7 @@ message:
    RemoveType: "&eDu hast alle #TYPE#'s entfernt"
    RemoveAll: "&eDu hast alle Objekte entfernt"
    RemoveLookat: "&eDu hast das Objekt mit der id #SERIAL# entfernt"
+   RemovePlayer: "&eDu hast alle Objecte des Spielers #PLAYER# entfernt"
    SideNotFound: "&cDie Seite wurde nicht gefunen"
    SideNavigation: "&eBenutze /furniture list <option> (0-#MAX#)"
    WrongOwner: "&cDas ist nicht deins"

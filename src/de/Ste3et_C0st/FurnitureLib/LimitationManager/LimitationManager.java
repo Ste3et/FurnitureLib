@@ -95,7 +95,7 @@ public class LimitationManager {
 		Integer maxChunk = pro.getAmountChunk();
 		Integer maxPlayer = pro.getAmountPlayer();
 		
-		if(p.isOp() || p.hasPermission("furniture.admin") || p.hasPermission("furniture.bypass.limit")){return true;}
+		if(p.isOp() || FurnitureLib.getInstance().hasPerm(p,"furniture.admin") || FurnitureLib.getInstance().hasPerm(p,"furniture.bypass.limit")){return true;}
 		if(world>=maxWorld){
 			if(maxWorld!=-1){return false;}
 		}
@@ -104,10 +104,10 @@ public class LimitationManager {
 			if(maxChunk!=-1){return false;}
 		}
 		
-		if(player>=maxPlayer){if(maxPlayer!=-1){if(player<perAmount){return true;}return false;}
+		if(player>=maxPlayer){if(maxPlayer!=-1){if(player<perAmount){return true;}p.sendMessage("ERROR0");return false;}
 		
 		if(player>=perAmount){
-			if(perAmount!=-1){return false;}
+			if(perAmount!=-1){p.sendMessage("ERROR1:" + perAmount);return false;}
 		}
 		}
 		return true;
@@ -115,17 +115,17 @@ public class LimitationManager {
 	
 	public void sendAuncer(Player p, ObjectID obj){
 		Project pro = obj.getProjectOBJ();
-		Integer world = returnProjectWorld(obj.getWorld(), pro);
-		Integer chunk = returnIntProjectChunk(obj.getChunk(), pro);
-		Integer player = returnIntProject(p, pro);
+		int world = returnProjectWorld(obj.getWorld(), pro);
+		int chunk = returnIntProjectChunk(obj.getChunk(), pro);
+		int player = returnIntProject(p, pro);
 		
-		Integer perAmount = pro.hasPermissionsAmount(p);
-		Integer maxWorld = pro.getAmountWorld(obj.getWorld());
-		Integer maxChunk = pro.getAmountChunk();
-		Integer maxPlayer = pro.getAmountPlayer();
+		int perAmount = pro.hasPermissionsAmount(p);
+		int maxWorld = pro.getAmountWorld(obj.getWorld());
+		int maxChunk = pro.getAmountChunk();
+		int maxPlayer = pro.getAmountPlayer();
 		
-		Integer max = -1;
-		Integer current = -1;
+		int max = -1;
+		int current = -1;
 		
 		if(maxWorld!=0&&maxWorld!=-1){
 			max=maxWorld;

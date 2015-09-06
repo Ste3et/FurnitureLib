@@ -10,6 +10,7 @@ import de.Ste3et_C0st.FurnitureLib.main.ArmorStandPacket;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.EventType;
+import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 
 public final class FurnitureBreakEvent extends Event implements Cancellable {
     private static final HandlerList handlers = new HandlerList();
@@ -19,6 +20,7 @@ public final class FurnitureBreakEvent extends Event implements Cancellable {
     private Location l;
     private boolean cancelled;
     public FurnitureBreakEvent(Player p, ArmorStandPacket a, ObjectID o, Location l) {
+    	if(o.getSQLAction().equals(SQLAction.REMOVE)){return;}
     	this.p = p;
     	this.a = a;
     	this.o = o;

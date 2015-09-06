@@ -14,6 +14,7 @@ message:
    RemovePlugin: "&eYou have removed all furniture what are set from #PLUGIN#"
    RemoveType: "&eYou have removed all #TYPE#'s"
    RemoveAll: "&eYou have removed all furniture"
+   RemovePlayer: "&eyou have removed all objects from the player #PLAYER#"
    RemoveLookat: "&eYou have removed #SERIAL#"
    SideNotFound: "&cThis side deos not exist"
    SideNavigation: "&eType /furniture list <option> (0-#MAX#)"

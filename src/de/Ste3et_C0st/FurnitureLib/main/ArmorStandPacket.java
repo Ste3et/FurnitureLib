@@ -332,15 +332,13 @@ public class ArmorStandPacket{
 	
 	public void unleash() {
 		if(pessanger==null) return;
-		int id = pessanger.getEntityId();
 		PacketContainer packet = new PacketContainer(PacketType.Play.Server.ATTACH_ENTITY);
 		packet.getIntegers()
-		.write(1, id)
+		.write(0, 0)
+		.write(1, pessanger.getEntityId())
 		.write(2, -1);
 		try {
-			for(Player p : loadedPlayers){
-				if(p.isOnline()){manager.sendServerPacket(p, packet);}
-			}
+			for(Player p : loadedPlayers){if(p.isOnline()){manager.sendServerPacket(p, packet);}}
 			this.pessanger = null;
 		} catch (Exception e1) {
 			e1.printStackTrace();

@@ -34,14 +34,14 @@ public class Project{
 	public Integer getHeight(){return this.height;}
 	public Integer getLength(){return this.length;}
 	
-	public Integer getAmountWorld(World w){return limitationWorld.get(w);}
+	public Integer getAmountWorld(World w){if(limitationWorld.containsKey(w)){return limitationWorld.get(w);}else{return -1;}}
 	public Integer getAmountChunk(){return this.chunkLimit;}
 	public Integer getAmountPlayer(){return this.playerLimit;}
 	public Integer hasPermissionsAmount(Player p){
-		int i = 0;
+		int i = -1;
 		if(!permissionList.isEmpty()){
 			for(String s : permissionList.keySet()){
-				if(p.hasPermission(s)){
+				if(FurnitureLib.getInstance().hasPerm(p,s)){
 					int j = permissionList.get(s);
 					if(j>i){i = permissionList.get(s);}
 				}
@@ -71,7 +71,7 @@ public class Project{
 	}
 	
 	public boolean hasPermissions(Player p){
-		if(p.hasPermission("Furniture.Player") || p.hasPermission("Furniture.place." + project) || p.isOp() || p.hasPermission("Furniture.admin")){
+		if(FurnitureLib.getInstance().hasPerm(p,"Furniture.Player") || FurnitureLib.getInstance().hasPerm(p,"Furniture.place." + project) || p.isOp() || FurnitureLib.getInstance().hasPerm(p,"Furniture.admin")){
 			return true;
 		}
 		p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("NoPermissions"));

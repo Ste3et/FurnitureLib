@@ -1,8 +1,6 @@
 package de.Ste3et_C0st.FurnitureLib.Utilitis;
 
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
-import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -31,15 +29,8 @@ public class CraftingInv implements Listener
   }
 
  
-public void openCrafting(final Player p, String n)
+public void openCrafting(final Player p, Project project)
   {
-	Project project = null;
-	for(Project pro : FurnitureLib.getInstance().getFurnitureManager().getProjects()){
-		if(pro.getName().equalsIgnoreCase(n)){
-			project = pro;
-		}
-	}
-	if(project==null){return;}
 	if(project.getCraftingFile().isEnable()){ p.sendMessage("This Furniture has not recipe"); return;}
 	
     HumanEntity clicker = p;

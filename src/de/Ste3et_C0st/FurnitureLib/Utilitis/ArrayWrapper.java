@@ -1,4 +1,4 @@
-package mkremins.fanciful;
+package de.Ste3et_C0st.FurnitureLib.Utilitis;
 
 import java.lang.reflect.Array;
 import java.util.Arrays;
@@ -22,7 +22,7 @@ public final class ArrayWrapper<E> {
 	 * Creates an array wrapper with some elements.
 	 * @param elements The elements of the array.
 	 */
-	@SuppressWarnings("unchecked")
+	@SafeVarargs
 	public ArrayWrapper(E... elements){
 		setArray(elements);
 	}

@@ -1,42 +1,38 @@
 package de.Ste3et_C0st.FurnitureLib.Command;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import mkremins.fanciful.FancyMessage;
+import java.util.Random;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.World;
-import org.bukkit.block.BlockFace;
-import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.ConsoleCommandSender;
+import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.Events.FurnitureClickEvent;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.JsonBuilder;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.ManageInv;
-import de.Ste3et_C0st.FurnitureLib.main.ArmorStandPacket;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.JsonBuilder.ClickAction;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.JsonBuilder.HoverAction;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
-import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 
-public class command implements CommandExecutor, Listener{
-
-	FurnitureManager manager;
-	Plugin plugin;
-	List<Player> playerList = new ArrayList<Player>();
-	List<Player> manageList = new ArrayList<Player>();
+public class command implements CommandExecutor, Listener, TabCompleter{
 	
-	public command(FurnitureManager manager, Plugin plugin){
-		this.manager = manager;
+	static FurnitureLib lib = FurnitureLib.getInstance();
+	FurnitureManager manager = lib.getFurnitureManager();
+	Plugin plugin;
+	public static List<Player> playerList = new ArrayList<Player>();
+	public static List<Player> manageList = new ArrayList<Player>();
+	
+	public command(Plugin plugin){
 		this.plugin = plugin;
 		Bukkit.getPluginManager().registerEvents(this, plugin);
 	}
@@ -52,13 +48,17 @@ public class command implements CommandExecutor, Listener{
 			p.sendMessage("§6PublicMode:§e " + e.getID().getPublicMode().name().toLowerCase());
 			p.sendMessage("§6Owner: §2" + e.getID().getPlayerName());
 			p.sendMessage("§6PublicEventAccess: §e" + e.getID().getEventType().name().toLowerCase());
+			p.sendMessage("§6ArmorStands: §e" + e.getID().getPacketList().size());
+			p.sendMessage("§6FromDatabse: §c" + e.getID().isFromDatabase());
+			p.sendMessage("§6Members: §e" + e.getID().getMemberList().size());
+			p.sendMessage("§6SQL State: §e" + e.getID().getSQLAction().name().toLowerCase());
 			playerList.remove(p);
 		}else if(manageList.contains(e.getPlayer())){
 			e.setCancelled(true);
 			Player p = e.getPlayer();
 			manageList.remove(p);
 			if(!e.getID().getUUID().equals(p.getUniqueId())){
-				if(!p.hasPermission("furniture.admin") && !p.isOp() && !p.hasPermission("furniture.manage.other")){
+				if(!lib.hasPerm(p, "furniture.admin") && !p.isOp() && !lib.hasPerm(p, "furniture.manage.other")){
 					p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("WrongOwner"));
 					return;
 				}
@@ -68,10 +68,10 @@ public class command implements CommandExecutor, Listener{
 		}
 	}
 	
-	public boolean noPermissions(CommandSender sender, String s){
+	public static boolean noPermissions(CommandSender sender, String s){
 		if(sender.isOp()) return true;
-		if(sender.hasPermission("furniture.admin")) return true;
-		if(!sender.hasPermission(s)){
+		if(lib.hasPerm(sender,"furniture.admin")) return true;
+		if(!lib.hasPerm(sender,s)){
 			sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("NoPermissions"));
 			return false;
 		}
@@ -80,601 +80,102 @@ public class command implements CommandExecutor, Listener{
 	
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String arg2, String[] args) {
-		if(sender instanceof Player){
-			Player p = (Player) sender;
 			if(cmd.getName().equalsIgnoreCase("furniture")){
+				Player p = null;
+				if(sender instanceof Player){p=(Player) sender;}
 				if(args.length==0){
 					sendHelp(p);
 					return true;
-				}else if(args.length==1){
-					if(args[0].equalsIgnoreCase("list")){
-						if(!noPermissions(sender, "furniture.list")) return true;
-						getList("type", p, 0);return true;
-					}else if(args[0].equalsIgnoreCase("debug")){
-						if(!noPermissions(sender, "furniture.debug")) return true;
-						p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("DebugModeEntered"));
-						playerList.add(p);return true;
-					}else if(args[0].equalsIgnoreCase("manage")){
-						if(!noPermissions(sender, "furniture.manage") && !p.hasPermission("furniture.player")) return true;
-						p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("ManageModeEntered"));
-						manageList.add(p);return true;
-					}else{
-						sendHelp(p);
-						return true;
-					}
-				}else if(args.length==2){
-					if(args[0].equalsIgnoreCase("list")){
-						if(!noPermissions(sender, "furniture.list")) return true;
-						if(args[1].equalsIgnoreCase("plugin")){
-							if(!noPermissions(sender, "furniture.list.plugin")) return true;
-							getList(null, p, 0);return true;
-						}else if(args[1].equalsIgnoreCase("type")){
-							if(!noPermissions(sender, "furniture.list.type")) return true;
-							getList("type", p, 0);return true;
-						}else if(args[1].equalsIgnoreCase("world")){
-							if(!noPermissions(sender, "furniture.list.world")) return true;
-							getList("world", p, 0);return true;
-						}else if(FurnitureLib.getInstance().isInt(args[1])){
-							int i = Integer.parseInt(args[1]);
-							getList("type", p, i);return true;
-						}
-						return true;
-					}else if(args[0].equalsIgnoreCase("remove")){
-						if(!noPermissions(sender, "furniture.remove")) return true;
-						if(FurnitureLib.getInstance().isInt(args[1])){
-							if(!noPermissions(sender, "furniture.remove.distance")) return true;
-							Integer Distance = Integer.parseInt(args[1]);
-							List<ObjectID> objList = getFromDistance(Distance, p.getLocation());
-							Integer i = objList.size();
-							String s = FurnitureLib.getInstance().getLangManager().getString("RemoveDistance");
-							s = s.replace("#AMOUNT#", i+"");
-							if(objList!=null&&!objList.isEmpty()){
-								removeListObj(objList);
-								
-							}
-							p.sendMessage(s);
-							return true;
-						}else if(getID(args[1])!=null){
-							if(!noPermissions(sender, "furniture.remove.obj")) return true;
-							ObjectID id = getID(args[1]);
-							String s = id.getSerial();
-							if(id!=null){
-								manager.remove(id);
-							}
-							p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("RemoveID").replaceAll("#OBJID#", s));
-							return true;
-						}else if(!getPlugin(args[1]).isEmpty()){
-							if(!noPermissions(sender, "furniture.remove.plugin")) return true;
-							List<ObjectID> objList = getPlugin(args[1]);
-							if(objList!=null){
-								removeListObj(objList);
-							}
-							p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("RemovePlugin").replaceAll("#PLUGIN#", args[1]));
-							return true;
-						}else if(!getType(args[1]).isEmpty()){
-							if(!noPermissions(sender, "furniture.remove.type")) return true;
-							List<ObjectID> objList = getType(args[1]);
-							if(objList!=null){
-								removeListObj(objList);
-							}
-							p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("RemoveType").replaceAll("#TYPE#", args[1]));
-							return true;
-						}else if(args[1].equalsIgnoreCase("all")){
-							if(!noPermissions(sender, "furniture.remove.all")) return true;
-							removeListObj(manager.getObjectList());
-							p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("RemoveAll"));
-							return true;
-						}else if(args[1].equalsIgnoreCase("lookat")){
-							if(!noPermissions(sender, "furniture.remove.lookat")) return true;
-							ObjectID obj = getFromSight(p.getLocation());
-							String s = obj.getSerial();
-							if(obj!=null){
-								manager.remove(obj);
-							}
-							p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("RemoveLookat").replaceAll("#SERIAL#", s));
-							return true;
-						}
-					}else if(args[0].equalsIgnoreCase("give")){
-						if(!noPermissions(sender, "furniture.give")) return true;
-						give(sender, p, args[1], 1);
-					}else if(args[0].equalsIgnoreCase("recipe")){
-						if(!noPermissions(sender, "furniture.recipe")) return true;
-						FurnitureLib.getInstance().getCraftingInv().openCrafting(p, args[1]);
-					}else if(args[0].equalsIgnoreCase("respawn")){
-						if(!noPermissions(sender, "furniture.respawn")) return true;
-						String s = args[1];
-						if(!getType(s).isEmpty()){
-							for(ObjectID id : getType(s)){
-								Location loc = id.getStartLocation();
-								Project project = manager.getProject(id.getProject());
-								manager.remove(id);
-								FurnitureLib.getInstance().spawn(project, loc);
-							}
-						}
-					}else{
-						sendHelp(p);
-						return true;
-					}
-					return true;
-				}else if(args.length==3){
-					if(args[0].equalsIgnoreCase("give")){
-						//          0    1      2        3
-						//furniture give <type> <player> <amount>
-						if(!noPermissions(sender, "furniture.give.player")) return true;
-						Player player = Bukkit.getPlayer(args[2]);
-						if(player == null || !player.isOnline()){
-							sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("PlayerNotOnline").replaceAll("#PLAYER#", args[2]));
-							return true;
-						}
-						give(sender, player, args[1], 1);
-					}else if(args[0].equalsIgnoreCase("list")){
-						if(!FurnitureLib.getInstance().isInt(args[2])){
-							p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("WrongArgument"));
-							return true;
-						}
-						if(!noPermissions(sender, "furniture.list")) return true;
-						if(args[1].equalsIgnoreCase("plugin")){
-							if(!noPermissions(sender, "furniture.list.plugin")) return true;
-							getList(null, p, Integer.parseInt(args[2]));return true;
-						}else if(args[1].equalsIgnoreCase("type")){
-							if(!noPermissions(sender, "furniture.list.type")) return true;
-							getList("type", p, Integer.parseInt(args[2]));return true;
-						}else if(args[1].equalsIgnoreCase("world")){
-							if(!noPermissions(sender, "furniture.list.world")) return true;
-							getList("world", p, Integer.parseInt(args[2]));return true;
-						}
-						return true;
-					}else{
-						sendHelp(p);
-						return true;
-					}
-					return true;
-				}else if(args.length==4){
-					if(args[0].equalsIgnoreCase("give")){
-						if(!noPermissions(sender, "furniture.give.player")) return true;
-						String pl = args[2];
-						String ty = args[1];
-						String am = args[3];
-						Player player = Bukkit.getPlayer(pl);
-						if(player==null){
-							sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("PlayerNotOnline").replaceAll("#PLAYER#", pl));
-							return true;
-						}
-						
-						Project pro = manager.getProject(ty);
-						if(pro==null){
-							sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("ProjectNotFound").replaceAll("#PROJECT#", pl));
-							return true;
-						}
-						
-						if(!FurnitureLib.getInstance().isInt(am)){
-							sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("WrongArgument"));
-							return true;
-						}
-						
-						
-						Integer i = Integer.parseInt(am);
-						ItemStack is = pro.getCraftingFile().getRecipe().getResult().clone();
-						is.setAmount(i);
-						player.getInventory().addItem(is);
-						player.updateInventory();
-						String str = FurnitureLib.getInstance().getLangManager().getString("GivePlayer");
-						str = str.replace("#PLAYER#", player.getName());
-						str = str.replace("#PROJECT#", ty);
-						str = str.replace("#AMOUNT#", i+"");
-						sender.sendMessage(str);
-						return true;
-					}
 				}else{
-					sendHelp(p);
-					return true;
-				}
-				
-				return true;
-			}
-		}else if(sender instanceof BlockCommandSender){
-				if(cmd.getName().equalsIgnoreCase("furniture")){
-					BlockCommandSender bs = (BlockCommandSender) sender;
-					if(args.length==6){
-						if(args[0].equalsIgnoreCase("spawn")){
-							Boolean Yaw = FurnitureLib.getInstance().isInt(args[4]);
-							if(FurnitureLib.getInstance().getFurnitureManager().getProject(args[5])!=null){
-								Integer x = Integer.parseInt(relativ((BlockCommandSender) sender, args[1], 0));
-								Integer y = Integer.parseInt(relativ((BlockCommandSender) sender, args[2], 1));
-								Integer z = Integer.parseInt(relativ((BlockCommandSender) sender, args[3], 2));
-								Integer yaw = 0;
-								
-								if(Yaw){
-									yaw = Integer.parseInt(args[4]);
-								}
-								
-									World w = bs.getBlock().getWorld();
-									Location l = new Location(w, x, y, z).getBlock().getLocation();
-									l.setYaw(yaw);
-									Project pro = FurnitureLib.getInstance().getFurnitureManager().getProject(args[5]);
-									FurnitureLib.getInstance().spawn(pro, l);
-							}
-						}
-					}else if(args.length==3){
-						if(args[0].equalsIgnoreCase("crafting")){
-							if(Bukkit.getPlayer(args[1])==null){return true;}
-							if(FurnitureLib.getInstance().getFurnitureManager().getProject(args[2])==null){return true;}
-							FurnitureLib.getInstance().getCraftingInv().openCrafting(Bukkit.getPlayer(args[1]), args[2]);
-						}
-					}else if(args.length==4){
-						if(args[0].equalsIgnoreCase("give")){
-							String pl = args[2];
-							String ty = args[1];
-							String am = args[3];
-							Player player = Bukkit.getPlayer(pl);
-							if(player==null){
-								sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("PlayerNotOnline").replaceAll("#PLAYER#", pl));
-								return true;
-							}
-							
-							Project pro = manager.getProject(ty);
-							if(pro==null){
-								sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("ProjectNotFound").replaceAll("#PROJECT#", pl));
-								return true;
-							}
-							
-							if(!FurnitureLib.getInstance().isInt(am)){
-								sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("WrongArgument"));
-								return true;
-							}
-							Integer i = Integer.parseInt(am);
-							ItemStack is = pro.getCraftingFile().getRecipe().getResult().clone();
-							is.setAmount(i);
-							player.getInventory().addItem(is);
-						}
-					}
-				}
-		}else if(sender instanceof ConsoleCommandSender){
-			if(cmd.getName().equalsIgnoreCase("furniture")){
-				if(args.length==4){
-					if(args[0].equalsIgnoreCase("give")){
-						String pl = args[2];
-						String ty = args[1];
-						String am = args[3];
-						Player player = Bukkit.getPlayer(pl);
-						if(player==null){
-							sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("PlayerNotOnline").replaceAll("#PLAYER#", pl));
-							return true;
-						}
-						
-						Project pro = manager.getProject(ty);
-						if(pro==null){
-							sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("ProjectNotFound").replaceAll("#PROJECT#", pl));
-							return true;
-						}
-						
-						if(!FurnitureLib.getInstance().isInt(am)){
-							sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("WrongArgument"));
-							return true;
-						}
-						Integer i = Integer.parseInt(am);
-						ItemStack is = pro.getCraftingFile().getRecipe().getResult().clone();
-						is.setAmount(i);
-						player.getInventory().addItem(is);
-						//furniture give [PLAYER] <TYPE> <AMOUNT>
+					switch (args[0]) {
+					case "list": new listCommand(sender, cmd, arg2, args); return true;
+					case "give": new giveCommand(sender, cmd, arg2, args); return true;
+					case "recipe": new recipeCommand(sender, cmd, arg2, args); return true;
+					case "debug": new debugCommand(sender, cmd, arg2, args); return true;
+					case "manage": new manageCommand(sender, cmd, arg2, args); return true;
+					case "remove": new removeCommand(sender, cmd, arg2, args); return true;
+					case "spawn": new spawnCommand(sender, cmd, arg2, args); return true;
+					default: sendHelp(p); return true;
 					}
 				}
 			}
-		}
 		return false;
 	}
 	
-	private String relativ(BlockCommandSender sender, String s, int i){
-		Location l = sender.getBlock().getLocation();
-		Integer j = 0;
-		if(s.startsWith("~")){
-			s = s.replace("~", "");
-			if(i==0) j = (int) l.getX();
-			if(i==1) j = (int) l.getY();
-			if(i==2) j = (int) l.getZ();
-			if(s.isEmpty()) return j+"";
-			if(s.startsWith("-")){
-				s = s.replace("-", "");
-				if(!FurnitureLib.getInstance().isInt(s)) return j+"";
-				j-=Integer.parseInt(s);
-			}else if(s.startsWith("+")){
-				s = s.replace("+", "");
-				if(!FurnitureLib.getInstance().isInt(s)) return j+"";
-				j+=Integer.parseInt(s);
+	public static void sendHelp(Player player){
+		if(player==null) return;
+		
+		String version = FurnitureLib.getInstance().getDescription().getVersion();
+		String Author = FurnitureLib.getInstance().getDescription().getAuthors().get(0);
+		String update = FurnitureLib.getInstance().getUpdater().getUpdate();
+		
+		if(!lib.hasPerm(player,"furniture.help")) return;
+		new JsonBuilder("§7§m+--------------------§7[")
+		.withText("§2Furniture").withHoverEvent(HoverAction.SHOW_TEXT, "§6§lVersion: §7" + version + "\n"
+				+ "§6§lAuthor: §2" + Author +  update)
+		.withText("§7]§m---------------------+\n")
+		.withText("§6/furniture list §e(Option) §c(side)\n").withHoverEvent(HoverAction.SHOW_TEXT,"§6list all available furniture\n\n§cOption:\n§6Plugin\n§6Type\n§6World").withClickEvent(ClickAction.SUGGEST_COMMAND, "/furniture list (Option)")
+		.withText("§6/furniture give §e<furniture> §c(player) §d(Amount)\n").withHoverEvent(HoverAction.SHOW_TEXT,"§6if the §cPlayer not set:\n"
+				+ "§cyou become a furniture\n" + 
+				"§6if the Player set:\n" + 
+				"§cgive the player one furniture").withClickEvent(ClickAction.SUGGEST_COMMAND, "/furniture give <FURNITURE> (player)")
+		.withText("§6/furniture debug \n").withHoverEvent(HoverAction.SHOW_TEXT,"§6You can become some information about\n§6abaout the furniture you are rightclicked").withClickEvent(ClickAction.SUGGEST_COMMAND, "/furniture debug")
+		.withText("§6/furniture manage \n").withHoverEvent(HoverAction.SHOW_TEXT,"§6You can config the furniture\n§6that you are rightclicked").withClickEvent(ClickAction.SUGGEST_COMMAND, "/furniture manage")
+		.withText("§6/furniture recipe §e<type>\n").withHoverEvent(HoverAction.SHOW_TEXT,"§6View recipe from a furniture").withClickEvent(ClickAction.SUGGEST_COMMAND, "/furniture recipe §e<type>")
+		.withText("§6/furniture remove §e<type>\n").withHoverEvent(HoverAction.SHOW_TEXT,"§6It's remove only one type of the \n§6Furniture").withClickEvent(ClickAction.SUGGEST_COMMAND, "/furniture remove <type>")
+		.withText("§6/furniture remove §e<player>\n").withHoverEvent(HoverAction.SHOW_TEXT,"§6Remove all furniture from an player").withClickEvent(ClickAction.SUGGEST_COMMAND, "/furniture remove <player>")
+		.withText("§6/furniture remove §e<world>\n").withHoverEvent(HoverAction.SHOW_TEXT,"§6Remove all furniture from an world").withClickEvent(ClickAction.SUGGEST_COMMAND, "/furniture remove <world>")
+		.withText("§6/furniture remove §e<plugin>\n").withHoverEvent(HoverAction.SHOW_TEXT,"§6It's remove only all Furniture from one Plugin").withClickEvent(ClickAction.SUGGEST_COMMAND, "/furniture remove <plugin>")
+		.withText("§6/furniture remove §e<ID>\n").withHoverEvent(HoverAction.SHOW_TEXT,"§6Remove a furniture by id").withClickEvent(ClickAction.SUGGEST_COMMAND, "/furniture remove <ID>")
+		.withText("§6/furniture remove §e<Distance>\n").withHoverEvent(HoverAction.SHOW_TEXT,"§6Remove all furniture in Distance").withClickEvent(ClickAction.SUGGEST_COMMAND, "/furniture remove <Distance>")
+		.withText("§6/furniture remove §elookat\n").withHoverEvent(HoverAction.SHOW_TEXT,"§6Remove a furniture at you looked").withClickEvent(ClickAction.SUGGEST_COMMAND, "/furniture remove lookat")
+		.withText("§6/furniture remove §eall\n").withHoverEvent(HoverAction.SHOW_TEXT,"§6Remove all furniture and reset database").withClickEvent(ClickAction.SUGGEST_COMMAND, "/furniture remove all")
+		.withText("\n").withText("§e§lTIP: §r§7Try to §e§nclick§7 or §e§nhover§7 the commands").
+		withText("§7§m+--------------------------------------------------+").sendJson(player);
+	}
+
+	@Override
+	public List<String> onTabComplete(CommandSender sender,Command cmd, String string,String[] args) {
+		if(sender instanceof Player){
+			if(cmd!=null&&cmd.getName().equalsIgnoreCase("furniture")){
+				if(args.length==1){return Arrays.asList("list","give","debug","manage","recipe","remove");}
+				if(args.length==2){
+					if(args[0].equalsIgnoreCase("list")){
+						return Arrays.asList("type","world","plugin");
+					}else if(args[0].equalsIgnoreCase("give")){
+						return getProjectNames();
+					}else if(args[0].equalsIgnoreCase("remove")){
+						List<String> stringList = getProjectNames();
+						stringList.add("all");
+						stringList.add("distance");
+						stringList.add("lookat");
+						stringList.add(new Random(10).nextInt()+"");
+						return getProjectPlugins(stringList);
+					}else if(args[0].equalsIgnoreCase("recipe")){
+						return getProjectNames();
+					}
+				}
 			}
-		}else{
-			return s;
 		}
-		return j+"";
+		return null;
 	}
 	
-	private void give(CommandSender sender, Player p2, String string, int i) {
-		Project project = null;
+	private List<String> getProjectPlugins(List<String> s){
 		for(Project pro : manager.getProjects()){
-			if(pro.getName().equalsIgnoreCase(string)) project = pro;
+			if(!s.contains(pro.getPlugin().getName())){
+				s.add(pro.getPlugin().getName());
+			}
 		}
-		if(project==null){
-			sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("ProjectNotFound").replaceAll("#PROJECT#", string));
-			return;
-		}
-		
-		p2.getInventory().addItem(project.getCraftingFile().getRecipe().getResult());
-		if(sender instanceof Player && sender.equals(p2)){return;}
-		String str = FurnitureLib.getInstance().getLangManager().getString("GivePlayer");
-		str = str.replace("#PLAYER#", p2.getName());
-		str = str.replace("#PROJECT#", string);
-		str = str.replace("#AMOUNT#", i+"");
-		sender.sendMessage(str);
+		return s;
 	}
 	
-	private int getPage(int i){
-        int a = (((i+9)/10)*10);
-        return a;
-	}
-	
-	private int getMaxPage(String option){
-		int j = 10;
-		switch (option) {
-		case "Plugin":
-			List<String> l = new ArrayList<String>();
-			for(Project pro : manager.getProjects()){
-				if(!l.contains(pro.getPlugin().getName())){
-					l.add(pro.getPlugin().getName());
-				}
-			}
-			j = getPage(l.size());
-			break;
-		case "World":
-			j = getPage(Bukkit.getWorlds().size());
-			break;
-		case "type":
-			j = getPage(manager.getProjects().size());
-			break;
-		}
-		return j;
-	}
-
-	private void getList(String option, Player p, int page){
-		if(page==0)page=1;
-		int objects = 10;
-		int min = page*objects-objects;
-		int max = page*objects;
-		int maxPage = getMaxPage(option)/10;
-		String a = "";
-		String b = "";
-		if(maxPage<10){
-			a+="0"+maxPage;
-		}else{
-			a=maxPage+"";
-		}
-		
-		if(page<10){
-			b+="0"+page;
-		}else{
-			b=page+"";
-		}
-		
-		if(page>maxPage){
-			p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("SideNotFound"));
-			p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("SideNavigation").replaceAll("#MAX#", maxPage + ""));
-			return;
-		}
-		
-		String s = "§7§m+--------------------------------------------+§8[§e" + b + "§8/§a" + a + "§8]";
-		
-		p.sendMessage(s);
-		if(option==null){option="Plugin";}
-		if(option.equalsIgnoreCase("Plugin")){
-			p.sendMessage("§ePlugins: ");
-			List<String> plugins = new ArrayList<String>();
-			int j = 0;
-			for(ObjectID id : manager.getObjectList()){
-				if(j>=min&&j<max){
-					if(!plugins.contains(id.getPlugin())){
-						String plugin = id.getPlugin();
-						String toolTip = "§aObjects: " + getPlugin(plugin).size() + "\n" + getTypes(plugin);
-						try{
-							new FancyMessage("§6- " +plugin).tooltip(toolTip).send(p);
-						}catch(Exception e){
-							p.sendMessage("§6- " + plugin + ":" + toolTip);
-						}
-						
-						plugins.add(plugin);
-					}
-				}
-				j++;
-			}
-		}else if(option.equalsIgnoreCase("type")){
-			p.sendMessage("§eTypes: ");
-			List<String> types = new ArrayList<String>();
-			int j = 0;
-			for(ObjectID id : manager.getObjectList()){
-				if(j>=min&&j<max){
-					if(!types.contains(id.getProject())){
-						String plugin = id.getPlugin();
-						String toolTip = "§aObjects: " + getPlugin(plugin).size() + "\n" + "§aPlugin: " + plugin;
-						
-						try{
-							new FancyMessage("§6- " +id.getProject()).tooltip(toolTip).send(p);
-						}catch(Exception e){
-							p.sendMessage("§6- " + id.getProject() + ":" + toolTip);
-						}
-						
-						types.add(id.getProject());
-						j++;
-					}
-				}
-			}
-			
-			for(Project pro : manager.getProjects()){
-				if(!types.contains(pro.getName())){
-					if(j>=min&&j<max){
-						String plugin = pro.getPlugin().getName();
-						String toolTip = "§aObjects: " + getPlugin(plugin).size() + "\n" + "§aPlugin: " + plugin;
-						
-						try{
-							new FancyMessage("§6- " +pro.getName()).tooltip(toolTip).send(p);
-						}catch(Exception e){
-							p.sendMessage("§6- " + pro.getName() + ":" + toolTip);
-						}
-						types.add(pro.getName());
-					}
-					j++;
-				}
-			}
-		}else if(option.equalsIgnoreCase("world")){
-			p.sendMessage("§eWorlds: ");
-			int j = 0;
-			for(World w : Bukkit.getWorlds()){
-				if(j>=min&&j<max){
-					try{
-						new FancyMessage("§6- " + w.getName()).tooltip("§aObjects: " + getWInt(w.getName())).send(p);
-					}catch(Exception e){
-						p.sendMessage("§6- " + w.getName() + ":" + getWInt(w.getName()));
-					}
-				}
-				j++;
+	private List<String> getProjectNames(){
+		List<String> projectName = new ArrayList<String>();
+		for(Project pro : manager.getProjects()){
+			if(!projectName.contains(pro.getName())){
+				projectName.add(pro.getName());
 			}
 		}
-		s = "§7§m+-------------------------------------------------+";
-		p.sendMessage(s);
-		s = FurnitureLib.getInstance().getLangManager().getString("SideNavigation").replaceAll("#MAX#", maxPage + "");
-		p.sendMessage(s);
-	}
-	
-	private String getTypes(String plugin){
-		String types="";
-		for(ObjectID obj : manager.getObjectList()){
-			if(!types.contains(obj.getProject())){
-				types += "§a- " + obj.getProject() + " \n";
-			}
-		}
-		return types;
-	}
-	
-	private void sendHelp(Player player){
-		if(!player.hasPermission("furniture.help")) return;
-		
-		try{
-			new FancyMessage("§7§m+--------------------§7[")
-			.then("§2Furniture").tooltip("")
-			.then("§7]§m---------------------+\n")
-			.then("§6/furniture list §e(Option) §c(side)\n").tooltip("§6list all available furniture\n\n§cOption:\n§6Plugin\n§6Type\n§6World").suggest("/furniture list (Option)")
-			.then("§6/furniture give §e<furniture> §c(player) §d(Amount)\n").tooltip("§6if the §cPlayer not set:\n"
-					+ "§cyou become a furniture\n" + 
-					"§6if the Player set:\n" + 
-					"§cgive the player one furniture").suggest("/furniture give <FURNITURE> (player)")
-			.then("§6/furniture debug \n").tooltip("§6You can become some information about\n§6abaout the furniture you are rightclicked").suggest("/furniture debug")
-			.then("§6/furniture manage \n").tooltip("§6You can config the furniture\n§6that you are rightclicked").suggest("/furniture manage")
-			.then("§6/furniture recipe §e<type>\n").tooltip("§6View recipe from a furniture").suggest("/furniture recipe §e<type>")
-			.then("§6/furniture remove §e<type>\n").tooltip("§6It's remove only one type of the \n§6Furniture").suggest("/furniture remove <type>")
-			.then("§6/furniture remove §e<plugin>\n").tooltip("§6It's remove only all Furniture from one Plugin").suggest("/furniture remove <plugin>")
-			.then("§6/furniture remove §e<ID>\n").tooltip("§6Remove a furniture by id").suggest("/furniture remove <ID>")
-			.then("§6/furniture remove §e<Distance>\n").tooltip("§6Remove all furniture in Distance").suggest("/furniture remove <Distance>")
-			.then("§6/furniture remove §elookat\n").tooltip("§6Remove a furniture at you looked").suggest("/furniture remove lookat")
-			.then("§6/furniture remove §eall\n").tooltip("§6Remove all furniture and reset database").suggest("/furniture remove all")
-			.then("§6/furniture respawn §e<type>\n").tooltip("§6Respawn the all furniture by type\n§c§lUse it with the own risk").suggest("/furniture respawn <type>")
-			.then("\n").then("§e§lTIP: §r§7Try to §e§nclick§7 or §e§nhover§7 the commands").
-			then("§7§m+--------------------------------------------------+").send(player);
-		}catch(Exception e){
-			String str = "§7§m+--------------------§7[§2Furniture§7]§m---------------------+\n";
-			str+="§6/furniture list §e(Plugin/Type/World) §c(side) | list all available furniture\n";
-			str+="§6/furniture give §e<furniture> §c(player) §d(Amount)\n";
-			str+="§6/furniture debug | when you rightclick an furniture §6you become some infos about it\n";
-			str+="§6/furniture manage | when you rightclick an furniture §6you can config the furniture\n";
-			str+="§6/furniture recipe §e<type> §6| You become an crafting recipe about the Type\n";
-			str+="§6/furniture remove §e<type> §6| You can remove all furniture by type\n";
-			str+="§6/furniture remove §e<plugin> §6| You can remove all furniture by plugin\n";
-			str+="§6/furniture remove §e<ID> §6| You can remove an furniture by ID\n";
-			str+="§6/furniture remove §e<Distance> §6| You can remove all furniture by Distance\n";
-			str+="§6/furniture remove §elookat §6| You can remove an furniture are you lookat\n";
-			str+="§6/furniture remove §eall §6| Remove all furniture ID\n\n";
-			str+="§6/furniture respawn §e<type> | §6Respawn all furniture by type (§c§lEXPEREMENTEL)";
-			str+="§7§m+--------------------------------------------------+";
-			player.sendMessage(str);
-		}
-
-	}
-	
-	private ObjectID getID(String serial){
-		for(ObjectID id : manager.getObjectList()){
-			if(serial.equalsIgnoreCase(id.getSerial())){
-				return id;
-			}
-		}
-		return null;
-	}
-	
-	private Integer getWInt(String s){
-		Integer j = 0;
-		if(manager.getObjectList().isEmpty()){return j;}
-		for(ObjectID obj : manager.getObjectList()){
-			if(obj.getStartLocation().getWorld().getName().equalsIgnoreCase(s)){
-				j++;
-			}
-		}
-		return j;
-	}
-	
-	private List<ObjectID> getPlugin(String plugin){
-		List<ObjectID> objList = new ArrayList<ObjectID>();
-		for(ObjectID id : manager.getObjectList()){
-			if(id.getPlugin().equalsIgnoreCase(plugin)){
-				objList.add(id);
-			}
-		}
-		return objList;
-	}
-	
-	private List<ObjectID> getType(String type){
-		List<ObjectID> objList = new ArrayList<ObjectID>();
-		for(ObjectID obj : manager.getObjectList()){
-			if(obj.getProject().equalsIgnoreCase(type)){
-				objList.add(obj);
-			}
-		}
-		return objList;
-	}
-	
-	private List<ObjectID> getFromDistance(Integer i, Location l){
-		List<ObjectID> objList = new ArrayList<ObjectID>();
-		if(manager.getObjectList().isEmpty()){return objList;}
-		for(ObjectID obj : manager.getObjectList()){
-			if(obj.getStartLocation().getWorld().getName().equalsIgnoreCase(l.getWorld().getName())){
-				objList.add(obj);
-			}
-		}
-		return objList;
-	}
-	
-	private ObjectID getFromSight(Location l){
-		if(manager.getObjectList().isEmpty()){return null;}
-		Integer i = 10;
-		BlockFace face = FurnitureLib.getInstance().getLocationUtil().yawToFace(l.getYaw());
-		for(int j = 0; j<=i;j++){
-			Location loc = FurnitureLib.getInstance().getLocationUtil().getRelativ(l, face,(double) j, 0D);
-			if(loc.getBlock()!=null&&loc.getBlock().getType()!=Material.AIR){return null;}
-			for(ObjectID obj : manager.getObjectList()){
-				for(ArmorStandPacket packet : obj.getPacketList()){
-					if(packet.getLocation().getWorld().getName().equalsIgnoreCase(loc.getWorld().getName())){
-						Double d = packet.getLocation().toVector().distanceSquared(loc.toVector());
-						if(d<=2.0){
-							return packet.getObjectId();
-						}
-					}
-				}
-			}
-		}
-		return null;
-	}
-	
-	private void removeListObj(List<ObjectID> objList){
-		if(objList==null){return;}
-		try{
-			for(ObjectID obj : objList){
-				manager.remove(obj);
-			}
-		}catch(Exception e){}
-
+		return projectName;
 	}
 }

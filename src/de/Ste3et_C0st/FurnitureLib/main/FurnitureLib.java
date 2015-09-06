@@ -5,12 +5,17 @@ import java.sql.Connection;
 import java.util.logging.Logger;
 
 import net.milkbowl.vault.Metrics;
+import net.milkbowl.vault.permission.Permission;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.PluginManager;
+import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
+
 import de.Ste3et_C0st.FurnitureLib.Command.command;
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.Database.DeSerializer;
@@ -46,6 +51,9 @@ public class FurnitureLib extends JavaPlugin{
 	private ColorUtil colorManager;
 	private Serializer serializeNew;
 	private DeSerializer deSerializerNew;
+	private Permission permission = null;
+	private PluginManager pluginManager = null;
+	private Updater updater;
 	
 	public LanguageManager getLangManager(){return this.lmanager;}
 	public LightManager getLightManager(){return this.lightMgr;}
@@ -64,11 +72,17 @@ public class FurnitureLib extends JavaPlugin{
 	public Boolean useGamemode() {return useGamemode;}
 	public Serializer getSerializer(){return serializeNew;}
 	public DeSerializer getDeSerializer(){return deSerializerNew;}
-	
+	public PluginManager getPluginManager(){return pluginManager;}
+	public boolean hasPerm(Player p, String perm){return permission.has(p, perm);}
+	public boolean hasPerm(CommandSender p, String perm){return permission.has(p, perm);}
+	public Updater getUpdater(){return updater;}
 	@SuppressWarnings("deprecation")
 	@Override
 	public void onEnable(){
 		if(!isEnable("ProtocolLib", true)){getLogger().warning("ProtocolLib not found");}
+		if(!isEnable("Vault", true)){getLogger().warning("Vault not found");}
+		if(!setupPermissions()){getLogger().warning("No Permission System found"); Bukkit.getPluginManager().disablePlugin(this);}
+		try{new Metrics(this).start();}catch(Exception e){e.printStackTrace();}
 		instance = this;
 		getConfig().options().copyDefaults(true);
 		saveConfig();
@@ -80,14 +94,15 @@ public class FurnitureLib extends JavaPlugin{
 		this.deSerializerNew = new DeSerializer();
 		this.lightMgr = new LightManager(this);
 		this.lmanager = new LanguageManager(instance, getConfig().getString("config.Language"));
+		this.pluginManager = getServer().getPluginManager();
 		this.useGamemode = getConfig().getBoolean("config.NormalGamemodeRemove");
+		this.updater = new Updater();
 		getConfig().addDefaults(YamlConfiguration.loadConfiguration(getResource("config.yml")));
 		getConfig().options().copyDefaults(true);
 		saveConfig();
-		if(isEnable("Vault", false)){try{new Metrics(this).start();}catch(Exception e){e.printStackTrace();}}
 		new FurnitureEvents(instance, manager);
 		getServer().getPluginManager().registerEvents(new ChunkOnLoad(), this);
-		getCommand("furniture").setExecutor(new command(manager, this));
+		getCommand("furniture").setExecutor(new command(this));
 		this.Pmanager = new ProtectionManager(instance);
 		getLogger().info("==========================================");
 		getLogger().info("FurnitureLibary Version: " + this.getDescription().getVersion());
@@ -104,7 +119,24 @@ public class FurnitureLib extends JavaPlugin{
 			int time = getConfig().getInt("config.timer.time");
 			sqlManager.saveIntervall(time);
 		}
+		
+		for(Player p : Bukkit.getOnlinePlayers()){
+			if(p.isOp()){
+				getUpdater().sendPlayer(p);
+			}
+		}
 	}
+	
+	
+	
+	private boolean setupPermissions()
+	   {
+	       RegisteredServiceProvider<Permission> permissionProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.permission.Permission.class);
+	       if (permissionProvider != null) {
+	           permission = permissionProvider.getProvider();
+	       }
+	       return (permission != null);
+	   }
 	
 	private boolean isEnable(String plugin, boolean shutdown){
 		if(plugin.equalsIgnoreCase("Vault")){

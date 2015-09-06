@@ -4,8 +4,6 @@ import java.lang.reflect.Field;
 
 import org.bukkit.Bukkit;
 
-import mkremins.fanciful.Reflection;
-
 public class EntityID {
 
 	public static int nextEntityId() throws Exception{
