@@ -91,7 +91,6 @@ public final class ArrayWrapper<E> {
         
         if(size < 0){
         	size = 0;
-        	// Ugly hack: Count it ourselves
         	for(@SuppressWarnings("unused") T element : list){
         		size++;
         	}
@@ -99,8 +98,8 @@ public final class ArrayWrapper<E> {
     	
         T[] result = (T[]) Array.newInstance(c, size);
         int i = 0;
-        for(T element : list){ // Assumes iteration order is consistent
-    		result[i++] = element; // Assign array element at index THEN increment counter
+        for(T element : list){
+    		result[i++] = element;
     	}
         return result;
     }
