@@ -43,7 +43,7 @@ public class FurnitureLib extends JavaPlugin{
 	private Serialize serialize;
 	private ProtectionManager Pmanager;
 	private LightManager lightMgr;
-	private Boolean useGamemode = true;
+	private Boolean useGamemode = true, canSit = true;
 	private CraftingInv craftingInv;
 	private LanguageManager lmanager;
 	private SQLManager sqlManager;
@@ -75,6 +75,7 @@ public class FurnitureLib extends JavaPlugin{
 	public PluginManager getPluginManager(){return pluginManager;}
 	public boolean hasPerm(Player p, String perm){return permission.has(p, perm);}
 	public boolean hasPerm(CommandSender p, String perm){return permission.has(p, perm);}
+	public boolean canSitting(){return this.canSit;}
 	public Updater getUpdater(){return updater;}
 	@SuppressWarnings("deprecation")
 	@Override
@@ -84,6 +85,7 @@ public class FurnitureLib extends JavaPlugin{
 		if(!setupPermissions()){getLogger().warning("No Permission System found"); Bukkit.getPluginManager().disablePlugin(this);}
 		try{new Metrics(this).start();}catch(Exception e){e.printStackTrace();}
 		instance = this;
+		getConfig().addDefaults(YamlConfiguration.loadConfiguration(getResource("config.yml")));
 		getConfig().options().copyDefaults(true);
 		saveConfig();
 		this.lUtil = new LocationUtil();
@@ -96,10 +98,8 @@ public class FurnitureLib extends JavaPlugin{
 		this.lmanager = new LanguageManager(instance, getConfig().getString("config.Language"));
 		this.pluginManager = getServer().getPluginManager();
 		this.useGamemode = getConfig().getBoolean("config.NormalGamemodeRemove");
+		this.canSit = !getConfig().getBoolean("config.DisableSitting");
 		this.updater = new Updater();
-		getConfig().addDefaults(YamlConfiguration.loadConfiguration(getResource("config.yml")));
-		getConfig().options().copyDefaults(true);
-		saveConfig();
 		new FurnitureEvents(instance, manager);
 		getServer().getPluginManager().registerEvents(new ChunkOnLoad(), this);
 		getCommand("furniture").setExecutor(new command(this));

@@ -70,7 +70,7 @@ public class FurnitureEvents {
         });
 		
 		ProtocolLibrary.getProtocolManager().addPacketListener(
-                new PacketAdapter(instance, ListenerPriority.NORMAL, PacketType.Play.Client.STEER_VEHICLE) {
+                new PacketAdapter(instance, ListenerPriority.HIGH, PacketType.Play.Client.STEER_VEHICLE) {
                     public void onPacketReceiving(PacketEvent event) {
                         if (event.getPacketType() == PacketType.Play.Client.STEER_VEHICLE) {
                         	if(event.getPacket().getSpecificModifier(boolean.class).read(1)){
@@ -80,6 +80,7 @@ public class FurnitureEvents {
                                 		for(ArmorStandPacket packet : obj.getPacketList()){
                                 			if(packet.getPessanger()!=null){
                                 				if(packet.getPessanger().equals(p)){
+                                					event.setCancelled(true);
                                     				packet.unleash();
                                 				}
                                 			}

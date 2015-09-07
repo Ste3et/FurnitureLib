@@ -77,6 +77,7 @@ public class ArmorStandPacket{
 	}
 
 	public void setPessanger(Entity e){
+		if(!FurnitureLib.getInstance().canSitting()){return;}
 		PacketContainer container = new PacketContainer(PacketType.Play.Server.ATTACH_ENTITY);
 		container.getIntegers()
 		.write(1, e.getEntityId())
