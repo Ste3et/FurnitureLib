@@ -44,8 +44,7 @@ public class CraftingFile {
 					if(!returnMaterial(s).get(c).equals(Material.AIR)){
 						this.recipe.setIngredient(c.charValue(), returnMaterial(s).get(c));
 					}
-				}
-				
+				}				
 				if(!isDisable){
 					Bukkit.getServer().addRecipe(this.recipe);
 				}

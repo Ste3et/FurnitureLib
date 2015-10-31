@@ -1,5 +1,6 @@
 package de.Ste3et_C0st.FurnitureLib.Crafting;
 
+import java.io.InputStream;
 import java.util.HashMap;
 
 import org.bukkit.Bukkit;
@@ -10,6 +11,8 @@ import org.bukkit.plugin.Plugin;
 
 import de.Ste3et_C0st.FurnitureLib.Utilitis.config;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
+import de.Ste3et_C0st.FurnitureLib.main.Type.CenterType;
+import de.Ste3et_C0st.FurnitureLib.main.Type.PlaceableSide;
 
 public class Project{
 	private String project;
@@ -24,6 +27,8 @@ public class Project{
 	private HashMap<World, Integer> limitationWorld = new HashMap<World, Integer>();
 	private Integer chunkLimit = -1;
 	private Integer playerLimit = -1;
+	private CenterType type = CenterType.RIGHT;
+	private PlaceableSide side;
 	
 	public String getName(){return project;}
 	public Plugin getPlugin(){ return plugin;}
@@ -33,6 +38,8 @@ public class Project{
 	public Integer getWitdh(){return this.witdh;}
 	public Integer getHeight(){return this.height;}
 	public Integer getLength(){return this.length;}
+	public CenterType getCenterType(){return this.type;}
+	public PlaceableSide getPlaceableSide(){return this.side;}
 	
 	public Integer getAmountWorld(World w){if(limitationWorld.containsKey(w)){return limitationWorld.get(w);}else{return -1;}}
 	public Integer getAmountChunk(){return this.chunkLimit;}
@@ -51,15 +58,15 @@ public class Project{
 	}
 	public HashMap<String, Integer> permissionList = new HashMap<String, Integer>();
 	
-	public void setSize(Integer witdh, Integer height, Integer length){
+	public void setSize(Integer witdh, Integer height, Integer length, CenterType type){
 		this.witdh = witdh;
 		this.height = height;
 		this.length = length;
+		this.type = type;
 	}
 	
-	public Project(String name, CraftingFile file, Plugin plugin, Class<?> clas){
+	public Project(String name, Plugin plugin,InputStream craftingFile,PlaceableSide side, Class<?> clas){
 		this.project = name;
-		this.file = file;
 		this.plugin = plugin;
 		this.clas = clas;
 		FurnitureLib.getInstance().getFurnitureManager().addProject(this);
@@ -68,6 +75,8 @@ public class Project{
 		addDefault("player");
 		this.chunkLimit = getDefault("chunk");
 		this.playerLimit = getDefault("player");
+		this.file = new CraftingFile(name, craftingFile);
+		this.side = side;
 	}
 	
 	public boolean hasPermissions(Player p){

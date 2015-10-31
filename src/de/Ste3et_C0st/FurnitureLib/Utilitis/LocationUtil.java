@@ -20,6 +20,10 @@ import org.bukkit.util.Vector;
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
+import de.Ste3et_C0st.FurnitureLib.main.Type.CenterType;
+import de.Ste3et_C0st.FurnitureLib.main.Type.EventType;
+import de.Ste3et_C0st.FurnitureLib.main.Type.PlaceableSide;
+import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 
 public class LocationUtil {
 
@@ -29,7 +33,9 @@ public class LocationUtil {
     public short getFromDey(short s){return (short) (15-s);}
     public BlockFace yawToFaceRadial(float yaw) { return radial[Math.round(yaw / 45f) & 0x7];}
     public BlockFace yawToFace(float yaw) {return axis[Math.round(yaw / 90f) & 0x3];}
-    
+    public int getFixedPoint(Double d){return (int) (d*32D);}
+	public byte getCompressedAngle(float value) {return (byte)(value * 256.0F / 360.0F);}
+	
     public BlockFace yawToFace(float yaw, float pitch) {
         if(pitch<-80){
         	return BlockFace.UP;
@@ -81,52 +87,94 @@ public class LocationUtil {
 		return Color.fromRGB(255, 255, 255);
 	}
 	
-	public boolean canPlace(Location l, Project pro, Player p, boolean front){
-		BlockFace b = yawToFace(l.getYaw()).getOppositeFace();
+	public boolean canBuild(Location loc, Project pro, Player p){
+		BlockFace face = yawToFace(loc.getYaw()).getOppositeFace();
+		loc = loc.add(0, 1, 0);
+		int w = pro.getWitdh();
+		int h = pro.getHeight();
+		int l = pro.getLength();
+		CenterType type = pro.getCenterType();
+
+		Vector v2 = loc.toVector();
 		for(ObjectID obj : FurnitureLib.getInstance().getFurnitureManager().getObjectList()){
 			Vector v1 = obj.getStartLocation().toVector();
-			Vector v2 = l.toVector();
 			if(v1.equals(v2)){
-				p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("FurnitureOnThisPlace"));
-				return false;
+				if(!obj.getSQLAction().equals(SQLAction.REMOVE)){
+					p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("FurnitureOnThisPlace"));
+					return false;
+				}
 			}
 		}
 		
-		Integer i = (int) l.getY();
-		for(int x = 0; x<=pro.getWitdh();x++){
-			for(int y = 0; y<=pro.getHeight();y++){
-				for(int z = 0; z<=pro.getLength();z++){
-					Location loc = getRelativ(l, b,(double) -x,(double) z).add(0, y, 0);
-					Integer integer = (int) loc.getY();
-					if(!integer.equals(i)){
-						if(loc.getBlock().getType()!=null&&!loc.getBlock().getType().equals(Material.AIR)){
-								p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("NotEnoughSpace"));
-								return false;
+		switch (type) {
+		case RIGHT:
+			if(!pro.getPlaceableSide().equals(PlaceableSide.SIDE)){
+				for(int a = 0; a<w;a++){
+					for(int b = 0; b<h;b++){
+						for(int c = 0;c<l;c++){
+							Location location = FurnitureLib.getInstance().getLocationUtil().getRelativ(loc, face,(double) -a,(double) c).add(0, b, 0);
+							if(!FurnitureLib.getInstance().getPermManager().canBuild(p, location, EventType.PLACE)){return false;}
+							if(!location.getBlock().getType().equals(Material.AIR)){p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("NotEnoughSpace"));return false;}
 						}
 					}
-
 				}
-			}
-		}
-		
-		if(l.getBlock()!=null){
-			if(!front){
-				if(l.getBlock().getRelative(BlockFace.UP)!=null){
-					Material m = l.getBlock().getRelative(BlockFace.UP).getType();
-					if(!m.equals(Material.AIR)){
-						p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("NotEnoughSpace"));
-						return false;
+				return true;
+			}else{
+				for(int a = 0; a<w;a++){
+					for(int b = 0; b<h;b++){
+						for(int c = 0;c>l;c--){
+							Location location = FurnitureLib.getInstance().getLocationUtil().getRelativ(loc, face,(double) -a,(double) c).add(0, b, 0);
+							if(!FurnitureLib.getInstance().getPermManager().canBuild(p, location, EventType.PLACE)){return false;}
+							if(!location.getBlock().getType().equals(Material.AIR)){p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("NotEnoughSpace"));return false;}
+						}
 					}
 				}
-			}else{
-//				if(l.getBlock().getRelative(b)!=null){
-//					Material m = l.getBlock().getRelative(b).getType();
-//					if(!m.equals(Material.AIR)){
-//						p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("NotEnoughSpace"));
-//						return false;
-//					}
-//				}
+				return true;
 			}
+		case LEFT:
+			for(int a = 0; a<w;a++){
+				for(int b = 0; b<h;b++){
+					for(int c = 0;c<l;c++){
+						Location location = FurnitureLib.getInstance().getLocationUtil().getRelativ(loc, face,(double) -a,(double) c).add(0, b, 0);
+						if(!FurnitureLib.getInstance().getPermManager().canBuild(p, location, EventType.PLACE)){return false;}
+						if(!location.getBlock().getType().equals(Material.AIR)){p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("NotEnoughSpace"));return false;}
+					}
+				}
+			}
+			return true;
+		case FRONT:
+			for(int a = 0; a<w;a++){
+				for(int b = 0; b<h;b++){
+					for(int c = 0;c<l;c++){
+						Location location = FurnitureLib.getInstance().getLocationUtil().getRelativ(loc, face,(double) a,(double) c).add(0, b, 0);
+						if(!FurnitureLib.getInstance().getPermManager().canBuild(p, location, EventType.PLACE)){return false;}
+						if(!location.getBlock().getType().equals(Material.AIR)){p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("NotEnoughSpace"));return false;}
+					}
+				}
+			}
+			return true;
+		case CENTER:
+			Double d = Math.ceil((double) l/2);
+			int w1 = d.intValue();
+			for(int a = 0; a<w;a++){
+				for(int b = 0; b<h;b++){
+					for(int c = 0;c<w1;c++){
+						Location location = FurnitureLib.getInstance().getLocationUtil().getRelativ(loc, face,(double) -a,(double) c).add(0, b, 0);
+						if(!FurnitureLib.getInstance().getPermManager().canBuild(p, location, EventType.PLACE)){return false;}
+						if(!location.getBlock().getType().equals(Material.AIR)){p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("NotEnoughSpace"));return false;}
+					}
+				}
+			}
+			for(int a = 0; a<w;a++){
+				for(int b = 0; b<h;b++){
+					for(int c = 0;c<w1;c++){
+						Location location = FurnitureLib.getInstance().getLocationUtil().getRelativ(loc, face,(double) -a,(double) -c).add(0, b, 0);
+						if(!FurnitureLib.getInstance().getPermManager().canBuild(p, location, EventType.PLACE)){return false;}
+						if(!location.getBlock().getType().equals(Material.AIR)){p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("NotEnoughSpace"));return false;}
+					}
+				}
+			}
+			return true;
 		}
 		return true;
 	}
@@ -141,7 +189,7 @@ public class LocationUtil {
         }
     }
     
-    public Vector getRelativ(Vector v1, Double x, BlockFace bf){
+    public Vector getRelativ(Vector v1, double x, BlockFace bf){
     	switch(bf){
     	case NORTH: v1.add(new Vector(0, 0,x)); break;
     	case EAST: v1.add(new Vector(x, 0, 0)); break;
@@ -289,7 +337,7 @@ public class LocationUtil {
     	return b.doubleValue();
     }
     
-	public Location getRelativ(Location loc, BlockFace b, Double z, Double x){
+	public Location getRelativ(Location loc, BlockFace b, double z, double x){
 		Location l = loc.clone();
 		l.setYaw(FaceToYaw(b));
 		x = round(x);

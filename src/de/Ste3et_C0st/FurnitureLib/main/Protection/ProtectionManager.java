@@ -7,7 +7,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
-import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.block.BlockBreakEvent;
 import org.bukkit.event.block.BlockPlaceEvent;
@@ -18,6 +17,7 @@ import org.bukkit.plugin.PluginManager;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.EventType;
+import de.Ste3et_C0st.FurnitureLib.main.Type.PlaceableSide;
 import de.Ste3et_C0st.FurnitureLib.main.Type.PublicMode;
 
 public class ProtectionManager {
@@ -33,9 +33,9 @@ public class ProtectionManager {
 		this.manager = Bukkit.getPluginManager();
 	}
 	
-	private boolean isSolid(Material m, int subID){if(!checkPlaceable(m, subID)) return false;return m.isSolid();}
+	public boolean isSolid(Material m, int subID, PlaceableSide side){if(!checkPlaceable(m, subID, side)){return false;}{return m.isSolid();}}
 	
-	private boolean checkPlaceable(Material m, int subID){
+	private boolean checkPlaceable(Material m, int subID, PlaceableSide side){
 	    switch (m) {
 			case WOOD_STAIRS: 
 			if(subID>=4) return true;
@@ -90,6 +90,13 @@ public class ProtectionManager {
 			case GLOWSTONE: return false;
 			case TNT: return false;
 			case PISTON_BASE: return false;
+			case STONE_PLATE: return false;
+			case WOOD_PLATE: return false;
+			case IRON_PLATE: return false;
+			case GOLD_PLATE: return false;
+			case IRON_BARDING: return false;
+			case STATIONARY_WATER: if(side.equals(PlaceableSide.WATER)){return true;}
+			case AIR: return true;
 			case SNOW: 
 			if(subID==7) return true;
 			return false;
@@ -97,18 +104,12 @@ public class ProtectionManager {
 		}
 	}
 	
-	
-	@SuppressWarnings("deprecation")
 	public boolean canBuild(Player p, Location loc, EventType type){
 		Block b = loc.getBlock();
-		BlockFace face = lib.getLocationUtil().yawToFace(p.getLocation().getYaw()).getOppositeFace();
-		if(b!=null&&!isSolid(loc.getBlock().getType(), loc.getBlock().getData())) return false;
+		if(b==null){return true;}
 		ItemStack is = p.getItemInHand();
-		if(b==null){Bukkit.broadcastMessage("block=null");return true;}
-		if(is==null){Bukkit.broadcastMessage("is=null");return true;}
-		if(face==null){Bukkit.broadcastMessage("face=null");return true;}
-		if(type==null){Bukkit.broadcastMessage("type=null");return true;}
-		
+		if(is==null){return true;}
+		if(type==null){return true;}
 		switch(type){
 		case BREAK: 
 			BlockBreakEvent event = new BlockBreakEvent(b,p);

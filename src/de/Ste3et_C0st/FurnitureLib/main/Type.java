@@ -12,14 +12,30 @@ import de.Ste3et_C0st.FurnitureLib.Utilitis.LanguageManager;
 
 public class Type {
 	static LanguageManager lang = FurnitureLib.getInstance().getLangManager();
-	
+	static List<Material> swords = Arrays.asList(Material.WOOD_SWORD, Material.STONE_SWORD, Material.IRON_SWORD, Material.GOLD_SWORD, Material.DIAMOND_SWORD);
+	static List<Material> spades = Arrays.asList(Material.WOOD_SPADE, Material.STONE_SPADE, Material.IRON_SPADE, Material.GOLD_SPADE, Material.DIAMOND_SPADE);
+	static List<Material> axt = Arrays.asList(Material.WOOD_AXE, Material.STONE_AXE, Material.IRON_AXE, Material.GOLD_AXE, Material.DIAMOND_AXE);
+	static List<Material> pickaxe = Arrays.asList(Material.WOOD_PICKAXE, Material.STONE_PICKAXE, Material.IRON_PICKAXE, Material.GOLD_PICKAXE, Material.DIAMOND_PICKAXE);
+	static List<Material> hoes = Arrays.asList(Material.WOOD_HOE, Material.STONE_HOE, Material.IRON_HOE, Material.GOLD_HOE, Material.DIAMOND_HOE);
+	static List<Material> weapons = Arrays.asList(Material.WOOD_SWORD, Material.STONE_SWORD, Material.IRON_SWORD, Material.GOLD_SWORD, Material.DIAMOND_SWORD,
+												  Material.WOOD_AXE, Material.STONE_AXE, Material.IRON_AXE, Material.GOLD_AXE, Material.DIAMOND_AXE);
+	static List<Material> tools = Arrays.asList(Material.WOOD_AXE, Material.STONE_AXE, Material.IRON_AXE, Material.GOLD_AXE, Material.DIAMOND_AXE,
+												Material.WOOD_SPADE, Material.STONE_SPADE, Material.IRON_SPADE, Material.GOLD_SPADE, Material.DIAMOND_SPADE,
+												Material.WOOD_PICKAXE, Material.STONE_PICKAXE, Material.IRON_PICKAXE, Material.GOLD_PICKAXE, Material.DIAMOND_PICKAXE,
+												Material.WOOD_HOE, Material.STONE_HOE, Material.IRON_HOE, Material.GOLD_HOE, Material.DIAMOND_HOE);
+	public enum DataBaseType{MySQL, SQLite;}
+	public enum ColorType{BLOCK, BANNER;}
+	public enum LimitationType{PLAYER, CHUNK, WORLD, PLOT;}
+	public enum SQLAction{SAVE, UPDATE, REMOVE, NOTHING;}
+	public enum CenterType{LEFT, RIGHT, CENTER, FRONT}
+	public enum PlaceableSide{TOP,BOTTOM,SIDE, WATER}
 	public enum BodyPart{
 		HEAD("Head",11, new EulerAngle(0D,0D,0D)), 
 		BODY("Body",12, new EulerAngle(0D,0D,0D)), 
-		LEFT_ARM("Left_Arm",13, new EulerAngle((double)-10.0F, 0.0D, (double)-10.0F)), 
-		RIGHT_ARM("Right_Arm",14, new EulerAngle((double)-15.0F, 0.0D, (double)10.0F)), 
-		LEFT_LEG("Left_Leg",15, new EulerAngle((double)-1.0F, 0.0D, (double)-1.0F)), 
-		RIGHT_LEG("Right_Leg",16, new EulerAngle((double)1.0F, 0.0D, (double)1.0F));
+		LEFT_ARM("Left_Arm",13, new EulerAngle(-0.174533, 0.0D, -0.174533)), 
+		RIGHT_ARM("Right_Arm",14, new EulerAngle(-0.261799, 0.0D, 0.174533)), 
+		LEFT_LEG("Left_Leg",15, new EulerAngle(-0.0174533, 0.0D, -0.0174533)), 
+		RIGHT_LEG("Right_Leg",16, new EulerAngle(0.0174533, 0.0D, 0.0174533));
 		
 		String name;
 		EulerAngle angle;
@@ -48,15 +64,7 @@ public class Type {
 			return parts;
 		}
 	}
-	
-	public enum DataBaseType{
-		MySQL, SQLite;
-	}
-	
-	public enum ColorType{
-		BLOCK, BANNER;
-	}
-	
+
 	public enum EventType{
 		PLACE(null, null, null, null),
 		BREAK(lang.getName("Break"), lang.getMaterial("Break"), lang.getShort("Break"), 1),
@@ -90,12 +98,19 @@ public class Type {
 		}
 	}
 	
-	public enum LimitationType{
-		PLAYER, CHUNK, WORLD, PLOT;
-	}
-	
-	public enum SQLAction{
-		SAVE, UPDATE, REMOVE, NOTHING;
+	public enum ToolType{
+		SWORD(swords),
+		SPADE(spades),
+		AXE(axt),
+		PICKAXE(pickaxe),
+		HOE(hoes),
+		WEAPON(weapons),
+		TOOLS(tools);
+		
+		List<Material> matList;
+		ToolType(List<Material> matList){this.matList=matList;}
+		
+		public List<Material> getMaterliaList(){return this.matList;}
 	}
 	
 	public enum PublicMode{

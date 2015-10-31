@@ -18,6 +18,10 @@ public final class FurnitureLateSpawnEvent extends Event implements Cancellable 
     private Player p;
     private Location l;
     private boolean cancelled;
+    @Override public HandlerList getHandlers() {return handlers; }
+    @Override public boolean isCancelled() {return cancelled;}
+    @Override public void setCancelled(boolean cancelled) { this.cancelled = cancelled;}
+    public static HandlerList getHandlerList() {return handlers;}
     
     public FurnitureLateSpawnEvent(Player p, ObjectID objID, Project pro, Location l) {
     	this.p = p;
@@ -31,8 +35,4 @@ public final class FurnitureLateSpawnEvent extends Event implements Cancellable 
     public Project getProject(){return this.pro;}
     public Player getPlayer(){return this.p;}
     public Location getLocation(){return this.l;}
-	public HandlerList getHandlers() {return handlers;}
-	public static HandlerList getHandlerList() {return handlers;}
-	public boolean isCancelled() {return cancelled;}
-	public void setCancelled(boolean arg0) {cancelled = arg0;}
 }

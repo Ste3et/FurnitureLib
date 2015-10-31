@@ -1,4 +1,4 @@
-package de.Ste3et_C0st.FurnitureLib.main;
+package de.Ste3et_C0st.FurnitureLib.main.entity;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
@@ -10,10 +10,9 @@ import java.util.Random;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
-public class ArmorStandInventory{
+public class fInventory{
 	
 	private ItemStack[] items = new ItemStack[5];
-	private String[] itemString = new String[5];
 	private int entityId = 0;
 	public ItemStack getItemInHand() {return this.items[0];}
 	public ItemStack getBoots() {return this.items[1];}
@@ -22,12 +21,7 @@ public class ArmorStandInventory{
 	public ItemStack getHelmet() {return this.items[4];}
 	public Random id = new Random(1*10000);
 	
-	public String[] getStringInv(){return this.itemString;}
-	
-	public ArmorStandInventory(int entityId){
-		for(int i = 0; i<itemString.length;i++){
-			itemString[i] = FurnitureLib.getInstance().getSerialize().toBase64(new ItemStack(Material.AIR));
-		}
+	public fInventory(int entityId){
 		this.entityId = entityId;
 	}
 	
@@ -65,7 +59,6 @@ public class ArmorStandInventory{
 			return;
 		}
 		this.items[slot] = item;
-		this.itemString[slot] = FurnitureLib.getInstance().getSerialize().toBase64(item);
 	}
 	
 	public List<PacketContainer> createPackets() {
@@ -92,8 +85,8 @@ public class ArmorStandInventory{
 	}
 	
 	@Override
-	public ArmorStandInventory clone() {
-		ArmorStandInventory inv = new ArmorStandInventory(this.entityId);
+	public fInventory clone() {
+		fInventory inv = new fInventory(this.entityId);
 		for (int i = 0; i < 5; i++) {
 			inv.setSlot(i, this.getSlot(i));
 		}

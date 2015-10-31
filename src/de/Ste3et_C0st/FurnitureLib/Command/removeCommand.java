@@ -15,10 +15,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
-import de.Ste3et_C0st.FurnitureLib.main.ArmorStandPacket;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
+import de.Ste3et_C0st.FurnitureLib.main.entity.fArmorStand;
 
 public class removeCommand {
 
@@ -130,11 +130,11 @@ public class removeCommand {
 			Location loc = FurnitureLib.getInstance().getLocationUtil().getRelativ(l, face,(double) j, 0D);
 			if(loc.getBlock()!=null&&loc.getBlock().getType()!=Material.AIR){return null;}
 			for(ObjectID obj : FurnitureLib.getInstance().getFurnitureManager().getObjectList()){
-				for(ArmorStandPacket packet : obj.getPacketList()){
+				for(fArmorStand packet : obj.getPacketList()){
 					if(packet.getLocation().getWorld().getName().equalsIgnoreCase(loc.getWorld().getName())){
 						Double d = packet.getLocation().toVector().distanceSquared(loc.toVector());
 						if(d<=2.0){
-							return packet.getObjectId();
+							return packet.getObjID();
 						}
 					}
 				}

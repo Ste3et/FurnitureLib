@@ -64,8 +64,6 @@ public abstract class Database {
 
     public void loadAll(SQLAction action){
     	try{
-    		if(isExist("FurnitureLib_ArmorStand")) loadaltArmorStands(SQLAction.SAVE);
-    		if(isExist("FurnitureLib_ObjectID")) loadAltObjIDs();
     		ResultSet rs = statement.executeQuery("SELECT * FROM FurnitureLib_Objects");
    		    List<String[]> asList = new ArrayList<String[]>();
     		while (rs.next()) {FurnitureLib.getInstance().getDeSerializer().Deserialze(rs.getString(1), rs.getString(2));}
@@ -74,62 +72,6 @@ public abstract class Database {
     	}catch(Exception e){
     		e.printStackTrace();
     	}
-    }
-    
-    public void loadaltArmorStands(SQLAction action)
-    {
-      try
-      {
-        ResultSet rs = statement.executeQuery("SELECT * FROM FurnitureLib_ArmorStand");
-        List<String[]> asList = new ArrayList<String[]>();
-        int i;
-        while (rs.next())
-        {
-          String[] a = new String[17];
-          for (i = 0; i <= 16; i++) {
-            a[i] = rs.getString(i + 1);
-          }
-          if (!asList.contains(a)) {
-            asList.add(a);
-          }
-        }
-        rs.close();
-        for (String[] l : asList) {
-          FurnitureLib.getInstance().getSerialize().fromArmorStandString(l, action);
-        }
-      }
-      catch (Exception e)
-      {
-        e.printStackTrace();
-      }
-    }
-    
-    public void loadAltObjIDs()
-    {
-      try
-      {
-        ResultSet rs = statement.executeQuery("SELECT * FROM FurnitureLib_ObjectID");
-        List<String[]> objList = new ArrayList<String[]>();
-        int i;
-        while (rs.next())
-        {
-          String[] a = new String[5];
-          for (i = 0; i <= 4; i++) {
-            a[i] = rs.getString(i + 1);
-          }
-          if (!objList.contains(a)) {
-            objList.add(a);
-          }
-        }
-        rs.close();
-        for (String[] l : objList) {
-          FurnitureLib.getInstance().getSerialize().fromArmorObjectString(l);
-        }
-      }
-      catch (Exception e)
-      {
-        e.printStackTrace();
-      }
     }
 
     public void delete(ObjectID objID){

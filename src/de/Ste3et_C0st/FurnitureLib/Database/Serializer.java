@@ -8,16 +8,18 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
+import org.bukkit.util.io.BukkitObjectOutputStream;
+import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
 import de.Ste3et_C0st.FurnitureLib.NBT.CraftItemStack;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTCompressedStreamTools;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagList;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagString;
-import de.Ste3et_C0st.FurnitureLib.main.ArmorStandInventory;
-import de.Ste3et_C0st.FurnitureLib.main.ArmorStandPacket;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.BodyPart;
+import de.Ste3et_C0st.FurnitureLib.main.entity.fArmorStand;
+import de.Ste3et_C0st.FurnitureLib.main.entity.fInventory;
 
 public class Serializer {
 
@@ -30,7 +32,7 @@ public class Serializer {
 		compound.set("Location",getFromLocation(obj.getStartLocation()));
 		
 		NBTTagCompound armorStands = new NBTTagCompound();
-		for(ArmorStandPacket packet : obj.getPacketList()){
+		for(fArmorStand packet : obj.getPacketList()){
 			NBTTagCompound metadata = new NBTTagCompound();
 			metadata.setString("Name", packet.getName());
 			metadata.set("Location",getFromLocation(packet.getLocation()));
@@ -39,9 +41,10 @@ public class Serializer {
 			metadata.setInt("Arms", BtI(packet.hasArms()));
 			metadata.setInt("BasePlate", BtI(packet.hasBasePlate()));
 			metadata.setInt("Fire", BtI(packet.isFire()));
-			metadata.setInt("Invisible", BtI(packet.isInvisible()));
-			metadata.setInt("Small", BtI(packet.isMini()));
-			metadata.setInt("NameVisible", BtI(packet.isNameVisible()));
+			metadata.setInt("Invisible", BtI(packet.isVisible()));
+			metadata.setInt("Small", BtI(packet.isSmall()));
+			metadata.setInt("NameVisible", BtI(packet.isCustomNameVisible()));
+			metadata.setInt("Marker", BtI(packet.isMarker()));
 			armorStands.set(packet.getArmorID()+"", metadata);
 		}
 		compound.set("ArmorStands", armorStands);
@@ -82,10 +85,10 @@ public class Serializer {
 		return memberList;
 	}
 	 
-	private NBTTagCompound getEulerAngle(ArmorStandPacket packet){
+	private NBTTagCompound getEulerAngle(fArmorStand packet){
 		NBTTagCompound eulerAngle = new NBTTagCompound();
 		for(BodyPart part : BodyPart.getList()){
-			EulerAngle angle = packet.getAngle(part);
+			EulerAngle angle = packet.getPose(part);
 			NBTTagCompound partAngle = new NBTTagCompound();
 			partAngle.setDouble("X", angle.getX());
 			partAngle.setDouble("Y", angle.getY());
@@ -106,10 +109,10 @@ public class Serializer {
 		return location;
 	}
 	
-	private NBTTagCompound getFromInventory(ArmorStandInventory inv){
+	private NBTTagCompound getFromInventory(fInventory fInventory){
 		NBTTagCompound inventory = new NBTTagCompound();
 		for(int i = 0; i<5; i++){
-			ItemStack is = inv.getSlot(i);
+			ItemStack is = fInventory.getSlot(i);
 			if(is==null||is.getType().equals(Material.AIR)){inventory.setString(i+"", "NONE");continue;}
 			try {
 				inventory.set(i+"", new CraftItemStack().getNBTTag(is));
@@ -119,4 +122,18 @@ public class Serializer {
 		}
 		return inventory;
 	}
+
+	  public String toBase64(ItemStack is){
+		  try {
+	  		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
+			BukkitObjectOutputStream dataOutput = new BukkitObjectOutputStream(outputStream);
+			if(is==null) is=new ItemStack(Material.AIR);
+			dataOutput.writeObject(is);
+			dataOutput.close();
+	        return Base64Coder.encodeLines(outputStream.toByteArray());
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+			return null;
+	  }
 }

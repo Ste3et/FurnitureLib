@@ -104,10 +104,10 @@ public class LimitationManager {
 			if(maxChunk!=-1){return false;}
 		}
 		
-		if(player>=maxPlayer){if(maxPlayer!=-1){if(player<perAmount){return true;}p.sendMessage("ERROR0");return false;}
+		if(player>=maxPlayer){if(maxPlayer!=-1){if(player<perAmount){return true;}return false;}
 		
 		if(player>=perAmount){
-			if(perAmount!=-1){p.sendMessage("ERROR1:" + perAmount);return false;}
+			if(perAmount!=-1){return false;}
 		}
 		}
 		return true;

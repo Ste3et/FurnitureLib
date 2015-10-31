@@ -5,7 +5,9 @@ import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -23,6 +25,8 @@ import org.bukkit.inventory.ItemStack;
 
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
+import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
+import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 
 public class ChunkOnLoad implements Listener{
 	
@@ -112,10 +116,33 @@ public class ChunkOnLoad implements Listener{
 	
 	@EventHandler
 	public void onClick(final PlayerInteractEvent event){
+		final Player p = event.getPlayer();
+		if(p.getGameMode().equals(GameMode.SPECTATOR)){return;}
 		if(event.getAction().equals(Action.RIGHT_CLICK_BLOCK)){
-			if(event.getClickedBlock()==null||event.getItem()==null){return;}
-			Player p = event.getPlayer();
+			if(event.getClickedBlock()==null){return;}
+			
 			ItemStack is = event.getItem();
+			if(FurnitureLib.getInstance().getBlockManager().getList().contains(event.getClickedBlock().getLocation())){
+					event.setCancelled(true);
+					ObjectID objID = null;
+					for(ObjectID obj : FurnitureLib.getInstance().getFurnitureManager().getObjectList()){
+						if(obj.getBlockList().contains(event.getClickedBlock().getLocation())){
+							objID = obj;
+							break;
+						}
+					}
+					
+					if(objID != null && !objID.getSQLAction().equals(SQLAction.REMOVE)){
+						final ObjectID o = objID;
+						Bukkit.getScheduler().scheduleSyncDelayedTask(FurnitureLib.getInstance(), new Runnable() {
+							@Override
+							public void run() {
+								FurnitureBlockClickEvent e = new FurnitureBlockClickEvent(p, event.getClickedBlock(), o);
+								Bukkit.getPluginManager().callEvent(e);
+							}});
+					}
+			}
+			if(event.getItem()==null){return;}
 			if(getProjectByItem(is)==null){return;}
 			if(eventList.contains(event.getPlayer())) return;
 			eventList.add(p);
@@ -126,15 +153,37 @@ public class ChunkOnLoad implements Listener{
 			final ItemStack itemstack = is;
 			final Project project = pro;
 			final Location l = event.getClickedBlock().getLocation();
+			final BlockFace face = event.getBlockFace();
 			l.setYaw(p.getLocation().getYaw());
 			Bukkit.getScheduler().scheduleSyncDelayedTask(FurnitureLib.getInstance(), new Runnable() {
 				@Override
 				public void run() {
-					FurnitureItemEvent e = new FurnitureItemEvent(player, itemstack, project, l);
+					FurnitureItemEvent e = new FurnitureItemEvent(player, itemstack, project, l, face);
 					Bukkit.getPluginManager().callEvent(e);
 				}
 			});
 			removePlayer(p);
+		}else if(event.getAction().equals(Action.LEFT_CLICK_BLOCK)){
+			if(event.getClickedBlock()==null){return;}
+			if(FurnitureLib.getInstance().getBlockManager().getList().contains(event.getClickedBlock().getLocation())){
+				event.setCancelled(true);
+				ObjectID objID = null;
+				for(ObjectID obj : FurnitureLib.getInstance().getFurnitureManager().getObjectList()){
+					if(obj.getBlockList().contains(event.getClickedBlock().getLocation())){
+						objID = obj;
+						break;
+					}
+				}
+				if(objID != null && !objID.getSQLAction().equals(SQLAction.REMOVE)){
+					final ObjectID o = objID;
+					Bukkit.getScheduler().scheduleSyncDelayedTask(FurnitureLib.getInstance(), new Runnable() {
+						@Override
+						public void run() {
+							FurnitureBlockBreakEvent e = new FurnitureBlockBreakEvent(p, event.getClickedBlock(), o);
+							Bukkit.getPluginManager().callEvent(e);
+						}});
+				}
+			}
 		}
 	}
 	

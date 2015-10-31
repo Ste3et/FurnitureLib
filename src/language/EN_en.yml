@@ -20,3 +20,4 @@ message:
    SideNavigation: "&eType /furniture list <option> (0-#MAX#)"
    WrongOwner: "&cThis is not yours"
    LimitAouncer: "&6You have been place &e#TYPE# &2#CURRENT#&6/&c#MAX#"
+   NotONThisSide: "&cYou can not Place the Furniture on this Side of the Block"

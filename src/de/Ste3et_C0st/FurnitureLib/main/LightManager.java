@@ -31,8 +31,11 @@ public class LightManager {
 	
 	public void removeLight(Location location){
 		if(!enable){return;}
-		registry.deleteLight(location);
-		registry.collectChunks(location);
-		registry.sendChunkChanges();
+		try{
+			registry.deleteLight(location);
+			registry.collectChunks(location);
+			registry.sendChunkChanges();
+		}catch(Exception e){}
+
 	}
 }

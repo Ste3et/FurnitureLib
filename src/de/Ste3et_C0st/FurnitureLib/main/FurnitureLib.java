@@ -21,7 +21,6 @@ import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.Database.DeSerializer;
 import de.Ste3et_C0st.FurnitureLib.Database.Serializer;
 import de.Ste3et_C0st.FurnitureLib.Database.SQLManager;
-import de.Ste3et_C0st.FurnitureLib.Database.Serialize;
 import de.Ste3et_C0st.FurnitureLib.Events.ChunkOnLoad;
 import de.Ste3et_C0st.FurnitureLib.Events.FurnitureEvents;
 import de.Ste3et_C0st.FurnitureLib.LimitationManager.LimitationManager;
@@ -30,6 +29,7 @@ import de.Ste3et_C0st.FurnitureLib.Utilitis.CraftingInv;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.LanguageManager;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.LocationUtil;
 import de.Ste3et_C0st.FurnitureLib.main.Type.EventType;
+import de.Ste3et_C0st.FurnitureLib.main.entity.fArmorStand;
 import de.Ste3et_C0st.FurnitureLib.main.Protection.ProtectionManager;
 
 public class FurnitureLib extends JavaPlugin{
@@ -40,10 +40,9 @@ public class FurnitureLib extends JavaPlugin{
 	private static FurnitureLib instance;
 	private FurnitureManager manager;
 	private Connection con;
-	private Serialize serialize;
 	private ProtectionManager Pmanager;
 	private LightManager lightMgr;
-	private Boolean useGamemode = true, canSit = true;
+	private boolean useGamemode = true, canSit = true, update = true;
 	private CraftingInv craftingInv;
 	private LanguageManager lmanager;
 	private SQLManager sqlManager;
@@ -52,8 +51,8 @@ public class FurnitureLib extends JavaPlugin{
 	private Serializer serializeNew;
 	private DeSerializer deSerializerNew;
 	private Permission permission = null;
-	private PluginManager pluginManager = null;
 	private Updater updater;
+	private BlockManager bmanager;
 	
 	public LanguageManager getLangManager(){return this.lmanager;}
 	public LightManager getLightManager(){return this.lightMgr;}
@@ -61,7 +60,6 @@ public class FurnitureLib extends JavaPlugin{
 	public LimitationManager getLimitManager(){return this.limitManager;}
 	public ColorUtil getColorManager(){return this.colorManager;}
 	public CraftingInv getCraftingInv(){return this.craftingInv;}
-	public Serialize getSerialize(){ return this.serialize;}
 	public String getBukkitVersion() {return Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3];}
 	public static FurnitureLib getInstance(){return instance;}
 	public LocationUtil getLocationUtil(){return this.lUtil;}
@@ -69,19 +67,26 @@ public class FurnitureLib extends JavaPlugin{
 	public Connection getConnection(){return this.con;}
 	public ObjectID getObjectID(String c, String plugin, Location loc){return new ObjectID(c, plugin, loc);}
 	public boolean canBuild(Player p, ObjectID id, EventType type){ return Pmanager.canBuild(p, id, type);}
+	public boolean isUpdate(){return this.update;}
 	public Boolean useGamemode() {return useGamemode;}
 	public Serializer getSerializer(){return serializeNew;}
 	public DeSerializer getDeSerializer(){return deSerializerNew;}
-	public PluginManager getPluginManager(){return pluginManager;}
+	public PluginManager getPluginManager(){return this.getServer().getPluginManager();}
 	public boolean hasPerm(Player p, String perm){return permission.has(p, perm);}
 	public boolean hasPerm(CommandSender p, String perm){return permission.has(p, perm);}
 	public boolean canSitting(){return this.canSit;}
+	public boolean isDouble(String s){try{Double.parseDouble(s);}catch(NumberFormatException e){return false;}return true;}
+	public boolean isBoolean(String s){try {Boolean.parseBoolean(s.toLowerCase());}catch (Exception e) {return false;}return true;}
+	public boolean isInt(String s){try{Integer.parseInt(s);}catch(NumberFormatException e){return false;}return true;}
+	public BlockManager getBlockManager() {return bmanager;}
+	
 	public Updater getUpdater(){return updater;}
 	@SuppressWarnings("deprecation")
 	@Override
 	public void onEnable(){
 		if(!isEnable("ProtocolLib", true)){getLogger().warning("ProtocolLib not found");}
 		if(!isEnable("Vault", true)){getLogger().warning("Vault not found");}
+		if(isEnable("HolographicDisplaysPatch", false)){getLogger().warning("!! HolographicDisplaysPatch is not Supportet uninstall it !!");return;}
 		if(!setupPermissions()){getLogger().warning("No Permission System found"); Bukkit.getPluginManager().disablePlugin(this);}
 		try{new Metrics(this).start();}catch(Exception e){e.printStackTrace();}
 		instance = this;
@@ -91,12 +96,10 @@ public class FurnitureLib extends JavaPlugin{
 		this.lUtil = new LocationUtil();
 		this.manager = new FurnitureManager();
 		this.colorManager = new ColorUtil();
-		this.serialize = new Serialize();
 		this.serializeNew = new Serializer();
 		this.deSerializerNew = new DeSerializer();
 		this.lightMgr = new LightManager(this);
 		this.lmanager = new LanguageManager(instance, getConfig().getString("config.Language"));
-		this.pluginManager = getServer().getPluginManager();
 		this.useGamemode = getConfig().getBoolean("config.NormalGamemodeRemove");
 		this.canSit = !getConfig().getBoolean("config.DisableSitting");
 		this.updater = new Updater();
@@ -115,6 +118,8 @@ public class FurnitureLib extends JavaPlugin{
 		getLogger().info("==========================================");
 		this.craftingInv = new CraftingInv(this);
 		this.limitManager = new LimitationManager(this);
+		this.update = getConfig().getBoolean("config.CheckUpdate");
+		this.bmanager = new BlockManager();
 		if(getConfig().getBoolean("config.timer.Enable")){
 			int time = getConfig().getInt("config.timer.time");
 			sqlManager.saveIntervall(time);
@@ -126,8 +131,6 @@ public class FurnitureLib extends JavaPlugin{
 			}
 		}
 	}
-	
-	
 	
 	private boolean setupPermissions()
 	   {
@@ -156,42 +159,13 @@ public class FurnitureLib extends JavaPlugin{
 		getLogger().info("ArmorStandPackets saved");
 		if(!getFurnitureManager().getObjectList().isEmpty()){
 			for(ObjectID obj : getFurnitureManager().getObjectList()){
-				for(ArmorStandPacket as : obj.getPacketList()){
-					as.destroy();
+				for(fArmorStand as : obj.getPacketList()){
+					as.kill();
 				}
 			}
 		}
-		
 		getLogger().info("==========================================");
 	}
-	
-	  public Boolean isDouble(String s){
-		  try{
-			  Double.parseDouble(s);
-			  return true;
-		  }catch(NumberFormatException e){
-			  return false;
-		  }
-	  }
-	  
-	  public Boolean isBoolean(String s){
-		  try {
-			  s = s.toLowerCase();
-			  Boolean.parseBoolean(s);
-			  return true;
-		} catch (Exception e) {
-			return false;
-		}
-	  }
-	  
-	  public Boolean isInt(String s){
-		  try{
-			  Integer.parseInt(s);
-			  return true;
-		  }catch(NumberFormatException e){
-			  return false;
-		  }
-	  }
 	
 	public void spawn(Project pro, Location l){
 		Class<?> c = pro.getclass();

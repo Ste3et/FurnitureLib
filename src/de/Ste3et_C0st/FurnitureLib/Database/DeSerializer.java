@@ -16,13 +16,13 @@ import de.Ste3et_C0st.FurnitureLib.NBT.CraftItemStack;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTCompressedStreamTools;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagList;
-import de.Ste3et_C0st.FurnitureLib.main.ArmorStandPacket;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.BodyPart;
 import de.Ste3et_C0st.FurnitureLib.main.Type.EventType;
 import de.Ste3et_C0st.FurnitureLib.main.Type.PublicMode;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
+import de.Ste3et_C0st.FurnitureLib.main.entity.fArmorStand;
 
 public class DeSerializer {
 
@@ -36,7 +36,7 @@ public class DeSerializer {
 			UUID uuid = uuidFetcher(compound.getString("Owner-UUID"));
 			List<UUID> members = membersFetcher(compound.getList("Members"));
 			Location startLocation = locationFetcher(compound.getCompound("Location"));
-			
+			if(startLocation==null){return;}
 			ObjectID obj = new ObjectID(null, null, startLocation);
 			obj.setID(objId);
 			obj.setEventTypeAccess(evType);
@@ -53,7 +53,7 @@ public class DeSerializer {
 				NBTTagCompound metadata = armorStands.getCompound(ArmorID+"");
 				String name = metadata.getString("Name");
 				Location loc = locationFetcher(metadata.getCompound("Location"));
-				ArmorStandPacket asPacket = FurnitureLib.getInstance().getFurnitureManager().createArmorStand(obj, loc);
+				fArmorStand asPacket = FurnitureLib.getInstance().getFurnitureManager().createArmorStand(obj, loc);
 				asPacket.setName(name);
 				
 				NBTTagCompound euler = metadata.getCompound("EulerAngle");
@@ -67,6 +67,8 @@ public class DeSerializer {
 				boolean Fire = ItB(metadata.getInt("Fire"));
 				boolean Arms = ItB(metadata.getInt("Arms"));
 				boolean Invisible = ItB(metadata.getInt("Invisible"));
+				boolean Marker = true;
+				if(metadata.hasKey("Marker")){Marker = ItB(metadata.getInt("Marker"));}
 				
 				NBTTagCompound inventory = metadata.getCompound("Inventory");
 				for(int i = 0; i<5; i++){
@@ -84,6 +86,7 @@ public class DeSerializer {
 				asPacket.setArms(Arms);
 				asPacket.setInvisible(Invisible);
 				asPacket.setArmorID(ArmorID);
+				asPacket.setMarker(Marker);
 				if(FurnitureLib.getInstance().getFurnitureManager().getLastID()<ArmorID){
 					FurnitureLib.getInstance().getFurnitureManager().setLastID(ArmorID);
 				}

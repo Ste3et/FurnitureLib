@@ -40,6 +40,7 @@ public class Updater {
 	}
 	
 	private boolean isUpdateAvaible(){
+		if(!FurnitureLib.getInstance().isUpdate()){return false;}
 		if(!currentVersion.equalsIgnoreCase(newVersion)){
 			return true;
 		}else{

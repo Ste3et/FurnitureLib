@@ -7,6 +7,7 @@ config:
    #Disable Sitting on some furniture
    DisableSitting: false
    LimitType: PLAYER
+   CheckUpdate: true
    Database:
       type: SQLite
       database: "furniture"

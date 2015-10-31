@@ -11,6 +11,7 @@ import org.bukkit.util.EulerAngle;
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.main.Type.BodyPart;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
+import de.Ste3et_C0st.FurnitureLib.main.entity.fArmorStand;
 
 public class FurnitureManager {
 	private Integer i = 0;
@@ -38,12 +39,12 @@ public class FurnitureManager {
 		if(this.objecte.isEmpty()){return;}
 		for(ObjectID obj : objecte){
 			if(obj.isInRange(player)){
-				for(ArmorStandPacket packet :obj.getPacketList()){
+				for(fArmorStand packet :obj.getPacketList()){
 					packet.send(player);
 				}
 			}else{
-				for(ArmorStandPacket packet :obj.getPacketList()){
-					packet.destroy(player);
+				for(fArmorStand packet :obj.getPacketList()){
+					packet.kill(player);
 				}
 			}
 		}
@@ -52,8 +53,8 @@ public class FurnitureManager {
 	public void updateFurniture(ObjectID obj) {
 		if(this.objecte.isEmpty()){return;}
 		if(obj.isFromDatabase()){obj.setSQLAction(SQLAction.UPDATE);}
-		for(ArmorStandPacket packet : obj.getPacketList()){
-			if(packet.getObjectId().equals(obj)){
+		for(fArmorStand packet : obj.getPacketList()){
+			if(packet.getObjID().equals(obj)){
 				for(Player player : Bukkit.getOnlinePlayers()){
 					if(obj.isInRange(player)){
 						packet.update(player);
@@ -75,20 +76,25 @@ public class FurnitureManager {
 	public void remove(ObjectID id){
 		if(this.objecte.isEmpty()){return;}
 		id.setSQLAction(SQLAction.REMOVE);
-		List<ArmorStandPacket> packetList = (List<ArmorStandPacket>) ((ArrayList<ArmorStandPacket>) id.getPacketList()).clone();
-		for(ArmorStandPacket asp : packetList){
-			if(asp.getObjectId().equals(id)){
-				asp.destroy();
+		List<fArmorStand> packetList = (List<fArmorStand>) ((ArrayList<fArmorStand>) id.getPacketList()).clone();
+		for(fArmorStand asp : packetList){
+			if(asp.getObjID().equals(id)){
+				asp.kill();
 				asp.delete();
 			}
+		}
+		
+		if(!id.getBlockList().isEmpty()){
+			FurnitureLib.getInstance().getBlockManager().destroy(id.getBlockList(), false);
+			id.getBlockList().clear();
 		}
 	}
 	
 	public void send(ObjectID id){
 		if(this.objecte.isEmpty()){return;}
-		if(id==null){System.out.println("OBJID not found");return;}
-		for(ArmorStandPacket packet : id.getPacketList()){
-			if(packet.getObjectId().equals(id)){
+		if(id==null){return;}
+		for(fArmorStand packet : id.getPacketList()){
+			if(packet.getObjID().equals(id)){
 				for(Player p : Bukkit.getOnlinePlayers()){
 					packet.send(p);
 				}
@@ -99,43 +105,36 @@ public class FurnitureManager {
 	public boolean isArmorStand(Integer entityID){
 		if(this.objecte.isEmpty()){return false;}
 		for(ObjectID obj : objecte){
-			for(ArmorStandPacket packet : obj.getPacketList()){
-				if(packet.getEntityId() == entityID) return true;
+			for(fArmorStand packet : obj.getPacketList()){
+				if(packet.getEntityID() == entityID) return true;
 			}
 		}
 		return false;
 	}
 	
-	public ArmorStandPacket createArmorStand(ObjectID id, Location loc){
+	public fArmorStand createArmorStand(ObjectID id, Location loc){
 		if(!objecte.contains(id)){this.objecte.add(id);}
 		i++;
-		ArmorStandPacket packet = new ArmorStandPacket(loc, id, i);
+		fArmorStand packet = new fArmorStand(loc, id);
 		id.addArmorStand(packet);
 		return packet;
 	}
-	
-	public void setMetadata(ArmorStandPacket packet, boolean Arms, boolean Invisible, boolean BasePlate, boolean Gravity){
-		packet.setArms(Arms);
-		packet.setBasePlate(BasePlate);
-		packet.setGravity(Gravity);
-		packet.setInvisible(Invisible);
-	}
-	
-	public void setName(ArmorStandPacket packet, String Name, boolean Show){
+
+	public void setName(fArmorStand packet, String Name, boolean Show){
 		packet.setName(Name);
 		packet.setNameVasibility(Show);
 	}
 	
-	public void setPose(ArmorStandPacket packet, EulerAngle angle, BodyPart part){
+	public void setPose(fArmorStand packet, EulerAngle angle, BodyPart part){
 		packet.setPose(angle, part);
 	}
 
-	public ArmorStandPacket getArmorStandPacketByID(Integer entityID) {
+	public fArmorStand getfArmorStandByID(Integer entityID) {
 		if(this.objecte.isEmpty()){return null;}
 		if(entityID==null) return null;
 		for(ObjectID obj : objecte){
-			for(ArmorStandPacket packet : obj.getPacketList()){
-				if(packet.getEntityId() == entityID){
+			for(fArmorStand packet : obj.getPacketList()){
+				if(packet.getEntityID() == entityID){
 					return packet;
 				}
 			}
@@ -143,7 +142,7 @@ public class FurnitureManager {
 		return null;
 	}
 	
-	public List<ArmorStandPacket> getArmorStandPacketByObjectID(ObjectID id) {
+	public List<fArmorStand> getfArmorStandByObjectID(ObjectID id) {
 		if(this.objecte.isEmpty()){return null;}
 		return id.getPacketList();
 	}
@@ -152,8 +151,8 @@ public class FurnitureManager {
 		if(this.objecte.isEmpty()){return null;}
 		if(entityID==null) return null;
 		for(ObjectID obj : objecte){
-			for(ArmorStandPacket packet : obj.getPacketList()){
-				if(packet.getEntityId() == entityID){
+			for(fArmorStand packet : obj.getPacketList()){
+				if(packet.getEntityID() == entityID){
 					return obj;
 				}
 			}
@@ -176,13 +175,13 @@ public class FurnitureManager {
 	public void removeFurniture(Player player) {
 		if(this.objecte.isEmpty()){return;}
 		for(ObjectID obj : objecte){
-			for(ArmorStandPacket packet : obj.getPacketList()){
-				packet.destroy(player);
+			for(fArmorStand packet : obj.getPacketList()){
+				packet.kill(player);
 			}
 		}
 	}
 
-	public void remove(ArmorStandPacket armorStandPacket) {
+	public void remove(fArmorStand armorStandPacket) {
 		if(this.objecte.isEmpty()){return;}
 		for(ObjectID obj : objecte){
 			if(obj.getPacketList().contains(armorStandPacket)){
@@ -191,9 +190,9 @@ public class FurnitureManager {
 		}
 	}
 	
-	public static List<ArmorStandPacket> cloneList(List<ArmorStandPacket> list) {
-	    List<ArmorStandPacket> clone = new ArrayList<ArmorStandPacket>(list.size());
-	    for(ArmorStandPacket item: list) clone.add(item);
+	public static List<fArmorStand> cloneList(List<fArmorStand> list) {
+	    List<fArmorStand> clone = new ArrayList<fArmorStand>(list.size());
+	    for(fArmorStand item: list) clone.add(item);
 	    return clone;
 	}
 	

@@ -6,12 +6,16 @@ import org.bukkit.Bukkit;
 
 public class EntityID {
 
-	public static int nextEntityId() throws Exception{
-		Field f = Reflection.getNMSClass("Entity").getDeclaredField("entityCount");
-		f.setAccessible(true);
-		int id = f.getInt(null);
-		f.set(null, id+1);
-		return id;
+	public static int nextEntityId(){
+		try{
+			Field f = Reflection.getNMSClass("Entity").getDeclaredField("entityCount");
+			f.setAccessible(true);
+			int id = f.getInt(null);
+			f.set(null, id+1);
+			return id;
+		}catch(Exception e){
+			return 0;
+		}
 	}
 	public static Class<?> getNMSClass(String className) {
 		String fullName = "net.minecraft.server." + getVersion() + className;
