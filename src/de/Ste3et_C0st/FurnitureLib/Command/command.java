@@ -1,21 +1,16 @@
 package de.Ste3et_C0st.FurnitureLib.Command;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Random;
-
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 
-import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.Events.FurnitureClickEvent;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.JsonBuilder;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.ManageInv;
@@ -24,7 +19,7 @@ import de.Ste3et_C0st.FurnitureLib.Utilitis.JsonBuilder.HoverAction;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
 
-public class command implements CommandExecutor, Listener, TabCompleter{
+public class command implements CommandExecutor, Listener{
 	
 	static FurnitureLib lib = FurnitureLib.getInstance();
 	FurnitureManager manager = lib.getFurnitureManager();
@@ -121,7 +116,7 @@ public class command implements CommandExecutor, Listener, TabCompleter{
 				"§cgive the player one furniture").withClickEvent(ClickAction.SUGGEST_COMMAND, "/furniture give <FURNITURE> (player)")
 		.withText("§6/furniture debug \n").withHoverEvent(HoverAction.SHOW_TEXT,"§6You can become some information about\n§6abaout the furniture you are rightclicked").withClickEvent(ClickAction.SUGGEST_COMMAND, "/furniture debug")
 		.withText("§6/furniture manage \n").withHoverEvent(HoverAction.SHOW_TEXT,"§6You can config the furniture\n§6that you are rightclicked").withClickEvent(ClickAction.SUGGEST_COMMAND, "/furniture manage")
-		.withText("§6/furniture recipe §e<type>\n").withHoverEvent(HoverAction.SHOW_TEXT,"§6View recipe from a furniture").withClickEvent(ClickAction.SUGGEST_COMMAND, "/furniture recipe §e<type>")
+		.withText("§6/furniture recipe §e<type>\n").withHoverEvent(HoverAction.SHOW_TEXT,"§6View recipe from a furniture").withClickEvent(ClickAction.SUGGEST_COMMAND, "/furniture recipe <type>")
 		.withText("§6/furniture remove §e<type>\n").withHoverEvent(HoverAction.SHOW_TEXT,"§6It's remove only one type of the \n§6Furniture").withClickEvent(ClickAction.SUGGEST_COMMAND, "/furniture remove <type>")
 		.withText("§6/furniture remove §e<player>\n").withHoverEvent(HoverAction.SHOW_TEXT,"§6Remove all furniture from an player").withClickEvent(ClickAction.SUGGEST_COMMAND, "/furniture remove <player>")
 		.withText("§6/furniture remove §e<world>\n").withHoverEvent(HoverAction.SHOW_TEXT,"§6Remove all furniture from an world").withClickEvent(ClickAction.SUGGEST_COMMAND, "/furniture remove <world>")
@@ -132,50 +127,5 @@ public class command implements CommandExecutor, Listener, TabCompleter{
 		.withText("§6/furniture remove §eall\n").withHoverEvent(HoverAction.SHOW_TEXT,"§6Remove all furniture and reset database").withClickEvent(ClickAction.SUGGEST_COMMAND, "/furniture remove all")
 		.withText("\n").withText("§e§lTIP: §r§7Try to §e§nclick§7 or §e§nhover§7 the commands").
 		withText("§7§m+--------------------------------------------------+").sendJson(player);
-	}
-
-	@Override
-	public List<String> onTabComplete(CommandSender sender,Command cmd, String string,String[] args) {
-		if(sender instanceof Player){
-			if(cmd!=null&&cmd.getName().equalsIgnoreCase("furniture")){
-				if(args.length==1){return Arrays.asList("list","give","debug","manage","recipe","remove");}
-				if(args.length==2){
-					if(args[0].equalsIgnoreCase("list")){
-						return Arrays.asList("type","world","plugin");
-					}else if(args[0].equalsIgnoreCase("give")){
-						return getProjectNames();
-					}else if(args[0].equalsIgnoreCase("remove")){
-						List<String> stringList = getProjectNames();
-						stringList.add("all");
-						stringList.add("distance");
-						stringList.add("lookat");
-						stringList.add(new Random(10).nextInt()+"");
-						return getProjectPlugins(stringList);
-					}else if(args[0].equalsIgnoreCase("recipe")){
-						return getProjectNames();
-					}
-				}
-			}
-		}
-		return null;
-	}
-	
-	private List<String> getProjectPlugins(List<String> s){
-		for(Project pro : manager.getProjects()){
-			if(!s.contains(pro.getPlugin().getName())){
-				s.add(pro.getPlugin().getName());
-			}
-		}
-		return s;
-	}
-	
-	private List<String> getProjectNames(){
-		List<String> projectName = new ArrayList<String>();
-		for(Project pro : manager.getProjects()){
-			if(!projectName.contains(pro.getName())){
-				projectName.add(pro.getName());
-			}
-		}
-		return projectName;
 	}
 }

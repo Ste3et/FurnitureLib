@@ -17,6 +17,8 @@ import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fArmorStand;
+import de.Ste3et_C0st.FurnitureLib.Events.FurnitureBreakEvent;
+import de.Ste3et_C0st.FurnitureLib.Events.FurnitureClickEvent;
 
 public class FurnitureEvents {
 
@@ -78,11 +80,17 @@ public class FurnitureEvents {
                         		final Player p = event.getPlayer();
                         		for(ObjectID obj : manager.getObjectList()){
                         			if(obj.isInRange(p)){
-                                		for(fArmorStand packet : obj.getPacketList()){
+                                		for(final fArmorStand packet : obj.getPacketList()){
                                 			if(packet.getPassanger()!=null){
                                 				if(packet.getPassanger().equals(p)){
                                 					event.setCancelled(true);
-                                    				packet.eject();
+                                					Bukkit.getScheduler().scheduleSyncDelayedTask(getPlugin(), new Runnable() {
+														@Override
+														public void run() {
+															packet.eject();
+														}
+													});
+                                    				
                                 				}
                                 			}
                                 		}

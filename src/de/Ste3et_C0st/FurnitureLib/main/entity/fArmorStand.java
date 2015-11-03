@@ -48,6 +48,7 @@ public class fArmorStand extends fEntity {
 		this.armorstandID = FurnitureLib.getInstance().getFurnitureManager().getLastID();
 		this.setObjID(obj);
 		this.pro = obj.getProjectOBJ();
+		
 	}
 
 	public EulerAngle getPose(BodyPart part){

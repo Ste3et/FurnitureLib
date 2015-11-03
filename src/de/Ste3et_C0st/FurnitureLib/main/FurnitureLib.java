@@ -10,12 +10,14 @@ import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.PluginCommand;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import de.Ste3et_C0st.FurnitureLib.Command.TabCompleterHandler;
 import de.Ste3et_C0st.FurnitureLib.Command.command;
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.Database.DeSerializer;
@@ -105,7 +107,10 @@ public class FurnitureLib extends JavaPlugin{
 		this.updater = new Updater();
 		new FurnitureEvents(instance, manager);
 		getServer().getPluginManager().registerEvents(new ChunkOnLoad(), this);
-		getCommand("furniture").setExecutor(new command(this));
+		
+		PluginCommand c = getCommand("furniture");
+		c.setExecutor(new command(this));
+		c.setTabCompleter(new TabCompleterHandler(this));
 		this.Pmanager = new ProtectionManager(instance);
 		getLogger().info("==========================================");
 		getLogger().info("FurnitureLibary Version: " + this.getDescription().getVersion());

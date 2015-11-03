@@ -37,7 +37,7 @@ public abstract class fEntity {
 	private ProtocolManager manager;
 	private PacketContainer container;
 	private boolean fire, nameVisible, visible;
-
+	
 	public fEntity(Location location, EntityType type) {
 		this.type = type;
 		this.location = location;

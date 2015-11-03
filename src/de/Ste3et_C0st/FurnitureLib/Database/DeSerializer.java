@@ -114,11 +114,25 @@ public class DeSerializer {
 		Double Z = location.getDouble("Z");
 		Float Yaw = location.getFloat("Yaw");
 		Float Pitch = location.getFloat("Pitch");
+		if(!isWorldLoadet(location.getString("World"))){return null;}
 		World world = Bukkit.getWorld(location.getString("World"));
 		Location loc = new Location(world, X, Y, Z);
 		loc.setYaw(Yaw);
 		loc.setPitch(Pitch);
 		return loc;
+	}
+	
+	public boolean isWorldLoadet(String s){
+		boolean loaded = false;
+		for(World w: Bukkit.getServer().getWorlds())
+		{
+		  if(w.getName().equals(s))
+		  {
+		    loaded = true;
+		    break;
+		  }
+		}
+		return loaded;
 	}
 	
 	private UUID uuidFetcher(String s){
