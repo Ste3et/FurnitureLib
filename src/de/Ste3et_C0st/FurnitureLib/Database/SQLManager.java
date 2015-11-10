@@ -88,11 +88,12 @@ public class SQLManager {
 					switch (obj.getSQLAction()) {
 					case UPDATE: remove(obj); save(obj); break;
 					case SAVE: save(obj); break;
-					case REMOVE:if(obj.isFromDatabase()){remove(obj);} break;
+					case REMOVE:remove(obj); break;
 					case NOTHING: break;
 					}
 					if(!obj.getSQLAction().equals(SQLAction.REMOVE)){obj.setSQLAction(SQLAction.NOTHING);}
 					objList.add(obj);
+					obj.setSQLAction(SQLAction.NOTHING);
 				}
 			}
 		}

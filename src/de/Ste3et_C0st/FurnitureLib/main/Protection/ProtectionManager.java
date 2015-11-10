@@ -6,11 +6,7 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
-import org.bukkit.event.block.BlockBreakEvent;
-import org.bukkit.event.block.BlockPlaceEvent;
-import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 
@@ -19,10 +15,11 @@ import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.EventType;
 import de.Ste3et_C0st.FurnitureLib.main.Type.PlaceableSide;
 import de.Ste3et_C0st.FurnitureLib.main.Type.PublicMode;
+import de.Ste3et_C0st.ProtectionLib.main.ProtectionLib;
 
 public class ProtectionManager {
 
-	Plugin plugin;
+	Plugin plugin, FP;
 	PluginManager manager;
 	FurnitureLib lib;
 	HashMap<Player, EventType> playerList = new HashMap<Player, EventType>();
@@ -31,6 +28,9 @@ public class ProtectionManager {
 		this.lib = FurnitureLib.getInstance();
 		this.plugin = plugin;
 		this.manager = Bukkit.getPluginManager();
+		if(Bukkit.getPluginManager().isPluginEnabled("ProtectionLib")){
+			this.FP = Bukkit.getPluginManager().getPlugin("ProtectionLib");
+		}
 	}
 	
 	public boolean isSolid(Material m, int subID, PlaceableSide side){if(!checkPlaceable(m, subID, side)){return false;}{return m.isSolid();}}
@@ -104,27 +104,16 @@ public class ProtectionManager {
 		}
 	}
 	
-	public boolean canBuild(Player p, Location loc, EventType type){
-		Block b = loc.getBlock();
-		if(b==null){return true;}
-		ItemStack is = p.getItemInHand();
-		if(is==null){return true;}
-		if(type==null){return true;}
-		switch(type){
-		case BREAK: 
-			BlockBreakEvent event = new BlockBreakEvent(b,p);
-			Bukkit.getPluginManager().callEvent(event);
-			return !event.isCancelled();
-		case PLACE:
-			BlockPlaceEvent ev = new BlockPlaceEvent(b, b.getState(), b, p.getItemInHand(), p, true);
-			Bukkit.getPluginManager().callEvent(ev);
-			return !ev.isCancelled();
-		case INTERACT:
-			ev = new BlockPlaceEvent(b, b.getState(), b, p.getItemInHand(), p, true);
-			Bukkit.getPluginManager().callEvent(ev);
-			return !ev.isCancelled();
-		default: return true;
-		}
+	public boolean canBuild(Player p, Location loc){
+		if(FP==null){return true;}
+		ProtectionLib fp = (ProtectionLib) this.FP;
+		return fp.canBuild(loc, p);
+	}
+	
+	public Boolean isOwner(Player p, Location loc) {
+		if(FP==null){return null;}
+		ProtectionLib fp = (ProtectionLib) this.FP;
+		return fp.isOwner(loc, p);
 	}
 	
 	public boolean canBuild(Player p, ObjectID id, EventType type){

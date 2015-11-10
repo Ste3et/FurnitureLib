@@ -7,6 +7,7 @@ import java.util.Random;
 
 import org.bukkit.Color;
 import org.bukkit.DyeColor;
+import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -21,7 +22,6 @@ import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.CenterType;
-import de.Ste3et_C0st.FurnitureLib.main.Type.EventType;
 import de.Ste3et_C0st.FurnitureLib.main.Type.PlaceableSide;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 
@@ -113,8 +113,8 @@ public class LocationUtil {
 					for(int b = 0; b<h;b++){
 						for(int c = 0;c<l;c++){
 							Location location = FurnitureLib.getInstance().getLocationUtil().getRelativ(loc, face,(double) -a,(double) c).add(0, b, 0);
-							if(!FurnitureLib.getInstance().getPermManager().canBuild(p, location, EventType.PLACE)){return false;}
-							if(!location.getBlock().getType().equals(Material.AIR)){p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("NotEnoughSpace"));return false;}
+							if(!FurnitureLib.getInstance().getPermManager().canBuild(p, location)){return false;}
+							if(!location.getBlock().getType().equals(Material.AIR)){p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("NotEnoughSpace"));particleBlock(location.getBlock());return false;}
 						}
 					}
 				}
@@ -124,8 +124,8 @@ public class LocationUtil {
 					for(int b = 0; b<h;b++){
 						for(int c = 0;c>l;c--){
 							Location location = FurnitureLib.getInstance().getLocationUtil().getRelativ(loc, face,(double) -a,(double) c).add(0, b, 0);
-							if(!FurnitureLib.getInstance().getPermManager().canBuild(p, location, EventType.PLACE)){return false;}
-							if(!location.getBlock().getType().equals(Material.AIR)){p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("NotEnoughSpace"));return false;}
+							if(!FurnitureLib.getInstance().getPermManager().canBuild(p, location)){return false;}
+							if(!location.getBlock().getType().equals(Material.AIR)){p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("NotEnoughSpace"));particleBlock(location.getBlock());return false;}
 						}
 					}
 				}
@@ -136,8 +136,8 @@ public class LocationUtil {
 				for(int b = 0; b<h;b++){
 					for(int c = 0;c<l;c++){
 						Location location = FurnitureLib.getInstance().getLocationUtil().getRelativ(loc, face,(double) -a,(double) c).add(0, b, 0);
-						if(!FurnitureLib.getInstance().getPermManager().canBuild(p, location, EventType.PLACE)){return false;}
-						if(!location.getBlock().getType().equals(Material.AIR)){p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("NotEnoughSpace"));return false;}
+						if(!FurnitureLib.getInstance().getPermManager().canBuild(p, location)){return false;}
+						if(!location.getBlock().getType().equals(Material.AIR)){p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("NotEnoughSpace"));particleBlock(location.getBlock());return false;}
 					}
 				}
 			}
@@ -147,8 +147,8 @@ public class LocationUtil {
 				for(int b = 0; b<h;b++){
 					for(int c = 0;c<l;c++){
 						Location location = FurnitureLib.getInstance().getLocationUtil().getRelativ(loc, face,(double) a,(double) c).add(0, b, 0);
-						if(!FurnitureLib.getInstance().getPermManager().canBuild(p, location, EventType.PLACE)){return false;}
-						if(!location.getBlock().getType().equals(Material.AIR)){p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("NotEnoughSpace"));return false;}
+						if(!FurnitureLib.getInstance().getPermManager().canBuild(p, location)){return false;}
+						if(!location.getBlock().getType().equals(Material.AIR)){p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("NotEnoughSpace"));particleBlock(location.getBlock());return false;}
 					}
 				}
 			}
@@ -160,8 +160,8 @@ public class LocationUtil {
 				for(int b = 0; b<h;b++){
 					for(int c = 0;c<w1;c++){
 						Location location = FurnitureLib.getInstance().getLocationUtil().getRelativ(loc, face,(double) -a,(double) c).add(0, b, 0);
-						if(!FurnitureLib.getInstance().getPermManager().canBuild(p, location, EventType.PLACE)){return false;}
-						if(!location.getBlock().getType().equals(Material.AIR)){p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("NotEnoughSpace"));return false;}
+						if(!FurnitureLib.getInstance().getPermManager().canBuild(p, location)){return false;}
+						if(!location.getBlock().getType().equals(Material.AIR)){p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("NotEnoughSpace"));particleBlock(location.getBlock());return false;}
 					}
 				}
 			}
@@ -169,14 +169,32 @@ public class LocationUtil {
 				for(int b = 0; b<h;b++){
 					for(int c = 0;c<w1;c++){
 						Location location = FurnitureLib.getInstance().getLocationUtil().getRelativ(loc, face,(double) -a,(double) -c).add(0, b, 0);
-						if(!FurnitureLib.getInstance().getPermManager().canBuild(p, location, EventType.PLACE)){return false;}
-						if(!location.getBlock().getType().equals(Material.AIR)){p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("NotEnoughSpace"));return false;}
+						if(!FurnitureLib.getInstance().getPermManager().canBuild(p, location)){return false;}
+						if(!location.getBlock().getType().equals(Material.AIR)){p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("NotEnoughSpace"));particleBlock(location.getBlock());return false;}
 					}
 				}
 			}
 			return true;
 		}
 		return true;
+	}
+	
+	public void particleBlock(Block b){
+		if(!FurnitureLib.getInstance().isParticleEnable()) return;
+		try{
+			World w = b.getWorld();
+			Location loc = b.getLocation();
+			for(double x = .0; x<1d; x+=.3){
+				for(double y = .0; y<1d; y+=.3){
+					for(double z = .0; z<1d; z+=.3){
+						Location location = loc.clone();
+						location = location.add(x, y, z);
+						w.spigot().playEffect(location, Effect.COLOURED_DUST, 1, 1, .1F, .1F, .1F, 0.2F, 1, 9);
+					}
+				}
+			}
+			
+		}catch(Exception e){}
 	}
 
     public boolean isDay(World w) {

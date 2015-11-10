@@ -49,7 +49,7 @@ public final class FurnitureItemEvent extends Event implements Cancellable {
     private ObjectID getStartLocation(){
     	switch (clickedFace) {
 		case UP:return new ObjectID(pro.getName(), pro.getPlugin().getName(), l.clone().add(0, 1, 0));
-		case DOWN: return new ObjectID(pro.getName(), pro.getPlugin().getName(), l.clone().add(0, -1, 0));
+		case DOWN:return new ObjectID(pro.getName(), pro.getPlugin().getName(), l.clone().add(0, -1, 0));
 		default:
 			l = FurnitureLib.getInstance().getLocationUtil().getRelativ(l.add(0, -1, 0), clickedFace, -1, 0);
 			l.setYaw(FurnitureLib.getInstance().getLocationUtil().FaceToYaw(clickedFace)+180);
@@ -62,9 +62,14 @@ public final class FurnitureItemEvent extends Event implements Cancellable {
 	
 	@SuppressWarnings("deprecation")
 	public boolean canBuild(){
-		if(!FurnitureLib.getInstance().getLocationUtil().canBuild(l, pro, p)){return false;}
 		BlockFace face = isOnTheRightSide();
 		if(face==null){p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("NotONThisSide"));return false;}
+		if(clickedFace.equals(BlockFace.DOWN)){
+			if(!FurnitureLib.getInstance().getLocationUtil().canBuild(l.clone().add(0, -2, 0), pro, p)){return false;}
+		}else{
+			if(!FurnitureLib.getInstance().getLocationUtil().canBuild(l, pro, p)){return false;}
+		}
+		
 	    if(!FurnitureLib.getInstance().getPermManager().isSolid(getBlock().getType(), getBlock().getData(), getProject().getPlaceableSide())){return false;}
 		if(p.isOp()) return true;
 		if(!pro.hasPermissions(p)){return false;}
@@ -79,8 +84,8 @@ public final class FurnitureItemEvent extends Event implements Cancellable {
 	private Block getBlock(){
 		BlockFace face = isOnTheRightSide();
 		switch (face) {
-		case UP:return l.getBlock().getRelative(BlockFace.DOWN);
-		case DOWN: return l.getBlock().getRelative(BlockFace.DOWN);
+		case UP:return l.getBlock();
+		case DOWN:return l.getBlock().getRelative(BlockFace.DOWN);
 		default:return l.getBlock().getRelative(face.getOppositeFace());
 		}
 	}

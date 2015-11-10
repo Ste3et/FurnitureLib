@@ -127,6 +127,6 @@ public class fArmorStand extends fEntity {
 			b0 = (byte)(b0 & 0xFFFFFFEF);
 		}
 		getHandle().setObject(10, Byte.valueOf(b0));
-		this.marker = b;
+		this.marker = !b;
 	}
 }

@@ -44,9 +44,12 @@ public class command implements CommandExecutor, Listener{
 			p.sendMessage("§6Owner: §2" + e.getID().getPlayerName());
 			p.sendMessage("§6PublicEventAccess: §e" + e.getID().getEventType().name().toLowerCase());
 			p.sendMessage("§6ArmorStands: §e" + e.getID().getPacketList().size());
-			p.sendMessage("§6FromDatabse: §c" + e.getID().isFromDatabase());
+			p.sendMessage("§6FromDatabase: §c" + e.getID().isFromDatabase());
+			p.sendMessage("§6Object Finish: §c" + e.getID().isFinish());
 			p.sendMessage("§6Members: §e" + e.getID().getMemberList().size());
 			p.sendMessage("§6SQL State: §e" + e.getID().getSQLAction().name().toLowerCase());
+			p.sendMessage("§6Size: §e" + e.getID().getProjectOBJ().getLength()+":"+ e.getID().getProjectOBJ().getHeight()+":"+e.getID().getProjectOBJ().getWitdh());
+			p.sendMessage("§6Blocks: §a" + e.getID().getBlockList().size());
 			playerList.remove(p);
 		}else if(manageList.contains(e.getPlayer())){
 			e.setCancelled(true);

@@ -20,7 +20,14 @@ public class FurnitureManager {
 	
 	public void setLastID(Integer i){this.i = i;}
 	public List<ObjectID> getObjectList(){return this.objecte;}
-	public void addProject(Project project){if(isExist(project.getName())){return;}if(!projects.contains(project)){projects.add(project);}}
+	public void addProject(Project project){
+		if(isExist(project.getName())){
+			getProject(project.getName()).setPlugin(project.getPlugin());
+			getProject(project.getName()).setClass(project.getclass());
+			return;}
+		if(!projects.contains(project)){
+		projects.add(project);}
+	}
 	public List<Project> getProjects(){return this.projects;}
 	public int getLastID() {return i;}
 	

@@ -2,6 +2,8 @@ package de.Ste3et_C0st.FurnitureLib.main;
 
 import java.lang.reflect.Constructor;
 import java.sql.Connection;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Logger;
 
 import net.milkbowl.vault.Metrics;
@@ -13,6 +15,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
@@ -31,6 +34,7 @@ import de.Ste3et_C0st.FurnitureLib.Utilitis.CraftingInv;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.LanguageManager;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.LocationUtil;
 import de.Ste3et_C0st.FurnitureLib.main.Type.EventType;
+import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fArmorStand;
 import de.Ste3et_C0st.FurnitureLib.main.Protection.ProtectionManager;
 
@@ -44,7 +48,7 @@ public class FurnitureLib extends JavaPlugin{
 	private Connection con;
 	private ProtectionManager Pmanager;
 	private LightManager lightMgr;
-	private boolean useGamemode = true, canSit = true, update = true;
+	private boolean useGamemode = true, canSit = true, update = true, useParticle = true;
 	private CraftingInv craftingInv;
 	private LanguageManager lmanager;
 	private SQLManager sqlManager;
@@ -74,6 +78,7 @@ public class FurnitureLib extends JavaPlugin{
 	public Serializer getSerializer(){return serializeNew;}
 	public DeSerializer getDeSerializer(){return deSerializerNew;}
 	public PluginManager getPluginManager(){return this.getServer().getPluginManager();}
+	public boolean isParticleEnable(){return this.useParticle;}
 	public boolean hasPerm(Player p, String perm){return permission.has(p, perm);}
 	public boolean hasPerm(CommandSender p, String perm){return permission.has(p, perm);}
 	public boolean canSitting(){return this.canSit;}
@@ -88,7 +93,7 @@ public class FurnitureLib extends JavaPlugin{
 	public void onEnable(){
 		if(!isEnable("ProtocolLib", true)){getLogger().warning("ProtocolLib not found");}
 		if(!isEnable("Vault", true)){getLogger().warning("Vault not found");}
-		if(isEnable("HolographicDisplaysPatch", false)){getLogger().warning("!! HolographicDisplaysPatch is not Supportet uninstall it !!");return;}
+		if(isEnable("LogBlock", false)){getLogger().warning("FurnitureLib is not compatible with LogBlock");return;}
 		if(!setupPermissions()){getLogger().warning("No Permission System found"); Bukkit.getPluginManager().disablePlugin(this);}
 		try{new Metrics(this).start();}catch(Exception e){e.printStackTrace();}
 		instance = this;
@@ -104,6 +109,7 @@ public class FurnitureLib extends JavaPlugin{
 		this.lmanager = new LanguageManager(instance, getConfig().getString("config.Language"));
 		this.useGamemode = getConfig().getBoolean("config.NormalGamemodeRemove");
 		this.canSit = !getConfig().getBoolean("config.DisableSitting");
+		this.useParticle = getConfig().getBoolean("config.useParticles");
 		this.updater = new Updater();
 		new FurnitureEvents(instance, manager);
 		getServer().getPluginManager().registerEvents(new ChunkOnLoad(), this);
@@ -133,6 +139,20 @@ public class FurnitureLib extends JavaPlugin{
 		for(Player p : Bukkit.getOnlinePlayers()){
 			if(p.isOp()){
 				getUpdater().sendPlayer(p);
+			}
+		}
+	}
+	
+	public void registerPluginFurnitures(Plugin plugin){
+		List<ObjectID> objList = new ArrayList<ObjectID>();
+		for(ObjectID obj : manager.getObjectList()){
+			if(obj==null) continue;
+			if(objList.contains(obj)) continue;
+			if(!objList.contains(obj)) objList.add(obj);
+			if(obj.getPlugin()==null) continue;
+			if(obj.getSQLAction().equals(SQLAction.REMOVE)) continue;
+			if(obj.getPlugin().equalsIgnoreCase(plugin.getName())){
+				spawn(obj.getProjectOBJ(), obj);
 			}
 		}
 	}
@@ -178,7 +198,17 @@ public class FurnitureLib extends JavaPlugin{
 		if(c==null ){return;}
 		Constructor<?> ctor = c.getConstructors()[0];
 			try {
-			ctor.newInstance(getInstance(), pro.getPlugin(), obj);
-		} catch (Exception e) {}
+			ctor.newInstance(obj);
+			obj.setFinish();
+		} catch (Exception e) {e.printStackTrace();}
+	}
+	
+	public void spawn(Project pro, ObjectID obj){
+		Class<?> c = pro.getclass();
+		if(c==null ){return;}
+		Constructor<?> ctor = c.getConstructors()[0];
+			try {
+			ctor.newInstance(obj);
+		} catch (Exception e) {e.printStackTrace();}
 	}
 }

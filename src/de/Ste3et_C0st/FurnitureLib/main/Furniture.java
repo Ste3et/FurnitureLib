@@ -24,14 +24,14 @@ public abstract class Furniture implements Listener {
 	private LocationUtil lutil;
 	private Plugin plugin;
 	
-	public Furniture(Plugin plugin, ObjectID id){
-		if(plugin==null||id==null){return;}
+	public Furniture(ObjectID id){
+		if(id==null){return;}
 		this.lib = FurnitureLib.getInstance();
 		this.lutil = lib.getLocationUtil();
 		this.manager = lib.getFurnitureManager();
 		this.b = lutil.yawToFace(id.getStartLocation().getYaw());
 		this.w = id.getStartLocation().getWorld();
-		this.plugin = plugin;
+		this.plugin = id.getProjectOBJ().getPlugin();
 		this.obj = id;
 	}
 	

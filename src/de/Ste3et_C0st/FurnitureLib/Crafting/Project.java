@@ -31,7 +31,7 @@ public class Project{
 	private PlaceableSide side;
 	
 	public String getName(){return project;}
-	public Plugin getPlugin(){ return plugin;}
+	public Plugin getPlugin(){return plugin;}
 	public CraftingFile getCraftingFile(){return file;}
 	public void setCraftingFile(CraftingFile file){this.file = file;}
 	public Class<?> getclass(){return clas;}
@@ -40,7 +40,8 @@ public class Project{
 	public Integer getLength(){return this.length;}
 	public CenterType getCenterType(){return this.type;}
 	public PlaceableSide getPlaceableSide(){return this.side;}
-	
+	public void setPlugin(Plugin plugin) {this.plugin = plugin;}
+	public void setClass(Class<?> clas) {this.clas = clas;}
 	public Integer getAmountWorld(World w){if(limitationWorld.containsKey(w)){return limitationWorld.get(w);}else{return -1;}}
 	public Integer getAmountChunk(){return this.chunkLimit;}
 	public Integer getAmountPlayer(){return this.playerLimit;}

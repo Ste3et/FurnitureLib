@@ -22,6 +22,7 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.material.FlowerPot;
 
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
@@ -123,7 +124,11 @@ public class ChunkOnLoad implements Listener{
 			
 			ItemStack is = event.getItem();
 			if(FurnitureLib.getInstance().getBlockManager().getList().contains(event.getClickedBlock().getLocation())){
-					event.setCancelled(true);
+					boolean b = true;
+					if(event.getClickedBlock()!=null&&event.getClickedBlock().getState().getData() instanceof FlowerPot){
+						b = false;
+					}
+					event.setCancelled(b);
 					ObjectID objID = null;
 					for(ObjectID obj : FurnitureLib.getInstance().getFurnitureManager().getObjectList()){
 						if(obj.getBlockList().contains(event.getClickedBlock().getLocation())){
@@ -160,6 +165,7 @@ public class ChunkOnLoad implements Listener{
 				public void run() {
 					FurnitureItemEvent e = new FurnitureItemEvent(player, itemstack, project, l, face);
 					Bukkit.getPluginManager().callEvent(e);
+					spawn(e);
 				}
 			});
 			removePlayer(p);
@@ -185,6 +191,16 @@ public class ChunkOnLoad implements Listener{
 				}
 			}
 		}
+	}
+	
+	private void spawn(FurnitureItemEvent e){
+		if(e.isCancelled()){return;}
+		if(!e.getProject().hasPermissions(e.getPlayer())){return;}
+		ObjectID obj = e.getObjID();
+		if(!e.canBuild()){return;}
+		FurnitureLib.getInstance().spawn(obj.getProjectOBJ(), obj);
+		e.finish();
+		e.removeItem();
 	}
 	
 	@EventHandler

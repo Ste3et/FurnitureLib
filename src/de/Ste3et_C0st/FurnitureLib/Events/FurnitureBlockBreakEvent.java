@@ -37,7 +37,12 @@ public final class FurnitureBlockBreakEvent extends Event implements Cancellable
     public ObjectID getID(){return this.o;}
     public Player getPlayer(){return this.p;}
     public Location getLocation(){return this.l;}
-	public boolean canBuild(){return FurnitureLib.getInstance().canBuild(p, o, EventType.BREAK);}
+	public boolean canBuild(){
+		Boolean b = FurnitureLib.getInstance().getPermManager().isOwner(p, o.getStartLocation());
+		if(b!=null&&b){return true;}
+		boolean a = FurnitureLib.getInstance().canBuild(p, o, EventType.BREAK);
+		return a;
+	}
 	
 	public void remove(){
 		o.remove(p);

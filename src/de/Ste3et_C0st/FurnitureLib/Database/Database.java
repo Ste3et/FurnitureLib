@@ -5,8 +5,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
-import java.util.ArrayList;
-import java.util.List;
 import java.util.logging.Level;
 
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
@@ -55,8 +53,6 @@ public abstract class Database {
     	String query = "REPLACE INTO FurnitureLib_Objects (`ObjID`,`Data`) VALUES('"+ objid +"', '" + binary + "');";
     	try{
     		statement.executeUpdate(query);
-    		if(isExist("FurnitureLib_ArmorStand")) statement.execute("DROP TABLE `FurnitureLib_ArmorStand`");
-    		if(isExist("FurnitureLib_ObjectID")) statement.execute("DROP TABLE `FurnitureLib_ObjectID`");
     	}catch(Exception e){
     		e.printStackTrace();
     	}
@@ -65,10 +61,9 @@ public abstract class Database {
     public void loadAll(SQLAction action){
     	try{
     		ResultSet rs = statement.executeQuery("SELECT * FROM FurnitureLib_Objects");
-   		    List<String[]> asList = new ArrayList<String[]>();
-    		while (rs.next()) {FurnitureLib.getInstance().getDeSerializer().Deserialze(rs.getString(1), rs.getString(2));}
-    		plugin.getLogger().info("FurnitureLib load " + asList.size()  +  " Objects from: " + getType().name() + " Database");
+    		while (rs.next()){FurnitureLib.getInstance().getDeSerializer().Deserialze(rs.getString(1), rs.getString(2));}
     		rs.close();
+    		plugin.getLogger().info("FurnitureLib load " + FurnitureLib.getInstance().getFurnitureManager().getObjectList().size()  +  " Objects from: " + getType().name() + " Database");
     	}catch(Exception e){
     		e.printStackTrace();
     	}

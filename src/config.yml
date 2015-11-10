@@ -4,6 +4,7 @@ config:
    Language: EN_en
    #Remove spawn eggs and Material in gamemode 1
    NormalGamemodeRemove: true
+   useParticles: true
    #Disable Sitting on some furniture
    DisableSitting: false
    LimitType: PLAYER

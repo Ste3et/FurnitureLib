@@ -35,7 +35,6 @@ public class FurnitureEvents {
                             	ObjectID objID = manager.getObjectIDByID(PacketID);
                             	if(objID==null){return;}
                             	if(objID.getSQLAction().equals(SQLAction.REMOVE)){return;}
-                            	
                             	Location loc = asPacket.getLocation();
                             	Player p = event.getPlayer();
                             	EntityUseAction action = event.getPacket().getEntityUseActions().read(0);
@@ -52,7 +51,8 @@ public class FurnitureEvents {
 									Bukkit.getScheduler().scheduleSyncDelayedTask(FurnitureLib.getInstance(), new Runnable() {
 										@Override
 										public void run() {
-											FurnitureLib.getInstance().getPluginManager().callEvent(new FurnitureBreakEvent(player, packet, objectID, location));
+											FurnitureBreakEvent event = new FurnitureBreakEvent(player, packet, objectID, location);
+											Bukkit.getServer().getPluginManager().callEvent(event);
 										}
 									});
 									break;
@@ -61,7 +61,8 @@ public class FurnitureEvents {
 									Bukkit.getScheduler().scheduleSyncDelayedTask(FurnitureLib.getInstance(), new Runnable() {
 									@Override
 										public void run() {
-											FurnitureLib.getInstance().getPluginManager().callEvent(new FurnitureClickEvent(player, packet, objectID, location));
+											FurnitureClickEvent event = new FurnitureClickEvent(player, packet, objectID, location);
+											Bukkit.getServer().getPluginManager().callEvent(event);		
 										}
 									});
 									break;
