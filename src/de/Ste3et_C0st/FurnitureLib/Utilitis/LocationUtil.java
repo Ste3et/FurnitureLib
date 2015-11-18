@@ -1,6 +1,7 @@
 package de.Ste3et_C0st.FurnitureLib.Utilitis;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
@@ -94,6 +95,7 @@ public class LocationUtil {
 		int h = pro.getHeight();
 		int l = pro.getLength();
 		CenterType type = pro.getCenterType();
+		List<Location> blockList = new ArrayList<Location>();
 
 		Vector v2 = loc.toVector();
 		for(ObjectID obj : FurnitureLib.getInstance().getFurnitureManager().getObjectList()){
@@ -105,7 +107,6 @@ public class LocationUtil {
 				}
 			}
 		}
-		
 		switch (type) {
 		case RIGHT:
 			if(!pro.getPlaceableSide().equals(PlaceableSide.SIDE)){
@@ -114,45 +115,44 @@ public class LocationUtil {
 						for(int c = 0;c<l;c++){
 							Location location = FurnitureLib.getInstance().getLocationUtil().getRelativ(loc, face,(double) -a,(double) c).add(0, b, 0);
 							if(!FurnitureLib.getInstance().getPermManager().canBuild(p, location)){return false;}
-							if(!location.getBlock().getType().equals(Material.AIR)){p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("NotEnoughSpace"));particleBlock(location.getBlock());return false;}
+							if(!location.getBlock().getType().equals(Material.AIR)){blockList.add(location);}
 						}
 					}
 				}
-				return true;
 			}else{
 				for(int a = 0; a<w;a++){
 					for(int b = 0; b<h;b++){
 						for(int c = 0;c>l;c--){
 							Location location = FurnitureLib.getInstance().getLocationUtil().getRelativ(loc, face,(double) -a,(double) c).add(0, b, 0);
 							if(!FurnitureLib.getInstance().getPermManager().canBuild(p, location)){return false;}
-							if(!location.getBlock().getType().equals(Material.AIR)){p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("NotEnoughSpace"));particleBlock(location.getBlock());return false;}
+							if(!location.getBlock().getType().equals(Material.AIR)){blockList.add(location);}
 						}
 					}
 				}
-				return true;
 			}
+			break;
 		case LEFT:
 			for(int a = 0; a<w;a++){
 				for(int b = 0; b<h;b++){
 					for(int c = 0;c<l;c++){
 						Location location = FurnitureLib.getInstance().getLocationUtil().getRelativ(loc, face,(double) -a,(double) c).add(0, b, 0);
 						if(!FurnitureLib.getInstance().getPermManager().canBuild(p, location)){return false;}
-						if(!location.getBlock().getType().equals(Material.AIR)){p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("NotEnoughSpace"));particleBlock(location.getBlock());return false;}
+						if(!location.getBlock().getType().equals(Material.AIR)){blockList.add(location);}
 					}
 				}
 			}
-			return true;
+			break;
 		case FRONT:
 			for(int a = 0; a<w;a++){
 				for(int b = 0; b<h;b++){
 					for(int c = 0;c<l;c++){
 						Location location = FurnitureLib.getInstance().getLocationUtil().getRelativ(loc, face,(double) a,(double) c).add(0, b, 0);
 						if(!FurnitureLib.getInstance().getPermManager().canBuild(p, location)){return false;}
-						if(!location.getBlock().getType().equals(Material.AIR)){p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("NotEnoughSpace"));particleBlock(location.getBlock());return false;}
+						if(!location.getBlock().getType().equals(Material.AIR)){blockList.add(location);}
 					}
 				}
 			}
-			return true;
+			break;
 		case CENTER:
 			Double d = Math.ceil((double) l/2);
 			int w1 = d.intValue();
@@ -161,7 +161,7 @@ public class LocationUtil {
 					for(int c = 0;c<w1;c++){
 						Location location = FurnitureLib.getInstance().getLocationUtil().getRelativ(loc, face,(double) -a,(double) c).add(0, b, 0);
 						if(!FurnitureLib.getInstance().getPermManager().canBuild(p, location)){return false;}
-						if(!location.getBlock().getType().equals(Material.AIR)){p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("NotEnoughSpace"));particleBlock(location.getBlock());return false;}
+						if(!location.getBlock().getType().equals(Material.AIR)){blockList.add(location);}
 					}
 				}
 			}
@@ -170,13 +170,22 @@ public class LocationUtil {
 					for(int c = 0;c<w1;c++){
 						Location location = FurnitureLib.getInstance().getLocationUtil().getRelativ(loc, face,(double) -a,(double) -c).add(0, b, 0);
 						if(!FurnitureLib.getInstance().getPermManager().canBuild(p, location)){return false;}
-						if(!location.getBlock().getType().equals(Material.AIR)){p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("NotEnoughSpace"));particleBlock(location.getBlock());return false;}
+						if(!location.getBlock().getType().equals(Material.AIR)){blockList.add(location);}
 					}
 				}
 			}
-			return true;
+			break;
 		}
-		return true;
+		
+		if(blockList.isEmpty()){
+			return true;
+		}else{
+			for(Location location : blockList){
+				particleBlock(location.getBlock());
+			}	
+			p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("NotEnoughSpace"));
+			return false;
+		}
 	}
 	
 	public void particleBlock(Block b){
@@ -269,50 +278,32 @@ public class LocationUtil {
 		Block block = l.getBlock();
         BlockState bedFoot = block.getState();
         BlockState bedHead = bedFoot.getBlock().getRelative(face.getOppositeFace()).getState();
-    	
+		l.getBlock().setType(Material.AIR);
+		l.getBlock().setType(Material.BED_BLOCK);
+        bedFoot.setType(Material.BED_BLOCK);
+        bedHead.setType(Material.BED_BLOCK);
     	switch (face) {
 		case NORTH:
-			l.getBlock().setType(Material.AIR);
-    		l.getBlock().setType(Material.BED_BLOCK);
-            bedFoot.setType(Material.BED_BLOCK);
-            bedHead.setType(Material.BED_BLOCK);
             bedFoot.setRawData((byte) 0);
             bedHead.setRawData((byte) 8);
-            bedFoot.update(true, false);
-            bedHead.update(true, true);
-			return bedHead.getLocation();
+			break;
 		case EAST:
-			l.getBlock().setType(Material.AIR);
-    		l.getBlock().setType(Material.BED_BLOCK);
-            bedFoot.setType(Material.BED_BLOCK);
-            bedHead.setType(Material.BED_BLOCK);
             bedFoot.setRawData((byte) 1);
             bedHead.setRawData((byte) 9);
-            bedFoot.update(true, false);
-            bedHead.update(true, true);
-            return bedHead.getLocation();
+            break;
 		case SOUTH:
-    		l.getBlock().setType(Material.AIR);
-    		l.getBlock().setType(Material.BED_BLOCK);
-            bedFoot.setType(Material.BED_BLOCK);
-            bedHead.setType(Material.BED_BLOCK);
             bedFoot.setRawData((byte) 2);
             bedHead.setRawData((byte) 10);
-            bedFoot.update(true, false);
-            bedHead.update(true, true);
-            return bedHead.getLocation();
+            break;
 		case WEST:
-    		l.getBlock().setType(Material.AIR);
-    		l.getBlock().setType(Material.BED_BLOCK);
-            bedFoot.setType(Material.BED_BLOCK);
-            bedHead.setType(Material.BED_BLOCK);
             bedFoot.setRawData((byte) 3);
             bedHead.setRawData((byte) 11);
-            bedFoot.update(true, false);
-            bedHead.update(true, true);
-            return bedHead.getLocation();
+            break;
 		default: return null;
 		}
+        bedFoot.update(true, false);
+        bedHead.update(true, true);
+		return bedHead.getLocation();
     }
     
     @SuppressWarnings("deprecation")

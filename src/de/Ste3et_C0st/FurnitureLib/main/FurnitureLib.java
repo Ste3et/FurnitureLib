@@ -93,7 +93,6 @@ public class FurnitureLib extends JavaPlugin{
 	public void onEnable(){
 		if(!isEnable("ProtocolLib", true)){getLogger().warning("ProtocolLib not found");}
 		if(!isEnable("Vault", true)){getLogger().warning("Vault not found");}
-		if(isEnable("LogBlock", false)){getLogger().warning("FurnitureLib is not compatible with LogBlock");return;}
 		if(!setupPermissions()){getLogger().warning("No Permission System found"); Bukkit.getPluginManager().disablePlugin(this);}
 		try{new Metrics(this).start();}catch(Exception e){e.printStackTrace();}
 		instance = this;
@@ -158,13 +157,13 @@ public class FurnitureLib extends JavaPlugin{
 	}
 	
 	private boolean setupPermissions()
-	   {
+	{
 	       RegisteredServiceProvider<Permission> permissionProvider = getServer().getServicesManager().getRegistration(net.milkbowl.vault.permission.Permission.class);
 	       if (permissionProvider != null) {
 	           permission = permissionProvider.getProvider();
 	       }
 	       return (permission != null);
-	   }
+   }
 	
 	private boolean isEnable(String plugin, boolean shutdown){
 		if(plugin.equalsIgnoreCase("Vault")){

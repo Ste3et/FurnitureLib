@@ -12,12 +12,14 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.scheduler.BukkitRunnable;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
+import com.comphenix.protocol.wrappers.EnumWrappers.Particle;
 
 import de.Ste3et_C0st.FurnitureLib.Utilitis.EntityID;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.LocationUtil;
@@ -36,7 +38,7 @@ public abstract class fEntity {
 	private List<Player> loadetPlayer;
 	private ProtocolManager manager;
 	private PacketContainer container;
-	private boolean fire, nameVisible, visible;
+	private boolean fire, nameVisible, visible, isKilled = false, isPlayed = false;
 	
 	public fEntity(Location location, EntityType type) {
 		this.type = type;
@@ -71,6 +73,10 @@ public abstract class fEntity {
 				.getEntityWatcher(entity).deepClone();
 		entity.remove();
 		return watcher;
+	}
+	
+	public boolean isParticlePlayed(){
+		return this.isPlayed;
 	}
 
 	public int getEntityID() {
@@ -261,6 +267,7 @@ public abstract class fEntity {
 	}
 	
 	public void kill(){
+		isKilled=true;
 		PacketContainer destroy = new PacketContainer(PacketType.Play.Server.ENTITY_DESTROY);
 		destroy.getIntegerArrays().write(0, new int[] {getEntityID()});
 		try {
@@ -358,6 +365,41 @@ public abstract class fEntity {
 			e.printStackTrace();
 		}
 	}
+	
+	public void sendParticle(Location loc, int particleID, boolean repeat)
+	{
+		Particle particle = Particle.getById(particleID);
+	    PacketContainer container = new PacketContainer(PacketType.Play.Server.WORLD_PARTICLES);
+	    container.getParticles().write(0, particle);
+	    container.getBooleans().write(0, Boolean.valueOf(true));
+	    container.getFloat().write(0, Float.valueOf((float)loc.getX()));
+	    container.getFloat().write(1, Float.valueOf((float)loc.getY()));
+	    container.getFloat().write(2, Float.valueOf((float)loc.getZ()));
+	    
+	    if(repeat){
+	    	final PacketContainer packet = container.deepClone();
+	    	isPlayed = true;
+	    	new BukkitRunnable() {
+				@Override
+				public void run() {
+					if(isKilled){isPlayed = false;cancel();return;}
+					for (Player p : loadetPlayer) {
+						try {
+							manager.sendServerPacket(p, packet);
+						} catch (InvocationTargetException e) {e.printStackTrace();}
+					}
+				}
+			}.runTaskTimer(FurnitureLib.getInstance(), 0L, 10L);
+	    }else{
+	    	if(isKilled) return;
+		    for (Player p : this.loadetPlayer) {
+				try {
+					this.manager.sendServerPacket(p, container);
+				} catch (InvocationTargetException e) {e.printStackTrace();}
+			}
+	    }
+
+    }
 	
 	public void remove(){
 			this.container = null;
