@@ -64,7 +64,6 @@ public class SQLManager {
 				plugin.getLogger().info("Old Database File found: " + file.getName());
 				plugin.getLogger().info("Start importing");
 				fileDB = file;
-				
 			}
 		}
 		if(fileDB!=null){

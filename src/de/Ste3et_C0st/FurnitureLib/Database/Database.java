@@ -61,7 +61,7 @@ public abstract class Database {
     public void loadAll(SQLAction action){
     	try{
     		ResultSet rs = statement.executeQuery("SELECT * FROM FurnitureLib_Objects");
-    		while (rs.next()){FurnitureLib.getInstance().getDeSerializer().Deserialze(rs.getString(1), rs.getString(2));}
+    		while (rs.next()){FurnitureLib.getInstance().getDeSerializer().Deserialze(rs.getString(1), rs.getString(2), action);}
     		rs.close();
     		plugin.getLogger().info("FurnitureLib load " + FurnitureLib.getInstance().getFurnitureManager().getObjectList().size()  +  " Objects from: " + getType().name() + " Database");
     	}catch(Exception e){

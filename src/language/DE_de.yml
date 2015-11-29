@@ -5,6 +5,7 @@ message:
    LimitReached: "&cDas Limit dieses Object wurde erreicht."
    PlayerNotOnline: "&c#PLAYER# ist nicht Online"
    ProjectNotFound: "&cDas Projekt #PROJECT# existiert nicht"
+   ProjectAlreadyExist: "&cDas Projekt #PROJECT# existiert bereits"
    WrongArgument: "&cDu benutzt falsche argumente"
    GivePlayer: "&aDer Spieler #PLAYER# bekamm #PROJECT#(#AMOUNT#)"
    DebugModeEntered: "&aDu hast den Infomodus betreten rechtsklicke ein Objekt"

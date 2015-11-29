@@ -53,6 +53,21 @@ public class CraftingFile {
 		}
 	}
 	
+	public void setName(String s){
+		ItemStack is = getRecipe().getResult();
+		ItemMeta im = is.getItemMeta();
+		im.setDisplayName(s);
+		is.setItemMeta(im);
+		ShapedRecipe recipe = new ShapedRecipe(is).shape(this.getRecipe().getShape());
+		for(Character c : recipe.getIngredientMap().keySet()){
+			recipe.setIngredient(c, this.recipe.getIngredientMap().get(c).getData());
+		}
+		this.recipe = recipe;
+		if(!isDisable){
+			Bukkit.getServer().addRecipe(this.recipe);
+		}
+	}
+	
 	@SuppressWarnings("deprecation")
 	private ItemStack returnResult(String s){
 		String path = name;

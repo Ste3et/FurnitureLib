@@ -26,7 +26,7 @@ import de.Ste3et_C0st.FurnitureLib.main.entity.fArmorStand;
 
 public class DeSerializer {
 
-	public void Deserialze(String objId,String in){
+	public void Deserialze(String objId,String in, SQLAction action){
 		try {
 			byte[] by = Base64.decodeBase64(in);
 			ByteArrayInputStream bin = new ByteArrayInputStream(by);
@@ -44,7 +44,12 @@ public class DeSerializer {
 			obj.setMemberList(members);
 			obj.setUUID(uuid);
 			obj.setFinish();
-			obj.setSQLAction(SQLAction.NOTHING);
+			if(action!=null&&action.equals(SQLAction.SAVE)){
+				obj.setSQLAction(SQLAction.SAVE);
+			}else{
+				obj.setSQLAction(SQLAction.NOTHING);
+			}
+			
 			obj.setFromDatabase();
 			
 			NBTTagCompound armorStands = compound.getCompound("ArmorStands");

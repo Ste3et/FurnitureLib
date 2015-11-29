@@ -5,6 +5,7 @@ message:
    LimitReached: "&cThe Limit of this furniture reached."
    PlayerNotOnline: "&cThe Player #PLAYER# is not online"
    ProjectNotFound: "&cThe project #PROJECT# does not exist"
+   ProjectAlreadyExist: "&cThe project #PROJECT# does already exist"
    WrongArgument: "&cThe command contains wrong arguments"
    GivePlayer: "&aThe Player #PLAYER# earned #PROJECT#(#AMOUNT#)"
    DebugModeEntered: "&aYou have entered the debug mode please rightclick an furniture"
