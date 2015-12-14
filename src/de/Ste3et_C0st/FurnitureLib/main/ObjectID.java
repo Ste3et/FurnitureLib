@@ -31,8 +31,8 @@ public class ObjectID{
 	private World w;
 	private UUID uuid;
 	private List<UUID> uuidList = new ArrayList<UUID>();
-	private PublicMode publicMode = PublicMode.PRIVATE;
-	private EventType memberType = EventType.INTERACT;
+	private PublicMode publicMode = FurnitureLib.getInstance().getDefaultPublicType();
+	private EventType memberType = FurnitureLib.getInstance().getDefaultEventType();
 	private SQLAction sqlAction = SQLAction.SAVE;
 	private List<fArmorStand> packetList = new ArrayList<fArmorStand>();
 	private boolean finish=false, fixed=false, fromDatabase=false;

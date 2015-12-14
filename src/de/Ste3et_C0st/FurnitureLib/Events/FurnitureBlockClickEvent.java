@@ -12,7 +12,7 @@ import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.EventType;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 
-public final class FurnitureBlockClickEvent extends Event implements Cancellable {
+public final class FurnitureBlockClickEvent extends Event implements Cancellable{
     private static final HandlerList handlers = new HandlerList();
     private Block b;
     private ObjectID o;

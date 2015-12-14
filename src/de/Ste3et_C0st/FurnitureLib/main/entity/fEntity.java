@@ -67,11 +67,7 @@ public abstract class fEntity {
 	}
 
 	private WrappedDataWatcher getDefaultWatcher() {
-		Entity entity = getWorld().spawnEntity(
-				new Location(getWorld(), 0, 256, 0), type);
-		WrappedDataWatcher watcher = WrappedDataWatcher
-				.getEntityWatcher(entity).deepClone();
-		entity.remove();
+		watcher = FurnitureLib.getInstance().getFurnitureManager().getDefaultWatcher(getWorld(), getEntityType());
 		return watcher;
 	}
 	

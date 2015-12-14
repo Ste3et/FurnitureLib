@@ -2,8 +2,10 @@ package de.Ste3et_C0st.FurnitureLib.main;
 
 import java.lang.reflect.Constructor;
 import java.sql.Connection;
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 import java.util.logging.Logger;
 
 import net.milkbowl.vault.Metrics;
@@ -11,9 +13,12 @@ import net.milkbowl.vault.permission.Permission;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
+import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
@@ -34,6 +39,7 @@ import de.Ste3et_C0st.FurnitureLib.Utilitis.CraftingInv;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.LanguageManager;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.LocationUtil;
 import de.Ste3et_C0st.FurnitureLib.main.Type.EventType;
+import de.Ste3et_C0st.FurnitureLib.main.Type.PublicMode;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fArmorStand;
 import de.Ste3et_C0st.FurnitureLib.main.Protection.ProtectionManager;
@@ -48,7 +54,7 @@ public class FurnitureLib extends JavaPlugin{
 	private Connection con;
 	private ProtectionManager Pmanager;
 	private LightManager lightMgr;
-	private boolean useGamemode = true, canSit = true, update = true, useParticle = true;
+	private boolean useGamemode = true, canSit = true, update = true, useParticle = true, useRegionMemberAccess = false, autoPurge = false, removePurge = false;
 	private CraftingInv craftingInv;
 	private LanguageManager lmanager;
 	private SQLManager sqlManager;
@@ -59,6 +65,9 @@ public class FurnitureLib extends JavaPlugin{
 	private Permission permission = null;
 	private Updater updater;
 	private BlockManager bmanager;
+	private PublicMode mode;
+	private EventType type;
+	private int purgeTime = 30;
 	
 	public LanguageManager getLangManager(){return this.lmanager;}
 	public LightManager getLightManager(){return this.lightMgr;}
@@ -67,25 +76,32 @@ public class FurnitureLib extends JavaPlugin{
 	public ColorUtil getColorManager(){return this.colorManager;}
 	public CraftingInv getCraftingInv(){return this.craftingInv;}
 	public String getBukkitVersion() {return Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3];}
-	public static FurnitureLib getInstance(){return instance;}
 	public LocationUtil getLocationUtil(){return this.lUtil;}
 	public FurnitureManager getFurnitureManager(){return this.manager;}
 	public Connection getConnection(){return this.con;}
 	public ObjectID getObjectID(String c, String plugin, Location loc){return new ObjectID(c, plugin, loc);}
-	public boolean canBuild(Player p, ObjectID id, EventType type){ return Pmanager.canBuild(p, id, type);}
-	public boolean isUpdate(){return this.update;}
 	public Boolean useGamemode() {return useGamemode;}
 	public Serializer getSerializer(){return serializeNew;}
 	public DeSerializer getDeSerializer(){return deSerializerNew;}
+	public EventType getDefaultEventType(){return this.type;}
+	public PublicMode getDefaultPublicType(){return this.mode;}
 	public PluginManager getPluginManager(){return this.getServer().getPluginManager();}
+	public BlockManager getBlockManager() {return bmanager;}
+	public int getPurgeTime(){return this.purgeTime;}
+	public static FurnitureLib getInstance(){return instance;}
+	public boolean isAutoPurge(){return this.autoPurge;}
+	public boolean isPurgeRemove(){return this.removePurge;}
+	public boolean canBuild(Player p, ObjectID id, EventType type){ return Pmanager.canBuild(p, id, type);}
+	public boolean isUpdate(){return this.update;}
 	public boolean isParticleEnable(){return this.useParticle;}
 	public boolean hasPerm(Player p, String perm){return permission.has(p, perm);}
 	public boolean hasPerm(CommandSender p, String perm){return permission.has(p, perm);}
 	public boolean canSitting(){return this.canSit;}
+	public boolean haveRegionMemberAccess(){return this.useRegionMemberAccess;}
 	public boolean isDouble(String s){try{Double.parseDouble(s);}catch(NumberFormatException e){return false;}return true;}
 	public boolean isBoolean(String s){try {Boolean.parseBoolean(s.toLowerCase());}catch (Exception e) {return false;}return true;}
 	public boolean isInt(String s){try{Integer.parseInt(s);}catch(NumberFormatException e){return false;}return true;}
-	public BlockManager getBlockManager() {return bmanager;}
+	
 	
 	public Updater getUpdater(){return updater;}
 	@SuppressWarnings("deprecation")
@@ -107,12 +123,15 @@ public class FurnitureLib extends JavaPlugin{
 		this.lightMgr = new LightManager(this);
 		this.lmanager = new LanguageManager(instance, getConfig().getString("config.Language"));
 		this.useGamemode = getConfig().getBoolean("config.NormalGamemodeRemove");
+		this.useRegionMemberAccess = getConfig().getBoolean("config.ProtectionLib.RegeionMemberAccess");
 		this.canSit = !getConfig().getBoolean("config.DisableSitting");
 		this.useParticle = getConfig().getBoolean("config.useParticles");
+		this.purgeTime = getConfig().getInt("config.Purge.time");
+		this.autoPurge = getConfig().getBoolean("config.Purge.autoPurge");
+		this.removePurge = getConfig().getBoolean("config.Purge.removePurge");
 		this.updater = new Updater();
 		new FurnitureEvents(instance, manager);
 		getServer().getPluginManager().registerEvents(new ChunkOnLoad(), this);
-		
 		PluginCommand c = getCommand("furniture");
 		c.setExecutor(new command(this));
 		c.setTabCompleter(new TabCompleterHandler(this));
@@ -122,6 +141,9 @@ public class FurnitureLib extends JavaPlugin{
 		getLogger().info("Furniture Autor: " + this.getDescription().getAuthors().get(0));
 		getLogger().info("Furniture Website: " + this.getDescription().getWebsite());
 		getLogger().info("Furniture start load");
+		Boolean b = isEnable("ProtectionLib", false);
+		getLogger().info("Furniture find ProtectionLib: " + b.toString());
+		createDefaultWatchers();
 		this.sqlManager = new SQLManager(instance);
 		this.sqlManager.loadALL();
 		getLogger().info("Furniture load finish");
@@ -130,14 +152,62 @@ public class FurnitureLib extends JavaPlugin{
 		this.limitManager = new LimitationManager(this);
 		this.update = getConfig().getBoolean("config.CheckUpdate");
 		this.bmanager = new BlockManager();
+		
+		PublicMode mode = PublicMode.valueOf(getConfig().getString("config.PlaceMode.Mode"));
+		EventType type = EventType.valueOf(getConfig().getString("config.PlaceMode.Access"));
+		if(mode!=null){this.mode = mode;}else{this.mode = PublicMode.PRIVATE;}
+		if(type!=null){this.type = type;}else{this.type = EventType.INTERACT;}
+		
 		if(getConfig().getBoolean("config.timer.Enable")){
 			int time = getConfig().getInt("config.timer.time");
 			sqlManager.saveIntervall(time);
 		}
-		
 		for(Player p : Bukkit.getOnlinePlayers()){
 			if(p.isOp()){
 				getUpdater().sendPlayer(p);
+			}
+		}
+	}
+	
+	public boolean checkPurge(ObjectID obj, UUID uuid, int purgeTime){
+		OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);
+		if(!player.hasPlayedBefore()) return false;
+		long time = player.getLastPlayed();
+		Date date = new Date(time);
+		Date datePurge = new Date(time+(86400000*purgeTime));
+		if(!datePurge.after(date))return false;
+		if(removePurge){getFurnitureManager().remove(obj);return false;}
+		obj.setSQLAction(SQLAction.REMOVE);
+		return true;
+	}
+	
+	public boolean checkPurge(ObjectID obj, UUID uuid){
+		OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);
+		if(!player.hasPlayedBefore()) return false;
+		long time = player.getLastPlayed();
+		Date date = new Date(time);
+		Date datePurge = new Date(time+(86400000*purgeTime));
+		if(!datePurge.after(date))return false;
+		if(removePurge){getFurnitureManager().remove(obj);return false;}
+		obj.setSQLAction(SQLAction.REMOVE);
+		return true;
+	}
+	
+	public boolean checkPurge(ObjectID obj, OfflinePlayer player){
+		if(!player.hasPlayedBefore()) return false;
+		long time = player.getLastPlayed();
+		Date date = new Date(time);
+		Date datePurge = new Date(time+(86400000*purgeTime));
+		if(!datePurge.after(date))return false;
+		if(removePurge){getFurnitureManager().remove(obj);return false;}
+		obj.setSQLAction(SQLAction.REMOVE);
+		return true;
+	}
+	
+	private void createDefaultWatchers(){
+		for(World w : Bukkit.getWorlds()){
+			if(w!=null){
+				getFurnitureManager().getDefaultWatcher(w, EntityType.ARMOR_STAND);
 			}
 		}
 	}

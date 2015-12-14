@@ -9,6 +9,11 @@ config:
    DisableSitting: false
    LimitType: PLAYER
    CheckUpdate: true
+   PlaceMode:
+      Mode: "PRIVATE"
+      Access: "INTERACT"
+   ProtectionLib:
+      RegeionMemberAccess: false
    Database:
       type: SQLite
       database: "furniture"
@@ -17,6 +22,10 @@ config:
       port: 3306
       host: localhost
       importCheck: false
+   Purge:
+      time: 30
+      autoPurge: false
+      removePurge: false
    timer:
       Enable: false
       time: 300

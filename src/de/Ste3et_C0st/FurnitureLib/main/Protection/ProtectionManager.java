@@ -118,18 +118,16 @@ public class ProtectionManager {
 	
 	public boolean canBuild(Player p, ObjectID id, EventType type){
 		if(p.isOp() || FurnitureLib.getInstance().hasPerm(p,"furniture.bypass.protection") || FurnitureLib.getInstance().hasPerm(p,"furniture.admin")){return true;}
-		
-		if(type!=null&&type.equals(EventType.BREAK)){
-			Boolean bool = FurnitureLib.getInstance().getPermManager().isOwner(p, id.getStartLocation());
-			if(bool!=null&&bool){return true;}
-		}
-		
 		PublicMode publicMode = id.getPublicMode();
 		UUID userID = p.getUniqueId();
 		UUID ownerID = id.getUUID();
 		if(ownerID!=null&&userID.equals(ownerID)){return true;}
+		Boolean b = canBuild(type, p, id);
 		
-		Boolean b = false;
+		if(FurnitureLib.getInstance().haveRegionMemberAccess()){
+			if(!b){p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("NoPermissions"));}
+			return b;
+		}
 		if(publicMode.equals(PublicMode.PRIVATE)){
 			if(ownerID==null){b=false;}
 			if(ownerID!=null&&userID!=null&&!ownerID.equals(userID)){b=false;}
@@ -143,6 +141,28 @@ public class ProtectionManager {
 		}
 		if(!b){p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("NoPermissions"));}
 		return b;
+	}
+	
+	private boolean canBuild(EventType type, Player p, ObjectID id){
+		if(type!=null&&type.equals(EventType.BREAK)){
+			Boolean bool = FurnitureLib.getInstance().getPermManager().isOwner(p, id.getStartLocation());
+			if(bool!=null&&bool){return true;}
+			if(FurnitureLib.getInstance().haveRegionMemberAccess()){
+				bool = FurnitureLib.getInstance().getPermManager().canBuild(p, id.getStartLocation());
+				if(bool!=null&&bool){return true;}
+			}
+		}
+		
+		if(type!=null&&type.equals(EventType.BREAK)){
+			if(FurnitureLib.getInstance().haveRegionMemberAccess()){
+				Boolean bool = FurnitureLib.getInstance().getPermManager().isOwner(p, id.getStartLocation());
+				if(bool!=null&&bool){return true;}
+				bool = FurnitureLib.getInstance().getPermManager().canBuild(p, id.getStartLocation());
+				if(bool!=null&&bool){return true;}
+			}
+		}
+		
+		return false;
 	}
 	
 	private boolean isEventType(ObjectID objID, EventType type){

@@ -25,8 +25,11 @@ import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fArmorStand;
 
 public class DeSerializer {
-
-	public void Deserialze(String objId,String in, SQLAction action){
+	
+	public int armorStands = 0;
+	public int purged = 0;
+	
+	public void Deserialze(String objId,String in, SQLAction action, boolean autoPurge){
 		try {
 			byte[] by = Base64.decodeBase64(in);
 			ByteArrayInputStream bin = new ByteArrayInputStream(by);
@@ -44,14 +47,9 @@ public class DeSerializer {
 			obj.setMemberList(members);
 			obj.setUUID(uuid);
 			obj.setFinish();
-			if(action!=null&&action.equals(SQLAction.SAVE)){
-				obj.setSQLAction(SQLAction.SAVE);
-			}else{
-				obj.setSQLAction(SQLAction.NOTHING);
-			}
-			
+			if(action!=null&&action.equals(SQLAction.SAVE)){obj.setSQLAction(SQLAction.SAVE);}else{obj.setSQLAction(SQLAction.NOTHING);}
 			obj.setFromDatabase();
-			
+			if(autoPurge){if(FurnitureLib.getInstance().checkPurge(obj, uuid)){purged++;return;}}
 			NBTTagCompound armorStands = compound.getCompound("ArmorStands");
 			for(Object objectInt : armorStands.c()){
 				Integer ArmorID = Integer.parseInt((String) objectInt);
@@ -95,6 +93,7 @@ public class DeSerializer {
 				if(FurnitureLib.getInstance().getFurnitureManager().getLastID()<ArmorID){
 					FurnitureLib.getInstance().getFurnitureManager().setLastID(ArmorID);
 				}
+				this.armorStands++;
 			}
 		} catch (Exception e) {
 			e.printStackTrace();

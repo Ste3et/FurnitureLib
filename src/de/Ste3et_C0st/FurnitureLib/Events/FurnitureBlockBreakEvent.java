@@ -12,7 +12,7 @@ import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.EventType;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 
-public final class FurnitureBlockBreakEvent extends Event implements Cancellable {
+public final class FurnitureBlockBreakEvent extends Event implements Cancellable{
     private static final HandlerList handlers = new HandlerList();
     private Block b;
     private ObjectID o;
@@ -37,12 +37,7 @@ public final class FurnitureBlockBreakEvent extends Event implements Cancellable
     public ObjectID getID(){return this.o;}
     public Player getPlayer(){return this.p;}
     public Location getLocation(){return this.l;}
-	public boolean canBuild(){
-		Boolean b = FurnitureLib.getInstance().getPermManager().isOwner(p, o.getStartLocation());
-		if(b!=null&&b){return true;}
-		boolean a = FurnitureLib.getInstance().canBuild(p, o, EventType.BREAK);
-		return a;
-	}
+	public boolean canBuild(){return FurnitureLib.getInstance().canBuild(p, o, EventType.BREAK);}
 	
 	public void remove(){
 		o.remove(p);

@@ -12,13 +12,13 @@ import de.Ste3et_C0st.FurnitureLib.main.Type.EventType;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fArmorStand;
 
-public final class FurnitureBreakEvent extends Event implements Cancellable {
+public final class FurnitureBreakEvent extends Event implements Cancellable{
     private static final HandlerList handlers = new HandlerList();
     private fArmorStand a;
     private ObjectID o;
     private Player p;
     private Location l;
-    private boolean cancelled = false;
+    private boolean cancelled;
     @Override public HandlerList getHandlers() {return handlers; }
     @Override public boolean isCancelled() {return cancelled;}
     @Override public void setCancelled(boolean cancelled) { this.cancelled = cancelled;}

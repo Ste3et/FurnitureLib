@@ -47,7 +47,11 @@ public abstract class Furniture implements Listener {
 	public FurnitureLib getLib(){return this.lib;}
 	public LocationUtil getLutil(){return this.lutil;}
 	public Plugin getPlugin(){return this.plugin;}
-	public List<fArmorStand> getfAsList(){return getObjID().getPacketList();}
+	public List<fArmorStand> getfAsList(){
+		if(this.obj==null) return null;
+		if(this.getObjID()==null) return null;
+		if(this.getObjID().getPacketList()==null) return null;
+		return getObjID().getPacketList();}
 	public boolean isFinish(){return getObjID().isFinish();}
 	public float getYaw(){return getLutil().FaceToYaw(getBlockFace());}
 	public Location getRelative(Location loc, BlockFace face, double z, double x){return getLutil().getRelativ(loc, b, z, x);}

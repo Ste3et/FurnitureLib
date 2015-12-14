@@ -1,5 +1,5 @@
 name: FurnitureLib
-version: 1.4.3
+version: 1.4.8
 description: FurnitureLib is an Libary to make ArmorStand creations easer
 author: Ste3et_C0st
 website: http://dicecraft.de
@@ -39,3 +39,4 @@ permissions:
       furniture.give.player: true
       furniture.limit.bypass: true
       furniture.manage.other: true
+      furniture.purge: true

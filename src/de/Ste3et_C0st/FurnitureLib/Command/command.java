@@ -1,8 +1,11 @@
 package de.Ste3et_C0st.FurnitureLib.Command;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -50,6 +53,20 @@ public class command implements CommandExecutor, Listener{
 			p.sendMessage("§6SQL State: §e" + e.getID().getSQLAction().name().toLowerCase());
 			p.sendMessage("§6Size: §e" + e.getID().getProjectOBJ().getLength()+":"+ e.getID().getProjectOBJ().getHeight()+":"+e.getID().getProjectOBJ().getWitdh());
 			p.sendMessage("§6Blocks: §a" + e.getID().getBlockList().size());
+			
+			if(e.getID().getUUID()!=null){
+				OfflinePlayer player = Bukkit.getOfflinePlayer(e.getID().getUUID());
+				if(player.hasPlayedBefore()&&!player.isOnline()){
+					long mili1 = System.currentTimeMillis();
+					long mili2 = player.getLastPlayed();
+					long mili3 = mili1-mili2;
+					SimpleDateFormat time = new SimpleDateFormat("D:HH:mm:ss.SSS");
+			    	String timeStr = time.format(mili3);
+			    	p.sendMessage("§6Player Offline: " + timeStr);
+				}
+			}
+			
+			
 			playerList.remove(p);
 		}else if(manageList.contains(e.getPlayer())){
 			e.setCancelled(true);
@@ -93,6 +110,7 @@ public class command implements CommandExecutor, Listener{
 					case "manage": new manageCommand(sender, cmd, arg2, args); return true;
 					case "remove": new removeCommand(sender, cmd, arg2, args); return true;
 					case "spawn": new spawnCommand(sender, cmd, arg2, args); return true;
+					case "purge": new purgeCommand(sender, cmd, arg2, args); return true;
 					default: sendHelp(p); return true;
 					}
 				}
@@ -119,6 +137,7 @@ public class command implements CommandExecutor, Listener{
 				"§cgive the player one furniture").withClickEvent(ClickAction.SUGGEST_COMMAND, "/furniture give <FURNITURE> (player)")
 		.withText("§6/furniture debug \n").withHoverEvent(HoverAction.SHOW_TEXT,"§6You can become some information about\n§6abaout the furniture you are rightclicked").withClickEvent(ClickAction.SUGGEST_COMMAND, "/furniture debug")
 		.withText("§6/furniture manage \n").withHoverEvent(HoverAction.SHOW_TEXT,"§6You can config the furniture\n§6that you are rightclicked").withClickEvent(ClickAction.SUGGEST_COMMAND, "/furniture manage")
+		.withText("§6/furniture purge §e<Time>\n").withHoverEvent(HoverAction.SHOW_TEXT, "§6Marked all furnitures to remove from the database").withClickEvent(ClickAction.SUGGEST_COMMAND, "/furniture purge <time>")
 		.withText("§6/furniture recipe §e<type>\n").withHoverEvent(HoverAction.SHOW_TEXT,"§6View recipe from a furniture").withClickEvent(ClickAction.SUGGEST_COMMAND, "/furniture recipe <type>")
 		.withText("§6/furniture remove §e<type>\n").withHoverEvent(HoverAction.SHOW_TEXT,"§6It's remove only one type of the \n§6Furniture").withClickEvent(ClickAction.SUGGEST_COMMAND, "/furniture remove <type>")
 		.withText("§6/furniture remove §e<player>\n").withHoverEvent(HoverAction.SHOW_TEXT,"§6Remove all furniture from an player").withClickEvent(ClickAction.SUGGEST_COMMAND, "/furniture remove <player>")

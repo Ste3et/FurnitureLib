@@ -22,3 +22,4 @@ message:
    WrongOwner: "&cDas ist nicht deins"
    LimitAouncer: "&6Du hast &e#TYPE# &2#CURRENT#&6/&c#MAX# &6platziert."
    NotONThisSide: "&cDu kannst dieses Model nicht an dieser Seite Platzieren"
+   PurgeMarked: "Du has #AMOUNT# ArmorStands zum entfernen aus der DB makiert."

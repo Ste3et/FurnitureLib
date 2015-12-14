@@ -5,6 +5,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.text.SimpleDateFormat;
 import java.util.logging.Level;
 
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
@@ -59,11 +60,21 @@ public abstract class Database {
     }
 
     public void loadAll(SQLAction action){
+    	long time1 = System.currentTimeMillis();
+    	boolean b = FurnitureLib.getInstance().isAutoPurge();
     	try{
     		ResultSet rs = statement.executeQuery("SELECT * FROM FurnitureLib_Objects");
-    		while (rs.next()){FurnitureLib.getInstance().getDeSerializer().Deserialze(rs.getString(1), rs.getString(2), action);}
+    		while (rs.next()){FurnitureLib.getInstance().getDeSerializer().Deserialze(rs.getString(1), rs.getString(2), action, b);}
     		rs.close();
     		plugin.getLogger().info("FurnitureLib load " + FurnitureLib.getInstance().getFurnitureManager().getObjectList().size()  +  " Objects from: " + getType().name() + " Database");
+    		long time2 = System.currentTimeMillis();
+	    	long newTime = time2-time1;
+	    	SimpleDateFormat time = new SimpleDateFormat("mm:ss.SSS");
+	    	String timeStr = time.format(newTime);
+	    	int ArmorStands = FurnitureLib.getInstance().getDeSerializer().armorStands;
+	    	int purged = FurnitureLib.getInstance().getDeSerializer().purged;
+	    	plugin.getLogger().info("FurnitureLib have loadet " + ArmorStands + " in " +timeStr);
+	    	plugin.getLogger().info("FurnitureLib have purged " + purged + " Objects");
     	}catch(Exception e){
     		e.printStackTrace();
     	}
