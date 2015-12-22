@@ -2,7 +2,6 @@ package de.Ste3et_C0st.FurnitureLib.main;
 
 import java.lang.reflect.Constructor;
 import java.sql.Connection;
-import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
@@ -173,21 +172,22 @@ public class FurnitureLib extends JavaPlugin{
 		OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);
 		if(!player.hasPlayedBefore()) return false;
 		long time = player.getLastPlayed();
-		Date date = new Date(time);
-		Date datePurge = new Date(time+(86400000*purgeTime));
-		if(!datePurge.after(date))return false;
+		if(!isAfterDate(time, purgeTime))return false;
 		if(removePurge){getFurnitureManager().remove(obj);return false;}
 		obj.setSQLAction(SQLAction.REMOVE);
 		return true;
+	}
+	
+	public boolean isAfterDate(long time, int purgeTime){
+		if(System.currentTimeMillis() - (time+(86400000*purgeTime)) >0){return true;}
+		return false;
 	}
 	
 	public boolean checkPurge(ObjectID obj, UUID uuid){
 		OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);
 		if(!player.hasPlayedBefore()) return false;
 		long time = player.getLastPlayed();
-		Date date = new Date(time);
-		Date datePurge = new Date(time+(86400000*purgeTime));
-		if(!datePurge.after(date))return false;
+		if(!isAfterDate(time, purgeTime))return false;
 		if(removePurge){getFurnitureManager().remove(obj);return false;}
 		obj.setSQLAction(SQLAction.REMOVE);
 		return true;
@@ -196,9 +196,7 @@ public class FurnitureLib extends JavaPlugin{
 	public boolean checkPurge(ObjectID obj, OfflinePlayer player){
 		if(!player.hasPlayedBefore()) return false;
 		long time = player.getLastPlayed();
-		Date date = new Date(time);
-		Date datePurge = new Date(time+(86400000*purgeTime));
-		if(!datePurge.after(date))return false;
+		if(!isAfterDate(time, purgeTime))return false;
 		if(removePurge){getFurnitureManager().remove(obj);return false;}
 		obj.setSQLAction(SQLAction.REMOVE);
 		return true;
