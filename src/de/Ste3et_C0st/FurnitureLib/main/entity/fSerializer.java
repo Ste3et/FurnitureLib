@@ -6,7 +6,6 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
 
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
-import com.comphenix.protocol.wrappers.WrappedDataWatcher.Registry;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.Serializer;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
 
@@ -21,10 +20,10 @@ public class fSerializer {
 	
 	
 	public fSerializer(){
-		intSerializer = Registry.get(Integer.class);
-		byteSerializer = Registry.get(Byte.class);
-		objSerializer = Registry.get(Object.class);
-		stringSerializer = Registry.get(String.class);
+		intSerializer = WrappedDataWatcher.Registry.get(Integer.class);
+		byteSerializer = WrappedDataWatcher.Registry.get(Byte.class);
+		objSerializer = WrappedDataWatcher.Registry.get(Object.class);
+		stringSerializer = WrappedDataWatcher.Registry.get(String.class);
 		metadata = new NBTTagCompound();
 	}
 	
