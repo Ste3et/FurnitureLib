@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Entity;
@@ -25,6 +26,8 @@ public class FurnitureManager {
 	private List<Project> projects = new ArrayList<Project>();
 	public void setLastID(Integer i){this.i = i;}
 	public List<ObjectID> getObjectList(){return this.objecte;}
+	public List<Chunk> chunkList = new ArrayList<Chunk>();
+	
 	public void addProject(Project project){
 		if(isExist(project.getName())){
 			getProject(project.getName()).setPlugin(project.getPlugin());
@@ -247,5 +250,15 @@ public class FurnitureManager {
 		return null;
 	}
 	
-	
+//	public void refreshChunk(Chunk chunk){
+//		if(!chunkList.contains(chunk)){
+//			final String query = chunk.getWorld().getName() + "#" + chunk.getX() + "#" + chunk.getZ();
+//			Bukkit.getScheduler().runTaskAsynchronously(FurnitureLib.getInstance(), new Runnable() {
+//				@Override
+//				public void run() {
+//					FurnitureLib.getInstance().getSQLManager().load(query);
+//				}
+//			});
+//		}
+//	}
 }

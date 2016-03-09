@@ -25,7 +25,7 @@ import de.Ste3et_C0st.FurnitureLib.Utilitis.EntityID;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.LocationUtil;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 
-public abstract class fEntity {
+public abstract class fEntity extends fSerializer{
 
 	private Location location;
 	private fInventory inventory;
@@ -38,7 +38,7 @@ public abstract class fEntity {
 	private List<Player> loadetPlayer;
 	private ProtocolManager manager;
 	private PacketContainer container;
-	private boolean fire, nameVisible, visible, isKilled = false, isPlayed = false;
+	private boolean fire, nameVisible, visible, isKilled = false, isPlayed = false, glowing = false;
 	
 	public fEntity(Location location, EntityType type) {
 		this.type = type;
@@ -135,12 +135,30 @@ public abstract class fEntity {
 		getInventory().setBoots(is);
 	}
 	
+	public void setItemInMainHand(ItemStack is){
+		getInventory().setItemInMainHand(is);
+	}
+	
+	public void setItemInOffHand(ItemStack is){
+		getInventory().setItemInOffHand(is);
+	}
+	
+	@Deprecated
 	public void setItemInHand(ItemStack is) {
 		getInventory().setItemInHand(is);
 	}
 
+	@Deprecated
 	public ItemStack getItemInHand() {
 		return getInventory().getItemInHand();
+	}
+	
+	public ItemStack getItemInMainHand(){
+		return getInventory().getItemInMainHand();
+	}
+	
+	public ItemStack getItemInOffHand(){
+		return getInventory().getItemInOffHand();
 	}
 
 	public String getCustomName() {
@@ -178,9 +196,17 @@ public abstract class fEntity {
 	public boolean isVisible(){
 		return this.visible;
 	}
+	
+	public boolean isGlowing(){
+		return this.glowing;
+	}
+	
+	public FurnitureLib getPlugin(){
+		return FurnitureLib.getInstance();
+	}
 
 	public void setNameVasibility(boolean b) {
-		this.watcher.setObject(3, (byte) (b ? 1 : 0));
+		setObject(getHandle(), (byte) (b ? 1 : 0), 3);
 		this.nameVisible = b;
 	}
 
@@ -286,7 +312,7 @@ public abstract class fEntity {
 				FurnitureLib.getInstance().getLightManager()
 						.removeLight(getLocation());
 		}
-		this.watcher.setObject(0, Byte.valueOf(b0));
+		setObject(getHandle(), 0, Byte.valueOf(b0));
 		this.fire = b;
 	}
 
@@ -298,7 +324,7 @@ public abstract class fEntity {
 			setNameVasibility(false);
 			return;
 		}
-		this.watcher.setObject(2, str);
+		setObject(getHandle(), str, 2);
 		this.customName = str;
 	}
 
@@ -362,6 +388,11 @@ public abstract class fEntity {
 		}
 	}
 	
+	public void setGlowing(boolean b){
+		b(6, b);
+		this.glowing = b;
+	}
+	
 	public void sendParticle(Location loc, int particleID, boolean repeat)
 	{
 		Particle particle = Particle.getById(particleID);
@@ -407,9 +438,9 @@ public abstract class fEntity {
 	{
 	   byte b0 = getHandle().getByte(0);
 	   if (flag) {
-		   getHandle().setObject(0, Byte.valueOf((byte)(b0 | 1 << i)));
+		   setObject(getHandle(), Byte.valueOf((byte)(b0 | 1 << i)), 0);
 	   } else {
-		   getHandle().setObject(0, Byte.valueOf((byte)(b0 & (1 << i ^ 0xFFFFFFFF))));
+		   setObject(getHandle(), Byte.valueOf((byte)(b0 & (1 << i ^ 0xFFFFFFFF))), 0);
 	   }
 	}
 	
@@ -417,4 +448,6 @@ public abstract class fEntity {
 		b(5, b);
 		this.visible = b;
 	}
+	
+	
 }

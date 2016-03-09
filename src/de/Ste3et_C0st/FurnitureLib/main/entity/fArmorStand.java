@@ -7,6 +7,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.util.EulerAngle;
 
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
+import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type;
@@ -62,7 +63,7 @@ public class fArmorStand extends fEntity {
 		this.angle.put(part, angle);
 		angle = FurnitureLib.getInstance().getLocationUtil().Radtodegress(angle);
 		Vector3f v = new Vector3f();
-		getHandle().setObject(part.getField(), v.a(angle));
+		setObject(getHandle(), v.a(angle), part.getField());
 	}
 	
 	public void delete(){
@@ -78,7 +79,7 @@ public class fArmorStand extends fEntity {
 		else {
 			b0 = (byte)(b0 & 0xFFFFFFFE);
 		}
-		getHandle().setObject(10, Byte.valueOf(b0));
+		setObject(getHandle(), 10, Byte.valueOf(b0));
 		this.small = b;
 	}
 
@@ -89,7 +90,7 @@ public class fArmorStand extends fEntity {
 		else {
 			b0 = (byte)(b0 & 0xFFFFFFFB);
 		}
-		getHandle().setObject(10, Byte.valueOf(b0));
+		setObject(getHandle(), 10, Byte.valueOf(b0));
 		this.arms = b;
 	}
 
@@ -100,7 +101,7 @@ public class fArmorStand extends fEntity {
 		else {
 			b0 = (byte)(b0 & 0xFFFFFFFD);
 		}
-		getHandle().setObject(10, Byte.valueOf(b0));
+		setObject(getHandle(), 10, Byte.valueOf(b0));
 		this.gravity = b;
 	}
 	
@@ -113,7 +114,7 @@ public class fArmorStand extends fEntity {
 	    } else {
 	      b0 = (byte)(b0 & 0xFFFFFFF7);
 	    }
-	    getHandle().setObject(10, Byte.valueOf(b0));
+	    setObject(getHandle(), 10, Byte.valueOf(b0));
 	    this.baseplate = b;
 	  }
 	
@@ -126,7 +127,11 @@ public class fArmorStand extends fEntity {
 		else {
 			b0 = (byte)(b0 & 0xFFFFFFEF);
 		}
-		getHandle().setObject(10, Byte.valueOf(b0));
+		setObject(getHandle(), 10, Byte.valueOf(b0));
 		this.marker = !b;
+	}
+	
+	public NBTTagCompound getMetadata(){
+		return getMetaData(this);
 	}
 }

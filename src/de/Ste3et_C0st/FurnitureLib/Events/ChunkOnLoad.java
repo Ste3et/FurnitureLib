@@ -21,6 +21,7 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.FlowerPot;
 
@@ -50,6 +51,11 @@ public class ChunkOnLoad implements Listener{
 		if (oldChunk.getWorld() != newChunk.getWorld() || oldChunk.getX() != newChunk.getX() || oldChunk.getZ() != newChunk.getZ()) {
 			FurnitureLib.getInstance().getFurnitureManager().updatePlayerView(event.getPlayer());
 		}
+	}
+	
+	@EventHandler
+	public void onLoad(ChunkLoadEvent event){
+		//FurnitureLib.getInstance().getFurnitureManager().refreshChunk(event.getChunk());
 	}
 	
 	@EventHandler

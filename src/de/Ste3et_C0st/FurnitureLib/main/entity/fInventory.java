@@ -14,22 +14,30 @@ public class fInventory{
 	
 	private ItemStack[] items = new ItemStack[5];
 	private int entityId = 0;
+	@Deprecated
 	public ItemStack getItemInHand() {return this.items[0];}
-	public ItemStack getBoots() {return this.items[1];}
-	public ItemStack getLeggings() {return this.items[2];}
-	public ItemStack getChestPlate() {return this.items[3];}
-	public ItemStack getHelmet() {return this.items[4];}
+	
+	public ItemStack getItemInMainHand() {return this.items[0];}
+	public ItemStack getItemInOffHand() {return this.items[1];}
+	public ItemStack getBoots() {return this.items[2];}
+	public ItemStack getLeggings() {return this.items[3];}
+	public ItemStack getChestPlate() {return this.items[4];}
+	public ItemStack getHelmet() {return this.items[5];}
 	public Random id = new Random(1*10000);
 	
 	public fInventory(int entityId){
 		this.entityId = entityId;
 	}
 	
+	@Deprecated
 	public void setItemInHand(ItemStack item) {this.setSlot(0, item);}
-	public void setBoots(ItemStack item) {this.setSlot(1, item);}
-	public void setLeggings(ItemStack item) {this.setSlot(2, item);}
-	public void setChestPlate(ItemStack item) {this.setSlot(3, item);}
-	public void setHelmet(ItemStack item) {this.setSlot(4, item);}
+	
+	public void setItemInMainHand(ItemStack item) {this.setSlot(0, item);}
+	public void setItemInOffHand(ItemStack item) {this.setSlot(1, item);}
+	public void setBoots(ItemStack item) {this.setSlot(2, item);}
+	public void setLeggings(ItemStack item) {this.setSlot(3, item);}
+	public void setChestPlate(ItemStack item) {this.setSlot(4, item);}
+	public void setHelmet(ItemStack item) {this.setSlot(5, item);}
 	public ItemStack[] getIS(){return this.items;}
 	
 	public ItemStack getSlot(int slot) {
@@ -92,5 +100,4 @@ public class fInventory{
 		}
 		return inv;
 	}
-	
 }

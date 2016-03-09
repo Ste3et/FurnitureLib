@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.UUID;
 
 import org.apache.commons.codec.binary.Base64;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.inventory.ItemStack;
@@ -24,8 +23,7 @@ import de.Ste3et_C0st.FurnitureLib.main.Type.PublicMode;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fArmorStand;
 
-public class DeSerializer {
-	
+public class NewDeSerializer {
 	public int armorStands = 0;
 	public int purged = 0;
 	
@@ -64,11 +62,15 @@ public class DeSerializer {
 					asPacket.setPose(eulerAngleFetcher(euler.getCompound(part.toString())), part);
 				}
 				
-				boolean nameVisible = ItB(metadata.getInt("NameVisible")), BasePlate = ItB(metadata.getInt("BasePlate")), Small = ItB(metadata.getInt("Small")),
-						Fire = ItB(metadata.getInt("Fire")), Arms = ItB(metadata.getInt("Arms")), Invisible = ItB(metadata.getInt("Invisible")), Marker = true,
-						Glowing = false;
+				boolean nameVisible = ItB(metadata.getInt("NameVisible"));
+				boolean BasePlate = ItB(metadata.getInt("BasePlate"));
+				boolean Small = ItB(metadata.getInt("Small"));
+				boolean Fire = ItB(metadata.getInt("Fire"));
+				boolean Arms = ItB(metadata.getInt("Arms"));
+				boolean Invisible = ItB(metadata.getInt("Invisible"));
+				boolean Marker = true;
 				if(metadata.hasKey("Marker")){Marker = ItB(metadata.getInt("Marker"));}
-				if(metadata.hasKey("Glowing")){Glowing = ItB(metadata.getInt("Glowing"));}
+				
 				NBTTagCompound inventory = metadata.getCompound("Inventory");
 				for(int i = 0; i<5; i++){
 					String s  = inventory.getString(i+"");
@@ -86,7 +88,6 @@ public class DeSerializer {
 				asPacket.setInvisible(Invisible);
 				asPacket.setArmorID(ArmorID);
 				asPacket.setMarker(Marker);
-				asPacket.setGlowing(Glowing);
 				if(FurnitureLib.getInstance().getFurnitureManager().getLastID()<ArmorID){
 					FurnitureLib.getInstance().getFurnitureManager().setLastID(ArmorID);
 				}
@@ -115,25 +116,12 @@ public class DeSerializer {
 		Double Z = location.getDouble("Z");
 		Float Yaw = location.getFloat("Yaw");
 		Float Pitch = location.getFloat("Pitch");
-		if(!isWorldLoadet(location.getString("World"))){return null;}
-		World world = Bukkit.getWorld(location.getString("World"));
+		if(!FurnitureLib.getInstance().getWorldPool().isExist(location.getString("World"))) return null;
+		World world = FurnitureLib.getInstance().getWorldPool().getWorld(location.getString("World"));
 		Location loc = new Location(world, X, Y, Z);
 		loc.setYaw(Yaw);
 		loc.setPitch(Pitch);
 		return loc;
-	}
-	
-	public boolean isWorldLoadet(String s){
-		boolean loaded = false;
-		for(World w: Bukkit.getServer().getWorlds())
-		{
-		  if(w.getName().equals(s))
-		  {
-		    loaded = true;
-		    break;
-		  }
-		}
-		return loaded;
 	}
 	
 	private UUID uuidFetcher(String s){

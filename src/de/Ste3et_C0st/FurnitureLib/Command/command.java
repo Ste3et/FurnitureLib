@@ -40,19 +40,19 @@ public class command implements CommandExecutor, Listener{
 		if(playerList.contains(e.getPlayer())){
 			e.setCancelled(true);
 			Player p = e.getPlayer();
-			p.sendMessage("§6Furniture Info about§e " + e.getID().getSerial());
-			p.sendMessage("§6Plugin:§e " + e.getID().getPlugin());
-			p.sendMessage("§6Type:§e " + e.getID().getProject());
-			p.sendMessage("§6PublicMode:§e " + e.getID().getPublicMode().name().toLowerCase());
-			p.sendMessage("§6Owner: §2" + e.getID().getPlayerName());
-			p.sendMessage("§6PublicEventAccess: §e" + e.getID().getEventType().name().toLowerCase());
-			p.sendMessage("§6ArmorStands: §e" + e.getID().getPacketList().size());
-			p.sendMessage("§6FromDatabase: §c" + e.getID().isFromDatabase());
-			p.sendMessage("§6Object Finish: §c" + e.getID().isFinish());
-			p.sendMessage("§6Members: §e" + e.getID().getMemberList().size());
-			p.sendMessage("§6SQL State: §e" + e.getID().getSQLAction().name().toLowerCase());
-			p.sendMessage("§6Size: §e" + e.getID().getProjectOBJ().getLength()+":"+ e.getID().getProjectOBJ().getHeight()+":"+e.getID().getProjectOBJ().getWitdh());
-			p.sendMessage("§6Blocks: §a" + e.getID().getBlockList().size());
+			p.sendMessage("Â§6Furniture Info aboutÂ§e " + e.getID().getSerial());
+			p.sendMessage("Â§6Plugin:Â§e " + e.getID().getPlugin());
+			p.sendMessage("Â§6Type:Â§e " + e.getID().getProject());
+			p.sendMessage("Â§6PublicMode:Â§e " + e.getID().getPublicMode().name().toLowerCase());
+			p.sendMessage("Â§6Owner: Â§2" + e.getID().getPlayerName());
+			p.sendMessage("Â§6PublicEventAccess: Â§e" + e.getID().getEventType().name().toLowerCase());
+			p.sendMessage("Â§6ArmorStands: Â§e" + e.getID().getPacketList().size());
+			p.sendMessage("Â§6FromDatabase: Â§c" + e.getID().isFromDatabase());
+			p.sendMessage("Â§6Object Finish: Â§c" + e.getID().isFinish());
+			p.sendMessage("Â§6Members: Â§e" + e.getID().getMemberList().size());
+			p.sendMessage("Â§6SQL State: Â§e" + e.getID().getSQLAction().name().toLowerCase());
+			p.sendMessage("Â§6Size: Â§e" + e.getID().getProjectOBJ().getLength()+":"+ e.getID().getProjectOBJ().getHeight()+":"+e.getID().getProjectOBJ().getWitdh());
+			p.sendMessage("Â§6Blocks: Â§a" + e.getID().getBlockList().size());
 			
 			if(e.getID().getUUID()!=null){
 				OfflinePlayer player = Bukkit.getOfflinePlayer(e.getID().getUUID());
@@ -62,7 +62,7 @@ public class command implements CommandExecutor, Listener{
 					long mili3 = mili1-mili2;
 					SimpleDateFormat time = new SimpleDateFormat("D:HH:mm:ss.SSS");
 			    	String timeStr = time.format(mili3);
-			    	p.sendMessage("§6Player Offline: " + timeStr);
+			    	p.sendMessage("Â§6Player Offline: " + timeStr);
 				}
 			}
 			
@@ -126,28 +126,28 @@ public class command implements CommandExecutor, Listener{
 		String update = FurnitureLib.getInstance().getUpdater().getUpdate();
 		
 		if(!lib.hasPerm(player,"furniture.help")) return;
-		new JsonBuilder("§7§m+--------------------§7[")
-		.withText("§2Furniture").withHoverEvent(HoverAction.SHOW_TEXT, "§6§lVersion: §7" + version + "\n"
-				+ "§6§lAuthor: §2" + Author +  update)
-		.withText("§7]§m---------------------+\n")
-		.withText("§6/furniture list §e(Option) §c(side)\n").withHoverEvent(HoverAction.SHOW_TEXT,"§6list all available furniture\n\n§cOption:\n§6Plugin\n§6Type\n§6World").withClickEvent(ClickAction.SUGGEST_COMMAND, "/furniture list (Option)")
-		.withText("§6/furniture give §e<furniture> §c(player) §d(Amount)\n").withHoverEvent(HoverAction.SHOW_TEXT,"§6if the §cPlayer not set:\n"
-				+ "§cyou become a furniture\n" + 
-				"§6if the Player set:\n" + 
-				"§cgive the player one furniture").withClickEvent(ClickAction.SUGGEST_COMMAND, "/furniture give <FURNITURE> (player)")
-		.withText("§6/furniture debug \n").withHoverEvent(HoverAction.SHOW_TEXT,"§6You can become some information about\n§6abaout the furniture you are rightclicked").withClickEvent(ClickAction.SUGGEST_COMMAND, "/furniture debug")
-		.withText("§6/furniture manage \n").withHoverEvent(HoverAction.SHOW_TEXT,"§6You can config the furniture\n§6that you are rightclicked").withClickEvent(ClickAction.SUGGEST_COMMAND, "/furniture manage")
-		.withText("§6/furniture purge §e<Time>\n").withHoverEvent(HoverAction.SHOW_TEXT, "§6Marked all furnitures to remove from the database").withClickEvent(ClickAction.SUGGEST_COMMAND, "/furniture purge <time>")
-		.withText("§6/furniture recipe §e<type>\n").withHoverEvent(HoverAction.SHOW_TEXT,"§6View recipe from a furniture").withClickEvent(ClickAction.SUGGEST_COMMAND, "/furniture recipe <type>")
-		.withText("§6/furniture remove §e<type>\n").withHoverEvent(HoverAction.SHOW_TEXT,"§6It's remove only one type of the \n§6Furniture").withClickEvent(ClickAction.SUGGEST_COMMAND, "/furniture remove <type>")
-		.withText("§6/furniture remove §e<player>\n").withHoverEvent(HoverAction.SHOW_TEXT,"§6Remove all furniture from an player").withClickEvent(ClickAction.SUGGEST_COMMAND, "/furniture remove <player>")
-		.withText("§6/furniture remove §e<world>\n").withHoverEvent(HoverAction.SHOW_TEXT,"§6Remove all furniture from an world").withClickEvent(ClickAction.SUGGEST_COMMAND, "/furniture remove <world>")
-		.withText("§6/furniture remove §e<plugin>\n").withHoverEvent(HoverAction.SHOW_TEXT,"§6It's remove only all Furniture from one Plugin").withClickEvent(ClickAction.SUGGEST_COMMAND, "/furniture remove <plugin>")
-		.withText("§6/furniture remove §e<ID>\n").withHoverEvent(HoverAction.SHOW_TEXT,"§6Remove a furniture by id").withClickEvent(ClickAction.SUGGEST_COMMAND, "/furniture remove <ID>")
-		.withText("§6/furniture remove §e<Distance>\n").withHoverEvent(HoverAction.SHOW_TEXT,"§6Remove all furniture in Distance").withClickEvent(ClickAction.SUGGEST_COMMAND, "/furniture remove <Distance>")
-		.withText("§6/furniture remove §elookat\n").withHoverEvent(HoverAction.SHOW_TEXT,"§6Remove a furniture at you looked").withClickEvent(ClickAction.SUGGEST_COMMAND, "/furniture remove lookat")
-		.withText("§6/furniture remove §eall\n").withHoverEvent(HoverAction.SHOW_TEXT,"§6Remove all furniture and reset database").withClickEvent(ClickAction.SUGGEST_COMMAND, "/furniture remove all")
-		.withText("\n").withText("§e§lTIP: §r§7Try to §e§nclick§7 or §e§nhover§7 the commands").
-		withText("§7§m+--------------------------------------------------+").sendJson(player);
+		new JsonBuilder("Â§7Â§m+--------------------Â§7[")
+		.withText("Â§2Furniture").withHoverEvent(HoverAction.SHOW_TEXT, "Â§6Â§lVersion: Â§7" + version + "\n"
+				+ "Â§6Â§lAuthor: Â§2" + Author +  update)
+		.withText("Â§7]Â§m---------------------+\n")
+		.withText("Â§6/furniture list Â§e(Option) Â§c(side)\n").withHoverEvent(HoverAction.SHOW_TEXT,"Â§6list all available furniture\n\nÂ§cOption:\nÂ§6Plugin\nÂ§6Type\nÂ§6World").withClickEvent(ClickAction.SUGGEST_COMMAND, "/furniture list (Option)")
+		.withText("Â§6/furniture give Â§e<furniture> Â§c(player) Â§d(Amount)\n").withHoverEvent(HoverAction.SHOW_TEXT,"Â§6if the Â§cPlayer not set:\n"
+				+ "Â§cyou become a furniture\n" + 
+				"Â§6if the Player set:\n" + 
+				"Â§cgive the player one furniture").withClickEvent(ClickAction.SUGGEST_COMMAND, "/furniture give <FURNITURE> (player)")
+		.withText("Â§6/furniture debug \n").withHoverEvent(HoverAction.SHOW_TEXT,"Â§6You can become some information about\nÂ§6abaout the furniture you are rightclicked").withClickEvent(ClickAction.SUGGEST_COMMAND, "/furniture debug")
+		.withText("Â§6/furniture manage \n").withHoverEvent(HoverAction.SHOW_TEXT,"Â§6You can config the furniture\nÂ§6that you are rightclicked").withClickEvent(ClickAction.SUGGEST_COMMAND, "/furniture manage")
+		.withText("Â§6/furniture purge Â§e<Time>\n").withHoverEvent(HoverAction.SHOW_TEXT, "Â§6Marked all furnitures to remove from the database").withClickEvent(ClickAction.SUGGEST_COMMAND, "/furniture purge <time>")
+		.withText("Â§6/furniture recipe Â§e<type>\n").withHoverEvent(HoverAction.SHOW_TEXT,"Â§6View recipe from a furniture").withClickEvent(ClickAction.SUGGEST_COMMAND, "/furniture recipe <type>")
+		.withText("Â§6/furniture remove Â§e<type>\n").withHoverEvent(HoverAction.SHOW_TEXT,"Â§6It's remove only one type of the \nÂ§6Furniture").withClickEvent(ClickAction.SUGGEST_COMMAND, "/furniture remove <type>")
+		.withText("Â§6/furniture remove Â§e<player>\n").withHoverEvent(HoverAction.SHOW_TEXT,"Â§6Remove all furniture from an player").withClickEvent(ClickAction.SUGGEST_COMMAND, "/furniture remove <player>")
+		.withText("Â§6/furniture remove Â§e<world>\n").withHoverEvent(HoverAction.SHOW_TEXT,"Â§6Remove all furniture from an world").withClickEvent(ClickAction.SUGGEST_COMMAND, "/furniture remove <world>")
+		.withText("Â§6/furniture remove Â§e<plugin>\n").withHoverEvent(HoverAction.SHOW_TEXT,"Â§6It's remove only all Furniture from one Plugin").withClickEvent(ClickAction.SUGGEST_COMMAND, "/furniture remove <plugin>")
+		.withText("Â§6/furniture remove Â§e<ID>\n").withHoverEvent(HoverAction.SHOW_TEXT,"Â§6Remove a furniture by id").withClickEvent(ClickAction.SUGGEST_COMMAND, "/furniture remove <ID>")
+		.withText("Â§6/furniture remove Â§e<Distance>\n").withHoverEvent(HoverAction.SHOW_TEXT,"Â§6Remove all furniture in Distance").withClickEvent(ClickAction.SUGGEST_COMMAND, "/furniture remove <Distance>")
+		.withText("Â§6/furniture remove Â§elookat\n").withHoverEvent(HoverAction.SHOW_TEXT,"Â§6Remove a furniture at you looked").withClickEvent(ClickAction.SUGGEST_COMMAND, "/furniture remove lookat")
+		.withText("Â§6/furniture remove Â§eall\n").withHoverEvent(HoverAction.SHOW_TEXT,"Â§6Remove all furniture and reset database").withClickEvent(ClickAction.SUGGEST_COMMAND, "/furniture remove all")
+		.withText("\n").withText("Â§eÂ§lTIP: Â§rÂ§7Try to Â§eÂ§nclickÂ§7 or Â§eÂ§nhoverÂ§7 the commands").
+		withText("Â§7Â§m+--------------------------------------------------+").sendJson(player);
 	}
 }

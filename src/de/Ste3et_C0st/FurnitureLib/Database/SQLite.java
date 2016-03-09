@@ -8,9 +8,6 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.logging.Level;
 
-
-
-
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.Type.DataBaseType;
 
@@ -27,6 +24,13 @@ public class SQLite extends Database{
     public String Objects = "CREATE TABLE IF NOT EXISTS FurnitureLib_Objects (" +
     		"`ObjID` STRING NOT NULL," +
     		"`Data` STRING NOT NULL" +
+    		");";
+    
+    public String DatabaseSchema = "CREATE TABLE IF NOT EXISTS FurnitureLib (" +
+    		"`WorldInfo` STRING NOT NULL," +
+    		"`ObjID` STRING NOT NULL," +
+    		"`Data` STRING NOT NULL," +
+    		"`PlaceTime` TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL" +
     		");";
 
     public Connection getSQLConnection() {
@@ -58,6 +62,7 @@ public class SQLite extends Database{
         try {
             Statement s = connection.createStatement();
             s.executeUpdate(Objects);
+            //s.executeUpdate(DatabaseSchema);
             s.close();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -75,4 +80,20 @@ public class SQLite extends Database{
     }
 
 	public DataBaseType getType() {return this.type;}
+
+	public void create(){
+		connection = getSQLConnection();
+        try {
+            Statement s = connection.createStatement();
+            s.executeUpdate(Objects);
+            // s.executeUpdate(DatabaseSchema);
+            s.close();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+	}
+	
+//	public void load(String query, SQLAction action) {
+//		loadAll(query, action);
+//	}
 }

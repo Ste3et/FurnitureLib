@@ -35,7 +35,7 @@ public class ColorUtil {
 	
 	private void colorBlock(Player p, boolean canBuild, Material m, ObjectID obj, int row){
 		if(!canBuild){return;}
-		ItemStack is = p.getItemInHand();
+		ItemStack is = p.getInventory().getItemInMainHand();
 		Integer Amount = is.getAmount();
 		List<fArmorStand> asp = manager.getfArmorStandByObjectID(obj);
 		short color = lutil.getFromDey(is.getDurability());
@@ -60,7 +60,7 @@ public class ColorUtil {
 		manager.updateFurniture(obj);
 		if(p.getGameMode().equals(GameMode.CREATIVE) && FurnitureLib.getInstance().useGamemode()) return;
 		Integer i = p.getInventory().getHeldItemSlot();
-		ItemStack item = p.getItemInHand();
+		ItemStack item = p.getInventory().getItemInMainHand();
 		item.setAmount(Amount);
 		p.getInventory().setItem(i, item);
 		p.updateInventory();
@@ -68,7 +68,7 @@ public class ColorUtil {
 	
 	private void colorBanner(Player p, boolean canBuild, Material m, ObjectID obj, int row){
 		if(!canBuild){return;}
-		ItemStack is = p.getItemInHand();
+		ItemStack is = p.getInventory().getItemInMainHand();
 		Integer Amount = is.getAmount();
 		List<fArmorStand> asp = manager.getfArmorStandByObjectID(obj);
 		DyeColor color = DyeColor.getByColor(lutil.getDyeFromDurability(is.getDurability()));

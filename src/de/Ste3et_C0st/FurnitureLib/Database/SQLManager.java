@@ -89,6 +89,7 @@ public class SQLManager {
 					case SAVE: save(obj); break;
 					case REMOVE:remove(obj); break;
 					case NOTHING: break;
+					case PURGE: break;
 					}
 					if(!obj.getSQLAction().equals(SQLAction.REMOVE)){obj.setSQLAction(SQLAction.NOTHING);}
 					objList.add(obj);
@@ -140,5 +141,14 @@ public class SQLManager {
 			this.mysql=null;
 		}
 	}
+
+//	public void load(String query) {
+//		if(this.sqlite!=null){
+//			this.sqlite.load(query,SQLAction.NOTHING);
+//		}else if(this.mysql!=null){
+//			//
+//		}
+//		FurnitureLib.getInstance().getFurnitureManager().sendAll();
+//	}
 	
 }

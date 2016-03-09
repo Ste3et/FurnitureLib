@@ -66,8 +66,9 @@ public class FurnitureLib extends JavaPlugin{
 	private BlockManager bmanager;
 	private PublicMode mode;
 	private EventType type;
+	private WorldPool wPool;
 	private int purgeTime = 30;
-	
+
 	public LanguageManager getLangManager(){return this.lmanager;}
 	public LightManager getLightManager(){return this.lightMgr;}
 	public ProtectionManager getPermManager(){return this.Pmanager;}
@@ -86,6 +87,8 @@ public class FurnitureLib extends JavaPlugin{
 	public PublicMode getDefaultPublicType(){return this.mode;}
 	public PluginManager getPluginManager(){return this.getServer().getPluginManager();}
 	public BlockManager getBlockManager() {return bmanager;}
+	public SQLManager getSQLManager(){return this.sqlManager;}
+	public WorldPool getWorldPool(){return this.wPool;}
 	public int getPurgeTime(){return this.purgeTime;}
 	public static FurnitureLib getInstance(){return instance;}
 	public boolean isAutoPurge(){return this.autoPurge;}
@@ -129,6 +132,7 @@ public class FurnitureLib extends JavaPlugin{
 		this.autoPurge = getConfig().getBoolean("config.Purge.autoPurge");
 		this.removePurge = getConfig().getBoolean("config.Purge.removePurge");
 		this.updater = new Updater();
+		this.wPool = new WorldPool();
 		new FurnitureEvents(instance, manager);
 		getServer().getPluginManager().registerEvents(new ChunkOnLoad(), this);
 		PluginCommand c = getCommand("furniture");
@@ -144,7 +148,15 @@ public class FurnitureLib extends JavaPlugin{
 		getLogger().info("Furniture find ProtectionLib: " + b.toString());
 		createDefaultWatchers();
 		this.sqlManager = new SQLManager(instance);
+		this.sqlManager.initialize();
 		this.sqlManager.loadALL();
+//		Bukkit.getScheduler().runTaskAsynchronously(FurnitureLib.getInstance(), new Runnable() {
+//			@Override
+//			public void run() {
+//				getSQLManager().loadALL();
+//			}
+//		});
+		
 		getLogger().info("Furniture load finish");
 		getLogger().info("==========================================");
 		this.craftingInv = new CraftingInv(this);
