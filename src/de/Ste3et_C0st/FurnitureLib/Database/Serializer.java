@@ -20,17 +20,13 @@ import de.Ste3et_C0st.FurnitureLib.main.entity.fArmorStand;
 public class Serializer {
 
 	public String SerializeObjectID(ObjectID obj){
-		/*
-		 * New-Database Schema
-		 * Welt#ChunkX#ChunkZ
-		 */
 		NBTTagCompound compound = new NBTTagCompound();
 		compound.setString("EventType", obj.getEventType().toString());
 		compound.setString("PublicMode", obj.getPublicMode().toString());
 		compound.setString("Owner-UUID", getOwnerUUID(obj));
 		compound.set("Members",getMemberList(obj));
 		compound.set("Location",getFromLocation(obj.getStartLocation()));
-		
+		compound.setInt("ArmorStands", obj.getPacketList().size());
 		NBTTagCompound armorStands = new NBTTagCompound();
 		for(fArmorStand packet : obj.getPacketList()){
 			armorStands.set(packet.getArmorID()+"", packet.getMetadata());

@@ -131,7 +131,7 @@ public class ObjectID{
 		FurnitureLib.getInstance().getLimitManager().removePlayer(this);
 		Location loc = getStartLocation();
 		dropItem(p, loc.clone().add(0, 1, 0), getProjectOBJ());
-		deleteEffect(manager.getfArmorStandByObjectID(this));
+		deleteEffect(packetList);
 		FurnitureLib.getInstance().getBlockManager().destroy(getBlockList(), false);
 		locList.clear();
 		manager.remove(this);
@@ -142,7 +142,7 @@ public class ObjectID{
 		FurnitureLib.getInstance().getLimitManager().removePlayer(this);
 		Location loc = getStartLocation();
 		if(dropItem) dropItem(p, loc.clone().add(0, 1, 0), getProjectOBJ());
-		if(deleteEffect) deleteEffect(manager.getfArmorStandByObjectID(this));
+		if(deleteEffect) deleteEffect(packetList);
 		manager.remove(this);
 		FurnitureLib.getInstance().getLimitManager().removePlayer(this);
 	}
@@ -169,7 +169,7 @@ public class ObjectID{
 	}
 	
 	public String getPlayerName(){
-		String name = "§cUNKNOW";
+		String name = "Â§cUNKNOW";
 		if(uuid!=null){
 			OfflinePlayer p = Bukkit.getOfflinePlayer(uuid);
 			name = p.getName();

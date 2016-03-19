@@ -60,6 +60,8 @@ public abstract class Furniture implements Listener {
 	public void send(){getManager().send(obj);}
 	public void update(){getManager().updateFurniture(obj);}
 	public void delete(){this.obj=null;}
+	
+	
 	public boolean canBuild(Player p){return FurnitureLib.getInstance().canBuild(p, getObjID(), Type.EventType.BREAK);} 
 	public boolean canInteract(Player p){return FurnitureLib.getInstance().canBuild(p, getObjID(), Type.EventType.INTERACT);} 
 	

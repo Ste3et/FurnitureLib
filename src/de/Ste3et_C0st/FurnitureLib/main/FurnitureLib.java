@@ -133,6 +133,7 @@ public class FurnitureLib extends JavaPlugin{
 		this.removePurge = getConfig().getBoolean("config.Purge.removePurge");
 		this.updater = new Updater();
 		this.wPool = new WorldPool();
+		this.wPool.loadWorlds();
 		new FurnitureEvents(instance, manager);
 		getServer().getPluginManager().registerEvents(new ChunkOnLoad(), this);
 		PluginCommand c = getCommand("furniture");
@@ -150,34 +151,18 @@ public class FurnitureLib extends JavaPlugin{
 		this.sqlManager = new SQLManager(instance);
 		this.sqlManager.initialize();
 		this.sqlManager.loadALL();
-//		Bukkit.getScheduler().runTaskAsynchronously(FurnitureLib.getInstance(), new Runnable() {
-//			@Override
-//			public void run() {
-//				getSQLManager().loadALL();
-//			}
-//		});
-		
 		getLogger().info("Furniture load finish");
 		getLogger().info("==========================================");
 		this.craftingInv = new CraftingInv(this);
 		this.limitManager = new LimitationManager(this);
 		this.update = getConfig().getBoolean("config.CheckUpdate");
 		this.bmanager = new BlockManager();
-		
 		PublicMode mode = PublicMode.valueOf(getConfig().getString("config.PlaceMode.Mode"));
 		EventType type = EventType.valueOf(getConfig().getString("config.PlaceMode.Access"));
 		if(mode!=null){this.mode = mode;}else{this.mode = PublicMode.PRIVATE;}
 		if(type!=null){this.type = type;}else{this.type = EventType.INTERACT;}
-		
-		if(getConfig().getBoolean("config.timer.Enable")){
-			int time = getConfig().getInt("config.timer.time");
-			sqlManager.saveIntervall(time);
-		}
-		for(Player p : Bukkit.getOnlinePlayers()){
-			if(p.isOp()){
-				getUpdater().sendPlayer(p);
-			}
-		}
+		if(getConfig().getBoolean("config.timer.Enable")){int time = getConfig().getInt("config.timer.time");sqlManager.saveIntervall(time);}
+		for(Player p : Bukkit.getOnlinePlayers()){if(p.isOp()){getUpdater().sendPlayer(p);}}
 	}
 	
 	public boolean checkPurge(ObjectID obj, UUID uuid, int purgeTime){

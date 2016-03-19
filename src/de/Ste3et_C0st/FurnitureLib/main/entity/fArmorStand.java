@@ -29,14 +29,14 @@ public class fArmorStand extends fEntity {
 	public EulerAngle getHeadPose(){return getPose(BodyPart.HEAD);}
 	public Project getProject(){return this.pro;}
 	public ObjectID getObjID() {return objID;}
-	public void setBodyPose(EulerAngle a){setPose(a,BodyPart.BODY);}
-	public void setLeftArmPose(EulerAngle a){setPose(a,BodyPart.LEFT_ARM);}
-	public void setRightArmPose(EulerAngle a){setPose(a,BodyPart.RIGHT_ARM);}
-	public void setLeftLegPose(EulerAngle a){setPose(a,BodyPart.LEFT_LEG);}
-	public void setRightLegPose(EulerAngle a){setPose(a,BodyPart.RIGHT_LEG);}
-	public void setHeadPose(EulerAngle a){setPose(a,BodyPart.HEAD);}
-	public void setObjID(ObjectID objID) {this.objID = objID;}
-	public void setArmorID(int i){this.armorstandID = i;}
+	public fArmorStand setBodyPose(EulerAngle a){setPose(a,BodyPart.BODY);return this;}
+	public fArmorStand setLeftArmPose(EulerAngle a){setPose(a,BodyPart.LEFT_ARM);return this;}
+	public fArmorStand setRightArmPose(EulerAngle a){setPose(a,BodyPart.RIGHT_ARM);return this;}
+	public fArmorStand setLeftLegPose(EulerAngle a){setPose(a,BodyPart.LEFT_LEG);return this;}
+	public fArmorStand setRightLegPose(EulerAngle a){setPose(a,BodyPart.RIGHT_LEG);return this;}
+	public fArmorStand setHeadPose(EulerAngle a){setPose(a,BodyPart.HEAD);return this;}
+	public fArmorStand setObjID(ObjectID objID) {this.objID = objID;return this;}
+	public fArmorStand setArmorID(int i){this.armorstandID = i;return this;}
 	public int getArmorID(){return this.armorstandID;}
 	public boolean hasArms(){return this.arms;}
 	public boolean hasBasePlate(){return this.baseplate;}
@@ -44,12 +44,12 @@ public class fArmorStand extends fEntity {
 	public boolean isMarker(){return this.marker;}
 	public boolean isSmall(){return this.small;}
 	
-	public fArmorStand(Location location, ObjectID obj) {
-		super(location, EntityType.ARMOR_STAND);
+	public fArmorStand(Location loc, ObjectID obj) {
+		super(loc, EntityType.ARMOR_STAND);
+		getObject(getWatcher(), Byte.valueOf((byte) 0), 10);
 		this.armorstandID = FurnitureLib.getInstance().getFurnitureManager().getLastID();
 		this.setObjID(obj);
 		this.pro = obj.getProjectOBJ();
-		
 	}
 
 	public EulerAngle getPose(BodyPart part){
@@ -57,81 +57,111 @@ public class fArmorStand extends fEntity {
 		return angle.get(part);
 	}
 	
-	public void setPose(EulerAngle angle, BodyPart part){
-		if(angle==null){return;}
-		if(part==null){return;}
-		this.angle.put(part, angle);
-		angle = FurnitureLib.getInstance().getLocationUtil().Radtodegress(angle);
-		Vector3f v = new Vector3f();
-		setObject(getHandle(), v.a(angle), part.getField());
-	}
+	  public fArmorStand setPose(EulerAngle angle, BodyPart part)
+	  {
+	    if (angle == null) {
+	      return this;
+	    }
+	    if (part == null) {
+	      return this;
+	    }
+	    this.angle.put(part, angle);
+	    angle = FurnitureLib.getInstance().getLocationUtil().Radtodegress(angle);
+	    Vector3f v = new Vector3f();
+	    setObject(getWatcher(), v.a(angle), part.getField());
+	    return this;
+	  }
 	
 	public void delete(){
 		remove();
 		FurnitureLib.getInstance().getFurnitureManager().remove(this);
 	}
 	
-	public void setSmall(boolean b){
-		byte b0 = getHandle().getByte(10);
-
+	public fArmorStand setSmall(boolean b){
+		byte b0 = (byte) getObject(getWatcher(), Byte.valueOf((byte) 0), 10);
 		if (b)
 			b0 = (byte)(b0 | 0x1);
 		else {
 			b0 = (byte)(b0 & 0xFFFFFFFE);
 		}
-		setObject(getHandle(), 10, Byte.valueOf(b0));
+		setObject(getWatcher(), Byte.valueOf(b0),10);
 		this.small = b;
+		return this;
 	}
 
-	public void setArms(boolean b) {
-		byte b0 = getHandle().getByte(10);
+	public fArmorStand setArms(boolean b) {
+		byte b0 = (byte) getObject(getWatcher(), Byte.valueOf((byte) 0), 10);
 		if (b)
 			b0 = (byte)(b0 | 0x4);
 		else {
 			b0 = (byte)(b0 & 0xFFFFFFFB);
 		}
-		setObject(getHandle(), 10, Byte.valueOf(b0));
+		setObject(getWatcher(), Byte.valueOf(b0),10);
 		this.arms = b;
+		return this;
 	}
 
-	public void setGravity(boolean b) {
-		byte b0 = getHandle().getByte(10);
+
+	@Deprecated
+	public fArmorStand setGravity(boolean b) {
+		byte b0 = (byte) getObject(getWatcher(), Byte.valueOf((byte) 0), 10);
 		if (b)
 			b0 = (byte)(b0 | 0x2);
 		else {
 			b0 = (byte)(b0 & 0xFFFFFFFD);
 		}
-		setObject(getHandle(), 10, Byte.valueOf(b0));
+		setObject(getWatcher(), Byte.valueOf(b0),10);
 		this.gravity = b;
+		return this;
 	}
 	
-	  public void setBasePlate(boolean b)
+	  public fArmorStand setBasePlate(boolean b)
 	  {
 		b = !b;
-	    byte b0 = getHandle().getByte(10);
+		byte b0 = (byte) getObject(getWatcher(), Byte.valueOf((byte) 0), 10);
 	    if (b) {
 	      b0 = (byte)(b0 | 0x8);
 	    } else {
 	      b0 = (byte)(b0 & 0xFFFFFFF7);
 	    }
-	    setObject(getHandle(), 10, Byte.valueOf(b0));
+	    setObject(getWatcher(), Byte.valueOf(b0),10);
 	    this.baseplate = b;
+	    return this;
 	  }
 	
-	public void setMarker(boolean b){
+	public fArmorStand setMarker(boolean b){
 		b = !b;
-		byte b0 = getHandle().getByte(10);
-
+		byte b0 = (byte) getObject(getWatcher(), Byte.valueOf((byte) 0), 10);
 		if (b)
 			b0 = (byte)(b0 | 0x10);
 		else {
 			b0 = (byte)(b0 & 0xFFFFFFEF);
 		}
-		setObject(getHandle(), 10, Byte.valueOf(b0));
+		setObject(getWatcher(), Byte.valueOf(b0),10);
 		this.marker = !b;
+		return this;
 	}
 	
 	public NBTTagCompound getMetadata(){
 		return getMetaData(this);
+	}
+	
+	public fArmorStand clone(Relative relative){
+		fArmorStand nStand = new fArmorStand(relative.getSecondLocation(), getObjID());
+		nStand.setInventory(getInventory());
+		nStand.setSmall(isSmall());
+		nStand.setInvisible(isVisible());
+		nStand.setMarker(isMarker());
+		nStand.setGlowing(isGlowing());
+		nStand.setArms(hasArms());
+		nStand.setBasePlate(hasBasePlate());
+		nStand.setFire(isFire());
+		nStand.setName(getCustomName());
+		nStand.setNameVasibility(isCustomNameVisible());
+		for(BodyPart part : BodyPart.values()){
+			nStand.setPose(getPose(part), part);
+		}
+		FurnitureLib.getInstance().getFurnitureManager().addArmorStand(nStand);
+		return nStand;
 	}
 }

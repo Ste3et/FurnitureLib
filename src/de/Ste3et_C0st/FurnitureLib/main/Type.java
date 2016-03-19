@@ -58,11 +58,6 @@ public class Type {
         public EulerAngle getDefAngle(){
         	return angle;
         }
-        
-		public static List<BodyPart> getList() {
-			List<BodyPart> parts = Arrays.asList(BodyPart.HEAD, BodyPart.BODY, BodyPart.LEFT_ARM, BodyPart.RIGHT_ARM, BodyPart.LEFT_LEG, BodyPart.RIGHT_LEG);
-			return parts;
-		}
 	}
 
 	public enum EventType{

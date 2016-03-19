@@ -31,16 +31,16 @@ public class FurnitureEvents {
                             if(manager.isArmorStand(PacketID)){
                             	event.setCancelled(true);
                             	fArmorStand asPacket = manager.getfArmorStandByID(PacketID);
-                            	if(asPacket==null){return;}
+                            	if(asPacket==null){System.out.println("error1");return;}
                             	ObjectID objID = manager.getObjectIDByID(PacketID);
-                            	if(objID==null){return;}
+                            	if(objID==null){System.out.println("error2");return;}
                             	if(objID.getSQLAction().equals(SQLAction.REMOVE)){return;}
                             	Location loc = asPacket.getLocation();
                             	Player p = event.getPlayer();
                             	EntityUseAction action = event.getPacket().getEntityUseActions().read(0);
                             	
-                            	if(loc==null){return;}
-                            	if(p==null){return;}
+                            	if(loc==null){System.out.println("error3");return;}
+                            	if(p==null){System.out.println("error4");return;}
 								final Player player = p;
 								final fArmorStand packet = asPacket;
 								final ObjectID objectID = objID;
@@ -58,9 +58,11 @@ public class FurnitureEvents {
 									break;
 								case INTERACT_AT:
 									if(p.getGameMode().equals(GameMode.SPECTATOR)){return;}
+									System.out.println("interact1");
 									Bukkit.getScheduler().scheduleSyncDelayedTask(FurnitureLib.getInstance(), new Runnable() {
 									@Override
 										public void run() {
+											System.out.println("interact2");
 											FurnitureClickEvent event = new FurnitureClickEvent(player, packet, objectID, location);
 											Bukkit.getServer().getPluginManager().callEvent(event);		
 										}

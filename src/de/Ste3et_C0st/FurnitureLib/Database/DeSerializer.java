@@ -19,15 +19,20 @@ import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagList;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.BodyPart;
+import de.Ste3et_C0st.FurnitureLib.main.WorldPool;
 import de.Ste3et_C0st.FurnitureLib.main.Type.EventType;
 import de.Ste3et_C0st.FurnitureLib.main.Type.PublicMode;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
+import de.Ste3et_C0st.FurnitureLib.main.entity.Vector3f;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fArmorStand;
 
 public class DeSerializer {
 	
 	public int armorStands = 0;
 	public int purged = 0;
+	public FurnitureLib lib = FurnitureLib.getInstance();
+	public WorldPool pool = FurnitureLib.getInstance().getWorldPool();
+	private Object[] enumItemSlots = new Vector3f().b();
 	
 	public void Deserialze(String objId,String in, SQLAction action, boolean autoPurge){
 		try {
@@ -51,42 +56,30 @@ public class DeSerializer {
 			obj.setFromDatabase();
 			if(autoPurge){if(FurnitureLib.getInstance().checkPurge(obj, uuid)){purged++;return;}}
 			NBTTagCompound armorStands = compound.getCompound("ArmorStands");
-			for(Object objectInt : armorStands.c()){
-				Integer ArmorID = Integer.parseInt((String) objectInt);
+			for(Object o : armorStands.c()){
+				Integer ArmorID = Integer.parseInt((String) o);
 				NBTTagCompound metadata = armorStands.getCompound(ArmorID+"");
 				String name = metadata.getString("Name");
 				Location loc = locationFetcher(metadata.getCompound("Location"));
-				fArmorStand asPacket = FurnitureLib.getInstance().getFurnitureManager().createArmorStand(obj, loc);
-				asPacket.setName(name);
-				
+				fArmorStand packet = FurnitureLib.getInstance().getFurnitureManager().createArmorStand(obj, loc);
 				NBTTagCompound euler = metadata.getCompound("EulerAngle");
 				for(BodyPart part : BodyPart.values()){
-					asPacket.setPose(eulerAngleFetcher(euler.getCompound(part.toString())), part);
+					packet.setPose(eulerAngleFetcher(euler.getCompound(part.toString())), part);
 				}
+				boolean n = (metadata.getInt("NameVisible")==1),b = (metadata.getInt("BasePlate")==1),s = (metadata.getInt("Small")==1);
+				boolean f = (metadata.getInt("Fire")==1),a = (metadata.getInt("Arms")==1),i = (metadata.getInt("Invisible")==1);
+				boolean m = (metadata.getInt("Marker")==1),g = (metadata.getInt("Glowing")==1);
 				
-				boolean nameVisible = ItB(metadata.getInt("NameVisible")), BasePlate = ItB(metadata.getInt("BasePlate")), Small = ItB(metadata.getInt("Small")),
-						Fire = ItB(metadata.getInt("Fire")), Arms = ItB(metadata.getInt("Arms")), Invisible = ItB(metadata.getInt("Invisible")), Marker = true,
-						Glowing = false;
-				if(metadata.hasKey("Marker")){Marker = ItB(metadata.getInt("Marker"));}
-				if(metadata.hasKey("Glowing")){Glowing = ItB(metadata.getInt("Glowing"));}
 				NBTTagCompound inventory = metadata.getCompound("Inventory");
-				for(int i = 0; i<5; i++){
-					String s  = inventory.getString(i+"");
-					if(!s.equalsIgnoreCase("NONE")){
-						ItemStack is = new CraftItemStack().getItemStack(inventory.getCompound(i+""));
-						asPacket.getInventory().setSlot(i, is);
+				for(Object object : enumItemSlots){
+					if(!inventory.getString(object.toString()).equalsIgnoreCase("NONE")){
+						ItemStack is = new CraftItemStack().getItemStack(inventory.getCompound(object.toString()+""));
+						packet.getInventory().setSlot(object.toString(), is);
 					}
 				}
 				
-				asPacket.setNameVasibility(nameVisible);
-				asPacket.setBasePlate(BasePlate);
-				asPacket.setSmall(Small);
-				asPacket.setFire(Fire);
-				asPacket.setArms(Arms);
-				asPacket.setInvisible(Invisible);
-				asPacket.setArmorID(ArmorID);
-				asPacket.setMarker(Marker);
-				asPacket.setGlowing(Glowing);
+				packet.setBasePlate(b).setSmall(s).setMarker(m).setArms(a).setArmorID(ArmorID);
+				packet.setNameVasibility(n).setName(name).setFire(f).setGlowing(g).setInvisible(i);
 				if(FurnitureLib.getInstance().getFurnitureManager().getLastID()<ArmorID){
 					FurnitureLib.getInstance().getFurnitureManager().setLastID(ArmorID);
 				}
@@ -95,11 +88,6 @@ public class DeSerializer {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	}
-	
-   private boolean ItB(int i){
-	  if(i==1) return true;
-	  return false;
 	}
 	
 	private EulerAngle eulerAngleFetcher(NBTTagCompound eularAngle){

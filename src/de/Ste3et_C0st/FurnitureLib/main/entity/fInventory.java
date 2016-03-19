@@ -7,12 +7,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
 
+import net.minecraft.server.v1_9_R1.EnumItemSlot;
+
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 public class fInventory{
 	
-	private ItemStack[] items = new ItemStack[5];
+	private ItemStack[] items = new ItemStack[6];
 	private int entityId = 0;
 	@Deprecated
 	public ItemStack getItemInHand() {return this.items[0];}
@@ -48,6 +50,19 @@ public class fInventory{
 		return this.items[slot];
 	}
 	
+	public ItemStack getSlot(String s) {
+		System.out.println(s);
+		switch (s) {
+		case "MAINHAND":return getSlot(0);
+		case "OFFHAND":return getSlot(1);
+		case "FEET":return getSlot(2);
+		case "LEGS":return getSlot(3);
+		case "CHEST":return getSlot(4);
+		case "HEAD":return getSlot(5);
+		}
+		return null;
+	}
+	
 	public Integer getSlot(ItemStack is){
 		if(is==null){return null;}
 		for(int l = 0; l<=getIS().length;l++){
@@ -69,16 +84,31 @@ public class fInventory{
 		this.items[slot] = item;
 	}
 	
+	public void setSlot(String s, ItemStack item) {
+		if (item != null && item.getType() == Material.AIR) {
+			item = null;
+		}
+		switch (s) {
+		case "MAINHAND":setSlot(0, item);break;
+		case "OFFHAND":setSlot(1, item);break;
+		case "FEET":setSlot(2, item);break;
+		case "LEGS":setSlot(3, item);break;
+		case "CHEST":setSlot(4, item);break;
+		case "HEAD":setSlot(5, item);break;
+		}
+	}
+	
 	public List<PacketContainer> createPackets() {
 		List<PacketContainer> packetList = new ArrayList<PacketContainer>();
-		for (int i = 0; i < 5; i++) {
+		int i = 0;
+		for(EnumItemSlot slot : EnumItemSlot.values()){
 			ItemStack stack = this.getSlot(i);
 			PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_EQUIPMENT);
-			packet.getIntegers().write(0, this.entityId);
-			packet.getIntegers().write(1, i);
+			packet.getIntegers().write(0, entityId);
+			packet.getSpecificModifier(EnumItemSlot.class).write(0, slot);
 			packet.getItemModifier().write(0, stack);
-
 			packetList.add(packet);
+			i++;
 		}
 		return packetList;
 	}

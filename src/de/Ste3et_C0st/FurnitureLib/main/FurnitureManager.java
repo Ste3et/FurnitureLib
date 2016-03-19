@@ -11,12 +11,9 @@ import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.bukkit.util.EulerAngle;
-
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
-import de.Ste3et_C0st.FurnitureLib.main.Type.BodyPart;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fArmorStand;
 
@@ -80,7 +77,7 @@ public class FurnitureManager {
 				}
 			}else{
 				for(fArmorStand packet :obj.getPacketList()){
-					packet.kill(player);
+					packet.kill(player, true);
 				}
 			}
 		}
@@ -155,14 +152,14 @@ public class FurnitureManager {
 		id.addArmorStand(packet);
 		return packet;
 	}
-
-	public void setName(fArmorStand packet, String Name, boolean Show){
-		packet.setName(Name);
-		packet.setNameVasibility(Show);
-	}
 	
-	public void setPose(fArmorStand packet, EulerAngle angle, BodyPart part){
-		packet.setPose(angle, part);
+	public void addArmorStand(Object obj){
+		if(obj instanceof fArmorStand == false){return;}
+		fArmorStand stand = (fArmorStand) obj;
+		ObjectID id = stand.getObjID();
+		if(!objecte.contains(id)){this.objecte.add(id);}
+		i++;
+		id.addArmorStand(stand);
 	}
 
 	public fArmorStand getfArmorStandByID(Integer entityID) {
@@ -178,11 +175,6 @@ public class FurnitureManager {
 		return null;
 	}
 	
-	public List<fArmorStand> getfArmorStandByObjectID(ObjectID id) {
-		if(this.objecte.isEmpty()){return null;}
-		return id.getPacketList();
-	}
-
 	public ObjectID getObjectIDByID(Integer entityID) {
 		if(this.objecte.isEmpty()){return null;}
 		if(entityID==null) return null;
@@ -212,7 +204,7 @@ public class FurnitureManager {
 		if(this.objecte.isEmpty()){return;}
 		for(ObjectID obj : objecte){
 			for(fArmorStand packet : obj.getPacketList()){
-				packet.kill(player);
+				packet.kill(player, true);
 			}
 		}
 	}
@@ -241,6 +233,11 @@ public class FurnitureManager {
 		return false;
 	}
 	
+	public List<fArmorStand> getfArmorStandByObjectID(ObjectID id) {
+		if(this.objecte.isEmpty()){return null;}
+		return id.getPacketList();
+	}
+	
 	public Project getProject(String name){
 		for(Project pro : projects){
 			if(pro.getName().equalsIgnoreCase(name)){
@@ -249,16 +246,4 @@ public class FurnitureManager {
 		}
 		return null;
 	}
-	
-//	public void refreshChunk(Chunk chunk){
-//		if(!chunkList.contains(chunk)){
-//			final String query = chunk.getWorld().getName() + "#" + chunk.getX() + "#" + chunk.getZ();
-//			Bukkit.getScheduler().runTaskAsynchronously(FurnitureLib.getInstance(), new Runnable() {
-//				@Override
-//				public void run() {
-//					FurnitureLib.getInstance().getSQLManager().load(query);
-//				}
-//			});
-//		}
-//	}
 }

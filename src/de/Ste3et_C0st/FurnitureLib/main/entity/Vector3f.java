@@ -17,4 +17,14 @@ public class Vector3f {
 			return null;
 		}
 	}
+	
+	public Object[] b(){
+		try{
+			Class<?> EnumItemSlot = Class.forName("net.minecraft.server." + FurnitureLib.getInstance().getBukkitVersion() + ".EnumItemSlot");
+			return EnumItemSlot.getEnumConstants();
+		}catch(Exception e){
+			System.out.println("Your Server Version are not Supportet the class 'EnumItemSlot' is missing");
+			return null;
+		}
+	}
 }

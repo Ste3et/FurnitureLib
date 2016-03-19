@@ -34,8 +34,6 @@ public class LocationUtil {
     public short getFromDey(short s){return (short) (15-s);}
     public BlockFace yawToFaceRadial(float yaw) { return radial[Math.round(yaw / 45f) & 0x7];}
     public BlockFace yawToFace(float yaw) {return axis[Math.round(yaw / 90f) & 0x3];}
-    public int getFixedPoint(Double d){return (int) (d*32D);}
-	public byte getCompressedAngle(float value) {return (byte)(value * 256.0F / 360.0F);}
 	
     public BlockFace yawToFace(float yaw, float pitch) {
         if(pitch<-80){

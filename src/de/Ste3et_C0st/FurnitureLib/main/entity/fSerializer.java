@@ -1,36 +1,47 @@
 package de.Ste3et_C0st.FurnitureLib.main.entity;
 
+import java.io.ByteArrayOutputStream;
+import java.util.HashMap;
+
+import org.apache.commons.codec.binary.Base64;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
+import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
 
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
-import com.comphenix.protocol.wrappers.WrappedDataWatcher.Serializer;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
 
 import de.Ste3et_C0st.FurnitureLib.NBT.CraftItemStack;
+import de.Ste3et_C0st.FurnitureLib.NBT.NBTCompressedStreamTools;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
 import de.Ste3et_C0st.FurnitureLib.main.Type.BodyPart;
 
-public class fSerializer {
+public class fSerializer extends fProtocol{
+
+	private NBTTagCompound metadata = new NBTTagCompound();
+	private HashMap<Integer, WrappedDataWatcherObject> objMap = new HashMap<Integer, WrappedDataWatcherObject>();
+	public fSerializer(World w, EntityType type) {super(w, type);}
 	
-	Serializer intSerializer, byteSerializer, objSerializer, stringSerializer;
-	NBTTagCompound metadata;
-	
-	
-	public fSerializer(){
-		intSerializer = WrappedDataWatcher.Registry.get(Integer.class);
-		byteSerializer = WrappedDataWatcher.Registry.get(Byte.class);
-		objSerializer = WrappedDataWatcher.Registry.get(Object.class);
-		stringSerializer = WrappedDataWatcher.Registry.get(String.class);
-		metadata = new NBTTagCompound();
+	public void setObject(WrappedDataWatcher watcher, Object o, int index){
+		WrappedDataWatcherObject wdwo = getDefWatcher(watcher,index, o);
+		watcher.setObject(wdwo, o);
+		objMap.put(index, wdwo);
+	}
+
+	public Object getObject(WrappedDataWatcher watcher,Object o, int index){
+		WrappedDataWatcherObject wdwo = getDefWatcher(watcher,index, o);
+		return watcher.getObject(wdwo);
 	}
 	
-	public void setObject(WrappedDataWatcher watcher, Byte byt, int index){watcher.setObject(new WrappedDataWatcherObject(index, byteSerializer), byt);}
-	public void setObject(WrappedDataWatcher watcher, Object obj, int index){watcher.setObject(new WrappedDataWatcherObject(index, objSerializer), obj);}
-	public void setObject(WrappedDataWatcher watcher, Integer integer, int index){watcher.setObject(new WrappedDataWatcherObject(index, intSerializer), integer);}
-	public void setObject(WrappedDataWatcher watcher, String str, int index){watcher.setObject(new WrappedDataWatcherObject(index, stringSerializer), str);}
+	private WrappedDataWatcherObject getDefWatcher(WrappedDataWatcher watcher, int index, Object o){
+		WrappedDataWatcherObject wdwo = null;
+		if(objMap.containsKey(index)){wdwo = objMap.get(index);}else{wdwo = new WrappedDataWatcherObject(index, WrappedDataWatcher.Registry.get(o.getClass()));objMap.put(index, wdwo);watcher.setObject(wdwo, o);}
+		return wdwo;
+	}
+	
 	public void setMetadata(String field, String value){metadata.setString(field, value);}
 	public void setMetadata(String field, Boolean value){setMetadata(field, value ? 1 : 0);}
 	public void setMetadata(String field, Integer value){metadata.setInt(field, value);}
@@ -46,11 +57,10 @@ public class fSerializer {
 	public void setMetadata(fInventory inventory){set("Inventory", getFromInventory(inventory));}
 	public void set(String field, NBTTagCompound value){metadata.set(field, value);}
 	
+	
+	
 	public NBTTagCompound getMetaData(fArmorStand stand){
 		setMetadata("Name", stand.getName());
-		setMetadata(stand.getLocation());
-		setMetadata(stand.getInventory());
-		set("EulerAngle", getEulerAngle(stand));
 		setMetadata("Arms", stand.hasArms());
 		setMetadata("BasePlate", stand.hasBasePlate());
 		setMetadata("Fire", stand.isFire());
@@ -59,6 +69,9 @@ public class fSerializer {
 		setMetadata("NameVisible", stand.isCustomNameVisible());
 		setMetadata("Marker", stand.isMarker());
 		setMetadata("Glowing", stand.isGlowing());
+		setMetadata(stand.getLocation());
+		setMetadata(stand.getInventory());
+		setMetadata(stand);
 		return metadata;
 	}
 	
@@ -75,7 +88,7 @@ public class fSerializer {
 	
 	private NBTTagCompound getEulerAngle(fArmorStand packet){
 		NBTTagCompound eulerAngle = new NBTTagCompound();
-		for(BodyPart part : BodyPart.getList()){
+		for(BodyPart part : BodyPart.values()){
 			EulerAngle angle = packet.getPose(part);
 			NBTTagCompound partAngle = new NBTTagCompound();
 			partAngle.setDouble("X", angle.getX());
@@ -88,15 +101,32 @@ public class fSerializer {
 	
 	private NBTTagCompound getFromInventory(fInventory fInventory){
 		NBTTagCompound inventory = new NBTTagCompound();
-		for(int i = 0; i<5; i++){
-			ItemStack is = fInventory.getSlot(i);
-			if(is==null||is.getType().equals(Material.AIR)){inventory.setString(i+"", "NONE");continue;}
+		for(Object o : new Vector3f().b()){
+			ItemStack is = fInventory.getSlot(o.toString());
+			if(is==null||is.getType().equals(Material.AIR)){inventory.setString(o.toString()+"", "NONE");continue;}
 			try {
-				inventory.set(i+"", new CraftItemStack().getNBTTag(is));
+				inventory.set(o.toString()+"", new CraftItemStack().getNBTTag(is));
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
 		return inventory;
+	}
+	
+	public String toString(fArmorStand stand){
+		NBTTagCompound nbt = getMetaData(stand);
+		return Base64.encodeBase64String(getByte(nbt));
+	}
+	
+	public byte[] getByte(NBTTagCompound compound){
+		ByteArrayOutputStream out = new ByteArrayOutputStream();
+		try {
+			NBTCompressedStreamTools.write(compound, out);
+			out.close();
+		} catch (Exception e) {
+			e.printStackTrace();
+			return new byte[0];
+		}
+		return out.toByteArray();
 	}
 }

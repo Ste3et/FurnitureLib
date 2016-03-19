@@ -3,11 +3,11 @@ package de.Ste3et_C0st.FurnitureLib.main.entity;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Server;
-import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -15,60 +15,44 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import com.comphenix.protocol.PacketType;
-import com.comphenix.protocol.ProtocolLibrary;
-import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.PacketContainer;
-import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.comphenix.protocol.wrappers.EnumWrappers.Particle;
 
 import de.Ste3et_C0st.FurnitureLib.Utilitis.EntityID;
-import de.Ste3et_C0st.FurnitureLib.Utilitis.LocationUtil;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 
 public abstract class fEntity extends fSerializer{
 
-	private Location location;
-	private fInventory inventory;
-	private EntityType type;
-	private int Eid;
+	private int a = EntityID.nextEntityId();
+	private UUID b = UUID.randomUUID();
+	private int c;
+	private double d;
+	private double e;
+	private double f;
+	private byte j;
+	private byte k;
+	private fInventory i;
+	private Location l;
 	private String customName = "";
 	private Entity passanger;
-	private WrappedDataWatcher watcher;
-	private LocationUtil lutil;
-	private List<Player> loadetPlayer;
-	private ProtocolManager manager;
-	private PacketContainer container;
+	private List<Player> loadetPlayer = new ArrayList<Player>();
 	private boolean fire, nameVisible, visible, isKilled = false, isPlayed = false, glowing = false;
-	
-	public fEntity(Location location, EntityType type) {
-		this.type = type;
-		this.location = location;
-		this.Eid = EntityID.nextEntityId();
-		this.inventory = new fInventory(this.Eid);
-		this.watcher = getDefaultWatcher();
-		this.lutil = FurnitureLib.getInstance().getLocationUtil();
-		this.loadetPlayer = new ArrayList<Player>();
-		this.manager = ProtocolLibrary.getProtocolManager();
-		create();
-	}
-	
-	@SuppressWarnings("deprecation")
-	private void create(){
-		this.container = new PacketContainer(PacketType.Play.Server.SPAWN_ENTITY_LIVING);
-		container.getIntegers()
-		.write(0, getEntityID())
-		.write(1, (int) type.getTypeId())
-		.write(2, FurnitureLib.getInstance().getLocationUtil().getFixedPoint(this.location.getX()))
-		.write(3, FurnitureLib.getInstance().getLocationUtil().getFixedPoint(this.location.getY()))
-		.write(4, FurnitureLib.getInstance().getLocationUtil().getFixedPoint(this.location.getZ()));
-		container.getBytes()
-		.write(0, FurnitureLib.getInstance().getLocationUtil().getCompressedAngle(this.location.getYaw()))
-		.write(1, FurnitureLib.getInstance().getLocationUtil().getCompressedAngle(this.location.getPitch()));
-	}
 
-	private WrappedDataWatcher getDefaultWatcher() {
-		watcher = FurnitureLib.getInstance().getFurnitureManager().getDefaultWatcher(getWorld(), getEntityType());
-		return watcher;
+	@SuppressWarnings("deprecation")
+	public fEntity(Location loc, EntityType type) {
+		super(loc.getWorld(), type);
+		this.c = (int) type.getTypeId();
+		this.d = loc.getX();
+		this.e = loc.getY();
+		this.f = loc.getZ();
+		this.j = ((byte) (int) (loc.getYaw() * 256.0F / 360.0F));
+		this.k = ((byte) (int) (loc.getPitch() * 256.0F / 360.0F));
+		this.i = new fInventory(this.a);
+		this.l = loc;
+		getHandle().getIntegers().write(0, a).write(1, c);
+		getHandle().getSpecificModifier(UUID.class).write(0, b);
+		getHandle().getDoubles().write(0, d).write(1, e).write(2, f);
+		getHandle().getBytes().write(0, j).write(1, k);
 	}
 	
 	public boolean isParticlePlayed(){
@@ -76,7 +60,7 @@ public abstract class fEntity extends fSerializer{
 	}
 
 	public int getEntityID() {
-		return this.Eid;
+		return this.a;
 	}
 
 	public boolean isFire() {
@@ -88,23 +72,19 @@ public abstract class fEntity extends fSerializer{
 	}
 
 	public Location getLocation() {
-		return this.location;
-	}
-
-	public EntityType getEntityType() {
-		return this.type;
+		return this.l;
 	}
 
 	public fInventory getEquipment() {
-		return this.inventory;
+		return this.i;
 	}
 	
 	public fInventory getInventory() {
-		return this.inventory;
+		return this.i;
 	}
 
 	public ItemStack getBoots() {
-		return this.inventory.getBoots();
+		return getInventory().getBoots();
 	}
 
 	public ItemStack getHelmet() {
@@ -119,28 +99,28 @@ public abstract class fEntity extends fSerializer{
 		return getInventory().getLeggings();
 	}
 	
-	public void setLeggings(ItemStack is) {
-		getInventory().setLeggings(is);
+	public fEntity setLeggings(ItemStack is) {
+		getInventory().setLeggings(is);return this;
 	}
 	
-	public void setChestPlate(ItemStack is) {
-		getInventory().setChestPlate(is);
+	public fEntity setChestPlate(ItemStack is) {
+		getInventory().setChestPlate(is);return this;
 	}
 	
-	public void setHelmet(ItemStack is) {
-		getInventory().setHelmet(is);
+	public fEntity setHelmet(ItemStack is) {
+		getInventory().setHelmet(is);return this;
 	}
 	
-	public void setBoots(ItemStack is) {
-		getInventory().setBoots(is);
+	public fEntity setBoots(ItemStack is) {
+		getInventory().setBoots(is);return this;
 	}
 	
-	public void setItemInMainHand(ItemStack is){
-		getInventory().setItemInMainHand(is);
+	public fEntity setItemInMainHand(ItemStack is){
+		getInventory().setItemInMainHand(is);return this;
 	}
 	
-	public void setItemInOffHand(ItemStack is){
-		getInventory().setItemInOffHand(is);
+	public fEntity setItemInOffHand(ItemStack is){
+		getInventory().setItemInOffHand(is);return this;
 	}
 	
 	@Deprecated
@@ -173,22 +153,6 @@ public abstract class fEntity extends fSerializer{
 		return this.passanger;
 	}
 
-	public World getWorld() {
-		return this.getLocation().getWorld();
-	}
-
-	public WrappedDataWatcher getHandle() {
-		return this.watcher;
-	}
-
-	public ProtocolManager getProtocolManager() {
-		return this.manager;
-	}
-
-	public PacketContainer getPacketContainer() {
-		return this.container;
-	}
-
 	public Server getServer() {
 		return Bukkit.getServer();
 	}
@@ -204,47 +168,72 @@ public abstract class fEntity extends fSerializer{
 	public FurnitureLib getPlugin(){
 		return FurnitureLib.getInstance();
 	}
-
-	public void setNameVasibility(boolean b) {
-		setObject(getHandle(), (byte) (b ? 1 : 0), 3);
-		this.nameVisible = b;
+	
+	public fEntity setInvisible(boolean b) {
+		b(5, b);
+		this.visible = b;return this;
+	}
+	
+	public fEntity setGlowing(boolean b) {
+		b(6, b);
+		this.glowing = b;return this;
+	}
+	
+	public fEntity setInventory(fInventory inv) {
+		this.i = inv;return this;
+	}
+	
+	public fEntity setNameVasibility(boolean b) {
+		setObject(getWatcher(), b, 3);
+		this.nameVisible = b;return this;
 	}
 
-	public void teleport(Location location) {
-		this.location = location;
-		int x = lutil.getFixedPoint(location.getX());
-		int y = lutil.getFixedPoint(location.getY());
-		int z = lutil.getFixedPoint(location.getZ());
-		byte yaw = lutil.getCompressedAngle(location.getYaw());
-		byte pitch = lutil.getCompressedAngle(location.getPitch());
-		
-		PacketContainer c = new PacketContainer(
-				PacketType.Play.Server.ENTITY_TELEPORT);
-		c.getIntegers().write(0, getEntityID()).write(1, x).write(2, y).write(3, z);
-		c.getBytes().write(0, yaw).write(1, pitch);
+	public void teleport(Location loc) {
+		this.l = loc;
+		this.d = this.l.getX();
+		this.e = this.l.getY();
+		this.f = this.l.getZ();
+		this.j = ((byte) (int) (this.l.getYaw() * 256.0F / 360.0F));
+		this.k = ((byte) (int) (this.l.getPitch() * 256.0F / 360.0F));
+		PacketContainer c = new PacketContainer(PacketType.Play.Server.ENTITY_TELEPORT);
+		c.getIntegers().write(0, getEntityID());
+		c.getDoubles().write(0, this.d).write(1, this.e).write(2, this.f);
+		c.getBytes().write(0, this.j).write(1, this.k);
 		for (Player p : this.loadetPlayer) {
 			try {
-				manager.sendServerPacket(p, c);
-			} catch (InvocationTargetException e) {
+				getManager().sendServerPacket(p, c);
+			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
 	}
-
-	public void send(Player p) {
-		if (this.loadetPlayer.contains(p)){return;}
-		if (this.manager == null){return;}
-		if (this.container == null){return;}
+	
+	public void send(Player player) {
+		if (this.loadetPlayer.contains(player)){return;}
+		if (getManager() == null){return;}
+		if (getHandle() == null){return;}
 		try {
-			this.container.getDataWatcherModifier().write(0, watcher);
-			this.manager.sendServerPacket(p, container);
-			this.loadetPlayer.add(p);
-			this.sendInventoryPacket(p);
+			getHandle().getDataWatcherModifier().write(0, getWatcher());
+			getManager().sendServerPacket(player, getHandle());
+			sendInventoryPacket(player);
+			loadetPlayer.add(player);
 			if (getPassanger() != null) {
 				setPassanger(getPassanger());
 			}
 		} catch (InvocationTargetException e) {
 			e.printStackTrace();
+		}
+	}
+
+	public void send(Player[] player) {
+		for (Player p : player) {
+			send(p);
+		}
+	}
+
+	public void send(List<Player> player) {
+		for (Player p : player) {
+			send(p);
 		}
 	}
 	
@@ -258,49 +247,41 @@ public abstract class fEntity extends fSerializer{
 		PacketContainer update = new PacketContainer(
 				PacketType.Play.Server.ENTITY_METADATA);
 		update.getIntegers().write(0, getEntityID());
-		update.getWatchableCollectionModifier().write(0,
-				watcher.getWatchableObjects());
+		update.getWatchableCollectionModifier().write(0,getWatcher().getWatchableObjects());
 		try {
-			this.manager.sendServerPacket(p, update);
+			getManager().sendServerPacket(p, update);
 			this.sendInventoryPacket(p);
 			if (getPassanger() != null) {
 				setPassanger(getPassanger());
 			}
-		} catch (InvocationTargetException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 
-	public void kill(Player p) {
-		if (!this.loadetPlayer.contains(p))
-			return;
-		PacketContainer destroy = new PacketContainer(
-				PacketType.Play.Server.ENTITY_DESTROY);
+	public void kill(Player p, boolean b) {
+		if (!this.loadetPlayer.contains(p))return;
+		PacketContainer destroy = new PacketContainer(PacketType.Play.Server.ENTITY_DESTROY);
 		destroy.getIntegerArrays().write(0, new int[] { getEntityID() });
 		try {
 			eject();
-			this.manager.sendServerPacket(p, destroy);
-			if (this.loadetPlayer.contains(p)) {
+			getManager().sendServerPacket(p, destroy);
+			if (this.loadetPlayer.contains(p) && b) {
 				this.loadetPlayer.remove(p);
 			}
-		} catch (InvocationTargetException e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 	
 	public void kill(){
-		isKilled=true;
-		PacketContainer destroy = new PacketContainer(PacketType.Play.Server.ENTITY_DESTROY);
-		destroy.getIntegerArrays().write(0, new int[] {getEntityID()});
-		try {
-			 eject();
-			 for(Player p : this.loadetPlayer){this.manager.sendServerPacket(p, destroy);}
-			 this.loadetPlayer.clear();
-		} catch (InvocationTargetException e) {e.printStackTrace();}
+		//isKilled=true;
+		 for(Player p : this.loadetPlayer){kill(p, false);}
+		 this.loadetPlayer.clear();
 	}
 
-	public void setFire(boolean b) {
-		byte b0 = this.watcher.getByte(0);
+	public fEntity setFire(boolean b) {
+		byte b0 = (byte) getObject(getWatcher(), Byte.valueOf((byte) 0), 0);
 		if (b) {
 			b0 = (byte) (b0 | 0x01);
 			if (Bukkit.getPluginManager().isPluginEnabled("LightAPI"))
@@ -312,21 +293,23 @@ public abstract class fEntity extends fSerializer{
 				FurnitureLib.getInstance().getLightManager()
 						.removeLight(getLocation());
 		}
-		setObject(getHandle(), 0, Byte.valueOf(b0));
-		this.fire = b;
+		setObject(getWatcher(), Byte.valueOf(b0), 0);
+		this.fire = b;return this;
 	}
 
-	public void setName(String str) {
+	public fEntity setName(String str) {
 		if (str == null) {
-			return;
+			return this;
 		}
 		if (str == "") {
 			setNameVasibility(false);
-			return;
+			return this;
 		}
-		setObject(getHandle(), str, 2);
-		this.customName = str;
+		setObject(getWatcher(), str, 2);
+		this.customName = str;return this;
 	}
+	
+
 
 	public void setPassanger(Entity e) {
 		if(!FurnitureLib.getInstance().canSitting()){return;}
@@ -334,13 +317,14 @@ public abstract class fEntity extends fSerializer{
 		if (passanger != null) {return;}
 		int passangerID = e.getEntityId();
 		PacketContainer container = new PacketContainer(PacketType.Play.Server.ATTACH_ENTITY);
-		container.getIntegers().write(1, passangerID).write(2, getEntityID());
+		container.getIntegers().write(0, passangerID).write(1, getEntityID());
 		try {
-			for (Player p : this.loadetPlayer) {
-				this.manager.sendServerPacket(p, container);
+			for (Player p : this.loadetPlayer){
+				p.sendMessage("test["+p.getEntityId()+"|"+ e.getEntityId()+"]:" + getEntityID());
+				getManager().sendServerPacket(p, container);
 			}
 			this.passanger = e;
-		} catch (InvocationTargetException e1) {
+		} catch (Exception e1) {
 			e1.printStackTrace();
 		}
 	}
@@ -349,35 +333,32 @@ public abstract class fEntity extends fSerializer{
 		if (passanger == null) {
 			return;
 		}
-		PacketContainer container = new PacketContainer(
-				PacketType.Play.Server.ATTACH_ENTITY);
-		container.getIntegers().write(1, passanger.getEntityId()).write(2, -1);
+		PacketContainer container = new PacketContainer(PacketType.Play.Server.ATTACH_ENTITY);
+		container.getIntegers().write(0, passanger.getEntityId()).write(1, -1);
 		try {
-			for (Player p : this.loadetPlayer) {
-				this.manager.sendServerPacket(p, container);
-			}
+			for (Player p : this.loadetPlayer) {getManager().sendServerPacket(p, container);}
 			this.passanger = null;
-		} catch (InvocationTargetException e1) {
+		} catch (Exception e1) {
 			e1.printStackTrace();
 		}
 	}
 
 	public void sendInventoryPacket(final Player player) {
-		List<PacketContainer> packets = this.inventory.createPackets();
+		List<PacketContainer> packets = this.i.createPackets();
 		if (packets.isEmpty())
 			return;
 		try {
 			for (final PacketContainer packet : packets) {
-				if (player == null || packet == null || manager == null) {
+				if (player == null || packet == null || getManager() == null) {
 					return;
 				}
-				this.manager.sendServerPacket(player, packet);
+				getManager().sendServerPacket(player, packet);
 				Bukkit.getScheduler().runTaskLater(FurnitureLib.getInstance(),
 						new Runnable() {
 							@Override
 							public void run() {
 								try {
-									manager.sendServerPacket(player, packet);
+									getManager().sendServerPacket(player,packet);
 								} catch (Exception e) {
 								}
 							}
@@ -386,11 +367,6 @@ public abstract class fEntity extends fSerializer{
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-	}
-	
-	public void setGlowing(boolean b){
-		b(6, b);
-		this.glowing = b;
 	}
 	
 	public void sendParticle(Location loc, int particleID, boolean repeat)
@@ -412,8 +388,8 @@ public abstract class fEntity extends fSerializer{
 					if(isKilled){isPlayed = false;cancel();return;}
 					for (Player p : loadetPlayer) {
 						try {
-							manager.sendServerPacket(p, packet);
-						} catch (InvocationTargetException e) {e.printStackTrace();}
+							getManager().sendServerPacket(p, packet);
+						} catch (Exception e) {e.printStackTrace();}
 					}
 				}
 			}.runTaskTimer(FurnitureLib.getInstance(), 0L, 10L);
@@ -421,33 +397,25 @@ public abstract class fEntity extends fSerializer{
 	    	if(isKilled) return;
 		    for (Player p : this.loadetPlayer) {
 				try {
-					this.manager.sendServerPacket(p, container);
-				} catch (InvocationTargetException e) {e.printStackTrace();}
+					getManager().sendServerPacket(p, container);
+				} catch (Exception e) {e.printStackTrace();}
 			}
 	    }
-
     }
 	
 	public void remove(){
-			this.container = null;
-			this.manager = null;
-			this.inventory = null;
+//			this.container = null;
+//			this.manager = null;
+//			this.inventory = null;
 	}
 	
-	protected void b(int i, boolean flag)
-	{
-	   byte b0 = getHandle().getByte(0);
-	   if (flag) {
-		   setObject(getHandle(), Byte.valueOf((byte)(b0 | 1 << i)), 0);
-	   } else {
-		   setObject(getHandle(), Byte.valueOf((byte)(b0 & (1 << i ^ 0xFFFFFFFF))), 0);
-	   }
+	protected void b(int i, boolean flag) {
+		byte b0 = (byte) getObject(getWatcher(), Byte.valueOf((byte) 0), 0);
+		if (flag) {
+			setObject(getWatcher(), Byte.valueOf((byte) (b0 | 1 << i)), 0);
+		} else {
+			setObject(getWatcher(),
+					Byte.valueOf((byte) (b0 & (1 << i ^ 0xFFFFFFFF))), 0);
+		}
 	}
-	
-	public void setInvisible(boolean b) {
-		b(5, b);
-		this.visible = b;
-	}
-	
-	
 }
