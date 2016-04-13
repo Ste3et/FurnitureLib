@@ -76,7 +76,12 @@ public class LimitationManager {
 	
 	private Integer returnProjectWorld(World w, Project pro){
 		int i = 0;
+		if(w==null) return i;
+		if(pro==null) return i;
 			for(ObjectID obj : lib.getFurnitureManager().getObjectList()){
+				if(obj==null) continue;
+				if(obj.getWorld()==null) continue;
+				if(obj.getProjectOBJ()==null) continue;
 				if(obj.getWorld().equals(w) && obj.getProjectOBJ().equals(pro)){
 					i++;
 				}

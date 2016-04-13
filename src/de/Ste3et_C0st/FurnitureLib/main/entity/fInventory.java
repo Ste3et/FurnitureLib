@@ -5,10 +5,6 @@ import com.comphenix.protocol.events.PacketContainer;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
-
-import net.minecraft.server.v1_9_R1.EnumItemSlot;
-
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
@@ -18,15 +14,13 @@ public class fInventory{
 	private int entityId = 0;
 	@Deprecated
 	public ItemStack getItemInHand() {return this.items[0];}
-	
+	private Vector3f v = new Vector3f();
 	public ItemStack getItemInMainHand() {return this.items[0];}
 	public ItemStack getItemInOffHand() {return this.items[1];}
 	public ItemStack getBoots() {return this.items[2];}
 	public ItemStack getLeggings() {return this.items[3];}
 	public ItemStack getChestPlate() {return this.items[4];}
 	public ItemStack getHelmet() {return this.items[5];}
-	public Random id = new Random(1*10000);
-	
 	public fInventory(int entityId){
 		this.entityId = entityId;
 	}
@@ -40,6 +34,7 @@ public class fInventory{
 	public void setLeggings(ItemStack item) {this.setSlot(3, item);}
 	public void setChestPlate(ItemStack item) {this.setSlot(4, item);}
 	public void setHelmet(ItemStack item) {this.setSlot(5, item);}
+	public int getEntityID(){return this.entityId;}
 	public ItemStack[] getIS(){return this.items;}
 	
 	public ItemStack getSlot(int slot) {
@@ -51,7 +46,6 @@ public class fInventory{
 	}
 	
 	public ItemStack getSlot(String s) {
-		System.out.println(s);
 		switch (s) {
 		case "MAINHAND":return getSlot(0);
 		case "OFFHAND":return getSlot(1);
@@ -101,11 +95,10 @@ public class fInventory{
 	public List<PacketContainer> createPackets() {
 		List<PacketContainer> packetList = new ArrayList<PacketContainer>();
 		int i = 0;
-		for(EnumItemSlot slot : EnumItemSlot.values()){
+		for(Object obj : v.b()){
 			ItemStack stack = this.getSlot(i);
 			PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_EQUIPMENT);
-			packet.getIntegers().write(0, entityId);
-			packet.getSpecificModifier(EnumItemSlot.class).write(0, slot);
+			packet.getModifier().write(0, entityId).write(1, obj);
 			packet.getItemModifier().write(0, stack);
 			packetList.add(packet);
 			i++;

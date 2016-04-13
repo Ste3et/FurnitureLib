@@ -26,7 +26,7 @@ public class listCommand {
 			if(!command.noPermissions(sender, "furniture.list")) return;
 			for(Project pro : FurnitureLib.getInstance().getFurnitureManager().getProjects()){
 				List<ObjectID> objectList = getByType(pro);
-				objList.add(new JsonBuilder("§6- " +pro.getName()).withHoverEvent(HoverAction.SHOW_TEXT,("§eObjecte: §c" + objectList.size())));
+				objList.add(new JsonBuilder("Â§6- " +pro.getName()).withHoverEvent(HoverAction.SHOW_TEXT,("Â§eObjecte: Â§c" + objectList.size())));
 			}
 			new objectToSide(objList, p, 1);
 		}else if(args.length==2){
@@ -34,13 +34,13 @@ public class listCommand {
 				if(!command.noPermissions(sender, "furniture.list.type")) return;
 				for(Project pro : FurnitureLib.getInstance().getFurnitureManager().getProjects()){
 					List<ObjectID> objectList = getByType(pro);
-					objList.add(new JsonBuilder("§6- " +pro.getName()).withHoverEvent(HoverAction.SHOW_TEXT,("§eObjecte: §c" + objectList.size())));
+					objList.add(new JsonBuilder("Â§6- " +pro.getName()).withHoverEvent(HoverAction.SHOW_TEXT,("Â§eObjecte: Â§c" + objectList.size())));
 				}
 			}else if(args[1].equalsIgnoreCase("World")){
 				if(!command.noPermissions(sender, "furniture.list.world")) return;
 				for(World w : Bukkit.getWorlds()){
 					List<ObjectID> objectList = getByWorld(w);
-					objList.add(new JsonBuilder("§6- " + w.getName()).withHoverEvent(HoverAction.SHOW_TEXT,("§eObjecte: §c" + objectList.size())));
+					objList.add(new JsonBuilder("Â§6- " + w.getName()).withHoverEvent(HoverAction.SHOW_TEXT,("Â§eObjecte: Â§c" + objectList.size())));
 				}
 			}else if(args[1].equalsIgnoreCase("Plugin")){
 				if(!command.noPermissions(sender, "furniture.list.plugin")) return;
@@ -48,16 +48,24 @@ public class listCommand {
 				for(Project pro : FurnitureLib.getInstance().getFurnitureManager().getProjects()){
 					String plugin = pro.getPlugin().getName();
 					if(!plugins.contains(plugin)){
-						objList.add(new JsonBuilder("§c" + plugin));
-						for(Project project : getByPlugin(plugin)){objList.add(new JsonBuilder("§7- " + project.getName()));}
+						objList.add(new JsonBuilder("Â§c" + plugin));
+						for(Project project : getByPlugin(plugin)){objList.add(new JsonBuilder("Â§7- " + project.getName()));}
 						plugins.add(plugin);
+					}
+				}
+			}else if(args[1].equalsIgnoreCase("models")){
+				if(!command.noPermissions(sender, "furniture.list.models")) return;
+				for(Project pro : FurnitureLib.getInstance().getFurnitureManager().getProjects()){
+					if(pro.isEditorProject()){
+						List<ObjectID> objectList = getByModel(pro);
+						objList.add(new JsonBuilder("Â§6- " +pro.getName()).withHoverEvent(HoverAction.SHOW_TEXT,("Â§eObjecte: Â§c" + objectList.size())));
 					}
 				}
 			}else if(FurnitureLib.getInstance().isInt(args[1])){
 				if(!command.noPermissions(sender, "furniture.list")) return;
 				for(Project pro : FurnitureLib.getInstance().getFurnitureManager().getProjects()){
 					List<ObjectID> objectList = getByType(pro);
-					objList.add(new JsonBuilder("§6- " +pro.getName()).withHoverEvent(HoverAction.SHOW_TEXT,("§eObjecte: §c" + objectList.size())));
+					objList.add(new JsonBuilder("Â§6- " +pro.getName()).withHoverEvent(HoverAction.SHOW_TEXT,("Â§eObjecte: Â§c" + objectList.size())));
 				}
 				new objectToSide(objList, p, Integer.parseInt(args[1]));
 				return;
@@ -71,13 +79,21 @@ public class listCommand {
 				if(!command.noPermissions(sender, "furniture.list.type")) return;
 				for(Project pro : FurnitureLib.getInstance().getFurnitureManager().getProjects()){
 					List<ObjectID> objectList = getByType(pro);
-					objList.add(new JsonBuilder("§6- " +pro.getName()).withHoverEvent(HoverAction.SHOW_TEXT,("§eObjecte: §c" + objectList.size())));
+					objList.add(new JsonBuilder("Â§6- " +pro.getName()).withHoverEvent(HoverAction.SHOW_TEXT,("Â§eObjecte: Â§c" + objectList.size())));
 				}
 			}else if(args[1].equalsIgnoreCase("World")){
 				if(!command.noPermissions(sender, "furniture.list.world")) return;
 				for(World w : Bukkit.getWorlds()){
 					List<ObjectID> objectList = getByWorld(w);
-					objList.add(new JsonBuilder("§6- " + w.getName()).withHoverEvent(HoverAction.SHOW_TEXT,("§eObjecte: §c" + objectList.size())));
+					objList.add(new JsonBuilder("Â§6- " + w.getName()).withHoverEvent(HoverAction.SHOW_TEXT,("Â§eObjecte: Â§c" + objectList.size())));
+				}
+			}else if(args[1].equalsIgnoreCase("models")){
+				if(!command.noPermissions(sender, "furniture.list.models")) return;
+				for(Project pro : FurnitureLib.getInstance().getFurnitureManager().getProjects()){
+					if(pro.isEditorProject()){
+						List<ObjectID> objectList = getByModel(pro);
+						objList.add(new JsonBuilder("Â§6- " +pro.getName()).withHoverEvent(HoverAction.SHOW_TEXT,("Â§eObjecte: Â§c" + objectList.size())));	
+					}
 				}
 			}else if(args[1].equalsIgnoreCase("Plugin")){
 				if(!command.noPermissions(sender, "furniture.list.plugin")) return;
@@ -85,8 +101,8 @@ public class listCommand {
 				for(Project pro : FurnitureLib.getInstance().getFurnitureManager().getProjects()){
 					String plugin = pro.getPlugin().getName();
 					if(!plugins.contains(plugin)){
-						objList.add(new JsonBuilder("§c" + plugin));
-						for(Project project : getByPlugin(plugin)){objList.add(new JsonBuilder("§7- " + project.getName()));}
+						objList.add(new JsonBuilder("Â§c" + plugin));
+						for(Project project : getByPlugin(plugin)){objList.add(new JsonBuilder("Â§7- " + project.getName()));}
 						plugins.add(plugin);
 					}
 				}
@@ -121,9 +137,28 @@ public class listCommand {
 	
 	private List<ObjectID> getByType(Project pro){
 		List<ObjectID> objList = new ArrayList<ObjectID>();
+		if(pro==null) return objList;
 		for(ObjectID obj : FurnitureLib.getInstance().getFurnitureManager().getObjectList()){
+			if(obj==null) continue;
+			if(obj.getProjectOBJ()==null) continue;
 			if(obj.getProjectOBJ().equals(pro)){
 				if(!obj.getSQLAction().equals(SQLAction.REMOVE)){
+					objList.add(obj);
+				}
+			}
+		}
+		return objList;
+	}
+	
+	private List<ObjectID> getByModel(Project pro){
+		List<ObjectID> objList = new ArrayList<ObjectID>();
+		if(pro==null) return objList;
+		for(ObjectID obj : FurnitureLib.getInstance().getFurnitureManager().getObjectList()){
+			if(obj==null) continue;
+			if(obj.getProjectOBJ()==null) continue;
+			if(obj.getProjectOBJ().equals(pro)){
+				if(!obj.getSQLAction().equals(SQLAction.REMOVE)){
+					if(!obj.getProjectOBJ().isEditorProject()) continue;
 					objList.add(obj);
 				}
 			}

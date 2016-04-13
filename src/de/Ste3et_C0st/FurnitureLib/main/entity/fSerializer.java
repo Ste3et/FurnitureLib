@@ -17,13 +17,14 @@ import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObje
 import de.Ste3et_C0st.FurnitureLib.NBT.CraftItemStack;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTCompressedStreamTools;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
+import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.BodyPart;
 
 public class fSerializer extends fProtocol{
 
 	private NBTTagCompound metadata = new NBTTagCompound();
 	private HashMap<Integer, WrappedDataWatcherObject> objMap = new HashMap<Integer, WrappedDataWatcherObject>();
-	public fSerializer(World w, EntityType type) {super(w, type);}
+	public fSerializer(World w, EntityType type, ObjectID id) {super(w, type, id);}
 	
 	public void setObject(WrappedDataWatcher watcher, Object o, int index){
 		WrappedDataWatcherObject wdwo = getDefWatcher(watcher,index, o);

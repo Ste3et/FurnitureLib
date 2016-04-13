@@ -35,6 +35,7 @@ public class FurnitureEvents {
                             	ObjectID objID = manager.getObjectIDByID(PacketID);
                             	if(objID==null){System.out.println("error2");return;}
                             	if(objID.getSQLAction().equals(SQLAction.REMOVE)){return;}
+                            	if(objID!=null){if(objID.isPrivate()){return;}}
                             	Location loc = asPacket.getLocation();
                             	Player p = event.getPlayer();
                             	EntityUseAction action = event.getPacket().getEntityUseActions().read(0);
@@ -58,11 +59,14 @@ public class FurnitureEvents {
 									break;
 								case INTERACT_AT:
 									if(p.getGameMode().equals(GameMode.SPECTATOR)){return;}
-									System.out.println("interact1");
+									if(p.getGameMode().equals(GameMode.CREATIVE)&&!FurnitureLib.getInstance().creativeInteract()){
+										if(!FurnitureLib.getInstance().hasPerm(p, "furniture.bypass.creative.interact")){
+											return;
+										}
+									}
 									Bukkit.getScheduler().scheduleSyncDelayedTask(FurnitureLib.getInstance(), new Runnable() {
 									@Override
 										public void run() {
-											System.out.println("interact2");
 											FurnitureClickEvent event = new FurnitureClickEvent(player, packet, objectID, location);
 											Bukkit.getServer().getPluginManager().callEvent(event);		
 										}

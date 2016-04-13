@@ -21,19 +21,21 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
-import org.bukkit.event.world.ChunkLoadEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.FlowerPot;
 
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.HiddenStringUtils;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
+import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 
 public class ChunkOnLoad implements Listener{
 	
 	public List<Player> eventList = new ArrayList<Player>();
-	
+	public FurnitureManager manager = FurnitureLib.getInstance().getFurnitureManager();
+	public FurnitureLib instance = FurnitureLib.getInstance();
 	@EventHandler
 	public void onPlayerMove(PlayerMoveEvent event) {
 		if (event.getFrom().getWorld() == event.getTo().getWorld() &&
@@ -49,36 +51,30 @@ public class ChunkOnLoad implements Listener{
 		Chunk newChunk = event.getTo().getChunk();
 
 		if (oldChunk.getWorld() != newChunk.getWorld() || oldChunk.getX() != newChunk.getX() || oldChunk.getZ() != newChunk.getZ()) {
-			FurnitureLib.getInstance().getFurnitureManager().updatePlayerView(event.getPlayer());
+			manager.updatePlayerView(player);
 		}
-	}
-	
-	@EventHandler
-	public void onLoad(ChunkLoadEvent event){
-		//FurnitureLib.getInstance().getFurnitureManager().refreshChunk(event.getChunk());
 	}
 	
 	@EventHandler
 	public void onPlayerTeleport(PlayerTeleportEvent event) {
 		final Player player = event.getPlayer();
-
-		Bukkit.getScheduler().runTaskLater(FurnitureLib.getInstance(), new Runnable() {
+		Bukkit.getScheduler().runTaskLater(instance, new Runnable(){
 			@Override
 			public void run() {
-				FurnitureLib.getInstance().getFurnitureManager().updatePlayerView(player);
+				manager.updatePlayerView(player);
 			}
-		}, 5L);
+		},5);
 	}
 	
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		final Player player = event.getPlayer();
-		Bukkit.getScheduler().runTaskLater(FurnitureLib.getInstance(), new Runnable() {
+		Bukkit.getScheduler().runTaskLater(instance, new Runnable() {
 			@Override
 			public void run() {
-				FurnitureLib.getInstance().getFurnitureManager().updatePlayerView(player);
+				manager.updatePlayerView(player);
 			}
-		}, 5L);
+		},5);
 		
 		if(player.isOp()){
 			FurnitureLib.getInstance().getUpdater().update();
@@ -89,30 +85,29 @@ public class ChunkOnLoad implements Listener{
 	@EventHandler
 	public void onPlayerChangedWorld(PlayerChangedWorldEvent event) {
 		final Player player = event.getPlayer();
-		Bukkit.getScheduler().runTaskLater(FurnitureLib.getInstance(), new Runnable() {
+		Bukkit.getScheduler().runTaskLater(instance, new Runnable() {
 			@Override
 			public void run() {
-				FurnitureLib.getInstance().getFurnitureManager().updatePlayerView(player);
+				manager.updatePlayerView(player);
 			}
-		}, 5L);
+		},5);
 	}
 	
 	@EventHandler
 	public void onPlayerQuit(PlayerQuitEvent event) {
 		Player player = event.getPlayer();
-		FurnitureLib.getInstance().getFurnitureManager().removeFurniture(player);
+		manager.removeFurniture(player);
 	}
 	
 	@EventHandler
 	public void onPlayerRespawn(PlayerRespawnEvent event) {
 		final Player player = event.getPlayer();
-
-		Bukkit.getScheduler().runTaskLater(FurnitureLib.getInstance(), new Runnable() {
+		Bukkit.getScheduler().runTaskLater(instance, new Runnable() {
 			@Override
 			public void run() {
-				FurnitureLib.getInstance().getFurnitureManager().updatePlayerView(player);
+				manager.updatePlayerView(player);
 			}
-		}, 5L);
+		},5);	
 	}
 
 	@EventHandler
@@ -127,14 +122,14 @@ public class ChunkOnLoad implements Listener{
 		if(p.getGameMode().equals(GameMode.SPECTATOR)){return;}
 		if(event.getAction().equals(Action.RIGHT_CLICK_BLOCK)){
 			if(event.getClickedBlock()==null){return;}
-			
+			if(event.getClickedBlock().getLocation()==null){return;}
 			ItemStack is = event.getItem();
-			if(FurnitureLib.getInstance().getBlockManager().getList().contains(event.getClickedBlock().getLocation())){
+			if(FurnitureLib.getInstance().getBlockManager()!=null){
+				if(FurnitureLib.getInstance().getBlockManager().getList().contains(event.getClickedBlock().getLocation())){
 					boolean b = true;
 					if(event.getClickedBlock()!=null&&event.getClickedBlock().getState().getData() instanceof FlowerPot){
 						b = false;
 					}
-					event.setCancelled(b);
 					ObjectID objID = null;
 					for(ObjectID obj : FurnitureLib.getInstance().getFurnitureManager().getObjectList()){
 						if(obj.getBlockList().contains(event.getClickedBlock().getLocation())){
@@ -143,8 +138,19 @@ public class ChunkOnLoad implements Listener{
 						}
 					}
 					
+					if(objID!=null){
+						if(objID.isPrivate()){return;}
+					}else{
+						return;
+					}
+					event.setCancelled(b);
 					if(objID != null && !objID.getSQLAction().equals(SQLAction.REMOVE)){
 						final ObjectID o = objID;
+						if(p.getGameMode().equals(GameMode.CREATIVE)&&!FurnitureLib.getInstance().creativeInteract()){
+							if(!FurnitureLib.getInstance().hasPerm(p, "furniture.bypass.creative.interact")){
+								return;
+							}
+						}
 						Bukkit.getScheduler().scheduleSyncDelayedTask(FurnitureLib.getInstance(), new Runnable() {
 							@Override
 							public void run() {
@@ -152,12 +158,18 @@ public class ChunkOnLoad implements Listener{
 								Bukkit.getPluginManager().callEvent(e);
 							}});
 					}
+				}
 			}
 			if(event.getItem()==null){return;}
 			if(getProjectByItem(is)==null){return;}
 			if(eventList.contains(event.getPlayer())) return;
-			eventList.add(p);
 			event.setCancelled(true);
+			if(p.getGameMode().equals(GameMode.CREATIVE)&&!FurnitureLib.getInstance().creativePlace()){
+				if(!FurnitureLib.getInstance().hasPerm(p, "furniture.bypass.creative.place")){
+					return;
+				}
+			}
+			eventList.add(p);
 			Project pro = getProjectByItem(is);
 			
 			final Player player = p;
@@ -178,7 +190,6 @@ public class ChunkOnLoad implements Listener{
 		}else if(event.getAction().equals(Action.LEFT_CLICK_BLOCK)){
 			if(event.getClickedBlock()==null){return;}
 			if(FurnitureLib.getInstance().getBlockManager().getList().contains(event.getClickedBlock().getLocation())){
-				event.setCancelled(true);
 				ObjectID objID = null;
 				for(ObjectID obj : FurnitureLib.getInstance().getFurnitureManager().getObjectList()){
 					if(obj.getBlockList().contains(event.getClickedBlock().getLocation())){
@@ -186,7 +197,14 @@ public class ChunkOnLoad implements Listener{
 						break;
 					}
 				}
-				if(objID != null && !objID.getSQLAction().equals(SQLAction.REMOVE)){
+				if(objID!=null){
+					if(objID.isPrivate()){return;}
+				}else{
+					return;
+				}
+				
+				event.setCancelled(true);
+				if(!objID.getSQLAction().equals(SQLAction.REMOVE)){
 					final ObjectID o = objID;
 					Bukkit.getScheduler().scheduleSyncDelayedTask(FurnitureLib.getInstance(), new Runnable() {
 						@Override
@@ -220,7 +238,7 @@ public class ChunkOnLoad implements Listener{
 		is.setAmount(1);
 		for(Project pro : FurnitureLib.getInstance().getFurnitureManager().getProjects()){
 			if(is.equals(pro.getCraftingFile().getRecipe().getResult())){
-				if(!FurnitureLib.getInstance().hasPerm(p,"furniture.craft." + pro.getName()) && !FurnitureLib.getInstance().hasPerm(p,"furniture.player") && !FurnitureLib.getInstance().hasPerm(p,"furniture.admin")){
+				if(!FurnitureLib.getInstance().hasPerm(p,"furniture.craft." + pro.getSystemID()) && !FurnitureLib.getInstance().hasPerm(p,"furniture.player") && !FurnitureLib.getInstance().hasPerm(p,"furniture.admin")){
 					e.getInventory().setResult(null);
 				}
 			}
@@ -239,8 +257,20 @@ public class ChunkOnLoad implements Listener{
 	}
 	
 	private Project getProjectByItem(ItemStack is){
+		ItemStack stack = getItemStackCopy(is);
+		if(stack==null) return null;
+		String systemID = "";
+		if(stack.hasItemMeta()){
+			if(stack.getItemMeta().hasLore()){
+				List<String> s = stack.getItemMeta().getLore();
+				if(HiddenStringUtils.hasHiddenString(s.get(0))) systemID = HiddenStringUtils.extractHiddenString(s.get(0));
+			}
+		}
+		
 		for(Project pro : FurnitureLib.getInstance().getFurnitureManager().getProjects()){
-			if(pro.getCraftingFile().getRecipe().getResult().equals(getItemStackCopy(is))){
+			if(pro==null) continue;
+			if(pro.getSystemID()==null) continue;
+			if(pro.getSystemID().equalsIgnoreCase(systemID)){
 				return pro;
 			}
 		}

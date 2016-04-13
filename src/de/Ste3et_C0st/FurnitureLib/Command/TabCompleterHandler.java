@@ -1,10 +1,10 @@
 package de.Ste3et_C0st.FurnitureLib.Command;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
@@ -14,11 +14,22 @@ import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 
 public class TabCompleterHandler implements TabCompleter {
-	List<String> str = Arrays.asList("list","give","debug","manage","recipe","remove");
-	List<String> str2 = Arrays.asList("type","world","plugin");
-	FurnitureLib lib;
+	private List<String> str = new ArrayList<String>();
+	private List<String> str2 = new ArrayList<String>();
+	private List<String> str3 = new ArrayList<String>();
+	private FurnitureLib lib;
+	private boolean b = true;
 	public TabCompleterHandler(FurnitureLib furnitureLib) {
 		this.lib = furnitureLib;
+		str.add("list");
+		str.add("give");
+		str.add("debug");
+		str.add("manage");
+		str.add("recipe");
+		str.add("remove");
+		str2.add("type");
+		str2.add("world");
+		str2.add("plugin");
 	}
 
 	@Override
@@ -44,6 +55,8 @@ public class TabCompleterHandler implements TabCompleter {
 						return getTabCompleter(s, getProjectPlugins(stringList));
 					}else if(args[0].equalsIgnoreCase("recipe")){
 						return getTabCompleter(s, getProjectNames());
+					}else if(str3.contains(s.toLowerCase())){
+						return getTabCompleter(s, getModels());
 					}
 				}
 			}
@@ -52,6 +65,19 @@ public class TabCompleterHandler implements TabCompleter {
 	}
 
 	private List<String> getTabCompleter(String s, List<String> strL){
+		if(b){
+			if(Bukkit.getPluginManager().isPluginEnabled("FurnitureMaker")){
+				this.str.add("create");
+				this.str.add("upload");
+				this.str.add("download");
+				this.str.add("edit");
+				this.str3.add("upload");
+				this.str3.add("download");
+				this.str3.add("edit");
+				this.str2.add("models");
+			}
+			this.b = false;
+		}
 		List<String> strAL = new ArrayList<String>();
 		for(String str : strL){
 			if(strAL.contains(str)){continue;}
@@ -74,6 +100,18 @@ public class TabCompleterHandler implements TabCompleter {
 		for(Project pro : lib.getFurnitureManager().getProjects()){
 			if(!projectName.contains(pro.getName())){
 				projectName.add(pro.getName());
+			}
+		}
+		return projectName;
+	}
+	
+	private List<String> getModels(){
+		List<String> projectName = new ArrayList<String>();
+		for(Project pro : lib.getFurnitureManager().getProjects()){
+			if(!projectName.contains(pro.getName())){
+				if(pro.isEditorProject()){
+					projectName.add(pro.getName());
+				}
 			}
 		}
 		return projectName;

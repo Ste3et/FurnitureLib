@@ -1,7 +1,6 @@
 package de.Ste3et_C0st.FurnitureLib.main.entity;
 
 import java.lang.reflect.InvocationTargetException;
-import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -20,10 +19,11 @@ import com.comphenix.protocol.wrappers.EnumWrappers.Particle;
 
 import de.Ste3et_C0st.FurnitureLib.Utilitis.EntityID;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
+import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 
 public abstract class fEntity extends fSerializer{
 
-	private int a = EntityID.nextEntityId();
+	private int a;
 	private UUID b = UUID.randomUUID();
 	private int c;
 	private double d;
@@ -35,12 +35,12 @@ public abstract class fEntity extends fSerializer{
 	private Location l;
 	private String customName = "";
 	private Entity passanger;
-	private List<Player> loadetPlayer = new ArrayList<Player>();
 	private boolean fire, nameVisible, visible, isKilled = false, isPlayed = false, glowing = false;
 
 	@SuppressWarnings("deprecation")
-	public fEntity(Location loc, EntityType type) {
-		super(loc.getWorld(), type);
+	public fEntity(Location loc, EntityType type, ObjectID id) {
+		super(loc.getWorld(), type, id);
+		this.a = EntityID.nextEntityId();
 		this.c = (int) type.getTypeId();
 		this.d = loc.getX();
 		this.e = loc.getY();
@@ -188,7 +188,17 @@ public abstract class fEntity extends fSerializer{
 		this.nameVisible = b;return this;
 	}
 
+	private void saveLight(Location loc1, Location loc2){
+		if (Bukkit.getPluginManager().isPluginEnabled("LightAPI")){
+			FurnitureLib.getInstance().getLightManager().removeLight(loc1);
+			if(loc2!=null){
+				FurnitureLib.getInstance().getLightManager().addLight(loc2, 15);	
+			}
+		}
+	}
+	
 	public void teleport(Location loc) {
+		if(isFire())saveLight(getLocation(), loc);
 		this.l = loc;
 		this.d = this.l.getX();
 		this.e = this.l.getY();
@@ -199,7 +209,7 @@ public abstract class fEntity extends fSerializer{
 		c.getIntegers().write(0, getEntityID());
 		c.getDoubles().write(0, this.d).write(1, this.e).write(2, this.f);
 		c.getBytes().write(0, this.j).write(1, this.k);
-		for (Player p : this.loadetPlayer) {
+		for (Player p : getObjID().getPlayerList()) {
 			try {
 				getManager().sendServerPacket(p, c);
 			} catch (Exception e) {
@@ -209,14 +219,12 @@ public abstract class fEntity extends fSerializer{
 	}
 	
 	public void send(Player player) {
-		if (this.loadetPlayer.contains(player)){return;}
 		if (getManager() == null){return;}
 		if (getHandle() == null){return;}
 		try {
 			getHandle().getDataWatcherModifier().write(0, getWatcher());
 			getManager().sendServerPacket(player, getHandle());
 			sendInventoryPacket(player);
-			loadetPlayer.add(player);
 			if (getPassanger() != null) {
 				setPassanger(getPassanger());
 			}
@@ -238,12 +246,13 @@ public abstract class fEntity extends fSerializer{
 	}
 	
 	public void update() {
-		for(Player p : this.loadetPlayer){
+		for(Player p : getObjID().getPlayerList()){
 			update(p);
 		}
 	}
 
 	public void update(Player p) {
+		if (!getObjID().getPlayerList().contains(p)){return;}
 		PacketContainer update = new PacketContainer(
 				PacketType.Play.Server.ENTITY_METADATA);
 		update.getIntegers().write(0, getEntityID());
@@ -260,39 +269,38 @@ public abstract class fEntity extends fSerializer{
 	}
 
 	public void kill(Player p, boolean b) {
-		if (!this.loadetPlayer.contains(p))return;
+		if (isFire()) setFire(false);
+		if (!getObjID().getPlayerList().contains(p))return;
 		PacketContainer destroy = new PacketContainer(PacketType.Play.Server.ENTITY_DESTROY);
-		destroy.getIntegerArrays().write(0, new int[] { getEntityID() });
+		destroy.getIntegerArrays().write(0, new int[] {getEntityID()});
 		try {
 			eject();
 			getManager().sendServerPacket(p, destroy);
-			if (this.loadetPlayer.contains(p) && b) {
-				this.loadetPlayer.remove(p);
-			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
 	
 	public void kill(){
-		//isKilled=true;
-		 for(Player p : this.loadetPlayer){kill(p, false);}
-		 this.loadetPlayer.clear();
+		 for(Player p : getObjID().getPlayerList()){kill(p, false);}
 	}
 
 	public fEntity setFire(boolean b) {
 		byte b0 = (byte) getObject(getWatcher(), Byte.valueOf((byte) 0), 0);
 		if (b) {
 			b0 = (byte) (b0 | 0x01);
-			if (Bukkit.getPluginManager().isPluginEnabled("LightAPI"))
-				FurnitureLib.getInstance().getLightManager()
-						.addLight(getLocation(), 15);
 		} else {
 			b0 = (byte) (b0 & 0xFFFFFFFE);
-			if (Bukkit.getPluginManager().isPluginEnabled("LightAPI"))
-				FurnitureLib.getInstance().getLightManager()
-						.removeLight(getLocation());
 		}
+		
+		if (Bukkit.getPluginManager().isPluginEnabled("LightAPI")){
+			if(b){
+				FurnitureLib.getInstance().getLightManager().addLight(getLocation(), 15);
+			}else{
+				FurnitureLib.getInstance().getLightManager().removeLight(getLocation());
+			}
+		}
+
 		setObject(getWatcher(), Byte.valueOf(b0), 0);
 		this.fire = b;return this;
 	}
@@ -309,21 +317,19 @@ public abstract class fEntity extends fSerializer{
 		this.customName = str;return this;
 	}
 	
-
-
 	public void setPassanger(Entity e) {
 		if(!FurnitureLib.getInstance().canSitting()){return;}
 		if (e == null) {return;}
 		if (passanger != null) {return;}
-		int passangerID = e.getEntityId();
-		PacketContainer container = new PacketContainer(PacketType.Play.Server.ATTACH_ENTITY);
-		container.getIntegers().write(0, passangerID).write(1, getEntityID());
+		int[] passangerID = {e.getEntityId()};
+		PacketContainer container = new PacketContainer(PacketType.Play.Server.MOUNT);
+		container.getIntegers().write(0, getEntityID());
+		container.getIntegerArrays().write(0, passangerID);
 		try {
-			for (Player p : this.loadetPlayer){
-				p.sendMessage("test["+p.getEntityId()+"|"+ e.getEntityId()+"]:" + getEntityID());
+			this.passanger = e;
+			for (Player p : getObjID().getPlayerList()){
 				getManager().sendServerPacket(p, container);
 			}
-			this.passanger = e;
 		} catch (Exception e1) {
 			e1.printStackTrace();
 		}
@@ -333,10 +339,12 @@ public abstract class fEntity extends fSerializer{
 		if (passanger == null) {
 			return;
 		}
-		PacketContainer container = new PacketContainer(PacketType.Play.Server.ATTACH_ENTITY);
-		container.getIntegers().write(0, passanger.getEntityId()).write(1, -1);
+		int[] i = {};
+		PacketContainer container = new PacketContainer(PacketType.Play.Server.MOUNT);
+		container.getIntegers().write(0, getEntityID());
+		container.getIntegerArrays().write(0, i);
 		try {
-			for (Player p : this.loadetPlayer) {getManager().sendServerPacket(p, container);}
+			for (Player p : getObjID().getPlayerList()) {getManager().sendServerPacket(p, container);}
 			this.passanger = null;
 		} catch (Exception e1) {
 			e1.printStackTrace();
@@ -386,7 +394,7 @@ public abstract class fEntity extends fSerializer{
 				@Override
 				public void run() {
 					if(isKilled){isPlayed = false;cancel();return;}
-					for (Player p : loadetPlayer) {
+					for (Player p : getObjID().getPlayerList()) {
 						try {
 							getManager().sendServerPacket(p, packet);
 						} catch (Exception e) {e.printStackTrace();}
@@ -395,19 +403,13 @@ public abstract class fEntity extends fSerializer{
 			}.runTaskTimer(FurnitureLib.getInstance(), 0L, 10L);
 	    }else{
 	    	if(isKilled) return;
-		    for (Player p : this.loadetPlayer) {
+		    for (Player p : getObjID().getPlayerList()) {
 				try {
 					getManager().sendServerPacket(p, container);
 				} catch (Exception e) {e.printStackTrace();}
 			}
 	    }
     }
-	
-	public void remove(){
-//			this.container = null;
-//			this.manager = null;
-//			this.inventory = null;
-	}
 	
 	protected void b(int i, boolean flag) {
 		byte b0 = (byte) getObject(getWatcher(), Byte.valueOf((byte) 0), 0);

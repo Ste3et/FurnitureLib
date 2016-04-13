@@ -1,16 +1,18 @@
 package de.Ste3et_C0st.FurnitureLib.main.entity;
 
 import java.math.BigDecimal;
-
 import org.bukkit.Location;
 import org.bukkit.block.BlockFace;
+import org.bukkit.util.Vector;
 
 public class Relative {
 
 	private double offsetX, offsetY, offsetZ;
 	private BlockFace face;
 	private Location firstLocation, secondLocation;
-	
+	private final BlockFace[] axis = { BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST };
+	private final BlockFace[] radial = { BlockFace.NORTH, BlockFace.NORTH_EAST, BlockFace.EAST, BlockFace.SOUTH_EAST, BlockFace.SOUTH, BlockFace.SOUTH_WEST, BlockFace.WEST, BlockFace.NORTH_WEST };
+    
 	public Relative(Location loc, double offsetX, double offsetY, double offsetZ, BlockFace face){
 		setOffsetX(offsetX);
 		setOffsetY(offsetY);
@@ -18,6 +20,17 @@ public class Relative {
 		setFace(face);
 		setFirstLocation(loc);
 		setSecondLocation(getRelativ(getFirstLocation(), getFace(), getOffsetX(), getOffsetZ()).add(0, getOffsetY(), 0));
+	}
+	
+	public Relative(Location loc, Location loc2){
+		Vector v1 = loc.toVector();
+		Vector v2 = loc2.toVector();
+		setOffsetX(v1.getX()-v2.getX());
+		setOffsetY(v1.getY()-v2.getY());
+		setOffsetZ(v1.getZ()-v2.getZ());
+		setFirstLocation(loc);
+		setFace(yawToFace(loc.getYaw()));
+		setSecondLocation(loc2);
 	}
 
 	public double getOffsetX() {
@@ -72,6 +85,18 @@ public class Relative {
     	BigDecimal b = new BigDecimal(d);
     	b = b.setScale(2,BigDecimal.ROUND_HALF_UP);
     	return b.doubleValue();
+    }
+    
+    public BlockFace yawToFaceRadial(float yaw) { return radial[Math.round(yaw / 45f) & 0x7];}
+    public BlockFace yawToFace(float yaw) {return axis[Math.round(yaw / 90f) & 0x3];}
+	
+    public BlockFace yawToFace(float yaw, float pitch) {
+        if(pitch<-80){
+        	return BlockFace.UP;
+        }else if(pitch>80){
+        	return BlockFace.DOWN;
+        }
+    	return axis[Math.round(yaw / 90f) & 0x3];
     }
 	
     public int FaceToYaw(final BlockFace face) {

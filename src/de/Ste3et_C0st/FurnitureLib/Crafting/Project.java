@@ -19,32 +19,37 @@ public class Project{
 	private CraftingFile file;
 	private Plugin plugin;
 	private Class<?> clas;
-	private Integer witdh = 0;
-	private Integer height = 0;
-	private Integer length = 0;
+	private Integer witdh = 0,height = 0,length = 0,chunkLimit = -1,playerLimit = -1;
 	private config limitationConfig;
 	private FileConfiguration limitationFile;
 	private HashMap<World, Integer> limitationWorld = new HashMap<World, Integer>();
-	private Integer chunkLimit = -1;
-	private Integer playerLimit = -1;
 	private CenterType type = CenterType.RIGHT;
 	private PlaceableSide side;
+	private boolean EditorProject = false;
+	private InputStream model = null;
 	
+	public InputStream getModel(){return this.model;}
 	public String getName(){return project;}
 	public Plugin getPlugin(){return plugin;}
 	public CraftingFile getCraftingFile(){return file;}
-	public void setCraftingFile(CraftingFile file){this.file = file;}
 	public Class<?> getclass(){return clas;}
 	public Integer getWitdh(){return this.witdh;}
 	public Integer getHeight(){return this.height;}
 	public Integer getLength(){return this.length;}
 	public CenterType getCenterType(){return this.type;}
 	public PlaceableSide getPlaceableSide(){return this.side;}
+	public boolean isEditorProject(){return this.EditorProject;}
+	public void setModel(InputStream stream){this.model = stream;}
+	public void setCraftingFile(CraftingFile file){this.file = file;}
 	public void setPlugin(Plugin plugin) {this.plugin = plugin;}
+	public void setPlaceableSide(PlaceableSide side){this.side = side;}
+	public void setEditorProject(boolean b){this.EditorProject = b;}
 	public void setClass(Class<?> clas) {this.clas = clas;}
+	public void setName(String name){this.project = name;}
 	public Integer getAmountWorld(World w){if(limitationWorld.containsKey(w)){return limitationWorld.get(w);}else{return -1;}}
 	public Integer getAmountChunk(){return this.chunkLimit;}
 	public Integer getAmountPlayer(){return this.playerLimit;}
+	public String getSystemID(){return getCraftingFile().getSystemID();}
 	public Integer hasPermissionsAmount(Player p){
 		int i = -1;
 		if(!permissionList.isEmpty()){
@@ -70,18 +75,33 @@ public class Project{
 		this.project = name;
 		this.plugin = plugin;
 		this.clas = clas;
+		this.file = new CraftingFile(name, craftingFile);
+		this.side = side;
 		FurnitureLib.getInstance().getFurnitureManager().addProject(this);
 		addDefaultWorld();
 		addDefault("chunk");
 		addDefault("player");
 		this.chunkLimit = getDefault("chunk");
 		this.playerLimit = getDefault("player");
-		this.file = new CraftingFile(name, craftingFile);
+		if(plugin!=null&&plugin.getName().equalsIgnoreCase("FurnitureMaker")){setEditorProject(true);}
+	}
+	
+	public Project(String name, Plugin plugin,PlaceableSide side, Class<?> clas){
+		this.project = name;
+		this.plugin = plugin;
+		this.clas = clas;
+		FurnitureLib.getInstance().getFurnitureManager().addProject(this);
+		addDefaultWorld();
+		addDefault("chunk");
+		addDefault("player");
+		this.chunkLimit = getDefault("chunk");
+		this.playerLimit = getDefault("player");
 		this.side = side;
+		if(plugin!=null&&plugin.getName().equalsIgnoreCase("FurnitureMaker")){setEditorProject(true);}
 	}
 	
 	public boolean hasPermissions(Player p){
-		if(FurnitureLib.getInstance().hasPerm(p,"Furniture.Player") || FurnitureLib.getInstance().hasPerm(p,"Furniture.place." + project) || p.isOp() || FurnitureLib.getInstance().hasPerm(p,"Furniture.admin")){
+		if(FurnitureLib.getInstance().hasPerm(p,"Furniture.Player") || FurnitureLib.getInstance().hasPerm(p,"Furniture.place." + getSystemID()) || p.isOp() || FurnitureLib.getInstance().hasPerm(p,"Furniture.admin")){
 			return true;
 		}
 		p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("NoPermissions"));
@@ -92,7 +112,7 @@ public class Project{
 		this.limitationConfig = new config(FurnitureLib.getInstance());
 		this.limitationFile = this.limitationConfig.getConfig("world", "/limitation/");
 		for(World w : Bukkit.getWorlds()){
-			this.limitationFile.addDefault("Projects." + w.getName() + "." + getName(), -1);
+			this.limitationFile.addDefault("Projects." + w.getName() + "." + getSystemID(), -1);
 		}
 		this.limitationFile.options().copyDefaults(true);
 		this.limitationConfig.saveConfig("world", this.limitationFile, "/limitation/");
@@ -103,7 +123,7 @@ public class Project{
 		this.limitationConfig = new config(FurnitureLib.getInstance());
 		this.limitationFile = this.limitationConfig.getConfig("world", "/limitation/");
 		for(World w : Bukkit.getWorlds()){
-			Integer i = this.limitationFile.getInt("Projects." + w.getName() + "." + getName());
+			Integer i = this.limitationFile.getInt("Projects." + w.getName() + "." + getSystemID());
 			limitationWorld.put(w, i);
 		}
 	}
@@ -111,10 +131,10 @@ public class Project{
 	private void addDefault(String conf){
 		this.limitationConfig = new config(FurnitureLib.getInstance());
 		this.limitationFile = this.limitationConfig.getConfig(conf, "/limitation/");
-		this.limitationFile.addDefault("Projects." + getName(), -1);
+		this.limitationFile.addDefault("Projects." + getSystemID(), -1);
 		if(conf.equalsIgnoreCase("player")){
-			if(!this.limitationFile.isSet("Projects." + getName())){
-				this.limitationFile.addDefault("PermissionsLimit.test." + getName(), 10);
+			if(!this.limitationFile.isSet("Projects." + getSystemID())){
+				this.limitationFile.addDefault("PermissionsLimit.test." + getSystemID(), 10);
 			}
 		}
 		this.limitationFile.options().copyDefaults(true);
@@ -128,15 +148,19 @@ public class Project{
 			if(this.limitationFile.isSet("PermissionsLimit")){
 				if(this.limitationFile.isConfigurationSection("PermissionsLimit")){
 					for(String s : this.limitationFile.getConfigurationSection("PermissionsLimit").getKeys(false)){
-						if(this.limitationFile.isSet("PermissionsLimit." + s + "." + getName())){
+						if(this.limitationFile.isSet("PermissionsLimit." + s + "." + getSystemID())){
 							String permission = "furniture.limit." + s;
-							Integer i = this.limitationFile.getInt("PermissionsLimit." + s + "." + getName());
+							Integer i = this.limitationFile.getInt("PermissionsLimit." + s + "." + getSystemID());
 							permissionList.put(permission, i);
 						}
 					}
 				}
 			}
 		}
-		return this.limitationFile.getInt("Projects." + getName());
+		return this.limitationFile.getInt("Projects." + getSystemID());
+	}
+	
+	public void rename(String string){
+		
 	}
 }

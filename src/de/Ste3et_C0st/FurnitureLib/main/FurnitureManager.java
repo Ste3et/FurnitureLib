@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -70,31 +69,13 @@ public class FurnitureManager {
 	
 	public void updatePlayerView(Player player) {
 		if(this.objecte.isEmpty()){return;}
-		for(ObjectID obj : objecte){
-			if(obj.isInRange(player)){
-				for(fArmorStand packet :obj.getPacketList()){
-					packet.send(player);
-				}
-			}else{
-				for(fArmorStand packet :obj.getPacketList()){
-					packet.kill(player, true);
-				}
-			}
-		}
+		for(ObjectID obj : objecte){obj.updatePlayerView(player);}
 	}
 	
 	public void updateFurniture(ObjectID obj) {
 		if(this.objecte.isEmpty()){return;}
 		if(obj.isFromDatabase()){obj.setSQLAction(SQLAction.UPDATE);}
-		for(fArmorStand packet : obj.getPacketList()){
-			if(packet.getObjID().equals(obj)){
-				for(Player player : Bukkit.getOnlinePlayers()){
-					if(obj.isInRange(player)){
-						packet.update(player);
-					}
-				}
-			}
-		}
+		obj.update();
 	}
 	
 	public void sendAll(){
@@ -109,6 +90,10 @@ public class FurnitureManager {
 	public void remove(ObjectID id){
 		if(this.objecte.isEmpty()){return;}
 		id.setSQLAction(SQLAction.REMOVE);
+		if(!id.getBlockList().isEmpty()){
+			FurnitureLib.getInstance().getBlockManager().destroy(id.getBlockList(), false);
+			id.getBlockList().clear();
+		}
 		List<fArmorStand> packetList = (List<fArmorStand>) ((ArrayList<fArmorStand>) id.getPacketList()).clone();
 		for(fArmorStand asp : packetList){
 			if(asp.getObjID().equals(id)){
@@ -126,13 +111,7 @@ public class FurnitureManager {
 	public void send(ObjectID id){
 		if(this.objecte.isEmpty()){return;}
 		if(id==null){return;}
-		for(fArmorStand packet : id.getPacketList()){
-			if(packet.getObjID().equals(id)){
-				for(Player p : Bukkit.getOnlinePlayers()){
-					packet.send(p);
-				}
-			}
-		}
+		id.sendAll();
 	}
 	
 	public boolean isArmorStand(Integer entityID){
@@ -203,9 +182,7 @@ public class FurnitureManager {
 	public void removeFurniture(Player player) {
 		if(this.objecte.isEmpty()){return;}
 		for(ObjectID obj : objecte){
-			for(fArmorStand packet : obj.getPacketList()){
-				packet.kill(player, true);
-			}
+			obj.removePacket(player);
 		}
 	}
 

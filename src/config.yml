@@ -2,13 +2,15 @@ config:
    UseMetrics: true
    #Avaible EN_en = english; DE_de = german
    Language: EN_en
-   #Remove spawn eggs and Material in gamemode 1
-   NormalGamemodeRemove: true
    useParticles: true
    #Disable Sitting on some furniture
    DisableSitting: false
    LimitType: PLAYER
    CheckUpdate: true
+   Creative:
+      RemoveItems: false
+      Interact: true
+      Place: true
    PlaceMode:
       Mode: "PRIVATE"
       Access: "INTERACT"

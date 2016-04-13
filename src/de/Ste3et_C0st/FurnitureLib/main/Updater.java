@@ -2,9 +2,8 @@ package de.Ste3et_C0st.FurnitureLib.main;
 
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
-import java.net.HttpURLConnection;
 import java.net.URL;
-
+import java.net.URLConnection;
 import org.bukkit.entity.Player;
 
 public class Updater {
@@ -13,7 +12,7 @@ public class Updater {
 	private enum CurrentPriority{NORMAL,SNAPSHOT}
 	
 	String currentVersion = "";
-	String newVersion = "";
+	String newVersion = "N/A";
 	String downloadLink = "http://www.spigotmc.org/resources/furniturelibary-free-alpha.9368/download?version=" + newVersion;
 	Long updateTime = 0L;
 	UpdatePriority priority1 = UpdatePriority.NO_UPDATE;
@@ -69,15 +68,14 @@ public class Updater {
 	
 	private String getLatestVersionOnSpigot() {
         try {
-            HttpURLConnection con = (HttpURLConnection) new URL("http://www.spigotmc.org/api/general.php").openConnection();
-            con.setDoOutput(true);
-            con.setConnectTimeout(20);
-            con.setRequestMethod("POST");
-            con.getOutputStream().write(("key=98BE0FE67F88AB82B4C197FAF1DC3B69206EFDCC4D3B80FC83A00037510B99B4&resource=9368").getBytes("UTF-8"));
-            String version = new BufferedReader(new InputStreamReader(con.getInputStream())).readLine();
-            if (version.length() <= 7) {
-                return version;
-            }
+	        URL website = new URL("http://dicecraft.de/API/furnitureLibVersion.txt");
+	        URLConnection connection = website.openConnection();
+	        BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+	        StringBuilder response = new StringBuilder();
+	        String inputLine;
+	        while ((inputLine = in.readLine()) != null) response.append(inputLine);
+	        in.close();
+	        return response.toString();
         } catch (Exception ex) {
             System.err.println("Failed to check for a update on spigot for FurnitureLib");
         }

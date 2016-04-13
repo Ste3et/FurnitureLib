@@ -27,7 +27,7 @@ public class objectToSide {
 			return;
 		}
 		
-		p.sendMessage("ง7งm+--------------------------------------------+ง8[งe" + b + "ง8/งa" + a + "ง8]");
+		p.sendMessage("ยง7ยงm+--------------------------------------------+ยง8[ยงe" + b + "ยง8/ยงa" + a + "ยง8]");
 		
 		int j = 0;
 		for(Object obj : objList){
@@ -38,7 +38,7 @@ public class objectToSide {
 			j++;
 		}
 		
-		p.sendMessage("ง7งm+-------------------------------------------------+");
+		p.sendMessage("ยง7ยงm+-------------------------------------------------+");
 	}
 	
 	private int getPage(int i){

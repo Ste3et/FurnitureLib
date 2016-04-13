@@ -14,7 +14,6 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
-
 import de.Ste3et_C0st.FurnitureLib.Utilitis.RandomStringGenerator;
 import de.Ste3et_C0st.FurnitureLib.main.Type.EventType;
 import de.Ste3et_C0st.FurnitureLib.main.Type.PublicMode;
@@ -35,7 +34,8 @@ public class ObjectID{
 	private EventType memberType = FurnitureLib.getInstance().getDefaultEventType();
 	private SQLAction sqlAction = SQLAction.SAVE;
 	private List<fArmorStand> packetList = new ArrayList<fArmorStand>();
-	private boolean finish=false, fixed=false, fromDatabase=false;
+	private List<Player> players = new ArrayList<Player>();
+	private boolean finish=false, fixed=false, fromDatabase=false, Private=false;
 	public String getID(){return this.ObjectID;}
 	public String getProject(){return this.Project;}
 	public Project getProjectOBJ(){return FurnitureLib.getInstance().getFurnitureManager().getProject(getProject());}
@@ -56,21 +56,51 @@ public class ObjectID{
 	public UUID getUUID(){return this.uuid;}
 	public World getWorld(){return this.w;}
 	public Chunk getChunk(){return this.c;}
+	public List<Player> getPlayerList(){return this.players;}
 	public boolean isMember(UUID uuid) {return uuidList.contains(uuid);}
 	public void setFromDatabase(){this.fromDatabase=true;}
 	public boolean isFromDatabase(){return this.fromDatabase;}
+	public boolean isPrivate(){return this.Private;}
 	public void addMember(UUID uuid){uuidList.add(uuid);}
 	public void remMember(UUID uuid){uuidList.remove(uuid);}
 	public List<fArmorStand> getPacketList() {return packetList;}
 	public void setPacketList(List<fArmorStand> packetList) {this.packetList = packetList;}
-	public boolean isInRange(Player player) {return getStartLocation().getWorld() == player.getLocation().getWorld() && (getStartLocation().distance(player.getLocation()) <= 48D);}
+	public boolean isInRange(Player player) {return isInWorld(player) && (getStartLocation().distance(player.getLocation()) <= 100D);}
+	public boolean isInWorld(Player player) {return getStartLocation().getWorld() == player.getLocation().getWorld();}
 	public void addArmorStand(fArmorStand packet) {packetList.add(packet);}
 	public void setPublicMode(PublicMode publicMode){this.publicMode = publicMode;}
+	public void setPrivate(boolean b){this.Private = b;}
+	
 	
 	public void setStartLocation(Location loc) {
 		this.loc = loc;
 		this.w = loc.getWorld();
 		this.c = loc.getChunk();
+	}
+	
+	public void updatePlayerView(Player player){
+		if(isPrivate()){return;}
+		if(getPacketList().isEmpty()){return;}
+		if(getSQLAction().equals(SQLAction.REMOVE)){return;}
+		if(isInRange(player)){
+			if(players.contains(player)) return;
+			for(fArmorStand stand : getPacketList()){stand.send(player);}
+			players.add(player);
+		}else{
+			if(!players.contains(player)) return;
+			for(fArmorStand stand : getPacketList()){stand.kill(player, false);}
+			players.remove(player);
+		}
+		
+
+	}
+	
+	public void removePacket(Player p){
+		if(isPrivate()){return;}
+		if(getPacketList().isEmpty()){return;}
+		if(getSQLAction().equals(SQLAction.REMOVE)){return;}
+		for(fArmorStand stand : getPacketList()){stand.kill(p, false);}
+		players.remove(p);
 	}
 	
 	
@@ -133,6 +163,7 @@ public class ObjectID{
 		dropItem(p, loc.clone().add(0, 1, 0), getProjectOBJ());
 		deleteEffect(packetList);
 		FurnitureLib.getInstance().getBlockManager().destroy(getBlockList(), false);
+		removeAll();
 		locList.clear();
 		manager.remove(this);
 		FurnitureLib.getInstance().getLimitManager().removePlayer(this);
@@ -143,6 +174,7 @@ public class ObjectID{
 		Location loc = getStartLocation();
 		if(dropItem) dropItem(p, loc.clone().add(0, 1, 0), getProjectOBJ());
 		if(deleteEffect) deleteEffect(packetList);
+		removeAll();
 		manager.remove(this);
 		FurnitureLib.getInstance().getLimitManager().removePlayer(this);
 	}
@@ -154,13 +186,17 @@ public class ObjectID{
 	}
 	
 	public void deleteEffect(List<fArmorStand> asList){
+		int i = 0;
 		try{
 			if(asList==null||asList.isEmpty()) return;
 			 for (fArmorStand packet : asList) {
 				if(packet!=null){
 					if(packet.getInventory() != null && packet.getInventory().getHelmet()!=null){
 						if(packet.getInventory().getHelmet().getType()!=null&&!packet.getInventory().getHelmet().getType().equals(Material.AIR)){
-							packet.getLocation().getWorld().playEffect(packet.getLocation(), Effect.STEP_SOUND, packet.getInventory().getHelmet().getType());
+							if(i<6){
+								packet.getLocation().getWorld().playEffect(packet.getLocation(), Effect.STEP_SOUND, packet.getInventory().getHelmet().getType());
+								i++;
+							}
 						}
 					}
 				}
@@ -178,5 +214,26 @@ public class ObjectID{
 	}
 	public List<Location> getBlockList() {
 		return this.locList;
+	}
+	
+	public void send(Player p){updatePlayerView(p);}
+	public void sendAll(){for(Player p : Bukkit.getOnlinePlayers()) send(p);}
+	public void update() {
+		if(isPrivate()){return;}
+		if(getPacketList().isEmpty()){return;}
+		if(getSQLAction().equals(SQLAction.REMOVE)){return;}
+		for(Player p : getPlayerList()){
+			for(fArmorStand stand : getPacketList()){stand.update(p);}
+		}
+	}
+	
+	public void removeAll(){
+		if(isPrivate()){return;}
+		if(getPacketList().isEmpty()){return;}
+		if(getSQLAction().equals(SQLAction.REMOVE)){return;}
+		for(Player p : getPlayerList()){
+			for(fArmorStand stand : getPacketList()){stand.kill(p, false);}
+		}
+		this.players.clear();
 	}
 }

@@ -4,38 +4,34 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.plugin.Plugin;
 
-import ru.BeYkeRYkt.LightAPI.LightAPI;
-import ru.BeYkeRYkt.LightAPI.LightRegistry;
+import ru.beykerykt.lightapi.chunks.ChunkInfo;
+import ru.beykerykt.lightapi.chunks.Chunks;
+import ru.beykerykt.lightapi.light.Lights;
 
 public class LightManager {
 
 	Boolean enable=false;
-	LightRegistry registry;
 	Plugin plugin;
 	
 	public LightManager(Plugin plugin){
 		if(Bukkit.getPluginManager().isPluginEnabled("LightAPI")){
 			enable=true;
 			this.plugin = plugin;
-			registry = LightAPI.getRegistry(plugin);
-			if(registry.isAutoSend()) registry.startAutoSend(20);
 		}
 	}
 	
 	public void addLight(Location location, Integer size){
 		if(!enable){return;}
-		registry.createLight(location, size);
-		registry.collectChunks(location);
-		registry.sendChunkChanges();
+		Lights.createLight(location, size, false);
+		for (ChunkInfo info : Chunks.collectModifiedChunks(location)) Chunks.sendChunkUpdate(info);
 	}
 	
 	public void removeLight(Location location){
 		if(!enable){return;}
 		try{
-			registry.deleteLight(location);
-			registry.collectChunks(location);
-			registry.sendChunkChanges();
-		}catch(Exception e){}
+			Lights.deleteLight(location, false);
+			for (ChunkInfo info : Chunks.collectModifiedChunks(location)) Chunks.sendChunkUpdate(info);
+		}catch(Exception e){e.printStackTrace();}
 
 	}
 }

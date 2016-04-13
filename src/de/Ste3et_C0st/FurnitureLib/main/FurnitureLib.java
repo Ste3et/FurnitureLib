@@ -24,6 +24,8 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.google.common.base.CharMatcher;
+
 import de.Ste3et_C0st.FurnitureLib.Command.TabCompleterHandler;
 import de.Ste3et_C0st.FurnitureLib.Command.command;
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
@@ -53,7 +55,8 @@ public class FurnitureLib extends JavaPlugin{
 	private Connection con;
 	private ProtectionManager Pmanager;
 	private LightManager lightMgr;
-	private boolean useGamemode = true, canSit = true, update = true, useParticle = true, useRegionMemberAccess = false, autoPurge = false, removePurge = false;
+	private boolean useGamemode = true, canSit = true, update = true, useParticle = true, useRegionMemberAccess = false, 
+					autoPurge = false, removePurge = false, creativeInteract = true, creativePlace = true;
 	private CraftingInv craftingInv;
 	private LanguageManager lmanager;
 	private SQLManager sqlManager;
@@ -68,7 +71,7 @@ public class FurnitureLib extends JavaPlugin{
 	private EventType type;
 	private WorldPool wPool;
 	private int purgeTime = 30;
-
+	
 	public LanguageManager getLangManager(){return this.lmanager;}
 	public LightManager getLightManager(){return this.lightMgr;}
 	public ProtectionManager getPermManager(){return this.Pmanager;}
@@ -99,11 +102,12 @@ public class FurnitureLib extends JavaPlugin{
 	public boolean hasPerm(Player p, String perm){return permission.has(p, perm);}
 	public boolean hasPerm(CommandSender p, String perm){return permission.has(p, perm);}
 	public boolean canSitting(){return this.canSit;}
+	public boolean creativeInteract(){return this.creativeInteract;}
+	public boolean creativePlace(){return this.creativePlace;}
 	public boolean haveRegionMemberAccess(){return this.useRegionMemberAccess;}
 	public boolean isDouble(String s){try{Double.parseDouble(s);}catch(NumberFormatException e){return false;}return true;}
 	public boolean isBoolean(String s){try {Boolean.parseBoolean(s.toLowerCase());}catch (Exception e) {return false;}return true;}
 	public boolean isInt(String s){try{Integer.parseInt(s);}catch(NumberFormatException e){return false;}return true;}
-	
 	
 	public Updater getUpdater(){return updater;}
 	@SuppressWarnings("deprecation")
@@ -124,7 +128,9 @@ public class FurnitureLib extends JavaPlugin{
 		this.deSerializerNew = new DeSerializer();
 		this.lightMgr = new LightManager(this);
 		this.lmanager = new LanguageManager(instance, getConfig().getString("config.Language"));
-		this.useGamemode = getConfig().getBoolean("config.NormalGamemodeRemove");
+		this.useGamemode = !getConfig().getBoolean("config.Creative.RemoveItems");
+		this.creativeInteract = getConfig().getBoolean("config.Creative.Interact");
+		this.creativePlace = getConfig().getBoolean("config.Creative.Place");
 		this.useRegionMemberAccess = getConfig().getBoolean("config.ProtectionLib.RegeionMemberAccess");
 		this.canSit = !getConfig().getBoolean("config.DisableSitting");
 		this.useParticle = getConfig().getBoolean("config.useParticles");
@@ -163,6 +169,18 @@ public class FurnitureLib extends JavaPlugin{
 		if(type!=null){this.type = type;}else{this.type = EventType.INTERACT;}
 		if(getConfig().getBoolean("config.timer.Enable")){int time = getConfig().getInt("config.timer.time");sqlManager.saveIntervall(time);}
 		for(Player p : Bukkit.getOnlinePlayers()){if(p.isOp()){getUpdater().sendPlayer(p);}}
+		
+		isVersionValid(getDescription().getVersion(), 100);
+	}
+	
+	public boolean isVersionValid(String version, int number){
+		String digits = CharMatcher.inRange('0', '9').retainFrom(version);
+		String[] numbers = digits.split(".");
+		int i = 0;
+		for(String str : numbers){
+			i+=Integer.parseInt(str);
+		}
+		if(i>=number){return true;}else{return false;}
 	}
 	
 	public boolean checkPurge(ObjectID obj, UUID uuid, int purgeTime){
@@ -268,11 +286,14 @@ public class FurnitureLib extends JavaPlugin{
 	}
 	
 	public void spawn(Project pro, ObjectID obj){
+		if(pro==null)return;
+		if(pro.getClass()==null)return;
 		Class<?> c = pro.getclass();
 		if(c==null ){return;}
 		Constructor<?> ctor = c.getConstructors()[0];
 			try {
 			ctor.newInstance(obj);
+			obj.setFinish();
 		} catch (Exception e) {e.printStackTrace();}
 	}
 }

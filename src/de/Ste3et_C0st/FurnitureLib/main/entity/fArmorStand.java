@@ -16,8 +16,7 @@ import de.Ste3et_C0st.FurnitureLib.main.Type.BodyPart;
 public class fArmorStand extends fEntity {
 
 	private int armorstandID;
-	private ObjectID objID;
-	private boolean arms,small,marker=true,gravity,baseplate;
+	private boolean arms=false,small=false,marker=true,gravity=false,baseplate=true;
 	private HashMap<BodyPart, EulerAngle> angle = new HashMap<Type.BodyPart, EulerAngle>();
 	private Project pro;
 	
@@ -28,14 +27,13 @@ public class fArmorStand extends fEntity {
 	public EulerAngle getRightLegPose(){return getPose(BodyPart.RIGHT_LEG);}
 	public EulerAngle getHeadPose(){return getPose(BodyPart.HEAD);}
 	public Project getProject(){return this.pro;}
-	public ObjectID getObjID() {return objID;}
 	public fArmorStand setBodyPose(EulerAngle a){setPose(a,BodyPart.BODY);return this;}
 	public fArmorStand setLeftArmPose(EulerAngle a){setPose(a,BodyPart.LEFT_ARM);return this;}
 	public fArmorStand setRightArmPose(EulerAngle a){setPose(a,BodyPart.RIGHT_ARM);return this;}
 	public fArmorStand setLeftLegPose(EulerAngle a){setPose(a,BodyPart.LEFT_LEG);return this;}
 	public fArmorStand setRightLegPose(EulerAngle a){setPose(a,BodyPart.RIGHT_LEG);return this;}
 	public fArmorStand setHeadPose(EulerAngle a){setPose(a,BodyPart.HEAD);return this;}
-	public fArmorStand setObjID(ObjectID objID) {this.objID = objID;return this;}
+	public fArmorStand setObjID(ObjectID objID) {setObjectID(objID);return this;}
 	public fArmorStand setArmorID(int i){this.armorstandID = i;return this;}
 	public int getArmorID(){return this.armorstandID;}
 	public boolean hasArms(){return this.arms;}
@@ -45,7 +43,7 @@ public class fArmorStand extends fEntity {
 	public boolean isSmall(){return this.small;}
 	
 	public fArmorStand(Location loc, ObjectID obj) {
-		super(loc, EntityType.ARMOR_STAND);
+		super(loc, EntityType.ARMOR_STAND, obj);
 		getObject(getWatcher(), Byte.valueOf((byte) 0), 10);
 		this.armorstandID = FurnitureLib.getInstance().getFurnitureManager().getLastID();
 		this.setObjID(obj);
@@ -73,7 +71,6 @@ public class fArmorStand extends fEntity {
 	  }
 	
 	public void delete(){
-		remove();
 		FurnitureLib.getInstance().getFurnitureManager().remove(this);
 	}
 	
@@ -148,18 +145,23 @@ public class fArmorStand extends fEntity {
 	
 	public fArmorStand clone(Relative relative){
 		fArmorStand nStand = new fArmorStand(relative.getSecondLocation(), getObjID());
-		nStand.setInventory(getInventory());
-		nStand.setSmall(isSmall());
-		nStand.setInvisible(isVisible());
-		nStand.setMarker(isMarker());
-		nStand.setGlowing(isGlowing());
-		nStand.setArms(hasArms());
-		nStand.setBasePlate(hasBasePlate());
-		nStand.setFire(isFire());
-		nStand.setName(getCustomName());
-		nStand.setNameVasibility(isCustomNameVisible());
+		fInventory inv = new fInventory(nStand.getEntityID());
+		for(int i = 0; i<7;i++){
+			if(getInventory().getSlot(i)==null) continue;
+			inv.setSlot(i, getInventory().getSlot(i));
+		}
+		nStand.setInventory(inv);
+		nStand.setSmall(this.isSmall());
+		nStand.setInvisible(this.isVisible());
+		nStand.setMarker(this.isMarker());
+		nStand.setGlowing(this.isGlowing());
+		nStand.setArms(this.hasArms());
+		nStand.setBasePlate(this.hasBasePlate());
+		nStand.setFire(this.isFire());
+		nStand.setName(this.getCustomName());
+		nStand.setNameVasibility(this.isCustomNameVisible());
 		for(BodyPart part : BodyPart.values()){
-			nStand.setPose(getPose(part), part);
+			nStand.setPose(this.getPose(part), part);
 		}
 		FurnitureLib.getInstance().getFurnitureManager().addArmorStand(nStand);
 		return nStand;
