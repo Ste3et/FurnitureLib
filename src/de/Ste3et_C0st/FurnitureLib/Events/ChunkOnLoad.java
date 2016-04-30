@@ -23,6 +23,7 @@ import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.FlowerPot;
+import org.bukkit.util.Vector;
 
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.HiddenStringUtils;
@@ -30,6 +31,7 @@ import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
+import de.Ste3et_C0st.FurnitureLib.main.entity.fArmorStand;
 
 public class ChunkOnLoad implements Listener{
 	
@@ -283,5 +285,15 @@ public class ChunkOnLoad implements Listener{
 		copy.setDurability(is.getDurability());
 		copy.setItemMeta(is.getItemMeta());
 		return copy;
+	}
+	
+	@EventHandler
+	public void onMoving(FurnitureMoveEvent e){
+		e.getPlayer().sendMessage(e.getEntityMoving().name());
+		fArmorStand stand = e.getfArmorStand();
+		Vector v = stand.getLocation().toVector();
+		v.normalize().add(new Vector(1.2,0,0));
+		stand.setGravity(true).setInvisible(false);
+		stand.setVelocity(v);
 	}
 }

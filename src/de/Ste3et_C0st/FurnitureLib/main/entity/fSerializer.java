@@ -70,6 +70,7 @@ public class fSerializer extends fProtocol{
 		setMetadata("NameVisible", stand.isCustomNameVisible());
 		setMetadata("Marker", stand.isMarker());
 		setMetadata("Glowing", stand.isGlowing());
+		setMetadata("Gravity", stand.hasGravity());
 		setMetadata(stand.getLocation());
 		setMetadata(stand.getInventory());
 		setMetadata(stand);

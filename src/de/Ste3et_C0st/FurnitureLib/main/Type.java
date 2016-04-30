@@ -141,4 +141,13 @@ public class Type {
 			return is;
 		}
 	}
+	
+	public enum EntityMoving{
+		LEFT,
+		RIGHT,
+		FORWARD,
+		BACKWARD,
+		JUMPING,
+		SNEEKING
+	}
 }

@@ -15,6 +15,7 @@ import com.comphenix.protocol.wrappers.EnumWrappers.EntityUseAction;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
+import de.Ste3et_C0st.FurnitureLib.main.Type.EntityMoving;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fArmorStand;
 import de.Ste3et_C0st.FurnitureLib.Events.FurnitureBreakEvent;
@@ -83,24 +84,36 @@ public class FurnitureEvents {
                 new PacketAdapter(instance, ListenerPriority.HIGHEST, PacketType.Play.Client.STEER_VEHICLE) {
                     public void onPacketReceiving(PacketEvent event) {
                         if (event.getPacketType() == PacketType.Play.Client.STEER_VEHICLE) {
-                        	if(event.getPacket().getSpecificModifier(boolean.class).read(1)){
-                        		final Player p = event.getPlayer();
-                        		for(ObjectID obj : manager.getObjectList()){
-                        			if(obj.isInRange(p)){
-                                		for(final fArmorStand packet : obj.getPacketList()){
-                                			if(packet.getPassanger()!=null){
-                                				if(packet.getPassanger().equals(p)){
-                                					event.setCancelled(true);
-                                					Bukkit.getScheduler().scheduleSyncDelayedTask(getPlugin(), new Runnable() {
-														@Override
-														public void run() {
-															packet.eject();
-														}
-													});
-                                    				
-                                				}
-                                			}
-                                		}
+                        	final Player p = event.getPlayer();
+                        	float a = event.getPacket().getFloat().read(0);
+                    		float b = event.getPacket().getFloat().read(1);
+                    		boolean c = event.getPacket().getBooleans().read(0);
+                    		boolean d = event.getPacket().getBooleans().read(1);
+                    		EntityMoving moving = null;
+                    		if(a>0){moving = EntityMoving.LEFT;}
+                    		if(a<0){moving = EntityMoving.RIGHT;}
+                    		if(b>0){moving = EntityMoving.FORWARD;}
+                    		if(b<0){moving = EntityMoving.BACKWARD;}
+                        	if(c){moving = EntityMoving.JUMPING;}
+                        	if(d){moving = EntityMoving.SNEEKING;}
+                        	for(final ObjectID obj : manager.getObjectList()){
+                        		if(obj.isInRange(p)){
+                        			for(final fArmorStand packet : obj.getPacketList()){
+                        				if(packet.getPassanger()!=null){
+                        					event.setCancelled(true);
+                        					final EntityMoving action = moving;
+                        					Bukkit.getScheduler().scheduleSyncDelayedTask(getPlugin(), new Runnable() {
+												@Override
+												public void run() {
+													if(action==null) return;
+													if(action.equals(EntityMoving.SNEEKING)){packet.eject();return;}
+													else{
+														FurnitureMoveEvent event = new FurnitureMoveEvent(p, packet, obj, action);
+														Bukkit.getServer().getPluginManager().callEvent(event);
+													}
+												}
+                        					});
+                        				}
                         			}
                         		}
                         	}

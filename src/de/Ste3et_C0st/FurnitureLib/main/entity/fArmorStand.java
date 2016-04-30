@@ -98,8 +98,6 @@ public class fArmorStand extends fEntity {
 		return this;
 	}
 
-
-	@Deprecated
 	public fArmorStand setGravity(boolean b) {
 		byte b0 = (byte) getObject(getWatcher(), Byte.valueOf((byte) 0), 10);
 		if (b)

@@ -69,6 +69,10 @@ public class DeSerializer {
 				boolean n = (metadata.getInt("NameVisible")==1),b = (metadata.getInt("BasePlate")==1),s = (metadata.getInt("Small")==1);
 				boolean f = (metadata.getInt("Fire")==1),a = (metadata.getInt("Arms")==1),i = (metadata.getInt("Invisible")==1);
 				boolean m = (metadata.getInt("Marker")==1),g = (metadata.getInt("Glowing")==1);
+				boolean grav = false;
+				if(metadata.hasKey("Gravity")){
+					grav = metadata.getInt("Gravity")==1;
+				}
 				
 				NBTTagCompound inventory = metadata.getCompound("Inventory");
 				for(Object object : enumItemSlots){
@@ -78,7 +82,7 @@ public class DeSerializer {
 					}
 				}
 				
-				packet.setBasePlate(b).setSmall(s).setMarker(m).setArms(a).setArmorID(ArmorID);
+				packet.setBasePlate(b).setSmall(s).setMarker(m).setArms(a).setArmorID(ArmorID).setGravity(grav);
 				packet.setNameVasibility(n).setName(name).setFire(f).setGlowing(g).setInvisible(i);
 				if(FurnitureLib.getInstance().getFurnitureManager().getLastID()<ArmorID){
 					FurnitureLib.getInstance().getFurnitureManager().setLastID(ArmorID);

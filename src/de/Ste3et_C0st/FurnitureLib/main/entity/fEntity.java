@@ -12,6 +12,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
+import org.bukkit.util.Vector;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
@@ -253,8 +254,7 @@ public abstract class fEntity extends fSerializer{
 
 	public void update(Player p) {
 		if (!getObjID().getPlayerList().contains(p)){return;}
-		PacketContainer update = new PacketContainer(
-				PacketType.Play.Server.ENTITY_METADATA);
+		PacketContainer update = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
 		update.getIntegers().write(0, getEntityID());
 		update.getWatchableCollectionModifier().write(0,getWatcher().getWatchableObjects());
 		try {
@@ -418,6 +418,22 @@ public abstract class fEntity extends fSerializer{
 		} else {
 			setObject(getWatcher(),
 					Byte.valueOf((byte) (b0 & (1 << i ^ 0xFFFFFFFF))), 0);
+		}
+	}
+	
+	public void setVelocity(Vector v) {
+		int x = (int) (v.getX() * 8000.0D);
+		int y = (int) (v.getY() * 8000.0D);
+		int z = (int) (v.getZ() * 8000.0D);
+		PacketContainer c = new PacketContainer(PacketType.Play.Server.ENTITY_VELOCITY);
+		c.getIntegers().write(0, getEntityID());
+		c.getIntegers().write(1, x).write(2, y).write(3, z);
+		for (Player p : getObjID().getPlayerList()) {
+			try {
+				getManager().sendServerPacket(p, c);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
 		}
 	}
 }
