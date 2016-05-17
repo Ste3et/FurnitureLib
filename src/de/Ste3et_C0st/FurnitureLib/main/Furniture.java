@@ -13,6 +13,7 @@ import de.Ste3et_C0st.FurnitureLib.Events.FurnitureBreakEvent;
 import de.Ste3et_C0st.FurnitureLib.Events.FurnitureClickEvent;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.LocationUtil;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fArmorStand;
+import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
 
 public abstract class Furniture implements Listener {
 
@@ -47,7 +48,7 @@ public abstract class Furniture implements Listener {
 	public FurnitureLib getLib(){return this.lib;}
 	public LocationUtil getLutil(){return this.lutil;}
 	public Plugin getPlugin(){return this.plugin;}
-	public List<fArmorStand> getfAsList(){
+	public List<fEntity> getfAsList(){
 		if(this.obj==null) return null;
 		if(this.getObjID()==null) return null;
 		if(this.getObjID().getPacketList()==null) return null;

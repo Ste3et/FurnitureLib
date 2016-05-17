@@ -143,11 +143,39 @@ public class Type {
 	}
 	
 	public enum EntityMoving{
-		LEFT,
-		RIGHT,
-		FORWARD,
-		BACKWARD,
-		JUMPING,
-		SNEEKING
+		LEFT(1,0,false),
+		RIGHT(-1,0,false),
+		FORWARD(0,1,false),
+		BACKWARD(0,-1,false),
+		JUMPING(0,0,true),
+		SNEEKING(0,0,false),
+		LEFT_FORWARD(1,1,false),
+		RIGHT_FORWARD(-1,1,false),
+		LEFT_BACKWARD(1,-1,false),
+		RIGHT_BACKWARD(-1,-1,false);
+
+		public void setValues(float a, float b, boolean c) {
+			this.a = a;
+			this.b = b;
+			this.c = c;
+		}
+		
+		private float a = 0;
+		private float b = 0;
+		private boolean c = false;
+		
+		EntityMoving(float a, float b, boolean c){
+			this.a = a;
+			this.b = b;
+			this.c = c;
+		}
+		
+		public float getFieldA(){return this.a;}
+		public float getFieldB(){return this.b;}
+		public boolean getFieldC(){return this.c;}
+	}
+	
+	public enum MoveType{
+		FORWARD,BACKWAR,NOTHING
 	}
 }

@@ -18,6 +18,7 @@ import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.EntityMoving;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fArmorStand;
+import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
 import de.Ste3et_C0st.FurnitureLib.Events.FurnitureBreakEvent;
 import de.Ste3et_C0st.FurnitureLib.Events.FurnitureClickEvent;
 
@@ -31,20 +32,19 @@ public class FurnitureEvents {
                         	Integer PacketID = event.getPacket().getIntegers().read(0);
                             if(manager.isArmorStand(PacketID)){
                             	event.setCancelled(true);
-                            	fArmorStand asPacket = manager.getfArmorStandByID(PacketID);
-                            	if(asPacket==null){System.out.println("error1");return;}
+                            	fEntity asPacket = manager.getfArmorStandByID(PacketID);
+                            	if(asPacket==null){return;}
                             	ObjectID objID = manager.getObjectIDByID(PacketID);
-                            	if(objID==null){System.out.println("error2");return;}
+                            	if(objID==null){return;}
                             	if(objID.getSQLAction().equals(SQLAction.REMOVE)){return;}
                             	if(objID!=null){if(objID.isPrivate()){return;}}
                             	Location loc = asPacket.getLocation();
                             	Player p = event.getPlayer();
                             	EntityUseAction action = event.getPacket().getEntityUseActions().read(0);
-                            	
-                            	if(loc==null){System.out.println("error3");return;}
-                            	if(p==null){System.out.println("error4");return;}
+                            	if(loc==null){return;}
+                            	if(p==null){return;}
 								final Player player = p;
-								final fArmorStand packet = asPacket;
+								final fEntity packet = asPacket;
 								final ObjectID objectID = objID;
 								final Location location = loc;
                             	switch (action) {
@@ -53,7 +53,7 @@ public class FurnitureEvents {
 									Bukkit.getScheduler().scheduleSyncDelayedTask(FurnitureLib.getInstance(), new Runnable() {
 										@Override
 										public void run() {
-											FurnitureBreakEvent event = new FurnitureBreakEvent(player, packet, objectID, location);
+											FurnitureBreakEvent event = new FurnitureBreakEvent(player, (fArmorStand) packet, objectID, location);
 											Bukkit.getServer().getPluginManager().callEvent(event);
 										}
 									});
@@ -68,7 +68,7 @@ public class FurnitureEvents {
 									Bukkit.getScheduler().scheduleSyncDelayedTask(FurnitureLib.getInstance(), new Runnable() {
 									@Override
 										public void run() {
-											FurnitureClickEvent event = new FurnitureClickEvent(player, packet, objectID, location);
+											FurnitureClickEvent event = new FurnitureClickEvent(player, (fArmorStand) packet, objectID, location);
 											Bukkit.getServer().getPluginManager().callEvent(event);		
 										}
 									});
@@ -96,26 +96,36 @@ public class FurnitureEvents {
                     		if(b<0){moving = EntityMoving.BACKWARD;}
                         	if(c){moving = EntityMoving.JUMPING;}
                         	if(d){moving = EntityMoving.SNEEKING;}
+                        	
+                        	if(a>0&&b>0){moving = EntityMoving.LEFT_FORWARD;}
+                        	if(a<0&&b>0){moving = EntityMoving.RIGHT_FORWARD;}
+                        	if(a<0&&b<0){moving = EntityMoving.RIGHT_BACKWARD;}
+                        	if(a>0&&b<0){moving = EntityMoving.LEFT_BACKWARD;}
+                        	if(moving==null) return;
                         	for(final ObjectID obj : manager.getObjectList()){
-                        		if(obj.isInRange(p)){
-                        			for(final fArmorStand packet : obj.getPacketList()){
+                        		//if(obj.isInRange(p)){
+                        			for(final fEntity packet : obj.getPacketList()){
                         				if(packet.getPassanger()!=null){
-                        					event.setCancelled(true);
-                        					final EntityMoving action = moving;
-                        					Bukkit.getScheduler().scheduleSyncDelayedTask(getPlugin(), new Runnable() {
-												@Override
-												public void run() {
-													if(action==null) return;
-													if(action.equals(EntityMoving.SNEEKING)){packet.eject();return;}
-													else{
-														FurnitureMoveEvent event = new FurnitureMoveEvent(p, packet, obj, action);
+                        					if(packet.getPassanger().equals(p)){
+                            					event.setCancelled(true);
+                            					moving.setValues(a,b,c);
+                            					final EntityMoving action = moving;
+                            					Bukkit.getScheduler().scheduleSyncDelayedTask(getPlugin(), new Runnable() {
+    												@Override
+    												public void run() {
+    													FurnitureMoveEvent event = new FurnitureMoveEvent(p, (fArmorStand) packet, obj, action);
 														Bukkit.getServer().getPluginManager().callEvent(event);
-													}
-												}
-                        					});
+														if(!event.isCancelled()){
+															if(action.equals(EntityMoving.SNEEKING)){
+																packet.eject();return;
+															}
+														}
+    												}
+                            					});
+                        					}
                         				}
                         			}
-                        		}
+                        		//}
                         	}
                         }
                     }

@@ -349,7 +349,6 @@ public class LocationUtil {
 		l.setYaw(FaceToYaw(b));
 		x = round(x);
 		z = round(z);
-
 		switch (b) {
 		case NORTH:
 			l.add(x,0,z);

@@ -16,6 +16,9 @@ import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagList;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagString;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fArmorStand;
+import de.Ste3et_C0st.FurnitureLib.main.entity.fCreeper;
+import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
+import de.Ste3et_C0st.FurnitureLib.main.entity.fPig;
 
 public class Serializer {
 
@@ -28,8 +31,18 @@ public class Serializer {
 		compound.set("Location",getFromLocation(obj.getStartLocation()));
 		compound.setInt("ArmorStands", obj.getPacketList().size());
 		NBTTagCompound armorStands = new NBTTagCompound();
-		for(fArmorStand packet : obj.getPacketList()){
-			armorStands.set(packet.getArmorID()+"", packet.getMetadata());
+		for(fEntity packet : obj.getPacketList()){
+			if(packet instanceof fArmorStand){
+				fArmorStand stand = (fArmorStand) packet;
+				armorStands.set(stand.getArmorID()+"", stand.getMetadata());
+			}else if(packet instanceof fPig){
+				fPig stand = (fPig) packet;
+				armorStands.set(stand.getArmorID()+"", stand.getMetadata());
+			}else if(packet instanceof fCreeper){
+				System.out.println("test");
+				fCreeper stand = (fCreeper) packet;
+				armorStands.set(stand.getArmorID()+"", stand.getMetadata());
+			}
 		}
 		compound.set("ArmorStands", armorStands);
 		return Base64.encodeBase64String(armorStandtoBytes(compound));

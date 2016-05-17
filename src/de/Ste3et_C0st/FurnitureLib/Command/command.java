@@ -22,7 +22,7 @@ import de.Ste3et_C0st.FurnitureLib.Utilitis.JsonBuilder.HoverAction;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
-import de.Ste3et_C0st.FurnitureLib.main.entity.fArmorStand;
+import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
 
 public class command implements CommandExecutor, Listener{
 	
@@ -73,7 +73,7 @@ public class command implements CommandExecutor, Listener{
 				}
 			}
 			
-			for(fArmorStand stand : e.getID().getPacketList()){
+			for(fEntity stand : e.getID().getPacketList()){
 				stand.setGlowing(true);
 			}
 			final SQLAction action = e.getID().getSQLAction();
@@ -83,7 +83,7 @@ public class command implements CommandExecutor, Listener{
 				
 				@Override
 				public void run() {
-					for(fArmorStand stand : e.getID().getPacketList()){
+					for(fEntity stand : e.getID().getPacketList()){
 						stand.setGlowing(false);
 					}
 					manager.updateFurniture(e.getID());

@@ -10,11 +10,15 @@ import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fArmorStand;
+import de.Ste3et_C0st.FurnitureLib.main.entity.fCreeper;
+import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
+import de.Ste3et_C0st.FurnitureLib.main.entity.fPig;
 
 public class FurnitureManager {
 	private Integer i = 0;
@@ -94,8 +98,8 @@ public class FurnitureManager {
 			FurnitureLib.getInstance().getBlockManager().destroy(id.getBlockList(), false);
 			id.getBlockList().clear();
 		}
-		List<fArmorStand> packetList = (List<fArmorStand>) ((ArrayList<fArmorStand>) id.getPacketList()).clone();
-		for(fArmorStand asp : packetList){
+		List<fEntity> packetList = (List<fEntity>) ((ArrayList<fEntity>) id.getPacketList()).clone();
+		for(fEntity asp : packetList){
 			if(asp.getObjID().equals(id)){
 				asp.kill();
 				asp.delete();
@@ -117,7 +121,7 @@ public class FurnitureManager {
 	public boolean isArmorStand(Integer entityID){
 		if(this.objecte.isEmpty()){return false;}
 		for(ObjectID obj : objecte){
-			for(fArmorStand packet : obj.getPacketList()){
+			for(fEntity packet : obj.getPacketList()){
 				if(packet.getEntityID() == entityID) return true;
 			}
 		}
@@ -132,6 +136,22 @@ public class FurnitureManager {
 		return packet;
 	}
 	
+	public fPig createPig(ObjectID id, Location loc){
+		if(!objecte.contains(id)){this.objecte.add(id);}
+		i++;
+		fPig packet = new fPig(loc, id);
+		id.addArmorStand(packet);
+		return packet;		
+	}
+	
+	public fCreeper createCreeper(ObjectID id, Location loc){
+		if(!objecte.contains(id)){this.objecte.add(id);}
+		i++;
+		fCreeper packet = new fCreeper(loc, id);
+		id.addArmorStand(packet);
+		return packet;		
+	}	
+	
 	public void addArmorStand(Object obj){
 		if(obj instanceof fArmorStand == false){return;}
 		fArmorStand stand = (fArmorStand) obj;
@@ -141,11 +161,11 @@ public class FurnitureManager {
 		id.addArmorStand(stand);
 	}
 
-	public fArmorStand getfArmorStandByID(Integer entityID) {
+	public fEntity getfArmorStandByID(Integer entityID) {
 		if(this.objecte.isEmpty()){return null;}
 		if(entityID==null) return null;
 		for(ObjectID obj : objecte){
-			for(fArmorStand packet : obj.getPacketList()){
+			for(fEntity packet : obj.getPacketList()){
 				if(packet.getEntityID() == entityID){
 					return packet;
 				}
@@ -158,7 +178,7 @@ public class FurnitureManager {
 		if(this.objecte.isEmpty()){return null;}
 		if(entityID==null) return null;
 		for(ObjectID obj : objecte){
-			for(fArmorStand packet : obj.getPacketList()){
+			for(fEntity packet : obj.getPacketList()){
 				if(packet.getEntityID() == entityID){
 					return obj;
 				}
@@ -186,7 +206,7 @@ public class FurnitureManager {
 		}
 	}
 
-	public void remove(fArmorStand armorStandPacket) {
+	public void remove(fEntity armorStandPacket) {
 		if(this.objecte.isEmpty()){return;}
 		for(ObjectID obj : objecte){
 			if(obj.getPacketList().contains(armorStandPacket)){
@@ -210,7 +230,7 @@ public class FurnitureManager {
 		return false;
 	}
 	
-	public List<fArmorStand> getfArmorStandByObjectID(ObjectID id) {
+	public List<fEntity> getfArmorStandByObjectID(ObjectID id) {
 		if(this.objecte.isEmpty()){return null;}
 		return id.getPacketList();
 	}

@@ -12,12 +12,11 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
-import org.bukkit.util.Vector;
-
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.EnumWrappers.Particle;
 
+import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.EntityID;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
@@ -36,20 +35,15 @@ public abstract class fEntity extends fSerializer{
 	private Location l;
 	private String customName = "";
 	private Entity passanger;
-	private boolean fire, nameVisible, visible, isKilled = false, isPlayed = false, glowing = false;
+	private boolean fire = false, nameVisible = false, visible = true, isKilled = false, isPlayed = false, glowing = false;
 
 	@SuppressWarnings("deprecation")
 	public fEntity(Location loc, EntityType type, ObjectID id) {
 		super(loc.getWorld(), type, id);
 		this.a = EntityID.nextEntityId();
 		this.c = (int) type.getTypeId();
-		this.d = loc.getX();
-		this.e = loc.getY();
-		this.f = loc.getZ();
-		this.j = ((byte) (int) (loc.getYaw() * 256.0F / 360.0F));
-		this.k = ((byte) (int) (loc.getPitch() * 256.0F / 360.0F));
 		this.i = new fInventory(this.a);
-		this.l = loc;
+		setLocation(loc);
 		getHandle().getIntegers().write(0, a).write(1, c);
 		getHandle().getSpecificModifier(UUID.class).write(0, b);
 		getHandle().getDoubles().write(0, d).write(1, e).write(2, f);
@@ -200,12 +194,7 @@ public abstract class fEntity extends fSerializer{
 	
 	public void teleport(Location loc) {
 		if(isFire())saveLight(getLocation(), loc);
-		this.l = loc;
-		this.d = this.l.getX();
-		this.e = this.l.getY();
-		this.f = this.l.getZ();
-		this.j = ((byte) (int) (this.l.getYaw() * 256.0F / 360.0F));
-		this.k = ((byte) (int) (this.l.getPitch() * 256.0F / 360.0F));
+		setLocation(loc);
 		PacketContainer c = new PacketContainer(PacketType.Play.Server.ENTITY_TELEPORT);
 		c.getIntegers().write(0, getEntityID());
 		c.getDoubles().write(0, this.d).write(1, this.e).write(2, this.f);
@@ -333,7 +322,50 @@ public abstract class fEntity extends fSerializer{
 		} catch (Exception e1) {
 			e1.printStackTrace();
 		}
+		
+		
 	}
+	
+	public void setPassanger(final List<Integer> entityIDs){
+		if(!FurnitureLib.getInstance().canSitting()){return;}
+		if (entityIDs == null) {return;}
+		int[] passangerID = new int[entityIDs.size()];
+		for(int i = 0; i<entityIDs.size();i++){passangerID[i] = entityIDs.get(i);}
+		PacketContainer container = new PacketContainer(PacketType.Play.Server.MOUNT);
+		container.getIntegers().write(0, getEntityID());
+		container.getIntegerArrays().write(0, passangerID);
+		try {
+			for (Player p : getObjID().getPlayerList()){
+				getManager().sendServerPacket(p, container);
+			}
+		} catch (Exception e1) {
+			e1.printStackTrace();
+		}
+//		
+//		Bukkit.getScheduler().runTaskLater(getPlugin(), new Runnable() {
+//			@Override
+//			public void run() {
+//				for(int i : entityIDs){rotateHead(i);}
+//			}
+//		}, 20);
+		
+	}
+	
+//	public void rotateHead(int entityID){
+//		if(!FurnitureLib.getInstance().canSitting()){return;}
+//		PacketContainer container = new PacketContainer(PacketType.Play.Server.ENTITY_LOOK);
+//    	container.getIntegers().write(0, entityID);
+//    	container.getBytes().write(0, ((byte) (int) (getLocation().getYaw() * 256.0F / 360.0F)));
+//		try {
+//			for (Player p : getObjID().getPlayerList()){
+//				p.sendMessage("test");
+//				getManager().sendServerPacket(p, container);
+//			}
+//		} catch (Exception e1) {
+//			e1.printStackTrace();
+//		}
+//		
+//	}
 
 	public void eject() {
 		if (passanger == null) {
@@ -420,20 +452,78 @@ public abstract class fEntity extends fSerializer{
 					Byte.valueOf((byte) (b0 & (1 << i ^ 0xFFFFFFFF))), 0);
 		}
 	}
+
+//	public fEntity setVelocity(double x, double y, double z, float yaw, float pitch){
+//		PacketContainer container = new PacketContainer(PacketType.Play.Server.REL_ENTITY_MOVE_LOOK);
+//		Vector v = new Vector(x, y, z);
+//		
+//		container.getIntegers().write(0, getEntityID()).write(1, toFixedPointNumber(x)).write(2, toFixedPointNumber(y)).write(3, toFixedPointNumber(z));
+//		container.getBooleans().write(0, true);
+//		container.getBytes().write(0, ((byte) (int) (yaw * 256.0F / 360.0F))).write(1, ((byte) (int) (pitch * 256.0F / 360.0F)));
+//		for(Player p : getObjID().getPlayerList()){
+//	    	try{getManager().sendServerPacket(p, container);}catch(Exception e){e.printStackTrace();}
+//	    }
+//		
+//		Vector v2 = getLocation().toVector();
+//		v2 = v2.add(v);
+//		setLocation(v2.toLocation(getWorld(), yaw, pitch));
+//		return this;
+//	}
+//	
+//	public fEntity setVelocity(double x, double y, double z){
+//		PacketContainer container = new PacketContainer(PacketType.Play.Server.REL_ENTITY_MOVE);
+//		container.getIntegers().write(0, getEntityID()).write(1, toFixedPointNumber(x)).write(2, toFixedPointNumber(y)).write(3, toFixedPointNumber(z));
+//		container.getBooleans().write(0, true);
+//		for(Player p : getObjID().getPlayerList()){
+//	    	try{getManager().sendServerPacket(p, container);}catch(Exception e){e.printStackTrace();}
+//	    }
+//
+//		Location loc = getLocation().add(x, y, z);
+//		setLocation(loc.clone());
+//		return this;
+//	}
+//	
+//	public fEntity setVelocity(Vector v){
+//		PacketContainer container = new PacketContainer(PacketType.Play.Server.REL_ENTITY_MOVE);
+//		container.getIntegers().write(0, getEntityID()).write(1, toFixedPointNumber(v.getX())).write(2, toFixedPointNumber(v.getY())).write(3, toFixedPointNumber(v.getZ()));
+//		container.getBooleans().write(0, true);
+//		for(Player p : getObjID().getPlayerList()){try{getManager().sendServerPacket(p, container);}catch(Exception e){e.printStackTrace();} }
+//		this.d += v.getX();
+//		this.e += v.getY();
+//		this.f += v.getZ();
+//		this.l.setX(d);
+//		this.l.setY(e);
+//		this.l.setZ(f);
+//		return this;
+//	}
 	
-	public void setVelocity(Vector v) {
-		int x = (int) (v.getX() * 8000.0D);
-		int y = (int) (v.getY() * 8000.0D);
-		int z = (int) (v.getZ() * 8000.0D);
-		PacketContainer c = new PacketContainer(PacketType.Play.Server.ENTITY_VELOCITY);
-		c.getIntegers().write(0, getEntityID());
-		c.getIntegers().write(1, x).write(2, y).write(3, z);
-		for (Player p : getObjID().getPlayerList()) {
-			try {
-				getManager().sendServerPacket(p, c);
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
+	public void updatePlayerVehiclePos(){
+		if(getPassanger()!=null&&getPassanger() instanceof Player){
+			PacketContainer container = new PacketContainer(PacketType.Play.Server.VEHICLE_MOVE);
+			container.getDoubles().write(0, this.l.getX()).write(1, this.l.getY()).write(2, this.l.getZ());
+			container.getFloat().write(0, this.l.getYaw()).write(1, l.getPitch());
+			Player p = (Player) getPassanger();
+			try{getManager().sendServerPacket(p, container);}catch(Exception e){e.printStackTrace();}
 		}
 	}
+
+//	private int toFixedPointNumber(double d) {
+//		return (int) (d*32D);
+//	}
+	
+	public void setLocation(Location loc){
+		this.l = loc;
+		this.d = loc.getX();
+		this.e = loc.getY();
+		this.f = loc.getZ();
+		this.j = ((byte) (int) (loc.getYaw() * 256.0F / 360.0F));
+		this.k = ((byte) (int) (loc.getPitch() * 256.0F / 360.0F));
+	}
+	
+	public void delete(){
+		FurnitureLib.getInstance().getFurnitureManager().remove(this);
+	}
+	
+	public abstract NBTTagCompound getMetadata();
+	
 }

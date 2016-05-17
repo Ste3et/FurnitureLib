@@ -61,20 +61,38 @@ public class fSerializer extends fProtocol{
 	
 	
 	public NBTTagCompound getMetaData(fArmorStand stand){
-		setMetadata("Name", stand.getName());
+		getDefNBT(stand);
 		setMetadata("Arms", stand.hasArms());
 		setMetadata("BasePlate", stand.hasBasePlate());
-		setMetadata("Fire", stand.isFire());
-		setMetadata("Invisible", stand.isVisible());
-		setMetadata("Small", stand.isSmall());
-		setMetadata("NameVisible", stand.isCustomNameVisible());
-		setMetadata("Marker", stand.isMarker());
-		setMetadata("Glowing", stand.isGlowing());
 		setMetadata("Gravity", stand.hasGravity());
-		setMetadata(stand.getLocation());
-		setMetadata(stand.getInventory());
+		setMetadata("Marker", stand.isMarker());
+		setMetadata("Small", stand.isSmall());
 		setMetadata(stand);
 		return metadata;
+	}
+	
+	public NBTTagCompound getMetaData(fCreeper stand){
+		getDefNBT(stand);
+		setMetadata("Ignite", stand.isIgnited());
+		setMetadata("Charged", stand.isCharged());
+		return metadata;
+	}
+	
+	public NBTTagCompound getMetaData(fPig stand){
+		getDefNBT(stand);
+		setMetadata("Saddle", stand.haseSaddle());
+		return metadata;
+	}
+	
+	public void getDefNBT(fEntity entity){
+		setMetadata("EntityType", entity.getEntityType().toString());
+		setMetadata("Name", entity.getName());
+		setMetadata("Fire", entity.isFire());
+		setMetadata("Invisible", entity.isVisible());
+		setMetadata("NameVisible", entity.isCustomNameVisible());
+		setMetadata("Glowing", entity.isGlowing());
+		setMetadata(entity.getLocation());
+		setMetadata(entity.getInventory());
 	}
 	
 	private NBTTagCompound getFromLocation(Location loc){

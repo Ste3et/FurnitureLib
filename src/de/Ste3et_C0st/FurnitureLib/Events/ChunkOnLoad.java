@@ -21,9 +21,9 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerQuitEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.FlowerPot;
-import org.bukkit.util.Vector;
 
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.HiddenStringUtils;
@@ -31,13 +31,13 @@ import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
-import de.Ste3et_C0st.FurnitureLib.main.entity.fArmorStand;
 
 public class ChunkOnLoad implements Listener{
 	
 	public List<Player> eventList = new ArrayList<Player>();
 	public FurnitureManager manager = FurnitureLib.getInstance().getFurnitureManager();
 	public FurnitureLib instance = FurnitureLib.getInstance();
+
 	@EventHandler
 	public void onPlayerMove(PlayerMoveEvent event) {
 		if (event.getFrom().getWorld() == event.getTo().getWorld() &&
@@ -125,6 +125,7 @@ public class ChunkOnLoad implements Listener{
 		if(event.getAction().equals(Action.RIGHT_CLICK_BLOCK)){
 			if(event.getClickedBlock()==null){return;}
 			if(event.getClickedBlock().getLocation()==null){return;}
+			if(!event.getHand().equals(EquipmentSlot.HAND)){return;}
 			ItemStack is = event.getItem();
 			if(FurnitureLib.getInstance().getBlockManager()!=null){
 				if(FurnitureLib.getInstance().getBlockManager().getList().contains(event.getClickedBlock().getLocation())){
@@ -179,7 +180,8 @@ public class ChunkOnLoad implements Listener{
 			final Project project = pro;
 			final Location l = event.getClickedBlock().getLocation();
 			final BlockFace face = event.getBlockFace();
-			l.setYaw(p.getLocation().getYaw());
+			
+			l.setYaw(instance.getLocationUtil().FaceToYaw(instance.getLocationUtil().yawToFace(p.getLocation().getYaw())));
 			Bukkit.getScheduler().scheduleSyncDelayedTask(FurnitureLib.getInstance(), new Runnable() {
 				@Override
 				public void run() {
@@ -285,15 +287,5 @@ public class ChunkOnLoad implements Listener{
 		copy.setDurability(is.getDurability());
 		copy.setItemMeta(is.getItemMeta());
 		return copy;
-	}
-	
-	@EventHandler
-	public void onMoving(FurnitureMoveEvent e){
-		e.getPlayer().sendMessage(e.getEntityMoving().name());
-		fArmorStand stand = e.getfArmorStand();
-		Vector v = stand.getLocation().toVector();
-		v.normalize().add(new Vector(1.2,0,0));
-		stand.setGravity(true).setInvisible(false);
-		stand.setVelocity(v);
 	}
 }

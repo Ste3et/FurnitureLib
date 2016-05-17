@@ -14,11 +14,15 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
+
 import de.Ste3et_C0st.FurnitureLib.Utilitis.RandomStringGenerator;
 import de.Ste3et_C0st.FurnitureLib.main.Type.EventType;
+import de.Ste3et_C0st.FurnitureLib.main.Type.MoveType;
 import de.Ste3et_C0st.FurnitureLib.main.Type.PublicMode;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fArmorStand;
+import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 
 public class ObjectID{
@@ -26,14 +30,14 @@ public class ObjectID{
 	private String ObjectID, serial, Project, plugin;
 	private List<Location> locList = new ArrayList<Location>();
 	private Location loc;
-	private Chunk c;
-	private World w;
 	private UUID uuid;
+	private MoveType moving = MoveType.NOTHING;
+	private double speed = 0;
 	private List<UUID> uuidList = new ArrayList<UUID>();
 	private PublicMode publicMode = FurnitureLib.getInstance().getDefaultPublicType();
 	private EventType memberType = FurnitureLib.getInstance().getDefaultEventType();
 	private SQLAction sqlAction = SQLAction.SAVE;
-	private List<fArmorStand> packetList = new ArrayList<fArmorStand>();
+	private List<fEntity> packetList = new ArrayList<fEntity>();
 	private List<Player> players = new ArrayList<Player>();
 	private boolean finish=false, fixed=false, fromDatabase=false, Private=false;
 	public String getID(){return this.ObjectID;}
@@ -54,8 +58,8 @@ public class ObjectID{
 	public List<UUID> getMemberList(){return this.uuidList;}
 	public PublicMode getPublicMode(){return this.publicMode;}
 	public UUID getUUID(){return this.uuid;}
-	public World getWorld(){return this.w;}
-	public Chunk getChunk(){return this.c;}
+	public World getWorld(){return this.loc.getWorld();}
+	public Chunk getChunk(){return this.loc.getChunk();}
 	public List<Player> getPlayerList(){return this.players;}
 	public boolean isMember(UUID uuid) {return uuidList.contains(uuid);}
 	public void setFromDatabase(){this.fromDatabase=true;}
@@ -63,20 +67,40 @@ public class ObjectID{
 	public boolean isPrivate(){return this.Private;}
 	public void addMember(UUID uuid){uuidList.add(uuid);}
 	public void remMember(UUID uuid){uuidList.remove(uuid);}
-	public List<fArmorStand> getPacketList() {return packetList;}
-	public void setPacketList(List<fArmorStand> packetList) {this.packetList = packetList;}
+	public List<fEntity> getPacketList() {return packetList;}
+	public void setPacketList(List<fEntity> packetList) {this.packetList = packetList;}
 	public boolean isInRange(Player player) {return isInWorld(player) && (getStartLocation().distance(player.getLocation()) <= 100D);}
 	public boolean isInWorld(Player player) {return getStartLocation().getWorld() == player.getLocation().getWorld();}
-	public void addArmorStand(fArmorStand packet) {packetList.add(packet);}
+	public void addArmorStand(fEntity packet) {packetList.add(packet);}
 	public void setPublicMode(PublicMode publicMode){this.publicMode = publicMode;}
 	public void setPrivate(boolean b){this.Private = b;}
+	public double getSpeed(){return this.speed;}
+	public void setSpeed(double f){this.speed = f;}
+	public void setMoving(MoveType type){this.moving = type;}
 	
+	private boolean hasSearch = false;
+	private fEntity middle = null;
 	
-	public void setStartLocation(Location loc) {
-		this.loc = loc;
-		this.w = loc.getWorld();
-		this.c = loc.getChunk();
+	public fEntity getMiddle(){
+		if(hasSearch == false){
+			hasSearch = true;
+			for(fEntity entity : getPacketList()){
+				if(entity.getCustomName().equalsIgnoreCase("%CAR_MIDDLE%")){
+					this.middle = entity;
+					break;
+				}
+			}
+		}
+		return middle;
 	}
+	
+	public void setVelocity(Vector v){
+		this.loc.add(v);
+	}
+	
+	public MoveType getMoveType(){return this.moving;}
+	
+	public void setStartLocation(Location loc) {this.loc = loc;}
 	
 	public void updatePlayerView(Player player){
 		if(isPrivate()){return;}
@@ -84,22 +108,20 @@ public class ObjectID{
 		if(getSQLAction().equals(SQLAction.REMOVE)){return;}
 		if(isInRange(player)){
 			if(players.contains(player)) return;
-			for(fArmorStand stand : getPacketList()){stand.send(player);}
+			for(fEntity stand : getPacketList()){stand.send(player);}
 			players.add(player);
 		}else{
 			if(!players.contains(player)) return;
-			for(fArmorStand stand : getPacketList()){stand.kill(player, false);}
+			for(fEntity stand : getPacketList()){stand.kill(player, false);}
 			players.remove(player);
 		}
-		
-
 	}
 	
 	public void removePacket(Player p){
 		if(isPrivate()){return;}
 		if(getPacketList().isEmpty()){return;}
 		if(getSQLAction().equals(SQLAction.REMOVE)){return;}
-		for(fArmorStand stand : getPacketList()){stand.kill(p, false);}
+		for(fEntity stand : getPacketList()){stand.kill(p, false);}
 		players.remove(p);
 	}
 	
@@ -138,11 +160,7 @@ public class ObjectID{
 			this.plugin = plugin;
 			this.serial = RandomStringGenerator.generateRandomString(10,RandomStringGenerator.Mode.ALPHANUMERIC);
 			this.ObjectID = name+":"+this.serial+":"+plugin;
-			if(startLocation!=null){
-				this.loc = startLocation;
-				this.w = startLocation.getWorld();
-				this.c = startLocation.getChunk();
-			}
+			if(startLocation!=null){this.loc = startLocation;}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -185,12 +203,12 @@ public class ObjectID{
 		w.dropItemNaturally(loc, porject.getCraftingFile().getRecipe().getResult());
 	}
 	
-	public void deleteEffect(List<fArmorStand> asList){
+	public void deleteEffect(List<fEntity> asList){
 		int i = 0;
 		try{
 			if(asList==null||asList.isEmpty()) return;
-			 for (fArmorStand packet : asList) {
-				if(packet!=null){
+			 for (fEntity packet : asList) {
+				if(packet!=null && packet instanceof fArmorStand){
 					if(packet.getInventory() != null && packet.getInventory().getHelmet()!=null){
 						if(packet.getInventory().getHelmet().getType()!=null&&!packet.getInventory().getHelmet().getType().equals(Material.AIR)){
 							if(i<6){
@@ -223,7 +241,7 @@ public class ObjectID{
 		if(getPacketList().isEmpty()){return;}
 		if(getSQLAction().equals(SQLAction.REMOVE)){return;}
 		for(Player p : getPlayerList()){
-			for(fArmorStand stand : getPacketList()){stand.update(p);}
+			for(fEntity stand : getPacketList()){stand.update(p);}
 		}
 	}
 	
@@ -232,7 +250,7 @@ public class ObjectID{
 		if(getPacketList().isEmpty()){return;}
 		if(getSQLAction().equals(SQLAction.REMOVE)){return;}
 		for(Player p : getPlayerList()){
-			for(fArmorStand stand : getPacketList()){stand.kill(p, false);}
+			for(fEntity stand : getPacketList()){stand.kill(p, false);}
 		}
 		this.players.clear();
 	}

@@ -9,6 +9,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
 
@@ -25,6 +26,9 @@ import de.Ste3et_C0st.FurnitureLib.main.Type.PublicMode;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 import de.Ste3et_C0st.FurnitureLib.main.entity.Vector3f;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fArmorStand;
+import de.Ste3et_C0st.FurnitureLib.main.entity.fCreeper;
+import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
+import de.Ste3et_C0st.FurnitureLib.main.entity.fPig;
 
 public class DeSerializer {
 	
@@ -59,39 +63,69 @@ public class DeSerializer {
 			for(Object o : armorStands.c()){
 				Integer ArmorID = Integer.parseInt((String) o);
 				NBTTagCompound metadata = armorStands.getCompound(ArmorID+"");
-				String name = metadata.getString("Name");
-				Location loc = locationFetcher(metadata.getCompound("Location"));
-				fArmorStand packet = FurnitureLib.getInstance().getFurnitureManager().createArmorStand(obj, loc);
-				NBTTagCompound euler = metadata.getCompound("EulerAngle");
-				for(BodyPart part : BodyPart.values()){
-					packet.setPose(eulerAngleFetcher(euler.getCompound(part.toString())), part);
-				}
-				boolean n = (metadata.getInt("NameVisible")==1),b = (metadata.getInt("BasePlate")==1),s = (metadata.getInt("Small")==1);
-				boolean f = (metadata.getInt("Fire")==1),a = (metadata.getInt("Arms")==1),i = (metadata.getInt("Invisible")==1);
-				boolean m = (metadata.getInt("Marker")==1),g = (metadata.getInt("Glowing")==1);
-				boolean grav = false;
-				if(metadata.hasKey("Gravity")){
-					grav = metadata.getInt("Gravity")==1;
-				}
+				EntityType type = EntityType.ARMOR_STAND;
+				if(metadata.hasKey("EntityType")){type = EntityType.valueOf(metadata.getString("EntityType"));}
 				
-				NBTTagCompound inventory = metadata.getCompound("Inventory");
-				for(Object object : enumItemSlots){
-					if(!inventory.getString(object.toString()).equalsIgnoreCase("NONE")){
-						ItemStack is = new CraftItemStack().getItemStack(inventory.getCompound(object.toString()+""));
-						packet.getInventory().setSlot(object.toString(), is);
-					}
+				switch (type) {
+				case ARMOR_STAND:loadArmorStandMetadata(metadata, ArmorID, obj);break;
+				case PIG:loadPigMetadata(metadata, ArmorID, obj);break;
+				case CREEPER:loadCreeperMetadata(metadata, ArmorID, obj);break;
+				default:break;
 				}
-				
-				packet.setBasePlate(b).setSmall(s).setMarker(m).setArms(a).setArmorID(ArmorID).setGravity(grav);
-				packet.setNameVasibility(n).setName(name).setFire(f).setGlowing(g).setInvisible(i);
-				if(FurnitureLib.getInstance().getFurnitureManager().getLastID()<ArmorID){
-					FurnitureLib.getInstance().getFurnitureManager().setLastID(ArmorID);
-				}
+				if(FurnitureLib.getInstance().getFurnitureManager().getLastID()<ArmorID){FurnitureLib.getInstance().getFurnitureManager().setLastID(ArmorID);}
 				this.armorStands++;
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
+	}
+	
+	private void loadCreeperMetadata(NBTTagCompound metadata, Integer ArmorID, ObjectID obj){
+		Location loc = locationFetcher(metadata.getCompound("Location"));
+		fCreeper packet = FurnitureLib.getInstance().getFurnitureManager().createCreeper(obj, loc);
+		loadDefMetadata(metadata, packet);
+		boolean i = (metadata.getInt("Ignite")==1), f = (metadata.getInt("Charged")==1);
+		packet.setArmorID(ArmorID).setIgnited(i).setCharged(f);
+	}
+	
+	private void loadPigMetadata(NBTTagCompound metadata, Integer ArmorID, ObjectID obj){
+		Location loc = locationFetcher(metadata.getCompound("Location"));
+		fPig packet = FurnitureLib.getInstance().getFurnitureManager().createPig(obj, loc);
+		loadDefMetadata(metadata, packet);
+		boolean s = (metadata.getInt("Saddle")==1);
+		packet.setArmorID(ArmorID).setSaddle(s);
+	}
+	
+	private void loadArmorStandMetadata(NBTTagCompound metadata, Integer ArmorID, ObjectID obj){
+		Location loc = locationFetcher(metadata.getCompound("Location"));
+		fArmorStand packet = FurnitureLib.getInstance().getFurnitureManager().createArmorStand(obj, loc);
+		loadDefMetadata(metadata, packet);
+		NBTTagCompound euler = metadata.getCompound("EulerAngle");
+		for(BodyPart part : BodyPart.values()){
+			packet.setPose(eulerAngleFetcher(euler.getCompound(part.toString())), part);
+		}
+		boolean b = (metadata.getInt("BasePlate")==1),s = (metadata.getInt("Small")==1),a = (metadata.getInt("Arms")==1),m = (metadata.getInt("Marker")==1),grav = false;
+		if(metadata.hasKey("Gravity")){
+			grav = metadata.getInt("Gravity")==1;
+		}	
+		packet.setBasePlate(b).setSmall(s).setMarker(m).setArms(a).setArmorID(ArmorID).setGravity(grav);
+	}
+	
+	private void loadDefMetadata(NBTTagCompound metadata, fEntity entity){
+			String name = metadata.getString("Name");
+			boolean n = (metadata.getInt("NameVisible")==1);
+			boolean f = (metadata.getInt("Fire")==1),i = (metadata.getInt("Invisible")==1);
+			boolean g = (metadata.getInt("Glowing")==1);
+			NBTTagCompound inventory = metadata.getCompound("Inventory");
+			for(Object object : enumItemSlots){
+				if(!inventory.getString(object.toString()).equalsIgnoreCase("NONE")){
+					ItemStack is = new CraftItemStack().getItemStack(inventory.getCompound(object.toString()+""));
+					if(is!=null){
+						entity.getInventory().setSlot(object.toString(), is);
+					}
+				}
+			}
+			entity.setNameVasibility(n).setName(name).setFire(f).setGlowing(g).setInvisible(i);
 	}
 	
 	private EulerAngle eulerAngleFetcher(NBTTagCompound eularAngle){

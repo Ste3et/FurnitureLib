@@ -58,30 +58,6 @@ public abstract class Database {
     	}
     }
     
-//    
-//    @SuppressWarnings("unused")
-//	public void loadAll(String query, SQLAction action){
-//    	boolean b = FurnitureLib.getInstance().isAutoPurge();
-//    	try{
-//    		System.out.println(query);
-//    		ResultSet rs = statement.executeQuery("SELECT * FROM FurnitureLib WHERE WorldInfo='" + query +"'");
-//    		while (rs.next()){
-//    			long time = System.currentTimeMillis() - rs.getTimestamp(4).getNanos();
-//    			if(FurnitureLib.getInstance().isAutoPurge()){
-//    				//PURGEN EINBAUEN !!!
-//    				break;
-//    			}
-//    			//System.out.println(rs.getString(1));
-//    			//System.out.println(rs.getString(2));
-//    			//System.out.println(rs.getString(3));
-//    			//FurnitureLib.getInstance().getDeSerializer().Deserialze(rs.getString(2), rs.getString(3), action, b);
-//    		}
-//    		rs.close();
-//    	}catch(Exception e){
-//    		//e.printStackTrace();
-//    	}
-//    }
-    
     public void loadAll(SQLAction action){
     	long time1 = System.currentTimeMillis();
     	boolean b = FurnitureLib.getInstance().isAutoPurge();

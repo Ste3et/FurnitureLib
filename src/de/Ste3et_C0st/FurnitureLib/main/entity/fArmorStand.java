@@ -3,6 +3,7 @@ package de.Ste3et_C0st.FurnitureLib.main.entity;
 import java.util.HashMap;
 
 import org.bukkit.Location;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
 import org.bukkit.util.EulerAngle;
 
@@ -19,6 +20,7 @@ public class fArmorStand extends fEntity {
 	private boolean arms=false,small=false,marker=true,gravity=false,baseplate=true;
 	private HashMap<BodyPart, EulerAngle> angle = new HashMap<Type.BodyPart, EulerAngle>();
 	private Project pro;
+	private ArmorStand stand = null;
 	
 	public EulerAngle getBodyPose(){return getPose(BodyPart.BODY);}
 	public EulerAngle getLeftArmPose(){return getPose(BodyPart.LEFT_ARM);}
@@ -44,7 +46,6 @@ public class fArmorStand extends fEntity {
 	
 	public fArmorStand(Location loc, ObjectID obj) {
 		super(loc, EntityType.ARMOR_STAND, obj);
-		getObject(getWatcher(), Byte.valueOf((byte) 0), 10);
 		this.armorstandID = FurnitureLib.getInstance().getFurnitureManager().getLastID();
 		this.setObjID(obj);
 		this.pro = obj.getProjectOBJ();
@@ -69,10 +70,6 @@ public class fArmorStand extends fEntity {
 	    setObject(getWatcher(), v.a(angle), part.getField());
 	    return this;
 	  }
-	
-	public void delete(){
-		FurnitureLib.getInstance().getFurnitureManager().remove(this);
-	}
 	
 	public fArmorStand setSmall(boolean b){
 		byte b0 = (byte) getObject(getWatcher(), Byte.valueOf((byte) 0), 10);
@@ -163,5 +160,40 @@ public class fArmorStand extends fEntity {
 		}
 		FurnitureLib.getInstance().getFurnitureManager().addArmorStand(nStand);
 		return nStand;
+	}
+	
+	public ArmorStand getRealArmorStand(){
+		if(stand!=null){return stand;}
+		stand = (ArmorStand) getWorld().spawnEntity(getLocation(), getEntityType());
+		stand.setArms(this.hasArms());
+		stand.setVisible(this.isVisible());
+		stand.setSmall(isSmall());
+		stand.setArms(hasArms());
+		stand.setBasePlate(hasBasePlate());
+		stand.setGravity(hasGravity());
+		stand.setGlowing(isGlowing());
+		stand.setAI(false);
+		stand.setHeadPose(getHeadPose());
+		stand.setLeftArmPose(getLeftArmPose());
+		stand.setRightArmPose(getRightArmPose());
+		stand.setLeftLegPose(getLeftLegPose());
+		stand.setRightLegPose(getRightLegPose());
+		stand.setBodyPose(getBodyPose());
+		stand.setHelmet(getHelmet());
+		stand.setChestplate(getChestPlate());
+		stand.setCustomName(getCustomName());
+		stand.setCustomNameVisible(isCustomNameVisible());
+		stand.setLeggings(getLeggings());
+		stand.setBoots(getBoots());
+		return stand;
+	}
+	
+	public boolean isRealArmorStand(){
+		if(stand==null) return false;
+		return true;
+	}
+	
+	public void setStand(ArmorStand stand){
+		this.stand = null;
 	}
 }
