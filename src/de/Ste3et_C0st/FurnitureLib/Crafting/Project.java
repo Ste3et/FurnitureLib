@@ -2,6 +2,7 @@ package de.Ste3et_C0st.FurnitureLib.Crafting;
 
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.List;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -13,6 +14,7 @@ import de.Ste3et_C0st.FurnitureLib.Utilitis.config;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.Type.CenterType;
 import de.Ste3et_C0st.FurnitureLib.main.Type.PlaceableSide;
+import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
 
 public class Project{
 	private String project;
@@ -27,17 +29,18 @@ public class Project{
 	private PlaceableSide side;
 	private boolean EditorProject = false;
 	private InputStream model = null;
+	private int gear = -98451, maxSpeed = -98451, middle = -98451, front = -98451, backside = -98451;
+	private boolean isSearch = false, isCar = false;
+	private HashMap<String, Integer> permissionList = new HashMap<String, Integer>();
 	
 	public InputStream getModel(){return this.model;}
 	public String getName(){return project;}
 	public Plugin getPlugin(){return plugin;}
 	public CraftingFile getCraftingFile(){return file;}
 	public Class<?> getclass(){return clas;}
-	public Integer getWitdh(){return this.witdh;}
-	public Integer getHeight(){return this.height;}
-	public Integer getLength(){return this.length;}
 	public CenterType getCenterType(){return this.type;}
 	public PlaceableSide getPlaceableSide(){return this.side;}
+	public String getSystemID(){return getCraftingFile().getSystemID();}
 	public boolean isEditorProject(){return this.EditorProject;}
 	public void setModel(InputStream stream){this.model = stream;}
 	public void setCraftingFile(CraftingFile file){this.file = file;}
@@ -46,11 +49,20 @@ public class Project{
 	public void setEditorProject(boolean b){this.EditorProject = b;}
 	public void setClass(Class<?> clas) {this.clas = clas;}
 	public void setName(String name){this.project = name;}
-	public Integer getAmountWorld(World w){if(limitationWorld.containsKey(w)){return limitationWorld.get(w);}else{return -1;}}
-	public Integer getAmountChunk(){return this.chunkLimit;}
-	public Integer getAmountPlayer(){return this.playerLimit;}
-	public String getSystemID(){return getCraftingFile().getSystemID();}
-	public Integer hasPermissionsAmount(Player p){
+	public int getFront(){return this.front;}
+	public int getMiddle(){return this.middle;}
+	public int getBackside(){return this.backside;}
+	public int getMaxSpeed(){return this.maxSpeed;}
+	public int getGear(){return this.gear;}
+	public int getWitdh(){return this.witdh;}
+	public int getHeight(){return this.height;}
+	public int getLength(){return this.length;}
+	public int getAmountWorld(World w){if(limitationWorld.containsKey(w)){return limitationWorld.get(w);}else{return -1;}}
+	public int getAmountChunk(){return this.chunkLimit;}
+	public int getAmountPlayer(){return this.playerLimit;}
+
+	
+	public int hasPermissionsAmount(Player p){
 		int i = -1;
 		if(!permissionList.isEmpty()){
 			for(String s : permissionList.keySet()){
@@ -62,7 +74,42 @@ public class Project{
 		}
 		return i;
 	}
-	public HashMap<String, Integer> permissionList = new HashMap<String, Integer>();
+	
+	
+	public boolean isDriveable(){return isCar;}
+	
+	public void checkDriveable(List<fEntity> entityList){
+		if(!isSearch){
+			int i = 0;
+			for(fEntity entity : entityList){
+				String s = entity.getCustomName().toLowerCase();
+				if(s.equalsIgnoreCase("#car_front#")){front = i;}
+				else if(s.equalsIgnoreCase("#car_backside#")){backside = i;}
+				else if(s.startsWith("#car_middle#(")){
+					s = s.replace("#car_middle#(", "");
+					s = s.replace(")", "");
+					if(s.contains(",")){
+						String[] args = s.split(",");
+						for(String str : args){
+							if(str.contains("speed:")){
+								str = str.replace("speed:", "");
+								maxSpeed = Integer.parseInt(str);
+							}else if(str.contains("gear:")){
+								str = str.replace("gear:", "");
+								gear = Integer.parseInt(str);
+							}
+						}
+					}
+					middle = i;
+				}
+				i++;
+			}
+			isSearch = true;
+			if(gear!=-98451&&maxSpeed!=-98451&&middle!=-98451&&front!=-98451&&backside!=-98451){
+			    isCar = true;
+			}
+		}
+	}
 	
 	public void setSize(Integer witdh, Integer height, Integer length, CenterType type){
 		this.witdh = witdh;

@@ -12,6 +12,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitRunnable;
+
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.EnumWrappers.Particle;
@@ -35,7 +36,7 @@ public abstract class fEntity extends fSerializer{
 	private Location l;
 	private String customName = "";
 	private Entity passanger;
-	private boolean fire = false, nameVisible = false, visible = true, isKilled = false, isPlayed = false, glowing = false;
+	private boolean fire = false, nameVisible = false, visible = true, isKilled = false, isPlayed = false, glowing = false, invisible = false;
 
 	@SuppressWarnings("deprecation")
 	public fEntity(Location loc, EntityType type, ObjectID id) {
@@ -152,8 +153,13 @@ public abstract class fEntity extends fSerializer{
 		return Bukkit.getServer();
 	}
 	
+	@Deprecated
 	public boolean isVisible(){
 		return this.visible;
+	}
+	
+	public boolean isInvisible(){
+		return this.invisible;
 	}
 	
 	public boolean isGlowing(){
@@ -166,7 +172,8 @@ public abstract class fEntity extends fSerializer{
 	
 	public fEntity setInvisible(boolean b) {
 		b(5, b);
-		this.visible = b;return this;
+		this.invisible = b;
+		return this;
 	}
 	
 	public fEntity setGlowing(boolean b) {
@@ -341,31 +348,7 @@ public abstract class fEntity extends fSerializer{
 		} catch (Exception e1) {
 			e1.printStackTrace();
 		}
-//		
-//		Bukkit.getScheduler().runTaskLater(getPlugin(), new Runnable() {
-//			@Override
-//			public void run() {
-//				for(int i : entityIDs){rotateHead(i);}
-//			}
-//		}, 20);
-		
 	}
-	
-//	public void rotateHead(int entityID){
-//		if(!FurnitureLib.getInstance().canSitting()){return;}
-//		PacketContainer container = new PacketContainer(PacketType.Play.Server.ENTITY_LOOK);
-//    	container.getIntegers().write(0, entityID);
-//    	container.getBytes().write(0, ((byte) (int) (getLocation().getYaw() * 256.0F / 360.0F)));
-//		try {
-//			for (Player p : getObjID().getPlayerList()){
-//				p.sendMessage("test");
-//				getManager().sendServerPacket(p, container);
-//			}
-//		} catch (Exception e1) {
-//			e1.printStackTrace();
-//		}
-//		
-//	}
 
 	public void eject() {
 		if (passanger == null) {
@@ -452,64 +435,6 @@ public abstract class fEntity extends fSerializer{
 					Byte.valueOf((byte) (b0 & (1 << i ^ 0xFFFFFFFF))), 0);
 		}
 	}
-
-//	public fEntity setVelocity(double x, double y, double z, float yaw, float pitch){
-//		PacketContainer container = new PacketContainer(PacketType.Play.Server.REL_ENTITY_MOVE_LOOK);
-//		Vector v = new Vector(x, y, z);
-//		
-//		container.getIntegers().write(0, getEntityID()).write(1, toFixedPointNumber(x)).write(2, toFixedPointNumber(y)).write(3, toFixedPointNumber(z));
-//		container.getBooleans().write(0, true);
-//		container.getBytes().write(0, ((byte) (int) (yaw * 256.0F / 360.0F))).write(1, ((byte) (int) (pitch * 256.0F / 360.0F)));
-//		for(Player p : getObjID().getPlayerList()){
-//	    	try{getManager().sendServerPacket(p, container);}catch(Exception e){e.printStackTrace();}
-//	    }
-//		
-//		Vector v2 = getLocation().toVector();
-//		v2 = v2.add(v);
-//		setLocation(v2.toLocation(getWorld(), yaw, pitch));
-//		return this;
-//	}
-//	
-//	public fEntity setVelocity(double x, double y, double z){
-//		PacketContainer container = new PacketContainer(PacketType.Play.Server.REL_ENTITY_MOVE);
-//		container.getIntegers().write(0, getEntityID()).write(1, toFixedPointNumber(x)).write(2, toFixedPointNumber(y)).write(3, toFixedPointNumber(z));
-//		container.getBooleans().write(0, true);
-//		for(Player p : getObjID().getPlayerList()){
-//	    	try{getManager().sendServerPacket(p, container);}catch(Exception e){e.printStackTrace();}
-//	    }
-//
-//		Location loc = getLocation().add(x, y, z);
-//		setLocation(loc.clone());
-//		return this;
-//	}
-//	
-//	public fEntity setVelocity(Vector v){
-//		PacketContainer container = new PacketContainer(PacketType.Play.Server.REL_ENTITY_MOVE);
-//		container.getIntegers().write(0, getEntityID()).write(1, toFixedPointNumber(v.getX())).write(2, toFixedPointNumber(v.getY())).write(3, toFixedPointNumber(v.getZ()));
-//		container.getBooleans().write(0, true);
-//		for(Player p : getObjID().getPlayerList()){try{getManager().sendServerPacket(p, container);}catch(Exception e){e.printStackTrace();} }
-//		this.d += v.getX();
-//		this.e += v.getY();
-//		this.f += v.getZ();
-//		this.l.setX(d);
-//		this.l.setY(e);
-//		this.l.setZ(f);
-//		return this;
-//	}
-	
-	public void updatePlayerVehiclePos(){
-		if(getPassanger()!=null&&getPassanger() instanceof Player){
-			PacketContainer container = new PacketContainer(PacketType.Play.Server.VEHICLE_MOVE);
-			container.getDoubles().write(0, this.l.getX()).write(1, this.l.getY()).write(2, this.l.getZ());
-			container.getFloat().write(0, this.l.getYaw()).write(1, l.getPitch());
-			Player p = (Player) getPassanger();
-			try{getManager().sendServerPacket(p, container);}catch(Exception e){e.printStackTrace();}
-		}
-	}
-
-//	private int toFixedPointNumber(double d) {
-//		return (int) (d*32D);
-//	}
 	
 	public void setLocation(Location loc){
 		this.l = loc;

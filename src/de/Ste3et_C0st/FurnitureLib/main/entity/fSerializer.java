@@ -88,7 +88,7 @@ public class fSerializer extends fProtocol{
 		setMetadata("EntityType", entity.getEntityType().toString());
 		setMetadata("Name", entity.getName());
 		setMetadata("Fire", entity.isFire());
-		setMetadata("Invisible", entity.isVisible());
+		setMetadata("Invisible", entity.isInvisible());
 		setMetadata("NameVisible", entity.isCustomNameVisible());
 		setMetadata("Glowing", entity.isGlowing());
 		setMetadata(entity.getLocation());

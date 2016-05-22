@@ -280,8 +280,8 @@ public class FurnitureLib extends JavaPlugin{
 		Class<?> c = pro.getclass();
 		ObjectID obj = new ObjectID(pro.getName(), pro.getPlugin().getName(), l);
 		if(c==null ){return;}
-		Constructor<?> ctor = c.getConstructors()[0];
-			try {
+		try {
+			Constructor<?> ctor = c.getConstructor(ObjectID.class);
 			ctor.newInstance(obj);
 			obj.setFinish();
 		} catch (Exception e) {e.printStackTrace();}
@@ -290,11 +290,11 @@ public class FurnitureLib extends JavaPlugin{
 	public void spawn(Project pro, ObjectID obj){
 		if(pro==null)return;
 		if(pro.getClass()==null)return;
+		if(obj==null)return;
 		Class<?> c = pro.getclass();
 		if(c==null ){return;}
-		Constructor<?> ctor = c.getConstructors()[0];
-		if(ctor==null){return;}
 			try {
+			Constructor<?> ctor = c.getConstructor(ObjectID.class);
 			ctor.newInstance(obj);
 			obj.setFinish();
 		} catch (Exception e) {e.printStackTrace();}

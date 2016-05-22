@@ -79,24 +79,63 @@ public class ObjectID{
 	public void setMoving(MoveType type){this.moving = type;}
 	
 	private boolean hasSearch = false;
-	private fEntity middle = null;
 	
-	public fEntity getMiddle(){
+	public void checkDrivable(){
 		if(hasSearch == false){
 			hasSearch = true;
-			for(fEntity entity : getPacketList()){
-				if(entity.getCustomName().equalsIgnoreCase("%CAR_MIDDLE%")){
-					this.middle = entity;
-					break;
-				}
-			}
+			getProjectOBJ().checkDriveable(getPacketList());
 		}
-		return middle;
 	}
 	
-	public void setVelocity(Vector v){
-		this.loc.add(v);
+	public boolean isCar(){return getProjectOBJ().isDriveable();}
+	
+	public fEntity getFront(){
+		if(!isCar()) return null;
+		if(!hasSearch){checkDrivable();}
+		if(isCar()){
+			return getPacketList().get(getProjectOBJ().getFront());
+		}
+		return null;
 	}
+	
+	public fEntity getMiddle(){
+		if(!isCar()){return null;}
+		if(!hasSearch){checkDrivable();}
+		if(isCar()){
+			return getPacketList().get(getProjectOBJ().getMiddle());
+		}
+		return null;
+	}
+	
+	public fEntity getBackside(){
+		if(!isCar()) return null;
+		if(!hasSearch){checkDrivable();}
+		if(isCar()){
+			return getPacketList().get(getProjectOBJ().getBackside());
+		}
+		return null;
+	}
+	
+	public int getMaxSpeed(){
+		if(!isCar()) return 0;
+		if(!hasSearch){checkDrivable();}
+		if(isCar()){
+			return getProjectOBJ().getMaxSpeed();
+		}
+		return 0;
+	}
+	
+	public int getGear(){
+		if(!isCar()) return 0;
+		if(!hasSearch){checkDrivable();}
+		if(isCar()){
+			return getProjectOBJ().getGear();
+		}
+		return 0;
+	}
+	
+	@Deprecated
+	public void setVelocity(Vector v){this.loc.add(v);}
 	
 	public MoveType getMoveType(){return this.moving;}
 	

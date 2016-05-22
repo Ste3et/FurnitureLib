@@ -109,9 +109,8 @@ public class fArmorStand extends fEntity {
 	
 	  public fArmorStand setBasePlate(boolean b)
 	  {
-		b = !b;
 		byte b0 = (byte) getObject(getWatcher(), Byte.valueOf((byte) 0), 10);
-	    if (b) {
+	    if (!b) {
 	      b0 = (byte)(b0 | 0x8);
 	    } else {
 	      b0 = (byte)(b0 & 0xFFFFFFF7);
@@ -147,7 +146,7 @@ public class fArmorStand extends fEntity {
 		}
 		nStand.setInventory(inv);
 		nStand.setSmall(this.isSmall());
-		nStand.setInvisible(this.isVisible());
+		nStand.setInvisible(this.isInvisible());
 		nStand.setMarker(this.isMarker());
 		nStand.setGlowing(this.isGlowing());
 		nStand.setArms(this.hasArms());
@@ -163,10 +162,10 @@ public class fArmorStand extends fEntity {
 	}
 	
 	public ArmorStand getRealArmorStand(){
-		if(stand!=null){return stand;}
+		if(stand!=null){if(!stand.isDead()){return stand;}}
 		stand = (ArmorStand) getWorld().spawnEntity(getLocation(), getEntityType());
 		stand.setArms(this.hasArms());
-		stand.setVisible(this.isVisible());
+		stand.setVisible(this.isInvisible());
 		stand.setSmall(isSmall());
 		stand.setArms(hasArms());
 		stand.setBasePlate(hasBasePlate());
