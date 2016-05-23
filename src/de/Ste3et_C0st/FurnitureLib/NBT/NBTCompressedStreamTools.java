@@ -19,7 +19,7 @@ public class NBTCompressedStreamTools {
 		DataInputStream datainputstream = null;
 		try{
 			datainputstream = new DataInputStream(new BufferedInputStream(new GZIPInputStream(new ByteArrayInputStream(abyte))));
-		}catch (IOException | java.io.IOException e1){
+		}catch (Exception e1){
 			e1.printStackTrace();
 		}
 
