@@ -29,8 +29,8 @@ public class JsonBuilder {
     }
  
     public JsonBuilder parse(String text) {
-           String regex = "[&ง]{1}([a-fA-Fl-oL-O0-9]){1}";
-           text = text.replaceAll(regex, "ง$1");
+           String regex = "[&ยง]{1}([a-fA-Fl-oL-O0-9]){1}";
+           text = text.replaceAll(regex, "ยง$1");
            if(!Pattern.compile(regex).matcher(text).find()) {
               withText(text);
               return this;
@@ -41,7 +41,7 @@ public class JsonBuilder {
            for(String word : words) {
                try {
                    if(index != words[0].length())
-               withText(word).withColor("ง"+text.charAt(index - 1));
+               withText(word).withColor("ยง"+text.charAt(index - 1));
                } catch(Exception e){}
                index += word.length() + 2;
            }
