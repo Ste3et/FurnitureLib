@@ -103,7 +103,7 @@ public class NBTCompressedStreamTools {
 		}finally{
 			try{
 				dataoutputstream.close();
-			}catch (IOException | java.io.IOException e){
+			}catch (Exception e){
 				e.printStackTrace();
 			}
 		}
@@ -135,7 +135,7 @@ public class NBTCompressedStreamTools {
 		}finally{
 			try{
 				dataoutputstream.close();
-			}catch (IOException | java.io.IOException e){
+			}catch (Exception e){
 				e.printStackTrace();
 			}
 		}
