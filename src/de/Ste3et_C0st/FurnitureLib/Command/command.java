@@ -125,7 +125,7 @@ public class command implements CommandExecutor, Listener{
 				if(args.length==0){
 					sendHelp(p);
 					return true;
-				}else{
+				}else{		
 					switch (args[0]) {
 					case "list": new listCommand(sender, cmd, arg2, args); return true;
 					case "give": new giveCommand(sender, cmd, arg2, args); return true;
@@ -141,6 +141,10 @@ public class command implements CommandExecutor, Listener{
 								sCmd.runCommand(sender, cmd, arg2, args);
 								return true;
 							}
+						}
+						if(args[0].equalsIgnoreCase("download")){
+							p.sendMessage("§cThe FurnitureMaker plugin is not installed.");
+							return true;
 						}
 						sendHelp(p);
 						return true;
@@ -176,13 +180,14 @@ public class command implements CommandExecutor, Listener{
 		.withText("§6/furniture debug \n").withHoverEvent(HoverAction.SHOW_TEXT,"§6You can become some information about\n§6abaout the furniture you are rightclicked").withClickEvent(ClickAction.SUGGEST_COMMAND, "/furniture debug")
 		.withText("§6/furniture manage \n").withHoverEvent(HoverAction.SHOW_TEXT,"§6You can config the furniture\n§6that you are rightclicked").withClickEvent(ClickAction.SUGGEST_COMMAND, "/furniture manage")
 		.withText("§6/furniture purge §e<Time>\n").withHoverEvent(HoverAction.SHOW_TEXT, "§6Marked all furnitures to remove from the database").withClickEvent(ClickAction.SUGGEST_COMMAND, "/furniture purge <time>")
-		.withText("§6/furniture recipe §e<type>\n").withHoverEvent(HoverAction.SHOW_TEXT,"§6View recipe from a furniture").withClickEvent(ClickAction.SUGGEST_COMMAND, "/furniture recipe <type>")
-		.withText("§6/furniture remove §e<type>\n").withHoverEvent(HoverAction.SHOW_TEXT,"§6It's remove only one type of the \n§6Furniture").withClickEvent(ClickAction.SUGGEST_COMMAND, "/furniture remove <type>")
-		.withText("§6/furniture remove §e<player>\n").withHoverEvent(HoverAction.SHOW_TEXT,"§6Remove all furniture from an player").withClickEvent(ClickAction.SUGGEST_COMMAND, "/furniture remove <player>")
-		.withText("§6/furniture remove §e<world>\n").withHoverEvent(HoverAction.SHOW_TEXT,"§6Remove all furniture from an world").withClickEvent(ClickAction.SUGGEST_COMMAND, "/furniture remove <world>")
-		.withText("§6/furniture remove §e<plugin>\n").withHoverEvent(HoverAction.SHOW_TEXT,"§6It's remove only all Furniture from one Plugin").withClickEvent(ClickAction.SUGGEST_COMMAND, "/furniture remove <plugin>")
-		.withText("§6/furniture remove §e<ID>\n").withHoverEvent(HoverAction.SHOW_TEXT,"§6Remove a furniture by id").withClickEvent(ClickAction.SUGGEST_COMMAND, "/furniture remove <ID>")
-		.withText("§6/furniture remove §e<Distance>\n").withHoverEvent(HoverAction.SHOW_TEXT,"§6Remove all furniture in Distance").withClickEvent(ClickAction.SUGGEST_COMMAND, "/furniture remove <Distance>")
+		.withText("§6/furniture recipe §e<type> §a(edit/remove)\n").withHoverEvent(HoverAction.SHOW_TEXT,"§6View recipe from a furniture").withClickEvent(ClickAction.SUGGEST_COMMAND, "/furniture recipe <type>")
+		.withText("§6/furniture remove §e<type/player/world/plugin/ID/Distance>\n").withHoverEvent(HoverAction.SHOW_TEXT,"§6You can remove furnitures with the type:"
+		+ "\n§4Exemples: "
+		+ "\n§ctype = tent1"
+		+ "\n§cplayer = " + player.getName()
+		+ "\n§cworld = " + player.getWorld().getName()
+		+ "\n§cID = TOm4nvkoLW" 
+		+ "\n§cDistance = 5").withClickEvent(ClickAction.SUGGEST_COMMAND, "/furniture remove <type>")
 		.withText("§6/furniture remove §elookat\n").withHoverEvent(HoverAction.SHOW_TEXT,"§6Remove a furniture at you looked").withClickEvent(ClickAction.SUGGEST_COMMAND, "/furniture remove lookat")
 		.withText("§6/furniture remove §eall\n").withHoverEvent(HoverAction.SHOW_TEXT,"§6Remove all furniture and reset database").withClickEvent(ClickAction.SUGGEST_COMMAND, "/furniture remove all");
 		

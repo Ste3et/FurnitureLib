@@ -4,9 +4,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.plugin.Plugin;
 
-import ru.beykerykt.lightapi.chunks.ChunkInfo;
-import ru.beykerykt.lightapi.chunks.Chunks;
-import ru.beykerykt.lightapi.light.Lights;
+import ru.beykerykt.lightapi.LightAPI;
 
 public class LightManager {
 
@@ -15,22 +13,26 @@ public class LightManager {
 	
 	public LightManager(Plugin plugin){
 		if(Bukkit.getPluginManager().isPluginEnabled("LightAPI")){
-			enable=true;
-			this.plugin = plugin;
+			if(Bukkit.getPluginManager().getPlugin("LightAPI").getDescription().getVersion().startsWith("3")){
+				enable=true;
+				this.plugin = plugin;
+			}else{
+				FurnitureLib.getInstance().getLogger().warning("You use a old version of LightAPI this is not supportet: " + Bukkit.getPluginManager().getPlugin("LightAPI").getDescription().getVersion());
+			}
 		}
 	}
 	
 	public void addLight(Location location, Integer size){
 		if(!enable){return;}
-		Lights.createLight(location, size, false);
-		for (ChunkInfo info : Chunks.collectModifiedChunks(location)) Chunks.sendChunkUpdate(info);
+		LightAPI.createLight(location, size, false);
+		LightAPI.updateChunks(location, location.getWorld().getPlayers());
 	}
 	
 	public void removeLight(Location location){
 		if(!enable){return;}
 		try{
-			Lights.deleteLight(location, false);
-			for (ChunkInfo info : Chunks.collectModifiedChunks(location)) Chunks.sendChunkUpdate(info);
+			LightAPI.deleteLight(location, false);
+			LightAPI.updateChunks(location, location.getWorld().getPlayers());
 		}catch(Exception e){e.printStackTrace();}
 
 	}

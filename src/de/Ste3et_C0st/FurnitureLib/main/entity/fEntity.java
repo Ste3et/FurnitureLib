@@ -265,7 +265,6 @@ public abstract class fEntity extends fSerializer{
 	}
 
 	public void kill(Player p, boolean b) {
-		if (isFire()) setFire(false);
 		if (!getObjID().getPlayerList().contains(p))return;
 		PacketContainer destroy = new PacketContainer(PacketType.Play.Server.ENTITY_DESTROY);
 		destroy.getIntegerArrays().write(0, new int[] {getEntityID()});
@@ -282,22 +281,8 @@ public abstract class fEntity extends fSerializer{
 	}
 
 	public fEntity setFire(boolean b) {
-		byte b0 = (byte) getObject(getWatcher(), Byte.valueOf((byte) 0), 0);
-		if (b) {
-			b0 = (byte) (b0 | 0x01);
-		} else {
-			b0 = (byte) (b0 & 0xFFFFFFFE);
-		}
-		
-		if (Bukkit.getPluginManager().isPluginEnabled("LightAPI")){
-			if(b){
-				FurnitureLib.getInstance().getLightManager().addLight(getLocation(), 15);
-			}else{
-				FurnitureLib.getInstance().getLightManager().removeLight(getLocation());
-			}
-		}
-
-		setObject(getWatcher(), Byte.valueOf(b0), 0);
+		b(0, b);
+		if(!b){FurnitureLib.getInstance().getLightManager().addLight(getLocation(), 15);}else{FurnitureLib.getInstance().getLightManager().removeLight(getLocation());}
 		this.fire = b;return this;
 	}
 

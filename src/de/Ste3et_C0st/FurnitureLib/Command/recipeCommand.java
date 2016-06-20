@@ -23,10 +23,12 @@ public class recipeCommand {
 			return;
 		}
 		
+		if(sender==null) return;
+		
 		if(args.length==2){
 			if(sender instanceof Player){
 				if(!command.noPermissions(sender, "furniture.recipe")) return;
-				FurnitureLib.getInstance().getCraftingInv().openCrafting((Player) sender, pro);
+				FurnitureLib.getInstance().getCraftingInv().openCrafting((Player) sender, pro, false);
 				return;
 			}else{
 				sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("WrongArgument"));
@@ -35,7 +37,7 @@ public class recipeCommand {
 		}else if(args.length==3){
 			if(sender instanceof Player == false){
 				if(Bukkit.getPlayer(args[2])!=null){
-					FurnitureLib.getInstance().getCraftingInv().openCrafting(Bukkit.getPlayer(args[2]), pro);
+					FurnitureLib.getInstance().getCraftingInv().openCrafting(Bukkit.getPlayer(args[2]), pro, false);
 					return;
 				}else{
 					String s = FurnitureLib.getInstance().getLangManager().getString("PlayerNotOnline");
@@ -44,15 +46,35 @@ public class recipeCommand {
 					return;
 				}
 			}else{
-				sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("WrongArgument"));
-				return;
+				if(args[2].equalsIgnoreCase("edit")){
+					if(!command.noPermissions(sender, "furniture.recipe.edit")) return;
+					pro = getProject(args[1]);
+					if(pro == null){
+						sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("ProjectNotFound").replaceAll("#PROJECT#", args[1]));
+						return;
+					}
+					FurnitureLib.getInstance().getCraftingInv().openCrafting((Player) sender, pro, true);
+					return;
+				}else if(args[2].equalsIgnoreCase("remove")){
+					if(!command.noPermissions(sender, "furniture.recipe.remove")) return;
+					pro = getProject(args[1]);
+					if(pro == null){
+						sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("ProjectNotFound").replaceAll("#PROJECT#", args[1]));
+						return;
+					}
+					pro.getCraftingFile().removeCrafting();
+					pro.getCraftingFile().setCraftingDisabled(true);
+					sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("CraftingRemove"));
+					return;
+				}else{
+					sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("WrongArgument"));
+					return;
+				}
 			}
 		}else{
 			sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("WrongArgument"));
 			return;
 		}
-		
-		
 	}
 	
 	private Project getProject(String project){

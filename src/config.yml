@@ -5,6 +5,7 @@ config:
    useParticles: true
    #Disable Sitting on some furniture
    DisableSitting: false
+   viewDistance: 100
    LimitType: PLAYER
    CheckUpdate: true
    Creative:

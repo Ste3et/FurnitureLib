@@ -62,6 +62,7 @@ public final class FurnitureItemEvent extends Event implements Cancellable {
 	
 	@SuppressWarnings("deprecation")
 	public boolean canBuild(){
+		if(p==null||obj==null||getProject()==null) return true;
 		BlockFace face = isOnTheRightSide();
 		if(face==null){p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("NotONThisSide"));return false;}
 		if(clickedFace.equals(BlockFace.DOWN)){
@@ -69,7 +70,7 @@ public final class FurnitureItemEvent extends Event implements Cancellable {
 		}else{
 			if(!FurnitureLib.getInstance().getLocationUtil().canBuild(l, pro, p)){return false;}
 		}
-		
+		if(getBlock()==null) return false;
 	    if(!FurnitureLib.getInstance().getPermManager().isSolid(getBlock().getType(), getBlock().getData(), getProject().getPlaceableSide())){return false;}
 		if(p.isOp()) return true;
 		if(!pro.hasPermissions(p)){return false;}

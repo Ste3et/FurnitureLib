@@ -1,6 +1,5 @@
 package de.Ste3et_C0st.FurnitureLib.main.entity;
 
-import java.math.BigDecimal;
 import org.bukkit.Location;
 import org.bukkit.block.BlockFace;
 import org.bukkit.util.Vector;
@@ -80,12 +79,6 @@ public class Relative {
 	private void setSecondLocation(Location secondLocation) {
 		this.secondLocation = secondLocation;
 	}
-	
-    private Double round(Double d){
-    	BigDecimal b = new BigDecimal(d);
-    	b = b.setScale(2,BigDecimal.ROUND_HALF_UP);
-    	return b.doubleValue();
-    }
     
     public BlockFace yawToFaceRadial(float yaw) { return radial[Math.round(yaw / 45f) & 0x7];}
     public BlockFace yawToFace(float yaw) {return axis[Math.round(yaw / 90f) & 0x3];}
@@ -116,9 +109,6 @@ public class Relative {
 	private Location getRelativ(Location loc, BlockFace b, double z, double x){
 		Location l = loc.clone();
 		l.setYaw(FaceToYaw(b));
-		x = round(x);
-		z = round(z);
-
 		switch (b) {
 		case NORTH:
 			l.add(x,0,z);

@@ -2,7 +2,9 @@ package de.Ste3et_C0st.FurnitureLib.ShematicLoader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 import org.apache.commons.codec.binary.Base64;
 import org.bukkit.Bukkit;
@@ -10,10 +12,12 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.material.MaterialData;
 import org.bukkit.util.EulerAngle;
 
 import de.Ste3et_C0st.FurnitureLib.Events.FurnitureBlockBreakEvent;
@@ -43,12 +47,20 @@ public class ProjectLoader extends Furniture implements Listener{
 			YamlConfiguration config = new YamlConfiguration();
 			config.load(new File("plugins/FurnitureLib/plugin/DiceEditor/", getObjID().getProject()+".yml"));
 			header = getHeader(config);
-			setBlock(id.getStartLocation(), config, true);
+			Player player = setBlock(id.getStartLocation(), config, true);
+			if(player!=null){
+				player.sendMessage(FurnitureLib.getInstance().getLangManager().getString("NotEnoughSpace"));
+				getObjID().setSQLAction(SQLAction.REMOVE);
+				return;
+			}
+			
 			if(isFinish()){
 				registerInventory();
 				toggleLight(false);
 				Bukkit.getPluginManager().registerEvents(this, id.getProjectOBJ().getPlugin());
 				return;
+			}else{
+				
 			}
 			spawn(id.getStartLocation(), config, true);
 			Bukkit.getPluginManager().registerEvents(this, id.getProjectOBJ().getPlugin());
@@ -64,12 +76,20 @@ public class ProjectLoader extends Furniture implements Listener{
 			YamlConfiguration config = new YamlConfiguration();
 			config.load(new File("plugins/FurnitureLib/plugin/DiceEditor/", getObjID().getProject()+".yml"));
 			header = getHeader(config);
-			setBlock(id.getStartLocation(), config, rotate);
+			Player player = setBlock(id.getStartLocation(), config, rotate);
+			if(player!=null){
+				player.sendMessage(FurnitureLib.getInstance().getLangManager().getString("NotEnoughSpace"));
+				getObjID().setSQLAction(SQLAction.REMOVE);
+				return;
+			}
+			
 			if(isFinish()){
 				registerInventory();
 				toggleLight(false);
 				Bukkit.getPluginManager().registerEvents(this, id.getProjectOBJ().getPlugin());
 				return;
+			}else{
+				
 			}
 			spawn(id.getStartLocation(), config, rotate);
 			Bukkit.getPluginManager().registerEvents(this, id.getProjectOBJ().getPlugin());
@@ -162,27 +182,6 @@ public class ProjectLoader extends Furniture implements Listener{
 		toggleLight(true);
 	}
 	
-	public void toggleLight(boolean change){
-		for(fEntity stand : getfAsList()){
-			if(stand.getName().startsWith("#Light:")){
-				String[] str = stand.getName().split(":");
-				String lightBool = str[2];
-				if(change){
-					if(lightBool.equalsIgnoreCase("off#")){
-						stand.setName(stand.getName().replace("off#", "on#"));
-						if(!stand.isFire()){stand.setFire(true);}
-					}else if(lightBool.equalsIgnoreCase("on#")){
-						stand.setName(stand.getName().replace("on#", "off#"));
-						if(stand.isFire()){stand.setFire(false);}
-					}
-				}else{
-					if(lightBool.equalsIgnoreCase("on#")){if(!stand.isFire()){stand.setFire(true);}}
-				}
-			}
-		}
-		update();
-	}
-
 	@EventHandler
 	public void onFurnitureClick(FurnitureClickEvent e) {
 		if(getObjID()==null){return;}
@@ -216,6 +215,29 @@ public class ProjectLoader extends Furniture implements Listener{
 		}
 		toggleLight(true);
 	}
+	
+	public void toggleLight(boolean change){
+		for(fEntity stand : getfAsList()){
+			if(stand.getName().startsWith("#Light:")){
+				String[] str = stand.getName().split(":");
+				String lightBool = str[2];
+				if(change){
+					if(lightBool.equalsIgnoreCase("off#")){
+						stand.setName(stand.getName().replace("off#", "on#"));
+						if(!stand.isFire()){stand.setFire(true);}
+					}else if(lightBool.equalsIgnoreCase("on#")){
+						stand.setName(stand.getName().replace("on#", "off#"));
+						if(stand.isFire()){stand.setFire(false);}
+					}
+				}else{
+					if(lightBool.equalsIgnoreCase("on#")){if(!stand.isFire()){stand.setFire(true);}}
+				}
+			}
+		}
+		update();
+	}
+
+
 
 	public void spawn(Location loc, YamlConfiguration config, boolean rotate) {
 		try {
@@ -264,35 +286,64 @@ public class ProjectLoader extends Furniture implements Listener{
 	}
 	
 	@SuppressWarnings("deprecation")
-	private void setBlock(Location loc, YamlConfiguration config, boolean rotate){
+	private HashMap<Location, MaterialData> getBlockMap(Location loc, YamlConfiguration config, boolean rotate){
+		HashMap<Location, MaterialData> map = new HashMap<Location, MaterialData>();
 		try {
-			if(!config.isSet(header+".ProjectModels.Block")) return;
-			List<Block> blockList = new ArrayList<Block>();
-			if(!config.isConfigurationSection(header+".ProjectModels.Block")) return;
-			for(String s : config.getConfigurationSection(header+".ProjectModels.Block").getKeys(false)){
-				double x = config.getDouble(header+".ProjectModels.Block." + s + ".X-Offset");
-				double y = config.getDouble(header+".ProjectModels.Block." + s + ".Y-Offset");
-				double z = config.getDouble(header+".ProjectModels.Block." + s + ".Z-Offset");
-				Material m = Material.valueOf(config.getString(header+".ProjectModels.Block." + s + ".Type"));
-				byte b = (byte) config.getInt(header+".ProjectModels.Block." + s + ".Data");
-				Location armorLocation = getRelative(getLocation(), getBlockFace(), -z, -x).add(0, y, 0);
-				switch (getObjID().getProjectOBJ().getPlaceableSide()) {
-				case SIDE:
+			if(config.isConfigurationSection(header+".ProjectModels.Block")){
+				for(String s : config.getConfigurationSection(header+".ProjectModels.Block").getKeys(false)){
+					double x = config.getDouble(header+".ProjectModels.Block." + s + ".X-Offset");
+					double y = config.getDouble(header+".ProjectModels.Block." + s + ".Y-Offset");
+					double z = config.getDouble(header+".ProjectModels.Block." + s + ".Z-Offset");
+					Material m = Material.valueOf(config.getString(header+".ProjectModels.Block." + s + ".Type"));
+					byte b = (byte) config.getInt(header+".ProjectModels.Block." + s + ".Data");
+					Location armorLocation = getRelative(getLocation(), getBlockFace(), -z, -x).add(0, y, 0);
 					if(rotate){
-						armorLocation = getRelative(getLocation(), getBlockFace(), z, x).add(0, y, 0);
+						switch (getObjID().getProjectOBJ().getPlaceableSide()) {
+							case SIDE:armorLocation = getRelative(getLocation(), getBlockFace(), z, x).add(0, y, 0);break;
+							default: break;
+						}
 					}
-					break;
-				default:break;}
-				if(m.equals(Material.AIR)) return;
-				armorLocation.getBlock().setType(m);
-				armorLocation.getBlock().setData(b);
-				blockList.add(armorLocation.getBlock());
+					MaterialData data = new MaterialData(m, b);
+					map.put(armorLocation, data);
+				}
 			}
-			getObjID().addBlock(blockList);
 		}catch(Exception e){
 			e.printStackTrace();
 		}
-
+		return map;
+	}
+	
+	@SuppressWarnings("deprecation")
+	private Player setBlock(Location loc, YamlConfiguration config, boolean rotate){
+		HashMap<Location, MaterialData> map = getBlockMap(loc, config, rotate);
+		List<Block> blockList = new ArrayList<Block>();
+		boolean b = true, c = isFinish();
+		UUID uuid = getObjID().getUUID();
+		Player p = Bukkit.getPlayer(uuid);
+		for(Location location : map.keySet()){
+			MaterialData data = map.get(location);
+			if(!data.getItemType().equals(Material.AIR)){
+				if(!c){
+					if(p!=null&&p.isOnline()){
+						if(location.getBlock().getType().isSolid()){if(!location.getBlock().getType().equals(data.getItemType())){b = false;getLutil().particleBlock(location.getBlock());}}
+					}
+				}
+			}
+		}
+		
+		if(b){
+			p = null;
+			for(Location location : map.keySet()){
+				MaterialData data = map.get(location);
+				if(!data.getItemType().equals(Material.AIR)){
+					location.getBlock().setType(data.getItemType());
+					location.getBlock().setData(data.getData(), true);
+					blockList.add(location.getBlock());
+				}
+			}
+		}
+		getObjID().addBlock(blockList);
+		return p;
 	}
 	
 	private EulerAngle eulerAngleFetcher(NBTTagCompound eularAngle){

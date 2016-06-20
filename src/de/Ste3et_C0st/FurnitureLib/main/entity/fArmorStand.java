@@ -67,68 +67,68 @@ public class fArmorStand extends fEntity {
 	    this.angle.put(part, angle);
 	    angle = FurnitureLib.getInstance().getLocationUtil().Radtodegress(angle);
 	    Vector3f v = new Vector3f();
-	    setObject(getWatcher(), v.a(angle), part.getField());
+	    setObject(getWatcher(), v.a(angle), getField().getFieldFromPose(part));
 	    return this;
 	  }
 	
 	public fArmorStand setSmall(boolean b){
-		byte b0 = (byte) getObject(getWatcher(), Byte.valueOf((byte) 0), 10);
+		byte b0 = (byte) getObject(getWatcher(), Byte.valueOf((byte) 0), getField().getBitMask());
 		if (b)
 			b0 = (byte)(b0 | 0x1);
 		else {
 			b0 = (byte)(b0 & 0xFFFFFFFE);
 		}
-		setObject(getWatcher(), Byte.valueOf(b0),10);
+		setObject(getWatcher(), Byte.valueOf(b0),getField().getBitMask());
 		this.small = b;
 		return this;
 	}
 
 	public fArmorStand setArms(boolean b) {
-		byte b0 = (byte) getObject(getWatcher(), Byte.valueOf((byte) 0), 10);
+		byte b0 = (byte) getObject(getWatcher(), Byte.valueOf((byte) 0), getField().getBitMask());
 		if (b)
 			b0 = (byte)(b0 | 0x4);
 		else {
 			b0 = (byte)(b0 & 0xFFFFFFFB);
 		}
-		setObject(getWatcher(), Byte.valueOf(b0),10);
+		setObject(getWatcher(), Byte.valueOf(b0),getField().getBitMask());
 		this.arms = b;
 		return this;
 	}
 
 	public fArmorStand setGravity(boolean b) {
-		byte b0 = (byte) getObject(getWatcher(), Byte.valueOf((byte) 0), 10);
+		byte b0 = (byte) getObject(getWatcher(), Byte.valueOf((byte) 0), getField().getBitMask());
 		if (b)
 			b0 = (byte)(b0 | 0x2);
 		else {
 			b0 = (byte)(b0 & 0xFFFFFFFD);
 		}
-		setObject(getWatcher(), Byte.valueOf(b0),10);
+		setObject(getWatcher(), Byte.valueOf(b0),getField().getBitMask());
 		this.gravity = b;
 		return this;
 	}
 	
 	  public fArmorStand setBasePlate(boolean b)
 	  {
-		byte b0 = (byte) getObject(getWatcher(), Byte.valueOf((byte) 0), 10);
+		byte b0 = (byte) getObject(getWatcher(), Byte.valueOf((byte) 0), getField().getBitMask());
 	    if (!b) {
 	      b0 = (byte)(b0 | 0x8);
 	    } else {
 	      b0 = (byte)(b0 & 0xFFFFFFF7);
 	    }
-	    setObject(getWatcher(), Byte.valueOf(b0),10);
+	    setObject(getWatcher(), Byte.valueOf(b0),getField().getBitMask());
 	    this.baseplate = b;
 	    return this;
 	  }
 	
 	public fArmorStand setMarker(boolean b){
 		b = !b;
-		byte b0 = (byte) getObject(getWatcher(), Byte.valueOf((byte) 0), 10);
+		byte b0 = (byte) getObject(getWatcher(), Byte.valueOf((byte) 0), getField().getBitMask());
 		if (b)
 			b0 = (byte)(b0 | 0x10);
 		else {
 			b0 = (byte)(b0 & 0xFFFFFFEF);
 		}
-		setObject(getWatcher(), Byte.valueOf(b0),10);
+		setObject(getWatcher(), Byte.valueOf(b0),getField().getBitMask());
 		this.marker = !b;
 		return this;
 	}
@@ -161,7 +161,7 @@ public class fArmorStand extends fEntity {
 		return nStand;
 	}
 	
-	public ArmorStand getRealArmorStand(){
+	public ArmorStand toRealArmorStand(){
 		if(stand!=null){if(!stand.isDead()){return stand;}}
 		stand = (ArmorStand) getWorld().spawnEntity(getLocation(), getEntityType());
 		stand.setArms(this.hasArms());

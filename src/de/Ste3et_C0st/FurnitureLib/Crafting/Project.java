@@ -29,7 +29,7 @@ public class Project{
 	private PlaceableSide side;
 	private boolean EditorProject = false;
 	private InputStream model = null;
-	private int gear = -98451, maxSpeed = -98451, middle = -98451, front = -98451, backside = -98451;
+	private int gear = -98451, maxSpeed = -98451, middle = -98451;
 	private boolean isSearch = false, isCar = false;
 	private HashMap<String, Integer> permissionList = new HashMap<String, Integer>();
 	
@@ -49,9 +49,7 @@ public class Project{
 	public void setEditorProject(boolean b){this.EditorProject = b;}
 	public void setClass(Class<?> clas) {this.clas = clas;}
 	public void setName(String name){this.project = name;}
-	public int getFront(){return this.front;}
 	public int getMiddle(){return this.middle;}
-	public int getBackside(){return this.backside;}
 	public int getMaxSpeed(){return this.maxSpeed;}
 	public int getGear(){return this.gear;}
 	public int getWitdh(){return this.witdh;}
@@ -83,9 +81,7 @@ public class Project{
 			int i = 0;
 			for(fEntity entity : entityList){
 				String s = entity.getCustomName().toLowerCase();
-				if(s.equalsIgnoreCase("#car_front#")){front = i;}
-				else if(s.equalsIgnoreCase("#car_backside#")){backside = i;}
-				else if(s.startsWith("#car_middle#(")){
+				if(s.startsWith("#car_middle#(")){
 					s = s.replace("#car_middle#(", "");
 					s = s.replace(")", "");
 					if(s.contains(",")){
@@ -105,7 +101,7 @@ public class Project{
 				i++;
 			}
 			isSearch = true;
-			if(gear!=-98451&&maxSpeed!=-98451&&middle!=-98451&&front!=-98451&&backside!=-98451){
+			if(gear!=-98451&&maxSpeed!=-98451&&middle!=-98451){
 			    isCar = true;
 			}
 		}

@@ -69,7 +69,7 @@ public class ObjectID{
 	public void remMember(UUID uuid){uuidList.remove(uuid);}
 	public List<fEntity> getPacketList() {return packetList;}
 	public void setPacketList(List<fEntity> packetList) {this.packetList = packetList;}
-	public boolean isInRange(Player player) {return isInWorld(player) && (getStartLocation().distance(player.getLocation()) <= 100D);}
+	public boolean isInRange(Player player) {return isInWorld(player) && (getStartLocation().distance(player.getLocation()) <= viewDistance);}
 	public boolean isInWorld(Player player) {return getStartLocation().getWorld() == player.getLocation().getWorld();}
 	public void addArmorStand(fEntity packet) {packetList.add(packet);}
 	public void setPublicMode(PublicMode publicMode){this.publicMode = publicMode;}
@@ -77,6 +77,7 @@ public class ObjectID{
 	public double getSpeed(){return this.speed;}
 	public void setSpeed(double f){this.speed = f;}
 	public void setMoving(MoveType type){this.moving = type;}
+	public int viewDistance = 100;
 	
 	private boolean hasSearch = false;
 	
@@ -88,30 +89,12 @@ public class ObjectID{
 	}
 	
 	public boolean isCar(){return getProjectOBJ().isDriveable();}
-	
-	public fEntity getFront(){
-		if(!isCar()) return null;
-		if(!hasSearch){checkDrivable();}
-		if(isCar()){
-			return getPacketList().get(getProjectOBJ().getFront());
-		}
-		return null;
-	}
-	
+
 	public fEntity getMiddle(){
 		if(!isCar()){return null;}
 		if(!hasSearch){checkDrivable();}
 		if(isCar()){
 			return getPacketList().get(getProjectOBJ().getMiddle());
-		}
-		return null;
-	}
-	
-	public fEntity getBackside(){
-		if(!isCar()) return null;
-		if(!hasSearch){checkDrivable();}
-		if(isCar()){
-			return getPacketList().get(getProjectOBJ().getBackside());
 		}
 		return null;
 	}
@@ -200,6 +183,7 @@ public class ObjectID{
 			this.serial = RandomStringGenerator.generateRandomString(10,RandomStringGenerator.Mode.ALPHANUMERIC);
 			this.ObjectID = name+":"+this.serial+":"+plugin;
 			if(startLocation!=null){this.loc = startLocation;}
+			this.viewDistance = FurnitureLib.getInstance().getViewDistance();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -253,12 +237,20 @@ public class ObjectID{
 							if(i<6){
 								packet.getLocation().getWorld().playEffect(packet.getLocation(), Effect.STEP_SOUND, packet.getInventory().getHelmet().getType());
 								i++;
-							}
+							}else{break;}
 						}
 					}
 				}
 			 }
 		}catch(Exception e){}
+		if(i==0){
+			for (fEntity packet : asList) {
+				if(i<6){
+					packet.getLocation().getWorld().playEffect(packet.getLocation(), Effect.STEP_SOUND, Material.WOOD);
+					i++;
+				}else{break;}
+			}
+		}
 	}
 	
 	public String getPlayerName(){

@@ -38,6 +38,7 @@ import de.Ste3et_C0st.FurnitureLib.Utilitis.CraftingInv;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.LanguageManager;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.LocationUtil;
 import de.Ste3et_C0st.FurnitureLib.main.Type.EventType;
+import de.Ste3et_C0st.FurnitureLib.main.Type.ProtocolFields;
 import de.Ste3et_C0st.FurnitureLib.main.Type.PublicMode;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
@@ -68,7 +69,9 @@ public class FurnitureLib extends JavaPlugin{
 	private PublicMode mode;
 	private EventType type;
 	private WorldPool wPool;
+	private ProtocolFields field = ProtocolFields.Spigot110;
 	private int purgeTime = 30;
+	private int viewDistance = 100;
 	
 	public LanguageManager getLangManager(){return this.lmanager;}
 	public LightManager getLightManager(){return this.lightMgr;}
@@ -89,8 +92,10 @@ public class FurnitureLib extends JavaPlugin{
 	public PluginManager getPluginManager(){return this.getServer().getPluginManager();}
 	public BlockManager getBlockManager() {return bmanager;}
 	public SQLManager getSQLManager(){return this.sqlManager;}
+	public ProtocolFields getField() {return this.field;}
 	public WorldPool getWorldPool(){return this.wPool;}
 	public int getPurgeTime(){return this.purgeTime;}
+	public int getViewDistance(){return this.viewDistance;}
 	public static FurnitureLib getInstance(){return instance;}
 	public boolean isAutoPurge(){return this.autoPurge;}
 	public boolean isPurgeRemove(){return this.removePurge;}
@@ -115,11 +120,12 @@ public class FurnitureLib extends JavaPlugin{
 		if(!isEnable("Vault", true)){send("§cVault not found");}
 		if(!setupPermissions()){send("§cNo Permission System found"); Bukkit.getPluginManager().disablePlugin(this);}
 		try{new Metrics(this).start();}catch(Exception e){e.printStackTrace();}
-		if(getServer().getBukkitVersion().startsWith("1.9")){
+		if(getServer().getBukkitVersion().startsWith("1.9") || getServer().getBukkitVersion().startsWith("1.10")){
 			instance = this;
 			getConfig().addDefaults(YamlConfiguration.loadConfiguration(getResource("config.yml")));
 			getConfig().options().copyDefaults(true);
 			saveConfig();
+			field = ProtocolFields.getField(getServer().getBukkitVersion());
 			this.lUtil = new LocationUtil();
 			this.manager = new FurnitureManager();
 			this.colorManager = new ColorUtil();
@@ -136,6 +142,7 @@ public class FurnitureLib extends JavaPlugin{
 			this.purgeTime = getConfig().getInt("config.Purge.time");
 			this.autoPurge = getConfig().getBoolean("config.Purge.autoPurge");
 			this.removePurge = getConfig().getBoolean("config.Purge.removePurge");
+			this.viewDistance = getConfig().getInt("config.viewDistance");
 			this.updater = new Updater();
 			this.wPool = new WorldPool();
 			this.wPool.loadWorlds();

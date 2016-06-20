@@ -30,12 +30,12 @@ public class Type {
 	public enum CenterType{LEFT, RIGHT, CENTER, FRONT}
 	public enum PlaceableSide{TOP,BOTTOM,SIDE, WATER}
 	public enum BodyPart{
-		HEAD("Head",11, new EulerAngle(0D,0D,0D)), 
-		BODY("Body",12, new EulerAngle(0D,0D,0D)), 
-		LEFT_ARM("Left_Arm",13, new EulerAngle(-0.174533, 0.0D, -0.174533)), 
-		RIGHT_ARM("Right_Arm",14, new EulerAngle(-0.261799, 0.0D, 0.174533)), 
-		LEFT_LEG("Left_Leg",15, new EulerAngle(-0.0174533, 0.0D, -0.0174533)), 
-		RIGHT_LEG("Right_Leg",16, new EulerAngle(0.0174533, 0.0D, 0.0174533));
+		HEAD("Head",12, new EulerAngle(0D,0D,0D)), 
+		BODY("Body",13, new EulerAngle(0D,0D,0D)), 
+		LEFT_ARM("Left_Arm",14, new EulerAngle(-0.174533, 0.0D, -0.174533)), 
+		RIGHT_ARM("Right_Arm",15, new EulerAngle(-0.261799, 0.0D, 0.174533)), 
+		LEFT_LEG("Left_Leg",16, new EulerAngle(-0.0174533, 0.0D, -0.0174533)), 
+		RIGHT_LEG("Right_Leg",17, new EulerAngle(0.0174533, 0.0D, 0.0174533));
 		
 		String name;
 		EulerAngle angle;
@@ -58,6 +58,48 @@ public class Type {
         public EulerAngle getDefAngle(){
         	return angle;
         }
+	}
+	
+	public enum ProtocolFields{
+		Spigot19(10,11,12,13,14,15,16),
+		Spigot110(11,12,13,14,15,16,17);
+		
+		int bitMask, HeadRotation, BodyRotation, LeftArmRotation, RightArmRotation, LeftLegRotation, RightLegRotation;
+		ProtocolFields(int a,int b, int c, int d, int e, int f, int g){
+			this.bitMask = a;
+			this.HeadRotation = b;
+			this.BodyRotation = c;
+			this.LeftArmRotation = d;
+			this.RightArmRotation = e;
+			this.LeftLegRotation = f;
+			this.RightLegRotation = g;
+		}
+		
+		public int getBitMask(){return this.bitMask;}
+		public int getHeadRotation(){return this.HeadRotation;}
+		public int getBodyRotation(){return this.BodyRotation;}
+		public int getLeftArmRotation(){return this.LeftArmRotation;}
+		public int getRightArmRotation(){return this.RightArmRotation;}
+		public int getLeftLegRotation(){return this.LeftLegRotation;}
+		public int getRightLegRotation(){return this.RightLegRotation;}
+		
+		public static ProtocolFields getField(String s){
+			if(s.startsWith("1.9")) return Spigot19;
+			if(s.startsWith("1.10")) return Spigot110;
+			return Spigot110;
+		}
+		
+		public int getFieldFromPose(BodyPart part){
+			switch (part) {
+			case HEAD:return getHeadRotation();
+			case BODY:return getBodyRotation();
+			case LEFT_ARM:return getLeftArmRotation();
+			case RIGHT_ARM:return getRightArmRotation();
+			case LEFT_LEG:return getLeftLegRotation();
+			case RIGHT_LEG:return getRightLegRotation();
+			}
+			return BodyRotation;
+		}
 	}
 
 	public enum EventType{

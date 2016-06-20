@@ -5,20 +5,21 @@ import java.util.List;
 
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
+import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 
 public class LanguageManager{
 
-	String lang;
-	Plugin plugin;
-	HashMap<String, String> hash = new HashMap<String, String>();
+	private String lang;
+	private Plugin plugin;
+	private HashMap<String, String> hash = new HashMap<String, String>();
 	
-	HashMap<String, List<String>> invHashList = new HashMap<String, List<String>>();
-	HashMap<String, Material> invMatList = new HashMap<String, Material>();
-	HashMap<String, String> invStringList = new HashMap<String, String>();
-	HashMap<String, Short> invShortList = new HashMap<String, Short>();
+	private HashMap<String, List<String>> invHashList = new HashMap<String, List<String>>();
+	private HashMap<String, Material> invMatList = new HashMap<String, Material>();
+	private HashMap<String, String> invStringList = new HashMap<String, String>();
+	private HashMap<String, Short> invShortList = new HashMap<String, Short>();
 	
 	config c;
 	FileConfiguration file;
@@ -44,6 +45,18 @@ public class LanguageManager{
 		file.options().copyDefaults(true);
 		c.saveConfig(lang, file, "/lang/");
 		if(file==null) return;
+		for(String str : file.getConfigurationSection("message").getKeys(false)){
+			String string = file.getString("message"+"."+str);
+			hash.put(str, string);
+		}
+	}
+	
+	public void addDefault(String a, Configuration defaults){
+		c = new config(plugin);
+		file = c.getConfig(lang + a, "/lang/");
+		file.addDefaults(defaults);
+		file.options().copyDefaults(true);
+		c.saveConfig(lang + a, file, "/lang/");
 		for(String str : file.getConfigurationSection("message").getKeys(false)){
 			String string = file.getString("message"+"."+str);
 			hash.put(str, string);

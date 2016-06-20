@@ -7,11 +7,14 @@ import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.PlayerDeathEvent;
 import org.bukkit.event.inventory.PrepareItemCraftEvent;
 import org.bukkit.event.player.PlayerChangedWorldEvent;
@@ -23,7 +26,6 @@ import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.material.FlowerPot;
 
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.HiddenStringUtils;
@@ -121,6 +123,7 @@ public class ChunkOnLoad implements Listener{
 	@EventHandler
 	public void onClick(final PlayerInteractEvent event){
 		final Player p = event.getPlayer();
+		if(p==null) return;
 		if(p.getGameMode().equals(GameMode.SPECTATOR)){return;}
 		if(event.getAction().equals(Action.RIGHT_CLICK_BLOCK)){
 			if(event.getClickedBlock()==null){return;}
@@ -130,7 +133,7 @@ public class ChunkOnLoad implements Listener{
 			if(FurnitureLib.getInstance().getBlockManager()!=null){
 				if(FurnitureLib.getInstance().getBlockManager().getList().contains(event.getClickedBlock().getLocation())){
 					boolean b = true;
-					if(event.getClickedBlock()!=null&&event.getClickedBlock().getState().getData() instanceof FlowerPot){
+					if(event.getClickedBlock()!=null&&event.getClickedBlock().getState().getType().equals(Material.FLOWER_POT)){
 						b = false;
 					}
 					ObjectID objID = null;
@@ -221,11 +224,24 @@ public class ChunkOnLoad implements Listener{
 		}
 	}
 	
+	@EventHandler
+	public void explode(EntityExplodeEvent e){
+		List<Block> blockList = new ArrayList<Block>(e.blockList());
+		List<Location> furnitureBlocks = FurnitureLib.getInstance().getBlockManager().getList();
+		for(Block b : blockList){
+			if(furnitureBlocks.contains(b.getLocation())){
+				e.blockList().remove(b);
+			}
+		}
+	}
+	
+	
 	private void spawn(FurnitureItemEvent e){
 		if(e.isCancelled()){return;}
 		if(!e.getProject().hasPermissions(e.getPlayer())){return;}
 		ObjectID obj = e.getObjID();
 		if(!e.canBuild()){return;}
+		if(!FurnitureLib.getInstance().getPermManager().canBuild(e.getPlayer(), obj.getStartLocation())){return;}
 		FurnitureLib.getInstance().spawn(obj.getProjectOBJ(), obj);
 		e.finish();
 		e.removeItem();

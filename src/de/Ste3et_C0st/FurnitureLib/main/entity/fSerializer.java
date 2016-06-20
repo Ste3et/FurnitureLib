@@ -58,8 +58,6 @@ public class fSerializer extends fProtocol{
 	public void setMetadata(fInventory inventory){set("Inventory", getFromInventory(inventory));}
 	public void set(String field, NBTTagCompound value){metadata.set(field, value);}
 	
-	
-	
 	public NBTTagCompound getMetaData(fArmorStand stand){
 		getDefNBT(stand);
 		setMetadata("Arms", stand.hasArms());

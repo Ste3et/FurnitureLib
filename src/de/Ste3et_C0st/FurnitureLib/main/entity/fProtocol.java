@@ -11,6 +11,7 @@ import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
+import de.Ste3et_C0st.FurnitureLib.main.Type.ProtocolFields;
 
 public class fProtocol{
 
@@ -20,6 +21,7 @@ public class fProtocol{
 	private World w;
 	private EntityType type;
 	private ObjectID id;
+	private ProtocolFields fields = ProtocolFields.Spigot19;
 	
 	public World getWorld(){return this.w;}
 	public EntityType getEntityType(){return this.type;}
@@ -28,6 +30,7 @@ public class fProtocol{
 	public PacketContainer getHandle(){return this.container;}
 	public ObjectID getObjID(){return this.id;}
 	public void setObjectID(ObjectID id){this.id = id;}
+	public ProtocolFields getField(){return this.fields;}
 	public fProtocol(World w, EntityType type, ObjectID id){
 		this.manager = ProtocolLibrary.getProtocolManager();
 		this.w = w;
@@ -35,5 +38,6 @@ public class fProtocol{
 		this.type = type;
 		this.watcher = FurnitureLib.getInstance().getFurnitureManager().getDefaultWatcher(getWorld(), getEntityType());
 		this.container = new PacketContainer(PacketType.Play.Server.SPAWN_ENTITY_LIVING);
+		this.fields = FurnitureLib.getInstance().getField();
 	}
 }

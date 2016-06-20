@@ -1,25 +1,27 @@
 message:
-   FurnitureOnThisPlace: "&aThere is already a furniture at this position."
-   NotEnoughSpace: "&aThere is not enough space to place this object."
-   NoPermissions: "&cYou don't have permissions to do this."
-   LimitReached: "&cThe limit of this object is reached."
-   PlayerNotOnline: "&cThe player #PLAYER# is not online."
-   ProjectNotFound: "&cThe project #PROJECT# does not exist."
-   ProjectAlreadyExist: "&cThe project #PROJECT# already exists."
-   WrongArgument: "&cThe command you've entered contains wrong arguments."
-   GivePlayer: "&aThe Player #PLAYER# received #PROJECT#(#AMOUNT#)."
-   DebugModeEntered: "&aYou have entered the debug mode. Please rightclick a furniture."
-   ManageModeEntered: "&aYou have entered manage mode. Please rightclick a furniture."
-   RemoveDistance: "&eSuccessfully removed #AMOUNT# furnitures."
-   RemoveID: "&eSuccessfully removed #OBJID#"
-   RemovePlugin: "&eSuccessfully removed all furnitures set by #PLUGIN#."
-   RemoveType: "&eSuccessfully removed all #TYPE#s."
-   RemoveAll: "&eSuccessfully removed all furnitures."
-   RemovePlayer: "&eSuccessfully removed all objects by the player #PLAYER#."
-   RemoveLookat: "&eSuccessfully removed #SERIAL#."
-   SideNotFound: "&cThis page deos not exist."
-   SideNavigation: "&eType /furniture list <option> (0-#MAX#) to list all furnitures."
-   WrongOwner: "&cYou are not the owner of this furniture!"
-   LimitAouncer: "&6You have placed &2#CURRENT#&6/&c#MAX# of &e#TYPE#."
-   NotONThisSide: "&cYou may not place the furniture on this side of the block."
-   PurgeMarked: "You marked #AMOUNT# furnitures to remove from the Database"
+  FurnitureOnThisPlace: '&aThere is already a piece of furniture at this position.'
+  NotEnoughSpace: '&aThere is not enough space to place this object.'
+  NoPermissions: '&cYou do not have permissions to do this.'
+  LimitReached: '&cThe limit of this object is reached.'
+  PlayerNotOnline: '&cThe player #PLAYER# is not online.'
+  ProjectNotFound: '&cThe project #PROJECT# does not exist.'
+  ProjectAlreadyExist: '&cThe project #PROJECT# already exists.'
+  WrongArgument: '&cThe command you have entered contains wrong arguments.'
+  GivePlayer: '&aThe player #PLAYER# received #PROJECT#(#AMOUNT#).'
+  DebugModeEntered: '&aYou have entered the debug mode. Please right click a piece of furniture.'
+  ManageModeEntered: '&aYou have entered manage mode. Please right click a piece of furniture.'
+  RemoveDistance: '&eSuccessfully removed #AMOUNT# furnitures.'
+  RemoveID: '&eSuccessfully removed #OBJID#'
+  RemovePlugin: '&eSuccessfully removed all furnitures set by #PLUGIN#.'
+  RemoveType: '&eSuccessfully removed all #TYPE#s.'
+  RemoveAll: '&eSuccessfully removed all furnitures.'
+  RemovePlayer: '&eSuccessfully removed all objects by the player #PLAYER#.'
+  RemoveLookat: '&eSuccessfully removed #SERIAL#.'
+  SideNotFound: '&cThis page does not exist.'
+  SideNavigation: '&eType /furniture list <option> (0-#MAX#) to list all furnitures.'
+  WrongOwner: '&cYou are not the owner of this piece of furniture!'
+  LimitAouncer: '&6You have placed &2#CURRENT#&6/&c#MAX# of &e#TYPE#.'
+  NotONThisSide: '&cYou may not place this piece of furniture on this side of the block.'
+  PurgeMarked: '&aYou marked #AMOUNT# furnitures to be removed from the database.'
+  CraftingEdit: '&eYou have update the Furniture Crafting Recipe'
+  CraftingRemove: '&aYou remove the Crafting recipe on the current server instance'

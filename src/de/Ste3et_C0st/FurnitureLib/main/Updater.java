@@ -4,7 +4,11 @@ import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
+
 import org.bukkit.entity.Player;
+
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 public class Updater {
 
@@ -13,7 +17,6 @@ public class Updater {
 	
 	String currentVersion = "";
 	String newVersion = "N/A";
-	String downloadLink = "http://www.spigotmc.org/resources/furniturelibary-free-alpha.9368/download?version=" + newVersion;
 	Long updateTime = 0L;
 	UpdatePriority priority1 = UpdatePriority.NO_UPDATE;
 	CurrentPriority priority2 = CurrentPriority.NORMAL;
@@ -68,15 +71,18 @@ public class Updater {
 	
 	private String getLatestVersionOnSpigot() {
         try {
-	        URL website = new URL("http://dicecraft.de/API/furnitureLibVersion.txt");
+	        URL website = new URL("https://api.spiget.org/v1/resources/9368");
 	        URLConnection connection = website.openConnection();
 	        BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 	        StringBuilder response = new StringBuilder();
 	        String inputLine;
 	        while ((inputLine = in.readLine()) != null) response.append(inputLine);
 	        in.close();
-	        return response.toString();
+	        JsonParser parser = new JsonParser();
+	        JsonObject o = parser.parse(response.toString()).getAsJsonObject();       
+	        return o.get("version").getAsString();
         } catch (Exception ex) {
+        	ex.printStackTrace();
             System.err.println("Failed to check for a update on spigot for FurnitureLib");
         }
         return null;
