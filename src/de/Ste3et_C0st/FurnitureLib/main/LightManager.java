@@ -5,6 +5,7 @@ import org.bukkit.Location;
 import org.bukkit.plugin.Plugin;
 
 import ru.beykerykt.lightapi.LightAPI;
+import ru.beykerykt.lightapi.chunks.ChunkInfo;
 
 public class LightManager {
 
@@ -25,14 +26,18 @@ public class LightManager {
 	public void addLight(Location location, Integer size){
 		if(!enable){return;}
 		LightAPI.createLight(location, size, false);
-		LightAPI.updateChunks(location, location.getWorld().getPlayers());
+		for(ChunkInfo info: LightAPI.collectChunks(location)){
+			LightAPI.updateChunks(info);
+		}
 	}
 	
 	public void removeLight(Location location){
 		if(!enable){return;}
 		try{
 			LightAPI.deleteLight(location, false);
-			LightAPI.updateChunks(location, location.getWorld().getPlayers());
+			for(ChunkInfo info: LightAPI.collectChunks(location)){
+				LightAPI.updateChunks(info);
+			}
 		}catch(Exception e){e.printStackTrace();}
 
 	}
