@@ -94,6 +94,35 @@ public class FurnitureManager {
 	public void remove(ObjectID id){
 		if(this.objecte.isEmpty()){return;}
 		id.setSQLAction(SQLAction.REMOVE);
+		
+		
+		ProjectConfig c = new ProjectConfig();
+		FileConfiguration file = c.getConfig(id.getSerial(), "metadata/");
+		String string = file.getString("inventory");
+		if (file.isSet("inventory")) {
+			Location loc = id.getStartLocation();
+			byte[] by = Base64.decodeBase64(string);
+			ByteArrayInputStream bin = new ByteArrayInputStream(by);
+			try {
+				NBTTagCompound compound = NBTCompressedStreamTools.read(bin);
+				NBTTagCompound inventory = compound.getCompound("inventory");
+				int size = compound.getInt("size");
+				Inventory inv = Bukkit.createInventory(null, size, id
+						.getProjectOBJ().getCraftingFile().getRecipe()
+						.getResult().getItemMeta().getDisplayName());
+				for(int i = 0; i<size;i++){
+					if(!inventory.getString(i+"").equalsIgnoreCase("NONE")){
+						ItemStack is = new CraftItemStack().getItemStack(inventory.getCompound(i+""));
+						loc.getWorld().dropItemNaturally(loc, is);
+						loc.getWorld().playSound(loc, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1.0f, 1.3f);
+					}
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+		}
+		
 		if(!id.getBlockList().isEmpty()){
 			FurnitureLib.getInstance().getBlockManager().destroy(id.getBlockList(), false);
 			id.getBlockList().clear();
