@@ -1,6 +1,6 @@
 package de.Ste3et_C0st.FurnitureLib.main;
 
-mport java.io.ByteArrayInputStream;
+import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
