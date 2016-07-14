@@ -33,6 +33,12 @@
         <id>pex-repo</id>
         <url>http://pex-repo.aoeu.xyz/</url>
     </repository>
+    
+    <repository>
+	<id>jitpack.io</id>
+	<url>https://jitpack.io</url>
+    </repository>
+    
 </repositories>
 
 <dependencies>
@@ -61,7 +67,7 @@
     <dependency>
         <groupId>net.milkbowl.vault</groupId>
         <artifactId>VaultAPI</artifactId>
-        <version>1.6</version>
+        <version>1.5</version>
         <scope>provided</scope>
     </dependency>
     <!-- PermissionsEx -->
@@ -70,6 +76,29 @@
     	<artifactId>PermissionsEx</artifactId>
     	<version>1.23.2-SNAPSHOT</version>
     </dependency>
+    
+    <!-- LightAPI -->
+    <dependency>
+	<groupId>com.github.BeYkeRYkt</groupId>
+	<artifactId>LightAPI</artifactId>
+	<version>3.2.1</version>
+    </dependency>
+    
+    <!-- https://mvnrepository.com/artifact/commons-codec/commons-codec -->
+    <!-- Apache Commons-Codec -->
+    <dependency>
+    	<groupId>commons-codec</groupId>
+    	<artifactId>commons-codec</artifactId>
+    	<version>1.10</version>
+    </dependency>
+
+    <!-- ProtectionLib - MAY NOT WORK! -->
+    <dependency>
+	<groupId>com.github.Ste3et</groupId>
+	<artifactId>ProtectionLib</artifactId>
+	<version>a117346</version>
+    </dependency>
+
 </dependencies>
 
   
