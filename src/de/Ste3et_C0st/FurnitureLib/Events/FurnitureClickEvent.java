@@ -25,7 +25,6 @@ public final class FurnitureClickEvent extends Event implements Cancellable{
     public static HandlerList getHandlerList() {return handlers;}
     
     public FurnitureClickEvent(Player p, fArmorStand a, ObjectID o, Location l) {
-    	if(p==null||a==null||o==null||l==null){return;}
     	if(o.getSQLAction().equals(SQLAction.REMOVE)){return;}
     	this.p = p;
     	this.a = a;

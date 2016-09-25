@@ -177,7 +177,7 @@ public class removeCommand {
 		if(objList==null){return i;}
 		if(objList.isEmpty()){return i;}
 		for(ObjectID obj : objList){
-			FurnitureLib.getInstance().getFurnitureManager().remove(obj);
+			obj.remove();
 			i++;
 		}
 		return i;

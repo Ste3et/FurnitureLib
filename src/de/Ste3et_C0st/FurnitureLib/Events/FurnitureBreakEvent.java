@@ -30,7 +30,6 @@ public final class FurnitureBreakEvent extends Event implements Cancellable{
     	this.a = a;
     	this.o = o;
     	this.l = l;
-    	FurnitureLib.getInstance().getFurnitureManager();
     }
     
     public fArmorStand getArmorStandPacket(){return this.a;}

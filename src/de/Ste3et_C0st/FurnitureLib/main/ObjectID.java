@@ -125,6 +125,7 @@ public class ObjectID{
 	public void setStartLocation(Location loc) {this.loc = loc;}
 	
 	public void updatePlayerView(Player player){
+		if(manager.getIgnoreList().contains(player.getUniqueId())){return;}
 		if(isPrivate()){return;}
 		if(getPacketList().isEmpty()){return;}
 		if(getSQLAction().equals(SQLAction.REMOVE)){return;}
@@ -202,6 +203,23 @@ public class ObjectID{
 		FurnitureLib.getInstance().getLimitManager().removePlayer(this);
 		Location loc = getStartLocation();
 		dropItem(p, loc.clone().add(0, 1, 0), getProjectOBJ());
+		deleteEffect(packetList);
+		FurnitureLib.getInstance().getBlockManager().destroy(getBlockList(), false);
+		removeAll();
+		locList.clear();
+		manager.remove(this);
+		FurnitureLib.getInstance().getLimitManager().removePlayer(this);
+	}
+	
+	public void remove(){
+		if(!this.packetList.isEmpty()){
+			for(fEntity entity : packetList){
+				if(entity.isFire()){
+					entity.setFire(false);
+				}
+			}
+		}
+		FurnitureLib.getInstance().getLimitManager().removePlayer(this);
 		deleteEffect(packetList);
 		FurnitureLib.getInstance().getBlockManager().destroy(getBlockList(), false);
 		removeAll();

@@ -27,7 +27,7 @@ public class LightManager {
 		if(!enable){return;}
 		LightAPI.createLight(location, size, false);
 		for(ChunkInfo info: LightAPI.collectChunks(location)){
-			LightAPI.updateChunks(info);
+			LightAPI.updateChunk(info);
 		}
 	}
 	
@@ -36,7 +36,7 @@ public class LightManager {
 		try{
 			LightAPI.deleteLight(location, false);
 			for(ChunkInfo info: LightAPI.collectChunks(location)){
-				LightAPI.updateChunks(info);
+				LightAPI.updateChunk(info);
 			}
 		}catch(Exception e){e.printStackTrace();}
 

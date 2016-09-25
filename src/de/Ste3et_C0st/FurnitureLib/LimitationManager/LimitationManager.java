@@ -54,10 +54,13 @@ public class LimitationManager {
 	
 	private Integer returnIntProject(Player p, Project pro){
 		int i = 0;
+		if(pro==null) return i;
 		if(playerList.containsKey(p.getUniqueId())){
 			for(ObjectID obj : playerList.get(p.getUniqueId())){
-				if(obj.getProjectOBJ().equals(pro)){
-					i++;
+				if(obj!=null&&obj.getProjectOBJ()!=null){
+					if(obj.getProjectOBJ().equals(pro)){
+						i++;
+					}
 				}
 			}
 		}

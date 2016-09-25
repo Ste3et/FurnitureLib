@@ -30,7 +30,7 @@ public class NBTCompressedStreamTools {
 		}finally{
 			try{
 				datainputstream.close();
-			}catch (IOException e){
+			}catch (Exception e){
 				e.printStackTrace();
 			}
 		}

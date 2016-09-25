@@ -41,10 +41,11 @@ public class LanguageManager{
 		}
 		c = new config(plugin);
 		file = c.getConfig(lang, "/lang/");
+		if(file==null) return;
 		file.addDefaults(YamlConfiguration.loadConfiguration(plugin.getResource("language/" + s + ".yml")));
 		file.options().copyDefaults(true);
 		c.saveConfig(lang, file, "/lang/");
-		if(file==null) return;
+		
 		for(String str : file.getConfigurationSection("message").getKeys(false)){
 			String string = file.getString("message"+"."+str);
 			hash.put(str, string);
@@ -67,10 +68,11 @@ public class LanguageManager{
 	private void addDefaultInv(){
 		c = new config(plugin);
 		file = c.getConfig("manageInv", "");
+		if(file==null) return;
 		file.addDefaults(YamlConfiguration.loadConfiguration(plugin.getResource("manageInv.yml")));
 		file.options().copyDefaults(true);
 		c.saveConfig("manageInv", file, "");
-		if(file==null) return;
+		
 		for(String str : file.getConfigurationSection("inv.mode").getKeys(false)){
 			invHashList.put(str, file.getStringList("inv.mode." + str + ".Text"));
 			invMatList.put(str, Material.getMaterial(file.getInt("inv.mode." + str + ".Material")));
@@ -106,6 +108,8 @@ public class LanguageManager{
 	
 	
 	public String getString(String a){
+		if(hash.isEmpty()) return "§cHash is empty";
+		if(!hash.containsKey(a)) return "§ckey not found";
 		String b = hash.get(a);
 		return ChatColor.translateAlternateColorCodes('&', b);
 	}

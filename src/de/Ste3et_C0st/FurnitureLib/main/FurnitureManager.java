@@ -3,6 +3,7 @@ package de.Ste3et_C0st.FurnitureLib.main;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -24,10 +25,11 @@ public class FurnitureManager {
 	private Integer i = 0;
 	private List<ObjectID> objecte = new ArrayList<ObjectID>();
 	private List<Project> projects = new ArrayList<Project>();
+	private List<UUID> ignoreList = new ArrayList<UUID>();
 	public void setLastID(Integer i){this.i = i;}
 	public List<ObjectID> getObjectList(){return this.objecte;}
 	public List<Chunk> chunkList = new ArrayList<Chunk>();
-	
+	public List<UUID> getIgnoreList(){return this.ignoreList;}
 	public void addProject(Project project){
 		if(isExist(project.getName())){
 			getProject(project.getName()).setPlugin(project.getPlugin());
@@ -195,7 +197,9 @@ public class FurnitureManager {
 				break;
 			}
 		}
-		if(obj.getSQLAction().equals(SQLAction.REMOVE)){return null;}
+		if(obj !=null){
+			if(obj.getSQLAction().equals(SQLAction.REMOVE)){return null;}
+		}
 		return obj;
 	}
 

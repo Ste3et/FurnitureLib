@@ -82,7 +82,6 @@ public class Updater {
 	        JsonObject o = parser.parse(response.toString()).getAsJsonObject();       
 	        return o.get("version").getAsString();
         } catch (Exception ex) {
-        	ex.printStackTrace();
             System.err.println("Failed to check for a update on spigot for FurnitureLib");
         }
         return null;

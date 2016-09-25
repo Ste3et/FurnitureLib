@@ -1,8 +1,8 @@
 package de.Ste3et_C0st.FurnitureLib.main;
 
 import java.lang.reflect.Constructor;
-import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 import java.util.logging.Logger;
@@ -16,6 +16,7 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.PluginCommand;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -37,6 +38,7 @@ import de.Ste3et_C0st.FurnitureLib.Utilitis.ColorUtil;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.CraftingInv;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.LanguageManager;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.LocationUtil;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.config;
 import de.Ste3et_C0st.FurnitureLib.main.Type.EventType;
 import de.Ste3et_C0st.FurnitureLib.main.Type.ProtocolFields;
 import de.Ste3et_C0st.FurnitureLib.main.Type.PublicMode;
@@ -51,9 +53,9 @@ public class FurnitureLib extends JavaPlugin{
 	private LocationUtil lUtil;
 	private static FurnitureLib instance;
 	private FurnitureManager manager;
-	private Connection con;
 	private ProtectionManager Pmanager;
 	private LightManager lightMgr;
+	private HashMap<String, List<String>> permissionKit = new HashMap<String, List<String>>();
 	private boolean useGamemode = true, canSit = true, update = true, useParticle = true, useRegionMemberAccess = false, 
 					autoPurge = false, removePurge = false, creativeInteract = true, creativePlace = true;
 	private CraftingInv craftingInv;
@@ -82,7 +84,6 @@ public class FurnitureLib extends JavaPlugin{
 	public String getBukkitVersion() {return Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3];}
 	public LocationUtil getLocationUtil(){return this.lUtil;}
 	public FurnitureManager getFurnitureManager(){return this.manager;}
-	public Connection getConnection(){return this.con;}
 	public ObjectID getObjectID(String c, String plugin, Location loc){return new ObjectID(c, plugin, loc);}
 	public Boolean useGamemode() {return useGamemode;}
 	public Serializer getSerializer(){return serializeNew;}
@@ -94,6 +95,7 @@ public class FurnitureLib extends JavaPlugin{
 	public SQLManager getSQLManager(){return this.sqlManager;}
 	public ProtocolFields getField() {return this.field;}
 	public WorldPool getWorldPool(){return this.wPool;}
+	public HashMap<String, List<String>> getPermissionList(){return this.permissionKit;}
 	public int getPurgeTime(){return this.purgeTime;}
 	public int getViewDistance(){return this.viewDistance;}
 	public static FurnitureLib getInstance(){return instance;}
@@ -116,77 +118,130 @@ public class FurnitureLib extends JavaPlugin{
 	@SuppressWarnings("deprecation")
 	@Override
 	public void onEnable(){
-		if(!isEnable("ProtocolLib", true)){send("§cProtocolLib not found");}
-		if(!isEnable("Vault", true)){send("§cVault not found");}
-		if(!setupPermissions()){send("§cNo Permission System found"); Bukkit.getPluginManager().disablePlugin(this);}
-		try{new Metrics(this).start();}catch(Exception e){e.printStackTrace();}
-		if(getServer().getBukkitVersion().startsWith("1.9") || getServer().getBukkitVersion().startsWith("1.10")){
-			instance = this;
-			getConfig().addDefaults(YamlConfiguration.loadConfiguration(getResource("config.yml")));
-			getConfig().options().copyDefaults(true);
-			saveConfig();
-			field = ProtocolFields.getField(getServer().getBukkitVersion());
-			this.lUtil = new LocationUtil();
-			this.manager = new FurnitureManager();
-			this.colorManager = new ColorUtil();
-			this.serializeNew = new Serializer();
-			this.deSerializerNew = new DeSerializer();
-			this.lightMgr = new LightManager(this);
-			this.lmanager = new LanguageManager(instance, getConfig().getString("config.Language"));
-			this.useGamemode = !getConfig().getBoolean("config.Creative.RemoveItems");
-			this.creativeInteract = getConfig().getBoolean("config.Creative.Interact");
-			this.creativePlace = getConfig().getBoolean("config.Creative.Place");
-			this.useRegionMemberAccess = getConfig().getBoolean("config.ProtectionLib.RegeionMemberAccess");
-			this.canSit = !getConfig().getBoolean("config.DisableSitting");
-			this.useParticle = getConfig().getBoolean("config.useParticles");
-			this.purgeTime = getConfig().getInt("config.Purge.time");
-			this.autoPurge = getConfig().getBoolean("config.Purge.autoPurge");
-			this.removePurge = getConfig().getBoolean("config.Purge.removePurge");
-			this.viewDistance = getConfig().getInt("config.viewDistance");
-			this.updater = new Updater();
-			this.wPool = new WorldPool();
-			this.wPool.loadWorlds();
-			new FurnitureEvents(instance, manager);
-			getServer().getPluginManager().registerEvents(new ChunkOnLoad(), this);
-			PluginCommand c = getCommand("furniture");
-			c.setExecutor(new command(this));
-			c.setTabCompleter(new TabCompleterHandler(this));
-			this.Pmanager = new ProtectionManager(instance);
-			send("==========================================");
-			send("FurnitureLibary Version: §e" + this.getDescription().getVersion());
-			send("Furniture Autor: §6" + this.getDescription().getAuthors().get(0));
-			send("Furniture Website: §e" + this.getDescription().getWebsite());
-			String s = getPluginManager().getPlugin("ProtocolLib").getDescription().getVersion();
-			boolean protocollib = isRightProtocollib(s);
-			if(protocollib){
-				send("Furniture start load");
-				Boolean b = isEnable("ProtectionLib", false);
-				send("Furniture find ProtectionLib: §e" + b.toString());
-				createDefaultWatchers();
-				this.sqlManager = new SQLManager(instance);
-				this.sqlManager.initialize();
-				this.sqlManager.loadALL();
-				send("§2Furniture load finish :)");
-				send("==========================================");
-				this.craftingInv = new CraftingInv(this);
-				this.limitManager = new LimitationManager(this);
-				this.update = getConfig().getBoolean("config.CheckUpdate");
-				this.bmanager = new BlockManager();
-				PublicMode mode = PublicMode.valueOf(getConfig().getString("config.PlaceMode.Mode"));
-				EventType type = EventType.valueOf(getConfig().getString("config.PlaceMode.Access"));
-				if(mode!=null){this.mode = mode;}else{this.mode = PublicMode.PRIVATE;}
-				if(type!=null){this.type = type;}else{this.type = EventType.INTERACT;}
-				if(getConfig().getBoolean("config.timer.Enable")){int time = getConfig().getInt("config.timer.time");sqlManager.saveIntervall(time);}
-				for(Player p : Bukkit.getOnlinePlayers()){if(p.isOp()){getUpdater().sendPlayer(p);}}
-			}else{
-				send("Furniture Lib deosn't find the correct ProtocolLib");
-				send("Please Install Protocollib §c4.x");
-				send("You can it download at: §6§lhttps://www.spigotmc.org/resources/protocollib.1997/");
-				send("==========================================");
+		if(!isEnable("ProtocolLib", true)){send("§cProtocolLib not found");getPluginManager().disablePlugin(this);}else{
+			if(!isEnable("Vault", true)){send("§cVault not found");getPluginManager().disablePlugin(this);}else{
+				if(!setupPermissions()){send("§cNo Permission System found");getPluginManager().disablePlugin(this);}else{
+					try{new Metrics(this).start();}catch(Exception e){e.printStackTrace();}
+					if(getServer().getBukkitVersion().startsWith("1.9") || getServer().getBukkitVersion().startsWith("1.10")){
+						instance = this;
+						getConfig().addDefaults(YamlConfiguration.loadConfiguration(getResource("config.yml")));
+						getConfig().options().copyDefaults(true);
+						getConfig().options().copyHeader(true);
+						saveConfig();
+						field = ProtocolFields.getField(getServer().getBukkitVersion());
+						this.lUtil = new LocationUtil();
+						this.manager = new FurnitureManager();
+						this.colorManager = new ColorUtil();
+						this.serializeNew = new Serializer();
+						this.deSerializerNew = new DeSerializer();
+						this.lightMgr = new LightManager(this);
+						this.lmanager = new LanguageManager(instance, getConfig().getString("config.Language"));
+						this.useGamemode = !getConfig().getBoolean("config.Creative.RemoveItems");
+						this.creativeInteract = getConfig().getBoolean("config.Creative.Interact");
+						this.creativePlace = getConfig().getBoolean("config.Creative.Place");
+						this.useRegionMemberAccess = getConfig().getBoolean("config.ProtectionLib.RegeionMemberAccess");
+						this.canSit = !getConfig().getBoolean("config.DisableSitting");
+						this.useParticle = getConfig().getBoolean("config.useParticles");
+						this.purgeTime = getConfig().getInt("config.Purge.time");
+						this.autoPurge = getConfig().getBoolean("config.Purge.autoPurge");
+						this.removePurge = getConfig().getBoolean("config.Purge.removePurge");
+						this.viewDistance = getConfig().getInt("config.viewDistance");
+						this.updater = new Updater();
+						this.wPool = new WorldPool();
+						this.wPool.loadWorlds();
+						new FurnitureEvents(instance, manager);
+						getServer().getPluginManager().registerEvents(new ChunkOnLoad(), this);
+						PluginCommand c = getCommand("furniture");
+						c.setExecutor(new command(this));
+						c.setTabCompleter(new TabCompleterHandler(this));
+						this.Pmanager = new ProtectionManager(instance);
+						send("==========================================");
+						send("FurnitureLibary Version: §e" + this.getDescription().getVersion());
+						send("Furniture Autor: §6" + this.getDescription().getAuthors().get(0));
+						send("Furniture Website: §e" + this.getDescription().getWebsite());
+						String s = getPluginManager().getPlugin("ProtocolLib").getDescription().getVersion();
+						boolean protocollib = isRightProtocollib(s);
+						if(protocollib){
+							send("Furniture start load");
+							Boolean b = isEnable("ProtectionLib", false);
+							send("Furniture find ProtectionLib: §e" + b.toString());
+							createDefaultWatchers();
+							this.sqlManager = new SQLManager(instance);
+							this.sqlManager.initialize();
+							this.loadIgnore();
+							this.sqlManager.loadALL();
+							send("§2Furniture load finish :)");
+							send("==========================================");
+							this.craftingInv = new CraftingInv(this);
+							this.limitManager = new LimitationManager(this);
+							this.update = getConfig().getBoolean("config.CheckUpdate");
+							this.bmanager = new BlockManager();
+							PublicMode mode = PublicMode.valueOf(getConfig().getString("config.PlaceMode.Mode"));
+							EventType type = EventType.valueOf(getConfig().getString("config.PlaceMode.Access"));
+							if(mode!=null){this.mode = mode;}else{this.mode = PublicMode.PRIVATE;}
+							if(type!=null){this.type = type;}else{this.type = EventType.INTERACT;}
+							if(getConfig().getBoolean("config.timer.Enable")){int time = getConfig().getInt("config.timer.time");sqlManager.saveIntervall(time);}
+							for(Player p : Bukkit.getOnlinePlayers()){if(p.isOp()){getUpdater().sendPlayer(p);}}
+							loadPermissionKit();
+						}else{
+							send("Furniture Lib deosn't find the correct ProtocolLib");
+							send("Please Install Protocollib §c4.x");
+							send("You can it download at: §6§lhttps://www.spigotmc.org/resources/protocollib.1997/");
+							send("==========================================");
+							getPluginManager().disablePlugin(this);
+						}
+					}else{
+						send("§cYour Server version is not Supportet please use §c1.9.x");
+						getPluginManager().disablePlugin(this);
+					}
+				}
 			}
-		}else{
-			send("§cYour Server version is not Supportet please use §c1.9.x");
 		}
+	}
+	
+	private void loadIgnore() {
+		config c = new config(getInstance());
+		FileConfiguration configuration = c.getConfig("ignoredPlayers", "");
+		if(configuration.isSet("ignoreList")){
+			for(Object s : configuration.getStringList("ignoreList")){
+				String str = (String) s;
+				getFurnitureManager().getIgnoreList().add(UUID.fromString(str));
+			}
+		}
+	}
+	
+	@SuppressWarnings("deprecation")
+	private void loadPermissionKit(){
+		config c = new config(this);
+		FileConfiguration file = c.getConfig("permissionKit.yml", "");
+		if(file==null) return;
+		file.addDefaults(YamlConfiguration.loadConfiguration(this.getResource("permissionKit.yml")));
+		file.options().copyDefaults(true);
+		file.options().copyHeader(true);
+		c.saveConfig("permissionKit.yml", file, "");
+		if(file.isSet("kit")){
+			for(String s : file.getConfigurationSection("kit").getKeys(false)){
+				String header = (String) s;
+				if(file.isSet("kit." + header)){
+					List<String> projectList = new ArrayList<String>();
+					if(file.getStringList("kit." + header)!=null){
+						projectList = file.getStringList("kit." + header);
+					}
+					permissionKit.put(header, projectList);
+				}
+			}
+		}
+	}
+	
+	private void saveIgnore(){
+		List <String> ignoreList = new ArrayList<String>();
+		for(UUID uuid : getFurnitureManager().getIgnoreList()){
+			ignoreList.add(uuid.toString());
+		}
+		config c = new config(getInstance());
+		FileConfiguration configuration = c.getConfig("ignoredPlayers", "");
+		configuration.set("ignoreList", ignoreList);
+		c.saveConfig("ignoredPlayers", configuration, "");
 	}
 	
 	private boolean isRightProtocollib(String s){return s.startsWith("4");}
@@ -280,6 +335,7 @@ public class FurnitureLib extends JavaPlugin{
 				}
 			}
 		}
+		this.saveIgnore();
 		getLogger().info("==========================================");
 	}
 	

@@ -82,14 +82,6 @@ public class config
 	  return false;
   }
   
-  
-  public boolean isMaps(String folder){
-	  if(new File(path + folder).list().length > 0){
-		  return true; 
-	  }
-	  return false;
-  }
-  
   public void deleteFolder(File folder)
   {
 

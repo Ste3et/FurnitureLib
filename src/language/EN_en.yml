@@ -25,3 +25,6 @@ message:
   PurgeMarked: '&aYou marked #AMOUNT# furnitures to be removed from the database.'
   CraftingEdit: '&eYou have update the Furniture Crafting Recipe'
   CraftingRemove: '&aYou remove the Crafting recipe on the current server instance'
+  FurnitureToggleCMDOff: '&aYou make all Furnitures &cinvisible'
+  FurnitureToggleCMDOn: '&aYou make all Furnitures &2visible'
+  FurnitureToggleEvent: '&cYou cannot do this.'

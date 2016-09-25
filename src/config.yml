@@ -1,12 +1,12 @@
 config:
    UseMetrics: true
    #Avaible EN_en = english; DE_de = german
-   Language: EN_en
+   Language: "EN_en"
    useParticles: true
    #Disable Sitting on some furniture
    DisableSitting: false
    viewDistance: 100
-   LimitType: PLAYER
+   LimitType: "PLAYER"
    CheckUpdate: true
    Creative:
       RemoveItems: false
@@ -18,12 +18,12 @@ config:
    ProtectionLib:
       RegeionMemberAccess: false
    Database:
-      type: SQLite
+      type: "SQLite"
       database: "furniture"
-      user: ROOT
-      password: 123abcdefg
+      user: "ROOT"
+      password: "123abcdefg"
       port: 3306
-      host: localhost
+      host: "localhost"
       importCheck: false
    Purge:
       time: 30

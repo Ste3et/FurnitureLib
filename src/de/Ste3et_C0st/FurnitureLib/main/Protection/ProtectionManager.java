@@ -111,7 +111,7 @@ public class ProtectionManager {
 	}
 	
 	public Boolean isOwner(Player p, Location loc) {
-		if(FP==null){return null;}
+		if(FP==null){return true;}
 		ProtectionLib fp = (ProtectionLib) this.FP;
 		return fp.isOwner(loc, p);
 	}

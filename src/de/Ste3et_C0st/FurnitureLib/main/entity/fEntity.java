@@ -290,7 +290,7 @@ public abstract class fEntity extends fSerializer{
 		if (str == null) {
 			return this;
 		}
-		if (str == "") {
+		if (str.equalsIgnoreCase("")) {
 			setNameVasibility(false);
 			return this;
 		}

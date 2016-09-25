@@ -66,7 +66,11 @@ public class CraftingFile {
 	}
 	
 	public String getHeader(){
-		return (String) this.file.getConfigurationSection("").getKeys(false).toArray()[0];
+		try{
+			return (String) this.file.getConfigurationSection("").getKeys(false).toArray()[0];
+		}catch(ArrayIndexOutOfBoundsException ex){
+			return this.name;
+		}
 	}
 	
 	public void rename(String name){

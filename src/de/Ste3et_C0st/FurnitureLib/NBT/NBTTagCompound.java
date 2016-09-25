@@ -12,7 +12,7 @@ import java.util.logging.Logger;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 
 @SuppressWarnings({ "rawtypes", "unchecked", "unused" })
-public class NBTTagCompound extends NBTBase {
+public class NBTTagCompound extends NBTBase implements Cloneable {
 
 	private static final Logger logger = FurnitureLib.getInstance() == null ? null : FurnitureLib.getInstance().getLogger();
 

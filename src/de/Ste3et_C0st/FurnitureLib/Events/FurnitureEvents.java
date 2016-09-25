@@ -47,7 +47,7 @@ public class FurnitureEvents {
 								final fEntity packet = asPacket;
 								final ObjectID objectID = objID;
 								final Location location = loc;
-                            	switch (action) {
+								switch (action) {
 								case ATTACK:
 									if(p.getGameMode().equals(GameMode.SPECTATOR)){return;}
 									Bukkit.getScheduler().scheduleSyncDelayedTask(FurnitureLib.getInstance(), new Runnable() {

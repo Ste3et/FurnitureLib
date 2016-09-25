@@ -135,9 +135,18 @@ public class command implements CommandExecutor, Listener{
 					case "remove": new removeCommand(sender, cmd, arg2, args); return true;
 					case "spawn": new spawnCommand(sender, cmd, arg2, args); return true;
 					case "purge": new purgeCommand(sender, cmd, arg2, args); return true;
+					case "toggle" : new toggleCommand(sender, cmd, arg2, args); return true;
 					default:
 						for(SubCommand sCmd : subCommands){
 							if(sCmd.getSubcommand().equalsIgnoreCase(args[0])){
+								if(p!=null){
+									if(sCmd.getSubcommand().equalsIgnoreCase("create")){
+										if(lib.getFurnitureManager().getIgnoreList().contains(p.getUniqueId())){
+											sender.sendMessage(lib.getLangManager().getString("FurnitureToggleEvent"));
+											return true;
+										}
+									}
+								}
 								sCmd.runCommand(sender, cmd, arg2, args);
 								return true;
 							}
@@ -189,8 +198,8 @@ public class command implements CommandExecutor, Listener{
 		+ "\n§cID = TOm4nvkoLW" 
 		+ "\n§cDistance = 5").withClickEvent(ClickAction.SUGGEST_COMMAND, "/furniture remove <type>")
 		.withText("§6/furniture remove §elookat\n").withHoverEvent(HoverAction.SHOW_TEXT,"§6Remove a furniture at you looked").withClickEvent(ClickAction.SUGGEST_COMMAND, "/furniture remove lookat")
-		.withText("§6/furniture remove §eall\n").withHoverEvent(HoverAction.SHOW_TEXT,"§6Remove all furniture and reset database").withClickEvent(ClickAction.SUGGEST_COMMAND, "/furniture remove all");
-		
+		.withText("§6/furniture remove §eall\n").withHoverEvent(HoverAction.SHOW_TEXT,"§6Remove all furniture and reset database").withClickEvent(ClickAction.SUGGEST_COMMAND, "/furniture remove all")
+		.withText("§6/furniture toggle\n").withHoverEvent(HoverAction.SHOW_TEXT, "§6Hide/Show furniture to you").withClickEvent(ClickAction.SUGGEST_COMMAND, "/furniture toggle");
 		for(SubCommand commands : subCommands){
 			builder.withText(commands.getCommand() + "\n").withHoverEvent(HoverAction.SHOW_TEXT, commands.getHoverText()).withClickEvent(ClickAction.SUGGEST_COMMAND, commands.getSuggest_Command());
 		}

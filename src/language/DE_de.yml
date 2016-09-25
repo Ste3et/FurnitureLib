@@ -25,3 +25,6 @@ message:
    PurgeMarked: "Du has #AMOUNT# ArmorStands zum entfernen aus der DB makiert."
    CraftingEdit: '&eDu hast das Furniture Crafting Rezept verändert'
    CraftingRemove: '&aDu hast das Furniture Crafting Rezept entfernt'
+  FurnitureToggleCMDOff: '&aDu hast alle Furniture &cunsichtbar gemacht'
+  FurnitureToggleCMDOn: '&aDu hast alle Furniture &2sichtbar gemacht'
+  FurnitureToggleEvent: '&cDas kannst du nicht machen.'

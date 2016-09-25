@@ -5,7 +5,7 @@ import java.io.DataOutput;
 import java.util.ArrayList;
 import java.util.List;
 
-public class NBTTagList extends NBTBase {
+public class NBTTagList extends NBTBase implements Cloneable {
 	private List<NBTBase> list = new ArrayList<NBTBase>();
 	private byte type = 0;
 

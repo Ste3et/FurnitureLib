@@ -37,7 +37,7 @@ public class Project{
 	public String getName(){return project;}
 	public Plugin getPlugin(){return plugin;}
 	public CraftingFile getCraftingFile(){return file;}
-	public Class<?> getclass(){return clas;}
+	public Class<?> getclass(){return this.clas;}
 	public CenterType getCenterType(){return this.type;}
 	public PlaceableSide getPlaceableSide(){return this.side;}
 	public String getSystemID(){return getCraftingFile().getSystemID();}
@@ -144,8 +144,20 @@ public class Project{
 	}
 	
 	public boolean hasPermissions(Player p){
-		if(FurnitureLib.getInstance().hasPerm(p,"Furniture.Player") || FurnitureLib.getInstance().hasPerm(p,"Furniture.place." + getSystemID()) || p.isOp() || FurnitureLib.getInstance().hasPerm(p,"Furniture.admin")){
-			return true;
+		if(p.isOp()) return true;
+		if(FurnitureLib.getInstance().hasPerm(p,"Furniture.admin")) return true;
+		if(FurnitureLib.getInstance().hasPerm(p,"Furniture.Player")) return true;
+		if(FurnitureLib.getInstance().hasPerm(p,"Furniture.place." + getSystemID())) return true;
+		if(FurnitureLib.getInstance().hasPerm(p,"Furniture.place.all")) return true;
+		if(FurnitureLib.getInstance().hasPerm(p,"Furniture.place.all." + getPlugin().getName())) return true;
+		if(FurnitureLib.getInstance().getPermissionList()!=null){
+			for(String s : FurnitureLib.getInstance().getPermissionList().keySet()){
+				if(FurnitureLib.getInstance().hasPerm(p, "Furniture.place.all." + s)){
+					if(FurnitureLib.getInstance().getPermissionList().get(s).contains(this.getName())){
+						return true;
+					}
+				}
+			}
 		}
 		p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("NoPermissions"));
 		return false;

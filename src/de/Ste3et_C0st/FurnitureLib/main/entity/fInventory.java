@@ -8,7 +8,7 @@ import java.util.List;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
-public class fInventory{
+public class fInventory implements Cloneable{
 	
 	private ItemStack[] items = new ItemStack[6];
 	private int entityId = 0;
