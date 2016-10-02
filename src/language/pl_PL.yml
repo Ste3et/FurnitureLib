@@ -28,4 +28,4 @@ message:
   CraftingRemove: '&aCrafting mebla zostal usuniety.'
   FurnitureToggleCMDOff: '&aWszystkie meble sa teraz &cniewidoczne'
   FurnitureToggleCMDOn: '&aWszystie meble sa teraz &2widoczne'
-FurnitureToggleEvent: '&cNie mozesz tego zrobic.'
+  FurnitureToggleEvent: '&cNie mozesz tego zrobic.'
