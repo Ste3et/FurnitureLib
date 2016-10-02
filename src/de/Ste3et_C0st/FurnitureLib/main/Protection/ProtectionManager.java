@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 
+import de.Ste3et_C0st.FurnitureLib.Events.FurnitureRegionClear;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.EventType;
@@ -30,6 +31,7 @@ public class ProtectionManager {
 		this.manager = Bukkit.getPluginManager();
 		if(Bukkit.getPluginManager().isPluginEnabled("ProtectionLib")){
 			this.FP = Bukkit.getPluginManager().getPlugin("ProtectionLib");
+			Bukkit.getPluginManager().registerEvents(new FurnitureRegionClear(), plugin);
 		}
 	}
 	

@@ -121,7 +121,6 @@ public class FurnitureLib extends JavaPlugin{
 		if(!isEnable("ProtocolLib", true)){send("§cProtocolLib not found");getPluginManager().disablePlugin(this);}else{
 			if(!isEnable("Vault", true)){send("§cVault not found");getPluginManager().disablePlugin(this);}else{
 				if(!setupPermissions()){send("§cNo Permission System found");getPluginManager().disablePlugin(this);}else{
-					try{new Metrics(this).start();}catch(Exception e){e.printStackTrace();}
 					if(getServer().getBukkitVersion().startsWith("1.9") || getServer().getBukkitVersion().startsWith("1.10")){
 						instance = this;
 						getConfig().addDefaults(YamlConfiguration.loadConfiguration(getResource("config.yml")));
@@ -183,6 +182,7 @@ public class FurnitureLib extends JavaPlugin{
 							if(getConfig().getBoolean("config.timer.Enable")){int time = getConfig().getInt("config.timer.time");sqlManager.saveIntervall(time);}
 							for(Player p : Bukkit.getOnlinePlayers()){if(p.isOp()){getUpdater().sendPlayer(p);}}
 							loadPermissionKit();
+							loadMetrics();
 						}else{
 							send("Furniture Lib deosn't find the correct ProtocolLib");
 							send("Please Install Protocollib §c4.x");
@@ -197,6 +197,12 @@ public class FurnitureLib extends JavaPlugin{
 				}
 			}
 		}
+	}
+	
+	private void loadMetrics(){
+		try{if(getConfig().getBoolean("config.UseMetrics")){
+			new Metrics(this).start();
+		}}catch(Exception e){e.printStackTrace();}
 	}
 	
 	private void loadIgnore() {
@@ -313,9 +319,6 @@ public class FurnitureLib extends JavaPlugin{
    }
 	
 	private boolean isEnable(String plugin, boolean shutdown){
-		if(plugin.equalsIgnoreCase("Vault")){
-			if(!getConfig().getBoolean("config.UseMetrics")) return false;
-		}
 		boolean b = getServer().getPluginManager().isPluginEnabled(plugin);
 		if(!b && shutdown) getServer().getPluginManager().disablePlugin(this);
 		return b;
