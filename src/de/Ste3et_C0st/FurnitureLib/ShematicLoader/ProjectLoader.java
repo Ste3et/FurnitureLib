@@ -138,7 +138,7 @@ public class ProjectLoader extends Furniture implements Listener{
 		e.remove();
 	}
 	
-	@EventHandler
+	@EventHandler(ignoreCancelled = true)
 	private void onPhysiks(BlockPhysicsEvent e){
 		  if(getObjID() == null) return;
 		  if(getObjID().getSQLAction().equals(SQLAction.REMOVE)){return;}
