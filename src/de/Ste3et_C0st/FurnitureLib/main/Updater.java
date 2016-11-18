@@ -42,9 +42,12 @@ public class Updater {
 	}
 	
 	private boolean isUpdateAvaible(){
-		if(!FurnitureLib.getInstance().isUpdate()){return false;}
-		if(!currentVersion.equalsIgnoreCase(newVersion)){
-			return true;
+		if(FurnitureLib.getInstance().isUpdate()){
+			if(!currentVersion.equalsIgnoreCase(newVersion)){
+				return true;
+			}else{
+				return false;
+			}
 		}else{
 			return false;
 		}
@@ -70,21 +73,25 @@ public class Updater {
 	
 	
 	private String getLatestVersionOnSpigot() {
-        try {
-	        URL website = new URL("https://api.spiget.org/v1/resources/9368");
-	        URLConnection connection = website.openConnection();
-	        BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-	        StringBuilder response = new StringBuilder();
-	        String inputLine;
-	        while ((inputLine = in.readLine()) != null) response.append(inputLine);
-	        in.close();
-	        JsonParser parser = new JsonParser();
-	        JsonObject o = parser.parse(response.toString()).getAsJsonObject();       
-	        return o.get("version").getAsString();
-        } catch (Exception ex) {
-            System.err.println("Failed to check for a update on spigot for FurnitureLib");
-        }
-        return null;
+		if(FurnitureLib.getInstance().isUpdate()){
+	        try {
+		        URL website = new URL("https://api.spiget.org/v1/resources/9368");
+		        URLConnection connection = website.openConnection();
+		        BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+		        StringBuilder response = new StringBuilder();
+		        String inputLine;
+		        while ((inputLine = in.readLine()) != null) response.append(inputLine);
+		        in.close();
+		        JsonParser parser = new JsonParser();
+		        JsonObject o = parser.parse(response.toString()).getAsJsonObject();       
+		        return o.get("version").getAsString();
+	        } catch (Exception ex) {
+	            System.err.println("Failed to check for a update on spigot for FurnitureLib");
+	        }
+	        return null;
+		}else{
+			return FurnitureLib.getInstance().getDescription().getVersion();
+		}
     }
 	
 }

@@ -31,7 +31,7 @@ public class ProtectionManager {
 		this.manager = Bukkit.getPluginManager();
 		if(Bukkit.getPluginManager().isPluginEnabled("ProtectionLib")){
 			this.FP = Bukkit.getPluginManager().getPlugin("ProtectionLib");
-			Bukkit.getPluginManager().registerEvents(new FurnitureRegionClear(), plugin);
+			new FurnitureRegionClear();
 		}
 	}
 	

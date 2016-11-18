@@ -216,6 +216,7 @@ public abstract class fEntity extends fSerializer{
 	}
 	
 	public void send(Player player) {
+		
 		if (getManager() == null){return;}
 		if (getHandle() == null){return;}
 		try {

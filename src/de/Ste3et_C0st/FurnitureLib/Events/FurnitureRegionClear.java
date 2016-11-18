@@ -1,5 +1,6 @@
 package de.Ste3et_C0st.FurnitureLib.Events;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -10,6 +11,10 @@ import de.Ste3et_C0st.ProtectionLib.main.RegionClearEvent;
 
 public class FurnitureRegionClear implements Listener {
 
+	public FurnitureRegionClear() {
+		Bukkit.getPluginManager().registerEvents(this, FurnitureLib.getInstance());
+	}
+	
 	@EventHandler
 	private void onPlotClear(RegionClearEvent e){
 		Location loc1 = e.getLoc1();

@@ -121,7 +121,7 @@ public class FurnitureLib extends JavaPlugin{
 		if(!isEnable("ProtocolLib", true)){send("§cProtocolLib not found");getPluginManager().disablePlugin(this);}else{
 			if(!isEnable("Vault", true)){send("§cVault not found");getPluginManager().disablePlugin(this);}else{
 				if(!setupPermissions()){send("§cNo Permission System found");getPluginManager().disablePlugin(this);}else{
-					if(getServer().getBukkitVersion().startsWith("1.9") || getServer().getBukkitVersion().startsWith("1.10")){
+					if(getServer().getBukkitVersion().startsWith("1.9") || getServer().getBukkitVersion().startsWith("1.10") || getServer().getBukkitVersion().startsWith("1.11")){
 						instance = this;
 						getConfig().addDefaults(YamlConfiguration.loadConfiguration(getResource("config.yml")));
 						getConfig().options().copyDefaults(true);

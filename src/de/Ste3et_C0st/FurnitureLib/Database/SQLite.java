@@ -62,7 +62,7 @@ public class SQLite extends Database{
         try {
             Statement s = connection.createStatement();
             s.executeUpdate(Objects);
-            //s.executeUpdate(DatabaseSchema);
+            s.executeUpdate(DatabaseSchema);
             s.close();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -86,14 +86,10 @@ public class SQLite extends Database{
         try {
             Statement s = connection.createStatement();
             s.executeUpdate(Objects);
-            // s.executeUpdate(DatabaseSchema);
+            s.executeUpdate(DatabaseSchema);
             s.close();
         } catch (SQLException e) {
             e.printStackTrace();
         }
 	}
-	
-//	public void load(String query, SQLAction action) {
-//		loadAll(query, action);
-//	}
 }

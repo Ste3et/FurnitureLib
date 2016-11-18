@@ -2,9 +2,11 @@ package de.Ste3et_C0st.FurnitureLib.main.entity;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
+import com.comphenix.protocol.wrappers.EnumWrappers.ItemSlot;
 
 import java.util.ArrayList;
 import java.util.List;
+
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
@@ -14,7 +16,7 @@ public class fInventory implements Cloneable{
 	private int entityId = 0;
 	@Deprecated
 	public ItemStack getItemInHand() {return this.items[0];}
-	private Vector3f v = new Vector3f();
+	//private Vector3f v = new Vector3f();
 	public ItemStack getItemInMainHand() {return this.items[0];}
 	public ItemStack getItemInOffHand() {return this.items[1];}
 	public ItemStack getBoots() {return this.items[2];}
@@ -94,14 +96,13 @@ public class fInventory implements Cloneable{
 	
 	public List<PacketContainer> createPackets() {
 		List<PacketContainer> packetList = new ArrayList<PacketContainer>();
-		int i = 0;
-		for(Object obj : v.b()){
+		for(int i = 0; i < 6; i++){
 			ItemStack stack = this.getSlot(i);
 			PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_EQUIPMENT);
-			packet.getModifier().write(0, entityId).write(1, obj);
+			packet.getIntegers().write(0, entityId);
+			packet.getItemSlots().write(0, ItemSlot.values()[i]);
 			packet.getItemModifier().write(0, stack);
 			packetList.add(packet);
-			i++;
 		}
 		return packetList;
 	}

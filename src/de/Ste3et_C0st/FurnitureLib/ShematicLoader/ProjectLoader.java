@@ -121,6 +121,7 @@ public class ProjectLoader extends Furniture implements Listener{
 	@EventHandler
 	public void onFurnitureBreak(FurnitureBreakEvent e) {
 		if(getObjID()==null){return;}
+		if(e.getID()==null) return;
 		if(getObjID().getSQLAction().equals(SQLAction.REMOVE)){return;}
 		if(e.isCancelled()) return;
 		if(!e.getID().equals(getObjID())) return;
@@ -131,6 +132,7 @@ public class ProjectLoader extends Furniture implements Listener{
 	@EventHandler
 	public void onFurnitureBreak(FurnitureBlockBreakEvent e) {
 		if(getObjID()==null){return;}
+		if(e.getID()==null) return;
 		if(getObjID().getSQLAction().equals(SQLAction.REMOVE)){return;}
 		if(e.isCancelled()) return;
 		if(!e.getID().equals(getObjID())) return;
@@ -138,7 +140,7 @@ public class ProjectLoader extends Furniture implements Listener{
 		e.remove();
 	}
 	
-	@EventHandler
+	@EventHandler(ignoreCancelled = true)
 	private void onPhysiks(BlockPhysicsEvent e){
 		  if(getObjID() == null) return;
 		  if(getObjID().getSQLAction().equals(SQLAction.REMOVE)){return;}
@@ -150,6 +152,7 @@ public class ProjectLoader extends Furniture implements Listener{
 	@EventHandler
 	public void onFurnitureBreak(FurnitureBlockClickEvent e) {
 		if(getObjID()==null){return;}
+		if(e.getID()==null) return;
 		if(getObjID().getSQLAction().equals(SQLAction.REMOVE)){return;}
 		if(e.isCancelled()) return;
 		if(!e.getID().equals(getObjID())) return;
@@ -187,6 +190,7 @@ public class ProjectLoader extends Furniture implements Listener{
 		if(getObjID()==null){return;}
 		if(getObjID().getSQLAction().equals(SQLAction.REMOVE)){return;}
 		if(e.isCancelled()) return;
+		if(e.getID()==null) return;
 		if(!e.getID().equals(getObjID())) return;
 		if(this.inv!=null){
 			if(this.inv.getPlayer()==null){

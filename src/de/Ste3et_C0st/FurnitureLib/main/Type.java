@@ -51,6 +51,7 @@ public class Type {
             return name;
         }
         
+        @Deprecated
         public int getField(){
             return field;
         }

@@ -32,7 +32,7 @@ public class CraftingFile {
 	private ShapedRecipe recipe;
 	private boolean isDisable;
 	public ShapedRecipe getRecipe(){return this.recipe;}
-	public ItemStack getItemstack(){return this.getRecipe().getResult();}
+	public ItemStack getItemstack(){return this.recipe.getResult();}
 	public boolean isEnable(){return this.isDisable;}
 	public String getFileName(){return this.name;}
 	public String systemID = "";
@@ -58,6 +58,7 @@ public class CraftingFile {
 			systemID = name;
 			this.c.saveConfig(name, this.file, "/Crafting/");
 		}
+		this.file = c.getConfig(name, "/Crafting/");
 		loadCrafting(name);
 	}
 	
@@ -93,6 +94,7 @@ public class CraftingFile {
 				if(!isDisable){
 					Bukkit.getServer().addRecipe(this.recipe);
 				}
+				
 		}catch(Exception e){
 			e.printStackTrace();
 		}
@@ -115,20 +117,30 @@ public class CraftingFile {
 	
 	@SuppressWarnings("deprecation")
 	private ItemStack returnResult(String s){
-		String MaterialSubID = file.getString(header+".material");
+		String MaterialSubID = "0";
+		try{
+			MaterialSubID = file.getString(header+".material", "0");
+		}catch(Exception e){
+			MaterialSubID = "0";
+		}
 		Material mat = Material.AIR;
 		short durability = 0;
 		if(MaterialSubID.contains(":")){
 			String[] str = MaterialSubID.split(":");
 			mat = Material.getMaterial(Integer.parseInt(str[0]));
-			durability = (short) Integer.parseInt(str[1]);
+			try{
+				durability = (short) Integer.parseInt(str[1]);
+			}catch(Exception e){
+				durability = (short) 0;
+			}
+			
 		}else{
 			mat = Material.getMaterial(Integer.parseInt(MaterialSubID));
 		}
 
 		ItemStack is = new ItemStack(mat);
 		ItemMeta im = is.getItemMeta();
-		String name = file.getString(header+".name");
+		String name = file.getString(header+".name", "");
 		im.setDisplayName(ChatColor.translateAlternateColorCodes('&', name));
 		
 		List<String> loreText = new ArrayList<String>();
@@ -153,7 +165,7 @@ public class CraftingFile {
 	}
 	
 	private String[] returnFragment(String s){
-		String recipe = this.file.getString(header+".crafting.recipe");
+		String recipe = this.file.getString(header+".crafting.recipe", "");
 		String[] fragments = recipe.split(",");
 		return fragments;
 	}
