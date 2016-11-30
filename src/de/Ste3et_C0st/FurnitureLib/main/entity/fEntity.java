@@ -36,7 +36,7 @@ public abstract class fEntity extends fSerializer{
 	private Location l;
 	private String customName = "";
 	private Entity passanger;
-	private boolean fire = false, nameVisible = false, visible = true, isKilled = false, isPlayed = false, glowing = false, invisible = false;
+	private boolean fire = false, nameVisible = false, visible = true, isKilled = false, isPlayed = false, glowing = false, invisible = false, gravity = false;
 
 	@SuppressWarnings("deprecation")
 	public fEntity(Location loc, EntityType type, ObjectID id) {
@@ -61,6 +61,10 @@ public abstract class fEntity extends fSerializer{
 
 	public boolean isFire() {
 		return this.fire;
+	}
+	
+	public boolean hasGravity(){
+		return this.gravity;
 	}
 
 	public boolean isCustomNameVisible() {
@@ -117,6 +121,12 @@ public abstract class fEntity extends fSerializer{
 	
 	public fEntity setItemInOffHand(ItemStack is){
 		getInventory().setItemInOffHand(is);return this;
+	}
+	
+	public fEntity setGravity(boolean b) {
+		setObject(getWatcher(), b, 5);
+		this.gravity = b;
+		return this;
 	}
 	
 	@Deprecated

@@ -7,6 +7,7 @@ import org.bukkit.util.EulerAngle;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 
 public class Vector3f {
+	@Deprecated
 	public Object a(EulerAngle angle){
 		try{
 			Class<?> Vector3f = Class.forName("net.minecraft.server." + FurnitureLib.getInstance().getBukkitVersion() + ".Vector3f");
@@ -17,7 +18,7 @@ public class Vector3f {
 			return null;
 		}
 	}
-	
+	@Deprecated
 	public Object[] b(){
 		try{
 			Class<?> EnumItemSlot = Class.forName("net.minecraft.server." + FurnitureLib.getInstance().getBukkitVersion() + ".EnumItemSlot");

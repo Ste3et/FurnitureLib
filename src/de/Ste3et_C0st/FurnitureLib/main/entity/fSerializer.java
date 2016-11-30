@@ -11,6 +11,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
 
+import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
 
@@ -119,7 +120,7 @@ public class fSerializer extends fProtocol{
 	
 	private NBTTagCompound getFromInventory(fInventory fInventory){
 		NBTTagCompound inventory = new NBTTagCompound();
-		for(Object o : new Vector3f().b()){
+		for(Object o : EnumWrappers.ItemSlot.values()){
 			ItemStack is = fInventory.getSlot(o.toString());
 			if(is==null||is.getType().equals(Material.AIR)){inventory.setString(o.toString()+"", "NONE");continue;}
 			try {

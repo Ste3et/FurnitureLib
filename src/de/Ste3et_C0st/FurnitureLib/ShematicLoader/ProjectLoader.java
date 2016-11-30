@@ -20,6 +20,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
 import org.bukkit.util.EulerAngle;
 
+import com.comphenix.protocol.wrappers.EnumWrappers;
+
 import de.Ste3et_C0st.FurnitureLib.Events.FurnitureBlockBreakEvent;
 import de.Ste3et_C0st.FurnitureLib.Events.FurnitureBlockClickEvent;
 import de.Ste3et_C0st.FurnitureLib.Events.FurnitureBreakEvent;
@@ -32,12 +34,11 @@ import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.BodyPart;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
-import de.Ste3et_C0st.FurnitureLib.main.entity.Vector3f;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fArmorStand;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
 
 public class ProjectLoader extends Furniture implements Listener{
-	private Object[] enumItemSlots = new Vector3f().b();
+	private Object[] enumItemSlots = EnumWrappers.ItemSlot.values();
 	public String header;
 	private ProjektInventory inv=null;
 	
@@ -274,6 +275,7 @@ public class ProjectLoader extends Furniture implements Listener{
 				for(Object object : enumItemSlots){
 					if(!inventory.getString(object.toString()).equalsIgnoreCase("NONE")){
 						ItemStack is = new CraftItemStack().getItemStack(inventory.getCompound(object.toString()+""));
+						if(is==null) is = new ItemStack(Material.AIR, 1);
 						packet.getInventory().setSlot(object.toString(), is);
 					}
 				}

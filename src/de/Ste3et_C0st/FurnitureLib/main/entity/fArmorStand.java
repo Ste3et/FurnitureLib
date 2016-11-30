@@ -13,11 +13,12 @@ import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type;
 import de.Ste3et_C0st.FurnitureLib.main.Type.BodyPart;
+import com.comphenix.protocol.wrappers.Vector3F;
 
 public class fArmorStand extends fEntity {
 
 	private int armorstandID;
-	private boolean arms=false,small=false,marker=true,gravity=false,baseplate=true;
+	private boolean arms=false,small=false,marker=true,baseplate=true;
 	private HashMap<BodyPart, EulerAngle> angle = new HashMap<Type.BodyPart, EulerAngle>();
 	private Project pro;
 	private ArmorStand stand = null;
@@ -40,7 +41,6 @@ public class fArmorStand extends fEntity {
 	public int getArmorID(){return this.armorstandID;}
 	public boolean hasArms(){return this.arms;}
 	public boolean hasBasePlate(){return this.baseplate;}
-	public boolean hasGravity(){return this.gravity;}
 	public boolean isMarker(){return this.marker;}
 	public boolean isSmall(){return this.small;}
 	
@@ -66,8 +66,7 @@ public class fArmorStand extends fEntity {
 	    }
 	    this.angle.put(part, angle);
 	    angle = FurnitureLib.getInstance().getLocationUtil().Radtodegress(angle);
-	    Vector3f v = new Vector3f();
-	    setObject(getWatcher(), v.a(angle), getField().getFieldFromPose(part));
+	    setObject(getWatcher(), new Vector3F((float)angle.getX(),(float)angle.getY(),(float)angle.getZ()), getField().getFieldFromPose(part));
 	    return this;
 	  }
 	
@@ -92,18 +91,6 @@ public class fArmorStand extends fEntity {
 		}
 		setObject(getWatcher(), Byte.valueOf(b0),getField().getBitMask());
 		this.arms = b;
-		return this;
-	}
-
-	public fArmorStand setGravity(boolean b) {
-		byte b0 = (byte) getObject(getWatcher(), Byte.valueOf((byte) 0), getField().getBitMask());
-		if (b)
-			b0 = (byte)(b0 | 0x2);
-		else {
-			b0 = (byte)(b0 & 0xFFFFFFFD);
-		}
-		setObject(getWatcher(), Byte.valueOf(b0),getField().getBitMask());
-		this.gravity = b;
 		return this;
 	}
 	

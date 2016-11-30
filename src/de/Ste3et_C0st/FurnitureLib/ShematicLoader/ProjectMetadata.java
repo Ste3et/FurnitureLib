@@ -5,7 +5,6 @@ import de.Ste3et_C0st.FurnitureLib.NBT.NBTCompressedStreamTools;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
 import de.Ste3et_C0st.FurnitureLib.main.Type;
 import de.Ste3et_C0st.FurnitureLib.main.entity.Relative;
-import de.Ste3et_C0st.FurnitureLib.main.entity.Vector3f;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fArmorStand;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fInventory;
 
@@ -16,6 +15,8 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
+
+import com.comphenix.protocol.wrappers.EnumWrappers;
 
 public class ProjectMetadata
 {
@@ -141,7 +142,7 @@ public class ProjectMetadata
   {
     NBTTagCompound inventory = new NBTTagCompound();
     Object[] arrayOfObject;
-    int j = (arrayOfObject = new Vector3f().b()).length;
+    int j = (arrayOfObject = EnumWrappers.ItemSlot.values()).length;
     for (int i = 0; i < j; i++)
     {
       Object o = arrayOfObject[i];

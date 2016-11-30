@@ -13,6 +13,8 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
 
+import com.comphenix.protocol.wrappers.EnumWrappers;
+
 import de.Ste3et_C0st.FurnitureLib.NBT.CraftItemStack;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTCompressedStreamTools;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
@@ -24,7 +26,6 @@ import de.Ste3et_C0st.FurnitureLib.main.WorldPool;
 import de.Ste3et_C0st.FurnitureLib.main.Type.EventType;
 import de.Ste3et_C0st.FurnitureLib.main.Type.PublicMode;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
-import de.Ste3et_C0st.FurnitureLib.main.entity.Vector3f;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fArmorStand;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fCreeper;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
@@ -36,13 +37,14 @@ public class DeSerializer {
 	public int purged = 0;
 	public FurnitureLib lib = FurnitureLib.getInstance();
 	public WorldPool pool = FurnitureLib.getInstance().getWorldPool();
-	private Object[] enumItemSlots = new Vector3f().b();
+	private Object[] enumItemSlots = EnumWrappers.ItemSlot.values();
 	
 	public void Deserialze(String objId,String in, SQLAction action, boolean autoPurge){
 		try {
 			byte[] by = Base64.decodeBase64(in);
 			ByteArrayInputStream bin = new ByteArrayInputStream(by);
 			NBTTagCompound compound = NBTCompressedStreamTools.read(bin);
+			System.out.println(compound.toString());
 			EventType evType = EventType.valueOf(compound.getString("EventType"));
 			PublicMode pMode = PublicMode.valueOf(compound.getString("PublicMode")); 
 			UUID uuid = uuidFetcher(compound.getString("Owner-UUID"));

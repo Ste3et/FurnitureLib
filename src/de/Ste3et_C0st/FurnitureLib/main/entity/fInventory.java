@@ -41,9 +41,9 @@ public class fInventory implements Cloneable{
 	
 	public ItemStack getSlot(int slot) {
 		if (slot < 0 || slot >= this.items.length) {
-			return null;
+			return new ItemStack(Material.AIR, 1);
 		}
-
+		if(this.items[slot]==null) return new ItemStack(Material.AIR, 1);
 		return this.items[slot];
 	}
 	
@@ -81,9 +81,10 @@ public class fInventory implements Cloneable{
 	}
 	
 	public void setSlot(String s, ItemStack item) {
-		if (item != null && item.getType() == Material.AIR) {
-			item = null;
+		if (item == null) {
+			item = new ItemStack(Material.AIR, 1);
 		}
+		
 		switch (s) {
 		case "MAINHAND":setSlot(0, item);break;
 		case "OFFHAND":setSlot(1, item);break;
