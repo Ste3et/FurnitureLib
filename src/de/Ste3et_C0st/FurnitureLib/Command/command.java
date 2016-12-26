@@ -136,6 +136,8 @@ public class command implements CommandExecutor, Listener{
 					case "spawn": new spawnCommand(sender, cmd, arg2, args); return true;
 					case "purge": new purgeCommand(sender, cmd, arg2, args); return true;
 					case "toggle" : new toggleCommand(sender, cmd, arg2, args); return true;
+					case "download": new downloadCommand(sender, cmd, arg2, args); return true;
+					case "delete": new deleteCommand(sender, cmd, arg2, args); return true;
 					default:
 						for(SubCommand sCmd : subCommands){
 							if(sCmd.getSubcommand().equalsIgnoreCase(args[0])){
@@ -199,11 +201,14 @@ public class command implements CommandExecutor, Listener{
 		+ "\n§cDistance = 5").withClickEvent(ClickAction.SUGGEST_COMMAND, "/furniture remove <type>")
 		.withText("§6/furniture remove §elookat\n").withHoverEvent(HoverAction.SHOW_TEXT,"§6Remove a furniture at you looked").withClickEvent(ClickAction.SUGGEST_COMMAND, "/furniture remove lookat")
 		.withText("§6/furniture remove §eall\n").withHoverEvent(HoverAction.SHOW_TEXT,"§6Remove all furniture and reset database").withClickEvent(ClickAction.SUGGEST_COMMAND, "/furniture remove all")
-		.withText("§6/furniture toggle\n").withHoverEvent(HoverAction.SHOW_TEXT, "§6Hide/Show furniture to you").withClickEvent(ClickAction.SUGGEST_COMMAND, "/furniture toggle");
+		.withText("§6/furniture toggle\n").withHoverEvent(HoverAction.SHOW_TEXT, "§6Hide/Show furniture to you").withClickEvent(ClickAction.SUGGEST_COMMAND, "/furniture toggle")
+		.withText("§6/furniture download §e<id> §a(newName)\n").withHoverEvent(HoverAction.SHOW_TEXT, "§6You can donload an furniture").withClickEvent(ClickAction.SUGGEST_COMMAND, "/furniture donwnload <id>")
+		.withText("§6/furniture delete §e<name>\n").withHoverEvent(HoverAction.SHOW_TEXT, "§6You can delete a Furniture Model").withClickEvent(ClickAction.SUGGEST_COMMAND, "/furniture delete <name>");
+		
 		for(SubCommand commands : subCommands){
 			builder.withText(commands.getCommand() + "\n").withHoverEvent(HoverAction.SHOW_TEXT, commands.getHoverText()).withClickEvent(ClickAction.SUGGEST_COMMAND, commands.getSuggest_Command());
 		}
-		
+		builder.withText("\n").withText("§6You need help with the commands look at the ").withText("§cCommand Page").withClickEvent(ClickAction.OPEN_URL, "http://dicecraft.de/furniture/cmdperm.php");
 		builder.withText("\n").withText("§e§lTIP: §r§7Try to §e§nclick§7 or §e§nhover§7 the commands").
 		withText("§7§m+--------------------------------------------------+").sendJson(player);
 	}

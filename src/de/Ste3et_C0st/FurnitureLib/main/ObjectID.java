@@ -200,6 +200,9 @@ public class ObjectID{
 
 	
 	public void remove(Player p){
+		for(fEntity entity : getPacketList()){
+			entity.setFire(false);
+		}
 		FurnitureLib.getInstance().getLimitManager().removePlayer(this);
 		Location loc = getStartLocation();
 		dropItem(p, loc.clone().add(0, 1, 0), getProjectOBJ());
@@ -229,6 +232,9 @@ public class ObjectID{
 	}
 	
 	public void remove(Player p,boolean dropItem, boolean deleteEffect){
+		for(fEntity entity : getPacketList()){
+			entity.setFire(false);
+		}
 		FurnitureLib.getInstance().getLimitManager().removePlayer(this);
 		Location loc = getStartLocation();
 		if(dropItem) dropItem(p, loc.clone().add(0, 1, 0), getProjectOBJ());

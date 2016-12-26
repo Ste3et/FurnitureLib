@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 import net.milkbowl.vault.Metrics;
@@ -20,6 +21,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.event.EventException;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.RegisteredServiceProvider;
@@ -34,6 +36,7 @@ import de.Ste3et_C0st.FurnitureLib.Database.SQLManager;
 import de.Ste3et_C0st.FurnitureLib.Events.ChunkOnLoad;
 import de.Ste3et_C0st.FurnitureLib.Events.FurnitureEvents;
 import de.Ste3et_C0st.FurnitureLib.LimitationManager.LimitationManager;
+import de.Ste3et_C0st.FurnitureLib.ShematicLoader.ProjectManager;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.ColorUtil;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.CraftingInv;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.LanguageManager;
@@ -72,8 +75,11 @@ public class FurnitureLib extends JavaPlugin{
 	private EventType type;
 	private WorldPool wPool;
 	private ProtocolFields field = ProtocolFields.Spigot110;
+	private ProjectManager pManager;
 	private int purgeTime = 30;
+	private long purgeTimeMS = 0;
 	private int viewDistance = 100;
+	public HashMap<Project, Long> deleteMap = new HashMap<Project, Long>();
 	
 	public LanguageManager getLangManager(){return this.lmanager;}
 	public LightManager getLightManager(){return this.lightMgr;}
@@ -96,6 +102,7 @@ public class FurnitureLib extends JavaPlugin{
 	public ProtocolFields getField() {return this.field;}
 	public WorldPool getWorldPool(){return this.wPool;}
 	public HashMap<String, List<String>> getPermissionList(){return this.permissionKit;}
+	public ProjectManager getProjectManager(){return this.pManager;}
 	public int getPurgeTime(){return this.purgeTime;}
 	public int getViewDistance(){return this.viewDistance;}
 	public static FurnitureLib getInstance(){return instance;}
@@ -148,6 +155,8 @@ public class FurnitureLib extends JavaPlugin{
 						this.updater = new Updater();
 						this.wPool = new WorldPool();
 						this.wPool.loadWorlds();
+						this.purgeTimeMS = TimeUnit.DAYS.toMillis(purgeTime);
+						this.pManager = new ProjectManager();
 						new FurnitureEvents(instance, manager);
 						getServer().getPluginManager().registerEvents(new ChunkOnLoad(), this);
 						PluginCommand c = getCommand("furniture");
@@ -169,8 +178,6 @@ public class FurnitureLib extends JavaPlugin{
 							this.sqlManager.initialize();
 							this.loadIgnore();
 							this.sqlManager.loadALL();
-							send("§2Furniture load finish :)");
-							send("==========================================");
 							this.craftingInv = new CraftingInv(this);
 							this.limitManager = new LimitationManager(this);
 							this.update = getConfig().getBoolean("config.CheckUpdate");
@@ -183,6 +190,9 @@ public class FurnitureLib extends JavaPlugin{
 							for(Player p : Bukkit.getOnlinePlayers()){if(p.isOp()){getUpdater().sendPlayer(p);}}
 							loadPermissionKit();
 							loadMetrics();
+							this.pManager.loadProjectFiles();
+							send("§2Furniture load finish :)");
+							send("==========================================");
 						}else{
 							send("Furniture Lib deosn't find the correct ProtocolLib");
 							send("Please Install Protocollib §c4.x");
@@ -264,7 +274,7 @@ public class FurnitureLib extends JavaPlugin{
 	}
 	
 	public boolean isAfterDate(long time, int purgeTime){
-		if(System.currentTimeMillis() - (time+(86400000*purgeTime)) >0){return true;}
+		if(System.currentTimeMillis() - (time+purgeTimeMS) >0){return true;}
 		return false;
 	}
 	
@@ -272,19 +282,27 @@ public class FurnitureLib extends JavaPlugin{
 		OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);
 		if(!player.hasPlayedBefore()) return false;
 		long time = player.getLastPlayed();
-		if(!isAfterDate(time, purgeTime))return false;
-		if(removePurge){getFurnitureManager().remove(obj);return false;}
-		obj.setSQLAction(SQLAction.REMOVE);
-		return true;
+		if(!isAfterDate(time, purgeTime)){return false;}else{
+			if(removePurge){
+				getFurnitureManager().remove(obj);
+				return true;
+			}
+			obj.setSQLAction(SQLAction.REMOVE);
+			return true;
+		}
 	}
 	
 	public boolean checkPurge(ObjectID obj, OfflinePlayer player){
 		if(!player.hasPlayedBefore()) return false;
 		long time = player.getLastPlayed();
-		if(!isAfterDate(time, purgeTime))return false;
-		if(removePurge){getFurnitureManager().remove(obj);return false;}
-		obj.setSQLAction(SQLAction.REMOVE);
-		return true;
+		if(!isAfterDate(time, purgeTime)){return false;}else{
+			if(removePurge){
+				getFurnitureManager().remove(obj);
+				return true;
+			}
+			obj.setSQLAction(SQLAction.REMOVE);
+			return true;
+		}
 	}
 	
 	private void createDefaultWatchers(){

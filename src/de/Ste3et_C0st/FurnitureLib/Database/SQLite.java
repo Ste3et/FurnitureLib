@@ -37,6 +37,7 @@ public class SQLite extends Database{
         File dataFolder = new File(plugin.getDataFolder(), dbname+".db");
         if (!dataFolder.exists()){
             try {
+            	System.out.println("New Database will be generated");
                 dataFolder.createNewFile();
             } catch (IOException e) {
                 plugin.getLogger().log(Level.SEVERE, "File write error: "+dbname+".db");

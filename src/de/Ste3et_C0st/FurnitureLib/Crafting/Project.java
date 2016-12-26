@@ -16,7 +16,7 @@ import de.Ste3et_C0st.FurnitureLib.main.Type.CenterType;
 import de.Ste3et_C0st.FurnitureLib.main.Type.PlaceableSide;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
 
-public class Project{
+public class Project extends ProjectSettings{
 	private String project;
 	private CraftingFile file;
 	private Plugin plugin;
@@ -126,7 +126,6 @@ public class Project{
 		addDefault("player");
 		this.chunkLimit = getDefault("chunk");
 		this.playerLimit = getDefault("player");
-		if(plugin!=null&&plugin.getName().equalsIgnoreCase("FurnitureMaker")){setEditorProject(true);}
 	}
 	
 	public Project(String name, Plugin plugin,PlaceableSide side, Class<?> clas){
@@ -140,7 +139,6 @@ public class Project{
 		this.chunkLimit = getDefault("chunk");
 		this.playerLimit = getDefault("player");
 		this.side = side;
-		if(plugin!=null&&plugin.getName().equalsIgnoreCase("FurnitureMaker")){setEditorProject(true);}
 	}
 	
 	public boolean hasPermissions(Player p){

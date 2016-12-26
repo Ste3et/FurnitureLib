@@ -1,9 +1,11 @@
 package de.Ste3et_C0st.FurnitureLib.Database;
 
 import java.io.ByteArrayInputStream;
+import java.io.EOFException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
+import java.util.zip.ZipException;
 
 import org.apache.commons.codec.binary.Base64;
 import org.bukkit.Bukkit;
@@ -40,19 +42,25 @@ public class DeSerializer {
 	private Object[] enumItemSlots = EnumWrappers.ItemSlot.values();
 	
 	public void Deserialze(String objId,String in, SQLAction action, boolean autoPurge){
+		ObjectID obj = new ObjectID(null, null, null);
+		obj.setID(objId);
 		try {
 			byte[] by = Base64.decodeBase64(in);
 			ByteArrayInputStream bin = new ByteArrayInputStream(by);
 			NBTTagCompound compound = NBTCompressedStreamTools.read(bin);
-			System.out.println(compound.toString());
+			bin.close();
 			EventType evType = EventType.valueOf(compound.getString("EventType"));
 			PublicMode pMode = PublicMode.valueOf(compound.getString("PublicMode")); 
 			UUID uuid = uuidFetcher(compound.getString("Owner-UUID"));
 			List<UUID> members = membersFetcher(compound.getList("Members"));
 			Location startLocation = locationFetcher(compound.getCompound("Location"));
-			if(startLocation==null){return;}
-			ObjectID obj = new ObjectID(null, null, startLocation);
-			obj.setID(objId);
+			if(startLocation==null){
+				System.out.println(obj.getID() + "Make Problems: empty StartLocation");
+				System.out.println(obj.getID() + "have marked as removing, pls ignor the error message");
+				obj.setSQLAction(SQLAction.REMOVE);
+				return;
+			}
+			obj.setStartLocation(startLocation);
 			obj.setEventTypeAccess(evType);
 			obj.setPublicMode(pMode);
 			obj.setMemberList(members);
@@ -60,14 +68,13 @@ public class DeSerializer {
 			obj.setFinish();
 			if(action!=null&&action.equals(SQLAction.SAVE)){obj.setSQLAction(SQLAction.SAVE);}else{obj.setSQLAction(SQLAction.NOTHING);}
 			obj.setFromDatabase();
-			if(autoPurge){if(FurnitureLib.getInstance().checkPurge(obj, uuid)){purged++;return;}}
+
 			NBTTagCompound armorStands = compound.getCompound("ArmorStands");
 			for(Object o : armorStands.c()){
 				Integer ArmorID = Integer.parseInt((String) o);
 				NBTTagCompound metadata = armorStands.getCompound(ArmorID+"");
 				EntityType type = EntityType.ARMOR_STAND;
-				if(metadata.hasKey("EntityType")){type = EntityType.valueOf(metadata.getString("EntityType"));}
-				
+				if(metadata.hasKey("EntityType")){type = EntityType.valueOf(metadata.getString("EntityType"));}if(autoPurge){if(FurnitureLib.getInstance().checkPurge(obj, uuid)){purged++;return;}}
 				switch (type) {
 				case ARMOR_STAND:loadArmorStandMetadata(metadata, ArmorID, obj);break;
 				case PIG:loadPigMetadata(metadata, ArmorID, obj);break;
@@ -77,8 +84,16 @@ public class DeSerializer {
 				if(FurnitureLib.getInstance().getFurnitureManager().getLastID()<ArmorID){FurnitureLib.getInstance().getFurnitureManager().setLastID(ArmorID);}
 				this.armorStands++;
 			}
-		} catch (Exception e) {
+		} catch (EOFException eofEx){
+			return;
+		} catch (ZipException zipEx){
+			System.out.println(obj.getID() + "Make Problems: Not in GZIP format or is the Table empty ?");
+			System.out.println(obj.getID() + "have marked as removing, pls ignor the error message");
+			obj.setSQLAction(SQLAction.REMOVE);
+			return;
+		}catch (Exception e) {
 			e.printStackTrace();
+			return;
 		}
 	}
 	

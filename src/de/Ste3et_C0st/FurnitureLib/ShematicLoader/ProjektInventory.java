@@ -2,6 +2,8 @@ package de.Ste3et_C0st.FurnitureLib.ShematicLoader;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.commons.codec.binary.Base64;
 import org.bukkit.Bukkit;
@@ -18,12 +20,14 @@ import de.Ste3et_C0st.FurnitureLib.NBT.CraftItemStack;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTCompressedStreamTools;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
+import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
 
 public class ProjektInventory implements Listener{
 
 	private Inventory inv;
 	private Player player;
 	private ObjectID id;
+	private List<fEntity> entityList = new ArrayList<fEntity>();
 	
 	public ProjektInventory(int slots, ObjectID id){
 		inv = Bukkit.createInventory(null, slots, id.getProjectOBJ().getCraftingFile().getRecipe().getResult().getItemMeta().getDisplayName());
@@ -46,6 +50,19 @@ public class ProjektInventory implements Listener{
 				FileConfiguration file = c.getConfig(this.id.getSerial(), "metadata/");
 				file.set("inventory", toString());
 				c.saveConfig(this.id.getSerial(), file, "metadata/");
+				
+				if(!entityList.isEmpty()){
+					for(fEntity entity : entityList){
+						String name = entity.getName();
+						name = name.replace("OnInventoryCloseDisplayItem(", "");
+						name = name.replace(")", "");
+						String[] args = name.split(",");
+						int slot = Integer.parseInt(args[1]);
+						int entitySlot = Integer.parseInt(args[0]);
+						entity.getInventory().setSlot(entitySlot, inv.getItem(slot));
+					}
+					this.id.update();
+				}
 			}
 		}
 	}
@@ -65,6 +82,12 @@ public class ProjektInventory implements Listener{
 		FileConfiguration file = c.getConfig(this.id.getSerial(), "metadata/");
 		if(file.isSet("inventory")){
 			setItems(file.getString("inventory"));
+		}
+		
+		for(fEntity entitys : this.id.getPacketList()){
+			if(entitys.getName().startsWith("OnInventoryCloseDisplayItem")){
+				this.entityList.add(entitys);
+			}
 		}
 	}
 	

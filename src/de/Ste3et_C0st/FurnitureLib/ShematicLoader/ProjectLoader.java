@@ -8,6 +8,7 @@ import java.util.UUID;
 
 import org.apache.commons.codec.binary.Base64;
 import org.bukkit.Bukkit;
+import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
@@ -46,11 +47,14 @@ public class ProjectLoader extends Furniture implements Listener{
 		super(id);
 		try{
 			YamlConfiguration config = new YamlConfiguration();
-			config.load(new File("plugins/FurnitureLib/plugin/DiceEditor/", getObjID().getProject()+".yml"));
+			config.load(new File("plugins/FurnitureLib/Crafting/", getObjID().getProject()+".yml"));
 			header = getHeader(config);
 			Player player = setBlock(id.getStartLocation(), config, true);
 			if(player!=null){
 				player.sendMessage(FurnitureLib.getInstance().getLangManager().getString("NotEnoughSpace"));
+				if(!player.getGameMode().equals(GameMode.CREATIVE) || !FurnitureLib.getInstance().creativePlace()){
+					player.getInventory().addItem(id.getProjectOBJ().getCraftingFile().getRecipe().getResult());
+				}
 				getObjID().setSQLAction(SQLAction.REMOVE);
 				return;
 			}
@@ -75,7 +79,7 @@ public class ProjectLoader extends Furniture implements Listener{
 		super(id);
 		try{
 			YamlConfiguration config = new YamlConfiguration();
-			config.load(new File("plugins/FurnitureLib/plugin/DiceEditor/", getObjID().getProject()+".yml"));
+			config.load(new File("plugins/FurnitureLib/Crafting/", getObjID().getProject()+".yml"));
 			header = getHeader(config);
 			Player player = setBlock(id.getStartLocation(), config, rotate);
 			if(player!=null){

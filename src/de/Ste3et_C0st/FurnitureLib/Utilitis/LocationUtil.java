@@ -6,7 +6,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Color;
 import org.bukkit.DyeColor;
 import org.bukkit.Effect;
@@ -176,6 +175,8 @@ public class LocationUtil {
 			break;
 		}
 		
+		
+		
 		if(blockList.isEmpty()){
 			return true;
 		}else{
@@ -187,6 +188,7 @@ public class LocationUtil {
 		}
 	}
 	
+	@SuppressWarnings("deprecation")
 	public void particleBlock(Block b){
 		if(!FurnitureLib.getInstance().isParticleEnable()) return;
 		try{
@@ -202,7 +204,7 @@ public class LocationUtil {
 				}
 			}
 			
-		}catch(Exception e){}
+		}catch(Exception e){e.printStackTrace();}
 	}
 
     public boolean isDay(World w) {
