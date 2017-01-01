@@ -43,6 +43,8 @@ public class FurnitureManager {
 	public HashMap<World, HashMap<EntityType, WrappedDataWatcher>> defaultWatchers = new HashMap<World, HashMap<EntityType, WrappedDataWatcher>>(); 
 	public WrappedDataWatcher watcher=null;
 	
+	public void addObjectID(ObjectID id){if(!objecte.contains(id)) objecte.add(id);}
+	
 	public WrappedDataWatcher getDefaultWatcher(World w, EntityType type){
 		if(defaultWatchers.containsKey(w)){if(defaultWatchers.get(w).containsKey(type)) return defaultWatchers.get(w).get(type).deepClone();}
 		WrappedDataWatcher watcher = createNew(w, type);

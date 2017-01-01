@@ -165,8 +165,13 @@ public class ChunkOnLoad implements Listener{
 						Bukkit.getScheduler().scheduleSyncDelayedTask(FurnitureLib.getInstance(), new Runnable() {
 							@Override
 							public void run() {
-								FurnitureBlockClickEvent e = new FurnitureBlockClickEvent(p, event.getClickedBlock(), o);
-								Bukkit.getPluginManager().callEvent(e);
+								PostFurnitureBlockClickEvent pEvent = new PostFurnitureBlockClickEvent(p, event.getClickedBlock(), o);
+								Bukkit.getPluginManager().callEvent(pEvent);
+								if(!pEvent.isCancelled()){
+									FurnitureBlockClickEvent e = new FurnitureBlockClickEvent(p, event.getClickedBlock(), o);
+									Bukkit.getPluginManager().callEvent(e);
+								}
+								
 							}});
 					}
 				}
@@ -225,8 +230,12 @@ public class ChunkOnLoad implements Listener{
 					Bukkit.getScheduler().scheduleSyncDelayedTask(FurnitureLib.getInstance(), new Runnable() {
 						@Override
 						public void run() {
-							FurnitureBlockBreakEvent e = new FurnitureBlockBreakEvent(p, event.getClickedBlock(), o);
-							Bukkit.getPluginManager().callEvent(e);
+							PostFurnitureBlockBreakEvent pEvent = new PostFurnitureBlockBreakEvent(p, event.getClickedBlock(), o);
+							Bukkit.getPluginManager().callEvent(pEvent);
+							if(!pEvent.isCancelled()){
+								FurnitureBlockBreakEvent e = new FurnitureBlockBreakEvent(p, event.getClickedBlock(), o);
+								Bukkit.getPluginManager().callEvent(e);
+							}
 						}});
 				}
 			}

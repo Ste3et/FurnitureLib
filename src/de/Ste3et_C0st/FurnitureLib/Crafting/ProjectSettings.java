@@ -28,9 +28,7 @@ public abstract class ProjectSettings {
 		config c = new config(FurnitureLib.getInstance());
 		if(!name.endsWith(".yml")) name += ".yml";
 		File f = new File("plugins/FurnitureLib/Crafting/", name);
-		System.out.println("name, start saving");
 		if(f.exists()){
-			System.out.println("name, file exist");
 			FileConfiguration config = c.getConfig(name, "/Crafting/");
 			name.replace(".yml", "");
 			String header = getHeader(config, name);

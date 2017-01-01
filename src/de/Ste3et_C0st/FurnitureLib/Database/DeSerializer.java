@@ -55,9 +55,8 @@ public class DeSerializer {
 			List<UUID> members = membersFetcher(compound.getList("Members"));
 			Location startLocation = locationFetcher(compound.getCompound("Location"));
 			if(startLocation==null){
-				System.out.println(obj.getID() + "Make Problems: empty StartLocation");
-				System.out.println(obj.getID() + "have marked as removing, pls ignor the error message");
 				obj.setSQLAction(SQLAction.REMOVE);
+				FurnitureLib.getInstance().getFurnitureManager().addObjectID(obj);
 				return;
 			}
 			obj.setStartLocation(startLocation);
@@ -90,6 +89,7 @@ public class DeSerializer {
 			System.out.println(obj.getID() + "Make Problems: Not in GZIP format or is the Table empty ?");
 			System.out.println(obj.getID() + "have marked as removing, pls ignor the error message");
 			obj.setSQLAction(SQLAction.REMOVE);
+			FurnitureLib.getInstance().getFurnitureManager().addObjectID(obj);
 			return;
 		}catch (Exception e) {
 			e.printStackTrace();

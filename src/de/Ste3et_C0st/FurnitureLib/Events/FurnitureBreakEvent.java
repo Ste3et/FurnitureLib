@@ -20,7 +20,9 @@ public final class FurnitureBreakEvent extends Event implements Cancellable{
     private Location l;
     private boolean cancelled;
     @Override public HandlerList getHandlers() {return handlers; }
+    @Deprecated
     @Override public boolean isCancelled() {return cancelled;}
+    @Deprecated
     @Override public void setCancelled(boolean cancelled) { this.cancelled = cancelled;}
     public static HandlerList getHandlerList() {return handlers;}
     

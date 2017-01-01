@@ -12,7 +12,7 @@ import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.EventType;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 
-public final class FurnitureBlockClickEvent extends Event implements Cancellable{
+public final class PostFurnitureBlockClickEvent extends Event implements Cancellable{
     private static final HandlerList handlers = new HandlerList();
     private Block b;
     private ObjectID o;
@@ -20,13 +20,11 @@ public final class FurnitureBlockClickEvent extends Event implements Cancellable
     private Location l;
     private boolean cancelled;
     @Override public HandlerList getHandlers() {return handlers; }
-    @Deprecated
     @Override public boolean isCancelled() {return cancelled;}
-    @Deprecated
     @Override public void setCancelled(boolean cancelled) { this.cancelled = cancelled;}
     public static HandlerList getHandlerList() {return handlers;}
     
-    public FurnitureBlockClickEvent(Player p, Block b, ObjectID o) {
+    public PostFurnitureBlockClickEvent(Player p, Block b, ObjectID o) {
     	if(o.getSQLAction().equals(SQLAction.REMOVE)){return;}
     	this.p = p;
     	this.b = b;

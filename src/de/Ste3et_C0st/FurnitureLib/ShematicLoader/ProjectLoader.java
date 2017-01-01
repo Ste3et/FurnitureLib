@@ -128,7 +128,6 @@ public class ProjectLoader extends Furniture implements Listener{
 		if(getObjID()==null){return;}
 		if(e.getID()==null) return;
 		if(getObjID().getSQLAction().equals(SQLAction.REMOVE)){return;}
-		if(e.isCancelled()) return;
 		if(!e.getID().equals(getObjID())) return;
 		if(!e.canBuild()){return;}
 		e.remove();
@@ -139,7 +138,6 @@ public class ProjectLoader extends Furniture implements Listener{
 		if(getObjID()==null){return;}
 		if(e.getID()==null) return;
 		if(getObjID().getSQLAction().equals(SQLAction.REMOVE)){return;}
-		if(e.isCancelled()) return;
 		if(!e.getID().equals(getObjID())) return;
 		if(!e.canBuild()){return;}
 		e.remove();
@@ -159,7 +157,6 @@ public class ProjectLoader extends Furniture implements Listener{
 		if(getObjID()==null){return;}
 		if(e.getID()==null) return;
 		if(getObjID().getSQLAction().equals(SQLAction.REMOVE)){return;}
-		if(e.isCancelled()) return;
 		if(!e.getID().equals(getObjID())) return;
 		if(this.inv!=null){
 			if(this.inv.getPlayer()==null){
@@ -194,7 +191,6 @@ public class ProjectLoader extends Furniture implements Listener{
 	public void onFurnitureClick(FurnitureClickEvent e) {
 		if(getObjID()==null){return;}
 		if(getObjID().getSQLAction().equals(SQLAction.REMOVE)){return;}
-		if(e.isCancelled()) return;
 		if(e.getID()==null) return;
 		if(!e.getID().equals(getObjID())) return;
 		if(this.inv!=null){

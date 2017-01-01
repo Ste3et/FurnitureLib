@@ -1,30 +1,30 @@
 message:
-   FurnitureOnThisPlace: "&aAn dieser Stelle ist schon ein Object."
-   NotEnoughSpace: "&aNicht genug Platz zum aufstellen."
-   NoPermissions: "&cDazu hast du keine Berechtigung."
-   LimitReached: "&cDas Limit dieses Object wurde erreicht."
-   PlayerNotOnline: "&c#PLAYER# ist nicht Online"
-   ProjectNotFound: "&cDas Projekt #PROJECT# existiert nicht"
-   ProjectAlreadyExist: "&cDas Projekt #PROJECT# existiert bereits"
-   WrongArgument: "&cDu benutzt falsche argumente"
-   GivePlayer: "&aDer Spieler #PLAYER# bekamm #PROJECT#(#AMOUNT#)"
-   DebugModeEntered: "&aDu hast den Infomodus betreten rechtsklicke ein Objekt"
-   ManageModeEntered: "&aDu hast den Mangemodus betreten rechtsklicke ein Objekt"
-   RemoveDistance: "&eDu hast #AMOUNT# Objekte entfernt"
-   RemoveID: "&eDu hast #OBJID# entfernt"
-   RemovePlugin: "&eDu hast alle Objekte die von #PLUGIN# gesetzt wurden entfernt"
-   RemoveType: "&eDu hast alle #TYPE#'s entfernt"
-   RemoveAll: "&eDu hast alle Objekte entfernt"
-   RemoveLookat: "&eDu hast das Objekt mit der id #SERIAL# entfernt"
-   RemovePlayer: "&eDu hast alle Objecte des Spielers #PLAYER# entfernt"
-   SideNotFound: "&cDie Seite wurde nicht gefunen"
-   SideNavigation: "&eBenutze /furniture list <option> (0-#MAX#)"
-   WrongOwner: "&cDas ist nicht deins"
-   LimitAouncer: "&6Du hast &e#TYPE# &2#CURRENT#&6/&c#MAX# &6platziert."
-   NotONThisSide: "&cDu kannst dieses Model nicht an dieser Seite Platzieren"
-   PurgeMarked: "Du has #AMOUNT# ArmorStands zum entfernen aus der DB makiert."
-   CraftingEdit: '&eDu hast das Furniture Crafting Rezept verändert'
-   CraftingRemove: '&aDu hast das Furniture Crafting Rezept entfernt'
-  FurnitureToggleCMDOff: '&aDu hast alle Furniture &cunsichtbar gemacht'
-  FurnitureToggleCMDOn: '&aDu hast alle Furniture &2sichtbar gemacht'
-  FurnitureToggleEvent: '&cDas kannst du nicht machen.'
+   FurnitureOnThisPlace: '&aAn dieser Stelle ist schon ein Objekt.'
+   NotEnoughSpace: '&aNicht genug Platz zum Aufstellen.'
+   NoPermissions: '&cDazu hast du keine Berechtigung.'
+   LimitReached: '&cDas Limit dieses Objekts wurde erreicht.'
+   PlayerNotOnline: '&c#PLAYER# ist nicht Online.'
+   ProjectNotFound: '&cDas Projekt #PROJECT# existiert nicht.'
+   ProjectAlreadyExist: '&cDas Projekt #PROJECT# existiert bereits.'
+   WrongArgument: '&cDu benutzt falsche Argumente.'
+   GivePlayer: '&aDer Spieler #PLAYER# bekam #PROJECT#(#AMOUNT#).'
+   DebugModeEntered: '&aDu hast den Infomodus betreten, rechtsklicke ein Objekt.'
+   ManageModeEntered: '&aDu hast den Verwaltungsmodus betreten, rechtsklicke ein Objekt.'
+   RemoveDistance: '&eDu hast #AMOUNT# Objekte entfernt.'
+   RemoveID: '&eDu hast #OBJID# entfernt.'
+   RemovePlugin: '&eDu hast alle Objekte, die von #PLUGIN# gesetzt wurden, entfernt.'
+   RemoveType: '&eDu hast alle #TYPE#en entfernt.'
+   RemoveAll: '&eDu hast alle Objekte entfernt.'
+   RemoveLookat: '&eDu hast das Objekt mit der id, #SERIAL#, entfernt.'
+   RemovePlayer: '&eDu hast alle Objekte des Spielers, #PLAYER#, entfernt.'
+   SideNotFound: '&cDie Seite wurde nicht gefunden.'
+   SideNavigation: '&eBenutze /furniture list <option> (0-#MAX#).'
+   WrongOwner: '&cDas ist nicht deins!'
+   LimitAouncer: '&6Du hast &e#TYPE# &2#CURRENT#&6/&c#MAX# &6platziert.'
+   NotONThisSide: '&cDu kannst dieses Mödel nicht auf dieser Seite platzieren.'
+   PurgeMarked: 'Du hast #AMOUNT# Rüstungsständer zum Entfernen aus der DB makiert.'
+   CraftingEdit: '&eDu hast das Möbelherstellungs-Rezept geändert.'
+   CraftingRemove: '&aDu hast das Möbelherstellungs-Rezept entfernt.'
+   FurnitureToggleCMDOff: '&aDu hast alle Möbel &cunsichtbar gemacht.'
+   FurnitureToggleCMDOn: '&aDu hast alle Möbel &2sichtbar gemacht.'
+   FurnitureToggleEvent: '&cDas kannst du nicht machen.'

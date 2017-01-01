@@ -14,7 +14,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 
-import de.Ste3et_C0st.FurnitureLib.Events.FurnitureClickEvent;
+import de.Ste3et_C0st.FurnitureLib.Events.PostFurnitureClickEvent;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.JsonBuilder;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.ManageInv;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.JsonBuilder.ClickAction;
@@ -43,7 +43,7 @@ public class command implements CommandExecutor, Listener{
 	}
 	
 	@EventHandler
-	public void onArmorRightClick(final FurnitureClickEvent e){
+	public void onArmorRightClick(final PostFurnitureClickEvent e){
 		if(playerList.contains(e.getPlayer())){
 			e.setCancelled(true);
 			Player p = e.getPlayer();

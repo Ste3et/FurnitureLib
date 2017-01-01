@@ -186,8 +186,12 @@ public class Project extends ProjectSettings{
 		this.limitationFile = this.limitationConfig.getConfig(conf, "/limitation/");
 		this.limitationFile.addDefault("Projects." + getSystemID(), -1);
 		if(conf.equalsIgnoreCase("player")){
+			if(!this.limitationFile.isSet("PermissionsLimit.test.totalPermissions")){
+				this.limitationFile.addDefault("PermissionsLimit.test.totalPermissions.enable", false);
+				this.limitationFile.addDefault("PermissionsLimit.test.totalPermissions.amount", -1);
+			}
 			if(!this.limitationFile.isSet("Projects." + getSystemID())){
-				this.limitationFile.addDefault("PermissionsLimit.test." + getSystemID(), 10);
+				this.limitationFile.addDefault("PermissionsLimit.test.systemID." + getSystemID(), 10);
 			}
 		}
 		this.limitationFile.options().copyDefaults(true);
@@ -200,11 +204,19 @@ public class Project extends ProjectSettings{
 		if(conf.equalsIgnoreCase("player")){
 			if(this.limitationFile.isSet("PermissionsLimit")){
 				if(this.limitationFile.isConfigurationSection("PermissionsLimit")){
-					for(String s : this.limitationFile.getConfigurationSection("PermissionsLimit").getKeys(false)){
-						if(this.limitationFile.isSet("PermissionsLimit." + s + "." + getSystemID())){
-							String permission = "furniture.limit." + s;
-							Integer i = this.limitationFile.getInt("PermissionsLimit." + s + "." + getSystemID());
-							permissionList.put(permission, i);
+					if(!this.limitationFile.getBoolean("PermissionsLimit.test.totalPermissions.enable")){
+						for(String s : this.limitationFile.getConfigurationSection("PermissionsLimit").getKeys(false)){
+							if(this.limitationFile.isSet("PermissionsLimit." + s + ".totalPermissions")){
+								if(this.limitationFile.getBoolean("PermissionsLimit." + s + ".totalPermissions.enable")){
+									String permission = "furniture.limit." + s;
+									Integer i = this.limitationFile.getInt("PermissionsLimit." + s + ".totalPermissions.amount");
+									permissionList.put(permission, i);
+								}
+							}else if(this.limitationFile.isSet("PermissionsLimit." + s + ".systemID." + getSystemID())){
+								String permission = "furniture.limit." + s;
+								Integer i = this.limitationFile.getInt("PermissionsLimit." + s + ".systemID." + getSystemID());
+								permissionList.put(permission, i);
+							}
 						}
 					}
 				}

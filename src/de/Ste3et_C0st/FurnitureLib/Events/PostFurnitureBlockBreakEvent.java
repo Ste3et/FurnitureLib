@@ -12,7 +12,7 @@ import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.EventType;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 
-public final class FurnitureBlockClickEvent extends Event implements Cancellable{
+public final class PostFurnitureBlockBreakEvent extends Event implements Cancellable{
     private static final HandlerList handlers = new HandlerList();
     private Block b;
     private ObjectID o;
@@ -20,13 +20,11 @@ public final class FurnitureBlockClickEvent extends Event implements Cancellable
     private Location l;
     private boolean cancelled;
     @Override public HandlerList getHandlers() {return handlers; }
-    @Deprecated
     @Override public boolean isCancelled() {return cancelled;}
-    @Deprecated
     @Override public void setCancelled(boolean cancelled) { this.cancelled = cancelled;}
     public static HandlerList getHandlerList() {return handlers;}
     
-    public FurnitureBlockClickEvent(Player p, Block b, ObjectID o) {
+    public PostFurnitureBlockBreakEvent(Player p, Block b, ObjectID o) {
     	if(o.getSQLAction().equals(SQLAction.REMOVE)){return;}
     	this.p = p;
     	this.b = b;
@@ -39,7 +37,7 @@ public final class FurnitureBlockClickEvent extends Event implements Cancellable
     public ObjectID getID(){return this.o;}
     public Player getPlayer(){return this.p;}
     public Location getLocation(){return this.l;}
-	public boolean canBuild(){return FurnitureLib.getInstance().canBuild(p, o, EventType.INTERACT);}
+	public boolean canBuild(){return FurnitureLib.getInstance().canBuild(p, o, EventType.BREAK);}
 	
 	public void remove(){
 		o.remove(p);

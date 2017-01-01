@@ -97,6 +97,8 @@ public class LocationUtil {
 
 		Vector v2 = loc.toVector();
 		for(ObjectID obj : FurnitureLib.getInstance().getFurnitureManager().getObjectList()){
+			if(obj==null) continue;
+			if(obj.getStartLocation()==null) continue;
 			Vector v1 = obj.getStartLocation().toVector();
 			if(v1.equals(v2)){
 				if(!obj.getSQLAction().equals(SQLAction.REMOVE)){

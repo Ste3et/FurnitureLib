@@ -53,8 +53,12 @@ public class FurnitureEvents {
 									Bukkit.getScheduler().scheduleSyncDelayedTask(FurnitureLib.getInstance(), new Runnable() {
 										@Override
 										public void run() {
-											FurnitureBreakEvent event = new FurnitureBreakEvent(player, (fArmorStand) packet, objectID, location);
-											Bukkit.getServer().getPluginManager().callEvent(event);
+											PostFurnitureBreakEvent pEvent = new PostFurnitureBreakEvent(player, (fArmorStand) packet, objectID, location);
+											Bukkit.getServer().getPluginManager().callEvent(pEvent);
+											if(!pEvent.isCancelled()){
+												FurnitureBreakEvent event = new FurnitureBreakEvent(player, (fArmorStand) packet, objectID, location);
+												Bukkit.getServer().getPluginManager().callEvent(event);
+											}
 										}
 									});
 									break;
@@ -68,8 +72,12 @@ public class FurnitureEvents {
 									Bukkit.getScheduler().scheduleSyncDelayedTask(FurnitureLib.getInstance(), new Runnable() {
 									@Override
 										public void run() {
-											FurnitureClickEvent event = new FurnitureClickEvent(player, (fArmorStand) packet, objectID, location);
-											Bukkit.getServer().getPluginManager().callEvent(event);		
+											PostFurnitureClickEvent pEvent = new PostFurnitureClickEvent(player, (fArmorStand) packet, objectID, location);
+											Bukkit.getServer().getPluginManager().callEvent(pEvent);	
+											if(!pEvent.isCancelled()){
+												FurnitureClickEvent event = new FurnitureClickEvent(player, (fArmorStand) packet, objectID, location);
+												Bukkit.getServer().getPluginManager().callEvent(event);	
+											}
 										}
 									});
 									break;
