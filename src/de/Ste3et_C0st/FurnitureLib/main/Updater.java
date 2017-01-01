@@ -75,7 +75,7 @@ public class Updater {
 	private String getLatestVersionOnSpigot() {
 		if(FurnitureLib.getInstance().isUpdate()){
 	        try {
-		        URL website = new URL("https://api.spiget.org/v1/resources/9368");
+		        URL website = new URL("https://api.spiget.org/v2/resources/9368/versions/latest");
 		        URLConnection connection = website.openConnection();
 		        BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 		        StringBuilder response = new StringBuilder();
@@ -84,7 +84,7 @@ public class Updater {
 		        in.close();
 		        JsonParser parser = new JsonParser();
 		        JsonObject o = parser.parse(response.toString()).getAsJsonObject();       
-		        return o.get("version").getAsString();
+		        return o.get("name").getAsString();
 	        } catch (Exception ex) {
 	            System.err.println("Failed to check for a update on spigot for FurnitureLib");
 	        }
