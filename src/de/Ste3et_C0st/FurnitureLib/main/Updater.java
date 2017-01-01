@@ -77,6 +77,7 @@ public class Updater {
 	        try {
 		        URL website = new URL("https://api.spiget.org/v2/resources/9368/versions/latest");
 		        URLConnection connection = website.openConnection();
+			connection.addRequestProperty("User-Agent", "FurnitureLib");
 		        BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 		        StringBuilder response = new StringBuilder();
 		        String inputLine;
