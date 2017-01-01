@@ -74,22 +74,22 @@ public class Updater {
 	
 	private String getLatestVersionOnSpigot() {
 		if(FurnitureLib.getInstance().isUpdate()){
-	        try {
-		        URL website = new URL("https://api.spiget.org/v2/resources/9368/versions/latest");
-		        URLConnection connection = website.openConnection();
-			connection.addRequestProperty("User-Agent", "FurnitureLib");
-		        BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
-		        StringBuilder response = new StringBuilder();
-		        String inputLine;
-		        while ((inputLine = in.readLine()) != null) response.append(inputLine);
-		        in.close();
-		        JsonParser parser = new JsonParser();
-		        JsonObject o = parser.parse(response.toString()).getAsJsonObject();       
-		        return o.get("name").getAsString();
-	        } catch (Exception ex) {
-	            System.err.println("Failed to check for a update on spigot for FurnitureLib");
-	        }
-	        return null;
+			try {
+				URL website = new URL("https://api.spiget.org/v2/resources/9368/versions/latest");
+				URLConnection connection = website.openConnection();
+				connection.addRequestProperty("User-Agent", "FurnitureLib");
+				BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+				StringBuilder response = new StringBuilder();
+				String inputLine;
+				while ((inputLine = in.readLine()) != null) response.append(inputLine);
+				in.close();
+				JsonParser parser = new JsonParser();
+				JsonObject o = parser.parse(response.toString()).getAsJsonObject();       
+				return o.get("name").getAsString();
+			} catch (Exception ex) {
+			    System.err.println("Failed to check for a update on spigot for FurnitureLib");
+			}
+	        	return null;
 		}else{
 			return FurnitureLib.getInstance().getDescription().getVersion();
 		}
