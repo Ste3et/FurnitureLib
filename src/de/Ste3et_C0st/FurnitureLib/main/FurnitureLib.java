@@ -343,10 +343,12 @@ public class FurnitureLib extends JavaPlugin{
 	
 	@Override
 	public void onDisable(){	
+		
 		getLogger().info("==========================================");
 		getLogger().info("Furniture shutdown started");
 		sqlManager.save();
 		sqlManager.stop();
+		instance = null;
 		getLogger().info("ArmorStandPackets saved");
 		if(!getFurnitureManager().getObjectList().isEmpty()){
 			for(ObjectID obj : getFurnitureManager().getObjectList()){
