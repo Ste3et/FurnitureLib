@@ -39,7 +39,6 @@ public class ChunkOnLoad implements Listener{
 	public List<Player> eventList = new ArrayList<Player>();
 	
 	public FurnitureManager manager = FurnitureLib.getInstance().getFurnitureManager();
-	public FurnitureLib instance = FurnitureLib.getInstance();
 
 	@EventHandler
 	public void onPlayerMove(PlayerMoveEvent event) {
@@ -63,7 +62,8 @@ public class ChunkOnLoad implements Listener{
 	@EventHandler
 	public void onPlayerTeleport(PlayerTeleportEvent event) {
 		final Player player = event.getPlayer();
-		Bukkit.getScheduler().runTaskLater(instance, new Runnable(){
+		if(FurnitureLib.getInstance()==null) return;
+		Bukkit.getScheduler().runTaskLater(FurnitureLib.getInstance(), new Runnable(){
 			@Override
 			public void run() {
 				manager.updatePlayerView(player);
@@ -74,7 +74,7 @@ public class ChunkOnLoad implements Listener{
 	@EventHandler
 	public void onPlayerJoin(PlayerJoinEvent event) {
 		final Player player = event.getPlayer();
-		Bukkit.getScheduler().runTaskLater(instance, new Runnable() {
+		Bukkit.getScheduler().runTaskLater(FurnitureLib.getInstance(), new Runnable() {
 			@Override
 			public void run() {
 				manager.updatePlayerView(player);
@@ -90,7 +90,7 @@ public class ChunkOnLoad implements Listener{
 	@EventHandler
 	public void onPlayerChangedWorld(PlayerChangedWorldEvent event) {
 		final Player player = event.getPlayer();
-		Bukkit.getScheduler().runTaskLater(instance, new Runnable() {
+		Bukkit.getScheduler().runTaskLater(FurnitureLib.getInstance(), new Runnable() {
 			@Override
 			public void run() {
 				manager.updatePlayerView(player);
@@ -107,7 +107,7 @@ public class ChunkOnLoad implements Listener{
 	@EventHandler
 	public void onPlayerRespawn(PlayerRespawnEvent event) {
 		final Player player = event.getPlayer();
-		Bukkit.getScheduler().runTaskLater(instance, new Runnable() {
+		Bukkit.getScheduler().runTaskLater(FurnitureLib.getInstance(), new Runnable() {
 			@Override
 			public void run() {
 				manager.updatePlayerView(player);
@@ -158,8 +158,8 @@ public class ChunkOnLoad implements Listener{
 								return;
 							}
 						}
-						if(instance.getFurnitureManager().getIgnoreList().contains(p.getUniqueId())){
-							p.sendMessage(instance.getLangManager().getString("FurnitureToggleEvent"));
+						if(FurnitureLib.getInstance().getFurnitureManager().getIgnoreList().contains(p.getUniqueId())){
+							p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("FurnitureToggleEvent"));
 							return;
 						}
 						Bukkit.getScheduler().scheduleSyncDelayedTask(FurnitureLib.getInstance(), new Runnable() {
@@ -194,7 +194,7 @@ public class ChunkOnLoad implements Listener{
 			final Location l = event.getClickedBlock().getLocation();
 			final BlockFace face = event.getBlockFace();
 			
-			l.setYaw(instance.getLocationUtil().FaceToYaw(instance.getLocationUtil().yawToFace(p.getLocation().getYaw())));
+			l.setYaw(FurnitureLib.getInstance().getLocationUtil().FaceToYaw(FurnitureLib.getInstance().getLocationUtil().yawToFace(p.getLocation().getYaw())));
 			Bukkit.getScheduler().scheduleSyncDelayedTask(FurnitureLib.getInstance(), new Runnable() {
 				@Override
 				public void run() {
@@ -223,8 +223,8 @@ public class ChunkOnLoad implements Listener{
 				event.setCancelled(true);
 				if(!objID.getSQLAction().equals(SQLAction.REMOVE)){
 					final ObjectID o = objID;
-					if(instance.getFurnitureManager().getIgnoreList().contains(p.getUniqueId())){
-						p.sendMessage(instance.getLangManager().getString("FurnitureToggleEvent"));
+					if(FurnitureLib.getInstance().getFurnitureManager().getIgnoreList().contains(p.getUniqueId())){
+						p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("FurnitureToggleEvent"));
 						return;
 					}
 					Bukkit.getScheduler().scheduleSyncDelayedTask(FurnitureLib.getInstance(), new Runnable() {
@@ -260,8 +260,8 @@ public class ChunkOnLoad implements Listener{
 		ObjectID obj = e.getObjID();
 		if(!e.canBuild()){return;}
 		if(!FurnitureLib.getInstance().getPermManager().canBuild(e.getPlayer(), obj.getStartLocation())){return;}
-		if(instance.getFurnitureManager().getIgnoreList().contains(e.getPlayer().getUniqueId())){
-			e.getPlayer().sendMessage(instance.getLangManager().getString("FurnitureToggleEvent"));
+		if(FurnitureLib.getInstance().getFurnitureManager().getIgnoreList().contains(e.getPlayer().getUniqueId())){
+			e.getPlayer().sendMessage(FurnitureLib.getInstance().getLangManager().getString("FurnitureToggleEvent"));
 			return;
 		}
 		FurnitureLib.getInstance().spawn(obj.getProjectOBJ(), obj);
