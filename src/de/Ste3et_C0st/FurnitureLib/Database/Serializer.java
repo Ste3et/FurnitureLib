@@ -5,11 +5,6 @@ import java.util.UUID;
 
 import org.apache.commons.codec.binary.Base64;
 import org.bukkit.Location;
-import org.bukkit.Material;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.util.io.BukkitObjectOutputStream;
-import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
-
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTCompressedStreamTools;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagList;
@@ -39,7 +34,6 @@ public class Serializer {
 				fPig stand = (fPig) packet;
 				armorStands.set(stand.getArmorID()+"", stand.getMetadata());
 			}else if(packet instanceof fCreeper){
-				System.out.println("test");
 				fCreeper stand = (fCreeper) packet;
 				armorStands.set(stand.getArmorID()+"", stand.getMetadata());
 			}
@@ -87,18 +81,4 @@ public class Serializer {
 		location.setString("World", loc.getWorld().getName());
 		return location;
 	}
-
-	  public String toBase64(ItemStack is){
-		  try {
-	  		ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
-			BukkitObjectOutputStream dataOutput = new BukkitObjectOutputStream(outputStream);
-			if(is==null) is=new ItemStack(Material.AIR);
-			dataOutput.writeObject(is);
-			dataOutput.close();
-	        return Base64Coder.encodeLines(outputStream.toByteArray());
-			} catch (Exception e) {
-				e.printStackTrace();
-			}
-			return null;
-	  }
 }

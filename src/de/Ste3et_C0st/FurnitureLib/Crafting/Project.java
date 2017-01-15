@@ -42,13 +42,13 @@ public class Project extends ProjectSettings{
 	public PlaceableSide getPlaceableSide(){return this.side;}
 	public String getSystemID(){return getCraftingFile().getSystemID();}
 	public boolean isEditorProject(){return this.EditorProject;}
-	public void setModel(InputStream stream){this.model = stream;}
-	public void setCraftingFile(CraftingFile file){this.file = file;}
-	public void setPlugin(Plugin plugin) {this.plugin = plugin;}
-	public void setPlaceableSide(PlaceableSide side){this.side = side;}
-	public void setEditorProject(boolean b){this.EditorProject = b;}
-	public void setClass(Class<?> clas) {this.clas = clas;}
-	public void setName(String name){this.project = name;}
+	public Project setModel(InputStream stream){this.model = stream;return this;}
+	public Project setCraftingFile(CraftingFile file){this.file = file;return this;}
+	public Project setPlugin(Plugin plugin) {this.plugin = plugin;return this;}
+	public Project setPlaceableSide(PlaceableSide side){this.side = side;return this;}
+	public Project setEditorProject(boolean b){this.EditorProject = b;return this;}
+	public Project setClass(Class<?> clas) {this.clas = clas;return this;}
+	public Project setName(String name){this.project = name;return this;}
 	public int getMiddle(){return this.middle;}
 	public int getMaxSpeed(){return this.maxSpeed;}
 	public int getGear(){return this.gear;}
@@ -66,7 +66,7 @@ public class Project extends ProjectSettings{
 			for(String s : permissionList.keySet()){
 				if(FurnitureLib.getInstance().hasPerm(p,s)){
 					int j = permissionList.get(s);
-					if(j>i){i = permissionList.get(s);}
+					if(j>i){i = j;}
 				}
 			}
 		}
@@ -107,11 +107,17 @@ public class Project extends ProjectSettings{
 		}
 	}
 	
-	public void setSize(Integer witdh, Integer height, Integer length, CenterType type){
+	public Project setSize(Integer witdh, Integer height, Integer length, CenterType type){
+		if(getName().equalsIgnoreCase("Catapult")){
+			System.out.println(witdh + ";" + height + ";" + length);
+		}
+		
 		this.witdh = witdh;
 		this.height = height;
 		this.length = length;
 		this.type = type;
+		FurnitureLib.getInstance().getFurnitureManager().addProject(this);
+		return this;
 	}
 	
 	public Project(String name, Plugin plugin,InputStream craftingFile,PlaceableSide side, Class<?> clas){
@@ -184,14 +190,22 @@ public class Project extends ProjectSettings{
 	private void addDefault(String conf){
 		this.limitationConfig = new config(FurnitureLib.getInstance());
 		this.limitationFile = this.limitationConfig.getConfig(conf, "/limitation/");
-		this.limitationFile.addDefault("Projects." + getSystemID(), -1);
 		if(conf.equalsIgnoreCase("player")){
-			if(!this.limitationFile.isSet("PermissionsLimit.test.totalPermissions")){
-				this.limitationFile.addDefault("PermissionsLimit.test.totalPermissions.enable", false);
-				this.limitationFile.addDefault("PermissionsLimit.test.totalPermissions.amount", -1);
+			if(!this.limitationFile.isSet("PlayerLimit.default.total")){
+				this.limitationFile.addDefault("PlayerLimit.default.total.enable", false);
+				this.limitationFile.addDefault("PlayerLimit.default.total.amount", 10);
 			}
-			if(!this.limitationFile.isSet("Projects." + getSystemID())){
-				this.limitationFile.addDefault("PermissionsLimit.test.systemID." + getSystemID(), 10);
+			if(!this.limitationFile.isSet("PlayerLimit.default.projects" + getSystemID())){
+				this.limitationFile.addDefault("PlayerLimit.default.projects." + getSystemID(), 10);
+			}
+		}else if(conf.equalsIgnoreCase("chunk")){
+			if(!this.limitationFile.isSet("ChunkLimit.total")){
+				this.limitationFile.addDefault("ChunkLimit.total.enable", false);
+				this.limitationFile.addDefault("ChunkLimit.total.amount", -1);
+			}
+			
+			if(!this.limitationFile.isSet("ChunkLimit.projects." + getSystemID())){
+				this.limitationFile.addDefault("ChunkLimit.projects." + getSystemID(), -1);
 			}
 		}
 		this.limitationFile.options().copyDefaults(true);
@@ -202,27 +216,30 @@ public class Project extends ProjectSettings{
 		this.limitationConfig = new config(FurnitureLib.getInstance());
 		this.limitationFile = this.limitationConfig.getConfig(conf, "/limitation/");
 		if(conf.equalsIgnoreCase("player")){
-			if(this.limitationFile.isSet("PermissionsLimit")){
-				if(this.limitationFile.isConfigurationSection("PermissionsLimit")){
-					if(!this.limitationFile.getBoolean("PermissionsLimit.test.totalPermissions.enable")){
-						for(String s : this.limitationFile.getConfigurationSection("PermissionsLimit").getKeys(false)){
-							if(this.limitationFile.isSet("PermissionsLimit." + s + ".totalPermissions")){
-								if(this.limitationFile.getBoolean("PermissionsLimit." + s + ".totalPermissions.enable")){
-									String permission = "furniture.limit." + s;
-									Integer i = this.limitationFile.getInt("PermissionsLimit." + s + ".totalPermissions.amount");
-									permissionList.put(permission, i);
-								}
-							}else if(this.limitationFile.isSet("PermissionsLimit." + s + ".systemID." + getSystemID())){
-								String permission = "furniture.limit." + s;
-								Integer i = this.limitationFile.getInt("PermissionsLimit." + s + ".systemID." + getSystemID());
-								permissionList.put(permission, i);
-							}
-						}
-					}
+			for(String str : limitationFile.getConfigurationSection("PlayerLimit").getKeys(false)){
+				if(str.equalsIgnoreCase("default")) continue;
+				String permission = "furniture.limit." + str;
+				Integer i = 10;
+				if(limitationFile.getBoolean("PlayerLimit." + str + ".total.enable", false)){
+					i = limitationFile.getInt("PlayerLimit."+ str +".total.amount", 10);
+				}else{
+					i = limitationFile.getInt("PlayerLimit."+ str +".projects." + getSystemID(), 10);
 				}
+				permissionList.put(permission, i);
+			}
+			if(limitationFile.getBoolean("PlayerLimit.default.total.enable", false)){
+				return limitationFile.getInt("PlayerLimit.default.total.amount", 10);
+			}else{
+				return limitationFile.getInt("PlayerLimit.default.projects." + getSystemID(), 10);
+			}		
+		}else if(conf.equalsIgnoreCase("chunk")){
+			if(limitationFile.getBoolean("ChunkLimit.total.enable", false)){
+				return limitationFile.getInt("ChunkLimit.total.amount", -1);
+			}else{
+				return limitationFile.getInt("ChunkLimit.projects." + getSystemID(), -1);
 			}
 		}
-		return this.limitationFile.getInt("Projects." + getSystemID());
+		return -1;
 	}
 	
 	public void rename(String string){

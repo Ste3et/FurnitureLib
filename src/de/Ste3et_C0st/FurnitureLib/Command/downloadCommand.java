@@ -4,10 +4,14 @@ import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
-import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
+
+import javax.net.ssl.HttpsURLConnection;
+import javax.net.ssl.SSLContext;
+import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509TrustManager;
 
 import org.apache.commons.codec.binary.Base64;
 import org.bukkit.command.Command;
@@ -31,7 +35,7 @@ public class downloadCommand {
 					try{
 						if(!command.noPermissions(sender, "furniture.download")) return;
 						String name = args[1];
-						final URL url = new URL("http://dicecraft.de/furniture/API/download.php");
+						final URL url = new URL("https://dicecraft.de/furniture/API/download.php");
 						sender.sendMessage("§7§m+-------------------§7[§2Download§7]§m--------------------+");
 						sender.sendMessage("§6Download startet from: " + name);
 						downLoadData(name, url, sender, null);
@@ -44,7 +48,7 @@ public class downloadCommand {
 					try{
 						if(!command.noPermissions(sender, "furniture.download")) return;
 						String name = args[1];
-						final URL url = new URL("http://dicecraft.de/furniture/API/download.php");
+						final URL url = new URL("https://dicecraft.de/furniture/API/download.php");
 						sender.sendMessage("§7§m+-------------------§7[§2Download§7]§m--------------------+");
 						sender.sendMessage("§6Download startet from: " + name);
 						downLoadData(name, url, sender, args[2]);
@@ -65,8 +69,12 @@ public class downloadCommand {
 			public void run() {
 				try{
 					boolean b = true;
-					HttpURLConnection connection = (HttpURLConnection) url.openConnection();
+					SSLContext sc = SSLContext.getInstance("SSL");
+				    sc.init(null, trustAllCerts, new java.security.SecureRandom());
+				    HttpsURLConnection.setDefaultSSLSocketFactory(sc.getSocketFactory());
+					HttpsURLConnection connection = (HttpsURLConnection) url.openConnection();
 					connection.setRequestProperty("User-Agent", "FurnitureMaker/" + FurnitureLib.getInstance().getDescription().getVersion());
+					
 					connection.setDoOutput(true);
 					connection.setDoInput(true);
 					connection.setRequestMethod("POST");
@@ -120,10 +128,25 @@ public class downloadCommand {
 				}catch(Exception e){
 					sender.sendMessage("§cThe FurnitureMaker Downloader have an Exception");
 					sender.sendMessage("§cPlease contact the Developer");
+					e.printStackTrace();
 				}
 			}
 		}).start();
 	}
+	
+	TrustManager[] trustAllCerts = new TrustManager[]{
+		    new X509TrustManager() {
+		        public java.security.cert.X509Certificate[] getAcceptedIssuers() {
+		            return null;
+		        }
+		        public void checkClientTrusted(
+		            java.security.cert.X509Certificate[] certs, String authType) {
+		        }
+		        public void checkServerTrusted(
+		            java.security.cert.X509Certificate[] certs, String authType) {
+		        }
+		    }
+		};
 	
 	
 	private void add(String config, String playerName, String project, CommandSender sender){

@@ -14,22 +14,22 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-import org.bukkit.event.Listener;
-import org.bukkit.event.block.BlockPhysicsEvent;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.MaterialData;
 import org.bukkit.util.EulerAngle;
 
 import com.comphenix.protocol.wrappers.EnumWrappers;
 
-import de.Ste3et_C0st.FurnitureLib.Events.FurnitureBlockBreakEvent;
-import de.Ste3et_C0st.FurnitureLib.Events.FurnitureBlockClickEvent;
 import de.Ste3et_C0st.FurnitureLib.Events.FurnitureBreakEvent;
 import de.Ste3et_C0st.FurnitureLib.Events.FurnitureClickEvent;
 import de.Ste3et_C0st.FurnitureLib.NBT.CraftItemStack;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTCompressedStreamTools;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
+import de.Ste3et_C0st.FurnitureLib.ShematicLoader.Events.FurnitureBlockBreakEventListener;
+import de.Ste3et_C0st.FurnitureLib.ShematicLoader.Events.FurnitureBlockClickEventListener;
+import de.Ste3et_C0st.FurnitureLib.ShematicLoader.Events.FurnitureBlockPhysikListener;
+import de.Ste3et_C0st.FurnitureLib.ShematicLoader.Events.FurnitureEntityBreakEventListener;
+import de.Ste3et_C0st.FurnitureLib.ShematicLoader.Events.FurnitureEntityClickEventListener;
 import de.Ste3et_C0st.FurnitureLib.main.Furniture;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
@@ -38,7 +38,7 @@ import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fArmorStand;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
 
-public class ProjectLoader extends Furniture implements Listener{
+public class ProjectLoader extends Furniture{
 	private Object[] enumItemSlots = EnumWrappers.ItemSlot.values();
 	public String header;
 	private ProjektInventory inv=null;
@@ -61,17 +61,35 @@ public class ProjectLoader extends Furniture implements Listener{
 			
 			if(isFinish()){
 				registerInventory();
-				toggleLight(false);
-				Bukkit.getPluginManager().registerEvents(this, id.getProjectOBJ().getPlugin());
+				registerEvents();
 				return;
 			}else{
 				
 			}
 			spawn(id.getStartLocation(), config, true);
-			Bukkit.getPluginManager().registerEvents(this, id.getProjectOBJ().getPlugin());
 			registerInventory();
+			registerEvents();
+			
 		}catch(Exception e){
 			e.printStackTrace();
+		}
+	}
+	
+	private void registerEvents(){
+		if(!getObjID().getPacketList().isEmpty()){
+			Bukkit.getPluginManager().registerEvents(new FurnitureEntityClickEventListener(getObjID(), inv), FurnitureLib.getInstance());
+			Bukkit.getPluginManager().registerEvents(new FurnitureEntityBreakEventListener(getObjID(), inv), FurnitureLib.getInstance());
+		}
+		if(!getObjID().getBlockList().isEmpty()){
+			Bukkit.getPluginManager().registerEvents(new FurnitureBlockClickEventListener(getObjID(), inv), FurnitureLib.getInstance());
+			Bukkit.getPluginManager().registerEvents(new FurnitureBlockBreakEventListener(getObjID(), inv), FurnitureLib.getInstance());
+			boolean b = false;
+			for(Location loc : getObjID().getBlockList()){
+				if(!loc.getBlock().getType().isSolid()){
+					b = true;
+				}
+			}
+			if(b){Bukkit.getPluginManager().registerEvents(new FurnitureBlockPhysikListener(getObjID(), inv), FurnitureLib.getInstance());}
 		}
 	}
 	
@@ -118,131 +136,6 @@ public class ProjectLoader extends Furniture implements Listener{
 			}
 		}
 	}
-	
-	public String getHeader(YamlConfiguration file){
-		return (String) file.getConfigurationSection("").getKeys(false).toArray()[0];
-	}
-
-	@EventHandler
-	public void onFurnitureBreak(FurnitureBreakEvent e) {
-		if(getObjID()==null){return;}
-		if(e.getID()==null) return;
-		if(getObjID().getSQLAction().equals(SQLAction.REMOVE)){return;}
-		if(!e.getID().equals(getObjID())) return;
-		if(!e.canBuild()){return;}
-		e.remove();
-	}
-	
-	@EventHandler
-	public void onFurnitureBreak(FurnitureBlockBreakEvent e) {
-		if(getObjID()==null){return;}
-		if(e.getID()==null) return;
-		if(getObjID().getSQLAction().equals(SQLAction.REMOVE)){return;}
-		if(!e.getID().equals(getObjID())) return;
-		if(!e.canBuild()){return;}
-		e.remove();
-	}
-	
-	@EventHandler(ignoreCancelled = true)
-	private void onPhysiks(BlockPhysicsEvent e){
-		  if(getObjID() == null) return;
-		  if(getObjID().getSQLAction().equals(SQLAction.REMOVE)){return;}
-		  if (e.getBlock() == null) return;
-		  if (!getObjID().getBlockList().contains(e.getBlock().getLocation())){return;}
-		  e.setCancelled(true);
-	}
-	
-	@EventHandler
-	public void onFurnitureBreak(FurnitureBlockClickEvent e) {
-		if(getObjID()==null){return;}
-		if(e.getID()==null) return;
-		if(getObjID().getSQLAction().equals(SQLAction.REMOVE)){return;}
-		if(!e.getID().equals(getObjID())) return;
-		if(this.inv!=null){
-			if(this.inv.getPlayer()==null){
-				this.inv.openInventory(e.getPlayer());
-				return;	
-			}
-		}
-		for(fEntity stand : getfAsList()){
-			if(stand.getName().startsWith("#Mount:")){
-				if(stand.getPassanger()==null){
-					stand.setPassanger(e.getPlayer());
-					return;
-				}
-			}else if(stand.getName().startsWith("/")){
-				if(!stand.getName().startsWith("/op")){
-					String str = stand.getName();
-					str = str.replaceAll("@player", e.getPlayer().getName());
-					str = str.replaceAll("@uuid", e.getPlayer().getUniqueId().toString());
-					str = str.replaceAll("@world", e.getPlayer().getWorld().getName());
-					str = str.replaceAll("@x", e.getPlayer().getLocation().getX() + "");
-					str = str.replaceAll("@y", e.getPlayer().getLocation().getY() + "");
-					str = str.replaceAll("@z", e.getPlayer().getLocation().getZ() + "");
-					e.getPlayer().chat(str);
-				}
-			}
-		}
-		
-		toggleLight(true);
-	}
-	
-	@EventHandler
-	public void onFurnitureClick(FurnitureClickEvent e) {
-		if(getObjID()==null){return;}
-		if(getObjID().getSQLAction().equals(SQLAction.REMOVE)){return;}
-		if(e.getID()==null) return;
-		if(!e.getID().equals(getObjID())) return;
-		if(this.inv!=null){
-			if(this.inv.getPlayer()==null){
-				this.inv.openInventory(e.getPlayer());
-				return;	
-			}
-		}
-		for(fEntity stand : getfAsList()){
-			if(stand.getName().startsWith("#Mount:")){
-				if(stand.getPassanger()==null){
-					stand.setPassanger(e.getPlayer());
-					return;
-				}
-			}else if(stand.getName().startsWith("/")){
-				if(!stand.getName().startsWith("/op")){
-					String str = stand.getName();
-					str = str.replaceAll("@player", e.getPlayer().getName());
-					str = str.replaceAll("@uuid", e.getPlayer().getUniqueId().toString());
-					str = str.replaceAll("@world", e.getPlayer().getWorld().getName());
-					str = str.replaceAll("@x", e.getPlayer().getLocation().getX() + "");
-					str = str.replaceAll("@y", e.getPlayer().getLocation().getY() + "");
-					str = str.replaceAll("@z", e.getPlayer().getLocation().getZ() + "");
-					e.getPlayer().chat(str);
-				}
-			}
-		}
-		toggleLight(true);
-	}
-	
-	public void toggleLight(boolean change){
-		for(fEntity stand : getfAsList()){
-			if(stand.getName().startsWith("#Light:")){
-				String[] str = stand.getName().split(":");
-				String lightBool = str[2];
-				if(change){
-					if(lightBool.equalsIgnoreCase("off#")){
-						stand.setName(stand.getName().replace("off#", "on#"));
-						if(!stand.isFire()){stand.setFire(true);}
-					}else if(lightBool.equalsIgnoreCase("on#")){
-						stand.setName(stand.getName().replace("on#", "off#"));
-						if(stand.isFire()){stand.setFire(false);}
-					}
-				}else{
-					if(lightBool.equalsIgnoreCase("on#")){if(!stand.isFire()){stand.setFire(true);}}
-				}
-			}
-		}
-		update();
-	}
-
-
 
 	public void spawn(Location loc, YamlConfiguration config, boolean rotate) {
 		try {
@@ -284,6 +177,9 @@ public class ProjectLoader extends Furniture implements Listener{
 					packet.setPose(eulerAngleFetcher(euler.getCompound(part.toString())), part);
 				}
 				packet.setBasePlate(b).setSmall(s1).setMarker(m).setArms(a).setGlowing(g).setNameVasibility(n).setName(customName).setFire(f).setGlowing(g).setInvisible(i);
+				if(customName.equalsIgnoreCase("#ITEM#") || customName.equalsIgnoreCase("#BLOCK#") || customName.equalsIgnoreCase("#SITZ#")){
+					packet.setNameVasibility(false);
+				}
 			}
 			send();
 		} catch (Exception e) {
@@ -331,7 +227,10 @@ public class ProjectLoader extends Furniture implements Listener{
 			if(!data.getItemType().equals(Material.AIR)){
 				if(!c){
 					if(p!=null&&p.isOnline()){
-						if(location.getBlock().getType().isSolid()){if(!location.getBlock().getType().equals(data.getItemType())){b = false;getLutil().particleBlock(location.getBlock());}}
+						if(location.getBlock().getType().isSolid()){
+							if(!location.getBlock().getType().equals(data.getItemType())){
+								b = false;
+								getLutil().particleBlock(location.getBlock());}}
 					}
 				}
 			}
@@ -342,8 +241,10 @@ public class ProjectLoader extends Furniture implements Listener{
 			for(Location location : map.keySet()){
 				MaterialData data = map.get(location);
 				if(!data.getItemType().equals(Material.AIR)){
-					location.getBlock().setType(data.getItemType());
-					location.getBlock().setData(data.getData(), true);
+					if(location.getBlock().isEmpty()){
+						location.getBlock().setType(data.getItemType());
+						location.getBlock().setData(data.getData(), true);
+					}
 					blockList.add(location.getBlock());
 				}
 			}
@@ -358,7 +259,15 @@ public class ProjectLoader extends Furniture implements Listener{
 		Double Z = eularAngle.getDouble("Z");
 		return new EulerAngle(X, Y, Z);
 	}
+	
+	public String getHeader(YamlConfiguration file){return (String) file.getConfigurationSection("").getKeys(false).toArray()[0];}
 
 	@Override
 	public void spawn(Location arg0) {}
+
+	@Override
+	public void onFurnitureBreak(FurnitureBreakEvent e) {}
+
+	@Override
+	public void onFurnitureClick(FurnitureClickEvent e) {}
 }

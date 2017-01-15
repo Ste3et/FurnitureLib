@@ -62,7 +62,7 @@ public class ObjectID{
 	public Chunk getChunk(){return this.loc.getChunk();}
 	public List<Player> getPlayerList(){return this.players;}
 	public boolean isMember(UUID uuid) {return uuidList.contains(uuid);}
-	public void setFromDatabase(){this.fromDatabase=true;}
+	public void setFromDatabase(boolean b){this.fromDatabase=b;}
 	public boolean isFromDatabase(){return this.fromDatabase;}
 	public boolean isPrivate(){return this.Private;}
 	public void addMember(UUID uuid){uuidList.add(uuid);}

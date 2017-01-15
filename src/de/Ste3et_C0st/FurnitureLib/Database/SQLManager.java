@@ -48,11 +48,8 @@ public class SQLManager {
 	}
 	
 	public void loadALL(){
-		if(this.sqlite!=null){
-			this.sqlite.loadAll(SQLAction.NOTHING);
-		}else if(this.mysql!=null){
-			this.mysql.loadAll(SQLAction.NOTHING);
-		}
+		if(this.sqlite!=null) this.sqlite.loadAll(SQLAction.NOTHING);
+		if(this.mysql!=null) this.mysql.loadAll(SQLAction.NOTHING);
 		FurnitureLib.getInstance().getFurnitureManager().sendAll();
 	}
 	
@@ -81,6 +78,8 @@ public class SQLManager {
 	
 	public void save(){
 		if(!plugin.getFurnitureManager().getObjectList().isEmpty()){
+			if(this.sqlite!=null) sqlite.reconnect();
+			if(this.mysql!=null) mysql.reconnect();
 			List<ObjectID> objList = new ArrayList<ObjectID>();
 			for(ObjectID obj : plugin.getFurnitureManager().getObjectList()){
 				if(!objList.contains(obj)){
@@ -100,19 +99,13 @@ public class SQLManager {
 	}
 	
 	public void save(ObjectID obj){
-		if(this.sqlite!=null){
-			this.sqlite.save(obj);
-		}else if(this.mysql!=null){
-			this.mysql.save(obj);
-		}
+		if(this.sqlite!=null) this.sqlite.save(obj);
+		if(this.mysql!=null)this.mysql.save(obj);
 	}
 	
 	public void remove(ObjectID obj){
-		if(this.sqlite!=null){
-			this.sqlite.delete(obj);
-		}else if(this.mysql!=null){
-			this.mysql.delete(obj);
-		}
+		if(this.sqlite!=null) this.sqlite.delete(obj);
+		if(this.mysql!=null) this.mysql.delete(obj);
 	}
 	
 	public void saveIntervall(int time){
@@ -141,14 +134,4 @@ public class SQLManager {
 			this.mysql=null;
 		}
 	}
-
-//	public void load(String query) {
-//		if(this.sqlite!=null){
-//			this.sqlite.load(query,SQLAction.NOTHING);
-//		}else if(this.mysql!=null){
-//			//
-//		}
-//		FurnitureLib.getInstance().getFurnitureManager().sendAll();
-//	}
-	
 }

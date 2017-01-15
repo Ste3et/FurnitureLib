@@ -59,7 +59,7 @@ public class FurnitureLib extends JavaPlugin{
 	private LightManager lightMgr;
 	private HashMap<String, List<String>> permissionKit = new HashMap<String, List<String>>();
 	private boolean useGamemode = true, canSit = true, update = true, useParticle = true, useRegionMemberAccess = false, 
-					autoPurge = false, removePurge = false, creativeInteract = true, creativePlace = true;
+					autoPurge = false, removePurge = false, creativeInteract = true, creativePlace = true, glowing = true;
 	private CraftingInv craftingInv;
 	private LanguageManager lmanager;
 	private SQLManager sqlManager;
@@ -105,6 +105,7 @@ public class FurnitureLib extends JavaPlugin{
 	public int getPurgeTime(){return this.purgeTime;}
 	public int getViewDistance(){return this.viewDistance;}
 	public static FurnitureLib getInstance(){return instance;}
+	public boolean isGlowing(){return this.glowing;}
 	public boolean isAutoPurge(){return this.autoPurge;}
 	public boolean isPurgeRemove(){return this.removePurge;}
 	public boolean canBuild(Player p, ObjectID id, EventType type){ return Pmanager.canBuild(p, id, type);}
@@ -151,6 +152,7 @@ public class FurnitureLib extends JavaPlugin{
 						this.autoPurge = getConfig().getBoolean("config.Purge.autoPurge");
 						this.removePurge = getConfig().getBoolean("config.Purge.removePurge");
 						this.viewDistance = getConfig().getInt("config.viewDistance");
+						this.glowing = getConfig().getBoolean("config.glowing");
 						this.updater = new Updater();
 						this.wPool = new WorldPool();
 						this.wPool.loadWorlds();
@@ -253,7 +255,7 @@ public class FurnitureLib extends JavaPlugin{
 		for(UUID uuid : getFurnitureManager().getIgnoreList()){
 			ignoreList.add(uuid.toString());
 		}
-		config c = new config(getInstance());
+		config c = new config(this);
 		FileConfiguration configuration = c.getConfig("ignoredPlayers", "");
 		configuration.set("ignoreList", ignoreList);
 		c.saveConfig("ignoredPlayers", configuration, "");

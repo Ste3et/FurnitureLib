@@ -25,13 +25,6 @@ public class SQLite extends Database{
     		"`ObjID` STRING NOT NULL," +
     		"`Data` STRING NOT NULL" +
     		");";
-    
-    public String DatabaseSchema = "CREATE TABLE IF NOT EXISTS FurnitureLib (" +
-    		"`WorldInfo` STRING NOT NULL," +
-    		"`ObjID` STRING NOT NULL," +
-    		"`Data` STRING NOT NULL," +
-    		"`PlaceTime` TIMESTAMP DEFAULT CURRENT_TIMESTAMP NOT NULL" +
-    		");";
 
     public Connection getSQLConnection() {
         File dataFolder = new File(plugin.getDataFolder(), dbname+".db");
@@ -63,7 +56,6 @@ public class SQLite extends Database{
         try {
             Statement s = connection.createStatement();
             s.executeUpdate(Objects);
-            s.executeUpdate(DatabaseSchema);
             s.close();
         } catch (SQLException e) {
             e.printStackTrace();
@@ -87,7 +79,6 @@ public class SQLite extends Database{
         try {
             Statement s = connection.createStatement();
             s.executeUpdate(Objects);
-            s.executeUpdate(DatabaseSchema);
             s.close();
         } catch (SQLException e) {
             e.printStackTrace();

@@ -35,6 +35,7 @@ config:
    DisableSitting: false
    viewDistance: 100
    LimitType: "PLAYER"
+   glowing: true
    CheckUpdate: true
    Creative:
       RemoveItems: false

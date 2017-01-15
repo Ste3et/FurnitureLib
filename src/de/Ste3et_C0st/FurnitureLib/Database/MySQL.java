@@ -27,12 +27,6 @@ public class MySQL extends Database{
     		"`ObjID` TEXT NOT NULL," +
     		"`Data` TEXT NOT NULL" +
     		");";
-    
-    public String DatabaseSchema = "CREATE TABLE IF NOT EXISTS FurnitureLib (" +
-    		"`WorldInfo` TEXT NOT NULL," +
-    		"`ObjID` TEXT NOT NULL," +
-    		"`Data` TEXT NOT NULL" +
-    		");";
 
     public Connection getSQLConnection() {
         try {
@@ -40,7 +34,7 @@ public class MySQL extends Database{
                 return connection;
             }
             Class.forName("com.mysql.jdbc.Driver");
-            String connectionString = "jdbc:mysql://"+host+":"+port+"/"+DBname;
+            String connectionString = "jdbc:mysql://"+host+":"+port+"/"+DBname + "?autoReconnect=true";
             connection = DriverManager.getConnection(connectionString,DBuser,DBPsw);
             return connection;
         } catch (SQLException ex) {
@@ -56,7 +50,6 @@ public class MySQL extends Database{
         try {
             Statement s = connection.createStatement();
             s.executeUpdate(Objects);
-            s.executeUpdate(DatabaseSchema);
             s.close();
         } catch (SQLException e) {
             e.printStackTrace();

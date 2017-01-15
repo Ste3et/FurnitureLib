@@ -12,6 +12,7 @@ import org.bukkit.entity.Player;
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
+import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 
 public class LimitationManager {
 
@@ -58,6 +59,8 @@ public class LimitationManager {
 		if(playerList.containsKey(p.getUniqueId())){
 			for(ObjectID obj : playerList.get(p.getUniqueId())){
 				if(obj!=null&&obj.getProjectOBJ()!=null){
+					if(obj.getSQLAction()==null) continue;
+					if(obj.getSQLAction().equals(SQLAction.REMOVE)) continue;
 					if(obj.getProjectOBJ().equals(pro)){
 						i++;
 					}
@@ -69,7 +72,12 @@ public class LimitationManager {
 	
 	private Integer returnIntProjectChunk(Chunk c, Project pro){
 		int i = 0;
+		if(pro == null) return i;
 		for(ObjectID obj : lib.getFurnitureManager().getObjectList()){
+			if(obj == null) continue;
+			if(obj.getSQLAction()==null) continue;
+			if(obj.getSQLAction().equals(SQLAction.REMOVE)) continue;
+			if(obj.getProjectOBJ() == null) continue;
 			if(obj.getChunk().equals(c)&&obj.getProjectOBJ().equals(pro)){
 				i++;
 			}
@@ -83,6 +91,8 @@ public class LimitationManager {
 		if(pro==null) return i;
 			for(ObjectID obj : lib.getFurnitureManager().getObjectList()){
 				if(obj==null) continue;
+				if(obj.getSQLAction()==null) continue;
+				if(obj.getSQLAction().equals(SQLAction.REMOVE)) continue;
 				if(obj.getWorld()==null) continue;
 				if(obj.getProjectOBJ()==null) continue;
 				if(obj.getWorld().equals(w) && obj.getProjectOBJ().equals(pro)){

@@ -58,6 +58,19 @@ public abstract class Database {
     	}
     }
     
+    public void reconnect(){
+    	try{
+    		if(connection.isClosed()){
+    			connection = getSQLConnection();
+    			statement = connection.createStatement();
+    		}else if(statement.isClosed()){
+    			statement = connection.createStatement();
+    		}
+    	}catch(SQLException e){
+    		e.printStackTrace();
+    	}
+    }
+    
     public void loadAll(SQLAction action){
     	long time1 = System.currentTimeMillis();
     	boolean b = FurnitureLib.getInstance().isAutoPurge();
@@ -81,7 +94,7 @@ public abstract class Database {
 
     public void delete(ObjectID objID){
     	try {
-			statement.execute("DELETE FROM FurnitureLib_Objects WHERE ObjID = '" + objID.getID() + "'");
+    		statement.execute("DELETE FROM FurnitureLib_Objects WHERE ObjID = '" + objID.getID() + "'");
 		} catch (SQLException e) {
 			e.printStackTrace();
 		}

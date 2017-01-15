@@ -7,17 +7,14 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Listener;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
-import de.Ste3et_C0st.FurnitureLib.Events.FurnitureBreakEvent;
-import de.Ste3et_C0st.FurnitureLib.Events.FurnitureClickEvent;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.LocationUtil;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fArmorStand;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
 
-public abstract class Furniture implements Listener {
+public abstract class FurnitureHelper{
 
 	private BlockFace b;
 	private World w;
@@ -27,7 +24,7 @@ public abstract class Furniture implements Listener {
 	private LocationUtil lutil;
 	private Plugin plugin;
 	
-	public Furniture(ObjectID id){
+	public FurnitureHelper(ObjectID id){
 		if(id==null){return;}
 		this.lib = FurnitureLib.getInstance();
 		this.lutil = lib.getLocationUtil();
@@ -80,28 +77,12 @@ public abstract class Furniture implements Listener {
 		loc.setYaw(getLutil().FaceToYaw(getBlockFace()));
 		return loc;}
 	
-	public abstract void spawn(Location location);
-	public abstract void onFurnitureBreak(FurnitureBreakEvent e);
-	public abstract void onFurnitureClick(FurnitureClickEvent e);
-	
-	public void toggleLight(boolean change){
-		for(fEntity stand : getfAsList()){
-			if(stand.getName().startsWith("#Light:")){
-				String[] str = stand.getName().split(":");
-				String lightBool = str[2];
-				if(change){
-					if(lightBool.equalsIgnoreCase("off#")){
-						stand.setName(stand.getName().replace("off#", "on#"));
-						if(!stand.isFire()){stand.setFire(true);}
-					}else if(lightBool.equalsIgnoreCase("on#")){
-						stand.setName(stand.getName().replace("on#", "off#"));
-						if(stand.isFire()){stand.setFire(false);}
-					}
-				}else{
-					if(lightBool.equalsIgnoreCase("on#")){if(!stand.isFire()){stand.setFire(true);}}
-				}
+	public fEntity entityByCustomName(String str){
+		for(fEntity entity : getfAsList()){
+			if(entity.getCustomName().equalsIgnoreCase(str)){
+				return entity;
 			}
 		}
-		update();
+		return null;
 	}
 }

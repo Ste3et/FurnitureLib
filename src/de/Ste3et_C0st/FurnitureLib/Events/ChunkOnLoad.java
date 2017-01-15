@@ -280,7 +280,7 @@ public class ChunkOnLoad implements Listener{
 		is.setAmount(1);
 		for(Project pro : FurnitureLib.getInstance().getFurnitureManager().getProjects()){
 			if(is.equals(pro.getCraftingFile().getRecipe().getResult())){
-				if(!FurnitureLib.getInstance().hasPerm(p,"furniture.craft." + pro.getSystemID()) && !FurnitureLib.getInstance().hasPerm(p,"furniture.player") && !FurnitureLib.getInstance().hasPerm(p,"furniture.admin")){
+				if(!FurnitureLib.getInstance().hasPerm(p,"furniture.craft.*") && !FurnitureLib.getInstance().hasPerm(p,"furniture.craft." + pro.getSystemID()) && !FurnitureLib.getInstance().hasPerm(p,"furniture.player") && !FurnitureLib.getInstance().hasPerm(p,"furniture.admin")){
 					e.getInventory().setResult(null);
 				}
 			}

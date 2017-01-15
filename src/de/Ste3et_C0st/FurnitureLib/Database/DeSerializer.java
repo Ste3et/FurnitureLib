@@ -66,7 +66,7 @@ public class DeSerializer {
 			obj.setUUID(uuid);
 			obj.setFinish();
 			if(action!=null&&action.equals(SQLAction.SAVE)){obj.setSQLAction(SQLAction.SAVE);}else{obj.setSQLAction(SQLAction.NOTHING);}
-			obj.setFromDatabase();
+			obj.setFromDatabase(true);
 
 			NBTTagCompound armorStands = compound.getCompound("ArmorStands");
 			for(Object o : armorStands.c()){

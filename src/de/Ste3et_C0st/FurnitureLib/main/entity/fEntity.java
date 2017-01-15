@@ -187,6 +187,7 @@ public abstract class fEntity extends fSerializer{
 	}
 	
 	public fEntity setGlowing(boolean b) {
+		if(!FurnitureLib.getInstance().isGlowing()) b = false;
 		b(6, b);
 		this.glowing = b;return this;
 	}
@@ -293,7 +294,12 @@ public abstract class fEntity extends fSerializer{
 
 	public fEntity setFire(boolean b) {
 		b(0, b);
-		if(!b){FurnitureLib.getInstance().getLightManager().addLight(getLocation(), 15);}else{FurnitureLib.getInstance().getLightManager().removeLight(getLocation());}
+		if(!b){
+			
+			FurnitureLib.getInstance().getLightManager().removeLight(getLocation());
+		}else{
+			FurnitureLib.getInstance().getLightManager().addLight(getLocation(), 15);
+		}
 		this.fire = b;return this;
 	}
 
