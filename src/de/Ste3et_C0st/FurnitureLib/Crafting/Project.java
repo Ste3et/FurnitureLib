@@ -116,8 +116,18 @@ public class Project extends ProjectSettings{
 		this.height = height;
 		this.length = length;
 		this.type = type;
-		FurnitureLib.getInstance().getFurnitureManager().addProject(this);
 		return this;
+	}
+	
+	public void setTest(Integer witdh, Integer height, Integer length, CenterType type){
+		if(getName().equalsIgnoreCase("Catapult")){
+			System.out.println(witdh + ";" + height + ";" + length);
+		}
+		
+		this.witdh = witdh;
+		this.height = height;
+		this.length = length;
+		this.type = type;
 	}
 	
 	public Project(String name, Plugin plugin,InputStream craftingFile,PlaceableSide side, Class<?> clas){
