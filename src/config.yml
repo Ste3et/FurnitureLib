@@ -61,3 +61,11 @@ config:
    timer:
       Enable: false
       time: 300
+   spamBlock:
+      Place:
+         Enable: true
+         time: 5
+      Break:
+         Enable: true
+         time: 5
+      timeDisplay: "mm:ss:SSS"

@@ -200,7 +200,15 @@ public class ChunkOnLoad implements Listener{
 				public void run() {
 					FurnitureItemEvent e = new FurnitureItemEvent(player, itemstack, project, l, face);
 					Bukkit.getPluginManager().callEvent(e);
-					spawn(e);
+					if(!e.isCancelled()){
+						if(e.canBuild()){
+							if(e.isTimeToPlace()){
+								if(e.sendAnouncer()){
+									spawn(e);
+								}
+							}
+						}
+					}
 				}
 			});
 			removePlayer(p);
@@ -258,7 +266,6 @@ public class ChunkOnLoad implements Listener{
 		if(e.isCancelled()){return;}
 		if(!e.getProject().hasPermissions(e.getPlayer())){return;}
 		ObjectID obj = e.getObjID();
-		if(!e.canBuild()){return;}
 		if(!FurnitureLib.getInstance().getPermManager().canBuild(e.getPlayer(), obj.getStartLocation())){return;}
 		if(FurnitureLib.getInstance().getFurnitureManager().getIgnoreList().contains(e.getPlayer().getUniqueId())){
 			e.getPlayer().sendMessage(FurnitureLib.getInstance().getLangManager().getString("FurnitureToggleEvent"));

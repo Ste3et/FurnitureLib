@@ -15,6 +15,7 @@ import com.google.common.io.Files;
 
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
+import de.Ste3et_C0st.FurnitureLib.main.Type.CenterType;
 import de.Ste3et_C0st.FurnitureLib.main.Type.PlaceableSide;
 
 public class ProjectManager {
@@ -26,22 +27,25 @@ public class ProjectManager {
 		List<File> deleteList = new ArrayList<File>();
 		if(folder2.exists()){
 			if(!folder.exists()) folder.mkdir();
-			for(File file : folder2.listFiles()){
-				if(!file.exists()) continue;
-				if(!file.isFile()) continue;
- 				String str = file.getName();
-				if(!str.endsWith(".yml")) str += ".yml";
-				System.out.println("Old Project: " + str + " found");
-				try {
-					Files.copy(file, new File(folder, str));
-					deleteList.add(file);
-				} catch (IOException e) {
-					e.printStackTrace();
+			File[] array = folder2.listFiles();
+			if(array!=null){
+				for(File file : array){
+					if(!file.exists()) continue;
+					if(!file.isFile()) continue;
+	 				String str = file.getName();
+					if(!str.endsWith(".yml")) str += ".yml";
+					System.out.println("Old Project: " + str + " found");
+					try {
+						Files.copy(file, new File(folder, str));
+						deleteList.add(file);
+					} catch (IOException e) {
+						e.printStackTrace();
+					}
 				}
-			}
-			
-			for(File file : deleteList){
-				file.deleteOnExit();
+				
+				for(File file : deleteList){
+					file.deleteOnExit();
+				}
 			}
 		}
 		
@@ -56,12 +60,37 @@ public class ProjectManager {
 								configuration.load(file);
 								String name = file.getName().replaceAll(".yml", "");
 								String header = getHeader(configuration, name);
-								if(configuration.contains(header + ".ProjectModels") || configuration.contains(header + "Block")){
+								if(configuration.contains(header + ".ProjectModels") || configuration.contains(header + ".ProjectModels.Block")){
 									PlaceableSide side = PlaceableSide.TOP;
 									String systemID = configuration.getString(header + ".system-ID");
 									if(configuration.isSet(header + ".PlaceAbleSide")){side = PlaceableSide.valueOf(configuration.getString(header + ".PlaceAbleSide"));}
-									new Project(systemID, FurnitureLib.getInstance(), new FileInputStream(file), side, ProjectLoader.class).setEditorProject(true);
+									Project p = new Project(systemID, FurnitureLib.getInstance(), new FileInputStream(file), side, ProjectLoader.class).setEditorProject(true);
 									s += systemID + ",";
+									int Width = 0, Height = 0, Lentgh = 0;
+									
+									if(configuration.isConfigurationSection(header+".ProjectModels.Block")){
+										
+										int minWitdh = 0, maxWidth = 0, maxHeight = 0, minHeight = 0, maxLentgh = 0, minLentgh = 0;
+										for(String str : configuration.getConfigurationSection(header+".ProjectModels.Block").getKeys(false)){
+											double x = configuration.getDouble(header+".ProjectModels.Block." + str + ".X-Offset");
+											double y = configuration.getDouble(header+".ProjectModels.Block." + str + ".Y-Offset");
+											double z = configuration.getDouble(header+".ProjectModels.Block." + str + ".Z-Offset");
+											if(x > maxWidth) maxWidth = (int) x;
+											if(y > maxHeight) maxHeight = (int) y;
+											if(z > maxLentgh) maxLentgh = (int) z;
+											if(x < minWitdh) minWitdh = (int) x;
+											if(y < minHeight) minHeight = (int) y;
+											if(z < minLentgh) minLentgh = (int) z;
+										}
+										minWitdh = Math.abs(minWitdh);
+										minHeight = Math.abs(minHeight);
+										minLentgh = Math.abs(minLentgh);
+										
+										Lentgh = minWitdh + maxWidth + 1;
+										Height = minHeight + maxHeight + 1;
+										Width = minLentgh + maxLentgh + 1;
+									}
+									p.setSize(Width, Height, Lentgh, CenterType.RIGHT);
 								}
 							} catch (Exception e) {e.printStackTrace();}
 						}

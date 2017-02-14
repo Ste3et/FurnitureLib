@@ -30,7 +30,6 @@ public abstract class ProjectSettings {
 		File f = new File("plugins/FurnitureLib/Crafting/", name);
 		if(f.exists()){
 			FileConfiguration config = c.getConfig(name, "/Crafting/");
-			name.replace(".yml", "");
 			String header = getHeader(config, name);
 			if(!metaDatas.isEmpty()){
 				System.out.println("name, metadata saving");
@@ -48,7 +47,6 @@ public abstract class ProjectSettings {
 		File f = new File("/Crafting/", name);
 		if(f.exists()){
 			FileConfiguration config = c.getConfig(name, "/Crafting/");
-			name.replace(".yml", "");
 			String header = getHeader(config, name);
 			if(config.isSet(header + ".metadata")){
 				for(String s : config.getConfigurationSection(header + ".metadata").getKeys(false)){

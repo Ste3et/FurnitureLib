@@ -28,3 +28,5 @@ message:
   FurnitureToggleCMDOff: '&aYou make all Furnitures &cinvisible'
   FurnitureToggleCMDOn: '&aYou make all Furnitures &2visible'
   FurnitureToggleEvent: '&cYou cannot do this.'
+  FurnitureToFastPlace: '&cYou must be wait &4#TIME# &cbefore you can place it.'
+  FurnitureToFastBreak: '&cYou must be wait &4#TIME# &cbefore you can break it.'

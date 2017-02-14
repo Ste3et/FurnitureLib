@@ -189,7 +189,7 @@ public class ManageInv  implements Listener{
 			}else if(Bukkit.getOfflinePlayer(uuid)!=null){
 				p = Bukkit.getOfflinePlayer(uuid).getPlayer();
 			}else{
-				this.p.sendMessage("�c�lERROR");
+				this.p.sendMessage("§cERROR");
 				break;
 			}
 			if(!obj.getUUID().equals(uuid)){
@@ -311,7 +311,7 @@ public class ManageInv  implements Listener{
 		if(p==null){return;}
 		ItemStack is = new ItemStack(Material.STAINED_GLASS_PANE, 1,(short) 15);
 		ItemMeta im = is.getItemMeta();
-		im.setDisplayName("�c");
+		im.setDisplayName("§c");
 		is.setItemMeta(im);
 		for(int i = 0; i<=8;i++){
 			inv.setItem(i, is);

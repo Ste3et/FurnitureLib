@@ -58,19 +58,19 @@ public abstract class Database {
     	}
     }
     
-    public void reconnect(){
-    	try{
-    		if(connection.isClosed()){
-    			connection = getSQLConnection();
-    			statement = connection.createStatement();
-    		}else if(statement.isClosed()){
-    			statement = connection.createStatement();
-    		}
-    	}catch(SQLException e){
-    		e.printStackTrace();
-    	}
-    }
-    
+//    public void reconnect(){
+//    	try{
+//    		if(connection.isClosed()){
+//    			connection = getSQLConnection();
+//    			statement = connection.createStatement();
+//    		}else if(statement.isClosed()){
+//    			statement = connection.createStatement();
+//    		}
+//    	}catch(SQLException e){
+//    		e.printStackTrace();
+//    	}
+//    }
+//    
     public void loadAll(SQLAction action){
     	long time1 = System.currentTimeMillis();
     	boolean b = FurnitureLib.getInstance().isAutoPurge();

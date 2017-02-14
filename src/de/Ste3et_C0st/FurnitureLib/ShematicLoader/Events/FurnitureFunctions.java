@@ -38,11 +38,17 @@ public class FurnitureFunctions extends FurnitureHelper {
 							is.setAmount(1);
 							getWorld().dropItem(getLocation(), is);
 						}
-						ItemStack is = p.getInventory().getItemInMainHand().clone();
-						is.setAmount(1);
-						stand.setItemInMainHand(is);
-						stand.update();
-						consumeItem(p);	
+						if(p.getInventory().getItemInMainHand()!=null){
+							ItemStack is = p.getInventory().getItemInMainHand().clone();
+							if(is.getAmount()<=0){
+								is.setAmount(0);
+							}else{
+								is.setAmount(1);
+							}
+							stand.setItemInMainHand(is);
+							stand.update();
+							consumeItem(p);	
+						}
 					}
 				}
 			}else if(stand.getName().equalsIgnoreCase("#BLOCK#")){
@@ -55,7 +61,11 @@ public class FurnitureFunctions extends FurnitureHelper {
 							getWorld().dropItem(getLocation(), is);
 						}
 						ItemStack is = p.getInventory().getItemInMainHand().clone();
-						is.setAmount(1);
+						if(is.getAmount()<=0){
+							is.setAmount(0);
+						}else{
+							is.setAmount(1);
+						}
 						stand.setHelmet(is);
 						stand.update();
 						consumeItem(p);	

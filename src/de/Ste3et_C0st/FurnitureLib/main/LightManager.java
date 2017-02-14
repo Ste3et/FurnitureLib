@@ -25,8 +25,8 @@ public class LightManager {
 	
 	public void addLight(Location location, Integer size){
 		if(!enable){return;}
-		if(location==null) System.out.println("loc: null");
-		if(size==null) System.out.println("size: null");
+		if(location==null){return;}
+		if(size==null){return;}
 		LightAPI.createLight(location, size, false);
 		for(ChunkInfo info: LightAPI.collectChunks(location)){
 			LightAPI.updateChunk(info);

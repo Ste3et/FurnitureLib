@@ -1,6 +1,7 @@
 package de.Ste3et_C0st.FurnitureLib.Crafting;
 
 import java.io.InputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
@@ -10,6 +11,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
+import de.Ste3et_C0st.FurnitureLib.ShematicLoader.ProjectLoader;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.config;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.Type.CenterType;
@@ -32,7 +34,7 @@ public class Project extends ProjectSettings{
 	private int gear = -98451, maxSpeed = -98451, middle = -98451;
 	private boolean isSearch = false, isCar = false;
 	private HashMap<String, Integer> permissionList = new HashMap<String, Integer>();
-	
+	private List<String> complete = new ArrayList<String>();
 	public InputStream getModel(){return this.model;}
 	public String getName(){return project;}
 	public Plugin getPlugin(){return plugin;}
@@ -42,6 +44,7 @@ public class Project extends ProjectSettings{
 	public PlaceableSide getPlaceableSide(){return this.side;}
 	public String getSystemID(){return getCraftingFile().getSystemID();}
 	public boolean isEditorProject(){return this.EditorProject;}
+	public boolean isDriveable(){return isCar;}
 	public Project setModel(InputStream stream){this.model = stream;return this;}
 	public Project setCraftingFile(CraftingFile file){this.file = file;return this;}
 	public Project setPlugin(Plugin plugin) {this.plugin = plugin;return this;}
@@ -73,9 +76,13 @@ public class Project extends ProjectSettings{
 		return i;
 	}
 	
-	
-	public boolean isDriveable(){return isCar;}
-	
+	public boolean isCompleteLimitation(String s){
+		if(this.complete.contains(s)){
+			return true;
+		}
+		return false;
+	}
+
 	public void checkDriveable(List<fEntity> entityList){
 		if(!isSearch){
 			int i = 0;
@@ -107,27 +114,12 @@ public class Project extends ProjectSettings{
 		}
 	}
 	
-	public Project setSize(Integer witdh, Integer height, Integer length, CenterType type){
-		if(getName().equalsIgnoreCase("Catapult")){
-			System.out.println(witdh + ";" + height + ";" + length);
-		}
-		
+	public Project setSize(Integer witdh, Integer height, Integer length, CenterType type){		
 		this.witdh = witdh;
 		this.height = height;
 		this.length = length;
 		this.type = type;
 		return this;
-	}
-	
-	public void setTest(Integer witdh, Integer height, Integer length, CenterType type){
-		if(getName().equalsIgnoreCase("Catapult")){
-			System.out.println(witdh + ";" + height + ";" + length);
-		}
-		
-		this.witdh = witdh;
-		this.height = height;
-		this.length = length;
-		this.type = type;
 	}
 	
 	public Project(String name, Plugin plugin,InputStream craftingFile,PlaceableSide side, Class<?> clas){
@@ -136,6 +128,20 @@ public class Project extends ProjectSettings{
 		this.clas = clas;
 		this.file = new CraftingFile(name, craftingFile);
 		this.side = side;
+		FurnitureLib.getInstance().getFurnitureManager().addProject(this);
+		addDefaultWorld();
+		addDefault("chunk");
+		addDefault("player");
+		this.chunkLimit = getDefault("chunk");
+		this.playerLimit = getDefault("player");
+	}
+	
+	public Project(String name, Plugin plugin,InputStream craftingFile){
+		this.project = name;
+		this.plugin = plugin;
+		this.clas = ProjectLoader.class;
+		this.file = new CraftingFile(name, craftingFile);
+		this.side = PlaceableSide.TOP;
 		FurnitureLib.getInstance().getFurnitureManager().addProject(this);
 		addDefaultWorld();
 		addDefault("chunk");
@@ -204,6 +210,7 @@ public class Project extends ProjectSettings{
 			if(!this.limitationFile.isSet("PlayerLimit.default.total")){
 				this.limitationFile.addDefault("PlayerLimit.default.total.enable", false);
 				this.limitationFile.addDefault("PlayerLimit.default.total.amount", 10);
+				this.limitationFile.addDefault("PlayerLimit.default.total.complete", false);
 			}
 			if(!this.limitationFile.isSet("PlayerLimit.default.projects" + getSystemID())){
 				this.limitationFile.addDefault("PlayerLimit.default.projects." + getSystemID(), 10);
@@ -232,12 +239,18 @@ public class Project extends ProjectSettings{
 				Integer i = 10;
 				if(limitationFile.getBoolean("PlayerLimit." + str + ".total.enable", false)){
 					i = limitationFile.getInt("PlayerLimit."+ str +".total.amount", 10);
+					if(limitationFile.getBoolean("PlayerLimit." + str + ".total.complete", false)){
+						complete.add(str);
+					}
 				}else{
 					i = limitationFile.getInt("PlayerLimit."+ str +".projects." + getSystemID(), 10);
 				}
 				permissionList.put(permission, i);
 			}
 			if(limitationFile.getBoolean("PlayerLimit.default.total.enable", false)){
+				if(limitationFile.getBoolean("PlayerLimit.default.total.complete", false)){
+					complete.add("default");
+				}
 				return limitationFile.getInt("PlayerLimit.default.total.amount", 10);
 			}else{
 				return limitationFile.getInt("PlayerLimit.default.projects." + getSystemID(), 10);

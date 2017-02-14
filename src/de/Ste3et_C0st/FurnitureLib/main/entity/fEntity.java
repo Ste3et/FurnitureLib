@@ -124,7 +124,6 @@ public abstract class fEntity extends fSerializer{
 	}
 	
 	public fEntity setGravity(boolean b) {
-		setObject(getWatcher(), b, 5);
 		this.gravity = b;
 		return this;
 	}
@@ -189,7 +188,8 @@ public abstract class fEntity extends fSerializer{
 	public fEntity setGlowing(boolean b) {
 		if(!FurnitureLib.getInstance().isGlowing()) b = false;
 		b(6, b);
-		this.glowing = b;return this;
+		this.glowing = b;
+		return this;
 	}
 	
 	public fEntity setInventory(fInventory inv) {
@@ -300,7 +300,8 @@ public abstract class fEntity extends fSerializer{
 		}else{
 			FurnitureLib.getInstance().getLightManager().addLight(getLocation(), 15);
 		}
-		this.fire = b;return this;
+		this.fire = b;
+		return this;
 	}
 
 	public fEntity setName(String str) {

@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
@@ -64,7 +65,12 @@ public abstract class FurnitureHelper{
 		if(p.getGameMode().equals(GameMode.CREATIVE) && FurnitureLib.getInstance().useGamemode()) return;
 		Integer i = p.getInventory().getHeldItemSlot();
 		ItemStack is = p.getInventory().getItemInMainHand();
-		is.setAmount(is.getAmount()-1);
+		if((is.getAmount()-1)<=0){
+			is.setType(Material.AIR);
+		}else{
+			is.setAmount(is.getAmount()-1);
+		}
+
 		p.getInventory().setItem(i, is);
 		p.updateInventory();
 	}

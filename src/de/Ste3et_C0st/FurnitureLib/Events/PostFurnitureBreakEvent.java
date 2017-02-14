@@ -47,4 +47,26 @@ public final class PostFurnitureBreakEvent extends Event implements Cancellable{
 	public void remove(boolean dropItem, boolean deleteEffect){
 		o.remove(p, dropItem, deleteEffect);
 	}
+	
+	public boolean spamBreak(){
+		if(FurnitureLib.getInstance().isSpamBreak()){
+			if(!FurnitureLib.getInstance().hasPerm(this.p,"furniture.admin") && !FurnitureLib.getInstance().hasPerm(this.p,"furniture.bypass.breakSpam")){
+				long current = System.currentTimeMillis();
+				if(FurnitureLib.getInstance().getTimeBreak().containsKey(p.getUniqueId())){
+					long since = FurnitureLib.getInstance().getTimeBreak().get(p.getUniqueId());
+					long newCurrent = current - since;
+					long dif = FurnitureLib.getInstance().getBreakTime();
+					if(newCurrent < dif){
+						String str = FurnitureLib.getInstance().getTimeDif(since, dif, FurnitureLib.getInstance().getTimePattern());
+						String msg = FurnitureLib.getInstance().getLangManager().getString("FurnitureToFastBreak");
+						msg = msg.replace("#TIME#", str);
+						p.sendMessage(msg);
+						return false;
+					}
+				}
+				FurnitureLib.getInstance().getTimeBreak().put(p.getUniqueId(), current);
+			}
+		}
+		return true;
+	}
 }

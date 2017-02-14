@@ -103,6 +103,9 @@ public class LimitationManager {
 	}
 	
 	public boolean canPlace(Player p, ObjectID obj){
+		if(p.isOp()) return true;
+		if(FurnitureLib.getInstance().hasPerm(p,"furniture.admin")) return true;
+		if(FurnitureLib.getInstance().hasPerm(p,"furniture.bypass.limit")) return true;
 		Project pro = obj.getProjectOBJ();
 		Integer world = returnProjectWorld(obj.getWorld(), pro);
 		Integer chunk = returnIntProjectChunk(obj.getChunk(), pro);
@@ -112,8 +115,7 @@ public class LimitationManager {
 		Integer maxWorld = pro.getAmountWorld(obj.getWorld());
 		Integer maxChunk = pro.getAmountChunk();
 		Integer maxPlayer = pro.getAmountPlayer();
-		
-		if(p.isOp() || FurnitureLib.getInstance().hasPerm(p,"furniture.admin") || FurnitureLib.getInstance().hasPerm(p,"furniture.bypass.limit")){return true;}
+
 		if(world>=maxWorld){
 			if(maxWorld!=-1){return false;}
 		}
@@ -132,6 +134,10 @@ public class LimitationManager {
 	}
 	
 	public void sendAuncer(Player p, ObjectID obj){
+		if(p.isOp()) return;
+		if(FurnitureLib.getInstance().hasPerm(p,"furniture.admin")) return;
+		if(FurnitureLib.getInstance().hasPerm(p,"furniture.bypass.limit")) return;
+		
 		Project pro = obj.getProjectOBJ();
 		int world = returnProjectWorld(obj.getWorld(), pro);
 		int chunk = returnIntProjectChunk(obj.getChunk(), pro);

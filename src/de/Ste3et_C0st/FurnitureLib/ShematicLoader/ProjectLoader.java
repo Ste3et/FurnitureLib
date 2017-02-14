@@ -2,6 +2,7 @@ package de.Ste3et_C0st.FurnitureLib.ShematicLoader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -42,7 +43,8 @@ public class ProjectLoader extends Furniture{
 	private Object[] enumItemSlots = EnumWrappers.ItemSlot.values();
 	public String header;
 	private ProjektInventory inv=null;
-	
+	private List<Material> activatePhysic = Arrays.asList(Material.TORCH, Material.REDSTONE_TORCH_OFF, Material.REDSTONE_TORCH_ON,
+														  Material.BED_BLOCK);
 	public ProjectLoader(ObjectID id){
 		super(id);
 		try{
@@ -69,7 +71,6 @@ public class ProjectLoader extends Furniture{
 			spawn(id.getStartLocation(), config, true);
 			registerInventory();
 			registerEvents();
-			
 		}catch(Exception e){
 			e.printStackTrace();
 		}
@@ -85,7 +86,7 @@ public class ProjectLoader extends Furniture{
 			Bukkit.getPluginManager().registerEvents(new FurnitureBlockBreakEventListener(getObjID(), inv), FurnitureLib.getInstance());
 			boolean b = false;
 			for(Location loc : getObjID().getBlockList()){
-				if(!loc.getBlock().getType().isSolid()){
+				if(activatePhysic.contains(loc.getBlock().getType())){
 					b = true;
 				}
 			}
@@ -188,11 +189,13 @@ public class ProjectLoader extends Furniture{
 	}
 	
 	@SuppressWarnings("deprecation")
-	private HashMap<Location, MaterialData> getBlockMap(Location loc, YamlConfiguration config, boolean rotate){
-		HashMap<Location, MaterialData> map = new HashMap<Location, MaterialData>();
+	private HashMap<Integer, HashMap<Location, MaterialData>> getBlockMap(Location loc, YamlConfiguration config, boolean rotate){
+		HashMap<Integer, HashMap<Location, MaterialData>> map = new HashMap<Integer, HashMap<Location, MaterialData>>();
 		try {
 			if(config.isConfigurationSection(header+".ProjectModels.Block")){
+				int i = 0;
 				for(String s : config.getConfigurationSection(header+".ProjectModels.Block").getKeys(false)){
+					HashMap<Location, MaterialData> block = new HashMap<Location, MaterialData>();
 					double x = config.getDouble(header+".ProjectModels.Block." + s + ".X-Offset");
 					double y = config.getDouble(header+".ProjectModels.Block." + s + ".Y-Offset");
 					double z = config.getDouble(header+".ProjectModels.Block." + s + ".Z-Offset");
@@ -206,7 +209,9 @@ public class ProjectLoader extends Furniture{
 						}
 					}
 					MaterialData data = new MaterialData(m, b);
-					map.put(armorLocation, data);
+					block.put(armorLocation, data);
+					map.put(i, block);
+					i++;
 				}
 			}
 		}catch(Exception e){
@@ -217,20 +222,23 @@ public class ProjectLoader extends Furniture{
 	
 	@SuppressWarnings("deprecation")
 	private Player setBlock(Location loc, YamlConfiguration config, boolean rotate){
-		HashMap<Location, MaterialData> map = getBlockMap(loc, config, rotate);
+		HashMap<Integer, HashMap<Location, MaterialData>> map = getBlockMap(loc, config, rotate);
+		
 		List<Block> blockList = new ArrayList<Block>();
 		boolean b = true, c = isFinish();
 		UUID uuid = getObjID().getUUID();
 		Player p = Bukkit.getPlayer(uuid);
-		for(Location location : map.keySet()){
-			MaterialData data = map.get(location);
-			if(!data.getItemType().equals(Material.AIR)){
-				if(!c){
-					if(p!=null&&p.isOnline()){
-						if(location.getBlock().getType().isSolid()){
-							if(!location.getBlock().getType().equals(data.getItemType())){
-								b = false;
-								getLutil().particleBlock(location.getBlock());}}
+		for(Integer i : map.keySet()){
+			for(Location blockLocation : map.get(i).keySet()){
+				MaterialData data = map.get(i).get(blockLocation);
+				if(!data.getItemType().equals(Material.AIR)){
+					if(!c){
+						if(p!=null&&p.isOnline()){
+							if(blockLocation.getBlock().getType().isSolid()){
+								if(!blockLocation.getBlock().getType().equals(data.getItemType())){
+									b = false;
+									getLutil().particleBlock(blockLocation.getBlock());}}
+						}
 					}
 				}
 			}
@@ -238,14 +246,20 @@ public class ProjectLoader extends Furniture{
 		
 		if(b){
 			p = null;
-			for(Location location : map.keySet()){
-				MaterialData data = map.get(location);
-				if(!data.getItemType().equals(Material.AIR)){
-					if(location.getBlock().isEmpty()){
-						location.getBlock().setType(data.getItemType());
-						location.getBlock().setData(data.getData(), true);
+			for(Integer i : map.keySet()){
+				for(Location blockLocation : map.get(i).keySet()){
+					MaterialData data = map.get(i).get(blockLocation);
+					if(!data.getItemType().equals(Material.AIR)){
+						if(blockLocation.getBlock().isEmpty()){
+							Block block = blockLocation.getBlock();
+							block.setType(data.getItemType(), false);
+							block.setData(data.getData(), false);
+							block.getState().update(true);
+							
+							
+						}
+						blockList.add(blockLocation.getBlock());
 					}
-					blockList.add(location.getBlock());
 				}
 			}
 		}

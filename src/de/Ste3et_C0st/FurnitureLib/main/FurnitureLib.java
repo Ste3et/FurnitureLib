@@ -1,7 +1,9 @@
 package de.Ste3et_C0st.FurnitureLib.main;
 
 import java.lang.reflect.Constructor;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -59,7 +61,8 @@ public class FurnitureLib extends JavaPlugin{
 	private LightManager lightMgr;
 	private HashMap<String, List<String>> permissionKit = new HashMap<String, List<String>>();
 	private boolean useGamemode = true, canSit = true, update = true, useParticle = true, useRegionMemberAccess = false, 
-					autoPurge = false, removePurge = false, creativeInteract = true, creativePlace = true, glowing = true;
+					autoPurge = false, removePurge = false, creativeInteract = true, creativePlace = true, glowing = true, 
+					spamBreak = true, spamPlace = true;
 	private CraftingInv craftingInv;
 	private LanguageManager lmanager;
 	private SQLManager sqlManager;
@@ -75,10 +78,12 @@ public class FurnitureLib extends JavaPlugin{
 	private WorldPool wPool;
 	private ProtocolFields field = ProtocolFields.Spigot110;
 	private ProjectManager pManager;
-	private int purgeTime = 30;
-	private long purgeTimeMS = 0;
-	private int viewDistance = 100;
+	private String timePattern = "mm:ss:SSS";
+	private int purgeTime = 30, viewDistance = 100;
+	private long purgeTimeMS = 0, spamBreakTime = 5000, spamPlaceTime = 5000;
 	public HashMap<Project, Long> deleteMap = new HashMap<Project, Long>();
+	public HashMap<UUID, Long> timeStampPlace = new HashMap<UUID, Long>();
+	public HashMap<UUID, Long> timeStampBreak = new HashMap<UUID, Long>();
 	
 	public LanguageManager getLangManager(){return this.lmanager;}
 	public LightManager getLightManager(){return this.lightMgr;}
@@ -102,8 +107,13 @@ public class FurnitureLib extends JavaPlugin{
 	public WorldPool getWorldPool(){return this.wPool;}
 	public HashMap<String, List<String>> getPermissionList(){return this.permissionKit;}
 	public ProjectManager getProjectManager(){return this.pManager;}
+	public HashMap<UUID, Long> getTimePlace(){return this.timeStampPlace;}
+	public HashMap<UUID, Long> getTimeBreak(){return this.timeStampBreak;}
+	public String getTimePattern(){return this.timePattern;}
 	public int getPurgeTime(){return this.purgeTime;}
 	public int getViewDistance(){return this.viewDistance;}
+	public long getBreakTime(){return this.spamBreakTime;}
+	public long getPlaceTime(){return this.spamPlaceTime;}
 	public static FurnitureLib getInstance(){return instance;}
 	public boolean isGlowing(){return this.glowing;}
 	public boolean isAutoPurge(){return this.autoPurge;}
@@ -111,6 +121,8 @@ public class FurnitureLib extends JavaPlugin{
 	public boolean canBuild(Player p, ObjectID id, EventType type){ return Pmanager.canBuild(p, id, type);}
 	public boolean isUpdate(){return this.update;}
 	public boolean isParticleEnable(){return this.useParticle;}
+	public boolean isSpamPlace(){return this.spamPlace;}
+	public boolean isSpamBreak(){return this.spamBreak;}
 	public boolean hasPerm(Player p, String perm){return permission.has(p, perm);}
 	public boolean hasPerm(CommandSender p, String perm){return permission.has(p, perm);}
 	public boolean canSitting(){return this.canSit;}
@@ -153,6 +165,11 @@ public class FurnitureLib extends JavaPlugin{
 						this.removePurge = getConfig().getBoolean("config.Purge.removePurge");
 						this.viewDistance = getConfig().getInt("config.viewDistance");
 						this.glowing = getConfig().getBoolean("config.glowing");
+						this.spamBreak = getConfig().getBoolean("config.spamBlock.Break.Enable");
+						this.spamPlace = getConfig().getBoolean("config.spamBlock.Place.Enable");
+						this.spamBreakTime = getConfig().getLong("config.spamBlock.Break.time");
+						this.spamBreakTime = getConfig().getLong("config.spamBlock.Place.time");
+						this.timePattern = getConfig().getString("config.spamBlock.timeDisplay");
 						this.updater = new Updater();
 						this.wPool = new WorldPool();
 						this.wPool.loadWorlds();
@@ -348,6 +365,11 @@ public class FurnitureLib extends JavaPlugin{
 		
 		getLogger().info("==========================================");
 		getLogger().info("Furniture shutdown started");
+		if(!getConfig().getBoolean("config.timer.Enable")){
+			this.sqlManager = new SQLManager(this);
+			this.sqlManager.initialize();
+			
+		}
 		sqlManager.save();
 		sqlManager.stop();
 		instance = null;
@@ -385,5 +407,12 @@ public class FurnitureLib extends JavaPlugin{
 			ctor.newInstance(obj);
 			obj.setFinish();
 		} catch (Exception e) {e.printStackTrace();}
+	}
+	
+	public String getTimeDif(long input, long dif, String pattern){
+		long current = System.currentTimeMillis();
+		long newCurrent =  dif - (current - input);
+		String s = new SimpleDateFormat(pattern).format(new Date(newCurrent)).toString();
+		return s;
 	}
 }

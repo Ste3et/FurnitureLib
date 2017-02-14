@@ -32,8 +32,8 @@ public class FurnitureManager {
 	public List<UUID> getIgnoreList(){return this.ignoreList;}
 	public void addProject(Project project){
 		if(isExist(project.getName())){
-			getProject(project.getName()).setPlugin(project.getPlugin());
-			getProject(project.getName()).setClass(project.getclass());
+			projects.remove(getProject(project.getName()));
+			projects.add(project);
 			return;}
 		if(!projects.contains(project)){
 		projects.add(project);}

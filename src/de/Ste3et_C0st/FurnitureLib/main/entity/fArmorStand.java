@@ -125,7 +125,11 @@ public class fArmorStand extends fEntity {
 	}
 	
 	public fArmorStand clone(Relative relative){
-		fArmorStand nStand = new fArmorStand(relative.getSecondLocation(), getObjID());
+		return clone(relative.getSecondLocation());
+	}
+	
+	public fArmorStand clone(Location location){
+		fArmorStand nStand = new fArmorStand(location, getObjID());
 		fInventory inv = new fInventory(nStand.getEntityID());
 		for(int i = 0; i<7;i++){
 			if(getInventory().getSlot(i)==null) continue;
@@ -152,7 +156,7 @@ public class fArmorStand extends fEntity {
 		if(stand!=null){if(!stand.isDead()){return stand;}}
 		stand = (ArmorStand) getWorld().spawnEntity(getLocation(), getEntityType());
 		stand.setArms(this.hasArms());
-		stand.setVisible(this.isInvisible());
+		stand.setVisible(!this.isInvisible());
 		stand.setSmall(isSmall());
 		stand.setArms(hasArms());
 		stand.setBasePlate(hasBasePlate());

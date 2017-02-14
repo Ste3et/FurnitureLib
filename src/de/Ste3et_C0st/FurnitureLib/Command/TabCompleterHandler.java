@@ -2,8 +2,6 @@ package de.Ste3et_C0st.FurnitureLib.Command;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
-
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -51,7 +49,6 @@ public class TabCompleterHandler implements TabCompleter {
 						stringList.add("all");
 						stringList.add("distance");
 						stringList.add("lookat");
-						stringList.add(new Random(10).nextInt()+"");
 						return getTabCompleter(s, getProjectPlugins(stringList));
 					}else if(args[0].equalsIgnoreCase("recipe")){
 						return getTabCompleter(s, getProjectNames());

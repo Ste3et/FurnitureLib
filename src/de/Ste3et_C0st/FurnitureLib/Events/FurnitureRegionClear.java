@@ -7,6 +7,7 @@ import org.bukkit.event.Listener;
 
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
+import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 import de.Ste3et_C0st.ProtectionLib.main.RegionClearEvent;
 
 public class FurnitureRegionClear implements Listener {
@@ -21,7 +22,13 @@ public class FurnitureRegionClear implements Listener {
 		Location loc2 = e.getLoc2();
 		for(ObjectID id : FurnitureLib.getInstance().getFurnitureManager().getObjectList()){
 			if(checkCuboid(id.getStartLocation(), loc1, loc2)){
-				id.remove();
+				if(e.isClear() || id.getUUID() == null){
+					id.remove();
+				}else{
+					id.setUUID(id.getUUID());
+					id.getMemberList().clear();
+					id.setSQLAction(SQLAction.UPDATE);
+				}
 			}
 		}
 	}

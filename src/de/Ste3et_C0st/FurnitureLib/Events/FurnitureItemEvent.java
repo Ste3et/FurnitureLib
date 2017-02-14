@@ -74,11 +74,37 @@ public final class FurnitureItemEvent extends Event implements Cancellable {
 	    if(!FurnitureLib.getInstance().getPermManager().isSolid(getBlock().getType(), getBlock().getData(), getProject().getPlaceableSide())){return false;}
 		if(p.isOp()) return true;
 		if(!pro.hasPermissions(p)){return false;}
+		return true;
+	}
+	
+	public boolean sendAnouncer(){
 		if(!FurnitureLib.getInstance().getLimitManager().canPlace(p, obj)){
 			p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("LimitReached"));
 			return false;
 		}
 		FurnitureLib.getInstance().getLimitManager().sendAuncer(p, obj);
+		return true;
+	}
+	
+	public boolean isTimeToPlace(){
+		if(FurnitureLib.getInstance().isSpamPlace()){
+			if(!FurnitureLib.getInstance().hasPerm(getPlayer(),"furniture.admin") && !FurnitureLib.getInstance().hasPerm(getPlayer(),"furniture.bypass.placeSplam")){
+				long current = System.currentTimeMillis();
+				if(FurnitureLib.getInstance().getTimePlace().containsKey(getPlayer().getUniqueId())){
+					long since = FurnitureLib.getInstance().getTimePlace().get(getPlayer().getUniqueId());
+					long newCurrent = current - since;
+					long dif = FurnitureLib.getInstance().getPlaceTime();
+					if(newCurrent < dif){
+						String str = FurnitureLib.getInstance().getTimeDif(since, dif, FurnitureLib.getInstance().getTimePattern());
+						String msg = FurnitureLib.getInstance().getLangManager().getString("FurnitureToFastPlace");
+						msg = msg.replace("#TIME#", str);
+						getPlayer().sendMessage(msg);
+						return false;
+					}
+				}
+				FurnitureLib.getInstance().getTimePlace().put(getPlayer().getUniqueId(), current);
+			}
+		}
 		return true;
 	}
 	

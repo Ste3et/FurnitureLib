@@ -56,7 +56,11 @@ public class SQLManager {
 	private void isExist(){
 		File fileDB = null;
 		if(!plugin.getConfig().getBoolean("config.Database.importCheck")){return;}
-		for(File file : new File("plugins/" + plugin.getName()).listFiles()){
+		File folder = new File("plugins/" + plugin.getName());
+		File[] array = folder.listFiles();
+		if(array == null) return;
+		for(File file : array){
+			if(file==null) continue;
 			if(file.getName().substring(file.getName().length() - 3, file.getName().length()).equalsIgnoreCase(".db")){
 				plugin.getLogger().info("Old Database File found: " + file.getName());
 				plugin.getLogger().info("Start importing");
@@ -78,8 +82,6 @@ public class SQLManager {
 	
 	public void save(){
 		if(!plugin.getFurnitureManager().getObjectList().isEmpty()){
-			if(this.sqlite!=null) sqlite.reconnect();
-			if(this.mysql!=null) mysql.reconnect();
 			List<ObjectID> objList = new ArrayList<ObjectID>();
 			for(ObjectID obj : plugin.getFurnitureManager().getObjectList()){
 				if(!objList.contains(obj)){
@@ -98,14 +100,29 @@ public class SQLManager {
 		}
 	}
 	
+	
 	public void save(ObjectID obj){
-		if(this.sqlite!=null) this.sqlite.save(obj);
-		if(this.mysql!=null)this.mysql.save(obj);
+		if(obj==null) return;
+		try{
+			if(this.sqlite!=null)this.sqlite.save(obj);
+			if(this.mysql!=null)this.mysql.save(obj);
+		}catch(Exception ex){
+			initialize();
+			if(this.sqlite!=null)this.sqlite.save(obj);
+			if(this.mysql!=null)this.mysql.save(obj);
+		}
 	}
 	
 	public void remove(ObjectID obj){
-		if(this.sqlite!=null) this.sqlite.delete(obj);
-		if(this.mysql!=null) this.mysql.delete(obj);
+		if(obj==null) return;
+		try{
+			if(this.sqlite!=null) this.sqlite.delete(obj);
+			if(this.mysql!=null)this.mysql.delete(obj);
+		}catch(Exception ex){
+			initialize();
+			if(this.sqlite!=null) this.sqlite.delete(obj);
+			if(this.mysql!=null)this.mysql.delete(obj);
+		}
 	}
 	
 	public void saveIntervall(int time){

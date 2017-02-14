@@ -37,7 +37,7 @@ public class FurnitureEvents {
                             	ObjectID objID = manager.getObjectIDByID(PacketID);
                             	if(objID==null){return;}
                             	if(objID.getSQLAction().equals(SQLAction.REMOVE)){return;}
-                            	if(objID!=null){if(objID.isPrivate()){return;}}
+                            	if(objID.isPrivate()){return;}
                             	Location loc = asPacket.getLocation();
                             	Player p = event.getPlayer();
                             	EntityUseAction action = event.getPacket().getEntityUseActions().read(0);
@@ -56,8 +56,10 @@ public class FurnitureEvents {
 											PostFurnitureBreakEvent pEvent = new PostFurnitureBreakEvent(player, (fArmorStand) packet, objectID, location);
 											Bukkit.getServer().getPluginManager().callEvent(pEvent);
 											if(!pEvent.isCancelled()){
-												FurnitureBreakEvent event = new FurnitureBreakEvent(player, (fArmorStand) packet, objectID, location);
-												Bukkit.getServer().getPluginManager().callEvent(event);
+												if(pEvent.spamBreak()){
+													FurnitureBreakEvent event = new FurnitureBreakEvent(player, (fArmorStand) packet, objectID, location);
+													Bukkit.getServer().getPluginManager().callEvent(event);
+												}
 											}
 										}
 									});

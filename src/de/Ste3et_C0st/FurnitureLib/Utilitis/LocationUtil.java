@@ -86,15 +86,16 @@ public class LocationUtil {
 		return Color.fromRGB(255, 255, 255);
 	}
 	
+	/* Check if the Furniture have enougth space */
 	public boolean canBuild(Location loc, Project pro, Player p){
 		BlockFace face = yawToFace(loc.getYaw()).getOppositeFace();
 		loc = loc.add(0, 1, 0);
+		if(!FurnitureLib.getInstance().getPermManager().canBuild(p, loc)){return false;}
 		int w = pro.getWitdh();
 		int h = pro.getHeight();
 		int l = pro.getLength();
 		CenterType type = pro.getCenterType();
 		List<Location> blockList = new ArrayList<Location>();
-
 		Vector v2 = loc.toVector();
 		for(ObjectID obj : FurnitureLib.getInstance().getFurnitureManager().getObjectList()){
 			if(obj==null) continue;
