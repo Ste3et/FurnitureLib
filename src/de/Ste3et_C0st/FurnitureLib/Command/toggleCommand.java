@@ -25,7 +25,7 @@ public class toggleCommand {
 				}
 			}
 		}else if(args.length == 2){
-			if(FurnitureLib.getInstance().hasPerm(sender, "furniture.toggle.another") || FurnitureLib.getInstance().hasPerm(sender, "furniture.player")){
+			if(FurnitureLib.getInstance().hasPerm(sender, "furniture.toggle.another")){
 				Player player = Bukkit.getPlayer(args[1]);
 				if(player == null){sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("PlayerNotOnline"));return;}
 				if(!FurnitureLib.getInstance().getFurnitureManager().getIgnoreList().contains(player.getUniqueId())){

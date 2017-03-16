@@ -13,13 +13,18 @@ import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockState;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.material.Directional;
+import org.bukkit.material.Door;
 import org.bukkit.material.MaterialData;
 import org.bukkit.util.EulerAngle;
 
 import com.comphenix.protocol.wrappers.EnumWrappers;
+import com.comphenix.protocol.wrappers.EnumWrappers.Particle;
 
 import de.Ste3et_C0st.FurnitureLib.Events.FurnitureBreakEvent;
 import de.Ste3et_C0st.FurnitureLib.Events.FurnitureClickEvent;
@@ -53,7 +58,6 @@ public class ProjectLoader extends Furniture{
 			header = getHeader(config);
 			Player player = setBlock(id.getStartLocation(), config, true);
 			if(player!=null){
-				player.sendMessage(FurnitureLib.getInstance().getLangManager().getString("NotEnoughSpace"));
 				if(!player.getGameMode().equals(GameMode.CREATIVE) || !FurnitureLib.getInstance().creativePlace()){
 					player.getInventory().addItem(id.getProjectOBJ().getCraftingFile().getRecipe().getResult());
 				}
@@ -65,8 +69,6 @@ public class ProjectLoader extends Furniture{
 				registerInventory();
 				registerEvents();
 				return;
-			}else{
-				
 			}
 			spawn(id.getStartLocation(), config, true);
 			registerInventory();
@@ -102,7 +104,6 @@ public class ProjectLoader extends Furniture{
 			header = getHeader(config);
 			Player player = setBlock(id.getStartLocation(), config, rotate);
 			if(player!=null){
-				player.sendMessage(FurnitureLib.getInstance().getLangManager().getString("NotEnoughSpace"));
 				getObjID().setSQLAction(SQLAction.REMOVE);
 				return;
 			}
@@ -112,8 +113,6 @@ public class ProjectLoader extends Furniture{
 				toggleLight(false);
 				Bukkit.getPluginManager().registerEvents(this, id.getProjectOBJ().getPlugin());
 				return;
-			}else{
-				
 			}
 			spawn(id.getStartLocation(), config, rotate);
 			Bukkit.getPluginManager().registerEvents(this, id.getProjectOBJ().getPlugin());
@@ -188,14 +187,13 @@ public class ProjectLoader extends Furniture{
 		}
 	}
 	
-	@SuppressWarnings("deprecation")
-	private HashMap<Integer, HashMap<Location, MaterialData>> getBlockMap(Location loc, YamlConfiguration config, boolean rotate){
-		HashMap<Integer, HashMap<Location, MaterialData>> map = new HashMap<Integer, HashMap<Location, MaterialData>>();
+	private HashMap<Integer, HashMap<Location, ProjectMaterial>> getBlockMap(Location loc, YamlConfiguration config, boolean rotate){
+		HashMap<Integer, HashMap<Location, ProjectMaterial>> map = new HashMap<Integer, HashMap<Location, ProjectMaterial>>();
 		try {
 			if(config.isConfigurationSection(header+".ProjectModels.Block")){
 				int i = 0;
 				for(String s : config.getConfigurationSection(header+".ProjectModels.Block").getKeys(false)){
-					HashMap<Location, MaterialData> block = new HashMap<Location, MaterialData>();
+					HashMap<Location, ProjectMaterial> block = new HashMap<Location, ProjectMaterial>();
 					double x = config.getDouble(header+".ProjectModels.Block." + s + ".X-Offset");
 					double y = config.getDouble(header+".ProjectModels.Block." + s + ".Y-Offset");
 					double z = config.getDouble(header+".ProjectModels.Block." + s + ".Z-Offset");
@@ -208,8 +206,29 @@ public class ProjectLoader extends Furniture{
 							default: break;
 						}
 					}
-					MaterialData data = new MaterialData(m, b);
-					block.put(armorLocation, data);
+					ProjectMaterial material = new ProjectMaterial(m, b);
+					if(config.isSet(header+".ProjectModels.Block." + s + ".Rotation")){
+						material.setBlockFace(BlockFace.valueOf(config.getString(header+".ProjectModels.Block." + s + ".Rotation")));
+					}
+					
+//					if(config.isSet(header+".ProjectModels.Block." + s + ".Inventory")){
+//						InventoryType type = InventoryType.valueOf(config.getString(header+".ProjectModels.Block." + s + ".Inventory.type"));
+//						Inventory inv = Bukkit.createInventory(null, type);
+//						for(String j : config.getConfigurationSection(header+".ProjectModels.Block." + s + ".Inventory").getKeys(false)){
+//							if(!j.equalsIgnoreCase("type")){
+//								String base64 = config.getString(header+".ProjectModels.Block." + s + ".Inventory." + j);
+//								byte[] bString = Base64.decodeBase64(base64);
+//								ByteArrayInputStream bin = new ByteArrayInputStream(bString);
+//								NBTTagCompound compound = NBTCompressedStreamTools.read(bin);
+//								bin.close();
+//								ItemStack stack = new CraftItemStack().getItemStack(compound);
+//								inv.setItem(Integer.parseInt(j), stack);
+//							}
+//						}
+//						material.setInventory(inv);
+//					}
+					
+					block.put(armorLocation, material);
 					map.put(i, block);
 					i++;
 				}
@@ -222,49 +241,141 @@ public class ProjectLoader extends Furniture{
 	
 	@SuppressWarnings("deprecation")
 	private Player setBlock(Location loc, YamlConfiguration config, boolean rotate){
-		HashMap<Integer, HashMap<Location, MaterialData>> map = getBlockMap(loc, config, rotate);
+		HashMap<Integer, HashMap<Location, ProjectMaterial>> map = getBlockMap(loc, config, rotate);
 		
 		List<Block> blockList = new ArrayList<Block>();
-		boolean b = true, c = isFinish();
+		boolean b = true, c = isFinish(), k = true;
 		UUID uuid = getObjID().getUUID();
 		Player p = Bukkit.getPlayer(uuid);
 		for(Integer i : map.keySet()){
 			for(Location blockLocation : map.get(i).keySet()){
-				MaterialData data = map.get(i).get(blockLocation);
-				if(!data.getItemType().equals(Material.AIR)){
+				ProjectMaterial material = map.get(i).get(blockLocation);
+				if(!material.getMaterial().equals(Material.AIR)){
 					if(!c){
 						if(p!=null&&p.isOnline()){
 							if(blockLocation.getBlock().getType().isSolid()){
-								if(!blockLocation.getBlock().getType().equals(data.getItemType())){
+								if(!blockLocation.getBlock().getType().equals(material.getMaterial())){
 									b = false;
-									getLutil().particleBlock(blockLocation.getBlock());}}
+									getLutil().particleBlock(blockLocation.getBlock(), p);
+									continue;
+								}}
+							
+							if(material.getMaterial().equals(Material.BED_BLOCK)){
+								
+								Location bottom = blockLocation.clone().subtract(0, 1, 0);
+								if(!bottom.getBlock().getType().isSolid()){
+									k = false;
+								}
+							}else if(material.getMaterial().name().endsWith("DOOR")){
+								Location bottom = blockLocation.clone().subtract(0, 1, 0);
+								if(!bottom.getBlock().getType().isSolid()){
+									getLutil().particleBlock(bottom.getBlock(), p, Particle.REDSTONE, 0);
+									k = false;
+								}else if(bottom.getBlock().getType().name().endsWith("STAIRS")){
+									getLutil().particleBlock(bottom.getBlock(), p, Particle.REDSTONE, 0);
+									k = false;
+								}else if(bottom.getBlock().getType().equals(Material.BEACON)){
+									getLutil().particleBlock(bottom.getBlock(), p, Particle.REDSTONE, 0);
+									k = false;
+								}
+							}
 						}
 					}
 				}
 			}
 		}
 		
-		if(b){
+		if(b && k){
 			p = null;
 			for(Integer i : map.keySet()){
 				for(Location blockLocation : map.get(i).keySet()){
-					MaterialData data = map.get(i).get(blockLocation);
-					if(!data.getItemType().equals(Material.AIR)){
+					ProjectMaterial material = map.get(i).get(blockLocation);
+					if(!material.getMaterial().equals(Material.AIR)){
 						if(blockLocation.getBlock().isEmpty()){
 							Block block = blockLocation.getBlock();
-							block.setType(data.getItemType(), false);
-							block.setData(data.getData(), false);
-							block.getState().update(true);
+							block.setType(material.getMaterial(), false);
+							block.setData(material.getByte(), false);
+							BlockState state = block.getState();
 							
+//							if(material.getInventory()!=null){
+//								Inventory inv = ((InventoryHolder) state).getInventory();
+//								inv.setContents(material.getInventory().getContents());							
+//							}
 							
+							if(material.isDirectional()){
+								BlockFace start = BlockFace.NORTH;
+								BlockFace newFace = getBlockFace();
+								BlockFace oldBlockFace = material.getBlockFace();
+								float yaw1 = getLutil().FaceToYaw(start);
+								float yaw2 = getLutil().FaceToYaw(newFace);
+								float yaw3 = getLutil().FaceToYaw(oldBlockFace);
+								float newYaw4 = yaw1 + yaw2 + yaw3;
+								BlockFace face = getLutil().yawToFace(newYaw4);
+								
+								if(material.getMaterial().equals(Material.BED_BLOCK)){
+									block.setType(Material.AIR);
+									getLutil().setBed(face, blockLocation);
+									registerBlock(block);
+									continue;
+								}if(material.getMaterial().name().endsWith("DOOR")){
+									//Bottom block
+									Door d = (Door) state.getData();
+									d.setTopHalf(false);
+									d.setFacingDirection(face);
+									
+									//Top Block
+									Block top = blockLocation.clone().add(0, 1, 0).getBlock();
+									
+									top.setType(d.getItemType());
+									BlockState stateTop = top.getState();
+									Door topDoor = (Door) stateTop.getData();
+									topDoor.setFacingDirection(d.getFacing());
+									topDoor.setTopHalf(true);
+									state.setData(d);
+									stateTop.setData(topDoor);
+									stateTop.update(true);
+									state.update(true);
+									registerBlock(block);
+									continue;
+								}else{
+									Directional directional = (Directional) state.getData();
+									directional.setFacingDirection(face);
+									state.setData((MaterialData) directional);
+								}
+							}
+							state.update(true);
 						}
-						blockList.add(blockLocation.getBlock());
+						if(blockLocation.getBlock().getType().equals(Material.BED_BLOCK) || blockLocation.getBlock().getType().name().endsWith("DOOR")){
+							registerBlock(blockLocation.getBlock());
+						}else{
+							blockList.add(blockLocation.getBlock());
+						}
 					}
 				}
 			}
+		}else if(!b){
+			p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("NotEnoughSpace"));
+		}else if(!k){
+			p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("BlockOfInstability"));
 		}
 		getObjID().addBlock(blockList);
 		return p;
+	}
+	
+	private void registerBlock(Block b){
+		List<Block> locationList = new ArrayList<Block>();
+		locationList.add(b);
+		if(b.getType().equals(Material.BED_BLOCK)){
+			BlockState state = b.getState();
+			Directional direction = (Directional) state.getData();
+			BlockState top = state.getBlock().getRelative(direction.getFacing()).getState();
+			locationList.add(top.getBlock());
+		}else if(b.getType().name().endsWith("DOOR")){
+			Block top = b.getLocation().clone().add(0, 1, 0).getBlock();
+			locationList.add(top);
+		}
+		
+		getObjID().addBlock(locationList);
 	}
 	
 	private EulerAngle eulerAngleFetcher(NBTTagCompound eularAngle){

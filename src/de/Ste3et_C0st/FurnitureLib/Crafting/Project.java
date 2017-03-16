@@ -23,7 +23,7 @@ public class Project extends ProjectSettings{
 	private CraftingFile file;
 	private Plugin plugin;
 	private Class<?> clas;
-	private Integer witdh = 0,height = 0,length = 0,chunkLimit = -1,playerLimit = -1;
+	private Integer witdh = 0,height = 0,length = 0,chunkLimit = -1;
 	private config limitationConfig;
 	private FileConfiguration limitationFile;
 	private HashMap<World, Integer> limitationWorld = new HashMap<World, Integer>();
@@ -33,7 +33,6 @@ public class Project extends ProjectSettings{
 	private InputStream model = null;
 	private int gear = -98451, maxSpeed = -98451, middle = -98451;
 	private boolean isSearch = false, isCar = false;
-	private HashMap<String, Integer> permissionList = new HashMap<String, Integer>();
 	private List<String> complete = new ArrayList<String>();
 	public InputStream getModel(){return this.model;}
 	public String getName(){return project;}
@@ -60,21 +59,6 @@ public class Project extends ProjectSettings{
 	public int getLength(){return this.length;}
 	public int getAmountWorld(World w){if(limitationWorld.containsKey(w)){return limitationWorld.get(w);}else{return -1;}}
 	public int getAmountChunk(){return this.chunkLimit;}
-	public int getAmountPlayer(){return this.playerLimit;}
-
-	
-	public int hasPermissionsAmount(Player p){
-		int i = -1;
-		if(!permissionList.isEmpty()){
-			for(String s : permissionList.keySet()){
-				if(FurnitureLib.getInstance().hasPerm(p,s)){
-					int j = permissionList.get(s);
-					if(j>i){i = j;}
-				}
-			}
-		}
-		return i;
-	}
 	
 	public boolean isCompleteLimitation(String s){
 		if(this.complete.contains(s)){
@@ -133,7 +117,7 @@ public class Project extends ProjectSettings{
 		addDefault("chunk");
 		addDefault("player");
 		this.chunkLimit = getDefault("chunk");
-		this.playerLimit = getDefault("player");
+		FurnitureLib.getInstance().getLimitManager().loadDefault(this.project);
 	}
 	
 	public Project(String name, Plugin plugin,InputStream craftingFile){
@@ -147,7 +131,7 @@ public class Project extends ProjectSettings{
 		addDefault("chunk");
 		addDefault("player");
 		this.chunkLimit = getDefault("chunk");
-		this.playerLimit = getDefault("player");
+		FurnitureLib.getInstance().getLimitManager().loadDefault(this.project);
 	}
 	
 	public Project(String name, Plugin plugin,PlaceableSide side, Class<?> clas){
@@ -159,20 +143,20 @@ public class Project extends ProjectSettings{
 		addDefault("chunk");
 		addDefault("player");
 		this.chunkLimit = getDefault("chunk");
-		this.playerLimit = getDefault("player");
 		this.side = side;
+		FurnitureLib.getInstance().getLimitManager().loadDefault(this.project);
 	}
 	
 	public boolean hasPermissions(Player p){
 		if(p.isOp()) return true;
-		if(FurnitureLib.getInstance().hasPerm(p,"Furniture.admin")) return true;
-		if(FurnitureLib.getInstance().hasPerm(p,"Furniture.Player")) return true;
-		if(FurnitureLib.getInstance().hasPerm(p,"Furniture.place." + getSystemID())) return true;
-		if(FurnitureLib.getInstance().hasPerm(p,"Furniture.place.all")) return true;
-		if(FurnitureLib.getInstance().hasPerm(p,"Furniture.place.all." + getPlugin().getName())) return true;
+		if(FurnitureLib.getInstance().hasPerm(p,"furniture.admin")) return true;
+		if(FurnitureLib.getInstance().hasPerm(p,"furniture.player")) return true;
+		if(FurnitureLib.getInstance().hasPerm(p,"furniture.place." + getSystemID())) return true;
+		if(FurnitureLib.getInstance().hasPerm(p,"furniture.place.all")) return true;
+		if(FurnitureLib.getInstance().hasPerm(p,"furniture.place.all." + getPlugin().getName())) return true;
 		if(FurnitureLib.getInstance().getPermissionList()!=null){
 			for(String s : FurnitureLib.getInstance().getPermissionList().keySet()){
-				if(FurnitureLib.getInstance().hasPerm(p, "Furniture.place.all." + s)){
+				if(FurnitureLib.getInstance().hasPerm(p, "furniture.place.all." + s)){
 					if(FurnitureLib.getInstance().getPermissionList().get(s).contains(this.getName())){
 						return true;
 					}
@@ -206,16 +190,7 @@ public class Project extends ProjectSettings{
 	private void addDefault(String conf){
 		this.limitationConfig = new config(FurnitureLib.getInstance());
 		this.limitationFile = this.limitationConfig.getConfig(conf, "/limitation/");
-		if(conf.equalsIgnoreCase("player")){
-			if(!this.limitationFile.isSet("PlayerLimit.default.total")){
-				this.limitationFile.addDefault("PlayerLimit.default.total.enable", false);
-				this.limitationFile.addDefault("PlayerLimit.default.total.amount", 10);
-				this.limitationFile.addDefault("PlayerLimit.default.total.complete", false);
-			}
-			if(!this.limitationFile.isSet("PlayerLimit.default.projects" + getSystemID())){
-				this.limitationFile.addDefault("PlayerLimit.default.projects." + getSystemID(), 10);
-			}
-		}else if(conf.equalsIgnoreCase("chunk")){
+		if(conf.equalsIgnoreCase("chunk")){
 			if(!this.limitationFile.isSet("ChunkLimit.total")){
 				this.limitationFile.addDefault("ChunkLimit.total.enable", false);
 				this.limitationFile.addDefault("ChunkLimit.total.amount", -1);
@@ -232,30 +207,7 @@ public class Project extends ProjectSettings{
 	private Integer getDefault(String conf){
 		this.limitationConfig = new config(FurnitureLib.getInstance());
 		this.limitationFile = this.limitationConfig.getConfig(conf, "/limitation/");
-		if(conf.equalsIgnoreCase("player")){
-			for(String str : limitationFile.getConfigurationSection("PlayerLimit").getKeys(false)){
-				if(str.equalsIgnoreCase("default")) continue;
-				String permission = "furniture.limit." + str;
-				Integer i = 10;
-				if(limitationFile.getBoolean("PlayerLimit." + str + ".total.enable", false)){
-					i = limitationFile.getInt("PlayerLimit."+ str +".total.amount", 10);
-					if(limitationFile.getBoolean("PlayerLimit." + str + ".total.complete", false)){
-						complete.add(str);
-					}
-				}else{
-					i = limitationFile.getInt("PlayerLimit."+ str +".projects." + getSystemID(), 10);
-				}
-				permissionList.put(permission, i);
-			}
-			if(limitationFile.getBoolean("PlayerLimit.default.total.enable", false)){
-				if(limitationFile.getBoolean("PlayerLimit.default.total.complete", false)){
-					complete.add("default");
-				}
-				return limitationFile.getInt("PlayerLimit.default.total.amount", 10);
-			}else{
-				return limitationFile.getInt("PlayerLimit.default.projects." + getSystemID(), 10);
-			}		
-		}else if(conf.equalsIgnoreCase("chunk")){
+		if(conf.equalsIgnoreCase("chunk")){
 			if(limitationFile.getBoolean("ChunkLimit.total.enable", false)){
 				return limitationFile.getInt("ChunkLimit.total.amount", -1);
 			}else{

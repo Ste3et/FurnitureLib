@@ -25,7 +25,7 @@ public class Type {
 												Material.WOOD_HOE, Material.STONE_HOE, Material.IRON_HOE, Material.GOLD_HOE, Material.DIAMOND_HOE);
 	public enum DataBaseType{MySQL, SQLite;}
 	public enum ColorType{BLOCK, BANNER;}
-	public enum LimitationType{PLAYER, CHUNK, WORLD, PLOT;}
+	public enum LimitationType{PLAYER, CHUNK, WORLD;}
 	public enum SQLAction{SAVE, UPDATE, REMOVE, PURGE,NOTHING;}
 	public enum CenterType{LEFT, RIGHT, CENTER, FRONT}
 	public enum PlaceableSide{TOP,BOTTOM,SIDE, WATER}

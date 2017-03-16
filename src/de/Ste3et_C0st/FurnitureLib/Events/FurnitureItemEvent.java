@@ -79,16 +79,16 @@ public final class FurnitureItemEvent extends Event implements Cancellable {
 	
 	public boolean sendAnouncer(){
 		if(!FurnitureLib.getInstance().getLimitManager().canPlace(p, obj)){
-			p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("LimitReached"));
+			FurnitureLib.getInstance().getLimitManager().sendAnouncer(p, obj);
 			return false;
 		}
-		FurnitureLib.getInstance().getLimitManager().sendAuncer(p, obj);
+		FurnitureLib.getInstance().getLimitManager().sendAnouncer(p, obj);
 		return true;
 	}
 	
 	public boolean isTimeToPlace(){
 		if(FurnitureLib.getInstance().isSpamPlace()){
-			if(!FurnitureLib.getInstance().hasPerm(getPlayer(),"furniture.admin") && !FurnitureLib.getInstance().hasPerm(getPlayer(),"furniture.bypass.placeSplam")){
+			if(!FurnitureLib.getInstance().hasPerm(getPlayer(),"furniture.admin") && !FurnitureLib.getInstance().hasPerm(getPlayer(),"furniture.bypass.placeSpam")){
 				long current = System.currentTimeMillis();
 				if(FurnitureLib.getInstance().getTimePlace().containsKey(getPlayer().getUniqueId())){
 					long since = FurnitureLib.getInstance().getTimePlace().get(getPlayer().getUniqueId());

@@ -8,7 +8,6 @@ import java.util.Random;
 
 import org.bukkit.Color;
 import org.bukkit.DyeColor;
-import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -19,7 +18,10 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
 
+import com.comphenix.protocol.wrappers.EnumWrappers.Particle;
+
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.Wrapper.WrapperPlayServerWorldParticles;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.CenterType;
@@ -184,25 +186,38 @@ public class LocationUtil {
 			return true;
 		}else{
 			for(Location location : blockList){
-				particleBlock(location.getBlock());
+				particleBlock(location.getBlock(), p);
 			}	
 			p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("NotEnoughSpace"));
 			return false;
 		}
 	}
 	
-	@SuppressWarnings("deprecation")
-	public void particleBlock(Block b){
+	public void particleBlock(Block b, Player p){
+		particleBlock(b, p, Particle.REDSTONE, 1);
+	}
+	
+	public void particleBlock(Block b, Player p, Particle particleData, float value){
 		if(!FurnitureLib.getInstance().isParticleEnable()) return;
 		try{
-			World w = b.getWorld();
 			Location loc = b.getLocation();
 			for(double x = .0; x<1d; x+=.3){
 				for(double y = .0; y<1d; y+=.3){
 					for(double z = .0; z<1d; z+=.3){
 						Location location = loc.clone();
 						location = location.add(x, y, z);
-						w.spigot().playEffect(location, Effect.COLOURED_DUST, 1, 1, .1F, .1F, .1F, 0.2F, 1, 9);
+						WrapperPlayServerWorldParticles particle = new WrapperPlayServerWorldParticles();
+						particle.setX((float) location.getX());
+						particle.setY((float) location.getY());
+						particle.setZ((float) location.getZ());
+						particle.setOffsetX(.1F);
+						particle.setOffsetY(.1F);
+						particle.setOffsetZ(.1F);
+						particle.setLongDistance(true);
+						particle.setNumberOfParticles(1);
+						particle.setParticleData(value);
+						particle.setParticleType(particleData);
+						particle.sendPacket(p);
 					}
 				}
 			}

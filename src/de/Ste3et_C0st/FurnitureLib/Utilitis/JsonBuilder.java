@@ -66,12 +66,14 @@ public class JsonBuilder {
     }
  
     public JsonBuilder withClickEvent(ClickAction action, String value) {
+    	if(value == null) return this;
         addSegment("clickEvent:{action:" + action.toString().toLowerCase()
                 + ",value:\"" + value + "\"}");
         return this;
     }
  
     public JsonBuilder withHoverEvent(HoverAction action, String value) {
+    	if(value == null) return this;
         addSegment("hoverEvent:{action:" + action.toString().toLowerCase()
                 + ",value:\"" + value + "\"}");
         return this;

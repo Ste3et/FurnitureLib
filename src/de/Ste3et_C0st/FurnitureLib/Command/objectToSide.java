@@ -5,11 +5,12 @@ import java.util.List;
 import org.bukkit.entity.Player;
 
 import de.Ste3et_C0st.FurnitureLib.Utilitis.JsonBuilder;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.JsonBuilder.ClickAction;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 
 public class objectToSide {
 
-	public objectToSide(List<JsonBuilder> objList, Player p, int page){
+	public objectToSide(List<JsonBuilder> objList, Player p, Integer page, String command){
 		if(page==0)page=1;
 		int objects = 10;
 		int min = page*objects-objects;
@@ -38,7 +39,28 @@ public class objectToSide {
 			j++;
 		}
 		
-		p.sendMessage("§7§m+-------------------------------------------------+");
+		String prevCommand = null;
+		String nextCommand = null;
+		String prevColor = "§c";
+		String nextColor = "§a";
+		
+		if(page>=2){
+			prevCommand = command + " " + (page - 1);
+		}else{
+			prevColor = "§7";
+		}
+		
+		if(page + 1 > maxPage){
+			nextColor = "§7";
+		}else{
+			nextCommand = command + " " + (page + 1);
+		}
+		
+		new JsonBuilder("§7§m+--------------------------------------------+§8[§e")
+						.withText(prevColor + "«").withClickEvent(ClickAction.RUN_COMMAND, prevCommand)
+						.withText("§8/§a")
+						.withText(nextColor + "»").withClickEvent(ClickAction.RUN_COMMAND, nextCommand)
+						.withText("§8]").sendJson(p);
 	}
 	
 	private int getPage(int i){

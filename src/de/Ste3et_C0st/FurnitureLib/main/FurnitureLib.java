@@ -44,6 +44,7 @@ import de.Ste3et_C0st.FurnitureLib.Utilitis.LanguageManager;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.LocationUtil;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.config;
 import de.Ste3et_C0st.FurnitureLib.main.Type.EventType;
+import de.Ste3et_C0st.FurnitureLib.main.Type.LimitationType;
 import de.Ste3et_C0st.FurnitureLib.main.Type.ProtocolFields;
 import de.Ste3et_C0st.FurnitureLib.main.Type.PublicMode;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
@@ -123,8 +124,8 @@ public class FurnitureLib extends JavaPlugin{
 	public boolean isParticleEnable(){return this.useParticle;}
 	public boolean isSpamPlace(){return this.spamPlace;}
 	public boolean isSpamBreak(){return this.spamBreak;}
-	public boolean hasPerm(Player p, String perm){return permission.has(p, perm);}
-	public boolean hasPerm(CommandSender p, String perm){return permission.has(p, perm);}
+	public boolean hasPerm(Player p, String perm){return hasPerm(((CommandSender)p), perm);}
+	public boolean hasPerm(CommandSender p, String perm){return permission.has(p, perm.toLowerCase());}
 	public boolean canSitting(){return this.canSit;}
 	public boolean creativeInteract(){return this.creativeInteract;}
 	public boolean creativePlace(){return this.creativePlace;}
@@ -187,6 +188,7 @@ public class FurnitureLib extends JavaPlugin{
 						send("Furniture Website: §e" + this.getDescription().getWebsite());
 						String s = getPluginManager().getPlugin("ProtocolLib").getDescription().getVersion();
 						boolean protocollib = isRightProtocollib(s);
+						this.limitManager = new LimitationManager(this, LimitationType.valueOf(getConfig().getString("config.LimitType", "PLAYER").toUpperCase()));
 						if(protocollib){
 							send("Furniture start load");
 							Boolean b = isEnable("ProtectionLib", false);
@@ -197,7 +199,6 @@ public class FurnitureLib extends JavaPlugin{
 							this.loadIgnore();
 							this.sqlManager.loadALL();
 							this.craftingInv = new CraftingInv(this);
-							this.limitManager = new LimitationManager(this);
 							this.update = getConfig().getBoolean("config.CheckUpdate");
 							this.bmanager = new BlockManager();
 							PublicMode mode = PublicMode.valueOf(getConfig().getString("config.PlaceMode.Mode"));

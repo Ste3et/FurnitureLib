@@ -110,7 +110,7 @@ public class command implements CommandExecutor, Listener{
 	public static boolean noPermissions(CommandSender sender, String s){
 		if(sender.isOp()) return true;
 		if(lib.hasPerm(sender,"furniture.admin")) return true;
-		if(!lib.hasPerm(sender,s)){
+		if(!lib.hasPerm(sender,s.toLowerCase())){
 			sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("NoPermissions"));
 			return false;
 		}

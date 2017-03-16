@@ -159,7 +159,11 @@ public class ChunkOnLoad implements Listener{
 							}
 						}
 						if(FurnitureLib.getInstance().getFurnitureManager().getIgnoreList().contains(p.getUniqueId())){
-							p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("FurnitureToggleEvent"));
+							PostFurnitureGhostBlockClickEvent pEvent = new PostFurnitureGhostBlockClickEvent(p, event.getClickedBlock(), o);
+							Bukkit.getPluginManager().callEvent(pEvent);
+							if(!pEvent.isCancelled()){
+								p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("FurnitureToggleEvent"));
+							}
 							return;
 						}
 						Bukkit.getScheduler().scheduleSyncDelayedTask(FurnitureLib.getInstance(), new Runnable() {
@@ -232,7 +236,11 @@ public class ChunkOnLoad implements Listener{
 				if(!objID.getSQLAction().equals(SQLAction.REMOVE)){
 					final ObjectID o = objID;
 					if(FurnitureLib.getInstance().getFurnitureManager().getIgnoreList().contains(p.getUniqueId())){
-						p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("FurnitureToggleEvent"));
+						PostFurnitureGhostBlockClickEvent pEvent = new PostFurnitureGhostBlockClickEvent(p, event.getClickedBlock(), o);
+						Bukkit.getPluginManager().callEvent(pEvent);
+						if(!pEvent.isCancelled()){
+							p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("FurnitureToggleEvent"));
+						}
 						return;
 					}
 					Bukkit.getScheduler().scheduleSyncDelayedTask(FurnitureLib.getInstance(), new Runnable() {

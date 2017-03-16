@@ -25,6 +25,7 @@ public class Updater {
 		updateTime = getTime();
 		currentVersion = FurnitureLib.getInstance().getDescription().getVersion();
 		newVersion = getLatestVersionOnSpigot();
+		
 	}
 	
 	public void update(){
@@ -34,7 +35,7 @@ public class Updater {
 		}
 	}
 	
-	public void sendPlayer(Player p){
+	public void sendPlayer(final Player p){
 		if(isUpdateAvaible()){
 			p.sendMessage("§7[§6FurnitureLib§7] §6Update §e" + newVersion + " §6is avaible");
 			p.sendMessage("§7[§6FurnitureLib§7] §6Lookat: §e" + "http://goo.gl/L7w1QQ");
