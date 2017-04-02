@@ -1,20 +1,32 @@
 package de.Ste3et_C0st.FurnitureLib.main;
 
+import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
+import org.apache.commons.codec.binary.Base64;
+import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
+import org.bukkit.Sound;
 import org.bukkit.World;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.Inventory;
+import org.bukkit.inventory.ItemStack;
 
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
+import de.Ste3et_C0st.FurnitureLib.NBT.CraftItemStack;
+import de.Ste3et_C0st.FurnitureLib.NBT.NBTCompressedStreamTools;
+import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
+import de.Ste3et_C0st.FurnitureLib.ShematicLoader.ProjectConfig;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.DebugUtil;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fArmorStand;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fCreeper;
@@ -98,6 +110,35 @@ public class FurnitureManager {
 	public void remove(ObjectID id){
 		if(this.objecte.isEmpty()){return;}
 		id.setSQLAction(SQLAction.REMOVE);
+		
+		
+		ProjectConfig c = new ProjectConfig();
+		FileConfiguration file = c.getConfig(id.getSerial(), "metadata/");
+		String string = file.getString("inventory");
+		if (file.isSet("inventory")) {
+			Location loc = id.getStartLocation();
+			byte[] by = Base64.decodeBase64(string);
+			ByteArrayInputStream bin = new ByteArrayInputStream(by);
+			try {
+				NBTTagCompound compound = NBTCompressedStreamTools.read(bin);
+				NBTTagCompound inventory = compound.getCompound("inventory");
+				int size = compound.getInt("size");
+				Inventory inv = Bukkit.createInventory(null, size, id
+						.getProjectOBJ().getCraftingFile().getRecipe()
+						.getResult().getItemMeta().getDisplayName());
+				for(int i = 0; i<size;i++){
+					if(!inventory.getString(i+"").equalsIgnoreCase("NONE")){
+						ItemStack is = new CraftItemStack().getItemStack(inventory.getCompound(i+""));
+						loc.getWorld().dropItemNaturally(loc, is);
+						loc.getWorld().playSound(loc, Sound.ENTITY_EXPERIENCE_ORB_PICKUP, 1.0f, 1.3f);
+					}
+				}
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+
+		}
+		
 		if(!id.getBlockList().isEmpty()){
 			FurnitureLib.getInstance().getBlockManager().destroy(id.getBlockList(), false);
 			id.getBlockList().clear();
