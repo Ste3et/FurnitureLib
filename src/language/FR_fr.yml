@@ -1,0 +1,44 @@
+#============================================================#
+# +--------------------------------------------------------+ #
+# |                  French language file                  | #
+# |                       By Niasio                        | #
+# +--------------------------------------------------------+ #
+#============================================================#
+
+message:
+  FurnitureOnThisPlace: '&aIl y a déjà un meuble ici.'
+  NotEnoughSpace: '&aIl n''y a pas assez d'espace pour placer cet objet.'
+  NoPermissions: '&cVous n''avez pas la permission pour le faire.'
+  PlayerNotOnline: '&cLe joueur #PLAYER# est déconnecté.'
+  ProjectNotFound: '&cLe projet #PROJECT# est inexistant.'
+  ProjectAlreadyExist: '&cLe projet #PROJECT# existe déjà.'
+  WrongArgument: '&cLa commande que vous avez entrée contient des arguments erronés.'
+  GivePlayer: '&aLe joueur #PLAYER# reçoit #PROJECT#(#AMOUNT#).'
+  DebugModeEntered: '&aVous êtes entré dans le mode de débogage. Cliquez avec le bouton droit sur un meuble.'
+  ManageModeEntered: '&aVous êtes entré dans le mode de gestion. Cliquez avec le bouton droit sur un meuble.'
+  RemoveDistance: '&eSupprime avec succès #AMOUNT# meubles.'
+  RemoveID: '&eSupprimé avec succès #OBJID#'
+  RemovePlugin: '&eSupprime avec succès tous les meubles fixés par #PLUGIN#.'
+  RemoveType: '&eSupprime avec succès tous #TYPE#.'
+  RemoveAll: '&eSupprime avec succès tous les meubles..'
+  RemovePlayer: '&eSupprime avec succès tous les objets par le joueur #PLAYER#.'
+  RemoveLookat: '&eSupprimé avec succès #SERIAL#.'
+  SideNotFound: '&cCette page n''existe pas.'
+  SideNavigation: '&eFaites /furniture list <option> (0-#MAX#) pour répertorier tous les meubles.'
+  WrongOwner: '&cVous n''êtes pas le propriétaire de ce meuble!'
+  NotONThisSide: '&cVous ne pouvez pas placer ce meuble de ce côté-ci du bloc.'
+  PurgeMarked: '&aVous avez marqué #AMOUNT# meubles à supprimer de la base de données.'
+  CraftingEdit: '&eVous avez mis à jour le Furniture Crafting Recipe'
+  CraftingRemove: '&aVous supprimez le Crafting Recipe sur l''instance du serveur actuel'
+  FurnitureToggleCMDOff: '&aTous les meubles sont &cinvisible'
+  FurnitureToggleCMDOn: '&aTous les meubles sont &2visible'
+  FurnitureToggleEvent: '&cTu ne peux pas faire ça.'
+  FurnitureToFastPlace: '&cVous devez attendre &4#TIME# &cavant de pouvoir le placer.'
+  FurnitureToFastBreak: '&cVous devez attendre &4#TIME# &cavant de pouvoir le casser.'
+  LimitAouncer: '&6Vous avez placé &2#CURRENT#&6/&c#MAX# de &e#TYPE#.'
+  LimitAouncerMaximum: '&6Vous avez placé &2#CURRENT#&6/&c#MAX# de &e#TYPE#&6, &a#AMOUNT# &6meubles restants'
+  LimitReachedWorld: '&cLa limite des meubles dans ce monde est atteinte'
+  LimitReachedChunk: '&cLa limite des meubles dans ce Chunk est atteinte'
+  LimitReached: '&cLa limite de cet objet est atteinte.'
+  LimitReachedMaximum: '&cLe mobilier maximal est atteint.'
+  BlockOfInstability: '&cEssayez d''installer les meubles sur un autre endroit'
