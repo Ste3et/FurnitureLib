@@ -37,6 +37,7 @@ public class LanguageManager{
 		switch(lang){
 			case "EN_en": s = "EN_en"; break;
 			case "DE_de": s = "DE_de"; break;
+			case "FR_fr": s = "FR_Fr"; break;
 			default: s = "EN_en";
 		}
 		c = new config(plugin);
