@@ -103,7 +103,7 @@ public class ProjectManager {
 		FurnitureLib.getInstance().registerPluginFurnitures(FurnitureLib.getInstance());
 		if(s.length()>1){
 			String str = s.substring(0, s.length()-1);
-			FurnitureLib.getInstance().send("FurnitureLib load Proejcts("+StringUtils.countMatches(s, ",")+"): " + str);
+			FurnitureLib.getInstance().send("FurnitureLib load Models("+StringUtils.countMatches(s, ",")+"): " + str);
 		}else{
 			FurnitureLib.getInstance().send("If you want to install more models look at here: http://dicecraft.de/furniture/models.php");
 		}

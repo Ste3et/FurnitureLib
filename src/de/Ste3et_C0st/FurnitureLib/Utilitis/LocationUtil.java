@@ -68,24 +68,9 @@ public class LocationUtil {
         }
     }
 	
+	@SuppressWarnings("deprecation")
 	public Color getDyeFromDurability(short s){
-		if(s==0){return Color.fromRGB(25, 25, 25);}
-		if(s==1){return Color.fromRGB(153, 51, 51);}
-		if(s==2){return Color.fromRGB(102, 127, 51);}
-		if(s==3){return Color.fromRGB(102, 76, 51);}
-		if(s==4){return Color.fromRGB(51, 76, 178);}
-		if(s==5){return Color.fromRGB(127, 63, 178);}
-		if(s==6){return Color.fromRGB(76, 127, 153);}
-		if(s==7){return Color.fromRGB(153, 153, 153);}
-		if(s==8){return Color.fromRGB(76, 76, 76);}
-		if(s==9){return Color.fromRGB(242, 127, 165);}
-		if(s==10){return Color.fromRGB(127, 204, 25);}
-		if(s==11){return Color.fromRGB(229, 229, 51);}
-		if(s==12){return Color.fromRGB(102, 153, 216);}
-		if(s==13){return Color.fromRGB(178, 76, 216);}
-		if(s==14){return Color.fromRGB(216, 127, 51);}
-		if(s==15){return Color.fromRGB(255, 255, 255);}
-		return Color.fromRGB(255, 255, 255);
+		return DyeColor.getByDyeData((byte) s).getColor();
 	}
 	
 	/* Check if the Furniture have enougth space */

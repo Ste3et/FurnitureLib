@@ -27,9 +27,9 @@ public class listCommand {
 		if(args.length==1){
 			if(!command.noPermissions(sender, "furniture.list")) return;
 			boolean recipe = false, give = false, detail = true;
-			if(FurnitureLib.getInstance().hasPerm(sender, "furniture.recipe")){recipe = true;}
-			if(FurnitureLib.getInstance().hasPerm(sender, "furniture.give")){give = true;}
-			if(FurnitureLib.getInstance().hasPerm(sender, "furniture.debug")){detail = false;}
+			if(FurnitureLib.getInstance().getPermission().hasPerm(sender, "furniture.recipe")){recipe = true;}
+			if(FurnitureLib.getInstance().getPermission().hasPerm(sender, "furniture.give")){give = true;}
+			if(FurnitureLib.getInstance().getPermission().hasPerm(sender, "furniture.debug")){detail = false;}
 			
 			for(Project pro : FurnitureLib.getInstance().getFurnitureManager().getProjects()){
 				String s = null;
@@ -97,9 +97,9 @@ public class listCommand {
 			}else if(FurnitureLib.getInstance().isInt(args[1])){
 				if(!command.noPermissions(sender, "furniture.list")) return;
 				boolean recipe = false, give = false, detail = true;
-				if(FurnitureLib.getInstance().hasPerm(sender, "furniture.recipe")){recipe = true;}
-				if(FurnitureLib.getInstance().hasPerm(sender, "furniture.give")){give = true;}
-				if(FurnitureLib.getInstance().hasPerm(sender, "furniture.debug")){detail = false;}
+				if(FurnitureLib.getInstance().getPermission().hasPerm(sender, "furniture.recipe")){recipe = true;}
+				if(FurnitureLib.getInstance().getPermission().hasPerm(sender, "furniture.give")){give = true;}
+				if(FurnitureLib.getInstance().getPermission().hasPerm(sender, "furniture.debug")){detail = false;}
 				
 				for(Project pro : FurnitureLib.getInstance().getFurnitureManager().getProjects()){
 					String s = null;

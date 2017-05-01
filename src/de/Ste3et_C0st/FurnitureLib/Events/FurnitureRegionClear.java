@@ -1,10 +1,11 @@
 package de.Ste3et_C0st.FurnitureLib.Events;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
+import org.bukkit.util.Vector;
 
+import de.Ste3et_C0st.FurnitureLib.Utilitis.ZoneVector;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
@@ -16,12 +17,24 @@ public class FurnitureRegionClear implements Listener {
 		Bukkit.getPluginManager().registerEvents(this, FurnitureLib.getInstance());
 	}
 	
+
 	@EventHandler
 	private void onPlotClear(RegionClearEvent e){
-		Location loc1 = e.getLoc1();
-		Location loc2 = e.getLoc2();
+		Vector v1 = e.getLoc1().toVector();
+		Vector v2 = e.getLoc2().toVector();
+		
+		if(v1.getBlockY() == v2.getBlockY()){
+			v1 = v1.setY(0);
+			v2 = v2.setY(256);
+		}
+		
+		
+	    ZoneVector min = new ZoneVector(Math.min(v1.getBlockX(), v2.getBlockX()), Math.min(v1.getBlockY(), v2.getBlockY()), Math.min(v1.getBlockZ(), v2.getBlockZ()));
+	    ZoneVector max = new ZoneVector(Math.max(v1.getBlockX(), v2.getBlockX()), Math.max(v1.getBlockY(), v2.getBlockY()), Math.max(v1.getBlockZ(), v2.getBlockZ()));
+		
 		for(ObjectID id : FurnitureLib.getInstance().getFurnitureManager().getObjectList()){
-			if(checkCuboid(id.getStartLocation(), loc1, loc2)){
+			ZoneVector curr = new ZoneVector(id.getStartLocation());
+			if(curr.isInAABB(min, max)){
 				if(e.isClear() || id.getUUID() == null){
 					id.remove();
 				}else{
@@ -32,21 +45,4 @@ public class FurnitureRegionClear implements Listener {
 			}
 		}
 	}
-	
-	public boolean checkCuboid(Location checkLoc, Location loc1, Location loc2)
-	{
-	    double x1 = Math.min(loc1.getX(), loc2.getX());
-	    double y1 = Math.min(loc1.getY(), loc2.getY());
-	    double z1 = Math.min(loc1.getZ(), loc2.getZ());
-	    
-	    double x2 = Math.min(loc1.getX(), loc1.getX());
-	    double y2 = Math.min(loc1.getY(), loc1.getY());
-	    double z2 = Math.min(loc1.getZ(), loc1.getZ());
-	 
-	    double cx = checkLoc.getX();
-	    double cy = checkLoc.getY();
-	    double cz = checkLoc.getZ();
-	    return (cx > x1 && cx < x2 && cy > y1 && cy < y2 && cy > z1 && cz < z2);
-	}
-	
 }

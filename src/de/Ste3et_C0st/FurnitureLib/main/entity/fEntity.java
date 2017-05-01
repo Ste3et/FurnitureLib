@@ -310,7 +310,6 @@ public abstract class fEntity extends fSerializer{
 		}
 		if (str.equalsIgnoreCase("")) {
 			setNameVasibility(false);
-			return this;
 		}
 		setObject(getWatcher(), str, 2);
 		this.customName = str;return this;

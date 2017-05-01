@@ -129,8 +129,8 @@ public class LimitationManager {
 	
 	public boolean canPlace(Player p, ObjectID obj){
 		if(p.isOp()) return true;
-		if(FurnitureLib.getInstance().hasPerm(p,"furniture.admin")) return true;
-		if(FurnitureLib.getInstance().hasPerm(p,"furniture.bypass.limit")) return true;
+		if(FurnitureLib.getInstance().getPermission().hasPerm(p,"furniture.admin")) return true;
+		if(FurnitureLib.getInstance().getPermission().hasPerm(p,"furniture.bypass.limit")) return true;
 		
 		Project pro = obj.getProjectOBJ();
 		LimitationObject limitOBJ = getLimitOBJ(p, pro);
@@ -175,8 +175,8 @@ public class LimitationManager {
 	
 	public void sendAnouncer(Player p, ObjectID obj){
 		if(p.isOp()) return;
-		if(FurnitureLib.getInstance().hasPerm(p,"furniture.admin")) return;
-		if(FurnitureLib.getInstance().hasPerm(p,"furniture.bypass.limit")) return;
+		if(FurnitureLib.getInstance().getPermission().hasPerm(p,"furniture.admin")) return;
+		if(FurnitureLib.getInstance().getPermission().hasPerm(p,"furniture.bypass.limit")) return;
 		
 		Project pro = obj.getProjectOBJ();
 		LimitationObject limitOBJ = getLimitOBJ(p, pro);
@@ -265,7 +265,7 @@ public class LimitationManager {
 						i = obj.getAmountFromType(project.getName());
 						lobj = obj;
 					}
-				}else if(lib.hasPerm(p, obj.permission)){
+				}else if(lib.getPermission().hasPerm(p, obj.permission)){
 					if(obj.getAmountFromType(project.getName()) > i){
 						i = obj.getAmountFromType(project.getName());
 						lobj = obj;

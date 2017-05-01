@@ -26,7 +26,6 @@ import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
-
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.HiddenStringUtils;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
@@ -41,22 +40,17 @@ public class ChunkOnLoad implements Listener{
 	public FurnitureManager manager = FurnitureLib.getInstance().getFurnitureManager();
 
 	@EventHandler
-	public void onPlayerMove(PlayerMoveEvent event) {
-		if (event.getFrom().getWorld() == event.getTo().getWorld() &&
-				event.getFrom().getBlockX() == event.getTo().getBlockX() &&
-				event.getFrom().getBlockY() == event.getTo().getBlockY() &&
-				event.getFrom().getBlockZ() == event.getTo().getBlockZ())
-			return;
-
-		Player player = event.getPlayer();
+	public void onPlayerMove(PlayerMoveEvent e) {
+		if (e.getTo().getBlockX() == e.getFrom().getBlockX() && e.getTo().getBlockY() == e.getFrom().getBlockY() && e.getTo().getBlockZ() == e.getFrom().getBlockZ()) return;
+		Player player = e.getPlayer();
 		if (player.getHealth() <= 0.0D) return;
 
-		Chunk oldChunk = event.getFrom().getChunk();
-		Chunk newChunk = event.getTo().getChunk();
+		Chunk oldChunk = e.getFrom().getChunk();
+		Chunk newChunk = e.getTo().getChunk();
 
-			if (oldChunk.getWorld() != newChunk.getWorld() || oldChunk.getX() != newChunk.getX() || oldChunk.getZ() != newChunk.getZ()) {
-				manager.updatePlayerView(player);
-			}
+		if (oldChunk.getWorld() != newChunk.getWorld() || oldChunk.getX() != newChunk.getX() || oldChunk.getZ() != newChunk.getZ()) {
+			manager.updatePlayerView(player);
+		}
 	}
 	
 	@EventHandler
@@ -81,10 +75,38 @@ public class ChunkOnLoad implements Listener{
 			}
 		},5);
 		
-		if(player.isOp()){
-			FurnitureLib.getInstance().getUpdater().update();
-			FurnitureLib.getInstance().getUpdater().sendPlayer(player);
-		}
+//		April fool ^^
+//		if(player.isOp()){
+//			FurnitureLib.getInstance().getUpdater().update();
+//			FurnitureLib.getInstance().getUpdater().sendPlayer(player);
+//			
+//			ObjectID id = new ObjectID("Herobrine", FurnitureLib.getInstance().getName(), player.getLocation());
+//			Location l = new Relative(player.getLocation(), -2, 0, 0, FurnitureLib.getInstance().getLocationUtil().yawToFace(player.getLocation().getYaw())).getSecondLocation();
+//			l.setYaw(player.getLocation().getYaw());
+//			fArmorStand stand = new fArmorStand(l, id);
+//			stand.setName("§cHerobrine");
+//			
+//			ItemStack skull = new ItemStack(Material.SKULL_ITEM);
+//			skull.setDurability((short) 3);
+//			SkullMeta skullMeta = (SkullMeta) skull.getItemMeta();
+//			skullMeta.setOwner("Herobrine");
+//			skull.setItemMeta(skullMeta);
+//			stand.setHelmet(skull);
+//			stand.setArms(true);
+//			
+//			stand.setItemInMainHand(new ItemStack(Material.DIAMOND_SWORD));
+//			stand.setItemInOffHand(new ItemStack(Material.IRON_SWORD));
+//			stand.setChestPlate(new ItemStack(Material.LEATHER_CHESTPLATE));
+//			stand.setLeggings(new ItemStack(Material.LEATHER_LEGGINGS));
+//			stand.setBoots(new ItemStack(Material.LEATHER_BOOTS));
+//			stand.setNameVasibility(true);
+//			stand.setBasePlate(false);
+//			id.addArmorStand(stand);
+//			id.send(player);
+//			
+//			id.setPrivate(true);
+//			id.setSQLAction(SQLAction.REMOVE);
+//		}
 	}
 	
 	@EventHandler
@@ -154,7 +176,7 @@ public class ChunkOnLoad implements Listener{
 					if(objID != null && !objID.getSQLAction().equals(SQLAction.REMOVE)){
 						final ObjectID o = objID;
 						if(p.getGameMode().equals(GameMode.CREATIVE)&&!FurnitureLib.getInstance().creativeInteract()){
-							if(!FurnitureLib.getInstance().hasPerm(p, "furniture.bypass.creative.interact")){
+							if(!FurnitureLib.getInstance().getPermission().hasPerm(p, "furniture.bypass.creative.interact")){
 								return;
 							}
 						}
@@ -185,7 +207,7 @@ public class ChunkOnLoad implements Listener{
 			if(eventList.contains(event.getPlayer())) return;
 			event.setCancelled(true);
 			if(p.getGameMode().equals(GameMode.CREATIVE)&&!FurnitureLib.getInstance().creativePlace()){
-				if(!FurnitureLib.getInstance().hasPerm(p, "furniture.bypass.creative.place")){
+				if(!FurnitureLib.getInstance().getPermission().hasPerm(p, "furniture.bypass.creative.place")){
 					return;
 				}
 			}
@@ -218,6 +240,10 @@ public class ChunkOnLoad implements Listener{
 			removePlayer(p);
 		}else if(event.getAction().equals(Action.LEFT_CLICK_BLOCK)){
 			if(event.getClickedBlock()==null){return;}
+			if(event.getClickedBlock().getLocation()==null){return;}
+			if(FurnitureLib.getInstance()==null){return;}
+			if(FurnitureLib.getInstance().getBlockManager()==null){return;}
+			if(FurnitureLib.getInstance().getBlockManager().getList()==null){return;}
 			if(FurnitureLib.getInstance().getBlockManager().getList().contains(event.getClickedBlock().getLocation())){
 				ObjectID objID = null;
 				for(ObjectID obj : FurnitureLib.getInstance().getFurnitureManager().getObjectList()){
@@ -295,7 +321,7 @@ public class ChunkOnLoad implements Listener{
 		is.setAmount(1);
 		for(Project pro : FurnitureLib.getInstance().getFurnitureManager().getProjects()){
 			if(is.equals(pro.getCraftingFile().getRecipe().getResult())){
-				if(!FurnitureLib.getInstance().hasPerm(p,"furniture.craft.*") && !FurnitureLib.getInstance().hasPerm(p,"furniture.craft." + pro.getSystemID()) && !FurnitureLib.getInstance().hasPerm(p,"furniture.player") && !FurnitureLib.getInstance().hasPerm(p,"furniture.admin")){
+				if(!FurnitureLib.getInstance().getPermission().hasPerm(p,"furniture.craft.*") && !FurnitureLib.getInstance().getPermission().hasPerm(p,"furniture.craft." + pro.getSystemID()) && !FurnitureLib.getInstance().getPermission().hasPerm(p,"furniture.player") && !FurnitureLib.getInstance().getPermission().hasPerm(p,"furniture.admin")){
 					e.getInventory().setResult(null);
 				}
 			}

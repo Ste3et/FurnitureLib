@@ -131,10 +131,12 @@ public class ObjectID{
 		if(getSQLAction().equals(SQLAction.REMOVE)){return;}
 		if(isInRange(player)){
 			if(players.contains(player)) return;
+			
 			for(fEntity stand : getPacketList()){stand.send(player);}
 			players.add(player);
 		}else{
 			if(!players.contains(player)) return;
+			
 			for(fEntity stand : getPacketList()){stand.kill(player, false);}
 			players.remove(player);
 		}

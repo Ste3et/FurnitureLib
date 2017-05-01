@@ -149,14 +149,14 @@ public class Project extends ProjectSettings{
 	
 	public boolean hasPermissions(Player p){
 		if(p.isOp()) return true;
-		if(FurnitureLib.getInstance().hasPerm(p,"furniture.admin")) return true;
-		if(FurnitureLib.getInstance().hasPerm(p,"furniture.player")) return true;
-		if(FurnitureLib.getInstance().hasPerm(p,"furniture.place." + getSystemID())) return true;
-		if(FurnitureLib.getInstance().hasPerm(p,"furniture.place.all")) return true;
-		if(FurnitureLib.getInstance().hasPerm(p,"furniture.place.all." + getPlugin().getName())) return true;
+		if(FurnitureLib.getInstance().getPermission().hasPerm(p,"furniture.admin")) return true;
+		if(FurnitureLib.getInstance().getPermission().hasPerm(p,"furniture.player")) return true;
+		if(FurnitureLib.getInstance().getPermission().hasPerm(p,"furniture.place." + getSystemID())) return true;
+		if(FurnitureLib.getInstance().getPermission().hasPerm(p,"furniture.place.all")) return true;
+		if(FurnitureLib.getInstance().getPermission().hasPerm(p,"furniture.place.all." + getPlugin().getName())) return true;
 		if(FurnitureLib.getInstance().getPermissionList()!=null){
 			for(String s : FurnitureLib.getInstance().getPermissionList().keySet()){
-				if(FurnitureLib.getInstance().hasPerm(p, "furniture.place.all." + s)){
+				if(FurnitureLib.getInstance().getPermission().hasPerm(p, "furniture.place.all." + s)){
 					if(FurnitureLib.getInstance().getPermissionList().get(s).contains(this.getName())){
 						return true;
 					}

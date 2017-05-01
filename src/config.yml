@@ -3,7 +3,8 @@
 # Language: current avaible Language: 
 #       - EN_en: english 
 #       - DE_de: german
-#       - PL_pl: polish
+#       - PL_pl: polish | By gabixdev
+#       - FR_fr: france | By Niasio
 # useParticles: you can enable/disable the particles when it is not enough space
 # DisableSitting: you can enable/disable the sit function of my plugin
 # viewDistance: This is the distance how long the player becomes the ArmorStands renderd you can make it smaller to reduce the CLIENT Lags.

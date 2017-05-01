@@ -1,9 +1,10 @@
 package de.Ste3et_C0st.FurnitureLib.ShematicLoader.Events;
 
+import org.bukkit.DyeColor;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-
+import org.bukkit.inventory.meta.BannerMeta;
 import de.Ste3et_C0st.FurnitureLib.ShematicLoader.ProjektInventory;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureHelper;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
@@ -20,6 +21,7 @@ public class FurnitureFunctions extends FurnitureHelper {
 
 	public ProjektInventory getInv(){return this.inv;}
 	
+	@SuppressWarnings("deprecation")
 	public void runFunction(Player p){
 		if(this.inv!=null){
 			if(this.inv.getPlayer()==null){
@@ -28,7 +30,98 @@ public class FurnitureFunctions extends FurnitureHelper {
 			}
 		}
 		
+		boolean j = false;
 		for(fEntity stand : getfAsList()){
+			if(!stand.getName().isEmpty()){
+				if(p.getInventory().getItemInMainHand() != null){
+					if(p.getInventory().getItemInMainHand().getAmount() > 0){
+						String command = stand.getName();
+						command = command.toUpperCase();
+						if(command.startsWith("#DYE")){
+							String[] selector = command.split(":");
+							String arg1 = selector[0].replace("#DYE_", "");
+							String arg2 = selector[1].replace("CONSUME_", "");
+							arg2 = arg2.replace("#", "");
+							
+							Material a = Material.AIR;
+							
+							if(containsNumber(arg1)){
+								try{
+									a = Material.getMaterial(Integer.parseInt(arg1));
+								}catch(Exception ex){
+									return;
+								}
+							}else{
+								a = Material.valueOf(arg1);
+							}
+							
+							boolean consume = false;
+							if(arg2.equalsIgnoreCase("DYE")){
+								Material m = p.getInventory().getItemInMainHand().getType();
+								if(m.equals(Material.INK_SACK)){
+									DyeColor color = DyeColor.getByDyeData((byte) p.getInventory().getItemInMainHand().getDurability());
+									for(fEntity stand2 : getfAsList()){
+										if(stand2.getHelmet() == null) continue;
+										if(stand2.getHelmet().getType().equals(a)){
+											ItemStack dyedStack = stand2.getHelmet();
+											if(dyedStack.getType().equals(Material.WOOL) || dyedStack.getType().equals(Material.CARPET) || dyedStack.getType().equals(Material.STAINED_GLASS) || dyedStack.getType().equals(Material.STAINED_CLAY) || dyedStack.getType().equals(Material.STAINED_GLASS_PANE)){
+												if(dyedStack.getDurability()!=color.getWoolData()){
+													dyedStack.setDurability(color.getWoolData());
+													consume = true;
+												}
+											}else if(dyedStack.getType().equals(Material.BANNER)){
+												BannerMeta meta = (BannerMeta) dyedStack.getItemMeta();
+												if(meta == null) continue;
+												if(meta.getBaseColor() == null || !meta.getBaseColor().equals(color)){
+													meta.setBaseColor(color);
+													dyedStack.setItemMeta(meta);
+													consume = true;
+												}
+											}
+											if(consume){
+												stand2.setHelmet(dyedStack);
+												stand2.update();
+											}
+										}
+									}
+								}
+							}else{
+								Material b  = Material.AIR;
+								if(containsNumber(arg2)){
+									try{
+										b = Material.getMaterial(Integer.parseInt(arg2));
+									}catch(Exception ex){
+										return;
+									}
+								}else{
+									b = Material.valueOf(arg2);
+								}
+								if(b.equals(p.getInventory().getItemInMainHand().getType())){
+									for(fEntity entity2 : getfAsList()){
+										if(entity2.getHelmet() != null){
+											if(entity2.getHelmet().getType().equals(a)){
+												ItemStack newIS = p.getInventory().getItemInMainHand().clone();
+												entity2.setHelmet(newIS);
+												entity2.update();
+												consume = true;
+											}
+										}
+									}
+								}
+							}
+							
+							if(selector[1].contains("CONSUME_") && consume){
+								consumeItem(p);
+							}
+							
+							if(consume){
+								j = true;
+							}
+						}
+					}
+				}
+			}
+			
 			if(stand.getName().equalsIgnoreCase("#ITEM#")){
 				if(p.getInventory().getItemInMainHand()!=null){
 					Material m = p.getInventory().getItemInMainHand().getType();
@@ -37,8 +130,10 @@ public class FurnitureFunctions extends FurnitureHelper {
 							ItemStack is = stand.getInventory().getItemInMainHand();
 							is.setAmount(1);
 							getWorld().dropItem(getLocation(), is);
+							j = true;
 						}
 						if(p.getInventory().getItemInMainHand()!=null){
+							j = true;
 							ItemStack is = p.getInventory().getItemInMainHand().clone();
 							if(is.getAmount()<=0){
 								is.setAmount(0);
@@ -59,7 +154,9 @@ public class FurnitureFunctions extends FurnitureHelper {
 							ItemStack is = stand.getInventory().getHelmet();
 							is.setAmount(1);
 							getWorld().dropItem(getLocation(), is);
+							j = true;
 						}
+						j = true;
 						ItemStack is = p.getInventory().getItemInMainHand().clone();
 						if(is.getAmount()<=0){
 							is.setAmount(0);
@@ -71,11 +168,6 @@ public class FurnitureFunctions extends FurnitureHelper {
 						consumeItem(p);	
 					}
 				}
-			}else if(stand.getName().startsWith("#Mount:") || stand.getName().startsWith("#SITZ#")){
-				if(stand.getPassanger()==null){
-					stand.setPassanger(p);
-					return;
-				}
 			}else if(stand.getName().startsWith("/")){
 				if(!stand.getName().startsWith("/op")){
 					String str = stand.getName();
@@ -86,6 +178,24 @@ public class FurnitureFunctions extends FurnitureHelper {
 					str = str.replaceAll("@y", p.getLocation().getY() + "");
 					str = str.replaceAll("@z", p.getLocation().getZ() + "");
 					p.chat(str);
+					j = true;
+				}
+			}
+		}
+		
+		if(!j){
+			for(fEntity stand : getfAsList()){
+				if(stand.getName().startsWith("#Mount:") || stand.getName().startsWith("#SITZ")){
+					
+					if(stand.getPassanger()==null){
+						
+						stand.setPassanger(p);
+						return;
+					}else{
+						if(stand.getPassanger().getUniqueId().equals(p.getUniqueId())){
+							stand.eject();
+						}
+					}
 				}
 			}
 		}
@@ -129,5 +239,18 @@ public class FurnitureFunctions extends FurnitureHelper {
 				}
 			}
 		}
+	}
+	
+	private boolean containsNumber(String str) {                
+
+	    if(str == null || str.isEmpty()) return false;
+	    boolean found = false;
+	    for(char c : str.toCharArray()){
+	        if(Character.isDigit(c)){
+	            found = true;
+	        }
+	    }
+
+	    return found;
 	}
 }

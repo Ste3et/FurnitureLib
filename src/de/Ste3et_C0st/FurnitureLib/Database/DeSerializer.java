@@ -41,6 +41,7 @@ public class DeSerializer {
 	public WorldPool pool = FurnitureLib.getInstance().getWorldPool();
 	private Object[] enumItemSlots = EnumWrappers.ItemSlot.values();
 	
+	
 	public void Deserialze(String objId,String in, SQLAction action, boolean autoPurge){
 		ObjectID obj = new ObjectID(null, null, null);
 		obj.setID(objId);
@@ -84,6 +85,7 @@ public class DeSerializer {
 				this.armorStands++;
 			}
 		} catch (EOFException eofEx){
+			eofEx.printStackTrace();
 			return;
 		} catch (ZipException zipEx){
 			System.out.println(obj.getID() + "Make Problems: Not in GZIP format or is the Table empty ?");
@@ -158,7 +160,7 @@ public class DeSerializer {
 		Double Z = location.getDouble("Z");
 		Float Yaw = location.getFloat("Yaw");
 		Float Pitch = location.getFloat("Pitch");
-		if(!isWorldLoadet(location.getString("World"))){return null;}
+		if(!isWorldLoadet(location.getString("World"))){FurnitureLib.getInstance().getLogger().info("The world: " + location.getString("World") + " deos not exist.");return null;}
 		World world = Bukkit.getWorld(location.getString("World"));
 		Location loc = new Location(world, X, Y, Z);
 		loc.setYaw(Yaw);

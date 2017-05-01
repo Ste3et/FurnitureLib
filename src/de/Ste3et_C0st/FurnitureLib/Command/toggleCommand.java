@@ -12,7 +12,7 @@ public class toggleCommand {
 	public toggleCommand(CommandSender sender, Command cmd, String arg2,String[] args) {
 		if(args.length == 1){
 			if(sender instanceof Player){
-				if(FurnitureLib.getInstance().hasPerm(sender, "furniture.toggle") || FurnitureLib.getInstance().hasPerm(sender, "furniture.player")){
+				if(FurnitureLib.getInstance().getPermission().hasPerm(sender, "furniture.toggle") || FurnitureLib.getInstance().getPermission().hasPerm(sender, "furniture.player")){
 					if(!FurnitureLib.getInstance().getFurnitureManager().getIgnoreList().contains(((Player) sender).getUniqueId())){
 						FurnitureLib.getInstance().getFurnitureManager().getIgnoreList().add(((Player) sender).getUniqueId());
 						FurnitureLib.getInstance().getFurnitureManager().removeFurniture((Player) sender);
@@ -25,7 +25,7 @@ public class toggleCommand {
 				}
 			}
 		}else if(args.length == 2){
-			if(FurnitureLib.getInstance().hasPerm(sender, "furniture.toggle.another")){
+			if(FurnitureLib.getInstance().getPermission().hasPerm(sender, "furniture.toggle.another")){
 				Player player = Bukkit.getPlayer(args[1]);
 				if(player == null){sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("PlayerNotOnline"));return;}
 				if(!FurnitureLib.getInstance().getFurnitureManager().getIgnoreList().contains(player.getUniqueId())){

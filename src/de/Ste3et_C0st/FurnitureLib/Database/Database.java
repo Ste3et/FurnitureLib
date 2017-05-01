@@ -48,14 +48,16 @@ public abstract class Database {
         }
     }
     
-    public void save(ObjectID id){
+    public boolean save(ObjectID id){
     	String binary = FurnitureLib.getInstance().getSerializer().SerializeObjectID(id);
     	String query = "REPLACE INTO FurnitureLib_Objects (`ObjID`,`Data`) VALUES ('" + id.getID() + "', '" + binary + "');";
     	try{
     		statement.executeUpdate(query);
+    		return true;
     	}catch(Exception e){
     		e.printStackTrace();
     	}
+    	return false;
     }
     
 //    public void reconnect(){

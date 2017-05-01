@@ -33,22 +33,34 @@ public class LanguageManager{
 	
 	@SuppressWarnings("deprecation")
 	private void addDefault(){
-		String s = "";
-		switch(lang){
-			case "EN_en": s = "EN_en"; break;
-			case "DE_de": s = "DE_de"; break;
-			default: s = "EN_en";
-		}
-		c = new config(plugin);
-		file = c.getConfig(lang, "/lang/");
-		if(file==null) return;
-		file.addDefaults(YamlConfiguration.loadConfiguration(plugin.getResource("language/" + s + ".yml")));
-		file.options().copyDefaults(true);
-		c.saveConfig(lang, file, "/lang/");
-		
-		for(String str : file.getConfigurationSection("message").getKeys(false)){
-			String string = file.getString("message"+"."+str);
-			hash.put(str, string);
+		try{
+			if(this.lang == null || this.lang.isEmpty()) lang = "EN_en";
+			String s = "";
+			
+			if(plugin.getResource("language/" + lang + ".yml") != null){
+				s = lang;
+			}else{
+				s = "EN_en";
+			}
+			
+			c = new config(plugin);
+			file = c.getConfig(lang, "/lang/");
+			
+			file.addDefaults(YamlConfiguration.loadConfiguration(plugin.getResource("language/" + s + ".yml")));
+			file.options().copyDefaults(true);
+			file.options().copyHeader(true);
+			c.saveConfig(lang, file, "/lang/");
+			
+			for(String str : file.getConfigurationSection("message").getKeys(false)){
+				String string = file.getString("message"+"."+str);
+				hash.put(str, string);
+			}
+		}catch(NullPointerException ex){
+			ex.printStackTrace();
+			return;
+		}catch (Exception e) {
+			e.printStackTrace();
+			return;
 		}
 	}
 	

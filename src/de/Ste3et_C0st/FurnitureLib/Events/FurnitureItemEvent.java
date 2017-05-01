@@ -88,7 +88,7 @@ public final class FurnitureItemEvent extends Event implements Cancellable {
 	
 	public boolean isTimeToPlace(){
 		if(FurnitureLib.getInstance().isSpamPlace()){
-			if(!FurnitureLib.getInstance().hasPerm(getPlayer(),"furniture.admin") && !FurnitureLib.getInstance().hasPerm(getPlayer(),"furniture.bypass.placeSpam")){
+			if(!FurnitureLib.getInstance().getPermission().hasPerm(getPlayer(),"furniture.admin") && !FurnitureLib.getInstance().getPermission().hasPerm(getPlayer(),"furniture.bypass.placeSpam")){
 				long current = System.currentTimeMillis();
 				if(FurnitureLib.getInstance().getTimePlace().containsKey(getPlayer().getUniqueId())){
 					long since = FurnitureLib.getInstance().getTimePlace().get(getPlayer().getUniqueId());

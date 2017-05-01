@@ -49,7 +49,7 @@ public final class PostFurnitureBlockBreakEvent extends Event implements Cancell
 	
 	public boolean spamBreak(){
 		if(FurnitureLib.getInstance().isSpamBreak()){
-			if(!FurnitureLib.getInstance().hasPerm(this.p,"furniture.admin") && !FurnitureLib.getInstance().hasPerm(this.p,"furniture.bypass.breakSpam")){
+			if(!FurnitureLib.getInstance().getPermission().hasPerm(this.p,"furniture.admin") && !FurnitureLib.getInstance().getPermission().hasPerm(this.p,"furniture.bypass.breakSpam")){
 				long current = System.currentTimeMillis();
 				if(FurnitureLib.getInstance().getTimeBreak().containsKey(p.getUniqueId())){
 					long since = FurnitureLib.getInstance().getTimeBreak().get(p.getUniqueId());

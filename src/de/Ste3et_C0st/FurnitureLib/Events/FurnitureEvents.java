@@ -67,7 +67,7 @@ public class FurnitureEvents {
 								case INTERACT_AT:
 									if(p.getGameMode().equals(GameMode.SPECTATOR)){return;}
 									if(p.getGameMode().equals(GameMode.CREATIVE)&&!FurnitureLib.getInstance().creativeInteract()){
-										if(!FurnitureLib.getInstance().hasPerm(p, "furniture.bypass.creative.interact")){
+										if(!FurnitureLib.getInstance().getPermission().hasPerm(p, "furniture.bypass.creative.interact")){
 											return;
 										}
 									}

@@ -323,7 +323,7 @@ public class ManageInv  implements Listener{
 			inv.setItem(i, is);
 		}
 		
-		if(FurnitureLib.getInstance().hasPerm(p,"furniture.setOwner")||FurnitureLib.getInstance().hasPerm(p,"furniture.admin")){
+		if(FurnitureLib.getInstance().getPermission().hasPerm(p,"furniture.setOwner")||FurnitureLib.getInstance().getPermission().hasPerm(p,"furniture.admin")){
 			inv.setItem(12, new ItemStack(getItemStack("setOwner")));
 		}
 		Integer Mode1 = 10;

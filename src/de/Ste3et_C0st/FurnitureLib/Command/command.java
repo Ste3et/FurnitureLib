@@ -97,7 +97,7 @@ public class command implements CommandExecutor, Listener{
 			Player p = e.getPlayer();
 			manageList.remove(p);
 			if(!e.getID().getUUID().equals(p.getUniqueId())){
-				if(!lib.hasPerm(p, "furniture.admin") && !p.isOp() && !lib.hasPerm(p, "furniture.manage.other")){
+				if(!lib.getPermission().hasPerm(p, "furniture.admin") && !p.isOp() && !lib.getPermission().hasPerm(p, "furniture.manage.other")){
 					p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("WrongOwner"));
 					return;
 				}
@@ -109,8 +109,8 @@ public class command implements CommandExecutor, Listener{
 	
 	public static boolean noPermissions(CommandSender sender, String s){
 		if(sender.isOp()) return true;
-		if(lib.hasPerm(sender,"furniture.admin")) return true;
-		if(!lib.hasPerm(sender,s.toLowerCase())){
+		if(lib.getPermission().hasPerm(sender,"furniture.admin")) return true;
+		if(!lib.getPermission().hasPerm(sender,s.toLowerCase())){
 			sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("NoPermissions"));
 			return false;
 		}
@@ -153,10 +153,6 @@ public class command implements CommandExecutor, Listener{
 								return true;
 							}
 						}
-						if(args[0].equalsIgnoreCase("download")){
-							p.sendMessage("§cThe FurnitureMaker plugin is not installed.");
-							return true;
-						}
 						sendHelp(p);
 						return true;
 					}
@@ -178,7 +174,7 @@ public class command implements CommandExecutor, Listener{
 		}
 		
 		
-		if(!lib.hasPerm(player,"furniture.help")) return;
+		if(!lib.getPermission().hasPerm(player,"furniture.help")) return;
 		JsonBuilder builder = new JsonBuilder("§7§m+--------------------§7[")
 		.withText("§2Furniture").withHoverEvent(HoverAction.SHOW_TEXT, "§6§lVersion: §7" + version + "\n"
 				+ "§6§lAuthor: §2" + Author +  update)

@@ -20,11 +20,13 @@ public class SQLManager {
 	Connection con;
 	
 	public SQLManager(FurnitureLib plugin){
-		this.plugin = plugin;initialize();
+		this.plugin = plugin;
 		initialize();
 	}
 	
 	public void initialize(){
+		if(plugin.getConfig()==null) return;
+		if(plugin.getConfig().getString("config.Database.type")==null) return;
 		if(plugin.getConfig().getString("config.Database.type").equalsIgnoreCase("SQLite")){
 			String database = plugin.getConfig().getString("config.Database.database");
 			this.sqlite = new SQLite(plugin, database);
@@ -81,22 +83,31 @@ public class SQLManager {
 	}
 	
 	public void save(){
+		plugin.getLogger().info("Furniture save started");
 		if(!plugin.getFurnitureManager().getObjectList().isEmpty()){
+			if(this.mysql == null && this.sqlite == null){initialize();}
+			
 			List<ObjectID> objList = new ArrayList<ObjectID>();
+			int j = 0, i = 0, l = 0;
 			for(ObjectID obj : plugin.getFurnitureManager().getObjectList()){
 				if(!objList.contains(obj)){
 					switch (obj.getSQLAction()) {
-					case UPDATE: remove(obj); save(obj); break;
-					case SAVE: save(obj); break;
-					case REMOVE:remove(obj);break;
-					case NOTHING: break;
-					case PURGE: break;
+						case UPDATE: remove(obj); j++; save(obj); break;
+						case SAVE: save(obj); i++; break;
+						case REMOVE:remove(obj); l++; break;
+						case NOTHING: break;
+						case PURGE: break;
 					}
 					if(!obj.getSQLAction().equals(SQLAction.REMOVE)){obj.setSQLAction(SQLAction.NOTHING);}
 					objList.add(obj);
 					obj.setSQLAction(SQLAction.NOTHING);
 				}
 			}
+			plugin.getLogger().info(i + " furniture have been saved to the database");
+			plugin.getLogger().info(j + " furniture have been update in the database");
+			plugin.getLogger().info(l + " furniture have been removed from the database");
+		}else{
+			plugin.getLogger().info("the objectlist is empty");
 		}
 	}
 	
@@ -104,24 +115,30 @@ public class SQLManager {
 	public void save(ObjectID obj){
 		if(obj==null) return;
 		try{
-			if(this.sqlite!=null)this.sqlite.save(obj);
-			if(this.mysql!=null)this.mysql.save(obj);
+			if(this.sqlite!=null){this.sqlite.save(obj);}
+			else if(this.mysql!=null){this.mysql.save(obj);}
+			else{FurnitureLib.getInstance().getLogger().warning("No SQLite and mySQL instance found");}
 		}catch(Exception ex){
 			initialize();
-			if(this.sqlite!=null)this.sqlite.save(obj);
-			if(this.mysql!=null)this.mysql.save(obj);
+			if(this.sqlite!=null){this.sqlite.save(obj);}
+			else if(this.mysql!=null){this.mysql.save(obj);}
+			else{FurnitureLib.getInstance().getLogger().warning("No SQLite and mySQL instance found");}
+			ex.printStackTrace();
 		}
 	}
 	
 	public void remove(ObjectID obj){
 		if(obj==null) return;
 		try{
-			if(this.sqlite!=null) this.sqlite.delete(obj);
-			if(this.mysql!=null)this.mysql.delete(obj);
+			if(this.sqlite!=null){this.sqlite.delete(obj);}
+			else if(this.mysql!=null){this.mysql.delete(obj);}
+			else{FurnitureLib.getInstance().getLogger().warning("No SQLite and mySQL instance found");}
 		}catch(Exception ex){
 			initialize();
-			if(this.sqlite!=null) this.sqlite.delete(obj);
-			if(this.mysql!=null)this.mysql.delete(obj);
+			if(this.sqlite!=null){this.sqlite.delete(obj);}
+			else if(this.mysql!=null){this.mysql.delete(obj);}
+			else{FurnitureLib.getInstance().getLogger().warning("No SQLite and mySQL instance found");}
+			ex.printStackTrace();
 		}
 	}
 	

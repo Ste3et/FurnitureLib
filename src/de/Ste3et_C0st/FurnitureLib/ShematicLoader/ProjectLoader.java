@@ -177,7 +177,10 @@ public class ProjectLoader extends Furniture{
 					packet.setPose(eulerAngleFetcher(euler.getCompound(part.toString())), part);
 				}
 				packet.setBasePlate(b).setSmall(s1).setMarker(m).setArms(a).setGlowing(g).setNameVasibility(n).setName(customName).setFire(f).setGlowing(g).setInvisible(i);
-				if(customName.equalsIgnoreCase("#ITEM#") || customName.equalsIgnoreCase("#BLOCK#") || customName.equalsIgnoreCase("#SITZ#")){
+				if(customName.equalsIgnoreCase("#ITEM#") 
+				|| customName.equalsIgnoreCase("#BLOCK#") 
+				|| customName.equalsIgnoreCase("#SITZ#") 
+				|| customName.toUpperCase().startsWith("#DYE_")){
 					packet.setNameVasibility(false);
 				}
 			}
@@ -302,7 +305,9 @@ public class ProjectLoader extends Furniture{
 //								inv.setContents(material.getInventory().getContents());							
 //							}
 							
-							if(material.isDirectional()){
+							if(material.getMaterial().equals(Material.TORCH)){
+								
+							}else if(material.isDirectional()){
 								BlockFace start = BlockFace.NORTH;
 								BlockFace newFace = getBlockFace();
 								BlockFace oldBlockFace = material.getBlockFace();
