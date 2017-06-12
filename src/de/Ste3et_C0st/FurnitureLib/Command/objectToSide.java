@@ -2,15 +2,16 @@ package de.Ste3et_C0st.FurnitureLib.Command;
 
 import java.util.List;
 
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+
 import org.bukkit.entity.Player;
 
-import de.Ste3et_C0st.FurnitureLib.Utilitis.JsonBuilder;
-import de.Ste3et_C0st.FurnitureLib.Utilitis.JsonBuilder.ClickAction;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 
 public class objectToSide {
 
-	public objectToSide(List<JsonBuilder> objList, Player p, Integer page, String command){
+	public objectToSide(List<ComponentBuilder> objList, Player p, Integer page, String command){
 		if(page==0)page=1;
 		int objects = 10;
 		int min = page*objects-objects;
@@ -34,7 +35,7 @@ public class objectToSide {
 		for(Object obj : objList){
 			if(j>=min&&j<max){
 				if(obj instanceof String){p.sendMessage((String) obj);}
-				else if(obj instanceof JsonBuilder){((JsonBuilder) obj).sendJson(p);}
+				else if(obj instanceof ComponentBuilder){p.spigot().sendMessage(((ComponentBuilder) obj).create());}
 			}
 			j++;
 		}
@@ -56,11 +57,11 @@ public class objectToSide {
 			nextCommand = command + " " + (page + 1);
 		}
 		
-		new JsonBuilder("§7§m+--------------------------------------------+§8[§e")
-						.withText(prevColor + "«").withClickEvent(ClickAction.RUN_COMMAND, prevCommand)
-						.withText("§8/§a")
-						.withText(nextColor + "»").withClickEvent(ClickAction.RUN_COMMAND, nextCommand)
-						.withText("§8]").sendJson(p);
+		p.spigot().sendMessage(new ComponentBuilder("§7§m+--------------------------------------------+§8[§e")
+		.append(prevColor + "«").event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, prevCommand))
+		.append("§8/§a")
+		.append(nextColor + "»").event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, nextCommand))
+		.append("§8]").create());
 	}
 	
 	private int getPage(int i){

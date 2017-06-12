@@ -1,6 +1,7 @@
 package de.Ste3et_C0st.FurnitureLib.main.entity;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -227,7 +228,7 @@ public abstract class fEntity extends fSerializer{
 	}
 	
 	public void send(Player player) {
-		
+		setObject(getWatcher(), 5, getField().getWrapperBit());
 		if (getManager() == null){return;}
 		if (getHandle() == null){return;}
 		try {
@@ -240,6 +241,12 @@ public abstract class fEntity extends fSerializer{
 		} catch (InvocationTargetException e) {
 			e.printStackTrace();
 		}
+	}
+	
+	public fEntity setHealth(float health){
+		if(health==0){return this;}
+		setObject(getWatcher(), health, 7);
+		return this;
 	}
 
 	public void send(Player[] player) {
@@ -316,23 +323,25 @@ public abstract class fEntity extends fSerializer{
 	}
 	
 	public void setPassanger(Entity e) {
-		if(!FurnitureLib.getInstance().canSitting()){return;}
-		if (e == null) {return;}
-		if (passanger != null) {return;}
-		int[] passangerID = {e.getEntityId()};
-		PacketContainer container = new PacketContainer(PacketType.Play.Server.MOUNT);
-		container.getIntegers().write(0, getEntityID());
-		container.getIntegerArrays().write(0, passangerID);
-		try {
-			this.passanger = e;
-			for (Player p : getObjID().getPlayerList()){
-				getManager().sendServerPacket(p, container);
+		setPassanger(Arrays.asList(e.getEntityId()));
+		this.passanger = e;
+		if(!FurnitureLib.getInstance().isRotateOnSitEnable()){return;}
+		if(e.getType().equals(EntityType.PLAYER)){
+			PacketContainer container = new PacketContainer(PacketType.Play.Server.ENTITY_LOOK);
+			container.getIntegers().write(0, e.getEntityId());
+			container.getBytes().write(0, ((byte) (int) (getLocation().getYaw() * 256.0F / 360.0F)));
+			try{
+				for (Player p : getObjID().getPlayerList()){
+					getManager().sendServerPacket(p, container);
+				}
+			}catch(Exception ex){
+				ex.printStackTrace();
 			}
-		} catch (Exception e1) {
-			e1.printStackTrace();
 		}
-		
-		
+	}
+	
+	public void setPassanger(Integer EntityID) {
+		setPassanger(Arrays.asList(EntityID));
 	}
 	
 	public void setPassanger(final List<Integer> entityIDs){

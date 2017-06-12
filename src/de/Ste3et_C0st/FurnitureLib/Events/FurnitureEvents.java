@@ -53,11 +53,11 @@ public class FurnitureEvents {
 									Bukkit.getScheduler().scheduleSyncDelayedTask(FurnitureLib.getInstance(), new Runnable() {
 										@Override
 										public void run() {
-											PostFurnitureBreakEvent pEvent = new PostFurnitureBreakEvent(player, (fArmorStand) packet, objectID, location);
+											PostFurnitureBreakEvent pEvent = new PostFurnitureBreakEvent(player, packet, objectID, location);
 											Bukkit.getServer().getPluginManager().callEvent(pEvent);
 											if(!pEvent.isCancelled()){
 												if(pEvent.spamBreak()){
-													FurnitureBreakEvent event = new FurnitureBreakEvent(player, (fArmorStand) packet, objectID, location);
+													FurnitureBreakEvent event = new FurnitureBreakEvent(player, packet, objectID, location);
 													Bukkit.getServer().getPluginManager().callEvent(event);
 												}
 											}

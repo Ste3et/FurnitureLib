@@ -160,8 +160,15 @@ public class DeSerializer {
 		Double Z = location.getDouble("Z");
 		Float Yaw = location.getFloat("Yaw");
 		Float Pitch = location.getFloat("Pitch");
-		if(!isWorldLoadet(location.getString("World"))){FurnitureLib.getInstance().getLogger().info("The world: " + location.getString("World") + " deos not exist.");return null;}
-		World world = Bukkit.getWorld(location.getString("World"));
+		String str = location.getString("World");
+		World world = null;
+		try{
+		    UUID uuid = UUID.fromString(str);
+		    world = Bukkit.getWorld(uuid);
+		} catch (IllegalArgumentException exception){
+			world = Bukkit.getWorld(str);
+		}
+		if(world == null){FurnitureLib.getInstance().getLogger().info("The world: " + location.getString("World") + " deos not exist.");return null;}
 		Location loc = new Location(world, X, Y, Z);
 		loc.setYaw(Yaw);
 		loc.setPitch(Pitch);
@@ -173,6 +180,19 @@ public class DeSerializer {
 		for(World w: Bukkit.getServer().getWorlds())
 		{
 		  if(w.getName().equals(s))
+		  {
+		    loaded = true;
+		    break;
+		  }
+		}
+		return loaded;
+	}
+	
+	public boolean isWorldLoadet(UUID uuid){
+		boolean loaded = false;
+		for(World w: Bukkit.getServer().getWorlds())
+		{
+		  if(w.getUID().equals(uuid))
 		  {
 		    loaded = true;
 		    break;

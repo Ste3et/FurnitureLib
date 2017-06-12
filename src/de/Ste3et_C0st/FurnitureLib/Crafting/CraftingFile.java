@@ -4,6 +4,8 @@ package de.Ste3et_C0st.FurnitureLib.Crafting;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -40,13 +42,12 @@ public class CraftingFile {
 	public File filePath;
 	public File getFilePath(){return this.filePath;}
 	public String getFileHeader(){return this.header;}
-	@SuppressWarnings("deprecation")
-	
 	public CraftingFile(String name,InputStream file){
 		this.c = new config(FurnitureLib.getInstance());
 		this.name = name;
 		this.file = c.getConfig(name, "/Crafting/");
-		this.file.addDefaults(YamlConfiguration.loadConfiguration(file));
+		Reader inReader = new InputStreamReader(file);
+		this.file.addDefaults(YamlConfiguration.loadConfiguration(inReader));
 		this.file.options().copyDefaults(true);
 		this.c.saveConfig(name, this.file, "/Crafting/");
 		this.filePath = new File(new File("plugins/FurnitureLib/Crafting"), name + ".yml");
@@ -82,6 +83,7 @@ public class CraftingFile {
 		stack.setItemMeta(meta);
 	}
 	
+	@SuppressWarnings("deprecation")
 	public void loadCrafting(String s){
 		try{
 				this.isDisable = file.getBoolean(header+".crafting.disable");
@@ -105,6 +107,7 @@ public class CraftingFile {
 		ItemMeta im = is.getItemMeta();
 		im.setDisplayName(s);
 		is.setItemMeta(im);
+		@SuppressWarnings("deprecation")
 		ShapedRecipe recipe = new ShapedRecipe(is).shape(this.getRecipe().getShape());
 		for(Character c : recipe.getIngredientMap().keySet()){
 			recipe.setIngredient(c, this.recipe.getIngredientMap().get(c).getData());

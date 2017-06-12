@@ -83,6 +83,11 @@ public class fSerializer extends fProtocol{
 		return metadata;
 	}
 	
+	public NBTTagCompound getMetaData(fGiant stand){
+		getDefNBT(stand);
+		return metadata;
+	}
+	
 	public void getDefNBT(fEntity entity){
 		setMetadata("EntityType", entity.getEntityType().toString());
 		setMetadata("Name", entity.getName());
@@ -101,7 +106,7 @@ public class fSerializer extends fProtocol{
 		location.setDouble("Z", loc.getZ());
 		location.setFloat("Yaw", loc.getYaw());
 		location.setFloat("Pitch", loc.getPitch());
-		location.setString("World", loc.getWorld().getName());
+		location.setString("World", loc.getWorld().getUID().toString());
 		return location;
 	}
 	

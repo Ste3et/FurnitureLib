@@ -28,7 +28,6 @@ public class FurnitureRegionClear implements Listener {
 			v2 = v2.setY(256);
 		}
 		
-		
 	    ZoneVector min = new ZoneVector(Math.min(v1.getBlockX(), v2.getBlockX()), Math.min(v1.getBlockY(), v2.getBlockY()), Math.min(v1.getBlockZ(), v2.getBlockZ()));
 	    ZoneVector max = new ZoneVector(Math.max(v1.getBlockX(), v2.getBlockX()), Math.max(v1.getBlockY(), v2.getBlockY()), Math.max(v1.getBlockZ(), v2.getBlockZ()));
 		

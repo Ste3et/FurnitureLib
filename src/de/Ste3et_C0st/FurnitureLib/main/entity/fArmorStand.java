@@ -44,6 +44,24 @@ public class fArmorStand extends fEntity {
 	public boolean isMarker(){return this.marker;}
 	public boolean isSmall(){return this.small;}
 	
+	public boolean isRealArmorStand(){
+		if(stand==null) return false;
+		return true;
+	}
+	
+	public void setStand(ArmorStand stand){
+		this.stand = null;
+	}
+	
+	
+	public NBTTagCompound getMetadata(){
+		return getMetaData(this);
+	}
+	
+	public fArmorStand clone(Relative relative){
+		return clone(relative.getSecondLocation());
+	}
+	
 	public fArmorStand(Location loc, ObjectID obj) {
 		super(loc, EntityType.ARMOR_STAND, obj);
 		this.armorstandID = FurnitureLib.getInstance().getFurnitureManager().getLastID();
@@ -119,15 +137,7 @@ public class fArmorStand extends fEntity {
 		this.marker = !b;
 		return this;
 	}
-	
-	public NBTTagCompound getMetadata(){
-		return getMetaData(this);
-	}
-	
-	public fArmorStand clone(Relative relative){
-		return clone(relative.getSecondLocation());
-	}
-	
+
 	public fArmorStand clone(Location location){
 		fArmorStand nStand = new fArmorStand(location, getObjID());
 		fInventory inv = new fInventory(nStand.getEntityID());
@@ -176,14 +186,5 @@ public class fArmorStand extends fEntity {
 		stand.setLeggings(getLeggings());
 		stand.setBoots(getBoots());
 		return stand;
-	}
-	
-	public boolean isRealArmorStand(){
-		if(stand==null) return false;
-		return true;
-	}
-	
-	public void setStand(ArmorStand stand){
-		this.stand = null;
 	}
 }

@@ -26,6 +26,7 @@ import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.HiddenStringUtils;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
@@ -41,10 +42,9 @@ public class ChunkOnLoad implements Listener{
 
 	@EventHandler
 	public void onPlayerMove(PlayerMoveEvent e) {
-		if (e.getTo().getBlockX() == e.getFrom().getBlockX() && e.getTo().getBlockY() == e.getFrom().getBlockY() && e.getTo().getBlockZ() == e.getFrom().getBlockZ()) return;
+		if (e.getTo().getBlock().getLocation().equals(e.getFrom().getBlock().getLocation())) return;
 		Player player = e.getPlayer();
 		if (player.getHealth() <= 0.0D) return;
-
 		Chunk oldChunk = e.getFrom().getChunk();
 		Chunk newChunk = e.getTo().getChunk();
 

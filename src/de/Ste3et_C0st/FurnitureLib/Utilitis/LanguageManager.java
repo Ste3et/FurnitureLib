@@ -10,6 +10,8 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 
+import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
+
 public class LanguageManager{
 
 	private String lang;
@@ -31,7 +33,6 @@ public class LanguageManager{
 		addDefaultInv();
 	}
 	
-	@SuppressWarnings("deprecation")
 	private void addDefault(){
 		try{
 			if(this.lang == null || this.lang.isEmpty()) lang = "EN_en";
@@ -45,8 +46,8 @@ public class LanguageManager{
 			
 			c = new config(plugin);
 			file = c.getConfig(lang, "/lang/");
-			
-			file.addDefaults(YamlConfiguration.loadConfiguration(plugin.getResource("language/" + s + ".yml")));
+			file.addDefaults(YamlConfiguration.loadConfiguration(FurnitureLib.getInstance().loadStream("language/" + s + ".yml")));
+			//file.addDefaults(YamlConfiguration.loadConfiguration(new InputStreamReader(plugin.getResource("language/" + s + ".yml"))));
 			file.options().copyDefaults(true);
 			file.options().copyHeader(true);
 			c.saveConfig(lang, file, "/lang/");
@@ -81,7 +82,8 @@ public class LanguageManager{
 		c = new config(plugin);
 		file = c.getConfig("manageInv", "");
 		if(file==null) return;
-		file.addDefaults(YamlConfiguration.loadConfiguration(plugin.getResource("manageInv.yml")));
+		file.addDefaults(YamlConfiguration.loadConfiguration(FurnitureLib.getInstance().loadStream("manageInv.yml")));
+		//file.addDefaults(YamlConfiguration.loadConfiguration(new InputStreamReader(plugin.getResource("manageInv.yml"))));
 		file.options().copyDefaults(true);
 		c.saveConfig("manageInv", file, "");
 		

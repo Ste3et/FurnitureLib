@@ -1,5 +1,9 @@
 package de.Ste3et_C0st.FurnitureLib.main;
 
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Constructor;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -58,7 +62,7 @@ public class FurnitureLib extends JavaPlugin{
 	private HashMap<String, List<String>> permissionKit = new HashMap<String, List<String>>();
 	private boolean useGamemode = true, canSit = true, update = true, useParticle = true, useRegionMemberAccess = false, 
 					autoPurge = false, removePurge = false, creativeInteract = true, creativePlace = true, glowing = true, 
-					spamBreak = true, spamPlace = true;
+					spamBreak = true, spamPlace = true, rotateOnSit = true;
 	private CraftingInv craftingInv;
 	private LanguageManager lmanager;
 	private SQLManager sqlManager;
@@ -123,19 +127,19 @@ public class FurnitureLib extends JavaPlugin{
 	public boolean canSitting(){return this.canSit;}
 	public boolean creativeInteract(){return this.creativeInteract;}
 	public boolean creativePlace(){return this.creativePlace;}
+	public boolean isRotateOnSitEnable(){return this.rotateOnSit;}
 	public boolean haveRegionMemberAccess(){return this.useRegionMemberAccess;}
 	public boolean isDouble(String s){try{Double.parseDouble(s);}catch(NumberFormatException e){return false;}return true;}
 	public boolean isBoolean(String s){try {Boolean.parseBoolean(s.toLowerCase());}catch (Exception e) {return false;}return true;}
 	public boolean isInt(String s){try{Integer.parseInt(s);}catch(NumberFormatException e){return false;}return true;}
 	
 	public Updater getUpdater(){return updater;}
-	@SuppressWarnings("deprecation")
 	@Override
 	public void onEnable(){
 		if(!isEnable("ProtocolLib", true)){send("§cProtocolLib not found");getPluginManager().disablePlugin(this);}else{
-			if(getServer().getBukkitVersion().startsWith("1.9") || getServer().getBukkitVersion().startsWith("1.10") || getServer().getBukkitVersion().startsWith("1.11")){
+			if(getServer().getBukkitVersion().startsWith("1.9") || getServer().getBukkitVersion().startsWith("1.10") || getServer().getBukkitVersion().startsWith("1.11") || getServer().getBukkitVersion().startsWith("1.12")){
 				instance = this;
-				getConfig().addDefaults(YamlConfiguration.loadConfiguration(getResource("config.yml")));
+				getConfig().addDefaults(YamlConfiguration.loadConfiguration(loadStream("config.yml")));
 				getConfig().options().copyDefaults(true);
 				getConfig().options().copyHeader(true);
 				saveConfig();
@@ -168,6 +172,7 @@ public class FurnitureLib extends JavaPlugin{
 				this.spamBreakTime = getConfig().getLong("config.spamBlock.Break.time");
 				this.spamBreakTime = getConfig().getLong("config.spamBlock.Place.time");
 				this.timePattern = getConfig().getString("config.spamBlock.timeDisplay");
+				this.rotateOnSit = getConfig().getBoolean("config.rotateOnSit");
 				this.updater = new Updater();
 				this.wPool = new WorldPool();
 				this.wPool.loadWorlds();
@@ -224,12 +229,7 @@ public class FurnitureLib extends JavaPlugin{
 		}
 	}
 	
-	private void loadMetrics(){
-		try{if(getConfig().getBoolean("config.UseMetrics")){
-			new bStats(getInstance());
-		}}catch(Exception e){e.printStackTrace();}
-	}
-	
+	private void loadMetrics(){try{if(getConfig().getBoolean("config.UseMetrics")){new bStats(getInstance());}}catch(Exception e){e.printStackTrace();}}
 	private void loadIgnore() {
 		config c = new config(getInstance());
 		FileConfiguration configuration = c.getConfig("ignoredPlayers", "");
@@ -241,12 +241,22 @@ public class FurnitureLib extends JavaPlugin{
 		}
 	}
 	
-	@SuppressWarnings("deprecation")
+	public BufferedReader loadStream(String str){
+		if(!str.startsWith("/")) str = "/" + str;
+		InputStream stream = getInstance().getClass().getResourceAsStream(str);
+		try {
+			return new BufferedReader(new InputStreamReader(stream, "UTF-8"));
+		} catch (UnsupportedEncodingException e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
+	
 	private void loadPermissionKit(){
 		config c = new config(this);
 		FileConfiguration file = c.getConfig("permissionKit.yml", "");
 		if(file==null) return;
-		file.addDefaults(YamlConfiguration.loadConfiguration(this.getResource("permissionKit.yml")));
+		file.addDefaults(YamlConfiguration.loadConfiguration(loadStream("permissionKit.yml")));
 		file.options().copyDefaults(true);
 		file.options().copyHeader(true);
 		c.saveConfig("permissionKit.yml", file, "");
@@ -288,36 +298,12 @@ public class FurnitureLib extends JavaPlugin{
 		return true;
 	}
 	
+	public boolean checkPurge(ObjectID obj, UUID uuid){return checkPurge(obj, uuid, this.purgeTime);}
+	public boolean checkPurge(ObjectID obj, OfflinePlayer player){return checkPurge(obj, player.getUniqueId());}
+	
 	public boolean isAfterDate(long time, int purgeTime){
 		if(System.currentTimeMillis() - (time+purgeTimeMS) >0){return true;}
 		return false;
-	}
-	
-	public boolean checkPurge(ObjectID obj, UUID uuid){
-		OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);
-		if(!player.hasPlayedBefore()) return false;
-		long time = player.getLastPlayed();
-		if(!isAfterDate(time, purgeTime)){return false;}else{
-			if(removePurge){
-				getFurnitureManager().remove(obj);
-				return true;
-			}
-			obj.setSQLAction(SQLAction.REMOVE);
-			return true;
-		}
-	}
-	
-	public boolean checkPurge(ObjectID obj, OfflinePlayer player){
-		if(!player.hasPlayedBefore()) return false;
-		long time = player.getLastPlayed();
-		if(!isAfterDate(time, purgeTime)){return false;}else{
-			if(removePurge){
-				getFurnitureManager().remove(obj);
-				return true;
-			}
-			obj.setSQLAction(SQLAction.REMOVE);
-			return true;
-		}
 	}
 	
 	private void createDefaultWatchers(){

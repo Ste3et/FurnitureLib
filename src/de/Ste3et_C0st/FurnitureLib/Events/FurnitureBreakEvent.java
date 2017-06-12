@@ -10,11 +10,11 @@ import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.EventType;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
-import de.Ste3et_C0st.FurnitureLib.main.entity.fArmorStand;
+import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
 
 public final class FurnitureBreakEvent extends Event implements Cancellable{
     private static final HandlerList handlers = new HandlerList();
-    private fArmorStand a;
+    private fEntity a;
     private ObjectID o;
     private Player p;
     private Location l;
@@ -26,7 +26,7 @@ public final class FurnitureBreakEvent extends Event implements Cancellable{
     @Override public void setCancelled(boolean cancelled) { this.cancelled = cancelled;}
     public static HandlerList getHandlerList() {return handlers;}
     
-    public FurnitureBreakEvent(Player p, fArmorStand a, ObjectID o, Location l) {
+    public FurnitureBreakEvent(Player p, fEntity a, ObjectID o, Location l) {
     	if(o.getSQLAction().equals(SQLAction.REMOVE)){return;}
     	this.p = p;
     	this.a = a;
@@ -34,7 +34,7 @@ public final class FurnitureBreakEvent extends Event implements Cancellable{
     	this.l = l;
     }
     
-    public fArmorStand getArmorStandPacket(){return this.a;}
+    public fEntity getfEntity(){return this.a;}
     public ObjectID getID(){return this.o;}
     public Player getPlayer(){return this.p;}
     public Location getLocation(){return this.l;}

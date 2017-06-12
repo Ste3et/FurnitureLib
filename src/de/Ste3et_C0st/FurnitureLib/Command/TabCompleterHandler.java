@@ -25,9 +25,12 @@ public class TabCompleterHandler implements TabCompleter {
 		str.add("manage");
 		str.add("recipe");
 		str.add("remove");
+		str.add("save");
+		str.add("download");
 		str2.add("type");
 		str2.add("world");
 		str2.add("plugin");
+		str3.add("download");
 	}
 
 	@Override
@@ -66,10 +69,8 @@ public class TabCompleterHandler implements TabCompleter {
 			if(Bukkit.getPluginManager().isPluginEnabled("FurnitureMaker")){
 				this.str.add("create");
 				this.str.add("upload");
-				this.str.add("download");
 				this.str.add("edit");
 				this.str3.add("upload");
-				this.str3.add("download");
 				this.str3.add("edit");
 				this.str2.add("models");
 			}

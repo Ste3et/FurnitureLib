@@ -3,6 +3,10 @@ package de.Ste3et_C0st.FurnitureLib.Command;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.md_5.bungee.api.chat.ClickEvent;
+import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.HoverEvent;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
@@ -11,9 +15,6 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
-import de.Ste3et_C0st.FurnitureLib.Utilitis.JsonBuilder;
-import de.Ste3et_C0st.FurnitureLib.Utilitis.JsonBuilder.ClickAction;
-import de.Ste3et_C0st.FurnitureLib.Utilitis.JsonBuilder.HoverAction;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
@@ -23,7 +24,7 @@ public class listCommand {
 	public listCommand(CommandSender sender, Command cmd, String arg2,String[] args) {
 		Player p = null;
 		if(sender instanceof Player){p = (Player) sender;}
-		List<JsonBuilder> objList = new ArrayList<JsonBuilder>();
+		List<ComponentBuilder> objList = new ArrayList<ComponentBuilder>();
 		if(args.length==1){
 			if(!command.noPermissions(sender, "furniture.list")) return;
 			boolean recipe = false, give = false, detail = true;
@@ -32,7 +33,7 @@ public class listCommand {
 			if(FurnitureLib.getInstance().getPermission().hasPerm(sender, "furniture.debug")){detail = false;}
 			
 			for(Project pro : FurnitureLib.getInstance().getFurnitureManager().getProjects()){
-				String s = null;
+				String s = "";
 				String name = pro.getName();
 				if(detail){
 					List<ObjectID> objectList = getByType(pro);
@@ -49,11 +50,11 @@ public class listCommand {
 				}
 				
 				if(give){
-					objList.add(new JsonBuilder("§6- " + name).withHoverEvent(HoverAction.SHOW_TEXT,(s)).withClickEvent(ClickAction.RUN_COMMAND, "/furniture give " + pro.getName()));
+					objList.add(new ComponentBuilder("§6- " + name).event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(s).create())).event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/furniture give " + pro.getName())));
 				}else if(recipe){
-					objList.add(new JsonBuilder("§6- " + name).withHoverEvent(HoverAction.SHOW_TEXT,(s)).withClickEvent(ClickAction.RUN_COMMAND, "/furniture recipe " + pro.getName()));
+					objList.add(new ComponentBuilder("§6- " + name).event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(s).create())).event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/furniture recipe " + pro.getName())));
 				}else {
-					objList.add(new JsonBuilder("§6- " + name).withHoverEvent(HoverAction.SHOW_TEXT,(s)));
+					objList.add(new ComponentBuilder("§6- " + name).event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(s).create())));
 				}
 			}
 			new objectToSide(objList, p, 1, "/furniture list");
@@ -63,14 +64,14 @@ public class listCommand {
 				if(!command.noPermissions(sender, "furniture.list.type")) return;
 				for(Project pro : FurnitureLib.getInstance().getFurnitureManager().getProjects()){
 					List<ObjectID> objectList = getByType(pro);
-					objList.add(new JsonBuilder("§6- " +pro.getName()).withHoverEvent(HoverAction.SHOW_TEXT,("§eObjecte: §c" + objectList.size())));
+					objList.add(new ComponentBuilder("§6- " +pro.getName()).event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("§eObjecte: §c" + objectList.size()).create())));
 				}
 				subcommand = " type";
 			}else if(args[1].equalsIgnoreCase("World")){
 				if(!command.noPermissions(sender, "furniture.list.world")) return;
 				for(World w : Bukkit.getWorlds()){
 					List<ObjectID> objectList = getByWorld(w);
-					objList.add(new JsonBuilder("§6- " + w.getName()).withHoverEvent(HoverAction.SHOW_TEXT,("§eObjecte: §c" + objectList.size())));
+					objList.add(new ComponentBuilder("§6- " + w.getName()).event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("§eObjecte: §c" + objectList.size()).create())));
 				}
 				subcommand = " world";
 			}else if(args[1].equalsIgnoreCase("Plugin")){
@@ -79,8 +80,8 @@ public class listCommand {
 				for(Project pro : FurnitureLib.getInstance().getFurnitureManager().getProjects()){
 					String plugin = pro.getPlugin().getName();
 					if(!plugins.contains(plugin)){
-						objList.add(new JsonBuilder("§c" + plugin));
-						for(Project project : getByPlugin(plugin)){objList.add(new JsonBuilder("§7- " + project.getName()));}
+						objList.add(new ComponentBuilder("§c" + plugin));
+						for(Project project : getByPlugin(plugin)){objList.add(new ComponentBuilder("§7- " + project.getName()));}
 						plugins.add(plugin);
 					}
 				}
@@ -90,7 +91,7 @@ public class listCommand {
 				for(Project pro : FurnitureLib.getInstance().getFurnitureManager().getProjects()){
 					if(pro.isEditorProject()){
 						List<ObjectID> objectList = getByModel(pro);
-						objList.add(new JsonBuilder("§6- " +pro.getName()).withHoverEvent(HoverAction.SHOW_TEXT,("§eObjecte: §c" + objectList.size())));
+						objList.add(new ComponentBuilder("§6- " +pro.getName()).event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("§eObjecte: §c" + objectList.size()).create())));
 					}
 				}
 				subcommand = " models";
@@ -102,7 +103,7 @@ public class listCommand {
 				if(FurnitureLib.getInstance().getPermission().hasPerm(sender, "furniture.debug")){detail = false;}
 				
 				for(Project pro : FurnitureLib.getInstance().getFurnitureManager().getProjects()){
-					String s = null;
+					String s = "";
 					String name = pro.getName();
 					if(detail){
 						List<ObjectID> objectList = getByType(pro);
@@ -119,11 +120,11 @@ public class listCommand {
 					}
 					
 					if(give){
-						objList.add(new JsonBuilder("§6- " + name).withHoverEvent(HoverAction.SHOW_TEXT,(s)).withClickEvent(ClickAction.RUN_COMMAND, "/furniture give " + pro.getName()));
+						objList.add(new ComponentBuilder("§6- " + name).event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(s).create())).event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/furniture give " + pro.getName())));
 					}else if(recipe){
-						objList.add(new JsonBuilder("§6- " + name).withHoverEvent(HoverAction.SHOW_TEXT,(s)).withClickEvent(ClickAction.RUN_COMMAND, "/furniture recipe " + pro.getName()));
+						objList.add(new ComponentBuilder("§6- " + name).event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(s).create())).event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/furniture recipe " + pro.getName())));
 					}else {
-						objList.add(new JsonBuilder("§6- " + name).withHoverEvent(HoverAction.SHOW_TEXT,(s)));
+						objList.add(new ComponentBuilder("§6- " + name).event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(s).create())));
 					}
 				}
 				new objectToSide(objList, p, Integer.parseInt(args[1]), "/furniture list");
@@ -139,14 +140,14 @@ public class listCommand {
 				if(!command.noPermissions(sender, "furniture.list.type")) return;
 				for(Project pro : FurnitureLib.getInstance().getFurnitureManager().getProjects()){
 					List<ObjectID> objectList = getByType(pro);
-					objList.add(new JsonBuilder("§6- " +pro.getName()).withHoverEvent(HoverAction.SHOW_TEXT,("§eObjecte: §c" + objectList.size())));
+					objList.add(new ComponentBuilder("§6- " +pro.getName()).event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("§eObjecte: §c" + objectList.size()).create())));
 				}
 				subcommand = " type";
 			}else if(args[1].equalsIgnoreCase("World")){
 				if(!command.noPermissions(sender, "furniture.list.world")) return;
 				for(World w : Bukkit.getWorlds()){
 					List<ObjectID> objectList = getByWorld(w);
-					objList.add(new JsonBuilder("§6- " + w.getName()).withHoverEvent(HoverAction.SHOW_TEXT,("§eObjecte: §c" + objectList.size())));
+					objList.add(new ComponentBuilder("§6- " + w.getName()).event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("§eObjecte: §c" + objectList.size()).create())));
 				}
 				subcommand = " world";
 			}else if(args[1].equalsIgnoreCase("models")){
@@ -154,7 +155,7 @@ public class listCommand {
 				for(Project pro : FurnitureLib.getInstance().getFurnitureManager().getProjects()){
 					if(pro.isEditorProject()){
 						List<ObjectID> objectList = getByModel(pro);
-						objList.add(new JsonBuilder("§6- " +pro.getName()).withHoverEvent(HoverAction.SHOW_TEXT,("§eObjecte: §c" + objectList.size())));	
+						objList.add(new ComponentBuilder("§6- " +pro.getName()).event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("§eObjecte: §c" + objectList.size()).create())));	
 					}
 				}
 				subcommand = " models";
@@ -164,8 +165,8 @@ public class listCommand {
 				for(Project pro : FurnitureLib.getInstance().getFurnitureManager().getProjects()){
 					String plugin = pro.getPlugin().getName();
 					if(!plugins.contains(plugin)){
-						objList.add(new JsonBuilder("§c" + plugin));
-						for(Project project : getByPlugin(plugin)){objList.add(new JsonBuilder("§7- " + project.getName()));}
+						objList.add(new ComponentBuilder("§c" + plugin));
+						for(Project project : getByPlugin(plugin)){objList.add(new ComponentBuilder("§7- " + project.getName()));}
 						plugins.add(plugin);
 					}
 				}

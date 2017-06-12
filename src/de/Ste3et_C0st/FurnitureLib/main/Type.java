@@ -62,11 +62,11 @@ public class Type {
 	}
 	
 	public enum ProtocolFields{
-		Spigot19(10,11,12,13,14,15,16),
-		Spigot110(11,12,13,14,15,16,17);
-		
-		int bitMask, HeadRotation, BodyRotation, LeftArmRotation, RightArmRotation, LeftLegRotation, RightLegRotation;
-		ProtocolFields(int a,int b, int c, int d, int e, int f, int g){
+		Spigot19(10,11,12,13,14,15,16,9),
+		Spigot110(11,12,13,14,15,16,17,10);
+
+		int bitMask, HeadRotation, BodyRotation, LeftArmRotation, RightArmRotation, LeftLegRotation, RightLegRotation, wrapperBit;
+		ProtocolFields(int a,int b, int c, int d, int e, int f, int g,int h){
 			this.bitMask = a;
 			this.HeadRotation = b;
 			this.BodyRotation = c;
@@ -74,6 +74,7 @@ public class Type {
 			this.RightArmRotation = e;
 			this.LeftLegRotation = f;
 			this.RightLegRotation = g;
+			this.wrapperBit = h;
 		}
 		
 		public int getBitMask(){return this.bitMask;}
@@ -83,10 +84,11 @@ public class Type {
 		public int getRightArmRotation(){return this.RightArmRotation;}
 		public int getLeftLegRotation(){return this.LeftLegRotation;}
 		public int getRightLegRotation(){return this.RightLegRotation;}
+		public int getWrapperBit(){return this.wrapperBit;}
 		
 		public static ProtocolFields getField(String s){
-			if(s.startsWith("1.9")) return Spigot19;
-			if(s.startsWith("1.10")) return Spigot110;
+			if(s.startsWith("1.9")){return Spigot19;}
+			if(s.startsWith("1.10")){return Spigot110;}
 			return Spigot110;
 		}
 		

@@ -30,7 +30,7 @@ public class CraftItemStack {
 	}
 	
 	public ItemStack getItemStack(NBTTagCompound nbt){
-		if(FurnitureLib.getInstance().getBukkitVersion().startsWith("v1_11")){
+		if(FurnitureLib.getInstance().getBukkitVersion().startsWith("v1_11") || FurnitureLib.getInstance().getBukkitVersion().startsWith("v1_12")){
 			return getItemStackNew(nbt);
 		}else{
 			return getItemStackOld(nbt);

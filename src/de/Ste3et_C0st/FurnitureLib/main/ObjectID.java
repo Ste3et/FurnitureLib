@@ -69,7 +69,7 @@ public class ObjectID{
 	public void remMember(UUID uuid){uuidList.remove(uuid);}
 	public List<fEntity> getPacketList() {return packetList;}
 	public void setPacketList(List<fEntity> packetList) {this.packetList = packetList;}
-	public boolean isInRange(Player player) {return isInWorld(player) && (getStartLocation().distance(player.getLocation()) <= viewDistance);}
+	public boolean isInRange(Player player) {return (getStartLocation().distance(player.getLocation()) <= viewDistance);}
 	public boolean isInWorld(Player player) {return getStartLocation().getWorld() == player.getLocation().getWorld();}
 	public void addArmorStand(fEntity packet) {packetList.add(packet);}
 	public void setPublicMode(PublicMode publicMode){this.publicMode = publicMode;}
@@ -129,9 +129,9 @@ public class ObjectID{
 		if(isPrivate()){return;}
 		if(getPacketList().isEmpty()){return;}
 		if(getSQLAction().equals(SQLAction.REMOVE)){return;}
+		if(!isInWorld(player)){return;}
 		if(isInRange(player)){
-			if(players.contains(player)) return;
-			
+			if(players.contains(player)){return;}
 			for(fEntity stand : getPacketList()){stand.send(player);}
 			players.add(player);
 		}else{
@@ -226,6 +226,23 @@ public class ObjectID{
 		}
 		FurnitureLib.getInstance().getLimitManager().removePlayer(this);
 		deleteEffect(packetList);
+		FurnitureLib.getInstance().getBlockManager().destroy(getBlockList(), false);
+		removeAll();
+		locList.clear();
+		manager.remove(this);
+		FurnitureLib.getInstance().getLimitManager().removePlayer(this);
+	}
+	
+	public void remove(boolean effect){
+		if(!this.packetList.isEmpty()){
+			for(fEntity entity : packetList){
+				if(entity.isFire()){
+					entity.setFire(false);
+				}
+			}
+		}
+		FurnitureLib.getInstance().getLimitManager().removePlayer(this);
+		if(effect){deleteEffect(packetList);}
 		FurnitureLib.getInstance().getBlockManager().destroy(getBlockList(), false);
 		removeAll();
 		locList.clear();

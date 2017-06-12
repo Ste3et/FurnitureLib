@@ -38,6 +38,7 @@ config:
    LimitType: "PLAYER"
    glowing: true
    CheckUpdate: true
+   rotateOnSit: true
    Creative:
       RemoveItems: false
       Interact: true

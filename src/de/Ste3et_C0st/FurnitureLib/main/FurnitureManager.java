@@ -19,6 +19,7 @@ import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fArmorStand;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fCreeper;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
+import de.Ste3et_C0st.FurnitureLib.main.entity.fGiant;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fPig;
 
 public class FurnitureManager {
@@ -144,6 +145,14 @@ public class FurnitureManager {
 		if(!objecte.contains(id)){this.objecte.add(id);}
 		i++;
 		fPig packet = new fPig(loc, id);
+		id.addArmorStand(packet);
+		return packet;		
+	}
+	
+	public fGiant createGiant(ObjectID id, Location loc){
+		if(!objecte.contains(id)){this.objecte.add(id);}
+		i++;
+		fGiant packet = new fGiant(loc, id);
 		id.addArmorStand(packet);
 		return packet;		
 	}
