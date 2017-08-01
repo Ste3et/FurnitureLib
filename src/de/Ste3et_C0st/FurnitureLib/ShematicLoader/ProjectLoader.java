@@ -2,7 +2,6 @@ package de.Ste3et_C0st.FurnitureLib.ShematicLoader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -33,7 +32,6 @@ import de.Ste3et_C0st.FurnitureLib.NBT.NBTCompressedStreamTools;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
 import de.Ste3et_C0st.FurnitureLib.ShematicLoader.Events.FurnitureBlockBreakEventListener;
 import de.Ste3et_C0st.FurnitureLib.ShematicLoader.Events.FurnitureBlockClickEventListener;
-import de.Ste3et_C0st.FurnitureLib.ShematicLoader.Events.FurnitureBlockPhysikListener;
 import de.Ste3et_C0st.FurnitureLib.ShematicLoader.Events.FurnitureEntityBreakEventListener;
 import de.Ste3et_C0st.FurnitureLib.ShematicLoader.Events.FurnitureEntityClickEventListener;
 import de.Ste3et_C0st.FurnitureLib.main.Furniture;
@@ -48,8 +46,6 @@ public class ProjectLoader extends Furniture{
 	private Object[] enumItemSlots = EnumWrappers.ItemSlot.values();
 	public String header;
 	private ProjektInventory inv=null;
-	private List<Material> activatePhysic = Arrays.asList(Material.TORCH, Material.REDSTONE_TORCH_OFF, Material.REDSTONE_TORCH_ON,
-														  Material.BED_BLOCK);
 	public ProjectLoader(ObjectID id){
 		super(id);
 		try{
@@ -86,13 +82,6 @@ public class ProjectLoader extends Furniture{
 		if(!getObjID().getBlockList().isEmpty()){
 			Bukkit.getPluginManager().registerEvents(new FurnitureBlockClickEventListener(getObjID(), inv), FurnitureLib.getInstance());
 			Bukkit.getPluginManager().registerEvents(new FurnitureBlockBreakEventListener(getObjID(), inv), FurnitureLib.getInstance());
-			boolean b = false;
-			for(Location loc : getObjID().getBlockList()){
-				if(activatePhysic.contains(loc.getBlock().getType())){
-					b = true;
-				}
-			}
-			if(b){Bukkit.getPluginManager().registerEvents(new FurnitureBlockPhysikListener(getObjID(), inv), FurnitureLib.getInstance());}
 		}
 	}
 	

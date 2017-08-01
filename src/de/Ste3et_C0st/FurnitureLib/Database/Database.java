@@ -1,5 +1,6 @@
 package de.Ste3et_C0st.FurnitureLib.Database;
 
+import java.net.SocketException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -55,24 +56,20 @@ public abstract class Database {
     		statement.executeUpdate(query);
     		return true;
     	}catch(Exception e){
+    		if(e instanceof SocketException){
+    			initialize();
+    			try{
+    				statement.executeUpdate(query);
+    			}catch(Exception ex){
+    				ex.printStackTrace();
+    			}
+    			return false;
+    		}
     		e.printStackTrace();
     	}
     	return false;
     }
-    
-//    public void reconnect(){
-//    	try{
-//    		if(connection.isClosed()){
-//    			connection = getSQLConnection();
-//    			statement = connection.createStatement();
-//    		}else if(statement.isClosed()){
-//    			statement = connection.createStatement();
-//    		}
-//    	}catch(SQLException e){
-//    		e.printStackTrace();
-//    	}
-//    }
-//    
+
     public void loadAll(SQLAction action){
     	long time1 = System.currentTimeMillis();
     	boolean b = FurnitureLib.getInstance().isAutoPurge();
@@ -97,8 +94,17 @@ public abstract class Database {
     public void delete(ObjectID objID){
     	try {
     		statement.execute("DELETE FROM FurnitureLib_Objects WHERE ObjID = '" + objID.getID() + "'");
-		} catch (SQLException e) {
-			e.printStackTrace();
+		} catch (Exception e) {
+    		if(e instanceof SocketException){
+    			initialize();
+    			try{
+    				statement.execute("DELETE FROM FurnitureLib_Objects WHERE ObjID = '" + objID.getID() + "'");
+    			}catch(Exception ex){
+    				ex.printStackTrace();
+    			}
+    			return;
+    		}
+    		e.printStackTrace();
 		}
     }
  

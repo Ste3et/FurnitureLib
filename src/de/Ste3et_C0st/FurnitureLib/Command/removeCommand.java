@@ -1,8 +1,6 @@
 package de.Ste3et_C0st.FurnitureLib.Command;
 
-import java.util.ArrayList;
-import java.util.List;
-
+import java.util.HashSet;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -85,7 +83,7 @@ public class removeCommand {
 					int distance = Integer.parseInt(args[1]);
 					Player p = (Player) sender;
 					World w = p.getWorld();
-					List<ObjectID> worldObjList = getObject(w);
+					HashSet<ObjectID> worldObjList = getObject(w);
 					int i = removeListObj(getObject(p.getLocation(), worldObjList, distance));
 					String s = FurnitureLib.getInstance().getLangManager().getString("RemoveDistance");
 					s = s.replace("#AMOUNT#", i+"");
@@ -94,7 +92,7 @@ public class removeCommand {
 					int distance = Integer.parseInt(args[1]);
 					BlockCommandSender commandBlock = (BlockCommandSender) sender;
 					World w = commandBlock.getBlock().getWorld();
-					List<ObjectID> worldObjList = getObject(w);
+					HashSet<ObjectID> worldObjList = getObject(w);
 					int i = removeListObj(getObject(commandBlock.getBlock().getLocation(), worldObjList, distance));
 					String s = FurnitureLib.getInstance().getLangManager().getString("RemoveDistance");
 					s = s.replace("#AMOUNT#", i+"");
@@ -172,7 +170,7 @@ public class removeCommand {
 		return null;
 	}
 
-	private int removeListObj(List<ObjectID> objList){
+	private int removeListObj(HashSet<ObjectID> objList){
 		int i = 0;
 		if(objList==null){return i;}
 		if(objList.isEmpty()){return i;}
@@ -183,8 +181,8 @@ public class removeCommand {
 		return i;
 	}
 	
-	private List<ObjectID> getObject(Location loc, List<ObjectID> objL, int distance){
-		List<ObjectID> objList = new ArrayList<ObjectID>();
+	private HashSet<ObjectID> getObject(Location loc, HashSet<ObjectID> objL, int distance){
+		HashSet<ObjectID> objList = new HashSet<ObjectID>();
 		Vector v1 = loc.toVector();
 		for(ObjectID obj : objL){
 			Vector v2 = obj.getStartLocation().toVector();
@@ -196,8 +194,8 @@ public class removeCommand {
 		return objList;
 	}
 	
-	private List<ObjectID> getObject(Project pro){
-		List<ObjectID> objList = new ArrayList<ObjectID>();
+	private HashSet<ObjectID> getObject(Project pro){
+		HashSet<ObjectID> objList = new HashSet<ObjectID>();
 		for(ObjectID obj : FurnitureLib.getInstance().getFurnitureManager().getObjectList()){
 			if(obj.getProjectOBJ().equals(pro)){
 				if(obj.getSQLAction().equals(SQLAction.REMOVE)){continue;}
@@ -207,8 +205,8 @@ public class removeCommand {
 		return objList;
 	}
 	
-	private List<ObjectID> getObject(World world){
-		List<ObjectID> objList = new ArrayList<ObjectID>();
+	private HashSet<ObjectID> getObject(World world){
+		HashSet<ObjectID> objList = new HashSet<ObjectID>();
 		for(ObjectID obj : FurnitureLib.getInstance().getFurnitureManager().getObjectList()){
 			if(obj.getWorld().equals(world)){
 				if(obj.getSQLAction().equals(SQLAction.REMOVE)){continue;}
@@ -218,8 +216,8 @@ public class removeCommand {
 		return objList;
 	}
 	
-	private List<ObjectID> getObject(String playerName){
-		List<ObjectID> objList = new ArrayList<ObjectID>();
+	private HashSet<ObjectID> getObject(String playerName){
+		HashSet<ObjectID> objList = new HashSet<ObjectID>();
 		for(ObjectID obj : FurnitureLib.getInstance().getFurnitureManager().getObjectList()){
 			if(obj.getPlayerName().equalsIgnoreCase(playerName)){
 				if(obj.getSQLAction().equals(SQLAction.REMOVE)){continue;}
@@ -229,8 +227,8 @@ public class removeCommand {
 		return objList;
 	}
 	
-	private List<ObjectID> getObjectPlugin(String plugin){
-		List<ObjectID> objList = new ArrayList<ObjectID>();
+	private HashSet<ObjectID> getObjectPlugin(String plugin){
+		HashSet<ObjectID> objList = new HashSet<ObjectID>();
 		for(ObjectID obj : FurnitureLib.getInstance().getFurnitureManager().getObjectList()){
 			if(obj.getPlugin().equalsIgnoreCase(plugin)){
 				if(obj.getSQLAction().equals(SQLAction.REMOVE)){continue;}

@@ -66,6 +66,7 @@ public class ColorUtil {
 		p.updateInventory();
 	}
 	
+	@SuppressWarnings("deprecation")
 	private void colorBanner(Player p, boolean canBuild, Material m, ObjectID obj, int row){
 		if(!canBuild){return;}
 		ItemStack is = p.getInventory().getItemInMainHand();
@@ -84,6 +85,7 @@ public class ColorUtil {
 		}
 		removeIS(obj, p, Amount);
 	}
+	@SuppressWarnings("deprecation")
 	private ItemStack getNewIS(ItemStack helmet, DyeColor color) {
 		ItemStack is = new ItemStack(helmet.getType(), 1, helmet.getDurability());
 		BannerMeta im = (BannerMeta) helmet.getItemMeta();

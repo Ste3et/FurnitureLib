@@ -1,6 +1,7 @@
 package de.Ste3et_C0st.FurnitureLib.main;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 
@@ -28,17 +29,17 @@ import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 public class ObjectID{
 	private FurnitureManager manager = FurnitureLib.getInstance().getFurnitureManager();
 	private String ObjectID, serial, Project, plugin;
-	private List<Location> locList = new ArrayList<Location>();
+	private HashSet<Location> locList = new HashSet<Location>();
 	private Location loc;
 	private UUID uuid;
 	private MoveType moving = MoveType.NOTHING;
 	private double speed = 0;
-	private List<UUID> uuidList = new ArrayList<UUID>();
+	private HashSet<UUID> uuidList = new HashSet<UUID>();
 	private PublicMode publicMode = FurnitureLib.getInstance().getDefaultPublicType();
 	private EventType memberType = FurnitureLib.getInstance().getDefaultEventType();
 	private SQLAction sqlAction = SQLAction.SAVE;
 	private List<fEntity> packetList = new ArrayList<fEntity>();
-	private List<Player> players = new ArrayList<Player>();
+	private HashSet<Player> players = new HashSet<Player>();
 	private boolean finish=false, fixed=false, fromDatabase=false, Private=false;
 	public String getID(){return this.ObjectID;}
 	public String getProject(){return this.Project;}
@@ -54,13 +55,13 @@ public class ObjectID{
 	public void setEventTypeAccess(EventType type){this.memberType = type;}
 	public void setSQLAction(SQLAction action){this.sqlAction=action;}
 	public void setFixed(boolean b){fixed=b;}
-	public void setMemberList(List<UUID> uuidList){this.uuidList=uuidList;}
-	public List<UUID> getMemberList(){return this.uuidList;}
+	public void setMemberList(HashSet<UUID> uuidList){this.uuidList=uuidList;}
+	public HashSet<UUID> getMemberList(){return this.uuidList;}
 	public PublicMode getPublicMode(){return this.publicMode;}
 	public UUID getUUID(){return this.uuid;}
 	public World getWorld(){return this.loc.getWorld();}
 	public Chunk getChunk(){return this.loc.getChunk();}
-	public List<Player> getPlayerList(){return this.players;}
+	public HashSet<Player> getPlayerList(){return this.players;}
 	public boolean isMember(UUID uuid) {return uuidList.contains(uuid);}
 	public void setFromDatabase(boolean b){this.fromDatabase=b;}
 	public boolean isFromDatabase(){return this.fromDatabase;}
@@ -79,43 +80,43 @@ public class ObjectID{
 	public void setMoving(MoveType type){this.moving = type;}
 	public int viewDistance = 100;
 	
-	private boolean hasSearch = false;
+//	private boolean hasSearch = false;
 	
-	public void checkDrivable(){
-		if(hasSearch == false){
-			hasSearch = true;
-			getProjectOBJ().checkDriveable(getPacketList());
-		}
-	}
-	
-	public boolean isCar(){return getProjectOBJ().isDriveable();}
-
-	public fEntity getMiddle(){
-		if(!isCar()){return null;}
-		if(!hasSearch){checkDrivable();}
-		if(isCar()){
-			return getPacketList().get(getProjectOBJ().getMiddle());
-		}
-		return null;
-	}
-	
-	public int getMaxSpeed(){
-		if(!isCar()) return 0;
-		if(!hasSearch){checkDrivable();}
-		if(isCar()){
-			return getProjectOBJ().getMaxSpeed();
-		}
-		return 0;
-	}
-	
-	public int getGear(){
-		if(!isCar()) return 0;
-		if(!hasSearch){checkDrivable();}
-		if(isCar()){
-			return getProjectOBJ().getGear();
-		}
-		return 0;
-	}
+//	public void checkDrivable(){
+//		if(hasSearch == false){
+//			hasSearch = true;
+//			getProjectOBJ().checkDriveable(getPacketList());
+//		}
+//	}
+//	
+//	public boolean isCar(){return getProjectOBJ().isDriveable();}
+//
+//	public fEntity getMiddle(){
+//		if(!isCar()){return null;}
+//		if(!hasSearch){checkDrivable();}
+//		if(isCar()){
+//			return getPacketList().get(getProjectOBJ().getMiddle());
+//		}
+//		return null;
+//	}
+//	
+//	public int getMaxSpeed(){
+//		if(!isCar()) return 0;
+//		if(!hasSearch){checkDrivable();}
+//		if(isCar()){
+//			return getProjectOBJ().getMaxSpeed();
+//		}
+//		return 0;
+//	}
+//	
+//	public int getGear(){
+//		if(!isCar()) return 0;
+//		if(!hasSearch){checkDrivable();}
+//		if(isCar()){
+//			return getProjectOBJ().getGear();
+//		}
+//		return 0;
+//	}
 	
 	@Deprecated
 	public void setVelocity(Vector v){this.loc.add(v);}
@@ -195,7 +196,7 @@ public class ObjectID{
 	public void addBlock(List<Block> bl){
 		if(bl==null||bl.isEmpty()){return;}
 		for(Block b : bl){
-			FurnitureLib.getInstance().getBlockManager().addLocation(b.getLocation());
+			FurnitureLib.getInstance().getBlockManager().addBlock(b);
 			this.locList.add(b.getLocation());
 		}
 	}
@@ -304,7 +305,7 @@ public class ObjectID{
 		}
 		return name;
 	}
-	public List<Location> getBlockList() {
+	public HashSet<Location> getBlockList() {
 		return this.locList;
 	}
 	

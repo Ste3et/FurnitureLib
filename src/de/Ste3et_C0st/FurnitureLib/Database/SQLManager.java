@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.bukkit.Bukkit;
+import org.bukkit.scheduler.BukkitTask;
 
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
@@ -16,7 +17,7 @@ public class SQLManager {
 	MySQL mysql;
 	SQLite sqlite;
 	FurnitureLib plugin;
-	Integer sqlSaveIntervall;
+	BukkitTask sqlSaveIntervall;
 	Connection con;
 	
 	public SQLManager(FurnitureLib plugin){
@@ -143,18 +144,17 @@ public class SQLManager {
 	}
 	
 	public void saveIntervall(int time){
-		sqlSaveIntervall=Bukkit.getScheduler().scheduleSyncRepeatingTask(plugin, new Runnable() {
+		sqlSaveIntervall=Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, new Runnable() {
 			@Override
 			public void run() {
-				save();
-				plugin.getLogger().info("Furniture Saved");
+				FurnitureLib.getInstance().getFurnitureManager().saveAsynchron(Bukkit.getConsoleSender());
 			}
 		}, 0, 20*time);
 	}
 
 	public void stop() {
 		if(sqlSaveIntervall!=null){
-			plugin.getServer().getScheduler().cancelTask(sqlSaveIntervall);
+			sqlSaveIntervall.cancel();
 			sqlSaveIntervall = null;
 		}
 	}

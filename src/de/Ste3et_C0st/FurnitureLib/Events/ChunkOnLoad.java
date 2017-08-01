@@ -1,6 +1,7 @@
 package de.Ste3et_C0st.FurnitureLib.Events;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import org.bukkit.Bukkit;
@@ -36,25 +37,22 @@ import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 
 public class ChunkOnLoad implements Listener{
 	
-	public List<Player> eventList = new ArrayList<Player>();
+	public HashSet<Player> eventList = new HashSet<Player>();
 	
 	public FurnitureManager manager = FurnitureLib.getInstance().getFurnitureManager();
 
 	@EventHandler
-	public void onPlayerMove(PlayerMoveEvent e) {
+	public void onPlayerMove(PlayerMoveEvent e){
 		if (e.getTo().getBlock().getLocation().equals(e.getFrom().getBlock().getLocation())) return;
 		Player player = e.getPlayer();
 		if (player.getHealth() <= 0.0D) return;
 		Chunk oldChunk = e.getFrom().getChunk();
 		Chunk newChunk = e.getTo().getChunk();
-
-		if (oldChunk.getWorld() != newChunk.getWorld() || oldChunk.getX() != newChunk.getX() || oldChunk.getZ() != newChunk.getZ()) {
-			manager.updatePlayerView(player);
-		}
+		if (!oldChunk.equals(newChunk)) manager.updatePlayerView(player);
 	}
 	
 	@EventHandler
-	public void onPlayerTeleport(PlayerTeleportEvent event) {
+	public void onPlayerTeleport(PlayerTeleportEvent event){
 		final Player player = event.getPlayer();
 		if(FurnitureLib.getInstance()==null) return;
 		Bukkit.getScheduler().runTaskLater(FurnitureLib.getInstance(), new Runnable(){
@@ -287,7 +285,7 @@ public class ChunkOnLoad implements Listener{
 	@EventHandler
 	public void explode(EntityExplodeEvent e){
 		List<Block> blockList = new ArrayList<Block>(e.blockList());
-		List<Location> furnitureBlocks = FurnitureLib.getInstance().getBlockManager().getList();
+		HashSet<Location> furnitureBlocks = FurnitureLib.getInstance().getBlockManager().getList();
 		for(Block b : blockList){
 			if(furnitureBlocks.contains(b.getLocation())){
 				e.blockList().remove(b);

@@ -2,8 +2,7 @@ package de.Ste3et_C0st.FurnitureLib.Database;
 
 import java.io.ByteArrayInputStream;
 import java.io.EOFException;
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.UUID;
 import java.util.zip.ZipException;
 
@@ -53,7 +52,7 @@ public class DeSerializer {
 			EventType evType = EventType.valueOf(compound.getString("EventType"));
 			PublicMode pMode = PublicMode.valueOf(compound.getString("PublicMode")); 
 			UUID uuid = uuidFetcher(compound.getString("Owner-UUID"));
-			List<UUID> members = membersFetcher(compound.getList("Members"));
+			HashSet<UUID> members = membersFetcher(compound.getList("Members"));
 			Location startLocation = locationFetcher(compound.getCompound("Location"));
 			if(startLocation==null){
 				obj.setSQLAction(SQLAction.REMOVE);
@@ -210,8 +209,8 @@ public class DeSerializer {
 		}
 	}
 	
-	private List<UUID> membersFetcher(NBTTagList nbtList){
-		List<UUID> uuidList = new ArrayList<UUID>();
+	private HashSet<UUID> membersFetcher(NBTTagList nbtList){
+		HashSet<UUID> uuidList = new HashSet<UUID>();
 		if(nbtList==null||nbtList.size()==0){return uuidList;}
 		for(int i = 0; i<nbtList.size();i++){
 			String string = nbtList.getString(i);

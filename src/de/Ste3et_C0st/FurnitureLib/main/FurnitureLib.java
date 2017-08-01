@@ -260,15 +260,19 @@ public class FurnitureLib extends JavaPlugin{
 		file.options().copyDefaults(true);
 		file.options().copyHeader(true);
 		c.saveConfig("permissionKit.yml", file, "");
-		if(file.isSet("kit")){
-			for(String s : file.getConfigurationSection("kit").getKeys(false)){
-				String header = (String) s;
-				if(file.isSet("kit." + header)){
-					List<String> projectList = new ArrayList<String>();
-					if(file.getStringList("kit." + header)!=null){
-						projectList = file.getStringList("kit." + header);
+		if(file.contains("kit")){
+			if(file.isSet("kit")){
+				if(file.isConfigurationSection("kit")){
+					for(String s : file.getConfigurationSection("kit").getKeys(false)){
+						String header = (String) s;
+						if(file.isSet("kit." + header)){
+							List<String> projectList = new ArrayList<String>();
+							if(file.getStringList("kit." + header)!=null){
+								projectList = file.getStringList("kit." + header);
+							}
+							permissionKit.put(header, projectList);
+						}
 					}
-					permissionKit.put(header, projectList);
 				}
 			}
 		}

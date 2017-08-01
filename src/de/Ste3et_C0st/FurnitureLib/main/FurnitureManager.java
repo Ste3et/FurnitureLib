@@ -1,13 +1,17 @@
 package de.Ste3et_C0st.FurnitureLib.main;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -24,11 +28,11 @@ import de.Ste3et_C0st.FurnitureLib.main.entity.fPig;
 
 public class FurnitureManager {
 	private Integer i = 0;
-	private List<ObjectID> objecte = new ArrayList<ObjectID>();
+	private HashSet<ObjectID> objecte = new HashSet<ObjectID>();
 	private List<Project> projects = new ArrayList<Project>();
 	private List<UUID> ignoreList = new ArrayList<UUID>();
 	public void setLastID(Integer i){this.i = i;}
-	public List<ObjectID> getObjectList(){return this.objecte;}
+	public HashSet<ObjectID> getObjectList(){return this.objecte;}
 	public List<Chunk> chunkList = new ArrayList<Chunk>();
 	public List<UUID> getIgnoreList(){return this.ignoreList;}
 	public void addProject(Project project){
@@ -74,6 +78,24 @@ public class FurnitureManager {
 			}
 		}
 		return null;
+	}
+	
+	public void saveAsynchron(final CommandSender sender){
+		Bukkit.getScheduler().runTaskAsynchronously(FurnitureLib.getInstance(), new Runnable() {
+			@Override
+			public void run() {
+				long currentTime = System.currentTimeMillis();
+				sender.sendMessage("§n§7--------------------------------------");
+				sender.sendMessage("§7Furniture async saving started");
+				FurnitureLib.getInstance().getSQLManager().save();
+				long newTime = System.currentTimeMillis();
+				long time = newTime - currentTime;
+				SimpleDateFormat timeDate = new SimpleDateFormat("mm:ss.SSS");
+		    	String timeStr = timeDate.format(time);
+				sender.sendMessage("§7Furniture saving finish : §9" + timeStr);
+				sender.sendMessage("§n§7--------------------------------------");
+			}
+		});
 	}
 	
 	public void updatePlayerView(Player player) {
