@@ -30,6 +30,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import de.Ste3et_C0st.FurnitureLib.Command.TabCompleterHandler;
 import de.Ste3et_C0st.FurnitureLib.Command.command;
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
+import de.Ste3et_C0st.FurnitureLib.Database.DataBaseCallBack;
 import de.Ste3et_C0st.FurnitureLib.Database.DeSerializer;
 import de.Ste3et_C0st.FurnitureLib.Database.Serializer;
 import de.Ste3et_C0st.FurnitureLib.Database.SQLManager;
@@ -197,23 +198,33 @@ public class FurnitureLib extends JavaPlugin{
 					Boolean b = isEnable("ProtectionLib", false);
 					send("Furniture find ProtectionLib: §e" + b.toString());
 					createDefaultWatchers();
-					this.sqlManager = new SQLManager(instance);
-					this.sqlManager.initialize();
-					this.loadIgnore();
-					this.sqlManager.loadALL();
-					this.craftingInv = new CraftingInv(this);
-					this.update = getConfig().getBoolean("config.CheckUpdate");
-					this.bmanager = new BlockManager();
+					
 					PublicMode mode = PublicMode.valueOf(getConfig().getString("config.PlaceMode.Mode"));
 					EventType type = EventType.valueOf(getConfig().getString("config.PlaceMode.Access"));
 					if(mode!=null){this.mode = mode;}else{this.mode = PublicMode.PRIVATE;}
 					if(type!=null){this.type = type;}else{this.type = EventType.INTERACT;}
-					if(getConfig().getBoolean("config.timer.Enable")){int time = getConfig().getInt("config.timer.time");sqlManager.saveIntervall(time);}
+					this.bmanager = new BlockManager();
+					this.craftingInv = new CraftingInv(this);
 					for(Player p : Bukkit.getOnlinePlayers()){if(p.isOp()){getUpdater().sendPlayer(p);}}
 					loadPermissionKit();
 					loadMetrics();
-					this.pManager.loadProjectFiles();
-					send("§2Furniture load finish :)");
+					this.update = getConfig().getBoolean("config.CheckUpdate");
+					this.sqlManager = new SQLManager(instance);
+					this.sqlManager.initialize();
+					this.loadIgnore();
+					
+					
+					this.sqlManager.loadALL(new DataBaseCallBack() {
+						@Override
+						public void onResult(boolean b) {
+							if(b){
+								if(getConfig().getBoolean("config.timer.Enable")){int time = getConfig().getInt("config.timer.time");sqlManager.saveIntervall(time);}
+								pManager.loadProjectFiles();
+								send("§2Furniture load finish :)");
+							}
+						}
+					});
+					
 					send("==========================================");
 				}else{
 					send("Furniture Lib deosn't find the correct ProtocolLib");

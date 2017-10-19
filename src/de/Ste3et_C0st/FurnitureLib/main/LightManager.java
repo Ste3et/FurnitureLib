@@ -36,6 +36,7 @@ public class LightManager {
 	public void removeLight(Location location){
 		if(!enable){return;}
 		try{
+			if(location == null) return;
 			LightAPI.deleteLight(location, false);
 			for(ChunkInfo info: LightAPI.collectChunks(location)){
 				LightAPI.updateChunk(info);

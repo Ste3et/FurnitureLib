@@ -83,6 +83,7 @@ public class DeSerializer {
 				if(FurnitureLib.getInstance().getFurnitureManager().getLastID()<ArmorID){FurnitureLib.getInstance().getFurnitureManager().setLastID(ArmorID);}
 				this.armorStands++;
 			}
+			obj.sendAll();
 		} catch (EOFException eofEx){
 			eofEx.printStackTrace();
 			return;
