@@ -308,6 +308,24 @@ public class ChunkOnLoad implements Listener{
 		e.removeItem();
 	}
 	
+	private boolean hasPermissions(Player p, String name) {
+		if(p.isOp()) return true;
+		if(FurnitureLib.getInstance().getPermission().hasPerm(p,"furniture.admin")) return true;
+		if(FurnitureLib.getInstance().getPermission().hasPerm(p,"furniture.player")) return true;
+		if(FurnitureLib.getInstance().getPermission().hasPerm(p,"furniture.craft.*")) return true;
+		if(FurnitureLib.getInstance().getPermission().hasPerm(p,"furniture.craft." + name)) return true;
+		if(FurnitureLib.getInstance().getPermissionList()!=null){
+			for(String s : FurnitureLib.getInstance().getPermissionList().keySet()){
+				if(FurnitureLib.getInstance().getPermission().hasPerm(p, "furniture.craft.all." + s)){
+					if(FurnitureLib.getInstance().getPermissionList().get(s).contains(name)){
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+	
 	@EventHandler
 	private void onCrafting(PrepareItemCraftEvent e){
 		if(FurnitureLib.getInstance().getFurnitureManager().getProjects().isEmpty()){return;}
@@ -319,7 +337,7 @@ public class ChunkOnLoad implements Listener{
 		is.setAmount(1);
 		for(Project pro : FurnitureLib.getInstance().getFurnitureManager().getProjects()){
 			if(is.equals(pro.getCraftingFile().getRecipe().getResult())){
-				if(!FurnitureLib.getInstance().getPermission().hasPerm(p,"furniture.craft.*") && !FurnitureLib.getInstance().getPermission().hasPerm(p,"furniture.craft." + pro.getSystemID()) && !FurnitureLib.getInstance().getPermission().hasPerm(p,"furniture.player") && !FurnitureLib.getInstance().getPermission().hasPerm(p,"furniture.admin")){
+				if(!hasPermissions(p, pro.getSystemID())){
 					e.getInventory().setResult(null);
 				}
 			}
