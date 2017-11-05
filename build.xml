@@ -35,5 +35,6 @@
 			<fileset dir="${bin}"/>
 			<fileset file="${src}/*.yml"/>
 		</jar>
+		<copy file="${dist}/${pluginname}.jar" tofile="${plugins}/${pluginname}.jar"/>
 	</target>
 </project>
