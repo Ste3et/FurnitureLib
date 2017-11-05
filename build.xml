@@ -15,11 +15,6 @@
 		<copy todir="${bin}/language">
 		    <fileset dir="${src}/language"/>
 		</copy>
-		<tstamp>
-		      <format property="DSTAMP"
-			      pattern="-MM-dd-yyyy"
-			      locale="en,UK"/>
-    		</tstamp>
 	</target>
 	
 	<target name="compile" depends="init">
@@ -36,7 +31,7 @@
 	
 	<target name="dist" depends="compile">
 		<mkdir dir="${dist}"/>
-		<jar jarfile="${dist}/${pluginname}-1.jar">
+		<jar jarfile="${dist}/${pluginname}.jar">
 			<fileset dir="${bin}"/>
 			<fileset file="${src}/*.yml"/>
 		</jar>
