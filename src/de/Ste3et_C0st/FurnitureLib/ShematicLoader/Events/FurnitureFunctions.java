@@ -186,9 +186,7 @@ public class FurnitureFunctions extends FurnitureHelper {
 		if(!j){
 			for(fEntity stand : getfAsList()){
 				if(stand.getName().startsWith("#Mount:") || stand.getName().startsWith("#SITZ")){
-					
 					if(stand.getPassanger()==null){
-						
 						stand.setPassanger(p);
 						return;
 					}else{
@@ -196,7 +194,34 @@ public class FurnitureFunctions extends FurnitureHelper {
 							stand.eject();
 						}
 					}
+				}else if(stand.getName().startsWith("#T_VISIBLE#")){
+					if(stand.isInvisible()){
+						stand.setInvisible(false);
+					}else{
+						stand.setInvisible(true);
+					}
+				}else if(stand.getName().startsWith("#T_HEAD_")){
+					String string = stand.getName();
+					string = string.replace("#", "");
+					string = string.replace("T_HEAD_", "");
+					short durability = 0;
+					Material m = null;
+					if(string.contains(":")){
+						String[] split = string.split(":");
+						m = Material.getMaterial(Integer.parseInt(split[0]));
+						durability = Short.parseShort(split[1]);
+					}else{
+						m = Material.getMaterial(string);
+					}
+					if(m == null){continue;}
+					if(stand.getHelmet() == null){
+						stand.setHelmet(new ItemStack(m, 1, durability));
+					}else if(stand.getHelmet().getType().equals(m) && stand.getHelmet().getDurability() == durability){{
+						stand.setHelmet(null);
+					}
+					stand.update();
 				}
+			}
 			}
 		}
 	}

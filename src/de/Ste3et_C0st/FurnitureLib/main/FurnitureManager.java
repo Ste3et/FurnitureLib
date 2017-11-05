@@ -260,9 +260,7 @@ public class FurnitureManager {
 	
 	private boolean isExist(String s){
 		for(Project project : projects){
-			if(project.getName().equals(s)){
-				return true;
-			}
+			if(project.getName().equals(s)) return true;
 		}
 		return false;
 	}
@@ -270,6 +268,11 @@ public class FurnitureManager {
 	public List<fEntity> getfArmorStandByObjectID(ObjectID id) {
 		if(this.objecte.isEmpty()){return null;}
 		return id.getPacketList();
+	}
+	
+	public void deleteObjectID(ObjectID id){
+		if(this.objecte.isEmpty() || id == null){return;}
+		this.objecte.remove(id);
 	}
 	
 	public Project getProject(String name){

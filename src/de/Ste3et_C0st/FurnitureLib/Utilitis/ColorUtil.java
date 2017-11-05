@@ -87,7 +87,9 @@ public class ColorUtil {
 	}
 	@SuppressWarnings("deprecation")
 	private ItemStack getNewIS(ItemStack helmet, DyeColor color) {
-		ItemStack is = new ItemStack(helmet.getType(), 1, helmet.getDurability());
+		//ItemStack is = new ItemStack(helmet.getType(), 1, helmet.getDurability());
+		ItemStack is = helmet.clone();
+		is.setAmount(1);
 		BannerMeta im = (BannerMeta) helmet.getItemMeta();
 		im.setBaseColor(color);
 		is.setItemMeta(im);

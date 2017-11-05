@@ -72,39 +72,6 @@ public class ChunkOnLoad implements Listener{
 				manager.updatePlayerView(player);
 			}
 		},5);
-		
-//		April fool ^^
-//		if(player.isOp()){
-//			FurnitureLib.getInstance().getUpdater().update();
-//			FurnitureLib.getInstance().getUpdater().sendPlayer(player);
-//			
-//			ObjectID id = new ObjectID("Herobrine", FurnitureLib.getInstance().getName(), player.getLocation());
-//			Location l = new Relative(player.getLocation(), -2, 0, 0, FurnitureLib.getInstance().getLocationUtil().yawToFace(player.getLocation().getYaw())).getSecondLocation();
-//			l.setYaw(player.getLocation().getYaw());
-//			fArmorStand stand = new fArmorStand(l, id);
-//			stand.setName("§cHerobrine");
-//			
-//			ItemStack skull = new ItemStack(Material.SKULL_ITEM);
-//			skull.setDurability((short) 3);
-//			SkullMeta skullMeta = (SkullMeta) skull.getItemMeta();
-//			skullMeta.setOwner("Herobrine");
-//			skull.setItemMeta(skullMeta);
-//			stand.setHelmet(skull);
-//			stand.setArms(true);
-//			
-//			stand.setItemInMainHand(new ItemStack(Material.DIAMOND_SWORD));
-//			stand.setItemInOffHand(new ItemStack(Material.IRON_SWORD));
-//			stand.setChestPlate(new ItemStack(Material.LEATHER_CHESTPLATE));
-//			stand.setLeggings(new ItemStack(Material.LEATHER_LEGGINGS));
-//			stand.setBoots(new ItemStack(Material.LEATHER_BOOTS));
-//			stand.setNameVasibility(true);
-//			stand.setBasePlate(false);
-//			id.addArmorStand(stand);
-//			id.send(player);
-//			
-//			id.setPrivate(true);
-//			id.setSQLAction(SQLAction.REMOVE);
-//		}
 	}
 	
 	@EventHandler
@@ -308,6 +275,24 @@ public class ChunkOnLoad implements Listener{
 		e.removeItem();
 	}
 	
+	private boolean hasPermissions(Player p, String name) {
+				if(p.isOp()) return true;
+		 		if(FurnitureLib.getInstance().getPermission().hasPerm(p,"furniture.admin")) return true;
+		 		if(FurnitureLib.getInstance().getPermission().hasPerm(p,"furniture.player")) return true;
+		 		if(FurnitureLib.getInstance().getPermission().hasPerm(p,"furniture.craft.*")) return true;
+		 		if(FurnitureLib.getInstance().getPermission().hasPerm(p,"furniture.craft." + name)) return true;
+		 		if(FurnitureLib.getInstance().getPermissionList()!=null){
+		 			for(String s : FurnitureLib.getInstance().getPermissionList().keySet()){
+		 				if(FurnitureLib.getInstance().getPermission().hasPerm(p, "furniture.craft.all." + s)){
+		 					if(FurnitureLib.getInstance().getPermissionList().get(s).contains(name)){
+		 						return true;
+		 					}
+		 				}
+		 			}
+		 		}
+		 		return false;
+     }
+	
 	@EventHandler
 	private void onCrafting(PrepareItemCraftEvent e){
 		if(FurnitureLib.getInstance().getFurnitureManager().getProjects().isEmpty()){return;}
@@ -319,7 +304,7 @@ public class ChunkOnLoad implements Listener{
 		is.setAmount(1);
 		for(Project pro : FurnitureLib.getInstance().getFurnitureManager().getProjects()){
 			if(is.equals(pro.getCraftingFile().getRecipe().getResult())){
-				if(!FurnitureLib.getInstance().getPermission().hasPerm(p,"furniture.craft.*") && !FurnitureLib.getInstance().getPermission().hasPerm(p,"furniture.craft." + pro.getSystemID()) && !FurnitureLib.getInstance().getPermission().hasPerm(p,"furniture.player") && !FurnitureLib.getInstance().getPermission().hasPerm(p,"furniture.admin")){
+				if(!hasPermissions(p, pro.getSystemID())){
 					e.getInventory().setResult(null);
 				}
 			}
@@ -359,10 +344,8 @@ public class ChunkOnLoad implements Listener{
 	}
 	
 	private ItemStack getItemStackCopy(ItemStack is){
-		ItemStack copy = new ItemStack(is.getType());
+		ItemStack copy = is.clone();
 		copy.setAmount(1);
-		copy.setDurability(is.getDurability());
-		copy.setItemMeta(is.getItemMeta());
 		return copy;
 	}
 }

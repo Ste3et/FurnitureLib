@@ -1,5 +1,6 @@
 package de.Ste3et_C0st.FurnitureLib.Database;
 
+import java.io.EOFException;
 import java.net.SocketException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -21,7 +22,6 @@ public abstract class Database {
     Statement statement;
     DataBaseCallBack callBack;
     boolean result = false;
-    private int count = 10;
     public Database(FurnitureLib instance){
         this.plugin = instance;
     }
@@ -60,7 +60,7 @@ public abstract class Database {
     		statement.executeUpdate(query);
     		return true;
     	}catch(Exception e){
-    		if(e instanceof SocketException){
+    		if(e instanceof SocketException || e instanceof EOFException){
     			initialize();
     			try{
     				statement.executeUpdate(query);
@@ -122,6 +122,10 @@ public abstract class Database {
 		        	int purged = FurnitureLib.getInstance().getDeSerializer().purged;
 		        	plugin.getLogger().info("FurnitureLib have loadet " + ArmorStands + " in " +timeStr);
 		        	plugin.getLogger().info("FurnitureLib have purged " + purged + " Objects");
+		        	for(ObjectID id : FurnitureLib.getInstance().getFurnitureManager().getObjectList()){
+		        		id.sendAll();
+		        	}
+		        	
 		        	callBack.onResult(true);
 				}
 			}
@@ -137,13 +141,11 @@ public abstract class Database {
     		@Override
 			public void run() {
     			try{
-    				
-    				int end = i + count, j = 0;
-    				System.out.println(i + ":" + end);
-        			String query = "SELECT * FROM FurnitureLib_Objects LIMIT " + i + "," + end;
+    				int count = FurnitureLib.getInstance().getStepSize();
+    				int offset = i, j = 0;
+        			String query = "SELECT * FROM FurnitureLib_Objects LIMIT " + count + " OFFSET " + offset;
         			ResultSet rs = statement.executeQuery(query);
         			while (rs.next()){
-        				System.out.println(j + " Furnitre");
         				FurnitureLib.getInstance().getDeSerializer().Deserialze(rs.getString(1), rs.getString(2), action, b);
         				j++;
         			}
@@ -152,10 +154,11 @@ public abstract class Database {
 		    			if(j != count){
 		    				result = true;
 		    				callBack2.onResult(true);
+		    				return;
 		    			}else{
-		    				loadFurnitures(end + 1, b, action);
+		    				loadFurnitures(i + count, b, action);
+		    				return;
 		    			}
-		    			return;
 		    		}
     			}catch(Exception ex){
     				ex.printStackTrace();
@@ -169,7 +172,7 @@ public abstract class Database {
     	try {
     		statement.execute("DELETE FROM FurnitureLib_Objects WHERE ObjID = '" + objID.getID() + "'");
 		} catch (Exception e) {
-    		if(e instanceof SocketException){
+    		if(e instanceof SocketException || e instanceof EOFException){
     			initialize();
     			try{
     				statement.execute("DELETE FROM FurnitureLib_Objects WHERE ObjID = '" + objID.getID() + "'");

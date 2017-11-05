@@ -3,6 +3,7 @@ package de.Ste3et_C0st.FurnitureLib.Database;
 import java.io.File;
 import java.sql.Connection;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import org.bukkit.Bukkit;
@@ -93,19 +94,20 @@ public class SQLManager {
 		}
 	}
 	
+	@SuppressWarnings("unchecked")
 	public void save(){
 		plugin.getLogger().info("Furniture save started");
 		if(!plugin.getFurnitureManager().getObjectList().isEmpty()){
 			if(this.mysql == null && this.sqlite == null){initialize();}
-			
 			List<ObjectID> objList = new ArrayList<ObjectID>();
 			int j = 0, i = 0, l = 0;
-			for(ObjectID obj : plugin.getFurnitureManager().getObjectList()){
+			HashSet<ObjectID> idList = (HashSet<ObjectID>) plugin.getFurnitureManager().getObjectList().clone();
+			for(ObjectID obj : idList){
 				if(!objList.contains(obj)){
 					switch (obj.getSQLAction()) {
 						case UPDATE: remove(obj); j++; save(obj); break;
 						case SAVE: save(obj); i++; break;
-						case REMOVE:remove(obj); l++; break;
+						case REMOVE:remove(obj); l++;plugin.getFurnitureManager().deleteObjectID(obj);break;
 						case NOTHING: break;
 						case PURGE: break;
 					}
@@ -114,6 +116,7 @@ public class SQLManager {
 					obj.setSQLAction(SQLAction.NOTHING);
 				}
 			}
+			
 			plugin.getLogger().info(i + " furniture have been saved to the database");
 			plugin.getLogger().info(j + " furniture have been update in the database");
 			plugin.getLogger().info(l + " furniture have been removed from the database");

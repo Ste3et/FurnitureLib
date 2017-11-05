@@ -219,8 +219,4 @@ public class Type {
 		public float getFieldB(){return this.b;}
 		public boolean getFieldC(){return this.c;}
 	}
-	
-	public enum MoveType{
-		FORWARD,BACKWAR,NOTHING
-	}
 }

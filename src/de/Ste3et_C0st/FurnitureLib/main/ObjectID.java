@@ -15,11 +15,9 @@ import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
-import org.bukkit.util.Vector;
 
 import de.Ste3et_C0st.FurnitureLib.Utilitis.RandomStringGenerator;
 import de.Ste3et_C0st.FurnitureLib.main.Type.EventType;
-import de.Ste3et_C0st.FurnitureLib.main.Type.MoveType;
 import de.Ste3et_C0st.FurnitureLib.main.Type.PublicMode;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fArmorStand;
@@ -32,8 +30,6 @@ public class ObjectID{
 	private HashSet<Location> locList = new HashSet<Location>();
 	private Location loc;
 	private UUID uuid;
-	private MoveType moving = MoveType.NOTHING;
-	private double speed = 0;
 	private HashSet<UUID> uuidList = new HashSet<UUID>();
 	private PublicMode publicMode = FurnitureLib.getInstance().getDefaultPublicType();
 	private EventType memberType = FurnitureLib.getInstance().getDefaultEventType();
@@ -71,57 +67,11 @@ public class ObjectID{
 	public List<fEntity> getPacketList() {return packetList;}
 	public void setPacketList(List<fEntity> packetList) {this.packetList = packetList;}
 	public boolean isInRange(Player player) {return (getStartLocation().distance(player.getLocation()) <= viewDistance);}
-	public boolean isInWorld(Player player) {return getStartLocation().getWorld() == player.getLocation().getWorld();}
+	public boolean isInWorld(Player player) {return getStartLocation().getWorld().equals(player.getLocation().getWorld());}
 	public void addArmorStand(fEntity packet) {packetList.add(packet);}
 	public void setPublicMode(PublicMode publicMode){this.publicMode = publicMode;}
 	public void setPrivate(boolean b){this.Private = b;}
-	public double getSpeed(){return this.speed;}
-	public void setSpeed(double f){this.speed = f;}
-	public void setMoving(MoveType type){this.moving = type;}
 	public int viewDistance = 100;
-	
-//	private boolean hasSearch = false;
-	
-//	public void checkDrivable(){
-//		if(hasSearch == false){
-//			hasSearch = true;
-//			getProjectOBJ().checkDriveable(getPacketList());
-//		}
-//	}
-//	
-//	public boolean isCar(){return getProjectOBJ().isDriveable();}
-//
-//	public fEntity getMiddle(){
-//		if(!isCar()){return null;}
-//		if(!hasSearch){checkDrivable();}
-//		if(isCar()){
-//			return getPacketList().get(getProjectOBJ().getMiddle());
-//		}
-//		return null;
-//	}
-//	
-//	public int getMaxSpeed(){
-//		if(!isCar()) return 0;
-//		if(!hasSearch){checkDrivable();}
-//		if(isCar()){
-//			return getProjectOBJ().getMaxSpeed();
-//		}
-//		return 0;
-//	}
-//	
-//	public int getGear(){
-//		if(!isCar()) return 0;
-//		if(!hasSearch){checkDrivable();}
-//		if(isCar()){
-//			return getProjectOBJ().getGear();
-//		}
-//		return 0;
-//	}
-	
-	@Deprecated
-	public void setVelocity(Vector v){this.loc.add(v);}
-	
-	public MoveType getMoveType(){return this.moving;}
 	
 	public void setStartLocation(Location loc) {this.loc = loc;}
 	

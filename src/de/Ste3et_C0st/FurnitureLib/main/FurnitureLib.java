@@ -80,7 +80,7 @@ public class FurnitureLib extends JavaPlugin{
 	private ProjectManager pManager;
 	private PermissionHandler permissionHandler;
 	private String timePattern = "mm:ss:SSS";
-	private int purgeTime = 30, viewDistance = 100;
+	private int purgeTime = 30, viewDistance = 100, asyncStepsPerSequenz = 100;
 	private long purgeTimeMS = 0, spamBreakTime = 5000, spamPlaceTime = 5000;
 	public HashMap<Project, Long> deleteMap = new HashMap<Project, Long>();
 	public HashMap<UUID, Long> timeStampPlace = new HashMap<UUID, Long>();
@@ -114,6 +114,7 @@ public class FurnitureLib extends JavaPlugin{
 	public PermissionHandler getPermission(){return this.permissionHandler;}
 	public int getPurgeTime(){return this.purgeTime;}
 	public int getViewDistance(){return this.viewDistance;}
+	public int getStepSize(){return this.asyncStepsPerSequenz;}
 	public long getBreakTime(){return this.spamBreakTime;}
 	public long getPlaceTime(){return this.spamPlaceTime;}
 	public static FurnitureLib getInstance(){return instance;}
@@ -161,7 +162,7 @@ public class FurnitureLib extends JavaPlugin{
 				this.purgeTime = getConfig().getInt("config.Purge.time");
 				this.autoPurge = getConfig().getBoolean("config.Purge.autoPurge");
 				this.removePurge = getConfig().getBoolean("config.Purge.removePurge");
-
+				this.asyncStepsPerSequenz = getConfig().getInt("config.Database.asyncStepsPerSequenz");
 				this.viewDistance = (Bukkit.getViewDistance()*16)-2;
 				if(this.viewDistance>=getConfig().getInt("config.viewDistance")){
 					this.viewDistance = getConfig().getInt("config.viewDistance");
@@ -219,7 +220,13 @@ public class FurnitureLib extends JavaPlugin{
 						public void onResult(boolean b) {
 							if(b){
 								if(getConfig().getBoolean("config.timer.Enable")){int time = getConfig().getInt("config.timer.time");sqlManager.saveIntervall(time);}
-								pManager.loadProjectFiles();
+								Bukkit.getScheduler().runTaskLater(getInstance(), new Runnable() {
+									
+									@Override
+									public void run() {
+										pManager.loadProjectFiles();
+									}
+								}, 5);
 								send("§2Furniture load finish :)");
 							}
 						}
@@ -241,6 +248,7 @@ public class FurnitureLib extends JavaPlugin{
 	}
 	
 	private void loadMetrics(){try{if(getConfig().getBoolean("config.UseMetrics")){new bStats(getInstance());}}catch(Exception e){e.printStackTrace();}}
+	
 	private void loadIgnore() {
 		config c = new config(getInstance());
 		FileConfiguration configuration = c.getConfig("ignoredPlayers", "");
@@ -398,9 +406,6 @@ public class FurnitureLib extends JavaPlugin{
 	}
 	
 	public String getTimeDif(long input, long dif, String pattern){
-		long current = System.currentTimeMillis();
-		long newCurrent =  dif - (current - input);
-		String s = new SimpleDateFormat(pattern).format(new Date(newCurrent)).toString();
-		return s;
+		return new SimpleDateFormat(pattern).format(new Date(dif - (System.currentTimeMillis() - input))).toString();
 	}
 }
