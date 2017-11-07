@@ -224,27 +224,29 @@ public class ObjectID{
 	
 	public void deleteEffect(List<fEntity> asList){
 		int i = 0;
-		try{
-			if(asList==null||asList.isEmpty()) return;
-			 for (fEntity packet : asList) {
-				if(packet!=null && packet instanceof fArmorStand){
-					if(packet.getInventory() != null && packet.getInventory().getHelmet()!=null){
-						if(packet.getInventory().getHelmet().getType()!=null&&!packet.getInventory().getHelmet().getType().equals(Material.AIR)){
-							if(i<6){
-								packet.getLocation().getWorld().playEffect(packet.getLocation(), Effect.STEP_SOUND, packet.getInventory().getHelmet().getType());
-								i++;
-							}else{break;}
+		if(!getProjectOBJ().isSilent()){
+			try{
+				if(asList==null||asList.isEmpty()) return;
+				 for (fEntity packet : asList) {
+					if(packet!=null && packet instanceof fArmorStand){
+						if(packet.getInventory() != null && packet.getInventory().getHelmet()!=null){
+							if(packet.getInventory().getHelmet().getType()!=null&&!packet.getInventory().getHelmet().getType().equals(Material.AIR)){
+								if(i<6){
+									packet.getLocation().getWorld().playEffect(packet.getLocation(), Effect.STEP_SOUND, packet.getInventory().getHelmet().getType());
+									i++;
+								}else{break;}
+							}
 						}
 					}
+				 }
+			}catch(Exception e){}
+			if(i==0){
+				for (fEntity packet : asList) {
+					if(i<6){
+						packet.getLocation().getWorld().playEffect(packet.getLocation(), Effect.STEP_SOUND, Material.WOOD);
+						i++;
+					}else{break;}
 				}
-			 }
-		}catch(Exception e){}
-		if(i==0){
-			for (fEntity packet : asList) {
-				if(i<6){
-					packet.getLocation().getWorld().playEffect(packet.getLocation(), Effect.STEP_SOUND, Material.WOOD);
-					i++;
-				}else{break;}
 			}
 		}
 	}

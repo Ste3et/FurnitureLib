@@ -16,7 +16,6 @@ import de.Ste3et_C0st.FurnitureLib.Utilitis.config;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.Type.CenterType;
 import de.Ste3et_C0st.FurnitureLib.main.Type.PlaceableSide;
-import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
 
 public class Project extends ProjectSettings{
 	private String project;
@@ -29,10 +28,8 @@ public class Project extends ProjectSettings{
 	private HashMap<World, Integer> limitationWorld = new HashMap<World, Integer>();
 	private CenterType type = CenterType.RIGHT;
 	private PlaceableSide side;
-	private boolean EditorProject = false;
+	private boolean EditorProject = false, silent = false;
 	private InputStream model = null;
-	private int gear = -98451, maxSpeed = -98451, middle = -98451;
-	private boolean isSearch = false, isCar = false;
 	private List<String> complete = new ArrayList<String>();
 	public InputStream getModel(){return this.model;}
 	public String getName(){return project;}
@@ -43,7 +40,6 @@ public class Project extends ProjectSettings{
 	public PlaceableSide getPlaceableSide(){return this.side;}
 	public String getSystemID(){return getCraftingFile().getSystemID();}
 	public boolean isEditorProject(){return this.EditorProject;}
-	public boolean isDriveable(){return isCar;}
 	public Project setModel(InputStream stream){this.model = stream;return this;}
 	public Project setCraftingFile(CraftingFile file){this.file = file;return this;}
 	public Project setPlugin(Plugin plugin) {this.plugin = plugin;return this;}
@@ -51,51 +47,18 @@ public class Project extends ProjectSettings{
 	public Project setEditorProject(boolean b){this.EditorProject = b;return this;}
 	public Project setClass(Class<?> clas) {this.clas = clas;return this;}
 	public Project setName(String name){this.project = name;return this;}
-	public int getMiddle(){return this.middle;}
-	public int getMaxSpeed(){return this.maxSpeed;}
-	public int getGear(){return this.gear;}
+	public boolean isSilent(){return this.silent;}
 	public int getWitdh(){return this.witdh;}
 	public int getHeight(){return this.height;}
 	public int getLength(){return this.length;}
 	public int getAmountWorld(World w){if(limitationWorld.containsKey(w)){return limitationWorld.get(w);}else{return -1;}}
 	public int getAmountChunk(){return this.chunkLimit;}
-	
+	public void setSilent(boolean b){silent = b;}
 	public boolean isCompleteLimitation(String s){
 		if(this.complete.contains(s)){
 			return true;
 		}
 		return false;
-	}
-
-	public void checkDriveable(List<fEntity> entityList){
-		if(!isSearch){
-			int i = 0;
-			for(fEntity entity : entityList){
-				String s = entity.getCustomName().toLowerCase();
-				if(s.startsWith("#car_middle#(")){
-					s = s.replace("#car_middle#(", "");
-					s = s.replace(")", "");
-					if(s.contains(",")){
-						String[] args = s.split(",");
-						for(String str : args){
-							if(str.contains("speed:")){
-								str = str.replace("speed:", "");
-								maxSpeed = Integer.parseInt(str);
-							}else if(str.contains("gear:")){
-								str = str.replace("gear:", "");
-								gear = Integer.parseInt(str);
-							}
-						}
-					}
-					middle = i;
-				}
-				i++;
-			}
-			isSearch = true;
-			if(gear!=-98451&&maxSpeed!=-98451&&middle!=-98451){
-			    isCar = true;
-			}
-		}
 	}
 	
 	public Project setSize(Integer witdh, Integer height, Integer length, CenterType type){		
@@ -215,9 +178,5 @@ public class Project extends ProjectSettings{
 			}
 		}
 		return -1;
-	}
-	
-	public void rename(String string){
-		
 	}
 }

@@ -67,9 +67,12 @@ public class ProjectManager {
 									Project p = new Project(systemID, FurnitureLib.getInstance(), new FileInputStream(file), side, ProjectLoader.class).setEditorProject(true);
 									s += systemID + ",";
 									int Width = 0, Height = 0, Lentgh = 0;
+									boolean silent = false;
+
+									if(configuration.isSet(header + ".Options.ProjectBreakEvent.Silent")){silent = configuration.getBoolean(header + ".Options.ProjectBreakEvent.Silent");}
+									p.setSilent(silent);
 									
 									if(configuration.isConfigurationSection(header+".ProjectModels.Block")){
-										
 										int minWitdh = 0, maxWidth = 0, maxHeight = 0, minHeight = 0, maxLentgh = 0, minLentgh = 0;
 										for(String str : configuration.getConfigurationSection(header+".ProjectModels.Block").getKeys(false)){
 											double x = configuration.getDouble(header+".ProjectModels.Block." + str + ".X-Offset");
