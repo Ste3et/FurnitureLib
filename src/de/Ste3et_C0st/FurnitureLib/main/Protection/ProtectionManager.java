@@ -119,7 +119,6 @@ public class ProtectionManager {
 	}
 	
 	public boolean canBuild(Player p, ObjectID id, EventType type){
-		Bukkit.broadcastMessage("Start Check");
 		if(p.isOp() || FurnitureLib.getInstance().getPermission().hasPerm(p,"furniture.bypass.protection") || FurnitureLib.getInstance().getPermission().hasPerm(p,"furniture.admin")){return true;}
 		PublicMode publicMode = id.getPublicMode();
 		Bukkit.broadcastMessage(publicMode.getName());
@@ -130,10 +129,8 @@ public class ProtectionManager {
 		Boolean b = canBuild(type, p, id);
 		if(FurnitureLib.getInstance().haveRegionMemberAccess()){
 			if(!b){p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("NoPermissions"));}
-			Bukkit.broadcastMessage("Boolean[haveRegionMemberAccess]: " + true);
 			return b;
 		}
-		Bukkit.broadcastMessage("Boolean[haveRegionMemberAccess]: " + false);
 		if(publicMode.equals(PublicMode.PRIVATE)){
 			if(!ownerID.equals(userID)) return true;
 		}else if(publicMode.equals(PublicMode.MEMBERS)){
@@ -150,25 +147,19 @@ public class ProtectionManager {
 	
 	private boolean canBuild(EventType type, Player p, ObjectID id){
 		if(type!=null&&type.equals(EventType.BREAK)){
-			Bukkit.broadcastMessage("Break: §11");
 			Boolean bool = FurnitureLib.getInstance().getPermManager().isOwner(p, id.getStartLocation());
-			Bukkit.broadcastMessage("Boolean[1]: " + bool);
 			if(bool!=null&&bool){return true;}
 			if(FurnitureLib.getInstance().haveRegionMemberAccess()){
 				bool = FurnitureLib.getInstance().getPermManager().canBuild(p, id.getStartLocation());
-				Bukkit.broadcastMessage("Boolean[2]: " + bool);
 				if(bool!=null&&bool){return true;}
 			}
 		}
 		
 		if(type!=null&&type.equals(EventType.BREAK)){
 			if(FurnitureLib.getInstance().haveRegionMemberAccess()){
-				Bukkit.broadcastMessage("Break: §42");
 				Boolean bool = FurnitureLib.getInstance().getPermManager().isOwner(p, id.getStartLocation());
-				Bukkit.broadcastMessage("Boolean[1]: " + bool);
 				if(bool!=null&&bool){return true;}
 				bool = FurnitureLib.getInstance().getPermManager().canBuild(p, id.getStartLocation());
-				Bukkit.broadcastMessage("Boolean[2]: " + bool);
 				if(bool!=null&&bool){return true;}
 			}
 		}
