@@ -119,20 +119,25 @@ public class ProtectionManager {
 	}
 	
 	public boolean canBuild(Player p, ObjectID id, EventType type){
+		Bukkit.broadcastMessage("Start Check");
 		if(p.isOp() || FurnitureLib.getInstance().getPermission().hasPerm(p,"furniture.bypass.protection") || FurnitureLib.getInstance().getPermission().hasPerm(p,"furniture.admin")){return true;}
 		PublicMode publicMode = id.getPublicMode();
+		Bukkit.broadcastMessage(publicMode.getName());
 		UUID userID = p.getUniqueId();
 		UUID ownerID = id.getUUID();
+		Bukkit.broadcastMessage("Owner:" + ownerID.toString());
 		if(ownerID!=null&&userID.equals(ownerID)){return true;}
-		Boolean b = canBuild(type, p, id);
 		
+		Boolean b = canBuild(type, p, id);
+		Bukkit.broadcastMessage("Boolean[CanBuild]: " + b);
 		if(FurnitureLib.getInstance().haveRegionMemberAccess()){
 			if(!b){p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("NoPermissions"));}
+			Bukkit.broadcastMessage("Boolean[haveRegionMemberAccess]: " + true);
 			return b;
 		}
+		Bukkit.broadcastMessage("Boolean[haveRegionMemberAccess]: " + false);
 		if(publicMode.equals(PublicMode.PRIVATE)){
-			if(ownerID==null){b=false;}
-			if(ownerID!=null&&userID!=null&&!ownerID.equals(userID)){b=false;}
+			if(!ownerID.equals(userID)) return true;
 		}else if(publicMode.equals(PublicMode.MEMBERS)){
 			if(id.getMemberList().isEmpty()){b=false;}
 			if(id.getMemberList().contains(userID)){
@@ -142,6 +147,7 @@ public class ProtectionManager {
 			b = isEventType(id, type);
 		}
 		if(!b){p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("NoPermissions"));}
+		Bukkit.broadcastMessage("Boolean[b]: " + true);
 		return b;
 	}
 	
