@@ -125,11 +125,9 @@ public class ProtectionManager {
 		Bukkit.broadcastMessage(publicMode.getName());
 		UUID userID = p.getUniqueId();
 		UUID ownerID = id.getUUID();
-		Bukkit.broadcastMessage("Owner:" + ownerID.toString());
 		if(ownerID!=null&&userID.equals(ownerID)){return true;}
 		
 		Boolean b = canBuild(type, p, id);
-		Bukkit.broadcastMessage("Boolean[CanBuild]: " + b);
 		if(FurnitureLib.getInstance().haveRegionMemberAccess()){
 			if(!b){p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("NoPermissions"));}
 			Bukkit.broadcastMessage("Boolean[haveRegionMemberAccess]: " + true);
@@ -147,25 +145,30 @@ public class ProtectionManager {
 			b = isEventType(id, type);
 		}
 		if(!b){p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("NoPermissions"));}
-		Bukkit.broadcastMessage("Boolean[b]: " + true);
 		return b;
 	}
 	
 	private boolean canBuild(EventType type, Player p, ObjectID id){
 		if(type!=null&&type.equals(EventType.BREAK)){
+			Bukkit.broadcastMessage("Break: §11");
 			Boolean bool = FurnitureLib.getInstance().getPermManager().isOwner(p, id.getStartLocation());
+			Bukkit.broadcastMessage("Boolean[1]: " + bool);
 			if(bool!=null&&bool){return true;}
 			if(FurnitureLib.getInstance().haveRegionMemberAccess()){
 				bool = FurnitureLib.getInstance().getPermManager().canBuild(p, id.getStartLocation());
+				Bukkit.broadcastMessage("Boolean[2]: " + bool);
 				if(bool!=null&&bool){return true;}
 			}
 		}
 		
 		if(type!=null&&type.equals(EventType.BREAK)){
 			if(FurnitureLib.getInstance().haveRegionMemberAccess()){
+				Bukkit.broadcastMessage("Break: §42");
 				Boolean bool = FurnitureLib.getInstance().getPermManager().isOwner(p, id.getStartLocation());
+				Bukkit.broadcastMessage("Boolean[1]: " + bool);
 				if(bool!=null&&bool){return true;}
 				bool = FurnitureLib.getInstance().getPermManager().canBuild(p, id.getStartLocation());
+				Bukkit.broadcastMessage("Boolean[2]: " + bool);
 				if(bool!=null&&bool){return true;}
 			}
 		}
