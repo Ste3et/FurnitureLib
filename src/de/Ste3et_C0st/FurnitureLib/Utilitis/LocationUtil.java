@@ -282,31 +282,33 @@ public class LocationUtil {
 		Block block = l.getBlock();
         BlockState bedFoot = block.getState();
         BlockState bedHead = bedFoot.getBlock().getRelative(face.getOppositeFace()).getState();
-		l.getBlock().setType(Material.AIR);
-		l.getBlock().setType(Material.BED_BLOCK);
-        bedFoot.setType(Material.BED_BLOCK);
-        bedHead.setType(Material.BED_BLOCK);
-    	switch (face) {
-		case NORTH:
-            bedFoot.setRawData((byte) 0);
-            bedHead.setRawData((byte) 8);
-			break;
-		case EAST:
-            bedFoot.setRawData((byte) 1);
-            bedHead.setRawData((byte) 9);
-            break;
-		case SOUTH:
-            bedFoot.setRawData((byte) 2);
-            bedHead.setRawData((byte) 10);
-            break;
-		case WEST:
-            bedFoot.setRawData((byte) 3);
-            bedHead.setRawData((byte) 11);
-            break;
-		default: return null;
+		if(!bedHead.getType().equals(Material.BED_BLOCK) || !bedFoot.getType().equals(Material.BED_BLOCK)) {
+			l.getBlock().setType(Material.AIR);
+			l.getBlock().setType(Material.BED_BLOCK);
+		    bedFoot.setType(Material.BED_BLOCK);
+		    bedHead.setType(Material.BED_BLOCK);
+		    switch (face) {
+				case NORTH:
+		            bedFoot.setRawData((byte) 0);
+		            bedHead.setRawData((byte) 8);
+					break;
+				case EAST:
+		            bedFoot.setRawData((byte) 1);
+		            bedHead.setRawData((byte) 9);
+		            break;
+				case SOUTH:
+		            bedFoot.setRawData((byte) 2);
+		            bedHead.setRawData((byte) 10);
+		            break;
+				case WEST:
+		            bedFoot.setRawData((byte) 3);
+		            bedHead.setRawData((byte) 11);
+		            break;
+				default: return null;
+			}
+		    bedFoot.update(true, false);
+		    bedHead.update(true, true);
 		}
-        bedFoot.update(true, false);
-        bedHead.update(true, true);
 		return bedHead.getLocation();
     }
     
