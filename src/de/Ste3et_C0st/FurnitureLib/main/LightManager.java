@@ -26,7 +26,7 @@ public class LightManager {
 		if(!enable){return;}
 		if(location==null){return;}
 		if(size==null){return;}
-		Bukkit.getScheduler().runTask(plugin, new Runnable() {
+		Bukkit.getScheduler().scheduleSyncDelayedTask(FurnitureLib.getInstance(), new Runnable() {
 			@Override
 			public void run() {
 				LightAPI.createLight(location, size, false);
