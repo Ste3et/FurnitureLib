@@ -3,7 +3,6 @@ package de.Ste3et_C0st.FurnitureLib.main;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.plugin.Plugin;
-
 import ru.beykerykt.lightapi.LightAPI;
 import ru.beykerykt.lightapi.chunks.ChunkInfo;
 
@@ -23,14 +22,19 @@ public class LightManager {
 		}
 	}
 	
-	public void addLight(Location location, Integer size){
+	public void addLight(final Location location, final Integer size){
 		if(!enable){return;}
 		if(location==null){return;}
 		if(size==null){return;}
-		LightAPI.createLight(location, size, false);
-		for(ChunkInfo info: LightAPI.collectChunks(location)){
-			LightAPI.updateChunk(info);
-		}
+		Bukkit.getScheduler().runTask(plugin, new Runnable() {
+			@Override
+			public void run() {
+				LightAPI.createLight(location, size, false);
+				for(ChunkInfo info: LightAPI.collectChunks(location)){
+					LightAPI.updateChunk(info);
+				}
+			}
+		});
 	}
 	
 	public void removeLight(Location location){
