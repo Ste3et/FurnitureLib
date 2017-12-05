@@ -80,6 +80,7 @@ public class FurnitureLib extends JavaPlugin{
 	private ProjectManager pManager;
 	private PermissionHandler permissionHandler;
 	private String timePattern = "mm:ss:SSS";
+	private List<registerAPI> furnitureList = new ArrayList<registerAPI>();
 	private int purgeTime = 30, viewDistance = 100, asyncStepsPerSequenz = 100;
 	private long purgeTimeMS = 0, spamBreakTime = 5000, spamPlaceTime = 5000;
 	public HashMap<Project, Long> deleteMap = new HashMap<Project, Long>();
@@ -225,9 +226,9 @@ public class FurnitureLib extends JavaPlugin{
 									@Override
 									public void run() {
 										pManager.loadProjectFiles();
+										send("§2Furniture load finish :)");
 									}
 								}, 5);
-								send("§2Furniture load finish :)");
 							}
 						}
 					});
@@ -338,20 +339,19 @@ public class FurnitureLib extends JavaPlugin{
 	}
 	
 	public void registerPluginFurnitures(Plugin plugin){
-		List<ObjectID> objList = new ArrayList<ObjectID>();
-		for(ObjectID obj : manager.getObjectList()){
-			if(obj==null) continue;
-			if(objList.contains(obj)) continue;
-			if(!objList.contains(obj)) objList.add(obj);
-			if(obj.getPlugin()==null) continue;
-			if(obj.getSQLAction().equals(SQLAction.REMOVE)) continue;
-			if(obj.getPlugin().equalsIgnoreCase(plugin.getName())){
-				spawn(obj.getProjectOBJ(), obj);
+		for(registerAPI api : this.furnitureList) {
+			if(api.getPlugin().equals(plugin)) {
+				return;
 			}
 		}
+		furnitureList.add(new registerAPI(plugin));
 	}
 	
-
+	public void triggerRegister() {
+		for(registerAPI api : this.furnitureList) {
+			api.trigger();
+		}
+	}
 	
 	private boolean isEnable(String plugin, boolean shutdown){
 		boolean b = getServer().getPluginManager().isPluginEnabled(plugin);
