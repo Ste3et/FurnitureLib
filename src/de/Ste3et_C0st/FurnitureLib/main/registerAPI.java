@@ -5,33 +5,39 @@ import java.util.List;
 
 import org.bukkit.plugin.Plugin;
 
-import de.Ste3et_C0st.FurnitureLib.Database.DataBaseCallBack;
+import de.Ste3et_C0st.FurnitureLib.Database.CallBack;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 
 public class registerAPI {
 
-	DataBaseCallBack callback = null;
+	CallBack callback = null;
 	Plugin plugin = null;
 	
-	public registerAPI(Plugin plugin) {
+	public registerAPI(Plugin plugin, CallBack callback) {
 		this.plugin = plugin;
-		callback = new DataBaseCallBack() {
-			@Override
-			public void onResult(boolean paramBoolean) {
-				if(paramBoolean) {
-					registerPluginFurnitures(getPlugin());
-				}
-			}
-		};
+//		callback = new CallBack() {
+//			@Override
+//			public void onResult(boolean paramBoolean) {
+//				if(paramBoolean) {
+//					registerPluginFurnitures(getPlugin());
+//				}
+//			}
+//		};
+		this.callback = callback;
 	}
 	
 	public Plugin getPlugin() {
 		return this.plugin;
 	}
 	
+	public CallBack getCallback() {
+		return this.callback;
+	}
+	
 	public void trigger() {
 		if(callback != null) {
 			callback.onResult(true);
+			registerPluginFurnitures(getPlugin());
 		}
 	}
 	

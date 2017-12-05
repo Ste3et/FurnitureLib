@@ -51,7 +51,7 @@ public class SQLManager {
 		}
 	}
 	
-	public void loadALL(DataBaseCallBack callBack){
+	public void loadALL(CallBack callBack){
 	       	if(sqlite!=null) sqlite.loadAll(SQLAction.NOTHING, callBack);
 	    	if(mysql!=null) mysql.loadAll(SQLAction.NOTHING, callBack);
 	    	FurnitureLib.getInstance().getFurnitureManager().sendAll();
@@ -75,7 +75,7 @@ public class SQLManager {
 			this.sqlite = new SQLite(plugin, fileDB.getName().replace(".db", ""));
 			this.sqlite.load();
 			final File fileDatabase = fileDB;
-			this.sqlite.loadAll(SQLAction.SAVE, new DataBaseCallBack() {
+			this.sqlite.loadAll(SQLAction.SAVE, new CallBack() {
 				@Override
 				public void onResult(boolean b) {
 					if(b){

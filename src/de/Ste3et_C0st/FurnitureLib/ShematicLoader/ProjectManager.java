@@ -14,6 +14,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import com.google.common.io.Files;
 
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
+import de.Ste3et_C0st.FurnitureLib.Database.CallBack;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.Type.CenterType;
 import de.Ste3et_C0st.FurnitureLib.main.Type.PlaceableSide;
@@ -103,13 +104,18 @@ public class ProjectManager {
 				return;
 			}
 		}
-		FurnitureLib.getInstance().registerPluginFurnitures(FurnitureLib.getInstance());
+		
 		if(s.length()>1){
 			String str = s.substring(0, s.length()-1);
 			FurnitureLib.getInstance().send("FurnitureLib load Models("+StringUtils.countMatches(s, ",")+"): " + str);
 		}else{
 			FurnitureLib.getInstance().send("If you want to install more models look at here: http://dicecraft.de/furniture/models.php");
 		}
+		
+		FurnitureLib.getInstance().registerPluginFurnitures(FurnitureLib.getInstance(), new CallBack() {
+			@Override
+			public void onResult(boolean paramBoolean) {}});
+		
 		FurnitureLib.getInstance().triggerRegister();
 	}
 	

@@ -19,7 +19,7 @@ public abstract class Database {
 	FurnitureLib plugin;
     Connection connection;
     Statement statement;
-    DataBaseCallBack callBack;
+    CallBack callBack;
     boolean result = false;
     public Database(FurnitureLib instance){
         this.plugin = instance;
@@ -73,7 +73,7 @@ public abstract class Database {
     	return false;
     }
 
-    public void loadAll(final SQLAction action, final DataBaseCallBack callBack){
+    public void loadAll(final SQLAction action, final CallBack callBack){
     	final long time1 = System.currentTimeMillis();
     	final boolean b = FurnitureLib.getInstance().isAutoPurge();
 //    	try{
@@ -108,7 +108,7 @@ public abstract class Database {
     	
     	this.callBack = callBack;
     	loadFurnitures(0, b, action);
-    	this.callBack2 = new DataBaseCallBack() {
+    	this.callBack2 = new CallBack() {
 			@Override
 			public void onResult(boolean b) {
 				if(b){
@@ -132,7 +132,7 @@ public abstract class Database {
     }
     
 
-    private DataBaseCallBack callBack2;
+    private CallBack callBack2;
     
     public boolean loadFurnitures(final int i, final boolean b, final SQLAction action){
     	if(result) return false;

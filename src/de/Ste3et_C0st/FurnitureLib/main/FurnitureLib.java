@@ -30,7 +30,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import de.Ste3et_C0st.FurnitureLib.Command.TabCompleterHandler;
 import de.Ste3et_C0st.FurnitureLib.Command.command;
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
-import de.Ste3et_C0st.FurnitureLib.Database.DataBaseCallBack;
+import de.Ste3et_C0st.FurnitureLib.Database.CallBack;
 import de.Ste3et_C0st.FurnitureLib.Database.DeSerializer;
 import de.Ste3et_C0st.FurnitureLib.Database.Serializer;
 import de.Ste3et_C0st.FurnitureLib.Database.SQLManager;
@@ -216,7 +216,7 @@ public class FurnitureLib extends JavaPlugin{
 					this.loadIgnore();
 					
 					
-					this.sqlManager.loadALL(new DataBaseCallBack() {
+					this.sqlManager.loadALL(new CallBack() {
 						@Override
 						public void onResult(boolean b) {
 							if(b){
@@ -338,13 +338,15 @@ public class FurnitureLib extends JavaPlugin{
 		}
 	}
 	
-	public void registerPluginFurnitures(Plugin plugin){
+	public registerAPI registerPluginFurnitures(Plugin plugin, CallBack callback){
 		for(registerAPI api : this.furnitureList) {
 			if(api.getPlugin().equals(plugin)) {
-				return;
+				return null;
 			}
 		}
-		furnitureList.add(new registerAPI(plugin));
+		registerAPI api = new registerAPI(plugin, callback);
+		furnitureList.add(api);
+		return api;
 	}
 	
 	public void triggerRegister() {
