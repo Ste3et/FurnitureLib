@@ -1,17 +1,16 @@
 package de.Ste3et_C0st.FurnitureLib.Events;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Chunk;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
-
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.ListenerPriority;
 import com.comphenix.protocol.events.PacketAdapter;
+import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
+import com.comphenix.protocol.reflect.StructureModifier;
 import com.comphenix.protocol.wrappers.EnumWrappers.EntityUseAction;
 
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
@@ -92,24 +91,63 @@ public class FurnitureEvents {
                     }
         });
 		
-//		ProtocolLibrary.getProtocolManager().addPacketListener(
-//				 new PacketAdapter(instance, ListenerPriority.HIGHEST, PacketType.Play.Client.POSITION) {
-//					 public void onPacketReceiving(PacketEvent event) {
-//						 Bukkit.getScheduler().scheduleSyncDelayedTask(FurnitureLib.getInstance(), new Runnable() {
-//							 @Override
-//							 public void run() {
-//								 
-//								 if (e.getTo().getBlock().getLocation().equals(e.getFrom().getBlock().getLocation())) return;
-//								Player player = e.getPlayer();
-//								if (player.getHealth() <= 0.0D) return;
-//								Chunk oldChunk = e.getFrom().getChunk();
-//								Chunk newChunk = e.getTo().getChunk();
-//								if (!oldChunk.equals(newChunk)) manager.updatePlayerView(player);
-//							 }
-//						 });
-//					 }
-//				 }
-//	    );
+		ProtocolLibrary.getProtocolManager().addPacketListener(
+				 new PacketAdapter(instance, ListenerPriority.HIGHEST, PacketType.Play.Client.POSITION){
+					 public void onPacketReceiving(PacketEvent e) {
+						 PacketContainer container = e.getPacket();
+						 StructureModifier<Double> doubleStructure = container.getDoubles();
+						 
+						 int x = doubleStructure.read(0).intValue();
+						 int z = doubleStructure.read(2).intValue();
+						 
+						 Player p = e.getPlayer();
+						 
+						 Location l = p.getLocation();
+						 
+						 int X = (int) l.getX();
+						 int Z = (int) l.getZ();
+						 
+						 int cX = x >> 4;
+						 int cZ = z>> 4;
+						 
+						 int CX = X >> 4;
+						 int CZ = Z >> 4;
+						 
+						 if(cX != CX || cZ != CZ) {
+							 manager.updatePlayerView(p);
+						 }
+					 }
+				 }
+	    );
+		
+		ProtocolLibrary.getProtocolManager().addPacketListener(
+				 new PacketAdapter(instance, ListenerPriority.HIGHEST, PacketType.Play.Client.POSITION_LOOK){
+					 public void onPacketReceiving(PacketEvent e) {
+						 PacketContainer container = e.getPacket();
+						 StructureModifier<Double> doubleStructure = container.getDoubles();
+						 
+						 int x = doubleStructure.read(0).intValue();
+						 int z = doubleStructure.read(2).intValue();
+						 
+						 Player p = e.getPlayer();
+						 
+						 Location l = p.getLocation();
+						 
+						 int X = (int) l.getX();
+						 int Z = (int) l.getZ();
+						 
+						 int cX = x >> 4;
+						 int cZ = z>> 4;
+						 
+						 int CX = X >> 4;
+						 int CZ = Z >> 4;
+						 
+						 if(cX != CX || cZ != CZ) {
+							 manager.updatePlayerView(p);
+						 }
+					 }
+				 }
+	    );
 		
 		ProtocolLibrary.getProtocolManager().addPacketListener(
                 new PacketAdapter(instance, ListenerPriority.HIGHEST, PacketType.Play.Client.STEER_VEHICLE) {

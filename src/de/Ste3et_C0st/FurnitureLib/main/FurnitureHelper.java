@@ -63,7 +63,6 @@ public abstract class FurnitureHelper{
 	public void delete(){this.obj=null;}
 	public void consumeItem(Player p){
 		if(p.getGameMode().equals(GameMode.CREATIVE) && FurnitureLib.getInstance().useGamemode()) return;
-		Integer i = p.getInventory().getHeldItemSlot();
 		ItemStack is = p.getInventory().getItemInMainHand();
 		if((is.getAmount()-1)<=0){
 			is.setType(Material.AIR);
@@ -71,7 +70,7 @@ public abstract class FurnitureHelper{
 			is.setAmount(is.getAmount()-1);
 		}
 
-		p.getInventory().setItem(i, is);
+		p.getInventory().setItem(p.getInventory().getHeldItemSlot(), is);
 		p.updateInventory();
 	}
 	

@@ -40,16 +40,6 @@ public class ChunkOnLoad implements Listener{
 	public HashSet<Player> eventList = new HashSet<Player>();
 	
 	public FurnitureManager manager = FurnitureLib.getInstance().getFurnitureManager();
-
-	@EventHandler
-	public void onPlayerMove(PlayerMoveEvent e){
-		if (e.getTo().getBlock().getLocation().equals(e.getFrom().getBlock().getLocation())) return;
-		Player player = e.getPlayer();
-		if (player.getHealth() <= 0.0D) return;
-		Chunk oldChunk = e.getFrom().getChunk();
-		Chunk newChunk = e.getTo().getChunk();
-		if (!oldChunk.equals(newChunk)) manager.updatePlayerView(player);
-	}
 	
 	@EventHandler
 	public void onPlayerTeleport(PlayerTeleportEvent event){
