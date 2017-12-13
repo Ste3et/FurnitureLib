@@ -76,36 +76,6 @@ public abstract class Database {
     public void loadAll(final SQLAction action, final CallBack callBack){
     	final long time1 = System.currentTimeMillis();
     	final boolean b = FurnitureLib.getInstance().isAutoPurge();
-//    	try{
-//    		new Thread(new Runnable() {
-//				@Override
-//				public void run() {
-//					try{
-//						ResultSet rs = statement.executeQuery("SELECT * FROM FurnitureLib_Objects");
-//			    		while (rs.next()){FurnitureLib.getInstance().getDeSerializer().Deserialze(rs.getString(1), rs.getString(2), action, b);}
-//			    		if(!rs.next()){
-//			    			rs.close();
-//			    			plugin.getLogger().info("FurnitureLib load " + FurnitureLib.getInstance().getFurnitureManager().getObjectList().size()  +  " Objects from: " + getType().name() + " Database");
-//			        		long time2 = System.currentTimeMillis();
-//			    	    	long newTime = time2-time1;
-//			    	    	SimpleDateFormat time = new SimpleDateFormat("mm:ss.SSS");
-//			    	    	String timeStr = time.format(newTime);
-//			    	    	int ArmorStands = FurnitureLib.getInstance().getDeSerializer().armorStands;
-//			    	    	int purged = FurnitureLib.getInstance().getDeSerializer().purged;
-//			    	    	plugin.getLogger().info("FurnitureLib have loadet " + ArmorStands + " in " +timeStr);
-//			    	    	plugin.getLogger().info("FurnitureLib have purged " + purged + " Objects");
-//			    	    	callBack.onResult(true);
-//			    		}
-//					}catch(Exception e){
-//			    		e.printStackTrace();
-//			    		callBack.onResult(false);
-//			    	}
-//				}
-//    		}).start();
-//    	}catch(Exception e){
-//    		e.printStackTrace();
-//    	}
-    	
     	this.callBack = callBack;
     	loadFurnitures(0, b, action);
     	this.callBack2 = new CallBack() {

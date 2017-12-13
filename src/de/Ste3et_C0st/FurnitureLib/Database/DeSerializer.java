@@ -1,11 +1,8 @@
 package de.Ste3et_C0st.FurnitureLib.Database;
 
 import java.io.ByteArrayInputStream;
-import java.io.EOFException;
 import java.util.HashSet;
 import java.util.UUID;
-import java.util.zip.ZipException;
-
 import org.apache.commons.codec.binary.Base64;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -39,16 +36,17 @@ public class DeSerializer {
 	public FurnitureLib lib = FurnitureLib.getInstance();
 	public WorldPool pool = FurnitureLib.getInstance().getWorldPool();
 	private Object[] enumItemSlots = EnumWrappers.ItemSlot.values();
-	
-	
+
 	public void Deserialze(String objId,String in, SQLAction action, boolean autoPurge){
 		ObjectID obj = new ObjectID(null, null, null);
 		obj.setID(objId);
 		try {
 			byte[] by = Base64.decodeBase64(in);
+			if(in == null || by == null) {return;}
 			ByteArrayInputStream bin = new ByteArrayInputStream(by);
 			NBTTagCompound compound = NBTCompressedStreamTools.read(bin);
 			bin.close();
+			if(compound == null) {return;}
 			EventType evType = EventType.valueOf(compound.getString("EventType"));
 			PublicMode pMode = PublicMode.valueOf(compound.getString("PublicMode")); 
 			UUID uuid = uuidFetcher(compound.getString("Owner-UUID"));
@@ -83,16 +81,6 @@ public class DeSerializer {
 				if(FurnitureLib.getInstance().getFurnitureManager().getLastID()<ArmorID){FurnitureLib.getInstance().getFurnitureManager().setLastID(ArmorID);}
 				this.armorStands++;
 			}
-			//obj.sendAll();
-		} catch (EOFException eofEx){
-			eofEx.printStackTrace();
-			return;
-		} catch (ZipException zipEx){
-			System.out.println(obj.getID() + "Make Problems: Not in GZIP format or is the Table empty ?");
-			System.out.println(obj.getID() + "have marked as removing, pls ignor the error message");
-			obj.setSQLAction(SQLAction.REMOVE);
-			FurnitureLib.getInstance().getFurnitureManager().addObjectID(obj);
-			return;
 		}catch (Exception e) {
 			e.printStackTrace();
 			return;

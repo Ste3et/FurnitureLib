@@ -35,76 +35,18 @@ public class ProtectionManager {
 		}
 	}
 	
-	public boolean isSolid(Material m, int subID, PlaceableSide side){if(!checkPlaceable(m, subID, side)){return false;}{return m.isSolid();}}
+	public boolean isSolid(Material mat, int subID, PlaceableSide side){if(!checkPlaceable(mat, subID, side)){return false;}{return mat.isSolid();}}
 	
-	private boolean checkPlaceable(Material m, int subID, PlaceableSide side){
-	    switch (m) {
-			case WOOD_STAIRS: 
-			if(subID>=4) return true;
-			return false;
-			case COBBLESTONE_STAIRS:
-			if(subID>=4) return true;
-			return false;
-			case BRICK_STAIRS:
-			if(subID>=4) return true;
-			return false;
-			case SMOOTH_STAIRS:
-			if(subID>=4) return true;
-			return false;
-			case QUARTZ_STAIRS:
-			if(subID>=4) return true;
-			return false;
-			case NETHER_BRICK_STAIRS:
-			if(subID>=4) return true;
-			return false;
-			case SANDSTONE_STAIRS:
-			if(subID>=4) return true;
-			return false;
-			case SPRUCE_WOOD_STAIRS:
-			if(subID>=4) return true;
-			return false;
-			case BIRCH_WOOD_STAIRS:
-			if(subID>=4) return true;
-			return false;
-			case JUNGLE_WOOD_STAIRS:
-			if(subID>=4) return true;
-			return false;
-			case ACACIA_STAIRS:
-			if(subID>=4) return true;
-			return false;
-			case DARK_OAK_STAIRS:
-			if(subID>=4) return true;
-			return false;
-			case RED_SANDSTONE_STAIRS:
-			if(subID>=4) return true;
-			return false;
-			case WOOD_STEP:
-			if(subID>=8) return true;
-			return false;
-			case STEP:
-			if(subID>=8) return true; 
-			return false;
-			case STONE_SLAB2:
-			if(subID>=8) return true; 
-			return false;
-			case SOIL: return false;
-			case ICE: return false;
-			case GLOWSTONE: return false;
-			case TNT: return false;
-			case PISTON_BASE: return false;
-			case STONE_PLATE: return false;
-			case WOOD_PLATE: return false;
-			case IRON_PLATE: return false;
-			case GOLD_PLATE: return false;
-			case IRON_BARDING: return false;
-			case STATIONARY_WATER: if(side.equals(PlaceableSide.WATER)){return true;}
-			case AIR: return true;
-			case SNOW: 
-			if(subID==7) return true;
-			return false;
-			default: return true;
-		}
+	private boolean checkPlaceable(Material mat, int l, PlaceableSide side){
+		if(mat.equals(Material.SNOW) && l > 7) return true;
+    	if(mat.equals(Material.STONE_SLAB2) && l > 7) return true;
+    	if(mat.equals(Material.STEP) && l > 7) return true;
+    	if(mat.equals(Material.WOOD_STEP) && l > 7) return true;
+    	if(mat.name().contains("FENCE")) return true;
+    	if(mat.name().contains("STAIRS") && l > 3) return true;
+        return mat.isBlock() && mat.isSolid() && mat.isOccluding();
 	}
+    
 	
 	public boolean canBuild(Player p, Location loc){
 		if(FP==null){return true;}

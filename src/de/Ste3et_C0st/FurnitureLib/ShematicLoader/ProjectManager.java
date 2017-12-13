@@ -24,32 +24,6 @@ public class ProjectManager {
 	public void loadProjectFiles(){
 		String s = "";
 		File folder = new File("plugins/FurnitureLib/Crafting/");
-		File folder2 = new File("plugins/FurnitureLib/plugin/DiceEditor");
-		List<File> deleteList = new ArrayList<File>();
-		if(folder2.exists()){
-			if(!folder.exists()) folder.mkdir();
-			File[] array = folder2.listFiles();
-			if(array!=null){
-				for(File file : array){
-					if(!file.exists()) continue;
-					if(!file.isFile()) continue;
-	 				String str = file.getName();
-					if(!str.endsWith(".yml")) str += ".yml";
-					System.out.println("Old Project: " + str + " found");
-					try {
-						Files.copy(file, new File(folder, str));
-						deleteList.add(file);
-					} catch (IOException e) {
-						e.printStackTrace();
-					}
-				}
-				
-				for(File file : deleteList){
-					file.deleteOnExit();
-				}
-			}
-		}
-		
 		if(folder.exists()){
 			try{
 			for(File file : folder.listFiles()){
