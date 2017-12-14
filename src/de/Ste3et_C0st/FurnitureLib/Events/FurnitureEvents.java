@@ -94,28 +94,20 @@ public class FurnitureEvents {
 		ProtocolLibrary.getProtocolManager().addPacketListener(
 				 new PacketAdapter(instance, ListenerPriority.HIGHEST, PacketType.Play.Client.POSITION){
 					 public void onPacketReceiving(PacketEvent e) {
+						 if(manager.getIgnoreList().contains(e.getPlayer().getUniqueId())) return;
 						 PacketContainer container = e.getPacket();
 						 StructureModifier<Double> doubleStructure = container.getDoubles();
-						 
 						 int x = doubleStructure.read(0).intValue();
 						 int z = doubleStructure.read(2).intValue();
-						 
 						 Player p = e.getPlayer();
-						 
 						 Location l = p.getLocation();
-						 
 						 int X = (int) l.getX();
 						 int Z = (int) l.getZ();
-						 
 						 int cX = x >> 4;
-						 int cZ = z>> 4;
-						 
+						 int cZ = z >> 4;
 						 int CX = X >> 4;
 						 int CZ = Z >> 4;
-						 
-						 if(cX != CX || cZ != CZ) {
-							 manager.updatePlayerView(p);
-						 }
+						 if(cX != CX || cZ != CZ) manager.updatePlayerView(p);
 					 }
 				 }
 	    );
@@ -123,28 +115,20 @@ public class FurnitureEvents {
 		ProtocolLibrary.getProtocolManager().addPacketListener(
 				 new PacketAdapter(instance, ListenerPriority.HIGHEST, PacketType.Play.Client.POSITION_LOOK){
 					 public void onPacketReceiving(PacketEvent e) {
+						 if(manager.getIgnoreList().contains(e.getPlayer().getUniqueId())) return;
 						 PacketContainer container = e.getPacket();
 						 StructureModifier<Double> doubleStructure = container.getDoubles();
-						 
 						 int x = doubleStructure.read(0).intValue();
 						 int z = doubleStructure.read(2).intValue();
-						 
 						 Player p = e.getPlayer();
-						 
 						 Location l = p.getLocation();
-						 
 						 int X = (int) l.getX();
 						 int Z = (int) l.getZ();
-						 
 						 int cX = x >> 4;
-						 int cZ = z>> 4;
-						 
+						 int cZ = z >> 4;
 						 int CX = X >> 4;
 						 int CZ = Z >> 4;
-						 
-						 if(cX != CX || cZ != CZ) {
-							 manager.updatePlayerView(p);
-						 }
+						 if(cX != CX || cZ != CZ) manager.updatePlayerView(p);
 					 }
 				 }
 	    );

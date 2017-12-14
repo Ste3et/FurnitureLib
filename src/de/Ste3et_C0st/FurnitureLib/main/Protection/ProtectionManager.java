@@ -63,18 +63,12 @@ public class ProtectionManager {
 	public boolean canBuild(Player p, ObjectID id, EventType type){
 		if(p.isOp() || FurnitureLib.getInstance().getPermission().hasPerm(p,"furniture.bypass.protection") || FurnitureLib.getInstance().getPermission().hasPerm(p,"furniture.admin")){return true;}
 		PublicMode publicMode = id.getPublicMode();
-		Bukkit.broadcastMessage(publicMode.getName());
 		UUID userID = p.getUniqueId();
 		UUID ownerID = id.getUUID();
-		if(ownerID!=null&&userID.equals(ownerID)){return true;}
-		
+		if(ownerID==null){return true;}
 		Boolean b = canBuild(type, p, id);
-		if(FurnitureLib.getInstance().haveRegionMemberAccess()){
-			if(!b){p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("NoPermissions"));}
-			return b;
-		}
 		if(publicMode.equals(PublicMode.PRIVATE)){
-			if(!ownerID.equals(userID)) return true;
+			b = ownerID.equals(userID);
 		}else if(publicMode.equals(PublicMode.MEMBERS)){
 			if(id.getMemberList().isEmpty()){b=false;}
 			if(id.getMemberList().contains(userID)){
@@ -88,24 +82,20 @@ public class ProtectionManager {
 	}
 	
 	private boolean canBuild(EventType type, Player p, ObjectID id){
-		if(type!=null&&type.equals(EventType.BREAK)){
-			Boolean bool = FurnitureLib.getInstance().getPermManager().isOwner(p, id.getStartLocation());
-			if(bool!=null&&bool){return true;}
-			if(FurnitureLib.getInstance().haveRegionMemberAccess()){
-				bool = FurnitureLib.getInstance().getPermManager().canBuild(p, id.getStartLocation());
-				if(bool!=null&&bool){return true;}
-			}
+		if(type==null) return false;
+		if(p.getUniqueId().equals(id.getUUID())) return true;
+		boolean memberOfRegion = canBuild(p, id.getStartLocation());
+		boolean ownerOfRegion = isOwner(p, id.getStartLocation());
+		
+		if(memberOfRegion && !ownerOfRegion) {
+			if(!p.getUniqueId().equals(id.getUUID())) return false;
+			return true;
 		}
 		
-		if(type!=null&&type.equals(EventType.BREAK)){
-			if(FurnitureLib.getInstance().haveRegionMemberAccess()){
-				Boolean bool = FurnitureLib.getInstance().getPermManager().isOwner(p, id.getStartLocation());
-				if(bool!=null&&bool){return true;}
-				bool = FurnitureLib.getInstance().getPermManager().canBuild(p, id.getStartLocation());
-				if(bool!=null&&bool){return true;}
-			}
+		if(memberOfRegion && ownerOfRegion && FurnitureLib.getInstance().haveRegionMemberAccess()) {
+			if(!p.getUniqueId().equals(id.getUUID())) return true;
+			return true;
 		}
-		
 		return false;
 	}
 	
