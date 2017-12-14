@@ -1,6 +1,7 @@
 package de.Ste3et_C0st.FurnitureLib.Command;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -9,6 +10,7 @@ import net.md_5.bungee.api.chat.HoverEvent;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -20,6 +22,100 @@ import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 
 public class listCommand {
+
+	
+	
+	/*
+	 * 
+	 * 			/furniture list    1        2        3         4
+	 *			/furniture list <type> -w:World -r:radius -p:Owner page
+	 * 
+	 * 
+	 * 
+	 */
+	
+	
+	
+//	@SuppressWarnings("deprecation")
+//	public listCommand(CommandSender sender, Command cmd, String arg2,String[] args) {
+//		Player p = null;
+//		if(sender instanceof Player){p = (Player) sender;}else {return;}
+//		
+//		String type = args[1];
+//		World world = null;
+//		Integer radius = null;
+//		OfflinePlayer player = null;
+//		int page = 0;
+//
+//		for(String arg : args) {
+//			if(arg.equalsIgnoreCase(type)) continue;
+//			String a = arg.toLowerCase();
+//			if(a.startsWith("-w:")) {
+//				String wArg = a.replace("-w:", "");
+//				if(Bukkit.getServer().getWorld(wArg) != null) {world = Bukkit.getServer().getWorld(wArg);}
+//			}else if(a.startsWith("-r:")) {
+//				String rArg = a.replace("-r:", "");
+//				try {
+//					radius = Integer.parseInt(rArg);
+//					world = p.getWorld();
+//				}catch (Exception e) {
+//
+//				}
+//			}else if(a.startsWith("-p:")) {
+//				String pArg = a.replace("-p:", "");
+//				if(Bukkit.getOfflinePlayer(pArg) != null) {
+//					OfflinePlayer pl = Bukkit.getOfflinePlayer(pArg);
+//					if(pl.hasPlayedBefore()) {
+//						player = pl;
+//					}
+//				}
+//			}else{
+//				try {
+//					page = Integer.parseInt(arg);
+//				}catch (Exception e) {
+//
+//				}
+//			}
+//		}
+//		
+//		HashSet<ObjectID> idList = FurnitureLib.getInstance().getFurnitureManager().getObjectList();
+//		List<Project> projectList = FurnitureLib.getInstance().getFurnitureManager().getProjects();
+//		
+//		ArrayList<ObjectID> objList = new ArrayList<ObjectID>();
+//		
+//		for(ObjectID id : idList) {
+//			ObjectID obj = null;
+//			if(world != null) {
+//				if(id.getWorld().equals(world)) {
+//					obj = id;
+//				}else {
+//					obj = null;
+//				}
+//			}
+//			
+//			if(radius != null) {
+//				if(id.getStartLocation().distance(p.getLocation()) <= radius) {
+//					obj = id;
+//				}else {
+//					obj = null;
+//				}
+//			}
+//			
+//			if(player != null) {
+//				if(id.getUUID() != null) {
+//					if(id.getUUID().equals(player.getUniqueId())){
+//						obj = id;
+//					}else {
+//						obj = null;
+//					}
+//				}else {
+//					obj = null;
+//				}
+//			}
+//			if(obj != null) objList.add(id);
+//		}
+//		
+//	}
 
 	public listCommand(CommandSender sender, Command cmd, String arg2,String[] args) {
 		Player p = null;

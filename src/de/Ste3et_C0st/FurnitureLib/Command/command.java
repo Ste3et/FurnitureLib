@@ -61,6 +61,7 @@ public class command implements CommandExecutor, Listener{
 			p.sendMessage("§6Size: §e" + e.getID().getProjectOBJ().getLength()+":"+ e.getID().getProjectOBJ().getHeight()+":"+e.getID().getProjectOBJ().getWitdh());
 			p.sendMessage("§6Blocks: §a" + e.getID().getBlockList().size());
 			p.sendMessage("§6Project-Model: §e" + e.getID().getProjectOBJ().isEditorProject());
+			p.sendMessage("§6Placeable Side: §e" + e.getID().getProjectOBJ().getPlaceableSide().name());
 			if(e.getID().getUUID()!=null){
 				OfflinePlayer player = Bukkit.getOfflinePlayer(e.getID().getUUID());
 				if(player.hasPlayedBefore()&&!player.isOnline()){

@@ -25,6 +25,7 @@ import org.bukkit.material.MaterialData;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.HiddenStringUtils;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.config;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
+import de.Ste3et_C0st.FurnitureLib.main.Type.PlaceableSide;
 
 public class CraftingFile {
 	private config c;
@@ -33,6 +34,7 @@ public class CraftingFile {
 	private String header;
 	private ShapedRecipe recipe;
 	private boolean isDisable;
+	private PlaceableSide side = null;
 	public ShapedRecipe getRecipe(){return this.recipe;}
 	public ItemStack getItemstack(){return this.recipe.getResult();}
 	public boolean isEnable(){return this.isDisable;}
@@ -96,10 +98,22 @@ public class CraftingFile {
 				if(!isDisable){
 					Bukkit.getServer().addRecipe(this.recipe);
 				}
-				
+				getPlaceAbleSide();
 		}catch(Exception e){
 			e.printStackTrace();
 		}
+	}
+	
+	public PlaceableSide getPlaceAbleSide(){
+		if(this.side != null) return this.side;
+		if(file.isSet(header+".PlaceAbleSide")) {
+			String str = file.getString(header+".PlaceAbleSide", "TOP");
+			PlaceableSide side = PlaceableSide.valueOf(str);
+			this.side = side;
+			return side;
+		}
+		this.side = PlaceableSide.TOP;
+		return this.side;
 	}
 	
 	public void setName(String s){

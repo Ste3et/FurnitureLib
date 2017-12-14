@@ -17,7 +17,7 @@ import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.Type.CenterType;
 import de.Ste3et_C0st.FurnitureLib.main.Type.PlaceableSide;
 
-public class Project extends ProjectSettings{
+public class Project{
 	private String project;
 	private CraftingFile file;
 	private Plugin plugin;
@@ -88,7 +88,7 @@ public class Project extends ProjectSettings{
 		this.plugin = plugin;
 		this.clas = ProjectLoader.class;
 		this.file = new CraftingFile(name, craftingFile);
-		this.side = PlaceableSide.TOP;
+		this.side = this.file.getPlaceAbleSide();
 		FurnitureLib.getInstance().getFurnitureManager().addProject(this);
 		addDefaultWorld();
 		addDefault("chunk");
