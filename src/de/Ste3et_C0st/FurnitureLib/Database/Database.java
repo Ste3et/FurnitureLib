@@ -77,7 +77,9 @@ public abstract class Database {
     	final long time1 = System.currentTimeMillis();
     	final boolean b = FurnitureLib.getInstance().isAutoPurge();
     	this.callBack = callBack;
-    	loadFurnitures(0, b, action);
+    	// Here was error. callBack2 must be initialized before loadFurnitures,
+		// because loadFurnitures could call callBack2 very fast if database is empty
+		// This is optional changes, because we will make single-thread database loading. See loadFurnitures.
     	this.callBack2 = new CallBack() {
 			@Override
 			public void onResult(boolean b) {
@@ -99,42 +101,63 @@ public abstract class Database {
 				}
 			}
 		};
+		loadFurnitures(0, b, action);
     }
     
 
     private CallBack callBack2;
     
     public boolean loadFurnitures(final int i, final boolean b, final SQLAction action){
-    	if(result) return false;
-    	new Thread(new Runnable() {
-    		@Override
-			public void run() {
-    			try{
-    				int count = FurnitureLib.getInstance().getStepSize();
-    				int offset = i, j = 0;
-        			String query = "SELECT * FROM FurnitureLib_Objects LIMIT " + count + " OFFSET " + offset;
-        			ResultSet rs = statement.executeQuery(query);
-        			while (rs.next()){
-        				FurnitureLib.getInstance().getDeSerializer().Deserialze(rs.getString(1), rs.getString(2), action, b);
-        				j++;
-        			}
-        			if(!rs.next()){
-		    			rs.close();
-		    			if(j != count){
-		    				result = true;
-		    				callBack2.onResult(true);
-		    				return;
-		    			}else{
-		    				loadFurnitures(i + count, b, action);
-		    				return;
-		    			}
-		    		}
-    			}catch(Exception ex){
-    				ex.printStackTrace();
-    			}
-    		}
-    	}).start();
-    	return false;
+    	// It is very hard to organize "parallel" reading database in another thread.
+		// 1. Server can begin shutdown before loading database is finished
+		// 2. Packets must be sended via spigot main thread: plugin.getServer().getScheduler().runTask
+		// 3. Is it it important how long will start?
+		// 4. Anyway all data will be loaded in memory at the end
+		// Therefore I've made single-thread loading =(
+    	String query = "SELECT * FROM FurnitureLib_Objects";
+		try{
+			ResultSet rs = statement.executeQuery(query);
+			while (rs.next()){
+				FurnitureLib.getInstance().getDeSerializer().Deserialze(rs.getString(1), rs.getString(2), action, b);
+			}
+			rs.close();
+		}catch(Exception ex){
+			// We can't start plugin if error has occurred
+			throw new RuntimeException("Error while reading database =(", ex);
+		}
+		result = true;
+		callBack2.onResult(true);
+		return true;
+//    	if(result) return false;
+//    	new Thread(new Runnable() {
+//    		@Override
+//			public void run() {
+//    			try{
+//    				int count = FurnitureLib.getInstance().getStepSize();
+//    				int offset = i, j = 0;
+//        			String query = "SELECT * FROM FurnitureLib_Objects LIMIT " + count + " OFFSET " + offset;
+//        			ResultSet rs = statement.executeQuery(query);
+//        			while (rs.next()){
+//        				FurnitureLib.getInstance().getDeSerializer().Deserialze(rs.getString(1), rs.getString(2), action, b);
+//        				j++;
+//        			}
+//        			if(!rs.next()){
+//		    			rs.close();
+//		    			if(j != count){
+//		    				result = true;
+//		    				callBack2.onResult(true);
+//		    				return;
+//		    			}else{
+//		    				loadFurnitures(i + count, b, action);
+//		    				return;
+//		    			}
+//		    		}
+//    			}catch(Exception ex){
+//    				ex.printStackTrace();
+//    			}
+//    		}
+//    	}).start();
+//    	return false;
 	}
 
     public void delete(ObjectID objID){

@@ -90,7 +90,7 @@ public class FurnitureEvents {
                         }
                     }
         });
-		
+
 		ProtocolLibrary.getProtocolManager().addPacketListener(
 				 new PacketAdapter(instance, ListenerPriority.HIGHEST, PacketType.Play.Client.POSITION){
 					 public void onPacketReceiving(PacketEvent e) {
@@ -107,11 +107,23 @@ public class FurnitureEvents {
 						 int cZ = z >> 4;
 						 int CX = X >> 4;
 						 int CZ = Z >> 4;
-						 if(cX != CX || cZ != CZ) manager.updatePlayerView(p);
+						 if(cX != CX || cZ != CZ) {
+						 	 // manager.updatePlayerView calls send paket inside. I think we can't do it in ProtocolLib.onPacketReceiving
+							 // What is bad: There will be new Spigot Task on every chunk change.
+							 // ToDo: make instead manager.updatePlayerView something like list=manager.collectPlayerPacketsToSend(p)
+							 // and if list.size()>0 then call runTask => run{ send list }
+						 	 final Player p2=p;
+							 plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
+								 @Override
+								 public void run() {
+									 manager.updatePlayerView(p2);
+								 }
+							 });
+						 }
 					 }
 				 }
 	    );
-		
+
 		ProtocolLibrary.getProtocolManager().addPacketListener(
 				 new PacketAdapter(instance, ListenerPriority.HIGHEST, PacketType.Play.Client.POSITION_LOOK){
 					 public void onPacketReceiving(PacketEvent e) {
@@ -128,7 +140,17 @@ public class FurnitureEvents {
 						 int cZ = z >> 4;
 						 int CX = X >> 4;
 						 int CZ = Z >> 4;
-						 if(cX != CX || cZ != CZ) manager.updatePlayerView(p);
+						 if(cX != CX || cZ != CZ){
+						 	 // The same problem as about
+							 // ToDo: look above
+							 final Player p2=p;
+							 plugin.getServer().getScheduler().runTask(plugin, new Runnable() {
+							 	 @Override
+								 public void run() {
+									 manager.updatePlayerView(p2);
+								 }
+							 });
+						 }
 					 }
 				 }
 	    );

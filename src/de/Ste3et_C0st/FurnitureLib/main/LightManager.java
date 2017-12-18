@@ -26,15 +26,16 @@ public class LightManager {
 		if(!enable){return;}
 		if(location==null){return;}
 		if(size==null){return;}
-		Bukkit.getScheduler().scheduleSyncDelayedTask(FurnitureLib.getInstance(), new Runnable() {
-			@Override
-			public void run() {
+// This is not nesessary because addLight is called by function where another packets are also must be sent in spigot main loop thread
+//		Bukkit.getScheduler().scheduleSyncDelayedTask(FurnitureLib.getInstance(), new Runnable() {
+//			@Override
+//			public void run() {
 				LightAPI.createLight(location, size, false);
 				for(ChunkInfo info: LightAPI.collectChunks(location)){
 					LightAPI.updateChunk(info);
 				}
-			}
-		});
+//			}
+//		});
 	}
 	
 	public void removeLight(Location location){
