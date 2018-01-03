@@ -62,7 +62,7 @@ public class recipeCommand {
 						sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("ProjectNotFound").replaceAll("#PROJECT#", args[1]));
 						return;
 					}
-					pro.getCraftingFile().removeCrafting();
+					pro.getCraftingFile().removeCrafting(pro.getCraftingFile().getItemstack());
 					pro.getCraftingFile().setCraftingDisabled(true);
 					sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("CraftingRemove"));
 					return;

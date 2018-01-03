@@ -28,7 +28,7 @@ public class giveCommand {
 		if(args.length==2){
 			if(sender instanceof Player){
 				Player player = (Player) sender;
-				player.getInventory().addItem(pro.getCraftingFile().getRecipe().getResult());
+				player.getInventory().addItem(pro.getCraftingFile().getItemstack());
 				player.updateInventory();
 				return;
 			}else{
@@ -41,7 +41,7 @@ public class giveCommand {
 					int i = Integer.parseInt(args[2]);
 					if(i==0) i = 1;
 					Player player = (Player) sender;
-					ItemStack is = pro.getCraftingFile().getRecipe().getResult().clone();
+					ItemStack is = pro.getCraftingFile().getItemstack().clone();
 					is.setAmount(i);
 					player.getInventory().addItem(is);
 					player.updateInventory();
@@ -55,7 +55,7 @@ public class giveCommand {
 				Player p2 = Bukkit.getPlayer(args[2]);
 				Player p = null;
 				if(p2!=null&&p2.isOnline()){
-					p2.getInventory().addItem(pro.getCraftingFile().getRecipe().getResult());
+					p2.getInventory().addItem(pro.getCraftingFile().getItemstack());
 					p2.updateInventory();
 					if(sender instanceof Player){p = (Player) sender;}
 					if(p!=null&&p.getUniqueId().equals(p2.getUniqueId())){return;}
@@ -86,7 +86,7 @@ public class giveCommand {
 					if(FurnitureLib.getInstance().isInt(args[3])){
 						int i = Integer.parseInt(args[3]);
 						if(i==0) i = 1;
-						ItemStack is = pro.getCraftingFile().getRecipe().getResult().clone();
+						ItemStack is = pro.getCraftingFile().getItemstack();
 						is.setAmount(i);
 						p2.getInventory().addItem(is);
 						p2.updateInventory();

@@ -10,16 +10,20 @@ import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.logging.Level;
 
+import org.bukkit.Bukkit;
+
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.DataBaseType;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 
 public abstract class Database {
-	FurnitureLib plugin;
-    Connection connection;
-    Statement statement;
-    CallBack callBack;
+	public FurnitureLib plugin;
+	public Connection connection;
+    private Statement statement;
+    @SuppressWarnings("unused")
+	private CallBack callBack, callBack2;
+    private Thread t = null;
     boolean result = false;
     public Database(FurnitureLib instance){
         this.plugin = instance;
@@ -77,7 +81,6 @@ public abstract class Database {
     	final long time1 = System.currentTimeMillis();
     	final boolean b = FurnitureLib.getInstance().isAutoPurge();
     	this.callBack = callBack;
-    	loadFurnitures(0, b, action);
     	this.callBack2 = new CallBack() {
 			@Override
 			public void onResult(boolean b) {
@@ -91,51 +94,47 @@ public abstract class Database {
 		        	int purged = FurnitureLib.getInstance().getDeSerializer().purged;
 		        	plugin.getLogger().info("FurnitureLib have loadet " + ArmorStands + " in " +timeStr);
 		        	plugin.getLogger().info("FurnitureLib have purged " + purged + " Objects");
-		        	for(ObjectID id : FurnitureLib.getInstance().getFurnitureManager().getObjectList()){
-		        		id.sendAll();
-		        	}
-		        	
 		        	callBack.onResult(true);
 				}
 			}
 		};
+		loadFurnitures(b, action);
     }
     
-
-    private CallBack callBack2;
-    
-    public boolean loadFurnitures(final int i, final boolean b, final SQLAction action){
-    	if(result) return false;
-    	new Thread(new Runnable() {
+    public void loadFurnitures(final boolean b, final SQLAction action){
+    	if(result || this.t != null) return;
+    	this.t = new Thread(new Runnable() {
     		@Override
-			public void run() {
+			public void run(){
     			try{
-    				int count = FurnitureLib.getInstance().getStepSize();
-    				int offset = i, j = 0;
-        			String query = "SELECT * FROM FurnitureLib_Objects LIMIT " + count + " OFFSET " + offset;
+        			String query = "SELECT * FROM FurnitureLib_Objects";
         			ResultSet rs = statement.executeQuery(query);
-        			while (rs.next()){
+        			while (rs.next()) {
         				FurnitureLib.getInstance().getDeSerializer().Deserialze(rs.getString(1), rs.getString(2), action, b);
-        				j++;
         			}
         			if(!rs.next()){
 		    			rs.close();
-		    			if(j != count){
-		    				result = true;
-		    				callBack2.onResult(true);
-		    				return;
-		    			}else{
-		    				loadFurnitures(i + count, b, action);
-		    				return;
-		    			}
+		    			stop();
 		    		}
-    			}catch(Exception ex){
-    				ex.printStackTrace();
-    			}
+    			}catch(Exception ex){ex.printStackTrace();}
     		}
-    	}).start();
-    	return false;
+    	});
+    	t.start();
+    	return;
 	}
+    
+    private void stop() {
+    	if(t!=null) {
+    		t.interrupt();
+    		t= null;
+    		Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
+				@Override
+				public void run() {
+					callBack2.onResult(true);
+				}
+			});
+    	}
+    }
 
     public void delete(ObjectID objID){
     	try {

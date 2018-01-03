@@ -99,7 +99,9 @@ public class FurnitureManager {
 	}
 	
 	public void updatePlayerView(Player player) {
-		if(this.objecte.isEmpty()){return;}
+		if(this.objecte.isEmpty() || !player.isOnline()){return;}
+		//player.sendMessage("test");
+		
 		for(ObjectID obj : objecte){obj.updatePlayerView(player);}
 	}
 	

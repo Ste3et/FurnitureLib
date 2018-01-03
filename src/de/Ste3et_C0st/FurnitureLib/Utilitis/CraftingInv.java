@@ -141,12 +141,12 @@ public void openCrafting(final Player p, Project project, boolean editable)
 			  CraftingFile file = this.project.getCraftingFile();
 			  if(s.equalsIgnoreCase("xxx,xxx,xxx")){
 				  file.setCraftingDisabled(true);
-				  file.removeCrafting();
+				  file.removeCrafting(file.getItemstack());
 				  YamlConfiguration conf = YamlConfiguration.loadConfiguration(file.getFilePath());
 				  setItem(result, conf, file.getFileHeader());
 				  save(conf, file.getFilePath());
 			  }else{
-				  file.removeCrafting();
+				  file.removeCrafting(file.getItemstack());
 				  file.setCraftingDisabled(false);
 				  YamlConfiguration conf = YamlConfiguration.loadConfiguration(file.getFilePath());
 				  conf.set(file.getFileHeader() + ".crafting.recipe", "");

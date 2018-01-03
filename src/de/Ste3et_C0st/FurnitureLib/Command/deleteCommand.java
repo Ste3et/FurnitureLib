@@ -63,7 +63,7 @@ public class deleteCommand {
 												ids.remove();
 											}
 										}
-										project.getCraftingFile().removeCrafting();
+										project.getCraftingFile().removeCrafting(project.getCraftingFile().getItemstack());
 										project.getCraftingFile().setCraftingDisabled(true);
 										String str = project.getCraftingFile().getFileName();
 										File file1 = new File("plugins/FurnitureLib/Crafting", str + ".yml");
