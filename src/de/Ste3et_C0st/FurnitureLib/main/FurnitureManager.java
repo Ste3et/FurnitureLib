@@ -31,10 +31,12 @@ public class FurnitureManager {
 	private HashSet<ObjectID> objecte = new HashSet<ObjectID>();
 	private List<Project> projects = new ArrayList<Project>();
 	private List<UUID> ignoreList = new ArrayList<UUID>();
+	private boolean isLoading = false;
 	public void setLastID(Integer i){this.i = i;}
 	public HashSet<ObjectID> getObjectList(){return this.objecte;}
 	public List<Chunk> chunkList = new ArrayList<Chunk>();
 	public List<UUID> getIgnoreList(){return this.ignoreList;}
+	
 	public void addProject(Project project){
 		if(isExist(project.getName())){
 			projects.remove(getProject(project.getName()));
@@ -99,9 +101,8 @@ public class FurnitureManager {
 	}
 	
 	public void updatePlayerView(Player player) {
-		if(this.objecte.isEmpty() || !player.isOnline()){return;}
+		if(!isLoading || this.objecte.isEmpty() || !player.isOnline()){return;}
 		//player.sendMessage("test");
-		
 		for(ObjectID obj : objecte){obj.updatePlayerView(player);}
 	}
 	
@@ -284,5 +285,8 @@ public class FurnitureManager {
 			}
 		}
 		return null;
+	}
+	public void setFinishLoading(boolean b) {
+		this.isLoading = b;
 	}
 }

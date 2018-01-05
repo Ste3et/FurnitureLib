@@ -222,13 +222,13 @@ public class FurnitureLib extends JavaPlugin{
 							if(b){
 								if(getConfig().getBoolean("config.timer.Enable")){int time = getConfig().getInt("config.timer.time");sqlManager.saveIntervall(time);}
 								Bukkit.getScheduler().runTaskLater(getInstance(), new Runnable() {
-									
 									@Override
 									public void run() {
 										pManager.loadProjectFiles();
 										send("§2Furniture load finish :)");
 									}
 								}, 5);
+								getFurnitureManager().setFinishLoading(true);
 							}
 						}
 					});
