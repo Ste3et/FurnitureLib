@@ -25,7 +25,7 @@ import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
 
 public class command implements CommandExecutor, Listener{
-	
+
 	static FurnitureLib lib = FurnitureLib.getInstance();
 	FurnitureManager manager = lib.getFurnitureManager();
 	Plugin plugin;
