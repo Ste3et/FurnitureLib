@@ -114,9 +114,7 @@ public class FurnitureManager {
 	
 	public void sendAll(){
 		for(ObjectID objID : objecte){
-			if(!objID.getSQLAction().equals(SQLAction.REMOVE)){
-				send(objID);
-			}
+			if(!objID.getSQLAction().equals(SQLAction.REMOVE)) send(objID);
 		}
 	}
 

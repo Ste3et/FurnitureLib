@@ -3,15 +3,9 @@ package de.Ste3et_C0st.FurnitureLib.ShematicLoader;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
-import java.util.ArrayList;
-import java.util.List;
-
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.configuration.file.YamlConfiguration;
-
-import com.google.common.io.Files;
 
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.Database.CallBack;
@@ -75,8 +69,10 @@ public class ProjectManager {
 					}
 				}
 			}}catch(NullPointerException ex){
+				ex.printStackTrace();
 				return;
 			}
+			FurnitureLib.getInstance().getFurnitureManager().setFinishLoading(true);
 		}
 		
 		if(s.length()>1){

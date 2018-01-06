@@ -90,4 +90,25 @@ public abstract class FurnitureHelper{
 		}
 		return null;
 	}
+	
+	public void toggleLight(boolean change){
+		for(fEntity stand : getfAsList()){
+			if(stand.getName().startsWith("#Light:")){
+				String[] str = stand.getName().split(":");
+				String lightBool = str[2];
+				if(change){
+					if(lightBool.equalsIgnoreCase("off#")){
+						stand.setName(stand.getName().replace("off#", "on#"));
+						if(!stand.isFire()){stand.setFire(true);}
+					}else if(lightBool.equalsIgnoreCase("on#")){
+						stand.setName(stand.getName().replace("on#", "off#"));
+						if(stand.isFire()){stand.setFire(false);}
+					}
+				}else{
+					if(lightBool.equalsIgnoreCase("on#")){if(!stand.isFire()){stand.setFire(true);}}
+				}
+			}
+		}
+		update();
+	}
 }

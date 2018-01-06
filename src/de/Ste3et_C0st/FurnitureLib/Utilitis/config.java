@@ -50,6 +50,7 @@ public class config
     File arena = new File(path + Folder, name);
     try
     {
+      config.options().copyHeader(true);
       config.save(arena);
     }
     catch (IOException e)
@@ -84,10 +85,8 @@ public class config
   
   public void deleteFolder(File folder)
   {
-
-    
     File[] files = folder.listFiles();
-    if(files!=null) { //some JVMs return null for empty dirs
+    if(files!=null) {
         for(File f: files) {
             if(f.isDirectory()) {
                 deleteFolder(f);

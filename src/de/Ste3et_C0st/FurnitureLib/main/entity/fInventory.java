@@ -16,7 +16,6 @@ public class fInventory implements Cloneable{
 	private int entityId = 0;
 	@Deprecated
 	public ItemStack getItemInHand() {return this.items[0];}
-	//private Vector3f v = new Vector3f();
 	public ItemStack getItemInMainHand() {return this.items[0];}
 	public ItemStack getItemInOffHand() {return this.items[1];}
 	public ItemStack getBoots() {return this.items[2];}

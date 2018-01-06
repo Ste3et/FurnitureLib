@@ -15,24 +15,11 @@ public class registerAPI {
 	
 	public registerAPI(Plugin plugin, CallBack callback) {
 		this.plugin = plugin;
-//		callback = new CallBack() {
-//			@Override
-//			public void onResult(boolean paramBoolean) {
-//				if(paramBoolean) {
-//					registerPluginFurnitures(getPlugin());
-//				}
-//			}
-//		};
 		this.callback = callback;
 	}
 	
-	public Plugin getPlugin() {
-		return this.plugin;
-	}
-	
-	public CallBack getCallback() {
-		return this.callback;
-	}
+	public Plugin getPlugin() {return this.plugin;}
+	public CallBack getCallback() {return this.callback;}
 	
 	public void trigger() {
 		if(callback != null) {
@@ -55,9 +42,7 @@ public class registerAPI {
 		}
 	}
 	
-	public FurnitureLib getInstance() {
-		return FurnitureLib.getInstance();
-	}
+	public FurnitureLib getInstance() {return FurnitureLib.getInstance();}
 	
 	
 }

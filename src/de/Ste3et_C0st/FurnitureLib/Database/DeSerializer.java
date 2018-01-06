@@ -20,7 +20,6 @@ import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagList;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.BodyPart;
-import de.Ste3et_C0st.FurnitureLib.main.WorldPool;
 import de.Ste3et_C0st.FurnitureLib.main.Type.EventType;
 import de.Ste3et_C0st.FurnitureLib.main.Type.PublicMode;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
@@ -34,7 +33,6 @@ public class DeSerializer {
 	public int armorStands = 0;
 	public int purged = 0;
 	public FurnitureLib lib = FurnitureLib.getInstance();
-	public WorldPool pool = FurnitureLib.getInstance().getWorldPool();
 	private Object[] enumItemSlots = EnumWrappers.ItemSlot.values();
 
 	public void Deserialze(String objId,String in, SQLAction action, boolean autoPurge){

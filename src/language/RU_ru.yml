@@ -1,0 +1,48 @@
+#----------------------------------------------
+#-         Translation from                   -
+#-              stashenko                     -
+#-       https://short.dicecraft.de/19qvp     -
+#----------------------------------------------
+message:
+  FurnitureOnThisPlace: '&aНа этом месте уже есть мебель.'
+  NotEnoughSpace: '&aНедостаточно места для размещения этого объекта.'
+  NoPermissions: '&cУ вас нет прав для этого.'
+  PlayerNotOnline: '&cИгрок #PLAYER# не онлайн'
+  ProjectNotFound: '&cПроект #PROJECT# не существует.'
+  ProjectAlreadyExist: '&cПроект #PROJECT# уже существует.'
+  WrongArgument: '&cВведенная команда содержит неправильные аргументы.'
+  GivePlayer: '&aИгрок #PLAYER# получил #PROJECT#(#AMOUNT#).'
+  DebugModeEntered: '&aВы вошли в режим отладки. Щелкните правой кнопкой мыши на предмет
+    мебели.'
+  ManageModeEntered: '&aВы вошли в режим управления. Щелкните правой кнопкой мыши
+    на предмет мебели.'
+  RemoveDistance: '&eУдалено #AMOUNT# мебель.'
+  RemoveID: '&eУдалено #OBJID#'
+  RemovePlugin: '&eУспешно удалили всю мебель, установленную в #PLUGIN#.'
+  RemoveType: '&eУспешно удалили все #TYPE#.'
+  RemoveAll: '&eУспешно удалили всю мебель'
+  RemovePlayer: '&eУспешно удалили все объекты игроку #PLAYER#.'
+  RemoveLookat: '&eУдалено #SERIAL#.'
+  SideNotFound: '&cЭта страница не существует.'
+  SideNavigation: '&eType /furniture list <option> (0-#MAX#) для просмотра всего списка
+    мебели'
+  WrongOwner: '&cВы не являетесь владельцем этой мебели!'
+  NotONThisSide: '&cВы не можете разместить мебель на этой стороне блока.'
+  PurgeMarked: '&aВы отметили #AMOUNT# мебель, которую нужно удалить из базы данных.'
+  CraftingEdit: '&eВы обновили рецепт изготовления мебели'
+  CraftingRemove: '&aВы удаляете рецепт крафта на текущем экземпляре сервера'
+  FurnitureToggleCMDOff: '&aВы сделали всю мебель &cневидимой'
+  FurnitureToggleCMDOn: '&aВы сделали всю мебель &cвидимой'
+  FurnitureToggleEvent: '&cВы не можете этого сделать.'
+  FurnitureToFastPlace: '&cВы должны подождать &4#TIME# &cпрежде, чем сможете его
+    разместить.'
+  FurnitureToFastBreak: '&cВы должны подождать &4#TIME# &cпрежде, чем сможете его
+    сломать.'
+  LimitAouncer: '&6Вы разместили &2#CURRENT#&6/&c#MAX# из &e#TYPE#.'
+  LimitAouncerMaximum: '&6Вы разместили &2#CURRENT#&6/&c#MAX# из &e#TYPE#&6, &a#AMOUNT#
+    &6оставшейся мебели'
+  LimitReachedWorld: '&cДостигнут предел мебели в этом мире'
+  LimitReachedChunk: '&cДостигнут предел мебели в этом чанке'
+  LimitReached: '&cДостигнут предел количества этого объекта.'
+  LimitReachedMaximum: '&cДостигнуто максимальное число мебели.'
+  BlockOfInstability: '&cПопробуйте поместить мебель в другое место'

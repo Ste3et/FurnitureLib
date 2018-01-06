@@ -19,6 +19,8 @@ import org.bukkit.inventory.ItemStack;
 import de.Ste3et_C0st.FurnitureLib.NBT.CraftItemStack;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTCompressedStreamTools;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.config;
+import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
 
@@ -46,10 +48,10 @@ public class ProjektInventory implements Listener{
 		if(e.getInventory().equals(inv)){
 			if(e.getPlayer().equals(getPlayer())){
 				this.player = null;
-				ProjectConfig c = new ProjectConfig();
-				FileConfiguration file = c.getConfig(this.id.getSerial(), "metadata/");
+				config c = new config(FurnitureLib.getInstance());
+				FileConfiguration file = c.getConfig(this.id.getSerial(), "/plugin/DiceEditor/metadata/");
 				file.set("inventory", toString());
-				c.saveConfig(this.id.getSerial(), file, "metadata/");
+				c.saveConfig(this.id.getSerial(), file, "/plugin/DiceEditor/metadata/");
 				
 				if(!entityList.isEmpty()){
 					for(fEntity entity : entityList){
@@ -78,8 +80,8 @@ public class ProjektInventory implements Listener{
 	}
 	
 	public void load(){
-		ProjectConfig c = new ProjectConfig();
-		FileConfiguration file = c.getConfig(this.id.getSerial(), "metadata/");
+		config c = new config(FurnitureLib.getInstance());
+		FileConfiguration file = c.getConfig(this.id.getSerial(), "/plugin/DiceEditor/metadata/");
 		if(file.isSet("inventory")){
 			setItems(file.getString("inventory"));
 		}

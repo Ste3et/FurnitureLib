@@ -52,9 +52,7 @@ public class ColorUtil {
 		removeIS(obj, p, Amount);
 	}
 	
-	private ItemStack getNewIS(Material m, Short durability){
-		return new ItemStack(m, 1, durability);
-	}
+	private ItemStack getNewIS(Material m, Short durability){return new ItemStack(m, 1, durability);}
 	
 	private void removeIS(ObjectID obj, Player p, int Amount){
 		manager.updateFurniture(obj);
