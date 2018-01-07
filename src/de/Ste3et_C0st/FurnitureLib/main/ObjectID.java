@@ -86,7 +86,7 @@ public class ObjectID{
 		if(isInRange(player)){
 			if(players.contains(player)){return;}
 			for(fEntity stand : getPacketList()){stand.send(player);}
-			player.sendMessage("In Range:" + getStartLocation().distance(player.getLocation()));
+			//player.sendMessage("In Range:" + getStartLocation().distance(player.getLocation()));
 			players.add(player);
 		}else{
 			if(!players.contains(player)) return;

@@ -35,6 +35,14 @@ import de.Ste3et_C0st.FurnitureLib.Database.Serializer;
 import de.Ste3et_C0st.FurnitureLib.Database.SQLManager;
 import de.Ste3et_C0st.FurnitureLib.Events.ChunkOnLoad;
 import de.Ste3et_C0st.FurnitureLib.Events.FurnitureEvents;
+import de.Ste3et_C0st.FurnitureLib.Events.internal.onCrafting;
+import de.Ste3et_C0st.FurnitureLib.Events.internal.onEntityExplode;
+import de.Ste3et_C0st.FurnitureLib.Events.internal.onPlayerChangeWorld;
+import de.Ste3et_C0st.FurnitureLib.Events.internal.onPlayerDeath;
+import de.Ste3et_C0st.FurnitureLib.Events.internal.onPlayerJoin;
+import de.Ste3et_C0st.FurnitureLib.Events.internal.onPlayerQuit;
+import de.Ste3et_C0st.FurnitureLib.Events.internal.onPlayerRespawn;
+import de.Ste3et_C0st.FurnitureLib.Events.internal.onPlayerTeleportEvent;
 import de.Ste3et_C0st.FurnitureLib.LimitationManager.LimitationManager;
 import de.Ste3et_C0st.FurnitureLib.ShematicLoader.ProjectManager;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.ColorUtil;
@@ -188,8 +196,6 @@ public class FurnitureLib extends JavaPlugin{
 				this.purgeTimeMS = TimeUnit.DAYS.toMillis(purgeTime);
 				this.pManager = new ProjectManager();
 				this.permissionHandler = new PermissionHandler();
-				new FurnitureEvents(instance, manager);
-				getServer().getPluginManager().registerEvents(new ChunkOnLoad(), this);
 				PluginCommand c = getCommand("furniture");
 				c.setExecutor(new command(this));
 				c.setTabCompleter(new TabCompleterHandler(this));
@@ -227,6 +233,17 @@ public class FurnitureLib extends JavaPlugin{
 									public void run() {
 										pManager.loadProjectFiles();
 										send("§2Furniture load finish :)");
+										new FurnitureEvents(instance, manager);
+										getServer().getPluginManager().registerEvents(new onCrafting(), getInstance());
+										getServer().getPluginManager().registerEvents(new onEntityExplode(), getInstance());
+										getServer().getPluginManager().registerEvents(new onPlayerChangeWorld(), getInstance());
+										getServer().getPluginManager().registerEvents(new onPlayerDeath(), getInstance());
+										getServer().getPluginManager().registerEvents(new onPlayerJoin(), getInstance());
+										getServer().getPluginManager().registerEvents(new onPlayerQuit(), getInstance());
+										getServer().getPluginManager().registerEvents(new onPlayerRespawn(), getInstance());
+										getServer().getPluginManager().registerEvents(new onPlayerTeleportEvent(), getInstance());
+										getServer().getPluginManager().registerEvents(new ChunkOnLoad(), getInstance());
+										
 									}
 								}, 5);
 							}
