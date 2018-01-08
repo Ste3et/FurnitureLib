@@ -17,6 +17,7 @@ import java.util.logging.Logger;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.World;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -129,7 +130,7 @@ public class FurnitureLib extends JavaPlugin{
 	public void triggerRegister() {for(registerAPI api : this.furnitureList) api.trigger();}
 	public void send(String s){getServer().getConsoleSender().sendMessage(s);}
 	private void loadMetrics(){try{if(getConfig().getBoolean("config.UseMetrics")){new bStats(getInstance());}}catch(Exception e){e.printStackTrace();}}
-	private void createDefaultWatchers(){if(Bukkit.getWorlds().size()!=0) getFurnitureManager().getDefaultWatcher(Bukkit.getWorlds().get(0), EntityType.ARMOR_STAND);}
+
 	public boolean isGlowing(){return this.glowing;}
 	public boolean isAutoPurge(){return this.autoPurge;}
 	public boolean isPurgeRemove(){return this.removePurge;}
@@ -243,7 +244,6 @@ public class FurnitureLib extends JavaPlugin{
 										getServer().getPluginManager().registerEvents(new onPlayerRespawn(), getInstance());
 										getServer().getPluginManager().registerEvents(new onPlayerTeleportEvent(), getInstance());
 										getServer().getPluginManager().registerEvents(new ChunkOnLoad(), getInstance());
-										
 									}
 								}, 5);
 							}
@@ -260,6 +260,14 @@ public class FurnitureLib extends JavaPlugin{
 			}else{
 				send("§cYour Server version is not Supportet please use §c1.9.x");
 				getPluginManager().disablePlugin(this);
+			}
+		}
+	}
+	
+	private void createDefaultWatchers(){
+		for(World w : Bukkit.getWorlds()){
+			if(w!=null){
+				getFurnitureManager().getDefaultWatcher(w, EntityType.ARMOR_STAND);
 			}
 		}
 	}
