@@ -39,12 +39,11 @@
            <scope>provided</scope>
     </dependency>
     <!--Bukkit API-->
-    <dependency>
-            <groupId>org.bukkit</groupId>
-            <artifactId>bukkit</artifactId>
-            <version>1.9.4-R0.1-SNAPSHOT</version>
-            <scope>provided</scope>
-    </dependency>
+	<dependency>
+	  <groupId>org.bukkit</groupId>
+	  <artifactId>bukkit</artifactId>
+	  <version>18w02a-R0.1-SNAPSHOT</version>
+	</dependency>
     
     <!-- Protocollib -->
     <dependency>

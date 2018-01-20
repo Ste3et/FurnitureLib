@@ -8,9 +8,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
+import java.util.Properties;
 import java.util.logging.Level;
 
 import org.bukkit.Bukkit;
+import org.sqlite.JDBC;
 
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
@@ -34,16 +36,6 @@ public abstract class Database {
     public abstract void load();
     public abstract DataBaseType getType();
     
-    public boolean isExist(String s){
-    	try{
-    		boolean query = statement.execute("SELECT * FROM `"+s+"`");
-    		if(query){return true;}
-    	}catch(Exception e){
-    		return false;
-    	}
-    	return false;
-    }
-    
     public void initialize(){
         connection = getSQLConnection();
         try{
@@ -55,9 +47,22 @@ public abstract class Database {
             plugin.getLogger().log(Level.SEVERE, "Unable to retreive connection", ex);
         }
     }
-    
+//    
+//    private void addNewCollums(){
+//    	String q1 = "ALTER TABLE `FurnitureLib_Objects` ADD COLUMN `id` INTEGER PRIMARY KEY AUTOINCREMENT;";
+//    	//String q2 = "ALTER TABLE `FurnitureLib_Objects` ADD COLUMN IF NOT EXISTS `world` TINYTEXT;";
+//    	try {
+//    		statement.executeUpdate(q1);
+//    		//statement.executeUpdate("ALTER TABLE `FurnitureLib_Objects` ADD COLUMN `id` INT NOT NULL AUTO_INCREMENT PRIMARY KEY FIRST;");
+//			//statement.executeUpdate(q2);dfsagfdsakhjfd sabnkfldsöa
+//		} catch (Exception e) {
+//			e.printStackTrace();
+//		}
+//    }
+//    
     public boolean save(ObjectID id){
     	String binary = FurnitureLib.getInstance().getSerializer().SerializeObjectID(id);
+    	//String query = "REPLACE INTO FurnitureLib_Objects (`id`,`ObjID`,`Data`,`world`) VALUES ('', '" + id.getID() + "', '" + binary + "', '"+ id.getWorld().getUID().toString() + "');";
     	String query = "REPLACE INTO FurnitureLib_Objects (`ObjID`,`Data`) VALUES ('" + id.getID() + "', '" + binary + "');";
     	try{
     		statement.executeUpdate(query);
@@ -110,9 +115,16 @@ public abstract class Database {
         			String query = "SELECT * FROM FurnitureLib_Objects";
         			ResultSet rs = statement.executeQuery(query);
         			while (rs.next()) {
-        				FurnitureLib.getInstance().getDeSerializer().Deserialze(rs.getString(1), rs.getString(2), action, b);
+//        				String world = rs.getString("world");
+//        				if(world == null || world.isEmpty()) {
+//        					FurnitureLib.getInstance().getDeSerializer().Deserialze(rs.getString("ObjID"), rs.getString("Data"), SQLAction.UPDATE, b);
+//        				}else {
+//        					FurnitureLib.getInstance().getDeSerializer().Deserialze(rs.getString("ObjID"), rs.getString("Data"), action, b);
+//        				}
+        				FurnitureLib.getInstance().getDeSerializer().Deserialze(rs.getString("ObjID"), rs.getString("Data"), action, b);
         			}
         			if(!rs.next()){
+        				//
 		    			rs.close();
 		    			stop();
 		    		}

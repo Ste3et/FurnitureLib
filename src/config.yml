@@ -56,7 +56,6 @@ config:
       port: 3306
       host: "localhost"
       importCheck: false
-      asyncStepsPerSequenz: 100
    Purge:
       time: 30
       autoPurge: false

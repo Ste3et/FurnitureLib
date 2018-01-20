@@ -7,6 +7,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -37,24 +38,23 @@ public class ChunkOnLoad implements Listener{
 			if(!event.getHand().equals(EquipmentSlot.HAND)){return;}
 			ItemStack is = event.getItem();
 			if(FurnitureLib.getInstance().getBlockManager()!=null){
-				if(FurnitureLib.getInstance().getBlockManager().getList().contains(event.getClickedBlock().getLocation())){
+				final Block block = event.getClickedBlock();
+				Location blockLocation = block.getLocation();
+				if(FurnitureLib.getInstance().getBlockManager().getList().contains(blockLocation)){
 					boolean b = true;
-					if(event.getClickedBlock()!=null&&event.getClickedBlock().getState().getType().equals(Material.FLOWER_POT)){
+					if(block.getState().getType().equals(Material.FLOWER_POT)){
 						b = false;
 					}
 					ObjectID objID = null;
 					for(ObjectID obj : FurnitureLib.getInstance().getFurnitureManager().getObjectList()){
-						if(obj.getBlockList().contains(event.getClickedBlock().getLocation())){
+						if(obj.getBlockList().contains(blockLocation)){
 							objID = obj;
 							break;
 						}
 					}
-					
-					if(objID!=null){
-						if(objID.isPrivate()){return;}
-					}else{
-						return;
-					}
+
+					if(objID==null){return;}
+					if(objID.isPrivate()){return;}
 					event.setCancelled(b);
 					if(objID != null && !objID.getSQLAction().equals(SQLAction.REMOVE)){
 						final ObjectID o = objID;
@@ -64,20 +64,18 @@ public class ChunkOnLoad implements Listener{
 							}
 						}
 						if(FurnitureLib.getInstance().getFurnitureManager().getIgnoreList().contains(p.getUniqueId())){
-							PostFurnitureGhostBlockClickEvent pEvent = new PostFurnitureGhostBlockClickEvent(p, event.getClickedBlock(), o);
+							PostFurnitureGhostBlockClickEvent pEvent = new PostFurnitureGhostBlockClickEvent(p, block, o);
 							Bukkit.getPluginManager().callEvent(pEvent);
-							if(!pEvent.isCancelled()){
-								p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("FurnitureToggleEvent"));
-							}
+							if(!pEvent.isCancelled()) p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("FurnitureToggleEvent"));
 							return;
 						}
 						Bukkit.getScheduler().scheduleSyncDelayedTask(FurnitureLib.getInstance(), new Runnable() {
 							@Override
 							public void run() {
-								PostFurnitureBlockClickEvent pEvent = new PostFurnitureBlockClickEvent(p, event.getClickedBlock(), o);
+								PostFurnitureBlockClickEvent pEvent = new PostFurnitureBlockClickEvent(p, block, o);
 								Bukkit.getPluginManager().callEvent(pEvent);
 								if(!pEvent.isCancelled()){
-									FurnitureBlockClickEvent e = new FurnitureBlockClickEvent(p, event.getClickedBlock(), o);
+									FurnitureBlockClickEvent e = new FurnitureBlockClickEvent(p, block, o);
 									Bukkit.getPluginManager().callEvent(e);
 								}
 								

@@ -88,7 +88,7 @@ public class FurnitureLib extends JavaPlugin{
 	private PermissionHandler permissionHandler;
 	private String timePattern = "mm:ss:SSS";
 	private List<registerAPI> furnitureList = new ArrayList<registerAPI>();
-	private int purgeTime = 30, viewDistance = 100, asyncStepsPerSequenz = 100;
+	private int purgeTime = 30, viewDistance = 100;
 	private long purgeTimeMS = 0, spamBreakTime = 5000, spamPlaceTime = 5000;
 	public HashMap<Project, Long> deleteMap = new HashMap<Project, Long>();
 	public HashMap<UUID, Long> timeStampPlace = new HashMap<UUID, Long>();
@@ -123,7 +123,6 @@ public class FurnitureLib extends JavaPlugin{
 	public PermissionHandler getPermission(){return this.permissionHandler;}
 	public int getPurgeTime(){return this.purgeTime;}
 	public int getViewDistance(){return this.viewDistance;}
-	public int getStepSize(){return this.asyncStepsPerSequenz;}
 	public long getBreakTime(){return this.spamBreakTime;}
 	public long getPlaceTime(){return this.spamPlaceTime;}
 	public static FurnitureLib getInstance(){return instance;}
@@ -178,7 +177,6 @@ public class FurnitureLib extends JavaPlugin{
 				this.purgeTime = getConfig().getInt("config.Purge.time");
 				this.autoPurge = getConfig().getBoolean("config.Purge.autoPurge");
 				this.removePurge = getConfig().getBoolean("config.Purge.removePurge");
-				this.asyncStepsPerSequenz = getConfig().getInt("config.Database.asyncStepsPerSequenz");
 				this.viewDistance = (Bukkit.getViewDistance()*16)-2;
 				if(this.viewDistance>=getConfig().getInt("config.viewDistance")){
 					this.viewDistance = getConfig().getInt("config.viewDistance");

@@ -31,11 +31,13 @@ public class FurnitureManager {
 	private HashSet<ObjectID> objecte = new HashSet<ObjectID>();
 	private List<Project> projects = new ArrayList<Project>();
 	private List<UUID> ignoreList = new ArrayList<UUID>();
+	private List<UUID> sendList = new ArrayList<UUID>();
 	private boolean isLoading = false;
 	public void setLastID(Integer i){this.i = i;}
 	public HashSet<ObjectID> getObjectList(){return this.objecte;}
 	public List<Chunk> chunkList = new ArrayList<Chunk>();
 	public List<UUID> getIgnoreList(){return this.ignoreList;}
+	public List<UUID> getSendList(){return this.sendList;}
 	
 	public void addProject(Project project){
 		if(isExist(project.getName())){

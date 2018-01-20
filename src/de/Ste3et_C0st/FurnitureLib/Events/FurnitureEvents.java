@@ -1,5 +1,7 @@
 package de.Ste3et_C0st.FurnitureLib.Events;
 
+import java.util.UUID;
+
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -94,7 +96,9 @@ public class FurnitureEvents {
 		ProtocolLibrary.getProtocolManager().addPacketListener(
 				 new PacketAdapter(instance, ListenerPriority.HIGHEST, PacketType.Play.Client.POSITION){
 					 public void onPacketReceiving(PacketEvent e) {
-						 if(manager.getIgnoreList().contains(e.getPlayer().getUniqueId())) return;
+						 UUID uuid = e.getPlayer().getUniqueId();
+						 if(!manager.getSendList().contains(uuid)) return;
+						 if(manager.getIgnoreList().contains(uuid)) return;
 						 PacketContainer container = e.getPacket();
 						 StructureModifier<Double> doubleStructure = container.getDoubles();
 						 int x = doubleStructure.read(0).intValue();
@@ -115,7 +119,9 @@ public class FurnitureEvents {
 		ProtocolLibrary.getProtocolManager().addPacketListener(
 				 new PacketAdapter(instance, ListenerPriority.HIGHEST, PacketType.Play.Client.POSITION_LOOK){
 					 public void onPacketReceiving(PacketEvent e) {
-						 if(manager.getIgnoreList().contains(e.getPlayer().getUniqueId())) return;
+						 UUID uuid = e.getPlayer().getUniqueId();
+						 if(!manager.getSendList().contains(uuid)) return;
+						 if(manager.getIgnoreList().contains(uuid)) return;
 						 PacketContainer container = e.getPacket();
 						 StructureModifier<Double> doubleStructure = container.getDoubles();
 						 int x = doubleStructure.read(0).intValue();
