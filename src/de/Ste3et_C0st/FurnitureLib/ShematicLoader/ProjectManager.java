@@ -4,6 +4,11 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.List;
+
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.configuration.file.YamlConfiguration;
 
@@ -16,7 +21,7 @@ import de.Ste3et_C0st.FurnitureLib.main.Type.PlaceableSide;
 public class ProjectManager {
 
 	public void loadProjectFiles(){
-		String s = "";
+		List<String> projectList = new ArrayList<String>();
 		File folder = new File("plugins/FurnitureLib/Crafting/");
 		if(folder.exists()){
 			try{
@@ -34,7 +39,7 @@ public class ProjectManager {
 									String systemID = configuration.getString(header + ".system-ID");
 									if(configuration.isSet(header + ".PlaceAbleSide")){side = PlaceableSide.valueOf(configuration.getString(header + ".PlaceAbleSide"));}
 									Project p = new Project(systemID, FurnitureLib.getInstance(), new FileInputStream(file), side, ProjectLoader.class).setEditorProject(true);
-									s += systemID + ",";
+									if(!projectList.contains(systemID)) {projectList.add(systemID);}
 									int Width = 0, Height = 0, Lentgh = 0;
 									boolean silent = false;
 
@@ -75,9 +80,12 @@ public class ProjectManager {
 			FurnitureLib.getInstance().getFurnitureManager().setFinishLoading(true);
 		}
 		
-		if(s.length()>1){
-			String str = s.substring(0, s.length()-1);
-			FurnitureLib.getInstance().send("FurnitureLib load Models("+StringUtils.countMatches(s, ",")+"): " + str);
+		if(projectList.size()>1){
+			String str = "";
+			Collections.sort(projectList);
+			for(String s : projectList) {str += s + ",";}
+			str = str.substring(0, str.length() - 1);
+			FurnitureLib.getInstance().send("FurnitureLib load Models("+projectList.size()+"): " + str);
 		}else{
 			FurnitureLib.getInstance().send("If you want to install more models look at here: http://dicecraft.de/furniture/models.php");
 		}

@@ -97,8 +97,6 @@ public class FurnitureEvents {
 				 new PacketAdapter(instance, ListenerPriority.HIGHEST, PacketType.Play.Client.POSITION){
 					 public void onPacketReceiving(PacketEvent e) {
 						 UUID uuid = e.getPlayer().getUniqueId();
-						 if(!manager.getSendList().contains(uuid)) return;
-						 if(manager.getIgnoreList().contains(uuid)) return;
 						 PacketContainer container = e.getPacket();
 						 StructureModifier<Double> doubleStructure = container.getDoubles();
 						 int x = doubleStructure.read(0).intValue();
@@ -111,7 +109,11 @@ public class FurnitureEvents {
 						 int cZ = z >> 4;
 						 int CX = X >> 4;
 						 int CZ = Z >> 4;
-						 if(cX != CX || cZ != CZ) manager.updatePlayerView(p);
+						 if(cX != CX || cZ != CZ) {
+							 if(!manager.getSendList().contains(uuid)) return;
+							 if(manager.getIgnoreList().contains(uuid)) return;
+							 manager.updatePlayerView(p);
+						 }
 					 }
 				 }
 	    );
@@ -120,8 +122,6 @@ public class FurnitureEvents {
 				 new PacketAdapter(instance, ListenerPriority.HIGHEST, PacketType.Play.Client.POSITION_LOOK){
 					 public void onPacketReceiving(PacketEvent e) {
 						 UUID uuid = e.getPlayer().getUniqueId();
-						 if(!manager.getSendList().contains(uuid)) return;
-						 if(manager.getIgnoreList().contains(uuid)) return;
 						 PacketContainer container = e.getPacket();
 						 StructureModifier<Double> doubleStructure = container.getDoubles();
 						 int x = doubleStructure.read(0).intValue();
@@ -134,7 +134,11 @@ public class FurnitureEvents {
 						 int cZ = z >> 4;
 						 int CX = X >> 4;
 						 int CZ = Z >> 4;
-						 if(cX != CX || cZ != CZ) manager.updatePlayerView(p);
+						 if(cX != CX || cZ != CZ) {
+							 if(!manager.getSendList().contains(uuid)) return;
+							 if(manager.getIgnoreList().contains(uuid)) return;
+							 manager.updatePlayerView(p);
+						 }
 					 }
 				 }
 	    );

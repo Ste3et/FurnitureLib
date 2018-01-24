@@ -126,7 +126,7 @@ public class FurnitureLib extends JavaPlugin{
 	public long getBreakTime(){return this.spamBreakTime;}
 	public long getPlaceTime(){return this.spamPlaceTime;}
 	public static FurnitureLib getInstance(){return instance;}
-	public void triggerRegister() {for(registerAPI api : this.furnitureList) api.trigger();}
+
 	public void send(String s){getServer().getConsoleSender().sendMessage(s);}
 	private void loadMetrics(){try{if(getConfig().getBoolean("config.UseMetrics")){new bStats(getInstance());}}catch(Exception e){e.printStackTrace();}}
 
@@ -338,11 +338,6 @@ public class FurnitureLib extends JavaPlugin{
 	}
 	
 	public registerAPI registerPluginFurnitures(Plugin plugin, CallBack callback){
-		for(registerAPI api : this.furnitureList) {
-			if(api.getPlugin().equals(plugin)) {
-				return null;
-			}
-		}
 		registerAPI api = new registerAPI(plugin, callback);
 		furnitureList.add(api);
 		return api;
@@ -398,5 +393,13 @@ public class FurnitureLib extends JavaPlugin{
 			ctor.newInstance(obj);
 			obj.setFinish();
 		} catch (Exception e) {e.printStackTrace();}
+	}
+	
+	public void triggerRegister() {
+		for(registerAPI api : this.furnitureList) {
+			if(api != null) {
+				api.trigger();
+			}
+		}
 	}
 }
