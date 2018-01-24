@@ -1,8 +1,11 @@
 package de.Ste3et_C0st.FurnitureLib.Command;
 
 import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.SortedSet;
+import java.util.TreeSet;
 
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
@@ -10,7 +13,6 @@ import net.md_5.bungee.api.chat.HoverEvent;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -121,6 +123,26 @@ public class listCommand {
 		Player p = null;
 		if(sender instanceof Player){p = (Player) sender;}
 		List<ComponentBuilder> objList = new ArrayList<ComponentBuilder>();
+		List<String> strList = new ArrayList<String>();
+		HashMap<String, String> proList = new HashMap<String, String>();
+		for(Project pro : FurnitureLib.getInstance().getFurnitureManager().getProjects()) {
+			strList.add(pro.getName());
+			String name = "";
+			if(pro.getCraftingFile().getRecipe().getResult() != null){
+				if(pro.getCraftingFile().getRecipe().getResult().hasItemMeta()){
+					if(pro.getCraftingFile().getRecipe().getResult().getItemMeta().hasDisplayName()){
+						name = ChatColor.stripColor(pro.getCraftingFile().getRecipe().getResult().getItemMeta().getDisplayName());
+					}
+				}
+			}
+			proList.put(pro.getName(), name);
+		}
+		
+		SortedSet<String> keys = new TreeSet<String>(proList.keySet());
+		SortedSet<String> values = new TreeSet<String>(proList.values());
+		
+		
+		
 		if(args.length==1){
 			if(!command.noPermissions(sender, "furniture.list")) return;
 			boolean recipe = false, give = false, detail = true;
@@ -128,8 +150,9 @@ public class listCommand {
 			if(FurnitureLib.getInstance().getPermission().hasPerm(sender, "furniture.give")){give = true;}
 			if(FurnitureLib.getInstance().getPermission().hasPerm(sender, "furniture.debug")){detail = false;}
 			
-			for(Project pro : FurnitureLib.getInstance().getFurnitureManager().getProjects()){
+			for(String str : getProjects(keys, values, proList, give)){
 				String s = "";
+				Project pro = FurnitureLib.getInstance().getFurnitureManager().getProject(str);
 				String name = pro.getName();
 				if(detail){
 					List<ObjectID> objectList = getByType(pro);
@@ -198,8 +221,9 @@ public class listCommand {
 				if(FurnitureLib.getInstance().getPermission().hasPerm(sender, "furniture.give")){give = true;}
 				if(FurnitureLib.getInstance().getPermission().hasPerm(sender, "furniture.debug")){detail = false;}
 				
-				for(Project pro : FurnitureLib.getInstance().getFurnitureManager().getProjects()){
+				for(String str : getProjects(keys, values, proList, give)){
 					String s = "";
+					Project pro = FurnitureLib.getInstance().getFurnitureManager().getProject(str);
 					String name = pro.getName();
 					if(detail){
 						List<ObjectID> objectList = getByType(pro);
@@ -272,6 +296,21 @@ public class listCommand {
 		}else{
 			command.sendHelp(p);
 		}
+	}
+	
+	private SortedSet<String> getProjects(SortedSet<String> key, SortedSet<String> values, HashMap<String, String> hash, boolean detail){
+		SortedSet<String> proList = new TreeSet<String>();
+		//return admin SystemID sort
+		if(!detail) {
+			for(String str : values) {
+				for(String k : hash.keySet()) {
+					String v = hash.get(k);
+					if(v.equalsIgnoreCase(str)) proList.add(k);
+				}
+			}
+			return key;
+		}
+		return key;
 	}
 	
 	private List<Project> getByPlugin(String plugin){
