@@ -61,6 +61,7 @@ public class Type {
         }
 	}
 	
+
 	public enum ProtocolFields{
 		Spigot19(10,11,12,13,14,15,16,9),
 		Spigot110(11,12,13,14,15,16,17,10);

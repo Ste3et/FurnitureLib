@@ -36,6 +36,7 @@ import de.Ste3et_C0st.FurnitureLib.Database.Serializer;
 import de.Ste3et_C0st.FurnitureLib.Database.SQLManager;
 import de.Ste3et_C0st.FurnitureLib.Events.ChunkOnLoad;
 import de.Ste3et_C0st.FurnitureLib.Events.FurnitureEvents;
+import de.Ste3et_C0st.FurnitureLib.Events.internal.onChunkChange;
 import de.Ste3et_C0st.FurnitureLib.Events.internal.onCrafting;
 import de.Ste3et_C0st.FurnitureLib.Events.internal.onEntityExplode;
 import de.Ste3et_C0st.FurnitureLib.Events.internal.onPlayerChangeWorld;
@@ -242,6 +243,7 @@ public class FurnitureLib extends JavaPlugin{
 										getServer().getPluginManager().registerEvents(new onPlayerRespawn(), getInstance());
 										getServer().getPluginManager().registerEvents(new onPlayerTeleportEvent(), getInstance());
 										getServer().getPluginManager().registerEvents(new ChunkOnLoad(), getInstance());
+										getServer().getPluginManager().registerEvents(new onChunkChange(), getInstance());
 									}
 								}, 5);
 							}

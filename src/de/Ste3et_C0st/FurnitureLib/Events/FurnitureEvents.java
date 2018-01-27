@@ -1,7 +1,5 @@
 package de.Ste3et_C0st.FurnitureLib.Events;
 
-import java.util.UUID;
-
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -10,9 +8,7 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.ListenerPriority;
 import com.comphenix.protocol.events.PacketAdapter;
-import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
-import com.comphenix.protocol.reflect.StructureModifier;
 import com.comphenix.protocol.wrappers.EnumWrappers.EntityUseAction;
 
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
@@ -93,55 +89,55 @@ public class FurnitureEvents {
                     }
         });
 		
-		ProtocolLibrary.getProtocolManager().addPacketListener(
-				 new PacketAdapter(instance, ListenerPriority.HIGHEST, PacketType.Play.Client.POSITION){
-					 public void onPacketReceiving(PacketEvent e) {
-						 UUID uuid = e.getPlayer().getUniqueId();
-						 PacketContainer container = e.getPacket();
-						 StructureModifier<Double> doubleStructure = container.getDoubles();
-						 int x = doubleStructure.read(0).intValue();
-						 int z = doubleStructure.read(2).intValue();
-						 Player p = e.getPlayer();
-						 Location l = p.getLocation();
-						 int X = (int) l.getX();
-						 int Z = (int) l.getZ();
-						 int cX = x >> 4;
-						 int cZ = z >> 4;
-						 int CX = X >> 4;
-						 int CZ = Z >> 4;
-						 if(cX != CX || cZ != CZ) {
-							 if(!manager.getSendList().contains(uuid)) return;
-							 if(manager.getIgnoreList().contains(uuid)) return;
-							 manager.updatePlayerView(p);
-						 }
-					 }
-				 }
-	    );
-		
-		ProtocolLibrary.getProtocolManager().addPacketListener(
-				 new PacketAdapter(instance, ListenerPriority.HIGHEST, PacketType.Play.Client.POSITION_LOOK){
-					 public void onPacketReceiving(PacketEvent e) {
-						 UUID uuid = e.getPlayer().getUniqueId();
-						 PacketContainer container = e.getPacket();
-						 StructureModifier<Double> doubleStructure = container.getDoubles();
-						 int x = doubleStructure.read(0).intValue();
-						 int z = doubleStructure.read(2).intValue();
-						 Player p = e.getPlayer();
-						 Location l = p.getLocation();
-						 int X = (int) l.getX();
-						 int Z = (int) l.getZ();
-						 int cX = x >> 4;
-						 int cZ = z >> 4;
-						 int CX = X >> 4;
-						 int CZ = Z >> 4;
-						 if(cX != CX || cZ != CZ) {
-							 if(!manager.getSendList().contains(uuid)) return;
-							 if(manager.getIgnoreList().contains(uuid)) return;
-							 manager.updatePlayerView(p);
-						 }
-					 }
-				 }
-	    );
+//		ProtocolLibrary.getProtocolManager().addPacketListener(
+//				 new PacketAdapter(instance, ListenerPriority.HIGHEST, PacketType.Play.Client.POSITION){
+//					 public void onPacketReceiving(PacketEvent e) {
+//						 UUID uuid = e.getPlayer().getUniqueId();
+//						 PacketContainer container = e.getPacket();
+//						 StructureModifier<Double> doubleStructure = container.getDoubles();
+//						 int x = doubleStructure.read(0).intValue();
+//						 int z = doubleStructure.read(2).intValue();
+//						 Player p = e.getPlayer();
+//						 Location l = p.getLocation();
+//						 int X = (int) l.getX();
+//						 int Z = (int) l.getZ();
+//						 int cX = x >> 4;
+//						 int cZ = z >> 4;
+//						 int CX = X >> 4;
+//						 int CZ = Z >> 4;
+//						 if(cX != CX || cZ != CZ) {
+//							 if(!manager.getSendList().contains(uuid)) return;
+//							 if(manager.getIgnoreList().contains(uuid)) return;
+//							 manager.updatePlayerView(p);
+//						 }
+//					 }
+//				 }
+//	    );
+//		
+//		ProtocolLibrary.getProtocolManager().addPacketListener(
+//				 new PacketAdapter(instance, ListenerPriority.HIGHEST, PacketType.Play.Client.POSITION_LOOK){
+//					 public void onPacketReceiving(PacketEvent e) {
+//						 UUID uuid = e.getPlayer().getUniqueId();
+//						 PacketContainer container = e.getPacket();
+//						 StructureModifier<Double> doubleStructure = container.getDoubles();
+//						 int x = doubleStructure.read(0).intValue();
+//						 int z = doubleStructure.read(2).intValue();
+//						 Player p = e.getPlayer();
+//						 Location l = p.getLocation();
+//						 int X = (int) l.getX();
+//						 int Z = (int) l.getZ();
+//						 int cX = x >> 4;
+//						 int cZ = z >> 4;
+//						 int CX = X >> 4;
+//						 int CZ = Z >> 4;
+//						 if(cX != CX || cZ != CZ) {
+//							 if(!manager.getSendList().contains(uuid)) return;
+//							 if(manager.getIgnoreList().contains(uuid)) return;
+//							 manager.updatePlayerView(p);
+//						 }
+//					 }
+//				 }
+//	    );
 		
 		ProtocolLibrary.getProtocolManager().addPacketListener(
                 new PacketAdapter(instance, ListenerPriority.HIGHEST, PacketType.Play.Client.STEER_VEHICLE) {
