@@ -180,6 +180,11 @@ public abstract class fEntity extends fSerializer{
 		return FurnitureLib.getInstance();
 	}
 	
+	public UUID getUUID() {
+		return this.b;
+	}
+	
+	
 	public fEntity setInvisible(boolean b) {
 		b(5, b);
 		this.invisible = b;
@@ -320,6 +325,11 @@ public abstract class fEntity extends fSerializer{
 		}
 		setObject(getWatcher(), str, 2);
 		this.customName = str;return this;
+	}
+	
+	public fEntity setParticleColor(int i) {
+		setObject(getWatcher(), i, 8);
+		return this;
 	}
 	
 	public void setPassanger(Entity e) {

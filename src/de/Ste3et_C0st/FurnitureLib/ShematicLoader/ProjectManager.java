@@ -89,12 +89,6 @@ public class ProjectManager {
 		}else{
 			FurnitureLib.getInstance().send("If you want to install more models look at here: http://dicecraft.de/furniture/models.php");
 		}
-		
-		FurnitureLib.getInstance().registerPluginFurnitures(FurnitureLib.getInstance(), new CallBack() {
-			@Override
-			public void onResult(boolean paramBoolean) {}});
-		
-		FurnitureLib.getInstance().triggerRegister();
 	}
 	
 	public String getHeader(YamlConfiguration file, String fileName){

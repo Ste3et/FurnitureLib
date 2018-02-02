@@ -49,10 +49,16 @@ public class ProjectLoader extends Furniture{
 	public ProjectLoader(ObjectID id){
 		super(id);
 		try{
+//			System.out.println("ProjectLoader: " + getObjID().getProject());
+//			System.out.println("1");
 			YamlConfiguration config = new YamlConfiguration();
+			//			System.out.println("2");
 			config.load(new File("plugins/FurnitureLib/Crafting/", getObjID().getProject()+".yml"));
+			//			System.out.println("3");
 			header = getHeader(config);
+			//System.out.println("4");
 			Player player = setBlock(id.getStartLocation(), config, true);
+			//System.out.println("5");
 			if(player!=null){
 				if(!player.getGameMode().equals(GameMode.CREATIVE) || !FurnitureLib.getInstance().creativePlace()){
 					player.getInventory().addItem(id.getProjectOBJ().getCraftingFile().getRecipe().getResult());
@@ -60,15 +66,17 @@ public class ProjectLoader extends Furniture{
 				getObjID().setSQLAction(SQLAction.REMOVE);
 				return;
 			}
-			
+			//System.out.println("6");
 			if(isFinish()){
 				registerInventory();
 				registerEvents();
 				return;
 			}
+			//System.out.println("7");
 			spawn(id.getStartLocation(), config, true);
 			registerInventory();
 			registerEvents();
+			//System.out.println("8");
 		}catch(Exception e){
 			e.printStackTrace();
 		}

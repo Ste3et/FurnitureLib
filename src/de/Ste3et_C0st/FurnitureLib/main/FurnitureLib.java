@@ -231,7 +231,6 @@ public class FurnitureLib extends JavaPlugin{
 								Bukkit.getScheduler().runTaskLater(getInstance(), new Runnable() {
 									@Override
 									public void run() {
-										pManager.loadProjectFiles();
 										send("§2Furniture load finish :)");
 										new FurnitureEvents(instance, manager);
 										getServer().getPluginManager().registerEvents(new onCrafting(), getInstance());
@@ -244,6 +243,14 @@ public class FurnitureLib extends JavaPlugin{
 										getServer().getPluginManager().registerEvents(new onPlayerTeleportEvent(), getInstance());
 										getServer().getPluginManager().registerEvents(new ChunkOnLoad(), getInstance());
 										getServer().getPluginManager().registerEvents(new onChunkChange(), getInstance());
+										
+										FurnitureLib.getInstance().registerPluginFurnitures(FurnitureLib.getInstance(), new CallBack() {
+											@Override
+											public void onResult(boolean paramBoolean) {
+												pManager.loadProjectFiles();
+										}});
+										
+										triggerRegister();
 									}
 								}, 5);
 							}
