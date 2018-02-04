@@ -5,15 +5,12 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
-import org.apache.commons.lang.StringUtils;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
-import de.Ste3et_C0st.FurnitureLib.Database.CallBack;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.Type.CenterType;
 import de.Ste3et_C0st.FurnitureLib.main.Type.PlaceableSide;
@@ -77,7 +74,6 @@ public class ProjectManager {
 				ex.printStackTrace();
 				return;
 			}
-			FurnitureLib.getInstance().getFurnitureManager().setFinishLoading(true);
 		}
 		
 		if(projectList.size()>1){
@@ -86,6 +82,7 @@ public class ProjectManager {
 			for(String s : projectList) {str += s + ",";}
 			str = str.substring(0, str.length() - 1);
 			FurnitureLib.getInstance().send("FurnitureLib load Models("+projectList.size()+"): " + str);
+			FurnitureLib.getInstance().registerPluginFurnitures(FurnitureLib.getInstance());
 		}else{
 			FurnitureLib.getInstance().send("If you want to install more models look at here: http://dicecraft.de/furniture/models.php");
 		}

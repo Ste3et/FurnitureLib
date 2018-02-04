@@ -32,7 +32,6 @@ public class FurnitureManager {
 	private List<Project> projects = new ArrayList<Project>();
 	private List<UUID> ignoreList = new ArrayList<UUID>();
 	private List<UUID> sendList = new ArrayList<UUID>();
-	private boolean isLoading = false;
 	public void setLastID(Integer i){this.i = i;}
 	public HashSet<ObjectID> getObjectList(){return this.objecte;}
 	public List<Chunk> chunkList = new ArrayList<Chunk>();
@@ -103,7 +102,7 @@ public class FurnitureManager {
 	}
 	
 	public void updatePlayerView(Player player) {
-		if(!isLoading || this.objecte.isEmpty() || !player.isOnline()){return;}
+		if(this.objecte.isEmpty() || !player.isOnline()){return;}
 		//player.sendMessage("test");
 		for(ObjectID obj : objecte){obj.updatePlayerView(player);}
 	}
@@ -285,8 +284,5 @@ public class FurnitureManager {
 			}
 		}
 		return null;
-	}
-	public void setFinishLoading(boolean b) {
-		this.isLoading = b;
 	}
 }

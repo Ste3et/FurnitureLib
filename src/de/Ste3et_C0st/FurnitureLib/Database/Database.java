@@ -10,7 +10,6 @@ import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.logging.Level;
 
-import org.bukkit.Bukkit;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.DataBaseType;
@@ -21,8 +20,6 @@ public abstract class Database {
 	public Connection connection;
     private Statement statement;
     @SuppressWarnings("unused")
-	private CallBack callBack, callBack2;
-    private Thread t = null;
     boolean result = false;
     public Database(FurnitureLib instance){
         this.plugin = instance;
@@ -78,70 +75,25 @@ public abstract class Database {
     	}
     	return false;
     }
-
-    public void loadAll(final SQLAction action, final CallBack callBack){
-    	final long time1 = System.currentTimeMillis();
-    	final boolean b = FurnitureLib.getInstance().isAutoPurge();
-    	this.callBack = callBack;
-    	this.callBack2 = new CallBack() {
-			@Override
-			public void onResult(boolean b) {
-				if(b){
-					plugin.getLogger().info("FurnitureLib load " + FurnitureLib.getInstance().getFurnitureManager().getObjectList().size()  +  " Objects from: " + getType().name() + " Database");
-		        	long time2 = System.currentTimeMillis();
-		        	long newTime = time2-time1;
-		        	SimpleDateFormat time = new SimpleDateFormat("mm:ss.SSS");
-		        	String timeStr = time.format(newTime);
-		        	int ArmorStands = FurnitureLib.getInstance().getDeSerializer().armorStands;
-		        	int purged = FurnitureLib.getInstance().getDeSerializer().purged;
-		        	plugin.getLogger().info("FurnitureLib have loadet " + ArmorStands + " in " +timeStr);
-		        	plugin.getLogger().info("FurnitureLib have purged " + purged + " Objects");
-		        	callBack.onResult(true);
-				}
-			}
-		};
-		loadFurnitures(b, action);
-    }
     
-    public void loadFurnitures(final boolean b, final SQLAction action){
-    	if(result || this.t != null) return;
-    	this.t = new Thread(new Runnable() {
-    		@Override
-			public void run(){
-    			try{
-        			String query = "SELECT * FROM FurnitureLib_Objects";
-        			ResultSet rs = statement.executeQuery(query);
-        			while (rs.next()) {
-//        				String world = rs.getString("world");
-//        				if(world == null || world.isEmpty()) {
-//        					FurnitureLib.getInstance().getDeSerializer().Deserialze(rs.getString("ObjID"), rs.getString("Data"), SQLAction.UPDATE, b);
-//        				}else {
-//        					FurnitureLib.getInstance().getDeSerializer().Deserialze(rs.getString("ObjID"), rs.getString("Data"), action, b);
-//        				}
-        				FurnitureLib.getInstance().getDeSerializer().Deserialze(rs.getString("ObjID"), rs.getString("Data"), action, b);
-        			}
-        			if(!rs.next()){
-        				//
-		    			rs.close();
-		    			stop();
-		    		}
-    			}catch(Exception ex){ex.printStackTrace();}
-    		}
-    	});
-    	t.start();
-    	return;
-	}
-    
-    private void stop() {
-    	if(t!=null) {
-    		t.interrupt();
-    		t= null;
-    		Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, new Runnable() {
-				@Override
-				public void run() {
-					callBack2.onResult(true);
-				}
-			});
+    public void loadAll(SQLAction action){
+    	long time1 = System.currentTimeMillis();
+    	boolean b = FurnitureLib.getInstance().isAutoPurge();
+    	try{
+    		ResultSet rs = statement.executeQuery("SELECT * FROM FurnitureLib_Objects");
+    		while (rs.next()){FurnitureLib.getInstance().getDeSerializer().Deserialze(rs.getString(1), rs.getString(2), action, b);}
+    		rs.close();
+    		plugin.getLogger().info("FurnitureLib load " + FurnitureLib.getInstance().getFurnitureManager().getObjectList().size()  +  " Objects from: " + getType().name() + " Database");
+    		long time2 = System.currentTimeMillis();
+	    	long newTime = time2-time1;
+	    	SimpleDateFormat time = new SimpleDateFormat("mm:ss.SSS");
+	    	String timeStr = time.format(newTime);
+	    	int ArmorStands = FurnitureLib.getInstance().getDeSerializer().armorStands;
+	    	int purged = FurnitureLib.getInstance().getDeSerializer().purged;
+	    	plugin.getLogger().info("FurnitureLib have loadet " + ArmorStands + " in " +timeStr);
+	    	plugin.getLogger().info("FurnitureLib have purged " + purged + " Objects");
+    	}catch(Exception e){
+    		e.printStackTrace();
     	}
     }
 

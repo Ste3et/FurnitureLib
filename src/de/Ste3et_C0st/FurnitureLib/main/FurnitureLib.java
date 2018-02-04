@@ -30,7 +30,6 @@ import org.bukkit.plugin.java.JavaPlugin;
 import de.Ste3et_C0st.FurnitureLib.Command.TabCompleterHandler;
 import de.Ste3et_C0st.FurnitureLib.Command.command;
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
-import de.Ste3et_C0st.FurnitureLib.Database.CallBack;
 import de.Ste3et_C0st.FurnitureLib.Database.DeSerializer;
 import de.Ste3et_C0st.FurnitureLib.Database.Serializer;
 import de.Ste3et_C0st.FurnitureLib.Database.SQLManager;
@@ -88,7 +87,6 @@ public class FurnitureLib extends JavaPlugin{
 	private ProjectManager pManager;
 	private PermissionHandler permissionHandler;
 	private String timePattern = "mm:ss:SSS";
-	private List<registerAPI> furnitureList = new ArrayList<registerAPI>();
 	private int purgeTime = 30, viewDistance = 100;
 	private long purgeTimeMS = 0, spamBreakTime = 5000, spamPlaceTime = 5000;
 	public HashMap<Project, Long> deleteMap = new HashMap<Project, Long>();
@@ -223,39 +221,21 @@ public class FurnitureLib extends JavaPlugin{
 					this.sqlManager = new SQLManager(instance);
 					this.sqlManager.initialize();
 					this.loadIgnore();
-					this.sqlManager.loadALL(new CallBack() {
-						@Override
-						public void onResult(boolean b) {
-							if(b){
-								if(getConfig().getBoolean("config.timer.Enable")){int time = getConfig().getInt("config.timer.time");sqlManager.saveIntervall(time);}
-								Bukkit.getScheduler().runTaskLater(getInstance(), new Runnable() {
-									@Override
-									public void run() {
-										send("§2Furniture load finish :)");
-										new FurnitureEvents(instance, manager);
-										getServer().getPluginManager().registerEvents(new onCrafting(), getInstance());
-										getServer().getPluginManager().registerEvents(new onEntityExplode(), getInstance());
-										getServer().getPluginManager().registerEvents(new onPlayerChangeWorld(), getInstance());
-										getServer().getPluginManager().registerEvents(new onPlayerDeath(), getInstance());
-										getServer().getPluginManager().registerEvents(new onPlayerJoin(), getInstance());
-										getServer().getPluginManager().registerEvents(new onPlayerQuit(), getInstance());
-										getServer().getPluginManager().registerEvents(new onPlayerRespawn(), getInstance());
-										getServer().getPluginManager().registerEvents(new onPlayerTeleportEvent(), getInstance());
-										getServer().getPluginManager().registerEvents(new ChunkOnLoad(), getInstance());
-										getServer().getPluginManager().registerEvents(new onChunkChange(), getInstance());
-										
-										FurnitureLib.getInstance().registerPluginFurnitures(FurnitureLib.getInstance(), new CallBack() {
-											@Override
-											public void onResult(boolean paramBoolean) {
-												pManager.loadProjectFiles();
-										}});
-										
-										triggerRegister();
-									}
-								}, 5);
-							}
-						}
-					});
+					this.sqlManager.loadALL();
+					this.pManager.loadProjectFiles();
+					new FurnitureEvents(instance, manager);
+					getServer().getPluginManager().registerEvents(new onCrafting(), getInstance());
+					getServer().getPluginManager().registerEvents(new onEntityExplode(), getInstance());
+					getServer().getPluginManager().registerEvents(new onPlayerChangeWorld(), getInstance());
+					getServer().getPluginManager().registerEvents(new onPlayerDeath(), getInstance());
+					getServer().getPluginManager().registerEvents(new onPlayerJoin(), getInstance());
+					getServer().getPluginManager().registerEvents(new onPlayerQuit(), getInstance());
+					getServer().getPluginManager().registerEvents(new onPlayerRespawn(), getInstance());
+					getServer().getPluginManager().registerEvents(new onPlayerTeleportEvent(), getInstance());
+					getServer().getPluginManager().registerEvents(new ChunkOnLoad(), getInstance());
+					getServer().getPluginManager().registerEvents(new onChunkChange(), getInstance());
+					send("§2Furniture load finish :)");
+					if(getConfig().getBoolean("config.timer.Enable")){int time = getConfig().getInt("config.timer.time");sqlManager.saveIntervall(time);}
 					send("==========================================");
 				}else{
 					send("Furniture Lib deosn't find the correct ProtocolLib");
@@ -346,10 +326,18 @@ public class FurnitureLib extends JavaPlugin{
 		return true;
 	}
 	
-	public registerAPI registerPluginFurnitures(Plugin plugin, CallBack callback){
-		registerAPI api = new registerAPI(plugin, callback);
-		furnitureList.add(api);
-		return api;
+	public void registerPluginFurnitures(Plugin plugin){
+		List<ObjectID> objList = new ArrayList<ObjectID>();
+		for(ObjectID obj : manager.getObjectList()){
+			if(obj==null) continue;
+			if(objList.contains(obj)) continue;
+			if(!objList.contains(obj)) objList.add(obj);
+			if(obj.getPlugin()==null) continue;
+			if(obj.getSQLAction().equals(SQLAction.REMOVE)) continue;
+			if(obj.getPlugin().equalsIgnoreCase(plugin.getName())){
+				spawn(obj.getProjectOBJ(), obj);
+			}
+		}
 	}
 	
 	private boolean isEnable(String plugin, boolean shutdown){
@@ -402,13 +390,5 @@ public class FurnitureLib extends JavaPlugin{
 			ctor.newInstance(obj);
 			obj.setFinish();
 		} catch (Exception e) {e.printStackTrace();}
-	}
-	
-	public void triggerRegister() {
-		for(registerAPI api : this.furnitureList) {
-			if(api != null) {
-				api.trigger();
-			}
-		}
 	}
 }

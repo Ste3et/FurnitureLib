@@ -51,10 +51,10 @@ public class SQLManager {
 		}
 	}
 	
-	public void loadALL(CallBack callBack){
-	       	if(sqlite!=null) sqlite.loadAll(SQLAction.NOTHING, callBack);
-	    	if(mysql!=null) mysql.loadAll(SQLAction.NOTHING, callBack);
-	    	FurnitureLib.getInstance().getFurnitureManager().sendAll();
+	public void loadALL(){
+		if(this.sqlite!=null) this.sqlite.loadAll(SQLAction.NOTHING);
+		if(this.mysql!=null) this.mysql.loadAll(SQLAction.NOTHING);
+		FurnitureLib.getInstance().getFurnitureManager().sendAll();
 	}
 	
 	private void isExist(){
@@ -74,23 +74,13 @@ public class SQLManager {
 		if(fileDB!=null){
 			this.sqlite = new SQLite(plugin, fileDB.getName().replace(".db", ""));
 			this.sqlite.load();
-			final File fileDatabase = fileDB;
-			this.sqlite.loadAll(SQLAction.SAVE, new CallBack() {
-				@Override
-				public void onResult(boolean b) {
-					if(b){
-						plugin.getLogger().info("Import finish");
-						sqlite.close();
-						sqlite = null;
-						plugin.getLogger().info("Make old Database unusable.");
-						fileDatabase.renameTo(new File("plugins/" + plugin.getName(), fileDatabase.getName() + ".old"));
-						fileDatabase.delete();
-					}else{
-						plugin.getLogger().info("Import was going wrong :(");
-					}
-				}
-			});
-			
+			this.sqlite.loadAll(SQLAction.SAVE);
+			plugin.getLogger().info("Import finish");
+			this.sqlite.close();
+			this.sqlite = null;
+			plugin.getLogger().info("Make old Database unusable.");
+			fileDB.renameTo(new File("plugins/" + plugin.getName(), fileDB.getName() + ".old"));
+			fileDB.delete();
 		}
 	}
 	
