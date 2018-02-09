@@ -64,7 +64,13 @@ public class CraftingFile {
 			this.c.saveConfig(name, this.file, "/Crafting/");
 		}
 		this.file = c.getConfig(name, "/Crafting/");
-		loadCrafting(name);
+		
+		if(Bukkit.getServer().getBukkitVersion().startsWith("1.12")){
+			loadCrafting(name);
+		}else {
+			loadCraftingUnder1_12(name);
+		}
+		
 	}
 	
 	public void setFileConfiguration(FileConfiguration file){
@@ -90,7 +96,7 @@ public class CraftingFile {
 	public void loadCrafting(String s){
 		try{
 				this.isDisable = file.getBoolean(header+".crafting.disable");
-				NamespacedKey key = new NamespacedKey(FurnitureLib.getInstance(), this.name);	
+				NamespacedKey key = new NamespacedKey(FurnitureLib.getInstance(), this.name);
 				this.recipe = new ShapedRecipe(key, returnResult(s)).shape(returnFragment(s)[0], returnFragment(s)[1], returnFragment(s)[2]);
 				for(Character c : returnMaterial(s).keySet()){
 					if(!returnMaterial(s).get(c).getItemType().equals(Material.AIR)){
@@ -101,6 +107,27 @@ public class CraftingFile {
 					if(!isKeyRegistred(key)) {
 						Bukkit.getServer().addRecipe(this.recipe);
 					}
+				}
+				getPlaceAbleSide();
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+	
+	@SuppressWarnings("deprecation")
+	public void loadCraftingUnder1_12(String s){
+		try{
+				this.isDisable = file.getBoolean(header+".crafting.disable");
+				//NamespacedKey key = new NamespacedKey(FurnitureLib.getInstance(), this.name);
+				//this.recipe = new ShapedRecipe(key, returnResult(s)).shape(returnFragment(s)[0], returnFragment(s)[1], returnFragment(s)[2]);
+				this.recipe = new ShapedRecipe(returnResult(s)).shape(returnFragment(s)[0], returnFragment(s)[1], returnFragment(s)[2]);
+				for(Character c : returnMaterial(s).keySet()){
+					if(!returnMaterial(s).get(c).getItemType().equals(Material.AIR)){
+						this.recipe.setIngredient(c.charValue(), returnMaterial(s).get(c));
+					}
+				}				
+				if(!isDisable){
+					Bukkit.getServer().addRecipe(this.recipe);
 				}
 				getPlaceAbleSide();
 		}catch(Exception e){
