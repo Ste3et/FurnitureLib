@@ -67,6 +67,7 @@ public class ProtectionManager {
 		UUID ownerID = id.getUUID();
 		if(ownerID==null){return true;}
 		Boolean b = canBuild(type, p, id);
+		if(b) return true;
 		if(publicMode.equals(PublicMode.PRIVATE)){
 			b = ownerID.equals(userID);
 		}else if(publicMode.equals(PublicMode.MEMBERS)){
@@ -90,6 +91,12 @@ public class ProtectionManager {
 		if(memberOfRegion && !ownerOfRegion) {
 			if(!p.getUniqueId().equals(id.getUUID())) return false;
 			return true;
+		}
+		
+		if(ownerOfRegion) {
+			if(!p.getUniqueId().equals(id.getUUID())) {
+				return true;
+			}
 		}
 		
 		if(memberOfRegion && ownerOfRegion && FurnitureLib.getInstance().haveRegionMemberAccess()) {
