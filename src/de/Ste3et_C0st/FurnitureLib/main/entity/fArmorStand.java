@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.util.EulerAngle;
 
@@ -21,7 +22,7 @@ public class fArmorStand extends fEntity {
 	private boolean arms=false,small=false,marker=true,baseplate=true;
 	private HashMap<BodyPart, EulerAngle> angle = new HashMap<Type.BodyPart, EulerAngle>();
 	private Project pro;
-	private ArmorStand stand = null;
+	private ArmorStand entity = null;
 	
 	public EulerAngle getBodyPose(){return getPose(BodyPart.BODY);}
 	public EulerAngle getLeftArmPose(){return getPose(BodyPart.LEFT_ARM);}
@@ -44,13 +45,13 @@ public class fArmorStand extends fEntity {
 	public boolean isMarker(){return this.marker;}
 	public boolean isSmall(){return this.small;}
 	
-	public boolean isRealArmorStand(){
-		if(stand==null) return false;
+	public boolean isRealEntity(){
+		if(entity==null) return false;
 		return true;
 	}
 	
-	public void setStand(ArmorStand stand){
-		this.stand = null;
+	public void setEntity(Entity entity){
+		if(entity instanceof ArmorStand) this.entity = (ArmorStand) entity;
 	}
 	
 	
@@ -162,29 +163,31 @@ public class fArmorStand extends fEntity {
 		return nStand;
 	}
 	
-	public ArmorStand toRealArmorStand(){
-		if(stand!=null){if(!stand.isDead()){return stand;}}
-		stand = (ArmorStand) getWorld().spawnEntity(getLocation(), getEntityType());
-		stand.setArms(this.hasArms());
-		stand.setVisible(!this.isInvisible());
-		stand.setSmall(isSmall());
-		stand.setArms(hasArms());
-		stand.setBasePlate(hasBasePlate());
-		stand.setGravity(hasGravity());
-		stand.setGlowing(isGlowing());
-		stand.setAI(false);
-		stand.setHeadPose(getHeadPose());
-		stand.setLeftArmPose(getLeftArmPose());
-		stand.setRightArmPose(getRightArmPose());
-		stand.setLeftLegPose(getLeftLegPose());
-		stand.setRightLegPose(getRightLegPose());
-		stand.setBodyPose(getBodyPose());
-		stand.setHelmet(getHelmet());
-		stand.setChestplate(getChestPlate());
-		stand.setCustomName(getCustomName());
-		stand.setCustomNameVisible(isCustomNameVisible());
-		stand.setLeggings(getLeggings());
-		stand.setBoots(getBoots());
-		return stand;
+	public ArmorStand toRealEntity(){
+		if(entity!=null){if(!entity.isDead()){return entity;}}
+		entity = (ArmorStand) getWorld().spawnEntity(getLocation(), getEntityType());
+		entity.setArms(this.hasArms());
+		entity.setVisible(!this.isInvisible());
+		entity.setSmall(isSmall());
+		entity.setArms(hasArms());
+		entity.setGravity(hasGravity());
+		entity.setGlowing(isGlowing());
+		entity.setAI(false);
+		entity.setHeadPose(getHeadPose());
+		entity.setLeftArmPose(getLeftArmPose());
+		entity.setRightArmPose(getRightArmPose());
+		entity.setLeftLegPose(getLeftLegPose());
+		entity.setRightLegPose(getRightLegPose());
+		entity.setBodyPose(getBodyPose());
+		
+		entity.setCustomName(getCustomName());
+		entity.setCustomNameVisible(isCustomNameVisible());
+		
+		entity.setBasePlate(hasBasePlate());
+		entity.setHelmet(getHelmet());
+		entity.setChestplate(getChestPlate());
+		entity.setLeggings(getLeggings());
+		entity.setBoots(getBoots());
+		return entity;
 	}
 }

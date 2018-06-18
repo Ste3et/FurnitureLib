@@ -4,7 +4,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.plugin.Plugin;
 import ru.beykerykt.lightapi.LightAPI;
-import ru.beykerykt.lightapi.chunks.ChunkInfo;
 
 public class LightManager {
 
@@ -30,9 +29,7 @@ public class LightManager {
 			@Override
 			public void run() {
 				LightAPI.createLight(location, size, false);
-				for(ChunkInfo info: LightAPI.collectChunks(location)){
-					LightAPI.updateChunk(info);
-				}
+				LightAPI.collectChunks(location).stream().forEach(info -> LightAPI.updateChunk(info));
 			}
 		});
 	}
@@ -42,9 +39,7 @@ public class LightManager {
 		try{
 			if(location == null) return;
 			LightAPI.deleteLight(location, false);
-			for(ChunkInfo info: LightAPI.collectChunks(location)){
-				LightAPI.updateChunk(info);
-			}
+			LightAPI.collectChunks(location).stream().forEach(info -> LightAPI.updateChunk(info));
 		}catch(Exception e){e.printStackTrace();}
 
 	}

@@ -9,7 +9,6 @@ public class onPlayerQuit extends EventLibary implements Listener{
 	@EventHandler
 	public void onPlayerQuitEvent(PlayerQuitEvent event) {
 		Player player = event.getPlayer();
-		getFurnitureMgr().getSendList().remove(player.getUniqueId());
 		getFurnitureMgr().removeFurniture(player);
 	}
 }

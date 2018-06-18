@@ -31,12 +31,16 @@ public class FurnitureManager {
 	private HashSet<ObjectID> objecte = new HashSet<ObjectID>();
 	private List<Project> projects = new ArrayList<Project>();
 	private List<UUID> ignoreList = new ArrayList<UUID>();
-	private List<UUID> sendList = new ArrayList<UUID>();
+	private static FurnitureManager manager;
+	
 	public void setLastID(Integer i){this.i = i;}
 	public HashSet<ObjectID> getObjectList(){return this.objecte;}
 	public List<Chunk> chunkList = new ArrayList<Chunk>();
 	public List<UUID> getIgnoreList(){return this.ignoreList;}
-	public List<UUID> getSendList(){return this.sendList;}
+	
+	public FurnitureManager() {
+		manager = this;
+	}
 	
 	public void addProject(Project project){
 		if(isExist(project.getName())){
@@ -73,14 +77,9 @@ public class FurnitureManager {
 	}
 	
 	public ObjectID getObjBySerial(String serial){
-		for(ObjectID obj : getObjectList()){
-			if(obj.getSerial().equalsIgnoreCase(serial)){
-				if(!obj.getSQLAction().equals(SQLAction.REMOVE)){
-					return obj;
-				}
-			}
-		}
-		return null;
+		return getObjectList().stream()
+				.filter(obj -> obj.getSerial().equalsIgnoreCase(serial)).findFirst()
+				.filter(obj -> !obj.getSQLAction().equals(SQLAction.REMOVE)).orElse(null);
 	}
 	
 	public void saveAsynchron(final CommandSender sender){
@@ -103,8 +102,7 @@ public class FurnitureManager {
 	
 	public void updatePlayerView(Player player) {
 		if(this.objecte.isEmpty() || !player.isOnline()){return;}
-		//player.sendMessage("test");
-		for(ObjectID obj : objecte){obj.updatePlayerView(player);}
+		objecte.stream().forEach(obj -> obj.updatePlayerView(player));
 	}
 	
 	public void updateFurniture(ObjectID obj) {
@@ -114,9 +112,7 @@ public class FurnitureManager {
 	}
 	
 	public void sendAll(){
-		for(ObjectID objID : objecte){
-			if(!objID.getSQLAction().equals(SQLAction.REMOVE)) send(objID);
-		}
+		this.objecte.stream().filter(obj -> !obj.getSQLAction().equals(SQLAction.REMOVE)).forEach(obj -> send(obj));
 	}
 
 	@SuppressWarnings("unchecked")
@@ -128,12 +124,10 @@ public class FurnitureManager {
 			id.getBlockList().clear();
 		}
 		List<fEntity> packetList = (List<fEntity>) ((ArrayList<fEntity>) id.getPacketList()).clone();
-		for(fEntity asp : packetList){
-			if(asp.getObjID().equals(id)){
-				asp.kill();
-				asp.delete();
-			}
-		}
+		packetList.stream().filter(entity -> entity.getObjID().equals(id)).forEach(entity -> {
+			entity.kill();
+			entity.delete();
+		});
 		
 		if(!id.getBlockList().isEmpty()){
 			FurnitureLib.getInstance().getBlockManager().destroy(id.getBlockList(), false);
@@ -215,11 +209,7 @@ public class FurnitureManager {
 		if(this.objecte.isEmpty()){return null;}
 		if(entityID==null) return null;
 		for(ObjectID obj : objecte){
-			for(fEntity packet : obj.getPacketList()){
-				if(packet.getEntityID() == entityID){
-					return obj;
-				}
-			}
+			if(obj.getPacketList().stream().filter(entity -> entity.getEntityID() == entityID).findFirst().isPresent()) return obj;
 		}
 		return null;
 	}
@@ -238,12 +228,7 @@ public class FurnitureManager {
 		return obj;
 	}
 
-	public void removeFurniture(Player player) {
-		if(this.objecte.isEmpty()){return;}
-		for(ObjectID obj : objecte){
-			obj.removePacket(player);
-		}
-	}
+	public void removeFurniture(Player player) {this.objecte.stream().forEach(obj -> obj.removePacket(player));}
 
 	public void remove(fEntity armorStandPacket) {
 		if(this.objecte.isEmpty()){return;}
@@ -260,12 +245,7 @@ public class FurnitureManager {
 	    return clone;
 	}
 	
-	private boolean isExist(String s){
-		for(Project project : projects){
-			if(project.getName().equals(s)) return true;
-		}
-		return false;
-	}
+	private boolean isExist(String s){return projects.stream().filter(projects -> projects.getName().equalsIgnoreCase(s)).findFirst().isPresent();}
 	
 	public List<fEntity> getfArmorStandByObjectID(ObjectID id) {
 		if(this.objecte.isEmpty()){return null;}
@@ -277,12 +257,9 @@ public class FurnitureManager {
 		this.objecte.remove(id);
 	}
 	
-	public Project getProject(String name){
-		for(Project pro : projects){
-			if(pro.getName().equalsIgnoreCase(name)){
-				return pro;
-			}
-		}
-		return null;
+	public Project getProject(String s){
+		return projects.stream().filter(projects -> projects.getName().equalsIgnoreCase(s)).findFirst().orElse(null);
 	}
+	
+	public static FurnitureManager getInstance() {return manager;}
 }

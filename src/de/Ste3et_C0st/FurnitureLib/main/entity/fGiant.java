@@ -1,7 +1,9 @@
 package de.Ste3et_C0st.FurnitureLib.main.entity;
 
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Giant;
 import org.bukkit.entity.Player;
 
 import com.comphenix.protocol.PacketType;
@@ -18,8 +20,10 @@ public class fGiant extends fEntity {
 	public fGiant setObjID(ObjectID objID) {setObjectID(objID);return this;}
 	public fGiant setArmorID(int i){this.armorstandID = i;return this;}
 	public int getArmorID(){return this.armorstandID;}
+	private boolean AI = true;
 	public Project getProject(){return this.pro;}
 	private Project pro;
+	private Giant entity = null;
 	
 	public fGiant(Location loc, ObjectID id) {
 		super(loc, EntityType.GIANT, id);
@@ -34,11 +38,9 @@ public class fGiant extends fEntity {
 	}
 	
 	public fGiant moveRelative(int x, int y, int z, float yaw, float pitch, boolean onGround){
-		
 		short X = (short) ((getLocation().getX() * 32 - x * 32) * 128);
 		short Y = (short) ((getLocation().getY() * 32 - y * 32) * 128);
 		short Z = (short) ((getLocation().getZ() * 32 - z * 32) * 128);
-		
 		PacketContainer c = new PacketContainer(PacketType.Play.Server.REL_ENTITY_MOVE_LOOK);
 		c.getIntegers().write(0, getEntityID());
 		c.getShorts().write(0, X).write(1, Y).write(2, Z);
@@ -69,6 +71,7 @@ public class fGiant extends fEntity {
 			b0 = (byte)(b0 & 0xFFFFFFFE);
 		}
 		setObject(getWatcher(), Byte.valueOf(b0),getField().getBitMask());
+		this.AI = b;
 		return this;
 	}
 	
@@ -83,4 +86,20 @@ public class fGiant extends fEntity {
 		return this;
 	}
 
+	public Giant toRealEntity() {
+		if(entity!=null){if(!entity.isDead()){return entity;}}
+		entity = (Giant) getWorld().spawnEntity(getLocation(), getEntityType());
+		entity.setAI(this.AI);
+		return entity;
+	}
+	
+	public boolean isRealEntity(){
+		if(entity==null) return false;
+		return true;
+	}
+	
+	public void setEntity(Entity entity){
+		if(entity instanceof Giant) this.entity = (Giant) entity;
+	}
+	
 }

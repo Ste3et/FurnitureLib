@@ -8,18 +8,22 @@ import org.bukkit.inventory.ItemStack;
 
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
+import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
 
 public class onCrafting implements Listener{
+	
+	private FurnitureManager manager = FurnitureManager.getInstance();
+	
 	@EventHandler
 	private void onCraftingEvent(PrepareItemCraftEvent e){
-		if(FurnitureLib.getInstance().getFurnitureManager().getProjects().isEmpty()){return;}
+		if(manager.getProjects().isEmpty()){return;}
 		Player p = (Player) e.getView().getPlayer();
 		if(p.isOp()) return;
 		if(e.getInventory()==null) return;
 		if(e.getInventory().getResult()==null) return;
 		ItemStack is = e.getInventory().getResult().clone();
 		is.setAmount(1);
-		for(Project pro : FurnitureLib.getInstance().getFurnitureManager().getProjects()){
+		for(Project pro : manager.getProjects()){
 			if(is.equals(pro.getCraftingFile().getRecipe().getResult())){
 				if(!hasPermissions(p, pro.getSystemID())){
 					e.getInventory().setResult(null);

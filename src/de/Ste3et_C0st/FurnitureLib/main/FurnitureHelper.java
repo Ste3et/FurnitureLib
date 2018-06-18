@@ -92,7 +92,7 @@ public abstract class FurnitureHelper{
 	}
 	
 	public void toggleLight(boolean change){
-		for(fEntity stand : getfAsList()){
+		getfAsList().stream().forEach(stand -> {
 			if(stand.getName().startsWith("#Light:")){
 				String[] str = stand.getName().split(":");
 				String lightBool = str[2];
@@ -108,7 +108,7 @@ public abstract class FurnitureHelper{
 					if(lightBool.equalsIgnoreCase("on#")){if(!stand.isFire()){stand.setFire(true);}}
 				}
 			}
-		}
+		});
 		update();
 	}
 }

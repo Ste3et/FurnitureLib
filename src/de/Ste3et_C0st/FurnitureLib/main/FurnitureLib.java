@@ -189,8 +189,6 @@ public class FurnitureLib extends JavaPlugin{
 				this.timePattern = getConfig().getString("config.spamBlock.timeDisplay");
 				this.rotateOnSit = getConfig().getBoolean("config.rotateOnSit");
 				this.updater = new Updater();
-//				this.wPool = new WorldPool();
-//				this.wPool.loadWorlds();
 				this.purgeTimeMS = TimeUnit.DAYS.toMillis(purgeTime);
 				this.pManager = new ProjectManager();
 				this.permissionHandler = new PermissionHandler();
@@ -331,8 +329,8 @@ public class FurnitureLib extends JavaPlugin{
 		for(ObjectID obj : manager.getObjectList()){
 			if(obj==null) continue;
 			if(objList.contains(obj)) continue;
-			if(!objList.contains(obj)) objList.add(obj);
 			if(obj.getPlugin()==null) continue;
+			objList.add(obj);
 			if(obj.getSQLAction().equals(SQLAction.REMOVE)) continue;
 			if(obj.getPlugin().equalsIgnoreCase(plugin.getName())){
 				spawn(obj.getProjectOBJ(), obj);
@@ -370,13 +368,9 @@ public class FurnitureLib extends JavaPlugin{
 	
 	public void spawn(Project pro, Location l){
 		Class<?> c = pro.getclass();
-		ObjectID obj = new ObjectID(pro.getName(), pro.getPlugin().getName(), l);
 		if(c==null ){return;}
-		try {
-			Constructor<?> ctor = c.getConstructor(ObjectID.class);
-			ctor.newInstance(obj);
-			obj.setFinish();
-		} catch (Exception e) {e.printStackTrace();}
+		ObjectID obj = new ObjectID(pro.getName(), pro.getPlugin().getName(), l);
+		spawn(pro, obj);
 	}
 	
 	public void spawn(Project pro, ObjectID obj){

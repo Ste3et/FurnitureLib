@@ -40,7 +40,6 @@ public class DeSerializer {
 		obj.setID(objId);
 		try {
 			byte[] by = Base64.decodeBase64(in);
-			if(in == null || by == null) {return;}
 			ByteArrayInputStream bin = new ByteArrayInputStream(by);
 			NBTTagCompound compound = NBTCompressedStreamTools.read(bin);
 			bin.close();

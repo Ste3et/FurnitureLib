@@ -15,7 +15,6 @@ public class onPlayerJoin extends EventLibary implements Listener {
 		Bukkit.getScheduler().runTaskLater(FurnitureLib.getInstance(), new Runnable() {
 			@Override
 			public void run() {
-				getFurnitureMgr().getSendList().add(player.getUniqueId());
 				getFurnitureMgr().updatePlayerView(player);}
 		},5);
 	}

@@ -10,6 +10,8 @@ import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.logging.Level;
 
+import org.sqlite.JDBC;
+
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.DataBaseType;
@@ -79,9 +81,16 @@ public abstract class Database {
     public void loadAll(SQLAction action){
     	long time1 = System.currentTimeMillis();
     	boolean b = FurnitureLib.getInstance().isAutoPurge();
-    	try{
+    	try{    		
     		ResultSet rs = statement.executeQuery("SELECT * FROM FurnitureLib_Objects");
-    		while (rs.next()){FurnitureLib.getInstance().getDeSerializer().Deserialze(rs.getString(1), rs.getString(2), action, b);}
+    		while (rs.next()){
+    			if(rs != null){
+    				String a = rs.getString(1), c = rs.getString(2);
+    				if(!(a.isEmpty() || c.isEmpty())) {
+    					FurnitureLib.getInstance().getDeSerializer().Deserialze(a, c, action, b);
+    				}
+    			}
+    		}
     		rs.close();
     		plugin.getLogger().info("FurnitureLib load " + FurnitureLib.getInstance().getFurnitureManager().getObjectList().size()  +  " Objects from: " + getType().name() + " Database");
     		long time2 = System.currentTimeMillis();

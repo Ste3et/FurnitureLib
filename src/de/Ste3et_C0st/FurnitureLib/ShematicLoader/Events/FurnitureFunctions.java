@@ -255,27 +255,22 @@ public class FurnitureFunctions extends FurnitureHelper {
 				}
 			}
 		}
-		for(fEntity entity : getfAsList()){
-			if(entity.getName().equalsIgnoreCase("#ITEM#") || entity.getName().equalsIgnoreCase("#BLOCK#")){
-				for(ItemStack stack : entity.getInventory().getIS()){
+		
+		getfAsList().stream().filter(entity -> entity.getName().equalsIgnoreCase("#ITEM#") || entity.getName().equalsIgnoreCase("#BLOCK#")).
+			forEach(entity -> {
+				for(ItemStack stack : entity.getInventory().getIS()) {
 					if(stack != null){
 						getWorld().dropItemNaturally(getLocation().clone().add(0, .5, 0), stack);
 					}
 				}
-			}
-		}
+			});
 	}
 	
 	private boolean containsNumber(String str) {                
-
 	    if(str == null || str.isEmpty()) return false;
-	    boolean found = false;
 	    for(char c : str.toCharArray()){
-	        if(Character.isDigit(c)){
-	            found = true;
-	        }
+	        if(Character.isDigit(c)) return true; 
 	    }
-
-	    return found;
+	    return false;
 	}
 }

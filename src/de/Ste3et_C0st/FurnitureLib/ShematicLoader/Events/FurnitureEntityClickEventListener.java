@@ -22,6 +22,7 @@ public class FurnitureEntityClickEventListener extends FurnitureFunctions implem
 		if(getObjID().getSQLAction().equals(SQLAction.REMOVE)){return;}
 		if(e.getID()==null) return;
 		if(!e.getID().equals(getObjID())) return;
+		if(!e.canBuild()){return;}
 		ProjectClickEvent event = new ProjectClickEvent(e.getPlayer(), e.getID());
 		Bukkit.getPluginManager().callEvent(event);
 		if(!event.isCancelled()){

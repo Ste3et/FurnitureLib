@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Server;
 import org.bukkit.entity.Entity;
@@ -38,7 +39,12 @@ public abstract class fEntity extends fSerializer{
 	private String customName = "";
 	private Entity passanger;
 	private boolean fire = false, nameVisible = false, visible = true, isKilled = false, isPlayed = false, glowing = false, invisible = false, gravity = false;
-
+	
+	public abstract NBTTagCompound getMetadata();
+	public abstract Entity toRealEntity();
+	public abstract boolean isRealEntity();
+	public abstract void setEntity(Entity e);
+	
 	@SuppressWarnings("deprecation")
 	public fEntity(Location loc, EntityType type, ObjectID id) {
 		super(loc.getWorld(), type, id);
@@ -182,6 +188,14 @@ public abstract class fEntity extends fSerializer{
 	
 	public UUID getUUID() {
 		return this.b;
+	}
+	
+	public void delete(){
+		FurnitureLib.getInstance().getFurnitureManager().remove(this);
+	}
+	
+	public void sendParticle() {
+		getWorld().playEffect(getLocation(), Effect.STEP_SOUND, getHelmet().getType());
 	}
 	
 	
@@ -362,13 +376,13 @@ public abstract class fEntity extends fSerializer{
 		PacketContainer container = new PacketContainer(PacketType.Play.Server.MOUNT);
 		container.getIntegers().write(0, getEntityID());
 		container.getIntegerArrays().write(0, passangerID);
-		try {
-			for (Player p : getObjID().getPlayerList()){
-				getManager().sendServerPacket(p, container);
+		getObjID().getPlayerList().forEach(player -> {
+			try {
+				getManager().sendServerPacket(player, container);
+			} catch (InvocationTargetException e) {
+				e.printStackTrace();
 			}
-		} catch (Exception e1) {
-			e1.printStackTrace();
-		}
+		});
 	}
 
 	public void eject() {
@@ -379,12 +393,13 @@ public abstract class fEntity extends fSerializer{
 		PacketContainer container = new PacketContainer(PacketType.Play.Server.MOUNT);
 		container.getIntegers().write(0, getEntityID());
 		container.getIntegerArrays().write(0, i);
-		try {
-			for (Player p : getObjID().getPlayerList()) {getManager().sendServerPacket(p, container);}
-			this.passanger = null;
-		} catch (Exception e1) {
-			e1.printStackTrace();
-		}
+		getObjID().getPlayerList().forEach(player -> {
+			try {
+				getManager().sendServerPacket(player, container);
+			} catch (InvocationTargetException e) {
+				e.printStackTrace();
+			}
+		});
 	}
 
 	public void sendInventoryPacket(final Player player) {
@@ -465,11 +480,4 @@ public abstract class fEntity extends fSerializer{
 		this.j = ((byte) (int) (loc.getYaw() * 256.0F / 360.0F));
 		this.k = ((byte) (int) (loc.getPitch() * 256.0F / 360.0F));
 	}
-	
-	public void delete(){
-		FurnitureLib.getInstance().getFurnitureManager().remove(this);
-	}
-	
-	public abstract NBTTagCompound getMetadata();
-	
 }

@@ -66,7 +66,7 @@ public class ProtectionManager {
 		UUID userID = p.getUniqueId();
 		UUID ownerID = id.getUUID();
 		if(ownerID==null){return true;}
-		Boolean b = canBuild(type, p, id);
+		Boolean b = canBuild(p, id);
 		if(b) return true;
 		if(publicMode.equals(PublicMode.PRIVATE)){
 			b = ownerID.equals(userID);
@@ -82,9 +82,9 @@ public class ProtectionManager {
 		return b;
 	}
 	
-	private boolean canBuild(EventType type, Player p, ObjectID id){
-		if(type==null) return false;
+	private boolean canBuild(Player p, ObjectID id){
 		if(p.getUniqueId().equals(id.getUUID())) return true;
+		if(FP==null) return false;
 		boolean memberOfRegion = canBuild(p, id.getStartLocation());
 		boolean ownerOfRegion = isOwner(p, id.getStartLocation());
 		
@@ -100,7 +100,9 @@ public class ProtectionManager {
 		}
 		
 		if(memberOfRegion && ownerOfRegion && FurnitureLib.getInstance().haveRegionMemberAccess()) {
-			if(!p.getUniqueId().equals(id.getUUID())) return true;
+			if(!p.getUniqueId().equals(id.getUUID())) {
+				return true;
+			}
 			return true;
 		}
 		return false;

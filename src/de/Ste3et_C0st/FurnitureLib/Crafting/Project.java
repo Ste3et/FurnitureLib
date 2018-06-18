@@ -54,6 +54,7 @@ public class Project{
 	public int getAmountWorld(World w){if(limitationWorld.containsKey(w)){return limitationWorld.get(w);}else{return -1;}}
 	public int getAmountChunk(){return this.chunkLimit;}
 	public void setSilent(boolean b){silent = b;}
+	
 	public boolean isCompleteLimitation(String s){
 		if(this.complete.contains(s)){
 			return true;

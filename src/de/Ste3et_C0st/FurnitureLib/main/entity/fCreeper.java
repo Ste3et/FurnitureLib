@@ -1,6 +1,8 @@
 package de.Ste3et_C0st.FurnitureLib.main.entity;
 
 import org.bukkit.Location;
+import org.bukkit.entity.Creeper;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
@@ -17,6 +19,7 @@ public class fCreeper extends fEntity{
 	public int getArmorID(){return this.armorstandID;}
 	public Project getProject(){return this.pro;}
 	private Project pro;
+	private Creeper entity = null;
 	
 	public fCreeper(Location loc, ObjectID obj) {
 		super(loc, EntityType.CREEPER, obj);
@@ -25,9 +28,6 @@ public class fCreeper extends fEntity{
 		this.pro = obj.getProjectOBJ();
 	}
 
-	public NBTTagCompound getMetadata() {
-		return getMetaData(this);
-	}
 	public boolean isCharged() {
 		return charged;
 	}
@@ -48,5 +48,24 @@ public class fCreeper extends fEntity{
 		return this;
 	}
 	
+	public Creeper toRealEntity() {
+		if(entity!=null){if(!entity.isDead()){return entity;}}
+		entity = (Creeper) getWorld().spawnEntity(getLocation(), getEntityType());
+		entity.setPowered(charged);
+		
+		return entity;
+	}
 	
+	public boolean isRealEntity(){
+		if(entity==null) return false;
+		return true;
+	}
+	
+	public void setEntity(Entity entity){
+		if(entity instanceof Creeper) this.entity = (Creeper) entity;
+	}
+	
+	public NBTTagCompound getMetadata() {
+		return getMetaData(this);
+	}
 }

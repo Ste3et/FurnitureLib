@@ -18,32 +18,33 @@ public class BlockManager implements Listener{
 	public HashSet<Location> locList = new HashSet<Location>();
 	private List<Material> activatePhysic = Arrays.asList(Material.TORCH, Material.REDSTONE_TORCH_OFF, Material.REDSTONE_TORCH_ON,
 			  Material.BED_BLOCK, Material.SIGN, Material.WALL_SIGN, Material.SIGN_POST);
+	private boolean isActive = false;
 	
 	public BlockManager(){}
 	
 	public void addBlock(Block block) {
 		if(block == null || block.getType() == null || block.getType().equals(Material.AIR)) return;
 		locList.add(block.getLocation());
-		if(activatePhysic.contains(block.getType())){
+		if(!isActive && activatePhysic.contains(block.getType())){
 			Bukkit.getPluginManager().registerEvents(this, FurnitureLib.getInstance());
+			isActive = true;
 		}
 	}
 
 	public void destroy(HashSet<Location> locList,boolean dropBlock){
 		if(locList.isEmpty()){return;}
-		for(Location loc : locList){
-			if(loc.getBlock()==null||loc.getBlock().isEmpty()||loc.getBlock().getType()==null||loc.getBlock().getType().equals(Material.AIR)){
-				continue;
-			}
-			if(dropBlock){
-				loc.getBlock().breakNaturally();
-				loc.getBlock().setType(Material.AIR);
-			}else{
-				loc.getBlock().setType(Material.AIR);
-			}
-			
-			this.locList.remove(loc);
-		}
+
+		locList.stream().filter(loc -> loc.getBlock() != null && !loc.getBlock().getType().equals(Material.AIR)).forEach(
+				loc -> {
+					if(dropBlock) {
+						loc.getBlock().breakNaturally();
+					}else {
+						loc.getBlock().setType(Material.AIR);
+					}
+					this.locList.remove(loc);
+				}
+		);
+		
 		locList.clear();
 	}
 

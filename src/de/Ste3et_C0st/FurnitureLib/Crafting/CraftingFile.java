@@ -179,29 +179,43 @@ public class CraftingFile {
 	
 	@SuppressWarnings("deprecation")
 	private ItemStack returnResult(String s){
-		String MaterialSubID = "0";
-		try{
-			MaterialSubID = file.getString(header+".material", "0");
-		}catch(Exception e){
-			MaterialSubID = "0";
-		}
-		Material mat = Material.AIR;
+		Material mat = Material.MONSTER_EGG;
 		short durability = 0;
-		if(MaterialSubID.contains(":")){
-			String[] str = MaterialSubID.split(":");
-			mat = Material.getMaterial(Integer.parseInt(str[0]));
-			try{
-				durability = (short) Integer.parseInt(str[1]);
-			}catch(Exception e){
-				durability = (short) 0;
+		if(file.contains(header + ".material")) {
+			String str = file.getString(header + ".material");
+			if(str.contains(":")) {
+				str = str.split(":")[0];
+			}else {
+				try {
+					Integer i = Integer.parseInt(str);
+					mat = Material.getMaterial(i);
+				}catch (NumberFormatException ex) {
+					mat = Material.getMaterial(str);
+				}
 			}
-			
-		}else{
-			mat = Material.getMaterial(Integer.parseInt(MaterialSubID));
+		}
+		
+		if(file.contains(header + ".durability")) {
+			String str = file.getString(header + ".durability");
+			try {
+				durability = (short) Integer.parseInt(str);
+			}catch (NumberFormatException ex) {
+				ex.printStackTrace();
+				durability = 0;
+			}
 		}
 
 		ItemStack is = new ItemStack(mat);
 		ItemMeta im = is.getItemMeta();
+		
+		try{
+			if(file.contains(header + ".unbreakable")) {
+				boolean str = file.getBoolean(header + ".unbreakable", false);
+				im.setUnbreakable(str);
+			}
+		}catch (Exception e) {
+		}
+		
 		String name = file.getString(header+".name", "");
 		im.setDisplayName(ChatColor.translateAlternateColorCodes('&', name));
 		

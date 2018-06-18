@@ -1,7 +1,9 @@
 package de.Ste3et_C0st.FurnitureLib.main.entity;
 
 import org.bukkit.Location;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Pig;
 
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
@@ -17,6 +19,7 @@ public class fPig extends fEntity{
 	public int getArmorID(){return this.armorstandID;}
 	public Project getProject(){return this.pro;}
 	private Project pro;
+	private Pig entity;
 	
 	public fPig(Location loc, ObjectID obj) {
 		super(loc, EntityType.PIG, obj);
@@ -38,4 +41,20 @@ public class fPig extends fEntity{
 	
 	public boolean haseSaddle(){return this.saddle;}
 
+	public Pig toRealEntity() {
+		if(entity!=null){if(!entity.isDead()){return entity;}}
+		entity = (Pig) getWorld().spawnEntity(getLocation(), getEntityType());
+		entity.setSaddle(saddle);
+		return entity;
+	}
+	
+	public boolean isRealEntity(){
+		if(entity==null) return false;
+		return true;
+	}
+	
+	public void setEntity(Entity entity){
+		if(entity instanceof Pig) this.entity = (Pig) entity;
+	}
+	
 }

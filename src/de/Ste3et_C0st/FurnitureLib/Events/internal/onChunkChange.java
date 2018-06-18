@@ -6,12 +6,11 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerMoveEvent;
 
-import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
 
 public class onChunkChange implements Listener{
 
-	private FurnitureManager manager = FurnitureLib.getInstance().getFurnitureManager();
+	private FurnitureManager manager = FurnitureManager.getInstance();
 	
 	@EventHandler
 	 public void onPlayerMove(PlayerMoveEvent e){

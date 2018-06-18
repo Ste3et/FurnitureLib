@@ -1,5 +1,6 @@
 package de.Ste3et_C0st.FurnitureLib.LimitationManager;
 
+import java.rmi.server.ObjID;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -40,8 +41,7 @@ public class LimitationManager {
 	
 	
 	public void addPlayer(UUID uuid, ObjectID obj){
-		List<ObjectID> objList = new ArrayList<ObjectID>();
-		if(playerList.containsKey(uuid)){objList=playerList.get(uuid);}
+		List<ObjectID> objList = playerList.getOrDefault(uuid, new ArrayList<ObjectID>());
 		objList.add(obj);
 		this.playerList.put(uuid, objList);
 	}
@@ -59,15 +59,17 @@ public class LimitationManager {
 				break;
 			}
 		}
+		
 		if(uui!=null&&objL!=null){
 			this.playerList.put(uui, objL);
 		}
+		
 	}
 	
 	private Integer returnIntProject(Player p, Project pro){
 		int i = 0;
 		if(pro==null) return i;
-			if(playerList.containsKey(p.getUniqueId())){
+			if(playerList.containsKey(p.getUniqueId())){				
 				for(ObjectID obj : playerList.get(p.getUniqueId())){
 					if(obj!=null&&obj.getProjectOBJ()!=null){
 						if(obj.getSQLAction()==null) continue;
@@ -145,14 +147,8 @@ public class LimitationManager {
 		int maxPlayer = -1;
 		
 		if(limitOBJ!=null) maxPlayer = limitOBJ.getAmountFromType(pro.getName());
-		
-		if(world>=maxWorld){
-			if(maxWorld!=-1){return false;}
-		}
-		
-		if(chunk>=maxChunk){
-			if(maxChunk!=-1){return false;}
-		}
+		if(world>=maxWorld){if(maxWorld!=-1){return false;}}
+		if(chunk>=maxChunk){if(maxChunk!=-1){return false;}}
 		
 		if(maxPlayer != -1){
 			if(player < maxPlayer){

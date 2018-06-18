@@ -17,10 +17,8 @@ public class onEntityExplode implements Listener{
 	public void explode(EntityExplodeEvent e){
 		List<Block> blockList = new ArrayList<Block>(e.blockList());
 		HashSet<Location> furnitureBlocks = FurnitureLib.getInstance().getBlockManager().getList();
-		for(Block b : blockList){
-			if(furnitureBlocks.contains(b.getLocation())){
-				e.blockList().remove(b);
-			}
-		}
+		blockList.stream().forEach(block -> {
+			if(furnitureBlocks.contains(block.getLocation())) e.blockList().remove(block);
+		});
 	}
 }

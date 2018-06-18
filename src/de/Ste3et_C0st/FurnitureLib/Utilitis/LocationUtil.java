@@ -77,7 +77,7 @@ public class LocationUtil {
 	public boolean canBuild(Location loc, Project pro, Player p){
 		BlockFace face = yawToFace(loc.getYaw()).getOppositeFace();
 		loc = loc.add(0, 1, 0);
-		if(!FurnitureLib.getInstance().getPermManager().canBuild(p, loc)){return false;}
+		//if(!FurnitureLib.getInstance().getPermManager().canBuild(p, loc)){return false;}
 		int w = pro.getWitdh();
 		int h = pro.getHeight();
 		int l = pro.getLength();
@@ -102,7 +102,7 @@ public class LocationUtil {
 					for(int b = 0; b<h;b++){
 						for(int c = 0;c<l;c++){
 							Location location = FurnitureLib.getInstance().getLocationUtil().getRelativ(loc, face,(double) -a,(double) c).add(0, b, 0);
-							if(!FurnitureLib.getInstance().getPermManager().canBuild(p, location)){return false;}
+							//if(!FurnitureLib.getInstance().getPermManager().canBuild(p, location)){return false;}
 							if(!location.getBlock().getType().equals(Material.AIR)){blockList.add(location);}
 						}
 					}
@@ -112,7 +112,7 @@ public class LocationUtil {
 					for(int b = 0; b<h;b++){
 						for(int c = 0;c>l;c--){
 							Location location = FurnitureLib.getInstance().getLocationUtil().getRelativ(loc, face,(double) -a,(double) c).add(0, b, 0);
-							if(!FurnitureLib.getInstance().getPermManager().canBuild(p, location)){return false;}
+							//if(!FurnitureLib.getInstance().getPermManager().canBuild(p, location)){return false;}
 							if(!location.getBlock().getType().equals(Material.AIR)){blockList.add(location);}
 						}
 					}
@@ -124,7 +124,7 @@ public class LocationUtil {
 				for(int b = 0; b<h;b++){
 					for(int c = 0;c<l;c++){
 						Location location = FurnitureLib.getInstance().getLocationUtil().getRelativ(loc, face,(double) -a,(double) c).add(0, b, 0);
-						if(!FurnitureLib.getInstance().getPermManager().canBuild(p, location)){return false;}
+						//if(!FurnitureLib.getInstance().getPermManager().canBuild(p, location)){return false;}
 						if(!location.getBlock().getType().equals(Material.AIR)){blockList.add(location);}
 					}
 				}
@@ -135,7 +135,7 @@ public class LocationUtil {
 				for(int b = 0; b<h;b++){
 					for(int c = 0;c<l;c++){
 						Location location = FurnitureLib.getInstance().getLocationUtil().getRelativ(loc, face,(double) a,(double) c).add(0, b, 0);
-						if(!FurnitureLib.getInstance().getPermManager().canBuild(p, location)){return false;}
+						//if(!FurnitureLib.getInstance().getPermManager().canBuild(p, location)){return false;}
 						if(!location.getBlock().getType().equals(Material.AIR)){blockList.add(location);}
 					}
 				}
@@ -148,7 +148,7 @@ public class LocationUtil {
 				for(int b = 0; b<h;b++){
 					for(int c = 0;c<w1;c++){
 						Location location = FurnitureLib.getInstance().getLocationUtil().getRelativ(loc, face,(double) -a,(double) c).add(0, b, 0);
-						if(!FurnitureLib.getInstance().getPermManager().canBuild(p, location)){return false;}
+						//if(!FurnitureLib.getInstance().getPermManager().canBuild(p, location)){return false;}
 						if(!location.getBlock().getType().equals(Material.AIR)){blockList.add(location);}
 					}
 				}
@@ -157,7 +157,7 @@ public class LocationUtil {
 				for(int b = 0; b<h;b++){
 					for(int c = 0;c<w1;c++){
 						Location location = FurnitureLib.getInstance().getLocationUtil().getRelativ(loc, face,(double) -a,(double) -c).add(0, b, 0);
-						if(!FurnitureLib.getInstance().getPermManager().canBuild(p, location)){return false;}
+						//if(!FurnitureLib.getInstance().getPermManager().canBuild(p, location)){return false;}
 						if(!location.getBlock().getType().equals(Material.AIR)){blockList.add(location);}
 					}
 				}
