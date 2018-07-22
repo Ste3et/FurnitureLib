@@ -64,7 +64,7 @@ public class deleteCommand {
 											}
 										}
 										project.getCraftingFile().removeCrafting(project.getCraftingFile().getItemstack());
-										project.getCraftingFile().setCraftingDisabled(true);
+										//project.getCraftingFile().setCraftingDisabled(true);
 										String str = project.getCraftingFile().getFileName();
 										File file1 = new File("plugins/FurnitureLib/Crafting", str + ".yml");
 										File file2 = new File("plugins/FurnitureLib/plugin/DiceEditor", str + ".yml");

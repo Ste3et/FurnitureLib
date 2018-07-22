@@ -63,7 +63,7 @@ public class recipeCommand {
 						return;
 					}
 					pro.getCraftingFile().removeCrafting(pro.getCraftingFile().getItemstack());
-					pro.getCraftingFile().setCraftingDisabled(true);
+					//pro.getCraftingFile().setCraftingDisabled(true);
 					sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("CraftingRemove"));
 					return;
 				}else{

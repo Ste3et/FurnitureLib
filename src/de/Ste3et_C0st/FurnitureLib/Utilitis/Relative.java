@@ -1,4 +1,4 @@
-package de.Ste3et_C0st.FurnitureLib.main.entity;
+package de.Ste3et_C0st.FurnitureLib.Utilitis;
 
 import org.bukkit.Location;
 import org.bukkit.block.BlockFace;

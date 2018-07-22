@@ -47,7 +47,7 @@ public class FurnitureFunctions extends FurnitureHelper {
 							
 							if(containsNumber(arg1)){
 								try{
-									a = Material.getMaterial(Integer.parseInt(arg1));
+									//a = Material.getMaterial(Integer.parseInt(arg1));
 								}catch(Exception ex){
 									return;
 								}
@@ -58,18 +58,18 @@ public class FurnitureFunctions extends FurnitureHelper {
 							boolean consume = false;
 							if(arg2.equalsIgnoreCase("DYE")){
 								Material m = p.getInventory().getItemInMainHand().getType();
-								if(m.equals(Material.INK_SACK)){
+								if(m.equals(Material.INK_SAC)){
 									DyeColor color = DyeColor.getByDyeData((byte) p.getInventory().getItemInMainHand().getDurability());
 									for(fEntity stand2 : getfAsList()){
 										if(stand2.getHelmet() == null) continue;
 										if(stand2.getHelmet().getType().equals(a)){
 											ItemStack dyedStack = stand2.getHelmet();
-											if(dyedStack.getType().equals(Material.WOOL) || dyedStack.getType().equals(Material.CARPET) || dyedStack.getType().equals(Material.STAINED_GLASS) || dyedStack.getType().equals(Material.STAINED_CLAY) || dyedStack.getType().equals(Material.STAINED_GLASS_PANE)){
+											if(dyedStack.getType().name().contains("WOOL") || dyedStack.getType().name().contains("CARPET") || dyedStack.getType().name().contains("STAINED_GLASS") || dyedStack.getType().name().contains("TERRACOTTA") || dyedStack.getType().name().contains("STAINED_GLASS_PANE")){
 												if(dyedStack.getDurability()!=color.getWoolData()){
 													dyedStack.setDurability(color.getWoolData());
 													consume = true;
 												}
-											}else if(dyedStack.getType().equals(Material.BANNER)){
+											}else if(dyedStack.getType().name().contains("BANNER")){
 												BannerMeta meta = (BannerMeta) dyedStack.getItemMeta();
 												if(meta == null) continue;
 												if(meta.getBaseColor() == null || !meta.getBaseColor().equals(color)){
@@ -89,7 +89,7 @@ public class FurnitureFunctions extends FurnitureHelper {
 								Material b  = Material.AIR;
 								if(containsNumber(arg2)){
 									try{
-										b = Material.getMaterial(Integer.parseInt(arg2));
+										//b = Material.getMaterial(Integer.parseInt(arg2));
 									}catch(Exception ex){
 										return;
 									}
@@ -207,9 +207,9 @@ public class FurnitureFunctions extends FurnitureHelper {
 					short durability = 0;
 					Material m = null;
 					if(string.contains(":")){
-						String[] split = string.split(":");
-						m = Material.getMaterial(Integer.parseInt(split[0]));
-						durability = Short.parseShort(split[1]);
+//						String[] split = string.split(":");
+//						m = Material.getMaterial(Integer.parseInt(split[0]));
+//						durability = Short.parseShort(split[1]);
 					}else{
 						m = Material.getMaterial(string);
 					}

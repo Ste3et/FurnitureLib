@@ -27,13 +27,10 @@ import de.Ste3et_C0st.FurnitureLib.main.entity.fGiant;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fPig;
 
 public class FurnitureManager {
-	private Integer i = 0;
 	private HashSet<ObjectID> objecte = new HashSet<ObjectID>();
 	private List<Project> projects = new ArrayList<Project>();
 	private List<UUID> ignoreList = new ArrayList<UUID>();
 	private static FurnitureManager manager;
-	
-	public void setLastID(Integer i){this.i = i;}
 	public HashSet<ObjectID> getObjectList(){return this.objecte;}
 	public List<Chunk> chunkList = new ArrayList<Chunk>();
 	public List<UUID> getIgnoreList(){return this.ignoreList;}
@@ -51,7 +48,6 @@ public class FurnitureManager {
 		projects.add(project);}
 	}
 	public List<Project> getProjects(){return this.projects;}
-	public int getLastID() {return i;}
 	public HashMap<World, HashMap<EntityType, WrappedDataWatcher>> defaultWatchers = new HashMap<World, HashMap<EntityType, WrappedDataWatcher>>(); 
 	public WrappedDataWatcher watcher=null;
 	
@@ -152,35 +148,19 @@ public class FurnitureManager {
 	}
 	
 	public fArmorStand createArmorStand(ObjectID id, Location loc){
-		if(!objecte.contains(id)){this.objecte.add(id);}
-		i++;
-		fArmorStand packet = new fArmorStand(loc, id);
-		id.addArmorStand(packet);
-		return packet;
+		return (fArmorStand) createFromType("armorstand", loc, id);	
 	}
 	
 	public fPig createPig(ObjectID id, Location loc){
-		if(!objecte.contains(id)){this.objecte.add(id);}
-		i++;
-		fPig packet = new fPig(loc, id);
-		id.addArmorStand(packet);
-		return packet;		
+		return (fPig) createFromType("pig", loc, id);	
 	}
 	
 	public fGiant createGiant(ObjectID id, Location loc){
-		if(!objecte.contains(id)){this.objecte.add(id);}
-		i++;
-		fGiant packet = new fGiant(loc, id);
-		id.addArmorStand(packet);
-		return packet;		
+		return (fGiant) createFromType("giant", loc, id);
 	}
 	
 	public fCreeper createCreeper(ObjectID id, Location loc){
-		if(!objecte.contains(id)){this.objecte.add(id);}
-		i++;
-		fCreeper packet = new fCreeper(loc, id);
-		id.addArmorStand(packet);
-		return packet;		
+		return (fCreeper) createFromType("creeper", loc, id);
 	}	
 	
 	public void addArmorStand(Object obj){
@@ -188,7 +168,6 @@ public class FurnitureManager {
 		fArmorStand stand = (fArmorStand) obj;
 		ObjectID id = stand.getObjID();
 		if(!objecte.contains(id)){this.objecte.add(id);}
-		i++;
 		id.addArmorStand(stand);
 	}
 
@@ -262,4 +241,27 @@ public class FurnitureManager {
 	}
 	
 	public static FurnitureManager getInstance() {return manager;}
+
+	public fEntity createFromType(String str, Location loc, ObjectID obj) {
+		if(!objecte.contains(obj)){this.objecte.add(obj);}
+		switch (str.toLowerCase()) {
+		case "creeper":
+			fCreeper crepper = new fCreeper(loc, obj);
+			obj.addArmorStand(crepper);
+			return crepper;
+		case "armorstand":
+			fArmorStand armorStand = new fArmorStand(loc, obj);
+			obj.addArmorStand(armorStand);
+			return armorStand;
+		case "pig":
+			fPig pig = new fPig(loc, obj);
+			obj.addArmorStand(pig);
+			return pig;	
+		case "giant":
+			fGiant giant = new fGiant(loc, obj);
+			obj.addArmorStand(giant);
+			return giant;	
+		default:return null;
+		}
+	}
 }

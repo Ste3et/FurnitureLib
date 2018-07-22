@@ -9,32 +9,16 @@ import org.bukkit.entity.Player;
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 
-import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
-import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 
 public class fGiant extends fEntity {
 
-	private int armorstandID;
-	public fGiant setObjID(ObjectID objID) {setObjectID(objID);return this;}
-	public fGiant setArmorID(int i){this.armorstandID = i;return this;}
-	public int getArmorID(){return this.armorstandID;}
 	private boolean AI = true;
-	public Project getProject(){return this.pro;}
-	private Project pro;
 	private Giant entity = null;
 	
 	public fGiant(Location loc, ObjectID id) {
 		super(loc, EntityType.GIANT, id);
-		this.armorstandID = FurnitureLib.getInstance().getFurnitureManager().getLastID();
-		this.setObjID(id);
-		this.pro = id.getProjectOBJ();
-	}
-
-	@Override
-	public NBTTagCompound getMetadata() {
-		return getMetaData(this);
 	}
 	
 	public fGiant moveRelative(int x, int y, int z, float yaw, float pitch, boolean onGround){
@@ -64,25 +48,25 @@ public class fGiant extends fEntity {
 	}
 	
 	public fGiant setNoAI(boolean b){
-		byte b0 = (byte) getObject(getWatcher(), Byte.valueOf((byte) 0), getField().getBitMask());
+		byte b0 = (byte) getObject(getWatcher(), Byte.valueOf((byte) 0), 11);
 		if (b)
 			b0 = (byte)(b0 | 0x1);
 		else {
 			b0 = (byte)(b0 & 0xFFFFFFFE);
 		}
-		setObject(getWatcher(), Byte.valueOf(b0),getField().getBitMask());
+		setObject(getWatcher(), Byte.valueOf(b0),11);
 		this.AI = b;
 		return this;
 	}
 	
 	public fGiant setLeftHanded(boolean b){
-		byte b0 = (byte) getObject(getWatcher(), Byte.valueOf((byte) 0), getField().getBitMask());
+		byte b0 = (byte) getObject(getWatcher(), Byte.valueOf((byte) 0), 11);
 		if (b)
 			b0 = (byte)(b0 | 0x2);
 		else {
 			b0 = (byte)(b0 & 0xFFFFFFFE);
 		}
-		setObject(getWatcher(), Byte.valueOf(b0),getField().getBitMask());
+		setObject(getWatcher(), Byte.valueOf(b0),11);
 		return this;
 	}
 
@@ -102,4 +86,13 @@ public class fGiant extends fEntity {
 		if(entity instanceof Giant) this.entity = (Giant) entity;
 	}
 	
+	public NBTTagCompound getMetaData(){
+		getDefNBT(this);
+		return getNBTField();
+	}
+	
+	@Override
+	public void loadMetadata(NBTTagCompound metadata) {
+		loadDefMetadata(metadata);
+	}
 }

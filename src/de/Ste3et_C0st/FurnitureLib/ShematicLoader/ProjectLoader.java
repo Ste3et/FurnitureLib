@@ -50,7 +50,7 @@ public class ProjectLoader extends Furniture{
 		super(id);
 		try{
 			YamlConfiguration config = new YamlConfiguration();
-			config.load(new File("plugins/FurnitureLib/Crafting/", getObjID().getProject()+".yml"));
+			config.load(new File("plugins/FurnitureLib/models/", getObjID().getProject()+".dModel"));
 			header = getHeader(config);
 			Player player = setBlock(id.getStartLocation(), config, true);
 			if(player!=null){
@@ -88,7 +88,7 @@ public class ProjectLoader extends Furniture{
 		super(id);
 		try{
 			YamlConfiguration config = new YamlConfiguration();
-			config.load(new File("plugins/FurnitureLib/Crafting/", getObjID().getProject()+".yml"));
+			config.load(new File("plugins/FurnitureLib/models/", getObjID().getProject()+".dModel"));
 			header = getHeader(config);
 			Player player = setBlock(id.getStartLocation(), config, rotate);
 			if(player!=null){
@@ -127,8 +127,8 @@ public class ProjectLoader extends Furniture{
 
 	public void spawn(Location loc, YamlConfiguration config, boolean rotate) {
 		try {
-			for(String s : config.getConfigurationSection(header+".ProjectModels.ArmorStands").getKeys(false)){
-				String md5 = config.getString(header+".ProjectModels.ArmorStands."+s);
+			for(String s : config.getConfigurationSection(header+".projectData.entitys").getKeys(false)){
+				String md5 = config.getString(header+".projectData.entitys."+s);
 				byte[] by = Base64.decodeBase64(md5);
 				ByteArrayInputStream bin = new ByteArrayInputStream(by);
 				NBTTagCompound metadata = NBTCompressedStreamTools.read(bin);
@@ -181,15 +181,14 @@ public class ProjectLoader extends Furniture{
 	private HashMap<Integer, HashMap<Location, ProjectMaterial>> getBlockMap(Location loc, YamlConfiguration config, boolean rotate){
 		HashMap<Integer, HashMap<Location, ProjectMaterial>> map = new HashMap<Integer, HashMap<Location, ProjectMaterial>>();
 		try {
-			if(config.isConfigurationSection(header+".ProjectModels.Block")){
+			if(config.isConfigurationSection(header+".projectData.blockList")){
 				int i = 0;
-				for(String s : config.getConfigurationSection(header+".ProjectModels.Block").getKeys(false)){
+				for(String s : config.getConfigurationSection(header+".projectData.blockList").getKeys(false)){
 					HashMap<Location, ProjectMaterial> block = new HashMap<Location, ProjectMaterial>();
-					double x = config.getDouble(header+".ProjectModels.Block." + s + ".X-Offset");
-					double y = config.getDouble(header+".ProjectModels.Block." + s + ".Y-Offset");
-					double z = config.getDouble(header+".ProjectModels.Block." + s + ".Z-Offset");
-					Material m = Material.valueOf(config.getString(header+".ProjectModels.Block." + s + ".Type"));
-					byte b = (byte) config.getInt(header+".ProjectModels.Block." + s + ".Data");
+					double x = config.getDouble(header+".projectData.blockList." + s + ".X-Offset");
+					double y = config.getDouble(header+".projectData.blockList." + s + ".Y-Offset");
+					double z = config.getDouble(header+".projectData.blockList." + s + ".Z-Offset");
+					Material m = Material.valueOf(config.getString(header+".projectData.blockList." + s + ".material"));
 					Location armorLocation = getRelative(getLocation(), getBlockFace(), -z, -x).add(0, y, 0);
 					if(rotate){
 						switch (getObjID().getProjectOBJ().getPlaceableSide()) {
@@ -197,17 +196,17 @@ public class ProjectLoader extends Furniture{
 							default: break;
 						}
 					}
-					ProjectMaterial material = new ProjectMaterial(m, b);
-					if(config.isSet(header+".ProjectModels.Block." + s + ".Rotation")){
-						material.setBlockFace(BlockFace.valueOf(config.getString(header+".ProjectModels.Block." + s + ".Rotation")));
+					ProjectMaterial material = new ProjectMaterial(m);
+					if(config.isSet(header+".projectData.blockList." + s + ".Rotation")){
+						material.setBlockFace(BlockFace.valueOf(config.getString(header+".projectData.blockList." + s + ".Rotation")));
 					}
 					
-//					if(config.isSet(header+".ProjectModels.Block." + s + ".Inventory")){
-//						InventoryType type = InventoryType.valueOf(config.getString(header+".ProjectModels.Block." + s + ".Inventory.type"));
+//					if(config.isSet(header+".projectData.blockList." + s + ".Inventory")){
+//						InventoryType type = InventoryType.valueOf(config.getString(header+".projectData.blockList." + s + ".Inventory.type"));
 //						Inventory inv = Bukkit.createInventory(null, type);
-//						for(String j : config.getConfigurationSection(header+".ProjectModels.Block." + s + ".Inventory").getKeys(false)){
+//						for(String j : config.getConfigurationSection(header+".projectData.blockList." + s + ".Inventory").getKeys(false)){
 //							if(!j.equalsIgnoreCase("type")){
-//								String base64 = config.getString(header+".ProjectModels.Block." + s + ".Inventory." + j);
+//								String base64 = config.getString(header+".projectData.blockList." + s + ".Inventory." + j);
 //								byte[] bString = Base64.decodeBase64(base64);
 //								ByteArrayInputStream bin = new ByteArrayInputStream(bString);
 //								NBTTagCompound compound = NBTCompressedStreamTools.read(bin);
@@ -251,8 +250,7 @@ public class ProjectLoader extends Furniture{
 									continue;
 								}}
 							
-							if(material.getMaterial().equals(Material.BED_BLOCK)){
-								
+							if(material.getMaterial().name().contains("_BED")){
 								Location bottom = blockLocation.clone().subtract(0, 1, 0);
 								if(!bottom.getBlock().getType().isSolid()){
 									k = false;
@@ -285,7 +283,6 @@ public class ProjectLoader extends Furniture{
 						if(blockLocation.getBlock().isEmpty()){
 							Block block = blockLocation.getBlock();
 							block.setType(material.getMaterial(), false);
-							block.setData(material.getByte(), false);
 							BlockState state = block.getState();
 							
 //							if(material.getInventory()!=null){
@@ -305,9 +302,9 @@ public class ProjectLoader extends Furniture{
 								float newYaw4 = yaw1 + yaw2 + yaw3;
 								BlockFace face = getLutil().yawToFace(newYaw4);
 								
-								if(material.getMaterial().equals(Material.BED_BLOCK)){
+								if(material.getMaterial().name().contains("_BED")){
 									block.setType(Material.AIR);
-									getLutil().setBed(face, blockLocation);
+									getLutil().setBed(face, blockLocation, material.getMaterial());
 									registerBlock(block);
 									continue;
 								}if(material.getMaterial().name().endsWith("DOOR")){
@@ -338,7 +335,7 @@ public class ProjectLoader extends Furniture{
 							}
 							state.update(true);
 						}
-						if(blockLocation.getBlock().getType().equals(Material.BED_BLOCK) || blockLocation.getBlock().getType().name().endsWith("DOOR")){
+						if(blockLocation.getBlock().getType().name().contains("_BED") || blockLocation.getBlock().getType().name().endsWith("DOOR")){
 							registerBlock(blockLocation.getBlock());
 						}else{
 							blockList.add(blockLocation.getBlock());
@@ -358,7 +355,7 @@ public class ProjectLoader extends Furniture{
 	private void registerBlock(Block b){
 		List<Block> locationList = new ArrayList<Block>();
 		locationList.add(b);
-		if(b.getType().equals(Material.BED_BLOCK)){
+		if(b.getType().name().contains("_BED")){
 			BlockState state = b.getState();
 			Directional direction = (Directional) state.getData();
 			BlockState top = state.getBlock().getRelative(direction.getFacing()).getState();

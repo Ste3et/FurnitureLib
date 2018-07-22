@@ -16,6 +16,7 @@ import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.command.PluginCommand;
@@ -89,6 +90,7 @@ public class FurnitureLib extends JavaPlugin{
 	private String timePattern = "mm:ss:SSS";
 	private int purgeTime = 30, viewDistance = 100;
 	private long purgeTimeMS = 0, spamBreakTime = 5000, spamPlaceTime = 5000;
+	private Material defMaterial = Material.COW_SPAWN_EGG;
 	public HashMap<Project, Long> deleteMap = new HashMap<Project, Long>();
 	public HashMap<UUID, Long> timeStampPlace = new HashMap<UUID, Long>();
 	public HashMap<UUID, Long> timeStampBreak = new HashMap<UUID, Long>();
@@ -102,6 +104,7 @@ public class FurnitureLib extends JavaPlugin{
 	public String getBukkitVersion() {return Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3];}
 	public String getTimeDif(long input, long dif, String pattern){return new SimpleDateFormat(pattern).format(new Date(dif - (System.currentTimeMillis() - input))).toString();}
 	public Updater getUpdater(){return updater;}
+	public Material getDefaultSpawnMaterial() {return this.defMaterial;}
 	public LocationUtil getLocationUtil(){return this.lUtil;}
 	public FurnitureManager getFurnitureManager(){return this.manager;}
 	public ObjectID getObjectID(String c, String plugin, Location loc){return new ObjectID(c, plugin, loc);}
@@ -125,7 +128,7 @@ public class FurnitureLib extends JavaPlugin{
 	public long getBreakTime(){return this.spamBreakTime;}
 	public long getPlaceTime(){return this.spamPlaceTime;}
 	public static FurnitureLib getInstance(){return instance;}
-
+	
 	public void send(String s){getServer().getConsoleSender().sendMessage(s);}
 	private void loadMetrics(){try{if(getConfig().getBoolean("config.UseMetrics")){new bStats(getInstance());}}catch(Exception e){e.printStackTrace();}}
 
@@ -153,97 +156,93 @@ public class FurnitureLib extends JavaPlugin{
 	@Override
 	public void onEnable(){
 		if(!isEnable("ProtocolLib", true)){send("§cProtocolLib not found");getPluginManager().disablePlugin(this);}else{
-			if(getServer().getBukkitVersion().startsWith("1.9") || getServer().getBukkitVersion().startsWith("1.10") || getServer().getBukkitVersion().startsWith("1.11") || getServer().getBukkitVersion().startsWith("1.12")){
-				instance = this;
-				getConfig().addDefaults(YamlConfiguration.loadConfiguration(loadStream("config.yml")));
-				getConfig().options().copyDefaults(true);
-				getConfig().options().copyHeader(true);
-				saveConfig();
-				field = ProtocolFields.getField(getServer().getBukkitVersion());
-				this.lUtil = new LocationUtil();
-				this.manager = new FurnitureManager();
-				this.colorManager = new ColorUtil();
-				this.serializeNew = new Serializer();
-				this.deSerializerNew = new DeSerializer();
-				this.lightMgr = new LightManager(this);
-				this.lmanager = new LanguageManager(instance, getConfig().getString("config.Language"));
-				this.useGamemode = !getConfig().getBoolean("config.Creative.RemoveItems");
-				this.creativeInteract = getConfig().getBoolean("config.Creative.Interact");
-				this.creativePlace = getConfig().getBoolean("config.Creative.Place");
-				this.useRegionMemberAccess = getConfig().getBoolean("config.ProtectionLib.RegeionMemberAccess");
-				this.canSit = !getConfig().getBoolean("config.DisableSitting");
-				this.useParticle = getConfig().getBoolean("config.useParticles");
-				this.purgeTime = getConfig().getInt("config.Purge.time");
-				this.autoPurge = getConfig().getBoolean("config.Purge.autoPurge");
-				this.removePurge = getConfig().getBoolean("config.Purge.removePurge");
-				this.viewDistance = (Bukkit.getViewDistance()*16)-2;
-				if(this.viewDistance>=getConfig().getInt("config.viewDistance")){
-					this.viewDistance = getConfig().getInt("config.viewDistance");
-				}
+			instance = this;
+			getConfig().addDefaults(YamlConfiguration.loadConfiguration(loadStream("config.yml")));
+			getConfig().options().copyDefaults(true);
+			getConfig().options().copyHeader(true);
+			saveConfig();
+			field = ProtocolFields.getField(getServer().getBukkitVersion());
+			this.lUtil = new LocationUtil();
+			this.manager = new FurnitureManager();
+			this.colorManager = new ColorUtil();
+			this.serializeNew = new Serializer();
+			this.deSerializerNew = new DeSerializer();
+			this.lightMgr = new LightManager(this);
+			this.lmanager = new LanguageManager(instance, getConfig().getString("config.Language"));
+			this.useGamemode = !getConfig().getBoolean("config.Creative.RemoveItems");
+			this.creativeInteract = getConfig().getBoolean("config.Creative.Interact");
+			this.creativePlace = getConfig().getBoolean("config.Creative.Place");
+			this.useRegionMemberAccess = getConfig().getBoolean("config.ProtectionLib.RegeionMemberAccess");
+			this.canSit = !getConfig().getBoolean("config.DisableSitting");
+			this.useParticle = getConfig().getBoolean("config.useParticles");
+			this.purgeTime = getConfig().getInt("config.Purge.time");
+			this.autoPurge = getConfig().getBoolean("config.Purge.autoPurge");
+			this.removePurge = getConfig().getBoolean("config.Purge.removePurge");
+			this.viewDistance = (Bukkit.getViewDistance()*16)-2;
+			if(this.viewDistance>=getConfig().getInt("config.viewDistance")){
+				this.viewDistance = getConfig().getInt("config.viewDistance");
+			}
 				
-				this.glowing = getConfig().getBoolean("config.glowing");
-				this.spamBreak = getConfig().getBoolean("config.spamBlock.Break.Enable");
-				this.spamPlace = getConfig().getBoolean("config.spamBlock.Place.Enable");
-				this.spamBreakTime = getConfig().getLong("config.spamBlock.Break.time");
-				this.spamBreakTime = getConfig().getLong("config.spamBlock.Place.time");
-				this.timePattern = getConfig().getString("config.spamBlock.timeDisplay");
-				this.rotateOnSit = getConfig().getBoolean("config.rotateOnSit");
+			this.glowing = getConfig().getBoolean("config.glowing");
+			this.spamBreak = getConfig().getBoolean("config.spamBlock.Break.Enable");
+			this.spamPlace = getConfig().getBoolean("config.spamBlock.Place.Enable");
+			this.spamBreakTime = getConfig().getLong("config.spamBlock.Break.time");
+			this.spamBreakTime = getConfig().getLong("config.spamBlock.Place.time");
+			this.timePattern = getConfig().getString("config.spamBlock.timeDisplay");
+			this.rotateOnSit = getConfig().getBoolean("config.rotateOnSit");
+				
+			this.purgeTimeMS = TimeUnit.DAYS.toMillis(purgeTime);
+			this.pManager = new ProjectManager();
+			this.permissionHandler = new PermissionHandler();
+			PluginCommand c = getCommand("furniture");
+			c.setExecutor(new command(this));
+			c.setTabCompleter(new TabCompleterHandler(this));
+			this.Pmanager = new ProtectionManager(instance);
+			send("==========================================");
+			send("FurnitureLibary Version: §e" + this.getDescription().getVersion());
+			send("Furniture Autor: §6" + this.getDescription().getAuthors().get(0));
+			send("Furniture Website: §e" + this.getDescription().getWebsite());
+			String s = getPluginManager().getPlugin("ProtocolLib").getDescription().getVersion();
+			boolean protocollib = isRightProtocollib(s);
+			this.limitManager = new LimitationManager(this, LimitationType.valueOf(getConfig().getString("config.LimitType", "PLAYER").toUpperCase()));
+			if(protocollib){
+				send("Furniture start load");
+				Boolean b = isEnable("ProtectionLib", false);
+				send("Furniture find ProtectionLib: §e" + b.toString());
+				createDefaultWatchers();
+				this.type = EventType.valueOf(getConfig().getString("config.PlaceMode.Access", "INTERACT"));
+				this.mode = PublicMode.valueOf(getConfig().getString("config.PlaceMode.Mode", "PRIVATE"));
+				this.bmanager = new BlockManager();
+				this.craftingInv = new CraftingInv(this);
+				for(Player p : Bukkit.getOnlinePlayers()){if(p.isOp()){getUpdater().sendPlayer(p);}}
+				loadPermissionKit();
+				loadMetrics();
+				this.update = getConfig().getBoolean("config.CheckUpdate");
 				this.updater = new Updater();
-				this.purgeTimeMS = TimeUnit.DAYS.toMillis(purgeTime);
-				this.pManager = new ProjectManager();
-				this.permissionHandler = new PermissionHandler();
-				PluginCommand c = getCommand("furniture");
-				c.setExecutor(new command(this));
-				c.setTabCompleter(new TabCompleterHandler(this));
-				this.Pmanager = new ProtectionManager(instance);
+				this.sqlManager = new SQLManager(instance);
+				this.sqlManager.initialize();
+				this.loadIgnore();
+				this.sqlManager.loadALL();
+				this.pManager.loadProjectFiles();
+				new FurnitureEvents(instance, manager);
+				getServer().getPluginManager().registerEvents(new onCrafting(), getInstance());
+				getServer().getPluginManager().registerEvents(new onEntityExplode(), getInstance());
+				getServer().getPluginManager().registerEvents(new onPlayerChangeWorld(), getInstance());
+				getServer().getPluginManager().registerEvents(new onPlayerDeath(), getInstance());
+				getServer().getPluginManager().registerEvents(new onPlayerJoin(), getInstance());
+				getServer().getPluginManager().registerEvents(new onPlayerQuit(), getInstance());
+				getServer().getPluginManager().registerEvents(new onPlayerRespawn(), getInstance());
+				getServer().getPluginManager().registerEvents(new onPlayerTeleportEvent(), getInstance());
+				getServer().getPluginManager().registerEvents(new ChunkOnLoad(), getInstance());
+				getServer().getPluginManager().registerEvents(new onChunkChange(), getInstance());
+				send("§2Furniture load finish :)");
+				if(getConfig().getBoolean("config.timer.Enable")){int time = getConfig().getInt("config.timer.time");sqlManager.saveIntervall(time);}
 				send("==========================================");
-				send("FurnitureLibary Version: §e" + this.getDescription().getVersion());
-				send("Furniture Autor: §6" + this.getDescription().getAuthors().get(0));
-				send("Furniture Website: §e" + this.getDescription().getWebsite());
-				String s = getPluginManager().getPlugin("ProtocolLib").getDescription().getVersion();
-				boolean protocollib = isRightProtocollib(s);
-				this.limitManager = new LimitationManager(this, LimitationType.valueOf(getConfig().getString("config.LimitType", "PLAYER").toUpperCase()));
-				if(protocollib){
-					send("Furniture start load");
-					Boolean b = isEnable("ProtectionLib", false);
-					send("Furniture find ProtectionLib: §e" + b.toString());
-					createDefaultWatchers();
-					this.type = EventType.valueOf(getConfig().getString("config.PlaceMode.Access", "INTERACT"));
-					this.mode = PublicMode.valueOf(getConfig().getString("config.PlaceMode.Mode", "PRIVATE"));
-					this.bmanager = new BlockManager();
-					this.craftingInv = new CraftingInv(this);
-					for(Player p : Bukkit.getOnlinePlayers()){if(p.isOp()){getUpdater().sendPlayer(p);}}
-					loadPermissionKit();
-					loadMetrics();
-					this.update = getConfig().getBoolean("config.CheckUpdate");
-					this.sqlManager = new SQLManager(instance);
-					this.sqlManager.initialize();
-					this.loadIgnore();
-					this.sqlManager.loadALL();
-					this.pManager.loadProjectFiles();
-					new FurnitureEvents(instance, manager);
-					getServer().getPluginManager().registerEvents(new onCrafting(), getInstance());
-					getServer().getPluginManager().registerEvents(new onEntityExplode(), getInstance());
-					getServer().getPluginManager().registerEvents(new onPlayerChangeWorld(), getInstance());
-					getServer().getPluginManager().registerEvents(new onPlayerDeath(), getInstance());
-					getServer().getPluginManager().registerEvents(new onPlayerJoin(), getInstance());
-					getServer().getPluginManager().registerEvents(new onPlayerQuit(), getInstance());
-					getServer().getPluginManager().registerEvents(new onPlayerRespawn(), getInstance());
-					getServer().getPluginManager().registerEvents(new onPlayerTeleportEvent(), getInstance());
-					getServer().getPluginManager().registerEvents(new ChunkOnLoad(), getInstance());
-					getServer().getPluginManager().registerEvents(new onChunkChange(), getInstance());
-					send("§2Furniture load finish :)");
-					if(getConfig().getBoolean("config.timer.Enable")){int time = getConfig().getInt("config.timer.time");sqlManager.saveIntervall(time);}
-					send("==========================================");
-				}else{
-					send("Furniture Lib deosn't find the correct ProtocolLib");
-					send("Please Install Protocollib §c4.x");
-					send("You can it download at: §6§lhttps://www.spigotmc.org/resources/protocollib.1997/");
-					send("==========================================");
-					getPluginManager().disablePlugin(this);
-				}
 			}else{
-				send("§cYour Server version is not Supportet please use §c1.9.x");
+				send("Furniture Lib deosn't find the correct ProtocolLib");
+				send("Please Install Protocollib §c4.x");
+				send("You can it download at: §6§lhttps://www.spigotmc.org/resources/protocollib.1997/");
+				send("==========================================");
 				getPluginManager().disablePlugin(this);
 			}
 		}

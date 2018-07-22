@@ -17,30 +17,37 @@ import org.bukkit.scheduler.BukkitRunnable;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
+import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.EnumWrappers.Particle;
 
+import de.Ste3et_C0st.FurnitureLib.NBT.CraftItemStack;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.EntityID;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 
 public abstract class fEntity extends fSerializer{
-
+	
+	/*
+	 * Field a = EntityID
+	 * Field b = UUID
+	 * Field c = EntityTypeID
+	 * Field i = InventoryObject
+	 * Field d,e,f = X,Y,Z Coordinats 
+	 * Field j,k = Yaw/Pitch
+	 */
+	
 	private int a;
 	private UUID b = UUID.randomUUID();
 	private int c;
-	private double d;
-	private double e;
-	private double f;
-	private byte j;
-	private byte k;
+	private double d,e,f;
+	private byte j,k;
 	private fInventory i;
 	private Location l;
 	private String customName = "";
 	private Entity passanger;
-	private boolean fire = false, nameVisible = false, visible = true, isKilled = false, isPlayed = false, glowing = false, invisible = false, gravity = false;
+	private boolean fire = false, nameVisible = false, isKilled = false, isPlayed = false, glowing = false, invisible = false, gravity = false;
 	
-	public abstract NBTTagCompound getMetadata();
 	public abstract Entity toRealEntity();
 	public abstract boolean isRealEntity();
 	public abstract void setEntity(Entity e);
@@ -135,16 +142,6 @@ public abstract class fEntity extends fSerializer{
 		return this;
 	}
 	
-	@Deprecated
-	public void setItemInHand(ItemStack is) {
-		getInventory().setItemInHand(is);
-	}
-
-	@Deprecated
-	public ItemStack getItemInHand() {
-		return getInventory().getItemInHand();
-	}
-	
 	public ItemStack getItemInMainHand(){
 		return getInventory().getItemInMainHand();
 	}
@@ -168,12 +165,7 @@ public abstract class fEntity extends fSerializer{
 	public Server getServer() {
 		return Bukkit.getServer();
 	}
-	
-	@Deprecated
-	public boolean isVisible(){
-		return this.visible;
-	}
-	
+
 	public boolean isInvisible(){
 		return this.invisible;
 	}
@@ -236,6 +228,24 @@ public abstract class fEntity extends fSerializer{
 		PacketContainer c = new PacketContainer(PacketType.Play.Server.ENTITY_TELEPORT);
 		c.getIntegers().write(0, getEntityID());
 		c.getDoubles().write(0, this.d).write(1, this.e).write(2, this.f);
+		c.getBytes().write(0, this.j).write(1, this.k);
+		for (Player p : getObjID().getPlayerList()) {
+			try {
+				getManager().sendServerPacket(p, c);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
+	public void rotate(float yaw, float pitch) {
+		Location loc = getLocation();
+		loc.setYaw(loc.getYaw() + yaw);
+		loc.setPitch(loc.getPitch() + pitch);
+		setLocation(loc);
+		
+		PacketContainer c = new PacketContainer(PacketType.Play.Server.ENTITY_LOOK);
+		c.getIntegers().write(0, getEntityID());
 		c.getBytes().write(0, this.j).write(1, this.k);
 		for (Player p : getObjID().getPlayerList()) {
 			try {
@@ -480,4 +490,23 @@ public abstract class fEntity extends fSerializer{
 		this.j = ((byte) (int) (loc.getYaw() * 256.0F / 360.0F));
 		this.k = ((byte) (int) (loc.getPitch() * 256.0F / 360.0F));
 	}
+	
+	public void loadDefMetadata(NBTTagCompound metadata){
+		String name = metadata.getString("Name");
+		boolean n = (metadata.getInt("NameVisible")==1);
+		boolean f = (metadata.getInt("Fire")==1),i = (metadata.getInt("Invisible")==1);
+		boolean g = (metadata.getInt("Glowing")==1);
+		NBTTagCompound inventory = metadata.getCompound("Inventory");
+		for(Object object : EnumWrappers.ItemSlot.values()){
+			if(!inventory.getString(object.toString()).equalsIgnoreCase("NONE")){
+				ItemStack is = new CraftItemStack().getItemStack(inventory.getCompound(object.toString()+""));
+				if(is!=null){
+					this.getInventory().setSlot(object.toString(), is);
+				}
+			}
+		}
+		this.setNameVasibility(n).setName(name).setFire(f).setGlowing(g).setInvisible(i);
+	}
+	
+	public abstract void loadMetadata(NBTTagCompound metadata);
 }

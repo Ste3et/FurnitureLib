@@ -6,68 +6,55 @@ inv:
     admin:
         setOwner:
             String: "&cSet Furniture Owner"
-            Material: 264
-            SubID: 0
+            Material: DIAMOND
             Text:
                 - "&e&lOwner:&2&l #OWNER#"
     mode:
         Private:
             String: "&cPrivate"
-            Material: 425
-            SubID: 0
+            Material: BLACK_BANNER
             Text:
                 - "&e&lOnly &c&nyou &e&lhave access to"
                 - "&e&lthe furniture"
         Member:
             String: "&6Members"
-            Material: 425
-            SubID: 14
+            Material: ORANGE_BANNER
             Text:
                 - "&e&lOnly your &c&nfriends &e&lhave access to"
                 - "&e&lthe furniture"
         Public:
             String: "&aPublic"
-            Material: 425
-            SubID: 2
+            Material: GREEN_BANNER
             Text:
                 - "&e&lAll &c&nPlayers &e&lhave access to"
                 - "&e&lthe furniture"
     event:
         Break:
             String: "&cBreak"
-            Material: 425
-            SubID: 0
+            Material: BLACK_BANNER
         Interact:
             String: "&eInteract"
-            Material: 425
-            SubID: 14
+            Material: ORANGE_BANNER
         Break_interact:
             String: "&aBreak_interact"
-            Material: 425
-            SubID: 2
+            Material: GREEN_BANNER
         None:
             String: "None"
-            Material: 425
-            SubID: 1
+            Material: RED_BANNER
     player:
         add:
             String: "Add Player"
-            Material: 397
-            SubID: 3
+            Material: PLAYER_HEAD
         remove:
             String: "Remove Player"
-            Material: 397
-            SubID: 2
+            Material: ZOMBIE_HEAD
     controller:
         NextPage:
             String: "&aNext Page"
-            Material: 262
-            SubID: 0
+            Material: DARK_OAK_BUTTON
         PrevPage:
             String: "&aPrev Page"
-            Material: 262
-            SubID: 0
+            Material: STONE_BUTTON
         PageItem:
             String: "&aPage #CURPAGE#/#MAXPAGE#"
-            Material: 339
-            SubID: 0
+            Material: PAPER

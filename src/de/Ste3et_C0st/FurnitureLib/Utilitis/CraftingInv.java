@@ -140,14 +140,14 @@ public void openCrafting(final Player p, Project project, boolean editable)
 			  
 			  CraftingFile file = this.project.getCraftingFile();
 			  if(s.equalsIgnoreCase("xxx,xxx,xxx")){
-				  file.setCraftingDisabled(true);
+				  //file.setCraftingDisabled(true);
 				  file.removeCrafting(file.getItemstack());
 				  YamlConfiguration conf = YamlConfiguration.loadConfiguration(file.getFilePath());
 				  setItem(result, conf, file.getFileHeader());
 				  save(conf, file.getFilePath());
 			  }else{
 				  file.removeCrafting(file.getItemstack());
-				  file.setCraftingDisabled(false);
+				  //file.setCraftingDisabled(false);
 				  YamlConfiguration conf = YamlConfiguration.loadConfiguration(file.getFilePath());
 				  conf.set(file.getFileHeader() + ".crafting.recipe", "");
 				  conf.set(file.getFileHeader() + ".crafting.index", "");
@@ -188,7 +188,7 @@ public void setItem(ItemStack stack, YamlConfiguration conf, String header){
 	  if(stack!=null){
 		  if(!stack.getType().equals(Material.AIR)){
 			  String name = "";
-			  Material material = Material.MONSTER_EGG;
+			  Material material = FurnitureLib.getInstance().getDefaultSpawnMaterial();
 			  byte data = 0;
 			  List<String> lore = new ArrayList<String>();
 			  material = stack.getType();

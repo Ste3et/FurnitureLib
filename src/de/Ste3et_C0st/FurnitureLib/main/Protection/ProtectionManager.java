@@ -38,12 +38,6 @@ public class ProtectionManager {
 	public boolean isSolid(Material mat, int subID, PlaceableSide side){if(!checkPlaceable(mat, subID, side)){return false;}{return mat.isSolid();}}
 	
 	private boolean checkPlaceable(Material mat, int l, PlaceableSide side){
-		if(mat.equals(Material.SNOW) && l > 7) return true;
-    	if(mat.equals(Material.STONE_SLAB2) && l > 7) return true;
-    	if(mat.equals(Material.STEP) && l > 7) return true;
-    	if(mat.equals(Material.WOOD_STEP) && l > 7) return true;
-    	if(mat.name().contains("FENCE")) return true;
-    	if(mat.name().contains("STAIRS") && l > 3) return true;
         return mat.isBlock() && mat.isSolid() && mat.isOccluding();
 	}
     

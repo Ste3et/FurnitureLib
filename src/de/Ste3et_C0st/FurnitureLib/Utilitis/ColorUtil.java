@@ -22,7 +22,7 @@ public class ColorUtil {
 	private FurnitureManager manager = lib.getFurnitureManager();
 	
 	public void color(Player p, boolean canBuild, Material m, ObjectID obj, ColorType type, int row){
-		if(m.equals(Material.BANNER)){type=ColorType.BANNER;}
+		if(m.name().toLowerCase().contains("_banner")){type=ColorType.BANNER;}
 		switch (type) {
 		case BLOCK:
 			colorBlock(p, canBuild, m, obj, row);
@@ -70,10 +70,11 @@ public class ColorUtil {
 		ItemStack is = p.getInventory().getItemInMainHand();
 		Integer Amount = is.getAmount();
 		List<fEntity> asp = manager.getfArmorStandByObjectID(obj);
-		DyeColor color = DyeColor.getByColor(lutil.getDyeFromDurability(is.getDurability()));
+		BannerMeta meta = (BannerMeta) is.getItemMeta();
+		DyeColor color = meta.getBaseColor();
 		int j = row;
 		for(fEntity packet : asp){
-			if(packet.getInventory().getHelmet()!=null&&packet.getInventory().getHelmet().getType().equals(m)&&Amount>0){
+			if(packet.getInventory().getHelmet()!=null&&packet.getInventory().getHelmet().getType().name().toLowerCase().contains("_banner")&&Amount>0){
 				DyeColor color2 = ((BannerMeta) packet.getInventory().getHelmet().getItemMeta()).getBaseColor();
 				if(color2 != color){
 					packet.getInventory().setHelmet(getNewIS(packet.getInventory().getHelmet(), color));

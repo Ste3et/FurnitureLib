@@ -14,6 +14,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
@@ -42,6 +43,7 @@ public class ChunkOnLoad implements Listener{
 			if(FurnitureLib.getInstance().getBlockManager().getList().contains(b.getLocation())) return;
 			if(eventList.contains(e.getPlayer())) return;
 			e.setCancelled(true);
+			if(!e.getHand().equals(EquipmentSlot.HAND)) return;
 			eventList.add(e.getPlayer());
 			final BlockFace face = e.getBlockFace();
 			final Location loc = b.getLocation();

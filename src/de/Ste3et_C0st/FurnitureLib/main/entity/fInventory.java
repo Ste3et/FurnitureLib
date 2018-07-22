@@ -14,8 +14,6 @@ public class fInventory implements Cloneable{
 	
 	private ItemStack[] items = new ItemStack[6];
 	private int entityId = 0;
-	@Deprecated
-	public ItemStack getItemInHand() {return this.items[0];}
 	public ItemStack getItemInMainHand() {return this.items[0];}
 	public ItemStack getItemInOffHand() {return this.items[1];}
 	public ItemStack getBoots() {return this.items[2];}
@@ -25,9 +23,6 @@ public class fInventory implements Cloneable{
 	public fInventory(int entityId){
 		this.entityId = entityId;
 	}
-	
-	@Deprecated
-	public void setItemInHand(ItemStack item) {this.setSlot(0, item);}
 	
 	public void setItemInMainHand(ItemStack item) {this.setSlot(0, item);}
 	public void setItemInOffHand(ItemStack item) {this.setSlot(1, item);}

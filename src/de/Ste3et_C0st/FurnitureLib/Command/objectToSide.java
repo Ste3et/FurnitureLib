@@ -1,6 +1,5 @@
 package de.Ste3et_C0st.FurnitureLib.Command;
 
-import java.util.Collections;
 import java.util.List;
 
 import net.md_5.bungee.api.chat.ClickEvent;

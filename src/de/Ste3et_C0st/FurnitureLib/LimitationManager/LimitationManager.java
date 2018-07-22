@@ -1,6 +1,5 @@
 package de.Ste3et_C0st.FurnitureLib.LimitationManager;
 
-import java.rmi.server.ObjID;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;

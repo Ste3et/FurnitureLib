@@ -8,20 +8,20 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.util.EulerAngle;
 
-import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
+import com.comphenix.protocol.wrappers.Vector3F;
+
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.Relative;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type;
 import de.Ste3et_C0st.FurnitureLib.main.Type.BodyPart;
-import com.comphenix.protocol.wrappers.Vector3F;
 
 public class fArmorStand extends fEntity {
 
 	private int armorstandID;
 	private boolean arms=false,small=false,marker=true,baseplate=true;
 	private HashMap<BodyPart, EulerAngle> angle = new HashMap<Type.BodyPart, EulerAngle>();
-	private Project pro;
 	private ArmorStand entity = null;
 	
 	public EulerAngle getBodyPose(){return getPose(BodyPart.BODY);}
@@ -30,15 +30,12 @@ public class fArmorStand extends fEntity {
 	public EulerAngle getLeftLegPose(){return getPose(BodyPart.LEFT_LEG);}
 	public EulerAngle getRightLegPose(){return getPose(BodyPart.RIGHT_LEG);}
 	public EulerAngle getHeadPose(){return getPose(BodyPart.HEAD);}
-	public Project getProject(){return this.pro;}
 	public fArmorStand setBodyPose(EulerAngle a){setPose(a,BodyPart.BODY);return this;}
 	public fArmorStand setLeftArmPose(EulerAngle a){setPose(a,BodyPart.LEFT_ARM);return this;}
 	public fArmorStand setRightArmPose(EulerAngle a){setPose(a,BodyPart.RIGHT_ARM);return this;}
 	public fArmorStand setLeftLegPose(EulerAngle a){setPose(a,BodyPart.LEFT_LEG);return this;}
 	public fArmorStand setRightLegPose(EulerAngle a){setPose(a,BodyPart.RIGHT_LEG);return this;}
 	public fArmorStand setHeadPose(EulerAngle a){setPose(a,BodyPart.HEAD);return this;}
-	public fArmorStand setObjID(ObjectID objID) {setObjectID(objID);return this;}
-	public fArmorStand setArmorID(int i){this.armorstandID = i;return this;}
 	public int getArmorID(){return this.armorstandID;}
 	public boolean hasArms(){return this.arms;}
 	public boolean hasBasePlate(){return this.baseplate;}
@@ -54,20 +51,12 @@ public class fArmorStand extends fEntity {
 		if(entity instanceof ArmorStand) this.entity = (ArmorStand) entity;
 	}
 	
-	
-	public NBTTagCompound getMetadata(){
-		return getMetaData(this);
-	}
-	
 	public fArmorStand clone(Relative relative){
 		return clone(relative.getSecondLocation());
 	}
 	
 	public fArmorStand(Location loc, ObjectID obj) {
 		super(loc, EntityType.ARMOR_STAND, obj);
-		this.armorstandID = FurnitureLib.getInstance().getFurnitureManager().getLastID();
-		this.setObjID(obj);
-		this.pro = obj.getProjectOBJ();
 	}
 
 	public EulerAngle getPose(BodyPart part){
@@ -85,7 +74,7 @@ public class fArmorStand extends fEntity {
 	    }
 	    this.angle.put(part, angle);
 	    angle = FurnitureLib.getInstance().getLocationUtil().Radtodegress(angle);
-	    setObject(getWatcher(), new Vector3F((float)angle.getX(),(float)angle.getY(),(float)angle.getZ()), getField().getFieldFromPose(part));
+	    setObject(getWatcher(), new Vector3F((float)angle.getX(),(float)angle.getY(),(float)angle.getZ()), part.getField());
 	    return this;
 	  }
 	
@@ -189,5 +178,37 @@ public class fArmorStand extends fEntity {
 		entity.setLeggings(getLeggings());
 		entity.setBoots(getBoots());
 		return entity;
+	}
+
+	public NBTTagCompound getMetaData(){
+		getDefNBT(this);
+		setMetadata("Arms", this.hasArms());
+		setMetadata("BasePlate", this.hasBasePlate());
+		setMetadata("Gravity", this.hasGravity());
+		setMetadata("Marker", this.isMarker());
+		setMetadata("Small", this.isSmall());
+		set("EulerAngle", getEulerAngle(this));
+		return getNBTField();
+	}
+	
+	@Override
+	public void loadMetadata(NBTTagCompound metadata) {
+		loadDefMetadata(metadata);
+		NBTTagCompound euler = metadata.getCompound("EulerAngle");
+		for(BodyPart part : BodyPart.values()){
+			this.setPose(eulerAngleFetcher(euler.getCompound(part.toString())), part);
+		}
+		boolean b = (metadata.getInt("BasePlate")==1),s = (metadata.getInt("Small")==1),a = (metadata.getInt("Arms")==1),m = (metadata.getInt("Marker")==1),grav = false;
+		if(metadata.hasKey("Gravity")){
+			grav = metadata.getInt("Gravity")==1;
+		}	
+		this.setBasePlate(b).setSmall(s).setMarker(m).setArms(a).setGravity(grav);
+	}
+	
+	private EulerAngle eulerAngleFetcher(NBTTagCompound eularAngle){
+		Double X = eularAngle.getDouble("X");
+		Double Y = eularAngle.getDouble("Y");
+		Double Z = eularAngle.getDouble("Z");
+		return new EulerAngle(X, Y, Z);
 	}
 }

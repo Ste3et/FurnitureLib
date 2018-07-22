@@ -14,6 +14,7 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
+import org.bukkit.block.data.Directional;
 import org.bukkit.entity.Player;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
@@ -68,10 +69,10 @@ public class LocationUtil {
         }
     }
 	
-	@SuppressWarnings("deprecation")
-	public Color getDyeFromDurability(short s){
-		return DyeColor.getByDyeData((byte) s).getColor();
-	}
+//	@SuppressWarnings("deprecation")
+//	public Color getDyeFromDurability(short s){
+//		return DyeColor.getByDyeData((byte) s).getColor();
+//	}
 	
 	/* Check if the Furniture have enougth space */
 	public boolean canBuild(Location loc, Project pro, Player p){
@@ -277,72 +278,26 @@ public class LocationUtil {
 		}
     }
     
-    @SuppressWarnings("deprecation")
-    public Location setBed(BlockFace face, Location l) {
+    public Location setBed(BlockFace face, Location l, Material mat) {
 		Block block = l.getBlock();
-        BlockState bedFoot = block.getState();
-        BlockState bedHead = bedFoot.getBlock().getRelative(face.getOppositeFace()).getState();
-		if(!bedHead.getType().equals(Material.BED_BLOCK) || !bedFoot.getType().equals(Material.BED_BLOCK)) {
-			l.getBlock().setType(Material.AIR);
-			l.getBlock().setType(Material.BED_BLOCK);
-		    bedFoot.setType(Material.BED_BLOCK);
-		    bedHead.setType(Material.BED_BLOCK);
-		    switch (face) {
-				case NORTH:
-		            bedFoot.setRawData((byte) 0);
-		            bedHead.setRawData((byte) 8);
-					break;
-				case EAST:
-		            bedFoot.setRawData((byte) 1);
-		            bedHead.setRawData((byte) 9);
-		            break;
-				case SOUTH:
-		            bedFoot.setRawData((byte) 2);
-		            bedHead.setRawData((byte) 10);
-		            break;
-				case WEST:
-		            bedFoot.setRawData((byte) 3);
-		            bedHead.setRawData((byte) 11);
-		            break;
-				default: return null;
-			}
-		    bedFoot.update(true, false);
-		    bedHead.update(true, true);
+		block.setType(mat);
+		if(block.getState() instanceof Directional) {
+			Directional bState = (Directional) block.getBlockData();
+			bState.setFacing(face);
+			block.setBlockData(bState);
 		}
-		return bedHead.getLocation();
+		return l;
     }
     
-    @SuppressWarnings("deprecation")
-    public Block setHalfBed(BlockFace face, Location l) {
-    	if(face == BlockFace.NORTH){
-    		Block block = l.getBlock();
-            BlockState bedHead = block.getState();
-            bedHead.setType(Material.BED_BLOCK);
-            bedHead.setRawData((byte) 9);
-            bedHead.update(true, false);
-            return block;
-    	}else if(face == BlockFace.EAST){
-    		Block block = l.getBlock();
-    		BlockState bedHead = block.getState();
-            bedHead.setType(Material.BED_BLOCK);
-            bedHead.setRawData((byte) 10);
-            bedHead.update(true, false);
-            return block;
-    	}else if(face == BlockFace.SOUTH){
-    		Block block = l.getBlock();
-    		BlockState bedHead = block.getState();
-            bedHead.setType(Material.BED_BLOCK);
-            bedHead.setRawData((byte) 11);
-            bedHead.update(true, false);
-            return block;
-    	}else if(face == BlockFace.WEST){
-    		Block block = l.getBlock();
-    		BlockState bedHead = block.getState();
-            bedHead.setType(Material.BED_BLOCK);
-            bedHead.setRawData((byte) 8);
-            bedHead.update(true, false);
-            return block;
-    	}
+    public Block setHalfBed(BlockFace face, Location l, Material mat) {
+    	Block block = l.getBlock();
+		block.setType(mat);
+		if(block.getState() instanceof Directional) {
+			Directional bState = (Directional) block.getBlockData();
+			bState.setFacing(face);
+			block.setBlockData(bState, false);
+			block.getRelative(face.getOppositeFace()).setType(Material.AIR);
+		}
 		return null;
     }
     

@@ -9,6 +9,7 @@ import com.comphenix.protocol.ProtocolManager;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 
+import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.ProtocolFields;
@@ -31,6 +32,8 @@ public class fProtocol{
 	public ObjectID getObjID(){return this.id;}
 	public void setObjectID(ObjectID id){this.id = id;}
 	public ProtocolFields getField(){return this.fields;}
+	public Project getProject(){return getObjID().getProjectOBJ();}
+	
 	public fProtocol(World w, EntityType type, ObjectID id){
 		this.manager = ProtocolLibrary.getProtocolManager();
 		this.w = w;

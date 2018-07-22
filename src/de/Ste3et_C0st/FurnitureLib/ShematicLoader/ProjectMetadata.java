@@ -3,8 +3,8 @@ package de.Ste3et_C0st.FurnitureLib.ShematicLoader;
 import de.Ste3et_C0st.FurnitureLib.NBT.CraftItemStack;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTCompressedStreamTools;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.Relative;
 import de.Ste3et_C0st.FurnitureLib.main.Type;
-import de.Ste3et_C0st.FurnitureLib.main.entity.Relative;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fArmorStand;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fInventory;
 

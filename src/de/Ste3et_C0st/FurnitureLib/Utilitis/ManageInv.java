@@ -120,14 +120,14 @@ public class ManageInv  implements Listener{
 				}
 				return;
 			}else if(invTitle.equalsIgnoreCase(addTitle)){
-				if(is.getType().equals(Material.SKULL_ITEM)){
+				if(is.getType().equals(Material.PLAYER_HEAD)){
 					UUID uuid = (UUID) objects[e.getSlot()];
 					obj.addMember(uuid);
 					update(s);
 				}
 				return;
 			}else if(invTitle.equalsIgnoreCase(remTitle)){
-				if(is.getType().equals(Material.SKULL_ITEM)){
+				if(is.getType().equals(Material.PLAYER_HEAD)){
 					UUID uuid = (UUID) objects[e.getSlot()];
 					obj.remMember(uuid);
 					update(s);
@@ -140,7 +140,7 @@ public class ManageInv  implements Listener{
 				update("playerSetInvName");
 				return;
 			}else if(invTitle.equalsIgnoreCase(setTitle)){
-				if(is.getType().equals(Material.SKULL_ITEM)){
+				if(is.getType().equals(Material.PLAYER_HEAD)){
 					UUID uuid = (UUID) objects[e.getSlot()];
 					obj.setUUID(uuid);
 					update(s);
@@ -181,7 +181,7 @@ public class ManageInv  implements Listener{
 	public void setPlayer(Object[] objects){
 		if(p==null){return;}
 		for(UUID uuid : getPlayerList(objects, side)){
-			ItemStack itemStack = new ItemStack(Material.SKULL_ITEM);
+			ItemStack itemStack = new ItemStack(Material.PLAYER_HEAD);
 			SkullMeta skull = (SkullMeta) itemStack.getItemMeta();
 			Player p = null;
 			if(Bukkit.getPlayer(uuid)!=null){
@@ -309,7 +309,7 @@ public class ManageInv  implements Listener{
 	
 	public void setItemHub(){
 		if(p==null){return;}
-		ItemStack is = new ItemStack(Material.STAINED_GLASS_PANE, 1,(short) 15);
+		ItemStack is = new ItemStack(Material.BLACK_STAINED_GLASS_PANE, 1);
 		ItemMeta im = is.getItemMeta();
 		im.setDisplayName("§c");
 		is.setItemMeta(im);

@@ -5,32 +5,16 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Pig;
 
-import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
-import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 
 public class fPig extends fEntity{
 
 	private boolean saddle = false;
-	private int armorstandID;
-	public fPig setObjID(ObjectID objID) {setObjectID(objID);return this;}
-	public fPig setArmorID(int i){this.armorstandID = i;return this;}
-	public int getArmorID(){return this.armorstandID;}
-	public Project getProject(){return this.pro;}
-	private Project pro;
 	private Pig entity;
 	
 	public fPig(Location loc, ObjectID obj) {
 		super(loc, EntityType.PIG, obj);
-		this.armorstandID = FurnitureLib.getInstance().getFurnitureManager().getLastID();
-		this.setObjID(obj);
-		this.pro = obj.getProjectOBJ();
-	}
-
-	@Override
-	public NBTTagCompound getMetadata() {
-		return getMetaData(this);
 	}
 	
 	public fPig setSaddle(boolean b){
@@ -39,7 +23,7 @@ public class fPig extends fEntity{
 		return this;
 	}
 	
-	public boolean haseSaddle(){return this.saddle;}
+	public boolean hasSaddle(){return this.saddle;}
 
 	public Pig toRealEntity() {
 		if(entity!=null){if(!entity.isDead()){return entity;}}
@@ -56,5 +40,17 @@ public class fPig extends fEntity{
 	public void setEntity(Entity entity){
 		if(entity instanceof Pig) this.entity = (Pig) entity;
 	}
+
+	public NBTTagCompound getMetaData(){
+		getDefNBT(this);
+		setMetadata("Saddle", this.hasSaddle());
+		return getNBTField();
+	}
 	
+	@Override
+	public void loadMetadata(NBTTagCompound metadata) {
+		loadDefMetadata(metadata);
+		boolean s = (metadata.getInt("Saddle")==1);
+		this.setSaddle(s);
+	}
 }

@@ -139,6 +139,7 @@ public class command implements CommandExecutor, Listener{
 					case "toggle" : new toggleCommand(sender, cmd, arg2, args); return true;
 					case "download": new downloadCommand(sender, cmd, arg2, args); return true;
 					case "save": new saveCommand(sender, cmd, arg2, args); return true;
+					case "convert": new converCommand(sender, cmd, arg2, args); return true;
 					case "delete": new deleteCommand(sender, cmd, arg2, args); return true;
 					default:
 						for(SubCommand sCmd : subCommands){

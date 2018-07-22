@@ -5,27 +5,16 @@ import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 
-import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
-import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 
 public class fCreeper extends fEntity{
 
 	private boolean charged = false, ignited = false;
-	private int armorstandID;
-	public fCreeper setObjID(ObjectID objID) {setObjectID(objID);return this;}
-	public fCreeper setArmorID(int i){this.armorstandID = i;return this;}
-	public int getArmorID(){return this.armorstandID;}
-	public Project getProject(){return this.pro;}
-	private Project pro;
 	private Creeper entity = null;
 	
 	public fCreeper(Location loc, ObjectID obj) {
 		super(loc, EntityType.CREEPER, obj);
-		this.armorstandID = FurnitureLib.getInstance().getFurnitureManager().getLastID();
-		this.setObjID(obj);
-		this.pro = obj.getProjectOBJ();
 	}
 
 	public boolean isCharged() {
@@ -64,8 +53,19 @@ public class fCreeper extends fEntity{
 	public void setEntity(Entity entity){
 		if(entity instanceof Creeper) this.entity = (Creeper) entity;
 	}
+
+	@Override
+	public NBTTagCompound getMetaData(){
+		getDefNBT(this);
+		setMetadata("Ignite", this.isIgnited());
+		setMetadata("Charged", this.isCharged());
+		return getNBTField();
+	}
 	
-	public NBTTagCompound getMetadata() {
-		return getMetaData(this);
+	@Override
+	public void loadMetadata(NBTTagCompound metadata) {
+		loadDefMetadata(metadata);
+		boolean i = (metadata.getInt("Ignite")==1), f = (metadata.getInt("Charged")==1);
+		this.setIgnited(i).setCharged(f);
 	}
 }

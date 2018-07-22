@@ -21,12 +21,12 @@ import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.BodyPart;
 
-public class fSerializer extends fProtocol{
+public abstract class fSerializer extends fProtocol{
 
 	private NBTTagCompound metadata = new NBTTagCompound();
 	private HashMap<Integer, WrappedDataWatcherObject> objMap = new HashMap<Integer, WrappedDataWatcherObject>();
 	public fSerializer(World w, EntityType type, ObjectID id) {super(w, type, id);}
-	
+	public NBTTagCompound getNBTField() {return this.metadata;}
 	public void setObject(WrappedDataWatcher watcher, Object o, int index){
 		WrappedDataWatcherObject wdwo = getDefWatcher(watcher,index, o);
 		watcher.setObject(wdwo, o);
@@ -59,34 +59,7 @@ public class fSerializer extends fProtocol{
 	public void setMetadata(fInventory inventory){set("Inventory", getFromInventory(inventory));}
 	public void set(String field, NBTTagCompound value){metadata.set(field, value);}
 	
-	public NBTTagCompound getMetaData(fArmorStand stand){
-		getDefNBT(stand);
-		setMetadata("Arms", stand.hasArms());
-		setMetadata("BasePlate", stand.hasBasePlate());
-		setMetadata("Gravity", stand.hasGravity());
-		setMetadata("Marker", stand.isMarker());
-		setMetadata("Small", stand.isSmall());
-		setMetadata(stand);
-		return metadata;
-	}
-	
-	public NBTTagCompound getMetaData(fCreeper stand){
-		getDefNBT(stand);
-		setMetadata("Ignite", stand.isIgnited());
-		setMetadata("Charged", stand.isCharged());
-		return metadata;
-	}
-	
-	public NBTTagCompound getMetaData(fPig stand){
-		getDefNBT(stand);
-		setMetadata("Saddle", stand.haseSaddle());
-		return metadata;
-	}
-	
-	public NBTTagCompound getMetaData(fGiant stand){
-		getDefNBT(stand);
-		return metadata;
-	}
+	public abstract NBTTagCompound getMetaData();
 	
 	public void getDefNBT(fEntity entity){
 		setMetadata("EntityType", entity.getEntityType().toString());
@@ -110,7 +83,7 @@ public class fSerializer extends fProtocol{
 		return location;
 	}
 	
-	private NBTTagCompound getEulerAngle(fArmorStand packet){
+	public NBTTagCompound getEulerAngle(fArmorStand packet){
 		NBTTagCompound eulerAngle = new NBTTagCompound();
 		for(BodyPart part : BodyPart.values()){
 			EulerAngle angle = packet.getPose(part);
@@ -138,8 +111,7 @@ public class fSerializer extends fProtocol{
 	}
 	
 	public String toString(fArmorStand stand){
-		NBTTagCompound nbt = getMetaData(stand);
-		return Base64.encodeBase64String(getByte(nbt));
+		return Base64.encodeBase64String(getByte(getNBTField()));
 	}
 	
 	public byte[] getByte(NBTTagCompound compound){

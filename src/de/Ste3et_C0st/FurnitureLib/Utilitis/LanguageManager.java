@@ -76,7 +76,6 @@ public class LanguageManager{
 		}
 	}
 	
-	@SuppressWarnings("deprecation")
 	private void addDefaultInv(){
 		c = new config(plugin);
 		file = c.getConfig("manageInv", "");
@@ -84,30 +83,29 @@ public class LanguageManager{
 		file.addDefaults(YamlConfiguration.loadConfiguration(FurnitureLib.getInstance().loadStream("manageInv.yml")));
 		file.options().copyDefaults(true);
 		c.saveConfig("manageInv", file, "");
-		
 		for(String str : file.getConfigurationSection("inv.mode").getKeys(false)){
 			invHashList.put(str, file.getStringList("inv.mode." + str + ".Text"));
-			invMatList.put(str, Material.getMaterial(file.getInt("inv.mode." + str + ".Material")));
+			invMatList.put(str, Material.valueOf(file.getString("inv.mode." + str + ".Material").toUpperCase()));
 			invStringList.put(str, file.getString("inv.mode." + str + ".String"));
 			invShortList.put(str,(short) file.getInt("inv.mode." + str + ".SubID"));
 		}
 		for(String str : file.getConfigurationSection("inv.event").getKeys(false)){
-			invMatList.put(str, Material.getMaterial(file.getInt("inv.event." + str + ".Material")));
+			invMatList.put(str, Material.valueOf(file.getString("inv.event." + str + ".Material").toUpperCase()));
 			invStringList.put(str, file.getString("inv.event." + str + ".String"));
 			invShortList.put(str,(short) file.getInt("inv.event." + str + ".SubID"));
 		}
 		for(String str : file.getConfigurationSection("inv.player").getKeys(false)){
-			invMatList.put(str, Material.getMaterial(file.getInt("inv.player." + str + ".Material")));
+			invMatList.put(str, Material.valueOf(file.getString("inv.player." + str + ".Material").toUpperCase()));
 			invStringList.put(str, file.getString("inv.player." + str + ".String"));
 			invShortList.put(str,(short) file.getInt("inv.player." + str + ".SubID"));
 		}
 		for(String str : file.getConfigurationSection("inv.controller").getKeys(false)){
-			invMatList.put(str, Material.getMaterial(file.getInt("inv.controller." + str + ".Material")));
+			invMatList.put(str, Material.valueOf(file.getString("inv.controller." + str + ".Material").toUpperCase()));
 			invStringList.put(str, file.getString("inv.controller." + str + ".String"));
 			invShortList.put(str,(short) file.getInt("inv.controller." + str + ".SubID"));
 		}
 		for(String str : file.getConfigurationSection("inv.admin").getKeys(false)){
-			invMatList.put(str, Material.getMaterial(file.getInt("inv.admin." + str + ".Material")));
+			invMatList.put(str, Material.valueOf(file.getString("inv.admin." + str + ".Material").toUpperCase()));
 			invStringList.put(str, file.getString("inv.admin." + str + ".String"));
 			invShortList.put(str,(short) file.getInt("inv.admin." + str + ".SubID"));
 			invHashList.put(str, file.getStringList("inv.admin." + str + ".Text"));
