@@ -3,6 +3,7 @@ package de.Ste3et_C0st.FurnitureLib.main.entity;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -19,6 +20,7 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.EnumWrappers.Particle;
+import com.comphenix.protocol.wrappers.WrappedChatComponent;
 
 import de.Ste3et_C0st.FurnitureLib.NBT.CraftItemStack;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
@@ -52,15 +54,15 @@ public abstract class fEntity extends fSerializer{
 	public abstract boolean isRealEntity();
 	public abstract void setEntity(Entity e);
 	
-	@SuppressWarnings("deprecation")
 	public fEntity(Location loc, EntityType type, ObjectID id) {
 		super(loc.getWorld(), type, id);
 		this.a = EntityID.nextEntityId();
-		this.c = (int) type.getTypeId();
+		this.c = 1;
 		this.i = new fInventory(this.a);
 		setLocation(loc);
+		getHandle().getModifier().writeDefaults();
 		getHandle().getIntegers().write(0, a).write(1, c);
-		getHandle().getSpecificModifier(UUID.class).write(0, b);
+		getHandle().getUUIDs().write(0, b);
 		getHandle().getDoubles().write(0, d).write(1, e).write(2, f);
 		getHandle().getBytes().write(0, j).write(1, k);
 	}
@@ -265,9 +267,10 @@ public abstract class fEntity extends fSerializer{
 			getManager().sendServerPacket(player, getHandle());
 			sendInventoryPacket(player);
 			if (getPassanger() != null) {
-				setPassanger(getPassanger());
+				//setPassanger(getPassanger());
 			}
-		} catch (InvocationTargetException e) {
+			player.sendMessage("EntityPacket sending");
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
@@ -347,7 +350,7 @@ public abstract class fEntity extends fSerializer{
 		if (str.equalsIgnoreCase("")) {
 			setNameVasibility(false);
 		}
-		setObject(getWatcher(), str, 2);
+		setObject(getWatcher(), Optional.of(WrappedChatComponent.fromText(str).getHandle()), 2);
 		this.customName = str;return this;
 	}
 	
@@ -477,8 +480,7 @@ public abstract class fEntity extends fSerializer{
 		if (flag) {
 			setObject(getWatcher(), Byte.valueOf((byte) (b0 | 1 << i)), 0);
 		} else {
-			setObject(getWatcher(),
-					Byte.valueOf((byte) (b0 & (1 << i ^ 0xFFFFFFFF))), 0);
+			setObject(getWatcher(),Byte.valueOf((byte) (b0 & (1 << i ^ 0xFFFFFFFF))), 0);
 		}
 	}
 	

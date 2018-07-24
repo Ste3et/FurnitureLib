@@ -35,7 +35,7 @@ public class ProjectManager {
 								configuration.load(file);
 								String name = file.getName().replaceAll(".dModel", "");
 								String header = getHeader(configuration, name);
-								if(configuration.contains(header + ".projectData") || configuration.contains(header + ".projectData.blockList")){
+								if(configuration.contains(header + ".projectData.entitys") || configuration.contains(header + ".projectData.blockList")){
 									PlaceableSide side = PlaceableSide.TOP;
 									String systemID = configuration.getString(header + ".system-ID");
 									if(configuration.isSet(header + ".placeAbleSide")){side = PlaceableSide.valueOf(configuration.getString(header + ".placeAbleSide"));}

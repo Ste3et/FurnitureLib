@@ -34,7 +34,6 @@ public class FurnitureManager {
 	public HashSet<ObjectID> getObjectList(){return this.objecte;}
 	public List<Chunk> chunkList = new ArrayList<Chunk>();
 	public List<UUID> getIgnoreList(){return this.ignoreList;}
-	
 	public FurnitureManager() {
 		manager = this;
 	}
@@ -148,7 +147,7 @@ public class FurnitureManager {
 	}
 	
 	public fArmorStand createArmorStand(ObjectID id, Location loc){
-		return (fArmorStand) createFromType("armorstand", loc, id);	
+		return (fArmorStand) createFromType("armor_stand", loc, id);	
 	}
 	
 	public fPig createPig(ObjectID id, Location loc){
@@ -244,24 +243,17 @@ public class FurnitureManager {
 
 	public fEntity createFromType(String str, Location loc, ObjectID obj) {
 		if(!objecte.contains(obj)){this.objecte.add(obj);}
+		fEntity e = null;
 		switch (str.toLowerCase()) {
-		case "creeper":
-			fCreeper crepper = new fCreeper(loc, obj);
-			obj.addArmorStand(crepper);
-			return crepper;
-		case "armorstand":
-			fArmorStand armorStand = new fArmorStand(loc, obj);
-			obj.addArmorStand(armorStand);
-			return armorStand;
-		case "pig":
-			fPig pig = new fPig(loc, obj);
-			obj.addArmorStand(pig);
-			return pig;	
-		case "giant":
-			fGiant giant = new fGiant(loc, obj);
-			obj.addArmorStand(giant);
-			return giant;	
-		default:return null;
+		case "creeper": e = new fCreeper(loc, obj);break;
+		case "armor_stand": e = new fArmorStand(loc, obj);break;
+		case "pig": e = new fPig(loc, obj);break;
+		case "giant": e = new fGiant(loc, obj);break;
+		default:break;
 		}
+		if(e!=null) {
+			obj.addArmorStand(e);
+		}
+		return e;
 	}
 }

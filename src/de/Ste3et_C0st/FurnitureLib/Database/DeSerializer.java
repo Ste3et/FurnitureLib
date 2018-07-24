@@ -55,15 +55,15 @@ public class DeSerializer {
 
 			NBTTagCompound armorStands = compound.getCompound("ArmorStands");
 			
-			armorStands.c().stream().forEach(packet -> {
-				Integer ArmorID = Integer.parseInt((String) packet);
-				EntityType type = EntityType.ARMOR_STAND;
-				NBTTagCompound metadata = armorStands.getCompound(ArmorID+"");
-				if(metadata.hasKey("EntityType")){type = EntityType.valueOf(metadata.getString("EntityType"));}
+			armorStands.c().stream().filter(packet -> packet != null).forEach(packet -> {
+				NBTTagCompound metadata = armorStands.getCompound((String) packet);
 				if(autoPurge){if(FurnitureLib.getInstance().checkPurge(obj, uuid)){purged++;return;}}
 				Location loc = locationFetcher(metadata.getCompound("Location"));
+				if(loc == null) {
+					System.out.println("loc = null");
+				}
 				this.armorStands++;
-				FurnitureManager.getInstance().createFromType(type.name(), loc, obj).loadMetadata(metadata);
+				FurnitureManager.getInstance().createFromType(metadata.getString("EntityType"), loc, obj).loadMetadata(metadata);
 			});
 			
 		}catch (Exception e) {

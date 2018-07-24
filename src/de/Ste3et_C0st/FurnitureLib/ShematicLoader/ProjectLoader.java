@@ -16,6 +16,8 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryType;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.material.Directional;
 import org.bukkit.material.Door;
@@ -43,7 +45,6 @@ import de.Ste3et_C0st.FurnitureLib.main.entity.fArmorStand;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
 
 public class ProjectLoader extends Furniture{
-	private Object[] enumItemSlots = EnumWrappers.ItemSlot.values();
 	public String header;
 	private ProjektInventory inv=null;
 	public ProjectLoader(ObjectID id){
@@ -153,7 +154,7 @@ public class ProjectLoader extends Furniture{
 				boolean m = (metadata.getInt("Marker")==1),g = (metadata.getInt("Glowing")==1);
 				fArmorStand packet = FurnitureLib.getInstance().getFurnitureManager().createArmorStand(getObjID(), armorLocation);
 				NBTTagCompound inventory = metadata.getCompound("Inventory");
-				for(Object object : enumItemSlots){
+				for(Object object : EnumWrappers.ItemSlot.values()){
 					if(!inventory.getString(object.toString()).equalsIgnoreCase("NONE")){
 						ItemStack is = new CraftItemStack().getItemStack(inventory.getCompound(object.toString()+""));
 						if(is==null) is = new ItemStack(Material.AIR, 1);
@@ -185,9 +186,9 @@ public class ProjectLoader extends Furniture{
 				int i = 0;
 				for(String s : config.getConfigurationSection(header+".projectData.blockList").getKeys(false)){
 					HashMap<Location, ProjectMaterial> block = new HashMap<Location, ProjectMaterial>();
-					double x = config.getDouble(header+".projectData.blockList." + s + ".X-Offset");
-					double y = config.getDouble(header+".projectData.blockList." + s + ".Y-Offset");
-					double z = config.getDouble(header+".projectData.blockList." + s + ".Z-Offset");
+					double x = config.getDouble(header+".projectData.blockList." + s + ".xOffset");
+					double y = config.getDouble(header+".projectData.blockList." + s + ".yOffset");
+					double z = config.getDouble(header+".projectData.blockList." + s + ".zOffset");
 					Material m = Material.valueOf(config.getString(header+".projectData.blockList." + s + ".material"));
 					Location armorLocation = getRelative(getLocation(), getBlockFace(), -z, -x).add(0, y, 0);
 					if(rotate){
@@ -201,22 +202,22 @@ public class ProjectLoader extends Furniture{
 						material.setBlockFace(BlockFace.valueOf(config.getString(header+".projectData.blockList." + s + ".Rotation")));
 					}
 					
-//					if(config.isSet(header+".projectData.blockList." + s + ".Inventory")){
-//						InventoryType type = InventoryType.valueOf(config.getString(header+".projectData.blockList." + s + ".Inventory.type"));
-//						Inventory inv = Bukkit.createInventory(null, type);
-//						for(String j : config.getConfigurationSection(header+".projectData.blockList." + s + ".Inventory").getKeys(false)){
-//							if(!j.equalsIgnoreCase("type")){
-//								String base64 = config.getString(header+".projectData.blockList." + s + ".Inventory." + j);
-//								byte[] bString = Base64.decodeBase64(base64);
-//								ByteArrayInputStream bin = new ByteArrayInputStream(bString);
-//								NBTTagCompound compound = NBTCompressedStreamTools.read(bin);
-//								bin.close();
-//								ItemStack stack = new CraftItemStack().getItemStack(compound);
-//								inv.setItem(Integer.parseInt(j), stack);
-//							}
-//						}
-//						material.setInventory(inv);
-//					}
+					if(config.isSet(header+".projectData.blockList." + s + ".Inventory")){
+						InventoryType type = InventoryType.valueOf(config.getString(header+".projectData.blockList." + s + ".Inventory.type"));
+						Inventory inv = Bukkit.createInventory(null, type);
+						for(String j : config.getConfigurationSection(header+".projectData.blockList." + s + ".Inventory").getKeys(false)){
+							if(!j.equalsIgnoreCase("type")){
+								String base64 = config.getString(header+".projectData.blockList." + s + ".Inventory." + j);
+								byte[] bString = Base64.decodeBase64(base64);
+								ByteArrayInputStream bin = new ByteArrayInputStream(bString);
+								NBTTagCompound compound = NBTCompressedStreamTools.read(bin);
+								bin.close();
+								ItemStack stack = new CraftItemStack().getItemStack(compound);
+								inv.setItem(Integer.parseInt(j), stack);
+							}
+						}
+						material.setInventory(inv);
+					}
 					
 					block.put(armorLocation, material);
 					map.put(i, block);
@@ -258,13 +259,13 @@ public class ProjectLoader extends Furniture{
 							}else if(material.getMaterial().name().endsWith("DOOR")){
 								Location bottom = blockLocation.clone().subtract(0, 1, 0);
 								if(!bottom.getBlock().getType().isSolid()){
-									getLutil().particleBlock(bottom.getBlock(), p, Particle.REDSTONE, 0);
+									getLutil().particleBlock(bottom.getBlock(), p, org.bukkit.Particle.REDSTONE, 0);
 									k = false;
 								}else if(bottom.getBlock().getType().name().endsWith("STAIRS")){
-									getLutil().particleBlock(bottom.getBlock(), p, Particle.REDSTONE, 0);
+									getLutil().particleBlock(bottom.getBlock(), p, org.bukkit.Particle.REDSTONE, 0);
 									k = false;
 								}else if(bottom.getBlock().getType().equals(Material.BEACON)){
-									getLutil().particleBlock(bottom.getBlock(), p, Particle.REDSTONE, 0);
+									getLutil().particleBlock(bottom.getBlock(), p, org.bukkit.Particle.REDSTONE, 0);
 									k = false;
 								}
 							}

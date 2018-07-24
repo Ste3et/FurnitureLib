@@ -23,12 +23,10 @@ import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import de.Ste3et_C0st.FurnitureLib.Utilitis.HiddenStringUtils;
-import de.Ste3et_C0st.FurnitureLib.Utilitis.config;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.Type.PlaceableSide;
 
 public class CraftingFile {
-	private config c;
 	private FileConfiguration file;
 	private String name;
 	private String header;
@@ -46,27 +44,37 @@ public class CraftingFile {
 	public String getFileHeader(){return this.header;}
 	
 	public CraftingFile(String name,InputStream file){
-		this.c = new config(FurnitureLib.getInstance());
 		this.name = name;
-		this.file = c.getConfig(name, "/models/");
+		this.filePath = new File("/plugins/" + FurnitureLib.getInstance().getName() + "/models/" + name + ".dModel");
+		this.file = YamlConfiguration.loadConfiguration(filePath);
+		if(file == null) {System.out.println("problems to load " + name);return;}
 		Reader inReader = new InputStreamReader(file);
 		this.file.addDefaults(YamlConfiguration.loadConfiguration(inReader));
 		this.file.options().copyDefaults(true);
-		this.c.saveConfig(name, this.file, "/models/");
-		this.filePath = new File(new File("plugins/FurnitureLib/models"), name + ".dModel");
+		try {
+			this.file.save(filePath);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 		header = getHeader();
 		if(!this.file.contains(header + ".displayName")) {
 			System.out.println("Cannot load " + name + " (Old format)");
 			return;
 		}
+		
 		if(this.file.isSet(header+".system-ID")){
 			systemID = this.file.getString(header+".system-ID");
 		}else{
 			this.file.set(header+".system-ID", name);
 			systemID = name;
-			this.c.saveConfig(name, this.file, "/models/");
+			try {
+				this.file.save(filePath);
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
 		}
-		this.file = c.getConfig(name, "/models/");
+		
+		this.file = YamlConfiguration.loadConfiguration(filePath);
 		loadCrafting(name);
 	}
 	
@@ -160,19 +168,18 @@ public class CraftingFile {
 			String str = file.getString(header + ".spawnMaterial");
 			mat = Material.getMaterial(str);
 		}
-		
 		ItemStack is = new ItemStack(mat);
 		ItemMeta im = is.getItemMeta();
-		
 		try{
 			if(file.contains(header + ".unbreakable")) {
 				boolean str = file.getBoolean(header + ".unbreakable", false);
 				im.setUnbreakable(str);
 			}
 		}catch (Exception e) {
+			e.printStackTrace();
 		}
 		
-		String name = file.getString(header+".name", "");
+		String name = file.getString(header+".displayName", "");
 		im.setDisplayName(ChatColor.translateAlternateColorCodes('&', name));
 		
 		List<String> loreText = new ArrayList<String>();

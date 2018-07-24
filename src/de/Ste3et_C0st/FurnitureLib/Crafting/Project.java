@@ -136,8 +136,7 @@ public class Project{
 		this.limitationFile = this.limitationConfig.getConfig("world", "/limitation/");
 		for(World w : Bukkit.getWorlds()){
 			if(w == null || getSystemID() == null) continue;
-			System.out.println(w.getName());
-			System.out.println(getSystemID());
+			if(getSystemID().isEmpty()) continue;
 			this.limitationFile.addDefault("Projects." + w.getName() + "." + getSystemID(), -1);
 		}
 		this.limitationFile.options().copyDefaults(true);

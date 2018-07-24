@@ -15,6 +15,8 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.data.Directional;
+import org.bukkit.block.data.type.Bed;
+import org.bukkit.block.data.type.Bed.Part;
 import org.bukkit.entity.Player;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
@@ -180,10 +182,10 @@ public class LocationUtil {
 	}
 	
 	public void particleBlock(Block b, Player p){
-		particleBlock(b, p, Particle.REDSTONE, 1);
+		particleBlock(b, p, org.bukkit.Particle.REDSTONE, 1);
 	}
 	
-	public void particleBlock(Block b, Player p, Particle particleData, float value){
+	public void particleBlock(Block b, Player p, org.bukkit.Particle particleData, float value){
 		if(!FurnitureLib.getInstance().isParticleEnable()) return;
 		try{
 			Location loc = b.getLocation();
@@ -192,18 +194,19 @@ public class LocationUtil {
 					for(double z = .0; z<1d; z+=.3){
 						Location location = loc.clone();
 						location = location.add(x, y, z);
-						WrapperPlayServerWorldParticles particle = new WrapperPlayServerWorldParticles();
-						particle.setX((float) location.getX());
-						particle.setY((float) location.getY());
-						particle.setZ((float) location.getZ());
-						particle.setOffsetX(.1F);
-						particle.setOffsetY(.1F);
-						particle.setOffsetZ(.1F);
-						particle.setLongDistance(true);
-						particle.setNumberOfParticles(1);
-						particle.setParticleData(value);
-						particle.setParticleType(particleData);
-						particle.sendPacket(p);
+//						WrapperPlayServerWorldParticles particle = new WrapperPlayServerWorldParticles();
+//						particle.setX((float) location.getX());
+//						particle.setY((float) location.getY());
+//						particle.setZ((float) location.getZ());
+//						particle.setOffsetX(.1F);
+//						particle.setOffsetY(.1F);
+//						particle.setOffsetZ(.1F);
+//						particle.setLongDistance(true);
+//						particle.setNumberOfParticles(1);
+//						particle.setParticleData(value);
+//						particle.setParticleType(particleData);
+//						particle.sendPacket(p);
+						p.spawnParticle(particleData, location, 1);
 					}
 				}
 			}
@@ -281,10 +284,21 @@ public class LocationUtil {
     public Location setBed(BlockFace face, Location l, Material mat) {
 		Block block = l.getBlock();
 		block.setType(mat);
-		if(block.getState() instanceof Directional) {
+		if(block.getBlockData() instanceof Directional) {
 			Directional bState = (Directional) block.getBlockData();
-			bState.setFacing(face);
-			block.setBlockData(bState);
+			bState.setFacing(face.getOppositeFace());
+			block.setBlockData(bState, false);
+			block = block.getRelative(face.getOppositeFace());
+			block.setType(mat, false);
+			if(block.getBlockData() instanceof Directional) {
+				bState = (Directional) block.getBlockData();
+				bState.setFacing(face.getOppositeFace());
+				if(block.getBlockData() instanceof Bed) {
+					Bed head = (Bed) bState;
+					head.setPart(Part.HEAD);
+				}
+				block.setBlockData(bState, false);
+			}
 		}
 		return l;
     }
@@ -292,11 +306,12 @@ public class LocationUtil {
     public Block setHalfBed(BlockFace face, Location l, Material mat) {
     	Block block = l.getBlock();
 		block.setType(mat);
-		if(block.getState() instanceof Directional) {
+		if(block.getBlockData() instanceof Directional) {
 			Directional bState = (Directional) block.getBlockData();
 			bState.setFacing(face);
 			block.setBlockData(bState, false);
 			block.getRelative(face.getOppositeFace()).setType(Material.AIR);
+			return block;
 		}
 		return null;
     }
@@ -412,6 +427,7 @@ public class LocationUtil {
         return d;
     }
     
+    @Deprecated
     public short getfromDyeColor(DyeColor c){
     	switch (c) {
 		case BLACK: return 0;
@@ -419,7 +435,7 @@ public class LocationUtil {
 		case BROWN: return 3;
 		case CYAN: return 6;
 		case GRAY: return 8;
-		case SILVER: return 7;
+		case LIGHT_GRAY: return 7;
 		case WHITE: return 15;
 		case GREEN: return 2;
 		case LIGHT_BLUE: return 12;

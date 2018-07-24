@@ -1,10 +1,11 @@
 package de.Ste3et_C0st.FurnitureLib.main;
 
 import java.util.Arrays;
+import java.util.EnumSet;
 import java.util.List;
-
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.BannerMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.EulerAngle;
 
@@ -29,6 +30,77 @@ public class Type {
 	public enum SQLAction{SAVE, UPDATE, REMOVE, PURGE,NOTHING;}
 	public enum CenterType{LEFT, RIGHT, CENTER, FRONT}
 	public enum PlaceableSide{TOP,BOTTOM,SIDE, WATER}
+	
+	public enum DyeColor
+	{
+	  WHITE(Material.BONE_MEAL),  
+	  ORANGE(Material.ORANGE_DYE),  
+	  MAGENTA(Material.MAGENTA_DYE),  
+	  LIGHT_BLUE(Material.LIGHT_BLUE_DYE),  
+	  YELLOW(Material.DANDELION_YELLOW),  
+	  LIME(Material.LIME_DYE),  
+	  PINK(Material.PINK_DYE),  
+	  LIGHT_GRAY(Material.LIGHT_GRAY_DYE),
+	  GRAY(Material.GRAY_DYE),  
+	  CYAN(Material.CYAN_DYE),  
+	  PURPLE(Material.PURPLE_DYE),  
+	  BLUE(Material.LAPIS_LAZULI),  
+	  BROWN(Material.COCOA_BEANS),  
+	  GREEN(Material.CACTUS_GREEN),  
+	  RED(Material.ROSE_RED),  
+	  BLACK(Material.INK_SAC);
+
+	  private Material mat;
+	  
+	  private DyeColor(Material mat)
+	  {
+	    this.mat = mat;
+	  }
+
+	  public Material getMaterial()
+	  {
+	    return this.mat;
+	  }
+	  
+	  public org.bukkit.DyeColor getDyeColor() {
+		  return EnumSet.allOf(org.bukkit.DyeColor.class).stream().filter(color -> color.name().equalsIgnoreCase(this.name())).findFirst().orElse(org.bukkit.DyeColor.WHITE);
+	  }
+	  
+	  public Material replaceMaterial(Material startMaterial) {
+		  String str = startMaterial.name().toUpperCase();
+		  DyeColor toReplace = EnumSet.allOf(DyeColor.class).stream().filter(color -> startMaterial.name().startsWith(color.name())).findFirst().orElse(DyeColor.WHITE);
+		  str = str.replace(toReplace.name(), this.name());
+		  return Material.valueOf(str);
+	  }
+	  
+	  public ItemStack applyToBannerBase(ItemStack banner) {
+		  ItemMeta meta = banner.getItemMeta();
+		  if(meta instanceof BannerMeta){
+			  BannerMeta bannerMeta = (BannerMeta) meta;
+			  banner.setType(replaceMaterial(banner.getType()));
+			  banner.setItemMeta(bannerMeta);
+			  return banner;
+		  }
+		  banner.setItemMeta(meta);
+		  return banner;
+	  }
+	  
+	  public static DyeColor getDyeColor(Material mat) {
+		  return EnumSet.allOf(DyeColor.class).stream().filter(color -> color.getMaterial().equals(mat)).findFirst().orElse(null);
+	  }
+	  
+	  public static DyeColor getDyeToReplace(Material mat) {
+		  return EnumSet.allOf(DyeColor.class).stream().filter(color -> mat.name().contains(color.name())).findFirst().orElse(null);
+	  }
+	  
+	  public ItemStack applyToItemStack(ItemStack stack) {
+		  ItemMeta meta = stack.getItemMeta();
+		  stack.setType(replaceMaterial(stack.getType()));
+		  stack.setItemMeta(meta);
+		  return stack;
+	  }
+	}
+	
 	public enum BodyPart{
 		HEAD("Head",12, new EulerAngle(0D,0D,0D)), 
 		BODY("Body",13, new EulerAngle(0D,0D,0D)), 

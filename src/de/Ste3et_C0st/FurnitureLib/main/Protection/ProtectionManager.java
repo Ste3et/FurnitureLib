@@ -35,9 +35,9 @@ public class ProtectionManager {
 		}
 	}
 	
-	public boolean isSolid(Material mat, int subID, PlaceableSide side){if(!checkPlaceable(mat, subID, side)){return false;}{return mat.isSolid();}}
+	public boolean isSolid(Material mat, PlaceableSide side){if(!checkPlaceable(mat, side)){return false;}{return mat.isSolid();}}
 	
-	private boolean checkPlaceable(Material mat, int l, PlaceableSide side){
+	private boolean checkPlaceable(Material mat, PlaceableSide side){
         return mat.isBlock() && mat.isSolid() && mat.isOccluding();
 	}
     

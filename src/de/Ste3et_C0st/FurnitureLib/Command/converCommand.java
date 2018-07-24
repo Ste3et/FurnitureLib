@@ -37,7 +37,13 @@ public class converCommand {
 						Reader inReader = new InputStreamReader(FurnitureLib.getInstance().getResource("default.dModel"));
 						newConfig.addDefaults(YamlConfiguration.loadConfiguration(inReader));
 						newConfig.options().copyDefaults(true);
+						newConfig.options().header("------------------------------------  #\n"
+								+ "                                      #\n"
+								+ "      never touch the system-ID !     #\n"
+								+ "                                      #\n"
+								+ "------------------------------------  #\n");
 						newConfig.options().copyHeader(true);
+						
 						String header = getHeader(f.getName().replace(".yml", ""), config);
 						String systemID = config.getString(header + ".system-ID");
 						String name = config.getString(header + ".name");
@@ -71,10 +77,7 @@ public class converCommand {
 									newConfig.set(header + ".crafting.index." + letter, cM.name());
 								});
 							}
-							
-							
-							
-							
+
 							if(config.contains(header + ".ProjectModels.ArmorStands")) {
 								config.getConfigurationSection(header + ".ProjectModels.ArmorStands").getKeys(false).stream().forEach(letter -> {
 									String md5 = config.getString(header + ".ProjectModels.ArmorStands." + letter);
@@ -122,6 +125,7 @@ public class converCommand {
 					}
 					sender.sendMessage("convert finish");
 					folder.renameTo(new File("plugins/" + FurnitureLib.getInstance().getName() + "/CraftingOld"));
+					return;
 				}
 				sender.sendMessage("Nichts zu konvertieren");
 			}
