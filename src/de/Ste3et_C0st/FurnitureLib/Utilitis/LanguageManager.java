@@ -78,11 +78,11 @@ public class LanguageManager{
 	
 	private void addDefaultInv(){
 		c = new config(plugin);
-		file = c.getConfig("manageInv", "");
+		file = c.getConfig("inventoryManage", "");
 		if(file==null) return;
 		file.addDefaults(YamlConfiguration.loadConfiguration(FurnitureLib.getInstance().loadStream("manageInv.yml")));
 		file.options().copyDefaults(true);
-		c.saveConfig("manageInv", file, "");
+		c.saveConfig("inventoryManage", file, "");
 		for(String str : file.getConfigurationSection("inv.mode").getKeys(false)){
 			invHashList.put(str, file.getStringList("inv.mode." + str + ".Text"));
 			invMatList.put(str, Material.valueOf(file.getString("inv.mode." + str + ".Material").toUpperCase()));

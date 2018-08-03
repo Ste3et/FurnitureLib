@@ -10,6 +10,7 @@ import org.bukkit.Color;
 import org.bukkit.DyeColor;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -20,8 +21,6 @@ import org.bukkit.block.data.type.Bed.Part;
 import org.bukkit.entity.Player;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.Vector;
-
-import com.comphenix.protocol.wrappers.EnumWrappers.Particle;
 
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.Wrapper.WrapperPlayServerWorldParticles;
@@ -203,10 +202,10 @@ public class LocationUtil {
 //						particle.setOffsetZ(.1F);
 //						particle.setLongDistance(true);
 //						particle.setNumberOfParticles(1);
-//						particle.setParticleData(value);
+//						particle.setParticleData(value);s
 //						particle.setParticleType(particleData);
 //						particle.sendPacket(p);
-						p.spawnParticle(particleData, location, 1);
+						p.spawnParticle(particleData, location, 1, new Particle.DustOptions(Color.RED, 1));
 					}
 				}
 			}

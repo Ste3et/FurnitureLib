@@ -17,7 +17,7 @@ import de.Ste3et_C0st.FurnitureLib.main.Type.PlaceableSide;
 
 public class ProjectManager {
 
-	public void loadProjectFiles(){
+	public synchronized void loadProjectFiles(){
 		List<String> projectList = new ArrayList<String>();
 		File folder = new File("plugins/FurnitureLib/models/");
 		if(folder.exists()){

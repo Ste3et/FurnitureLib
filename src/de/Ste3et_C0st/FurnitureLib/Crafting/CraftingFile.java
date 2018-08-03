@@ -45,7 +45,7 @@ public class CraftingFile {
 	
 	public CraftingFile(String name,InputStream file){
 		this.name = name;
-		this.filePath = new File("/plugins/" + FurnitureLib.getInstance().getName() + "/models/" + name + ".dModel");
+		this.filePath = new File("plugins/" + FurnitureLib.getInstance().getName() + "/models/" + name + ".dModel");
 		this.file = YamlConfiguration.loadConfiguration(filePath);
 		if(file == null) {System.out.println("problems to load " + name);return;}
 		Reader inReader = new InputStreamReader(file);
@@ -166,7 +166,9 @@ public class CraftingFile {
 		short durability = 0;
 		if(file.contains(header + ".spawnMaterial")) {
 			String str = file.getString(header + ".spawnMaterial");
-			mat = Material.getMaterial(str);
+			if(!str.equalsIgnoreCase("383")) {
+				mat = Material.getMaterial(str);
+			}
 		}
 		ItemStack is = new ItemStack(mat);
 		ItemMeta im = is.getItemMeta();

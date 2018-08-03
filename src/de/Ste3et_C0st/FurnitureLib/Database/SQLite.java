@@ -21,16 +21,19 @@ public class SQLite extends Database{
         this.dbname = dbName;
     }
     
-    public String Objects = "CREATE TABLE IF NOT EXISTS FurnitureLib_Objects (" +
-    		"`ObjID` STRING NOT NULL," +
-    		"`Data` STRING NOT NULL" +
+    public String Objects = "CREATE TABLE IF NOT EXISTS furnitureLibData (" +
+    		"`ObjID` STRING NOT NULL PRIMARY KEY," +
+    		"`Data` STRING NOT NULL," +
+    		"`world` STRING NOT NULL," +
+    		"`x` int NOT NULL," +
+    		"`z` int NOT NULL," +
+    		"`uuid` STRING NOT NULL" +
     		");";
 
     public Connection getSQLConnection() {
         File dataFolder = new File(plugin.getDataFolder(), dbname+".db");
         if (!dataFolder.exists()){
             try {
-            	System.out.println("New Database will be generated");
                 dataFolder.createNewFile();
             } catch (IOException e) {
                 plugin.getLogger().log(Level.SEVERE, "File write error: "+dbname+".db");

@@ -23,11 +23,14 @@ public class MySQL extends Database{
         this.port = Port;
     }
     
-    public String Objects = "CREATE TABLE IF NOT EXISTS FurnitureLib_Objects (" +
-    		"`ObjID` TEXT NOT NULL," +
-    		"`Data` TEXT NOT NULL" +
+    public String Objects = "CREATE TABLE IF NOT EXISTS furnitureLibData (" +
+			"`ObjID` varchar(255) NOT NULL," +
+			"`Data` TEXT NOT NULL," +
+			"`world` TEXT NOT NULL," +
+			"`x` int NOT NULL," +
+			"`z` int NOT NULL," +
+			"`uuid` TEXT NOT NULL, PRIMARY KEY (ObjID)" +
     		");";
-
     public Connection getSQLConnection() {
         try {
             if(connection!=null&&!connection.isClosed()){

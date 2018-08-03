@@ -1,8 +1,6 @@
 package de.Ste3et_C0st.FurnitureLib.main.entity;
 
 import java.io.ByteArrayOutputStream;
-import java.util.HashMap;
-
 import org.apache.commons.codec.binary.Base64;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -12,7 +10,7 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
 
 import com.comphenix.protocol.wrappers.EnumWrappers;
-import com.comphenix.protocol.wrappers.WrappedDataWatcher;
+import com.comphenix.protocol.wrappers.WrappedDataWatcher.Registry;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
 
 import de.Ste3et_C0st.FurnitureLib.NBT.CraftItemStack;
@@ -24,25 +22,8 @@ import de.Ste3et_C0st.FurnitureLib.main.Type.BodyPart;
 public abstract class fSerializer extends fProtocol{
 
 	private NBTTagCompound metadata = new NBTTagCompound();
-	private HashMap<Integer, WrappedDataWatcherObject> objMap = new HashMap<Integer, WrappedDataWatcherObject>();
 	public fSerializer(World w, EntityType type, ObjectID id) {super(w, type, id);}
 	public NBTTagCompound getNBTField() {return this.metadata;}
-	public void setObject(WrappedDataWatcher watcher, Object o, int index){
-		WrappedDataWatcherObject wdwo = getDefWatcher(watcher,index, o);
-		watcher.setObject(wdwo, o);
-		objMap.put(index, wdwo);
-	}
-
-	public Object getObject(WrappedDataWatcher watcher,Object o, int index){
-		WrappedDataWatcherObject wdwo = getDefWatcher(watcher,index, o);
-		return watcher.getObject(wdwo);
-	}
-	
-	private WrappedDataWatcherObject getDefWatcher(WrappedDataWatcher watcher, int index, Object o){
-		WrappedDataWatcherObject wdwo = null;
-		if(objMap.containsKey(index)){wdwo = objMap.get(index);}else{wdwo = new WrappedDataWatcherObject(index, WrappedDataWatcher.Registry.get(o.getClass()));objMap.put(index, wdwo);watcher.setObject(wdwo, o);}
-		return wdwo;
-	}
 	
 	public void setMetadata(String field, String value){metadata.setString(field, value);}
 	public void setMetadata(String field, Boolean value){setMetadata(field, value ? 1 : 0);}
@@ -108,6 +89,18 @@ public abstract class fSerializer extends fProtocol{
 			}
 		}
 		return inventory;
+	}
+	
+	public void setBitMask(boolean flag, int field, int i) {
+		byte b0 = (byte) 0;
+		if(getWatcher().hasIndex(field)) {
+			b0 = (byte) getWatcher().getObject(new WrappedDataWatcherObject(field, Registry.get(Byte.class)));
+		}
+		if (flag) {
+			getWatcher().setObject(new WrappedDataWatcherObject(field, Registry.get(Byte.class)), (byte) (b0 | 1 << i));
+		} else {
+			getWatcher().setObject(new WrappedDataWatcherObject(field, Registry.get(Byte.class)), Byte.valueOf((byte) (b0 & (1 << i ^ 0xFFFFFFFF))));
+		}
 	}
 	
 	public String toString(fArmorStand stand){

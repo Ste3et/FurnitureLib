@@ -39,6 +39,7 @@ config:
    glowing: true
    CheckUpdate: true
    rotateOnSit: true
+   autoFileUpdater: true
    Creative:
       RemoveItems: false
       Interact: true

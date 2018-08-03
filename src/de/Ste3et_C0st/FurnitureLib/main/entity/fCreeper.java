@@ -5,6 +5,9 @@ import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 
+import com.comphenix.protocol.wrappers.WrappedDataWatcher.Registry;
+import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
+
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 
@@ -25,15 +28,15 @@ public class fCreeper extends fEntity{
 		return ignited;
 	}
 	
-	public fCreeper setCharged(boolean charged) {
-		setObject(getWatcher(), charged, 12);
-		this.charged = charged;
+	public fCreeper setCharged(boolean b) {
+		getWatcher().setObject(new WrappedDataWatcherObject(12, Registry.get(Boolean.class)), b);
+		this.charged = b;
 		return this;
 	}
 	
-	public fCreeper setIgnited(boolean ignited) {
-		setObject(getWatcher(), ignited, 13);
-		this.ignited = ignited;
+	public fCreeper setIgnited(boolean b) {
+		getWatcher().setObject(new WrappedDataWatcherObject(13, Registry.get(Boolean.class)), b);
+		this.ignited = b;
 		return this;
 	}
 	

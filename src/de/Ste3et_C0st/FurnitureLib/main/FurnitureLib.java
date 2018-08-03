@@ -4,7 +4,6 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
-import java.lang.reflect.Constructor;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -12,18 +11,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.World;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
@@ -52,6 +48,7 @@ import de.Ste3et_C0st.FurnitureLib.Utilitis.ColorUtil;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.CraftingInv;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.LanguageManager;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.LocationUtil;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.autoConverter;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.config;
 import de.Ste3et_C0st.FurnitureLib.main.Type.EventType;
 import de.Ste3et_C0st.FurnitureLib.main.Type.LimitationType;
@@ -73,7 +70,7 @@ public class FurnitureLib extends JavaPlugin{
 	private HashMap<String, List<String>> permissionKit = new HashMap<String, List<String>>();
 	private boolean useGamemode = true, canSit = true, update = true, useParticle = true, useRegionMemberAccess = false, 
 					autoPurge = false, removePurge = false, creativeInteract = true, creativePlace = true, glowing = true, 
-					spamBreak = true, spamPlace = true, rotateOnSit = true;
+					spamBreak = true, spamPlace = true, rotateOnSit = true, autoFileUpdater = true;
 	private CraftingInv craftingInv;
 	private LanguageManager lmanager;
 	private SQLManager sqlManager;
@@ -133,6 +130,7 @@ public class FurnitureLib extends JavaPlugin{
 	public void send(String s){getServer().getConsoleSender().sendMessage(s);}
 	private void loadMetrics(){try{if(getConfig().getBoolean("config.UseMetrics")){new bStats(getInstance());}}catch(Exception e){e.printStackTrace();}}
 
+	public boolean isAutoFileUpdater() {return this.autoFileUpdater;}
 	public boolean isGlowing(){return this.glowing;}
 	public boolean isAutoPurge(){return this.autoPurge;}
 	public boolean isPurgeRemove(){return this.removePurge;}
@@ -156,6 +154,11 @@ public class FurnitureLib extends JavaPlugin{
 	
 	@Override
 	public void onEnable(){
+		if(!getBukkitVersion().startsWith("v1_13")) {
+			send("§cYour Server version is not Supportet please use §c1.13.x");
+			getPluginManager().disablePlugin(this);
+			return;
+		}
 		if(!isEnable("ProtocolLib", true)){send("§cProtocolLib not found");getPluginManager().disablePlugin(this);}else{
 			instance = this;
 			getConfig().addDefaults(YamlConfiguration.loadConfiguration(loadStream("config.yml")));
@@ -180,6 +183,7 @@ public class FurnitureLib extends JavaPlugin{
 			this.autoPurge = getConfig().getBoolean("config.Purge.autoPurge");
 			this.removePurge = getConfig().getBoolean("config.Purge.removePurge");
 			this.viewDistance = (Bukkit.getViewDistance()*16)-2;
+			this.autoFileUpdater = getConfig().getBoolean("config.autoFileUpdater");
 			if(this.viewDistance>=getConfig().getInt("config.viewDistance")){
 				this.viewDistance = getConfig().getInt("config.viewDistance");
 			}
@@ -210,7 +214,6 @@ public class FurnitureLib extends JavaPlugin{
 				send("Furniture start load");
 				Boolean b = isEnable("ProtectionLib", false);
 				send("Furniture find ProtectionLib: §e" + b.toString());
-				createDefaultWatchers();
 				this.type = EventType.valueOf(getConfig().getString("config.PlaceMode.Access", "INTERACT"));
 				this.mode = PublicMode.valueOf(getConfig().getString("config.PlaceMode.Mode", "PRIVATE"));
 				this.bmanager = new BlockManager();
@@ -223,8 +226,8 @@ public class FurnitureLib extends JavaPlugin{
 				this.sqlManager = new SQLManager(instance);
 				this.sqlManager.initialize();
 				this.loadIgnore();
-				this.sqlManager.loadALL();
-				this.pManager.loadProjectFiles();
+				autoConverter.modelConverter(getServer().getConsoleSender());
+				autoConverter.databaseConverter(getServer().getConsoleSender());
 				new FurnitureEvents(instance, manager);
 				getServer().getPluginManager().registerEvents(new onCrafting(), getInstance());
 				getServer().getPluginManager().registerEvents(new onEntityExplode(), getInstance());
@@ -249,22 +252,13 @@ public class FurnitureLib extends JavaPlugin{
 		}
 	}
 	
-	private void createDefaultWatchers(){
-		for(World w : Bukkit.getWorlds()){
-			if(w!=null){
-				getFurnitureManager().getDefaultWatcher(w, EntityType.ARMOR_STAND);
-			}
-		}
-	}
-	
 	private void loadIgnore() {
 		config c = new config(getInstance());
 		FileConfiguration configuration = c.getConfig("ignoredPlayers", "");
 		if(configuration.isSet("ignoreList")){
-			for(Object s : configuration.getStringList("ignoreList")){
-				String str = (String) s;
-				getFurnitureManager().getIgnoreList().add(UUID.fromString(str));
-			}
+			configuration.getStringList("ignoreList").forEach(letter -> {
+				getFurnitureManager().getIgnoreList().add(UUID.fromString(letter));
+			});
 		}
 	}
 	
@@ -290,8 +284,8 @@ public class FurnitureLib extends JavaPlugin{
 		if(file.contains("kit")){
 			if(file.isSet("kit")){
 				if(file.isConfigurationSection("kit")){
-					for(String s : file.getConfigurationSection("kit").getKeys(false)){
-						String header = (String) s;
+					file.getConfigurationSection("kit").getKeys(false).forEach(letter -> {
+						String header = (String) letter;
 						if(file.isSet("kit." + header)){
 							List<String> projectList = new ArrayList<String>();
 							if(file.getStringList("kit." + header)!=null){
@@ -299,7 +293,7 @@ public class FurnitureLib extends JavaPlugin{
 							}
 							permissionKit.put(header, projectList);
 						}
-					}
+					});
 				}
 			}
 		}
@@ -326,16 +320,14 @@ public class FurnitureLib extends JavaPlugin{
 	
 	public void registerPluginFurnitures(Plugin plugin){
 		List<ObjectID> objList = new ArrayList<ObjectID>();
-		for(ObjectID obj : manager.getObjectList()){
-			if(obj==null) continue;
-			if(objList.contains(obj)) continue;
-			if(obj.getPlugin()==null) continue;
+		manager.getObjectList().stream().filter(obj -> obj != null && obj.getPlugin() != null).forEach(obj -> {
 			objList.add(obj);
-			if(obj.getSQLAction().equals(SQLAction.REMOVE)) continue;
-			if(obj.getPlugin().equalsIgnoreCase(plugin.getName())){
-				spawn(obj.getProjectOBJ(), obj);
-			}
-		}
+			if(!obj.getSQLAction().equals(SQLAction.REMOVE)) {
+				if(obj.getPlugin().equalsIgnoreCase(plugin.getName())){
+					spawn(obj.getProjectOBJ(), obj);
+				}
+			};
+		});
 	}
 	
 	private boolean isEnable(String plugin, boolean shutdown){
@@ -379,9 +371,8 @@ public class FurnitureLib extends JavaPlugin{
 		if(obj==null)return;
 		Class<?> c = pro.getclass();
 		if(c==null ){return;}
-			try {
-			Constructor<?> ctor = c.getConstructor(ObjectID.class);
-			ctor.newInstance(obj);
+		try {
+			c.getConstructor(ObjectID.class).newInstance(obj);
 			obj.setFinish();
 		} catch (Exception e) {e.printStackTrace();}
 	}

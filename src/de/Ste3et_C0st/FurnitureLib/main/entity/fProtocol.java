@@ -39,8 +39,9 @@ public class fProtocol{
 		this.w = w;
 		this.id = id;
 		this.type = type;
-		this.watcher = FurnitureLib.getInstance().getFurnitureManager().getDefaultWatcher(getWorld(), getEntityType());
 		this.container = new PacketContainer(PacketType.Play.Server.SPAWN_ENTITY_LIVING);
+		this.container.getModifier().writeDefaults();
+		this.watcher = new WrappedDataWatcher();
 		this.fields = FurnitureLib.getInstance().getField();
 	}
 }

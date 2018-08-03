@@ -7,6 +7,7 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
 import org.bukkit.scheduler.BukkitTask;
 
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
@@ -95,7 +96,7 @@ public class SQLManager {
 			for(ObjectID obj : idList){
 				if(!objList.contains(obj)){
 					switch (obj.getSQLAction()) {
-						case UPDATE: remove(obj); j++; save(obj); break;
+						case UPDATE: save(obj);j++; break;
 						case SAVE: save(obj); i++; break;
 						case REMOVE:remove(obj); l++;plugin.getFurnitureManager().deleteObjectID(obj);break;
 						case NOTHING: break;
@@ -170,5 +171,10 @@ public class SQLManager {
 			this.mysql.close();
 			this.mysql=null;
 		}
+	}
+
+	public void convert(CommandSender sender) {
+		if(this.sqlite!=null){this.sqlite.startConvert(sender);}
+		if(this.mysql!=null){this.mysql.startConvert(sender);}
 	}
 }

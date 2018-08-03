@@ -9,6 +9,8 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.util.EulerAngle;
 
 import com.comphenix.protocol.wrappers.Vector3F;
+import com.comphenix.protocol.wrappers.WrappedDataWatcher.Registry;
+import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
 
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.Relative;
@@ -74,57 +76,32 @@ public class fArmorStand extends fEntity {
 	    }
 	    this.angle.put(part, angle);
 	    angle = FurnitureLib.getInstance().getLocationUtil().Radtodegress(angle);
-	    setObject(getWatcher(), new Vector3F((float)angle.getX(),(float)angle.getY(),(float)angle.getZ()), part.getField());
+	    getWatcher().setObject(new WrappedDataWatcherObject(part.getField(), Registry.getVectorSerializer()), new Vector3F((float)angle.getX(),(float)angle.getY(),(float)angle.getZ()));
 	    return this;
 	  }
 	
 	public fArmorStand setSmall(boolean b){
-		byte b0 = (byte) getObject(getWatcher(), Byte.valueOf((byte) 0), getField().getBitMask());
-		if (b)
-			b0 = (byte)(b0 | 0x1);
-		else {
-			b0 = (byte)(b0 & 0xFFFFFFFE);
-		}
-		setObject(getWatcher(), Byte.valueOf(b0),getField().getBitMask());
+		setBitMask(b, 11, 0);
 		this.small = b;
 		return this;
 	}
 
 	public fArmorStand setArms(boolean b) {
-		byte b0 = (byte) getObject(getWatcher(), Byte.valueOf((byte) 0), getField().getBitMask());
-		if (b)
-			b0 = (byte)(b0 | 0x4);
-		else {
-			b0 = (byte)(b0 & 0xFFFFFFFB);
-		}
-		setObject(getWatcher(), Byte.valueOf(b0),getField().getBitMask());
+		setBitMask(b, 11, 2);
 		this.arms = b;
 		return this;
 	}
 	
 	  public fArmorStand setBasePlate(boolean b)
 	  {
-		byte b0 = (byte) getObject(getWatcher(), Byte.valueOf((byte) 0), getField().getBitMask());
-	    if (!b) {
-	      b0 = (byte)(b0 | 0x8);
-	    } else {
-	      b0 = (byte)(b0 & 0xFFFFFFF7);
-	    }
-	    setObject(getWatcher(), Byte.valueOf(b0),getField().getBitMask());
+		setBitMask(!b, 11, 3);
 	    this.baseplate = b;
 	    return this;
 	  }
 	
 	public fArmorStand setMarker(boolean b){
-		b = !b;
-		byte b0 = (byte) getObject(getWatcher(), Byte.valueOf((byte) 0), getField().getBitMask());
-		if (b)
-			b0 = (byte)(b0 | 0x10);
-		else {
-			b0 = (byte)(b0 & 0xFFFFFFEF);
-		}
-		setObject(getWatcher(), Byte.valueOf(b0),getField().getBitMask());
-		this.marker = !b;
+		setBitMask(!b, 11, 4);
+		this.marker = b;
 		return this;
 	}
 

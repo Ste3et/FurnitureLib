@@ -85,13 +85,7 @@ public class LimitationManager {
 	private Integer returnIntProjectTotal(Player p){
 		int i = 0;
 		if(playerList.containsKey(p.getUniqueId())){
-			for(ObjectID obj : playerList.get(p.getUniqueId())){
-				if(obj!=null&&obj.getProjectOBJ()!=null){
-					if(obj.getSQLAction()==null) continue;
-					if(obj.getSQLAction().equals(SQLAction.REMOVE)) continue;
-					i++;
-				}
-			}
+			return (int) playerList.get(p.getUniqueId()).stream().filter(obj -> obj != null && !obj.getSQLAction().equals(SQLAction.REMOVE)).count();
 		}
 		return i;
 	}
@@ -243,10 +237,10 @@ public class LimitationManager {
 
 	public void loadDefault(String project) {
 		if(this.type.equals(LimitationType.PLAYER)){
-			for(LimitationObject obj : objectList){
+			objectList.stream().forEach(obj -> {
 				obj.addDefault(project);
 				obj.loadProjects(project);
-			}
+			});
 		}
 	}
 	

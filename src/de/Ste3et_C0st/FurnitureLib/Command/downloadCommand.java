@@ -2,22 +2,31 @@ package de.Ste3et_C0st.FurnitureLib.Command;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
+import java.io.Reader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.codec.binary.Base64;
+import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+
+import com.comphenix.protocol.wrappers.EnumWrappers;
 
 import de.Ste3et_C0st.FurnitureLib.Command.command;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTCompressedStreamTools;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.MaterialConverter;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.config;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.Type.PlaceableSide;
@@ -71,6 +80,7 @@ public class downloadCommand {
 					
 					PrintStream stream = new PrintStream(connection.getOutputStream());
 					stream.println("id=" + name);
+					stream.println("&spigot=" + FurnitureLib.getInstance().getBukkitVersion());
 					
 					BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 					
@@ -111,7 +121,6 @@ public class downloadCommand {
 						}
 						add(config, playerName, projectName, sender);
 					}
-					
 					connection.getInputStream().close();
 					sender.sendMessage("§7§m+------------------------------------------------+");
 				}catch(Exception e){
@@ -126,65 +135,169 @@ public class downloadCommand {
 	
 	private void add(String config, String playerName, String project, CommandSender sender){
 		try{
-			config c = new config(FurnitureLib.getInstance());
-			FileConfiguration file = c.getConfig(project, "/Crafting/");
 			byte[] by = Base64.decodeBase64(config);
 			ByteArrayInputStream bin = new ByteArrayInputStream(by);
 			NBTTagCompound compound = NBTCompressedStreamTools.read(bin);
-			NBTTagCompound crafting = compound.getCompound("crafting");
-			NBTTagCompound index = crafting.getCompound("index");
-			NBTTagCompound lore = compound.getCompound("lore");
-			String systemID = project;
-			if(compound.hasKey("systemID")) systemID = compound.getString("systemID");
-			if(!systemID.equalsIgnoreCase(project)) systemID = project;
-			file.set(project + ".name", compound.getString("name"));
-			file.set(project + ".system-ID", systemID);
-			file.set(project + ".material", compound.getInt("material"));
-			file.set(project + ".glow", compound.getBoolean("glow"));
-			List<String> loreText = new ArrayList<String>();
-			for(Object s : lore.c()){
-				loreText.add(lore.getString((String) s));
+			if(compound.hasKey("lore")) {
+				convert(compound, project);
+			}else {
+				save(compound, project);
 			}
-			file.set(project + ".lore", loreText);
-			
-			file.set(project + ".crafting.disable", crafting.getBoolean("disable"));
-			file.set(project + ".crafting.recipe", crafting.getString("recipe"));
-			for(Object s : index.c()){
-				file.set(project + ".crafting.index." + ((String) s), index.getString((String) s));
-			}
-			if(compound.hasKey("ArmorStands")){
-				NBTTagCompound armorStands = compound.getCompound("ArmorStands");
-				for(Object s : armorStands.c()){
-					file.set(project+".ProjectModels.ArmorStands."+ ((String) s), armorStands.getString((String) s) + "");
-				}
-			}
-			
-			PlaceableSide side = PlaceableSide.TOP;
-			if(compound.hasKey("PlaceAbleSide")){
-				side = PlaceableSide.valueOf(compound.getString("PlaceAbleSide"));
-			}
-			
-			file.set(project+".PlaceAbleSide", side.toString());
-			
-			if(compound.hasKey("Blocks")){
-				NBTTagCompound blocks = compound.getCompound("Blocks");
-				for(Object s : blocks.c()){
-					String str = (String) s;
-					if(blocks.hasKey(str)){
-						NBTTagCompound block = blocks.getCompound(str);
-						file.set(project+".ProjectModels.Block." + str + ".X-Offset", block.getDouble("X-Offset"));
-						file.set(project+".ProjectModels.Block." + str + ".Y-Offset", block.getDouble("Y-Offset"));
-						file.set(project+".ProjectModels.Block." + str + ".Z-Offset", block.getDouble("Z-Offset"));
-						file.set(project+".ProjectModels.Block." + str + ".Type", block.getString("Type"));
-						file.set(project+".ProjectModels.Block." + str + ".Data", block.getInt("Data"));
-					}
-				}
-			}
-			
-			c.saveConfig(project, file, "/Crafting/");
-			FurnitureLib.getInstance().getProjectManager().registerProeject(project, side);
 		}catch(Exception e){
 			e.printStackTrace();
 		}
+	}
+	
+	private void save(NBTTagCompound compound, String project) throws IOException{
+		YamlConfiguration file = new YamlConfiguration();
+		Reader inReader = new InputStreamReader(FurnitureLib.getInstance().getResource("default.dModel"));
+		file.addDefaults(YamlConfiguration.loadConfiguration(inReader));
+		file.options().copyDefaults(true);
+		file.options().header("------------------------------------  #\n"
+				+ "                                      #\n"
+				+ "      never touch the system-ID !     #\n"
+				+ "                                      #\n"
+				+ "------------------------------------  #\n");
+		file.options().copyHeader(true);
+		
+		NBTTagCompound crafting = compound.getCompound("crafting");
+		NBTTagCompound index = crafting.getCompound("index");
+		NBTTagCompound lore = crafting.getCompound("lore");
+		String systemID = project;
+		if(compound.hasKey("system-ID")) systemID = compound.getString("system-ID");
+		if(!systemID.equalsIgnoreCase(project)) systemID = project;
+		file.set(project + ".displayName", compound.getString("displayName"));
+		file.set(project + ".system-ID", systemID);
+		file.set(project + ".spawnMaterial", compound.getString("spawnMaterial"));
+		file.set(project + ".itemGlowEffect", compound.getBoolean("itemGlowEffect"));
+		List<String> loreText = new ArrayList<String>();
+		for(Object s : lore.c()){
+			loreText.add(lore.getString((String) s));
+		}
+		file.set(project + ".itemLore", loreText);
+		
+		file.set(project + ".crafting.disable", crafting.getBoolean("disable"));
+		file.set(project + ".crafting.recipe", crafting.getString("recipe"));
+		for(Object s : index.c()){
+			Material mat = MaterialConverter.getMaterialFromOld(index.getString((String) s));
+			file.set(project + ".crafting.index." + ((String) s), mat.name());
+		}
+		
+		if(compound.hasKey("entitys")){
+			NBTTagCompound armorStands = compound.getCompound("entitys");
+			for(Object s : armorStands.c()){
+				file.set(project+".projectData.entitys."+ ((String) s), armorStands.getString((String) s) + "");
+			}
+		}
+		
+		PlaceableSide side = PlaceableSide.TOP;
+		if(compound.hasKey("placeAbleSide")){
+			side = PlaceableSide.valueOf(compound.getString("placeAbleSide"));
+		}
+		
+		file.set(project+".placeAbleSide", side.toString());
+		
+		if(compound.hasKey("blockList")){
+			NBTTagCompound blocks = compound.getCompound("blockList");
+			for(Object s : blocks.c()){
+				String str = (String) s;
+				if(blocks.hasKey(str)){
+					NBTTagCompound block = blocks.getCompound(str);
+					file.set(project+".projectData.blockList." + str + ".xOffset", block.getDouble("xOffset"));
+					file.set(project+".projectData.blockList." + str + ".yOffset", block.getDouble("yOffset"));
+					file.set(project+".projectData.blockList." + str + ".zOffset", block.getDouble("zOffset"));
+					file.set(project+".projectData.blockList." + str + ".material", block.getString("material"));
+				}
+			}
+		}
+		file.save(new File("plugins/"+FurnitureLib.getInstance().getName()+"/models/" + project + ".dModel"));
+		FurnitureLib.getInstance().getProjectManager().registerProeject(project, side);
+	}
+	
+	private void convert(NBTTagCompound compound, String project) throws IOException{
+		YamlConfiguration file = new YamlConfiguration();
+		Reader inReader = new InputStreamReader(FurnitureLib.getInstance().getResource("default.dModel"));
+		file.addDefaults(YamlConfiguration.loadConfiguration(inReader));
+		file.options().copyDefaults(true);
+		file.options().header("------------------------------------  #\n"
+				+ "                                      #\n"
+				+ "      never touch the system-ID !     #\n"
+				+ "                                      #\n"
+				+ "------------------------------------  #\n");
+		file.options().copyHeader(true);
+		
+		NBTTagCompound crafting = compound.getCompound("crafting");
+		NBTTagCompound index = crafting.getCompound("index");
+		NBTTagCompound lore = crafting.getCompound("lore");
+		String systemID = project;
+		if(compound.hasKey("systemID")) systemID = compound.getString("systemID");
+		if(!systemID.equalsIgnoreCase(project)) systemID = project;
+		file.set(project + ".displayName", compound.getString("name"));
+		file.set(project + ".system-ID", systemID);
+		file.set(project + ".spawnMaterial", MaterialConverter.getMaterialFromOld(compound.getString("material")).name());
+		file.set(project + ".itemGlowEffect", compound.getBoolean("glow"));
+		List<String> loreText = new ArrayList<String>();
+		for(Object s : lore.c()){
+			loreText.add(lore.getString((String) s));
+		}
+		file.set(project + ".itemLore", loreText);
+		
+		file.set(project + ".crafting.disable", crafting.getBoolean("disable"));
+		file.set(project + ".crafting.recipe", crafting.getString("recipe"));
+		for(Object s : index.c()){
+			Material mat = MaterialConverter.getMaterialFromOld(index.getString((String) s));
+			file.set(project + ".crafting.index." + ((String) s), mat.name());
+		}
+		
+		if(compound.hasKey("ArmorStands")){
+			NBTTagCompound armorStands = compound.getCompound("ArmorStands");
+			for(Object s : armorStands.c()){
+				String md5 = armorStands.getString(((String) s));
+				byte[] by = Base64.decodeBase64(md5);
+				ByteArrayInputStream bin = new ByteArrayInputStream(by);
+				try {
+					NBTTagCompound metadata = NBTCompressedStreamTools.read(bin);
+					NBTTagCompound inventory = metadata.getCompound("Inventory");
+					NBTTagCompound updatetInventory = new NBTTagCompound();
+					for(Object object : EnumWrappers.ItemSlot.values()){
+						if(!inventory.getString(object.toString()).equalsIgnoreCase("NONE")){
+							NBTTagCompound item = MaterialConverter.convertNMSItemStack(inventory.getCompound(object.toString()+""));
+							updatetInventory.set(object.toString(), item);
+						}else {
+							updatetInventory.setString(object.toString(), "NONE");
+						}
+					}
+					metadata.set("Inventory", updatetInventory);
+					byte[] out = NBTCompressedStreamTools.toByte(metadata);
+					file.set(project+".projectData.entitys."+ ((String) s), Base64.encodeBase64String(out));
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
+		}
+		
+		PlaceableSide side = PlaceableSide.TOP;
+		if(compound.hasKey("PlaceAbleSide")){
+			side = PlaceableSide.valueOf(compound.getString("PlaceAbleSide"));
+		}
+		
+		file.set(project+".placeAbleSide", side.toString());
+		
+		if(compound.hasKey("Blocks")){
+			NBTTagCompound blocks = compound.getCompound("Blocks");
+			for(Object s : blocks.c()){
+				String str = (String) s;
+				if(blocks.hasKey(str)){
+					NBTTagCompound block = blocks.getCompound(str);
+					file.set(project+".projectData.blockList." + str + ".xOffset", block.getDouble("X-Offset"));
+					file.set(project+".projectData.blockList." + str + ".yOffset", block.getDouble("Y-Offset"));
+					file.set(project+".projectData.blockList." + str + ".zOffset", block.getDouble("Z-Offset"));
+					Material materialBlock = MaterialConverter.getMaterialFromOld(block.getString("Type"));
+					file.set(project+".projectData.blockList." + str + ".material", materialBlock.name());
+				}
+			}
+		}
+		file.save(new File("plugins/"+FurnitureLib.getInstance().getName()+"/models/" + project + ".dModel"));
+		FurnitureLib.getInstance().getProjectManager().registerProeject(project, side);
 	}
 }

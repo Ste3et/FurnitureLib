@@ -22,7 +22,7 @@ import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 
 public class ObjectID{
-	private String ObjectID, serial, Project, plugin;
+	private String ObjectID, serial, Project, plugin, worldName;
 	private HashSet<Location> locList = new HashSet<Location>();
 	private Location loc;
 	private UUID uuid;
@@ -33,7 +33,8 @@ public class ObjectID{
 	private List<fEntity> packetList = new ArrayList<fEntity>();
 	private HashSet<Player> players = new HashSet<Player>();
 	private boolean finish=false, fixed=false, fromDatabase=false, Private=false;
-	
+
+	public String getWorldName(){return this.worldName;}
 	public String getID(){return this.ObjectID;}
 	public String getProject(){return this.Project;}
 	public Project getProjectOBJ(){return FurnitureManager.getInstance().getProject(getProject());}
@@ -44,6 +45,7 @@ public class ObjectID{
 	public SQLAction getSQLAction(){return this.sqlAction;}
 	public boolean isFixed(){return this.fixed;}
 	public boolean isFinish() {return this.finish;}
+	public void setWorldName(String name) {this.worldName = name;}
 	public void setFinish(){this.finish = true;}
 	public void setEventTypeAccess(EventType type){this.memberType = type;}
 	public void setSQLAction(SQLAction action){this.sqlAction=action;}
@@ -200,4 +202,5 @@ public class ObjectID{
 		for(Player p : getPlayerList()) getPacketList().stream().forEach(entity -> entity.kill(p, false));
 		this.players.clear();
 	}
+	
 }

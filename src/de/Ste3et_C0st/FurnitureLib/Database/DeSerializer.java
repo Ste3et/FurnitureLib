@@ -7,7 +7,6 @@ import org.apache.commons.codec.binary.Base64;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.entity.EntityType;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTCompressedStreamTools;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagList;
@@ -50,18 +49,16 @@ public class DeSerializer {
 			obj.setMemberList(members);
 			obj.setUUID(uuid);
 			obj.setFinish();
+			obj.setWorldName(startLocation.getWorld().getName());
 			if(action!=null&&action.equals(SQLAction.SAVE)){obj.setSQLAction(SQLAction.SAVE);}else{obj.setSQLAction(SQLAction.NOTHING);}
 			obj.setFromDatabase(true);
 
-			NBTTagCompound armorStands = compound.getCompound("ArmorStands");
+			NBTTagCompound armorStands = compound.getCompound("entitys");
 			
 			armorStands.c().stream().filter(packet -> packet != null).forEach(packet -> {
 				NBTTagCompound metadata = armorStands.getCompound((String) packet);
 				if(autoPurge){if(FurnitureLib.getInstance().checkPurge(obj, uuid)){purged++;return;}}
 				Location loc = locationFetcher(metadata.getCompound("Location"));
-				if(loc == null) {
-					System.out.println("loc = null");
-				}
 				this.armorStands++;
 				FurnitureManager.getInstance().createFromType(metadata.getString("EntityType"), loc, obj).loadMetadata(metadata);
 			});
@@ -119,7 +116,7 @@ public class DeSerializer {
 		return loaded;
 	}
 	
-	private UUID uuidFetcher(String s){
+	public static UUID uuidFetcher(String s){
 		if(s.equalsIgnoreCase("NULL")){return null;}
 		try{
 			return UUID.fromString(s);

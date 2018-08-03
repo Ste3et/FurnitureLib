@@ -5,6 +5,9 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Pig;
 
+import com.comphenix.protocol.wrappers.WrappedDataWatcher.Registry;
+import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
+
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 
@@ -18,7 +21,7 @@ public class fPig extends fEntity{
 	}
 	
 	public fPig setSaddle(boolean b){
-		setObject(getWatcher(), b, 12);
+		getWatcher().setObject(new WrappedDataWatcherObject(12, Registry.get(Boolean.class)), b);
 		this.saddle = b;
 		return this;
 	}

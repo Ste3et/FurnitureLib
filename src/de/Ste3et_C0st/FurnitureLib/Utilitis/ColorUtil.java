@@ -26,7 +26,7 @@ public class ColorUtil {
 			colorBlock(p, canBuild, identifier, obj, row);
 			break;
 		case BANNER:
-			//colorBanner(p, canBuild, identifier, obj, row);
+			colorBlock(p, canBuild, identifier, obj, row);
 			break;
 		}
 	}

@@ -8,6 +8,8 @@ import org.bukkit.entity.Player;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
+import com.comphenix.protocol.wrappers.WrappedDataWatcher.Registry;
+import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
 
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
@@ -48,25 +50,13 @@ public class fGiant extends fEntity {
 	}
 	
 	public fGiant setNoAI(boolean b){
-		byte b0 = (byte) getObject(getWatcher(), Byte.valueOf((byte) 0), 11);
-		if (b)
-			b0 = (byte)(b0 | 0x1);
-		else {
-			b0 = (byte)(b0 & 0xFFFFFFFE);
-		}
-		setObject(getWatcher(), Byte.valueOf(b0),11);
+		setBitMask(b, 11, 0);
 		this.AI = b;
 		return this;
 	}
 	
 	public fGiant setLeftHanded(boolean b){
-		byte b0 = (byte) getObject(getWatcher(), Byte.valueOf((byte) 0), 11);
-		if (b)
-			b0 = (byte)(b0 | 0x2);
-		else {
-			b0 = (byte)(b0 & 0xFFFFFFFE);
-		}
-		setObject(getWatcher(), Byte.valueOf(b0),11);
+		setBitMask(b, 11, 1);
 		return this;
 	}
 

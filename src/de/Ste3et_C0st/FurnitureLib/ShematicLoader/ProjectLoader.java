@@ -189,7 +189,9 @@ public class ProjectLoader extends Furniture{
 					double x = config.getDouble(header+".projectData.blockList." + s + ".xOffset");
 					double y = config.getDouble(header+".projectData.blockList." + s + ".yOffset");
 					double z = config.getDouble(header+".projectData.blockList." + s + ".zOffset");
-					Material m = Material.valueOf(config.getString(header+".projectData.blockList." + s + ".material"));
+					String materialStr = config.getString(header+".projectData.blockList." + s + ".material");
+					if(materialStr == null || materialStr.isEmpty()) continue;
+					Material m = Material.valueOf(materialStr);
 					Location armorLocation = getRelative(getLocation(), getBlockFace(), -z, -x).add(0, y, 0);
 					if(rotate){
 						switch (getObjID().getProjectOBJ().getPlaceableSide()) {
@@ -231,7 +233,7 @@ public class ProjectLoader extends Furniture{
 	}
 	
 	@SuppressWarnings("deprecation")
-	private Player setBlock(Location loc, YamlConfiguration config, boolean rotate){
+	private synchronized Player setBlock(Location loc, YamlConfiguration config, boolean rotate){
 		HashMap<Integer, HashMap<Location, ProjectMaterial>> map = getBlockMap(loc, config, rotate);
 		
 		List<Block> blockList = new ArrayList<Block>();

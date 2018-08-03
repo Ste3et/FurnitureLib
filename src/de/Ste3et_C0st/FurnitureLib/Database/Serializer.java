@@ -25,11 +25,11 @@ public class Serializer {
 		obj.getPacketList().stream().filter(packet -> packet != null).forEach(packet -> {
 			armorStands.set(packet.getEntityID() + "", packet.getMetaData());
 		});
-		compound.set("ArmorStands", armorStands);
+		compound.set("entitys", armorStands);
 		return Base64.encodeBase64String(armorStandtoBytes(compound));
 	}
 	
-	private byte[] armorStandtoBytes(NBTTagCompound compound) {
+	public static byte[] armorStandtoBytes(NBTTagCompound compound) {
 		ByteArrayOutputStream out = new ByteArrayOutputStream();
 		try {
 			NBTCompressedStreamTools.write(compound, out);

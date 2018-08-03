@@ -20,6 +20,8 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.EnumWrappers.Particle;
+import com.comphenix.protocol.wrappers.WrappedDataWatcher.Registry;
+import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 
 import de.Ste3et_C0st.FurnitureLib.NBT.CraftItemStack;
@@ -194,14 +196,14 @@ public abstract class fEntity extends fSerializer{
 	
 	
 	public fEntity setInvisible(boolean b) {
-		b(5, b);
+		setBitMask(b, 0, 5);
 		this.invisible = b;
 		return this;
 	}
 	
 	public fEntity setGlowing(boolean b) {
 		if(!FurnitureLib.getInstance().isGlowing()) b = false;
-		b(6, b);
+		setBitMask(b, 0, 6);
 		this.glowing = b;
 		return this;
 	}
@@ -211,7 +213,7 @@ public abstract class fEntity extends fSerializer{
 	}
 	
 	public fEntity setNameVasibility(boolean b) {
-		setObject(getWatcher(), b, 3);
+		getWatcher().setObject(new WrappedDataWatcherObject(3, Registry.get(Boolean.class)), b);
 		this.nameVisible = b;return this;
 	}
 
@@ -259,17 +261,13 @@ public abstract class fEntity extends fSerializer{
 	}
 	
 	public void send(Player player) {
-		setObject(getWatcher(), 5, getField().getWrapperBit());
-		if (getManager() == null){return;}
-		if (getHandle() == null){return;}
+		getHandle().getDataWatcherModifier().write(0, getWatcher());
 		try {
-			getHandle().getDataWatcherModifier().write(0, getWatcher());
 			getManager().sendServerPacket(player, getHandle());
 			sendInventoryPacket(player);
 			if (getPassanger() != null) {
-				//setPassanger(getPassanger());
+				setPassanger(getPassanger());
 			}
-			player.sendMessage("EntityPacket sending");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -277,7 +275,7 @@ public abstract class fEntity extends fSerializer{
 	
 	public fEntity setHealth(float health){
 		if(health==0){return this;}
-		setObject(getWatcher(), health, 7);
+		getWatcher().setObject(new WrappedDataWatcherObject(7, Registry.get(Float.class)), health);
 		return this;
 	}
 
@@ -332,7 +330,7 @@ public abstract class fEntity extends fSerializer{
 	}
 
 	public fEntity setFire(boolean b) {
-		b(0, b);
+		setBitMask(b, 0, 0);
 		if(!b){
 			
 			FurnitureLib.getInstance().getLightManager().removeLight(getLocation());
@@ -344,18 +342,14 @@ public abstract class fEntity extends fSerializer{
 	}
 
 	public fEntity setName(String str) {
-		if (str == null) {
-			return this;
-		}
-		if (str.equalsIgnoreCase("")) {
-			setNameVasibility(false);
-		}
-		setObject(getWatcher(), Optional.of(WrappedChatComponent.fromText(str).getHandle()), 2);
+		if (str == null) return this;
+		if (str.equalsIgnoreCase("")) setNameVasibility(false);
+		getWatcher().setObject(new WrappedDataWatcherObject(2, Registry.getChatComponentSerializer(true)), Optional.of(WrappedChatComponent.fromText(str).getHandle()));
 		this.customName = str;return this;
 	}
 	
 	public fEntity setParticleColor(int i) {
-		setObject(getWatcher(), i, 8);
+		getWatcher().setObject(new WrappedDataWatcherObject(8, Registry.get(Integer.class)), i);
 		return this;
 	}
 	
@@ -443,46 +437,37 @@ public abstract class fEntity extends fSerializer{
 	
 	public void sendParticle(Location loc, int particleID, boolean repeat)
 	{
-		Particle particle = Particle.getById(particleID);
-	    PacketContainer container = new PacketContainer(PacketType.Play.Server.WORLD_PARTICLES);
-	    container.getParticles().write(0, particle);
-	    container.getBooleans().write(0, Boolean.valueOf(true));
-	    container.getFloat().write(0, Float.valueOf((float)loc.getX()));
-	    container.getFloat().write(1, Float.valueOf((float)loc.getY()));
-	    container.getFloat().write(2, Float.valueOf((float)loc.getZ()));
-	    
-	    if(repeat){
-	    	final PacketContainer packet = container.deepClone();
-	    	isPlayed = true;
-	    	new BukkitRunnable() {
-				@Override
-				public void run() {
-					if(isKilled){isPlayed = false;cancel();return;}
-					for (Player p : getObjID().getPlayerList()) {
-						try {
-							getManager().sendServerPacket(p, packet);
-						} catch (Exception e) {e.printStackTrace();}
-					}
-				}
-			}.runTaskTimer(FurnitureLib.getInstance(), 0L, 10L);
-	    }else{
-	    	if(isKilled) return;
-		    for (Player p : getObjID().getPlayerList()) {
-				try {
-					getManager().sendServerPacket(p, container);
-				} catch (Exception e) {e.printStackTrace();}
-			}
-	    }
+//		Particle particle = Particle.getById(particleID);
+//	    PacketContainer container = new PacketContainer(PacketType.Play.Server.WORLD_PARTICLES);
+//	    container.getParticles().write(0, particle);
+//	    container.getBooleans().write(0, Boolean.valueOf(true));
+//	    container.getFloat().write(0, Float.valueOf((float)loc.getX()));
+//	    container.getFloat().write(1, Float.valueOf((float)loc.getY()));
+//	    container.getFloat().write(2, Float.valueOf((float)loc.getZ()));
+//	    
+//	    if(repeat){
+//	    	final PacketContainer packet = container.deepClone();
+//	    	isPlayed = true;
+//	    	new BukkitRunnable() {
+//				@Override
+//				public void run() {
+//					if(isKilled){isPlayed = false;cancel();return;}
+//					for (Player p : getObjID().getPlayerList()) {
+//						try {
+//							getManager().sendServerPacket(p, packet);
+//						} catch (Exception e) {e.printStackTrace();}
+//					}
+//				}
+//			}.runTaskTimer(FurnitureLib.getInstance(), 0L, 10L);
+//	    }else{
+//	    	if(isKilled) return;
+//		    for (Player p : getObjID().getPlayerList()) {
+//				try {
+//					getManager().sendServerPacket(p, container);
+//				} catch (Exception e) {e.printStackTrace();}
+//			}
+//	    }
     }
-	
-	protected void b(int i, boolean flag) {
-		byte b0 = (byte) getObject(getWatcher(), Byte.valueOf((byte) 0), 0);
-		if (flag) {
-			setObject(getWatcher(), Byte.valueOf((byte) (b0 | 1 << i)), 0);
-		} else {
-			setObject(getWatcher(),Byte.valueOf((byte) (b0 & (1 << i ^ 0xFFFFFFFF))), 0);
-		}
-	}
 	
 	public void setLocation(Location loc){
 		this.l = loc;
@@ -507,7 +492,11 @@ public abstract class fEntity extends fSerializer{
 				}
 			}
 		}
-		this.setNameVasibility(n).setName(name).setFire(f).setGlowing(g).setInvisible(i);
+		this.setNameVasibility(n);
+		this.setName(name);
+		this.setFire(f);
+		this.setGlowing(g);
+		this.setInvisible(i);
 	}
 	
 	public abstract void loadMetadata(NBTTagCompound metadata);

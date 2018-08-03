@@ -2,7 +2,6 @@ package de.Ste3et_C0st.FurnitureLib.main;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
@@ -10,10 +9,7 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Entity;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
@@ -47,29 +43,9 @@ public class FurnitureManager {
 		projects.add(project);}
 	}
 	public List<Project> getProjects(){return this.projects;}
-	public HashMap<World, HashMap<EntityType, WrappedDataWatcher>> defaultWatchers = new HashMap<World, HashMap<EntityType, WrappedDataWatcher>>(); 
 	public WrappedDataWatcher watcher=null;
 	
 	public void addObjectID(ObjectID id){if(!objecte.contains(id)) objecte.add(id);}
-	
-	public WrappedDataWatcher getDefaultWatcher(World w, EntityType type){
-		if(defaultWatchers.containsKey(w)){if(defaultWatchers.get(w).containsKey(type)) return defaultWatchers.get(w).get(type).deepClone();}
-		WrappedDataWatcher watcher = createNew(w, type);
-		if(watcher==null) return null;
-		HashMap<EntityType, WrappedDataWatcher> watcherMap = null;
-		if(defaultWatchers.containsKey(w)) watcherMap = defaultWatchers.get(w);
-		if(watcherMap == null) watcherMap = new HashMap<EntityType, WrappedDataWatcher>();
-		watcherMap.put(type, watcher);
-		defaultWatchers.put(w, watcherMap);
-		return watcher;
-	}
-	
-	private WrappedDataWatcher createNew(World w, EntityType type){
-		Entity entity = w.spawnEntity(new Location(w, 0, 256, 0), type);
-		WrappedDataWatcher watcher = WrappedDataWatcher.getEntityWatcher(entity).deepClone();
-		entity.remove();
-		return watcher;
-	}
 	
 	public ObjectID getObjBySerial(String serial){
 		return getObjectList().stream()
@@ -193,16 +169,8 @@ public class FurnitureManager {
 	}
 	
 	public ObjectID getObjectIDByString(String objID){
-		ObjectID obj = null;
-		for(ObjectID objects : objecte){
-			if(objects.getID().equalsIgnoreCase(objID)){
-				obj = objects;
-				break;
-			}
-		}
-		if(obj !=null){
-			if(obj.getSQLAction().equals(SQLAction.REMOVE)){return null;}
-		}
+		ObjectID obj = objecte.stream().filter(objects -> objects.getID().equalsIgnoreCase(objID)).findFirst().orElse(null);
+		if(obj !=null) if(obj.getSQLAction().equals(SQLAction.REMOVE)){return null;}
 		return obj;
 	}
 
@@ -210,11 +178,9 @@ public class FurnitureManager {
 
 	public void remove(fEntity armorStandPacket) {
 		if(this.objecte.isEmpty()){return;}
-		for(ObjectID obj : objecte){
-			if(obj.getPacketList().contains(armorStandPacket)){
-				obj.getPacketList().remove(armorStandPacket);
-			}
-		}
+		objecte.stream().filter(obj -> obj.getPacketList().contains(armorStandPacket)).forEach(obj -> {
+			obj.getPacketList().remove(armorStandPacket);
+		});
 	}
 	
 	public static List<fArmorStand> cloneList(List<fArmorStand> list) {
