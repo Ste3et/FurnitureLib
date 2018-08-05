@@ -54,9 +54,7 @@ public class FurnitureManager {
 	}
 	
 	public void saveAsynchron(final CommandSender sender){
-		Bukkit.getScheduler().runTaskAsynchronously(FurnitureLib.getInstance(), new Runnable() {
-			@Override
-			public void run() {
+		Bukkit.getScheduler().runTaskAsynchronously(FurnitureLib.getInstance(), () -> {
 				long currentTime = System.currentTimeMillis();
 				sender.sendMessage("§n§7--------------------------------------");
 				sender.sendMessage("§7Furniture async saving started");
@@ -67,7 +65,6 @@ public class FurnitureManager {
 		    	String timeStr = timeDate.format(time);
 				sender.sendMessage("§7Furniture saving finish : §9" + timeStr);
 				sender.sendMessage("§n§7--------------------------------------");
-			}
 		});
 	}
 	

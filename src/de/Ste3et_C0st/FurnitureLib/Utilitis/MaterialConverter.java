@@ -1,6 +1,9 @@
 package de.Ste3et_C0st.FurnitureLib.Utilitis;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedOutputStream;
 import java.io.File;
+import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.InputStream;
@@ -33,13 +36,17 @@ public class MaterialConverter {
 				File json = new File("plugins/" + FurnitureLib.getInstance().getName() + "/id.json"); 
 				if(!json.exists()) {
 					try {
-						InputStream initialStream = FurnitureLib.getInstance().getResource("id.json");
-						byte[] buffer = new byte[initialStream.available()];
-						initialStream.read(buffer);
 					    File targetFile = new File("plugins/" + FurnitureLib.getInstance().getName() + "/id.json");
 					    OutputStream outStream = new FileOutputStream(targetFile);
-					    outStream.write(buffer);
-					    outStream.close();
+					    BufferedOutputStream bos = new BufferedOutputStream(outStream);
+					    InputStream fis = FurnitureLib.getInstance().getResource("id.json");
+					    BufferedInputStream bis = new BufferedInputStream(fis);
+					    byte[] buffer = new byte[1024*1024*10];
+					    int n = -1;
+					    while((n = bis.read(buffer))!=-1) {
+					     bos.write(buffer,0,n);
+					    }
+					    outStream.close(); 
 					}catch (Exception e) {
 						e.printStackTrace();
 						return false;

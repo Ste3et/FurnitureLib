@@ -57,6 +57,7 @@ public abstract class Database {
     	String binary = FurnitureLib.getInstance().getSerializer().SerializeObjectID(id);
     	int x = id.getStartLocation().getBlockX() >> 4;
     	int z = id.getStartLocation().getBlockZ() >> 4;
+    	System.out.println(id.getWorldName());
     	String sql = "REPLACE INTO furnitureLibData (ObjID, Data, world, `x`, `z`, `uuid`) " + 
     			"VALUES (" + 
     			"'"+id.getID()+"'," +
@@ -190,14 +191,30 @@ public abstract class Database {
 		});
     }
     
+	public void loadAsynchron(final int chunkX, final int chunkz, final String worldName) {
+		Bukkit.getScheduler().runTaskAsynchronously(FurnitureLib.getInstance(), () -> {
+			try (ResultSet rs = connection.createStatement().executeQuery("SELECT ObjID,Data FROM furnitureLibData WHERE x=" + chunkX + " AND z=" + chunkz + " AND world='"+worldName+"'")){
+				while (rs.next()){
+	    			if(rs != null){
+	    				String a = rs.getString(1), c = rs.getString(2), d = rs.getString(3);
+	    				if(!(a.isEmpty() || c.isEmpty())) FurnitureLib.getInstance().getDeSerializer().Deserialze(a, c, SQLAction.NOTHING, false, d);
+	    			}
+	    		}
+	    		rs.close();
+			}catch (Exception e) {
+				e.printStackTrace();
+			}
+		});
+	}
+    
     public void loadAll(SQLAction action){
     	long time1 = System.currentTimeMillis();
     	boolean b = FurnitureLib.getInstance().isAutoPurge();
-    	try (ResultSet rs = connection.createStatement().executeQuery("SELECT ObjID,Data FROM furnitureLibData")){    		
+    	try (ResultSet rs = connection.createStatement().executeQuery("SELECT ObjID,Data,world FROM furnitureLibData")){    		
     		while (rs.next()){
     			if(rs != null){
-    				String a = rs.getString(1), c = rs.getString(2);
-    				if(!(a.isEmpty() || c.isEmpty())) FurnitureLib.getInstance().getDeSerializer().Deserialze(a, c, action, b);
+    				String a = rs.getString(1), c = rs.getString(2), d = rs.getString(3);
+    				if(!(a.isEmpty() || c.isEmpty())) FurnitureLib.getInstance().getDeSerializer().Deserialze(a, c, action, b, d);
     			}
     		}
     		rs.close();

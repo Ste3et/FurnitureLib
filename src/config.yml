@@ -29,6 +29,10 @@
 # timer: this is the auto save timer
 # timer/Enable: enable/disable this option to activate the timer
 # timer/time: this it the save time
+# autoFileUpdater: true/false it convert all files from <1.13 to 1.13 !
+# PlaceMode: this is the mode of what the Furnitures are placed from each player
+# Mode: "PRIVATE/PUBLIC" : set all new placed furnitures to private or public
+# Access: "INTERACT/BREAK/BREAK_INTERACT" : it means the player have permissions to interact or break another Furnitures !
 config:
    UseMetrics: true
    Language: "EN_en"

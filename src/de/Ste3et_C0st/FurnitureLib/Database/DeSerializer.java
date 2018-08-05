@@ -24,7 +24,7 @@ public class DeSerializer {
 	public FurnitureLib lib = FurnitureLib.getInstance();
 
 	@SuppressWarnings("unchecked")
-	public void Deserialze(String objId,String in, SQLAction action, boolean autoPurge){
+	public void Deserialze(String objId,String in, SQLAction action, boolean autoPurge, String world){
 		ObjectID obj = new ObjectID(null, null, null);
 		obj.setID(objId);
 		try {
@@ -62,7 +62,7 @@ public class DeSerializer {
 				this.armorStands++;
 				FurnitureManager.getInstance().createFromType(metadata.getString("EntityType"), loc, obj).loadMetadata(metadata);
 			});
-			
+			if(world == null || world.isEmpty() || world.equals("null")) obj.setSQLAction(SQLAction.UPDATE);
 		}catch (Exception e) {
 			e.printStackTrace();
 			return;

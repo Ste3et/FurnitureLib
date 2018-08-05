@@ -4,6 +4,6 @@
   <property name="version" value="FurnitureLib1_13"/>
   <target name="CreateJar" description="Create Jar file">
         <jar jarfile="${workspace}/BuildServer/plugins/FurnitureLib.jar" basedir="./target/classes/" includes="**/*" />
-        <jar jarfile="${workspace}/output/${version}.jar" basedir="./target/classes/" includes="**/*" />
+        <jar jarfile="${workspace}/output/FurnitureLib/${version}.jar" basedir="./target/classes/" includes="**/*" />
   </target>
 </project>
