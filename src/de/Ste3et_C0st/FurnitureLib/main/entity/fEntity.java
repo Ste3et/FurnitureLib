@@ -54,8 +54,6 @@ public abstract class fEntity extends fSerializer{
 		setLocation(loc);
 		getHandle().getIntegers().write(0, a).write(1, c);
 		getHandle().getSpecificModifier(UUID.class).write(0, b);
-		getHandle().getDoubles().write(0, d).write(1, e).write(2, f);
-		getHandle().getBytes().write(0, j).write(1, k);
 	}
 	
 	public boolean isParticlePlayed(){
@@ -246,6 +244,24 @@ public abstract class fEntity extends fSerializer{
 		}
 	}
 	
+	public void rotate(float yaw, float pitch) {
+		Location loc = getLocation();
+		loc.setYaw(loc.getYaw() + yaw);
+		loc.setPitch(loc.getPitch() + pitch);
+		setLocation(loc);
+		
+		PacketContainer c = new PacketContainer(PacketType.Play.Server.ENTITY_LOOK);
+		c.getIntegers().write(0, getEntityID());
+		c.getBytes().write(0, this.j).write(1, this.k);
+		for (Player p : getObjID().getPlayerList()) {
+			try {
+				getManager().sendServerPacket(p, c);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+	}
+	
 	public void send(Player player) {
 		setObject(getWatcher(), 5, getField().getWrapperBit());
 		if (getManager() == null){return;}
@@ -396,6 +412,7 @@ public abstract class fEntity extends fSerializer{
 		getObjID().getPlayerList().forEach(player -> {
 			try {
 				getManager().sendServerPacket(player, container);
+				passanger = null;
 			} catch (InvocationTargetException e) {
 				e.printStackTrace();
 			}
@@ -479,5 +496,7 @@ public abstract class fEntity extends fSerializer{
 		this.f = loc.getZ();
 		this.j = ((byte) (int) (loc.getYaw() * 256.0F / 360.0F));
 		this.k = ((byte) (int) (loc.getPitch() * 256.0F / 360.0F));
+		getHandle().getDoubles().write(0, d).write(1, e).write(2, f);
+		getHandle().getBytes().write(0, j).write(1, k);
 	}
 }

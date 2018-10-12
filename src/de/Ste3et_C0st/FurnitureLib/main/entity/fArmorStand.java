@@ -15,6 +15,8 @@ import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type;
 import de.Ste3et_C0st.FurnitureLib.main.Type.BodyPart;
 import com.comphenix.protocol.wrappers.Vector3F;
+import com.comphenix.protocol.wrappers.WrappedDataWatcher.Registry;
+import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
 
 public class fArmorStand extends fEntity {
 
@@ -85,7 +87,7 @@ public class fArmorStand extends fEntity {
 	    }
 	    this.angle.put(part, angle);
 	    angle = FurnitureLib.getInstance().getLocationUtil().Radtodegress(angle);
-	    setObject(getWatcher(), new Vector3F((float)angle.getX(),(float)angle.getY(),(float)angle.getZ()), getField().getFieldFromPose(part));
+	    getWatcher().setObject(new WrappedDataWatcherObject(getField().getFieldFromPose(part), Registry.getVectorSerializer()), new Vector3F((float)angle.getX(),(float)angle.getY(),(float)angle.getZ()));
 	    return this;
 	  }
 	

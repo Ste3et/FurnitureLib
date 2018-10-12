@@ -188,7 +188,7 @@ public class FurnitureLib extends JavaPlugin{
 				this.spamBreakTime = getConfig().getLong("config.spamBlock.Place.time");
 				this.timePattern = getConfig().getString("config.spamBlock.timeDisplay");
 				this.rotateOnSit = getConfig().getBoolean("config.rotateOnSit");
-				this.updater = new Updater();
+				
 				this.purgeTimeMS = TimeUnit.DAYS.toMillis(purgeTime);
 				this.pManager = new ProjectManager();
 				this.permissionHandler = new PermissionHandler();
@@ -216,6 +216,7 @@ public class FurnitureLib extends JavaPlugin{
 					loadPermissionKit();
 					loadMetrics();
 					this.update = getConfig().getBoolean("config.CheckUpdate");
+					this.updater = new Updater();
 					this.sqlManager = new SQLManager(instance);
 					this.sqlManager.initialize();
 					this.loadIgnore();

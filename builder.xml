@@ -1,7 +1,9 @@
 <?xml version="1.0" ?>
-<!-- Configuration of the Ant build system to generate a Jar file -->
 <project name="FurnitureLib" default="CreateJar">
+  <property name="workspace" value="C:/Plugins"/>
+  <property name="version" value="FurnitureLib1_12"/>
   <target name="CreateJar" description="Create Jar file">
-        <jar jarfile="C:/Plugins/BuildServer/plugins/FurnitureLib.jar" basedir="./target/classes/" includes="**/*" />
+        <jar jarfile="${workspace}/BuildServer/plugins/FurnitureLib.jar" basedir="./target/classes/" includes="**/*" />
+        <jar jarfile="${workspace}/output/FurnitureLib/${version}.jar" basedir="./target/classes/" includes="**/*" />
   </target>
 </project>

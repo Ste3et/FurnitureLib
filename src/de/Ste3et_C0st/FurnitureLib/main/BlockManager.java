@@ -16,8 +16,7 @@ import org.bukkit.event.block.BlockPhysicsEvent;
 public class BlockManager implements Listener{
 	
 	public HashSet<Location> locList = new HashSet<Location>();
-	private List<Material> activatePhysic = Arrays.asList(Material.TORCH, Material.REDSTONE_TORCH_OFF, Material.REDSTONE_TORCH_ON,
-			  Material.BED_BLOCK, Material.SIGN, Material.WALL_SIGN, Material.SIGN_POST);
+	private List<Material> activatePhysic = Arrays.asList(Material.TORCH);
 	private boolean isActive = false;
 	
 	public BlockManager(){}

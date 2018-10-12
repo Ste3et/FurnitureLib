@@ -153,7 +153,7 @@ public class CraftingFile {
 		if(this.side != null) return this.side;
 		if(file.isSet(header+".PlaceAbleSide")) {
 			String str = file.getString(header+".PlaceAbleSide", "TOP");
-			PlaceableSide side = PlaceableSide.valueOf(str);
+			PlaceableSide side = PlaceableSide.valueOf(str.toUpperCase());
 			this.side = side;
 			return side;
 		}

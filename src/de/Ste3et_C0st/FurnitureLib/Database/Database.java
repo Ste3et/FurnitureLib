@@ -10,8 +10,6 @@ import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.logging.Level;
 
-import org.sqlite.JDBC;
-
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.DataBaseType;
@@ -21,7 +19,6 @@ public abstract class Database {
 	public FurnitureLib plugin;
 	public Connection connection;
     private Statement statement;
-    @SuppressWarnings("unused")
     boolean result = false;
     public Database(FurnitureLib instance){
         this.plugin = instance;
