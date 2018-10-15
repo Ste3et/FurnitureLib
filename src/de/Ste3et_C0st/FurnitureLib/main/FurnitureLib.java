@@ -212,7 +212,6 @@ public class FurnitureLib extends JavaPlugin{
 					this.mode = PublicMode.valueOf(getConfig().getString("config.PlaceMode.Mode", "PRIVATE"));
 					this.bmanager = new BlockManager();
 					this.craftingInv = new CraftingInv(this);
-					for(Player p : Bukkit.getOnlinePlayers()){if(p.isOp()){getUpdater().sendPlayer(p);}}
 					loadPermissionKit();
 					loadMetrics();
 					this.update = getConfig().getBoolean("config.CheckUpdate");
@@ -222,6 +221,10 @@ public class FurnitureLib extends JavaPlugin{
 					this.loadIgnore();
 					this.sqlManager.loadALL();
 					this.pManager.loadProjectFiles();
+					
+					//Place this after this.updater = new Updater(); because otherwise getUpdater() will return null.
+					for(Player p : Bukkit.getOnlinePlayers()){if(p.isOp()){getUpdater().sendPlayer(p);}}
+					
 					new FurnitureEvents(instance, manager);
 					getServer().getPluginManager().registerEvents(new onCrafting(), getInstance());
 					getServer().getPluginManager().registerEvents(new onEntityExplode(), getInstance());
