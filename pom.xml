@@ -82,7 +82,7 @@
     <repository>
 	    <id>vault-repo</id>
 	    <url>http://nexus.hc.to/content/repositories/pub_releases</url>
-	</repository>
+    </repository>
 	
 	<repository>
 	    <id>dmulloy2-repo</id>
@@ -120,13 +120,13 @@
             <version>1.13.1-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
     </dependency>
-    
-    <dependency>
-	   <groupId>net.milkbowl.vault</groupId>
-	   <artifactId>Vault</artifactId>
-	   <version>1.7.1</version>
-	   <scope>provided</scope>
-	</dependency>
+
+	<dependency>
+        <groupId>net.milkbowl.vault</groupId>
+        <artifactId>VaultAPI</artifactId>
+        <version>1.7</version>
+        <scope>provided</scope>
+    </dependency>
     
 	<dependency>
 	   <groupId>com.comphenix.protocol</groupId>
@@ -151,9 +151,4 @@
     </dependency>
 	
 </dependencies>
-
-  
-	<issueManagement>
-		<url>https://github.com/Ste3et/FurnitureLib/issues</url>
-	</issueManagement>
 </project>
