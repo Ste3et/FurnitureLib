@@ -9,8 +9,8 @@ import de.Ste3et_C0st.FurnitureLib.main.entity.fArmorStand;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fInventory;
 
 import java.io.ByteArrayOutputStream;
+import java.util.Base64;
 
-import org.apache.commons.codec.binary.Base64;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -166,7 +166,7 @@ public class ProjectMetadata
   public String toString(fArmorStand stand, Location Start)
   {
     NBTTagCompound nbt = getMetaData(stand, Start);
-    return Base64.encodeBase64String(getByte(nbt));
+    return Base64.getEncoder().encodeToString(getByte(nbt));
   }
   
   public byte[] getByte(NBTTagCompound compound)

@@ -21,6 +21,7 @@ public class MySQL extends Database{
         this.DBPsw = DBPsw;
         this.DBuser = DBUser;
         this.port = Port;
+        createTable();
     }
     
     public String Objects = "CREATE TABLE IF NOT EXISTS furnitureLibData (" +
@@ -31,15 +32,12 @@ public class MySQL extends Database{
 			"`z` int NOT NULL," +
 			"`uuid` TEXT NOT NULL, PRIMARY KEY (ObjID)" +
     		");";
+    
     public Connection getSQLConnection() {
         try {
-            if(connection!=null&&!connection.isClosed()){
-                return connection;
-            }
             Class.forName("com.mysql.jdbc.Driver");
             String connectionString = "jdbc:mysql://"+host+":"+port+"/"+DBname + "?autoReconnect=true";
-            connection = DriverManager.getConnection(connectionString,DBuser,DBPsw);
-            return connection;
+            return DriverManager.getConnection(connectionString,DBuser,DBPsw);
         } catch (SQLException ex) {
             plugin.getLogger().log(Level.SEVERE,"MySQL exception on initialize", ex);
         } catch (ClassNotFoundException ex) {
@@ -48,16 +46,12 @@ public class MySQL extends Database{
         return null;
     }
  
-    public void load() {
-        connection = getSQLConnection();     
-        try {
-            Statement s = connection.createStatement();
-            s.executeUpdate(Objects);
-            s.close();
+    public void createTable() {
+        try (Connection con = getSQLConnection(); Statement stmt = con.createStatement()){
+        	stmt.executeUpdate(Objects);
         } catch (SQLException e) {
             e.printStackTrace();
         }
-        initialize();
     }
 
 	public DataBaseType getType() {return this.type;}

@@ -13,9 +13,12 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.player.PlayerInteractAtEntityEvent;
+import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.PlayerInventory;
 
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.HiddenStringUtils;
@@ -37,12 +40,14 @@ public class ChunkOnLoad implements Listener{
 		if(e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
 			final Block b = e.getClickedBlock();
 			final ItemStack stack = e.getItem();
-			if(b== null || stack == null) return;
+			if(stack == null) return;
 			final Project pro = getProjectByItem(stack);
 			if(pro == null) return;
+			e.setCancelled(true);
+			if(b == null) return;
 			if(FurnitureLib.getInstance().getBlockManager().getList().contains(b.getLocation())) return;
 			if(eventList.contains(e.getPlayer())) return;
-			e.setCancelled(true);
+			if(b.isLiquid()) return;
 			if(!e.getHand().equals(EquipmentSlot.HAND)) return;
 			eventList.add(e.getPlayer());
 			final BlockFace face = e.getBlockFace();
@@ -66,7 +71,15 @@ public class ChunkOnLoad implements Listener{
 				}
 			});
 			removePlayer(p);
+		}else if(e.getAction().equals(Action.RIGHT_CLICK_AIR)) {
+			final ItemStack stack = e.getItem();
+			if(stack == null) return;
+			final Project pro = getProjectByItem(stack);
+			if(pro == null) return;
+			e.setCancelled(true);
 		}
+		
+		
 	}
 	
 	/*
@@ -168,8 +181,22 @@ public class ChunkOnLoad implements Listener{
 		}
 	}
 	
+	@EventHandler
+	public void onEntityRightClick(PlayerInteractEntityEvent e) {
+		if(e.getRightClicked() != null && e.getPlayer() != null) {
+			PlayerInventory inv = e.getPlayer().getInventory();
+			if(getProjectByItem(inv.getItemInMainHand()) != null) {
+				e.setCancelled(true);
+				return;
+			}
+			if(getProjectByItem(inv.getItemInOffHand()) != null) {
+				e.setCancelled(true);
+				return;
+			}
+		}
+	}
 	
-	private void spawn(FurnitureItemEvent e){
+	public void spawn(FurnitureItemEvent e){
 		if(e.isCancelled()){return;}
 		if(!e.getProject().hasPermissions(e.getPlayer())){return;}
 		ObjectID obj = e.getObjID();

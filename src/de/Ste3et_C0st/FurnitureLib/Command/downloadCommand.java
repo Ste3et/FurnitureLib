@@ -3,7 +3,6 @@ package de.Ste3et_C0st.FurnitureLib.Command;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
@@ -11,13 +10,12 @@ import java.io.Reader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
-import org.apache.commons.codec.binary.Base64;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
@@ -27,7 +25,6 @@ import de.Ste3et_C0st.FurnitureLib.Command.command;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTCompressedStreamTools;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.MaterialConverter;
-import de.Ste3et_C0st.FurnitureLib.Utilitis.config;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.Type.PlaceableSide;
 
@@ -135,7 +132,7 @@ public class downloadCommand {
 	
 	private void add(String config, String playerName, String project, CommandSender sender){
 		try{
-			byte[] by = Base64.decodeBase64(config);
+			byte[] by = Base64.getUrlDecoder().decode(config);
 			ByteArrayInputStream bin = new ByteArrayInputStream(by);
 			NBTTagCompound compound = NBTCompressedStreamTools.read(bin);
 			if(compound.hasKey("lore")) {
@@ -186,7 +183,8 @@ public class downloadCommand {
 		if(compound.hasKey("entitys")){
 			NBTTagCompound armorStands = compound.getCompound("entitys");
 			for(Object s : armorStands.c()){
-				file.set(project+".projectData.entitys."+ ((String) s), armorStands.getString((String) s) + "");
+				String str = armorStands.getString((String) s);
+				file.set(project+".projectData.entitys."+ ((String) s), str);
 			}
 		}
 		
@@ -207,6 +205,9 @@ public class downloadCommand {
 					file.set(project+".projectData.blockList." + str + ".yOffset", block.getDouble("yOffset"));
 					file.set(project+".projectData.blockList." + str + ".zOffset", block.getDouble("zOffset"));
 					file.set(project+".projectData.blockList." + str + ".material", block.getString("material"));
+					if(block.hasKey("Rotation")) {
+						file.set(project + ".projectData.blockList."+str+".Rotation", block.getString("Rotation"));
+					}
 				}
 			}
 		}
@@ -253,7 +254,7 @@ public class downloadCommand {
 			NBTTagCompound armorStands = compound.getCompound("ArmorStands");
 			for(Object s : armorStands.c()){
 				String md5 = armorStands.getString(((String) s));
-				byte[] by = Base64.decodeBase64(md5);
+				byte[] by = Base64.getDecoder().decode(md5);
 				ByteArrayInputStream bin = new ByteArrayInputStream(by);
 				try {
 					NBTTagCompound metadata = NBTCompressedStreamTools.read(bin);
@@ -269,7 +270,8 @@ public class downloadCommand {
 					}
 					metadata.set("Inventory", updatetInventory);
 					byte[] out = NBTCompressedStreamTools.toByte(metadata);
-					file.set(project+".projectData.entitys."+ ((String) s), Base64.encodeBase64String(out));
+					String str = Base64.getEncoder().encodeToString(out);
+					file.set(project+".projectData.entitys."+ ((String) s), str);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -294,6 +296,9 @@ public class downloadCommand {
 					file.set(project+".projectData.blockList." + str + ".zOffset", block.getDouble("Z-Offset"));
 					Material materialBlock = MaterialConverter.getMaterialFromOld(block.getString("Type"));
 					file.set(project+".projectData.blockList." + str + ".material", materialBlock.name());
+					if(block.hasKey("Rotation")) {
+						file.set(project + ".projectData.blockList."+str+".Rotation", block.getString("Rotation"));
+					}
 				}
 			}
 		}

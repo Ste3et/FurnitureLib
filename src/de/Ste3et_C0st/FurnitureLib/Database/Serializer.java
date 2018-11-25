@@ -1,9 +1,9 @@
 package de.Ste3et_C0st.FurnitureLib.Database;
 
 import java.io.ByteArrayOutputStream;
+import java.util.Base64;
 import java.util.UUID;
 
-import org.apache.commons.codec.binary.Base64;
 import org.bukkit.Location;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTCompressedStreamTools;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
@@ -26,7 +26,7 @@ public class Serializer {
 			armorStands.set(packet.getEntityID() + "", packet.getMetaData());
 		});
 		compound.set("entitys", armorStands);
-		return Base64.encodeBase64String(armorStandtoBytes(compound));
+		return Base64.getEncoder().encodeToString(armorStandtoBytes(compound));
 	}
 	
 	public static byte[] armorStandtoBytes(NBTTagCompound compound) {

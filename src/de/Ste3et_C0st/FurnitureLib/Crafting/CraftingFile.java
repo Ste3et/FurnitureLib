@@ -187,11 +187,11 @@ public class CraftingFile {
 		List<String> loreText = new ArrayList<String>();
 		if(im.getLore()!=null) loreText = im.getLore();
 		loreText.add(HiddenStringUtils.encodeString(getSystemID()));
-		
-		if(file.isSet(header+"itemLore")){
+
+		if(file.contains(header+".itemLore")){
 			if(file.isList(header+".itemLore")){
 				List<String> lore = file.getStringList(header+".itemLore");
-				if(im.getLore()!=null) loreText = im.getLore();
+				if(im.getLore()!=null) {loreText = im.getLore();}
 				for(String str : lore){
 					String a = ChatColor.translateAlternateColorCodes('&', str);
 					loreText.add(a);

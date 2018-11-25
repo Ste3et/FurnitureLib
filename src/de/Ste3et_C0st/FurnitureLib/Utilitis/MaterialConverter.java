@@ -3,7 +3,6 @@ package de.Ste3et_C0st.FurnitureLib.Utilitis;
 import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
-import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.InputStream;

@@ -2,11 +2,11 @@ package de.Ste3et_C0st.FurnitureLib.ShematicLoader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
-import org.apache.commons.codec.binary.Base64;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -14,19 +14,16 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
+import org.bukkit.block.data.Directional;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.material.Directional;
 import org.bukkit.material.Door;
-import org.bukkit.material.MaterialData;
 import org.bukkit.util.EulerAngle;
 
 import com.comphenix.protocol.wrappers.EnumWrappers;
-import com.comphenix.protocol.wrappers.EnumWrappers.Particle;
-
 import de.Ste3et_C0st.FurnitureLib.Events.FurnitureBreakEvent;
 import de.Ste3et_C0st.FurnitureLib.Events.FurnitureClickEvent;
 import de.Ste3et_C0st.FurnitureLib.NBT.CraftItemStack;
@@ -130,7 +127,7 @@ public class ProjectLoader extends Furniture{
 		try {
 			for(String s : config.getConfigurationSection(header+".projectData.entitys").getKeys(false)){
 				String md5 = config.getString(header+".projectData.entitys."+s);
-				byte[] by = Base64.decodeBase64(md5);
+				byte[] by = Base64.getDecoder().decode(md5);
 				ByteArrayInputStream bin = new ByteArrayInputStream(by);
 				NBTTagCompound metadata = NBTCompressedStreamTools.read(bin);
 				String customName = metadata.getString("Name");
@@ -201,7 +198,8 @@ public class ProjectLoader extends Furniture{
 					}
 					ProjectMaterial material = new ProjectMaterial(m);
 					if(config.isSet(header+".projectData.blockList." + s + ".Rotation")){
-						material.setBlockFace(BlockFace.valueOf(config.getString(header+".projectData.blockList." + s + ".Rotation")));
+						BlockFace face = BlockFace.valueOf(config.getString(header+".projectData.blockList." + s + ".Rotation"));
+						material.setBlockFace(face);
 					}
 					
 					if(config.isSet(header+".projectData.blockList." + s + ".Inventory")){
@@ -210,7 +208,7 @@ public class ProjectLoader extends Furniture{
 						for(String j : config.getConfigurationSection(header+".projectData.blockList." + s + ".Inventory").getKeys(false)){
 							if(!j.equalsIgnoreCase("type")){
 								String base64 = config.getString(header+".projectData.blockList." + s + ".Inventory." + j);
-								byte[] bString = Base64.decodeBase64(base64);
+								byte[] bString = Base64.getDecoder().decode(base64);
 								ByteArrayInputStream bin = new ByteArrayInputStream(bString);
 								NBTTagCompound compound = NBTCompressedStreamTools.read(bin);
 								bin.close();
@@ -304,7 +302,6 @@ public class ProjectLoader extends Furniture{
 								float yaw3 = getLutil().FaceToYaw(oldBlockFace);
 								float newYaw4 = yaw1 + yaw2 + yaw3;
 								BlockFace face = getLutil().yawToFace(newYaw4);
-								
 								if(material.getMaterial().name().contains("_BED")){
 									block.setType(Material.AIR);
 									getLutil().setBed(face, blockLocation, material.getMaterial());
@@ -331,9 +328,9 @@ public class ProjectLoader extends Furniture{
 									registerBlock(block);
 									continue;
 								}else{
-									Directional directional = (Directional) state.getData();
-									directional.setFacingDirection(face);
-									state.setData((MaterialData) directional);
+									Directional direction = (Directional) state.getBlockData();
+									direction.setFacing(face);
+									state.setBlockData(direction);
 								}
 							}
 							state.update(true);

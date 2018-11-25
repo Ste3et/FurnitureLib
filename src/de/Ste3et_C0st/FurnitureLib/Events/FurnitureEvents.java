@@ -164,8 +164,8 @@ public class FurnitureEvents {
                         	for(final ObjectID obj : manager.getObjectList()){
                         		//if(obj.isInRange(p)){
                         			for(final fEntity packet : obj.getPacketList()){
-                        				if(packet.getPassanger()!=null){
-                        					if(packet.getPassanger().equals(p)){
+                        				if(!packet.getPassanger().isEmpty()){
+                        					if(packet.getPassanger().contains(p.getEntityId())){
                             					event.setCancelled(true);
                             					moving.setValues(a,b,c);
                             					final EntityMoving action = moving;
@@ -176,7 +176,7 @@ public class FurnitureEvents {
 														Bukkit.getServer().getPluginManager().callEvent(event);
 														if(!event.isCancelled()){
 															if(action.equals(EntityMoving.SNEEKING)){
-																packet.eject();return;
+																packet.eject(p.getEntityId());return;
 															}
 														}
     												}

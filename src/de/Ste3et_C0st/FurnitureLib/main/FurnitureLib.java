@@ -218,11 +218,11 @@ public class FurnitureLib extends JavaPlugin{
 				this.mode = PublicMode.valueOf(getConfig().getString("config.PlaceMode.Mode", "PRIVATE"));
 				this.bmanager = new BlockManager();
 				this.craftingInv = new CraftingInv(this);
-				for(Player p : Bukkit.getOnlinePlayers()){if(p.isOp()){getUpdater().sendPlayer(p);}}
 				loadPermissionKit();
 				loadMetrics();
 				this.update = getConfig().getBoolean("config.CheckUpdate");
 				this.updater = new Updater();
+				Bukkit.getOnlinePlayers().stream().filter(p -> p!=null && p.isOp()).forEach(p -> getUpdater().sendPlayer(p));
 				this.sqlManager = new SQLManager(instance);
 				this.sqlManager.initialize();
 				this.loadIgnore();

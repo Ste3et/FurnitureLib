@@ -16,7 +16,6 @@ import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
 public class ColorUtil {
 
 	private FurnitureLib lib = FurnitureLib.getInstance();
-	private LocationUtil lutil = lib.getLocationUtil();
 	private FurnitureManager manager = lib.getFurnitureManager();
 	
 	public void color(Player p, boolean canBuild, String identifier, ObjectID obj, ColorType type, int row){
@@ -60,7 +59,7 @@ public class ColorUtil {
 		p.updateInventory();
 	}
 	
-	@SuppressWarnings("deprecation")
+	@Deprecated
 	private void colorBanner(Player p, boolean canBuild, Material m, ObjectID obj, int row){
 //		if(!canBuild){return;}
 //		ItemStack is = p.getInventory().getItemInMainHand();

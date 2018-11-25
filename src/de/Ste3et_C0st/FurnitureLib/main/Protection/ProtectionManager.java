@@ -6,6 +6,9 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.block.data.BlockData;
+import org.bukkit.block.data.type.Slab;
+import org.bukkit.block.data.type.Stairs;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
@@ -35,10 +38,17 @@ public class ProtectionManager {
 		}
 	}
 	
-	public boolean isSolid(Material mat, PlaceableSide side){if(!checkPlaceable(mat, side)){return false;}{return mat.isSolid();}}
+	public boolean isSolid(Material mat, PlaceableSide side, BlockData blockData){if(!checkPlaceable(mat, side, blockData)){return false;}{return mat.isSolid();}}
 	
-	private boolean checkPlaceable(Material mat, PlaceableSide side){
-        return mat.isBlock() && mat.isSolid() && mat.isOccluding();
+	private boolean checkPlaceable(Material mat, PlaceableSide side, BlockData blockState){
+        return mat.isBlock() && mat.isSolid() && (mat.isOccluding() || blockStateParser(blockState));
+	}
+	
+	private boolean blockStateParser(BlockData blockData) {
+		boolean b = false;
+		if(blockData instanceof Slab) {return !((Slab) blockData).getType().name().equalsIgnoreCase("BOTTOM");}
+		if(blockData instanceof Stairs){return !((Stairs) blockData).getHalf().name().equalsIgnoreCase("BOTTOM");}
+		return b;
 	}
     
 	

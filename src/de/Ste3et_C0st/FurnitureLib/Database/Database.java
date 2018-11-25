@@ -1,25 +1,17 @@
 package de.Ste3et_C0st.FurnitureLib.Database;
 
 import java.io.ByteArrayInputStream;
-import java.io.EOFException;
-import java.net.SocketException;
 import java.sql.Connection;
-import java.sql.PreparedStatement;
 import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.Statement;
 import java.text.SimpleDateFormat;
+import java.util.Base64;
 import java.util.EnumSet;
 import java.util.UUID;
-import java.util.logging.Level;
-
-import org.apache.commons.codec.binary.Base64;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
-import org.sqlite.SQLiteException;
 
 import com.comphenix.protocol.wrappers.EnumWrappers;
-import com.mysql.jdbc.exceptions.jdbc4.MySQLSyntaxErrorException;
-
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTCompressedStreamTools;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.MaterialConverter;
@@ -27,11 +19,9 @@ import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.DataBaseType;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
-import net.minecraft.server.v1_13_R1.MinecraftServer;
 
 public abstract class Database {
 	public FurnitureLib plugin;
-	public Connection connection;
     public int stepSize = 250, offset = 0, dataFiles = 0, step = 1, stepComplete = 0;
     
     public Database(FurnitureLib instance){
@@ -39,25 +29,12 @@ public abstract class Database {
     }
     
     public abstract Connection getSQLConnection();
-
-    public abstract void load();
     public abstract DataBaseType getType();
-    
-    public void initialize(){
-        connection = getSQLConnection();
-        try(PreparedStatement ps = connection.prepareStatement("SELECT COUNT(*) FROM furnitureLibData")){
-            ResultSet rs = ps.executeQuery();
-            close(ps,rs);
-        } catch (SQLException ex) {
-            plugin.getLogger().log(Level.SEVERE, "Unable to retreive connection", ex);
-        }
-    }
 
     public boolean save(ObjectID id){
     	String binary = FurnitureLib.getInstance().getSerializer().SerializeObjectID(id);
     	int x = id.getStartLocation().getBlockX() >> 4;
     	int z = id.getStartLocation().getBlockZ() >> 4;
-    	System.out.println(id.getWorldName());
     	String sql = "REPLACE INTO furnitureLibData (ObjID, Data, world, `x`, `z`, `uuid`) " + 
     			"VALUES (" + 
     			"'"+id.getID()+"'," +
@@ -66,19 +43,10 @@ public abstract class Database {
     			+x+"," +
     			+z+"," +
     			"'"+id.getUUID().toString()+"');";
-    	try{
-    		connection.createStatement().executeUpdate(sql);
+    	try(Connection con = getSQLConnection(); Statement stmt = con.createStatement()){
+    		stmt.executeUpdate(sql);
     		return true;
     	}catch(Exception e){
-    		if(e instanceof SocketException || e instanceof EOFException){
-    			initialize();
-    			try{
-    				connection.createStatement().executeUpdate(sql);
-    			}catch(Exception ex){
-    				ex.printStackTrace();
-    			}
-    			return false;
-    		}
     		e.printStackTrace();
     	}
     	return false;
@@ -86,7 +54,7 @@ public abstract class Database {
     
     public void startConvert(CommandSender sender) {
     	String sql = "SELECT COUNT(*) FROM `FurnitureLib_Objects`";
-    	try (ResultSet rs = connection.createStatement().executeQuery(sql)) {
+    	try (Connection con = getSQLConnection();ResultSet rs = con.createStatement().executeQuery(sql)) {
 			while (rs.next()){
 				dataFiles = rs.getInt(1);
 				if(dataFiles != 0) {
@@ -101,14 +69,9 @@ public abstract class Database {
 					return;
 				}
 			}
-		} catch (MySQLSyntaxErrorException ex) {
+		} catch (Exception ex) {
 			sender.sendMessage("§2Database is already converted !");
 			FurnitureLib.getInstance().getSQLManager().loadALL();
-		} catch (SQLiteException sqlex) {
-			sender.sendMessage("§2Database is already converted !");
-			FurnitureLib.getInstance().getSQLManager().loadALL();
-		} catch (SQLException e) {
-			e.printStackTrace();
 		} finally {
 			FurnitureLib.getInstance().getConfig().set("config.autoFileUpdater", false);
 			FurnitureLib.getInstance().saveConfig();
@@ -118,14 +81,14 @@ public abstract class Database {
     @SuppressWarnings("unchecked")
 	private void convert(CommandSender sender) {
     	Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-				try (ResultSet rs = connection.createStatement().executeQuery("SELECT * FROM FurnitureLib_Objects LIMIT " + stepSize + " OFFSET " + offset)) {
-					sender.sendMessage("§7Convert Models Step §e" + step + "/" + stepComplete + " start ! §7[§e"+MinecraftServer.TPS+"§7]");
+				try (Connection con = getSQLConnection();ResultSet rs = con.createStatement().executeQuery("SELECT * FROM FurnitureLib_Objects LIMIT " + stepSize + " OFFSET " + offset)) {
+					sender.sendMessage("§7Convert Models Step §e" + step + "/" + stepComplete + " start ! §7[§e"+getTPS()+"§7]");
 					while (rs.next()){
 						if(rs != null){
 							offset++;
 							String a = rs.getString(1), c = rs.getString(2);
 							if(!(a.isEmpty() || c.isEmpty())) {
-								ByteArrayInputStream bin = new ByteArrayInputStream(Base64.decodeBase64(c));
+								ByteArrayInputStream bin = new ByteArrayInputStream(Base64.getDecoder().decode(c));
 								NBTTagCompound compound = NBTCompressedStreamTools.read(bin);
 								bin.close();
 								
@@ -160,7 +123,7 @@ public abstract class Database {
 								});
 								compound.set("entitys", armorStands);
 								compound.remove("ArmorStands");
-								String g = Base64.encodeBase64String(Serializer.armorStandtoBytes(compound));
+								String g = Base64.getEncoder().encodeToString(Serializer.armorStandtoBytes(compound));
 						    	String sql = "REPLACE INTO furnitureLibData (ObjID, Data, world, `x`, `z`, `uuid`) " + 
 						    			"VALUES (" + 
 						    			"'"+a+"'," +
@@ -169,18 +132,20 @@ public abstract class Database {
 						    			+chunkX+"," +
 						    			+chunkZ+"," +
 						    			"'"+uuid+"');";
-						    	connection.createStatement().executeUpdate(sql);
+						    	con.createStatement().executeUpdate(sql);
 							}
 						}
 					}
-					sender.sendMessage("§7Convert Models Step §e" + step + "/" + stepComplete + " Finish ! §7[§e"+MinecraftServer.TPS+"§7]");
+					
+					sender.sendMessage("§7Convert Models Step §e" + step + "/" + stepComplete + " Finish ! §7[§e"+getTPS()+"§7]");
 					step++;
 					rs.close();
 					if(offset != dataFiles) {
 						convert(sender);
 					}else{
 						sender.sendMessage("§2Database Convert Finished :D");
-						connection.createStatement().execute("ALTER TABLE `FurnitureLib_Objects` RENAME TO `FurnitureLib_ObjectsOLD`;");
+						con.createStatement().execute("ALTER TABLE `FurnitureLib_Objects` RENAME TO `FurnitureLib_ObjectsOLD`;");
+						con.close();
 						FurnitureLib.getInstance().getSQLManager().loadALL();
 						FurnitureLib.getInstance().send("==========================================");
 					}
@@ -191,9 +156,18 @@ public abstract class Database {
 		});
     }
     
+    public int getTPS() {
+    	try {
+			return Class.forName("net.minecraft.server." + plugin.getBukkitVersion() + ".MinecraftServer").getField("TPS").getInt(null);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return 0;
+    }
+    
 	public void loadAsynchron(final int chunkX, final int chunkz, final String worldName) {
 		Bukkit.getScheduler().runTaskAsynchronously(FurnitureLib.getInstance(), () -> {
-			try (ResultSet rs = connection.createStatement().executeQuery("SELECT ObjID,Data FROM furnitureLibData WHERE x=" + chunkX + " AND z=" + chunkz + " AND world='"+worldName+"'")){
+			try (Connection con = getSQLConnection();ResultSet rs = con.createStatement().executeQuery("SELECT ObjID,Data FROM furnitureLibData WHERE x=" + chunkX + " AND z=" + chunkz + " AND world='"+worldName+"'")){
 				while (rs.next()){
 	    			if(rs != null){
 	    				String a = rs.getString(1), c = rs.getString(2), d = rs.getString(3);
@@ -210,7 +184,7 @@ public abstract class Database {
     public void loadAll(SQLAction action){
     	long time1 = System.currentTimeMillis();
     	boolean b = FurnitureLib.getInstance().isAutoPurge();
-    	try (ResultSet rs = connection.createStatement().executeQuery("SELECT ObjID,Data,world FROM furnitureLibData")){    		
+    	try (Connection con = getSQLConnection();ResultSet rs = con.createStatement().executeQuery("SELECT ObjID,Data,world FROM furnitureLibData")){    		
     		while (rs.next()){
     			if(rs != null){
     				String a = rs.getString(1), c = rs.getString(2), d = rs.getString(3);
@@ -235,38 +209,10 @@ public abstract class Database {
     }
 
     public void delete(ObjectID objID){
-    	try {
-    		connection.createStatement().execute("DELETE FROM furnitureLibData WHERE ObjID = '" + objID.getID() + "'");
+    	try(Connection con = getSQLConnection(); Statement stmt = con.createStatement()){
+    		stmt.execute("DELETE FROM furnitureLibData WHERE ObjID = '" + objID.getID() + "'");
 		} catch (Exception e) {
-    		if(e instanceof SocketException || e instanceof EOFException){
-    			initialize();
-    			try{
-    				connection.createStatement().execute("DELETE FROM furnitureLibData WHERE ObjID = '" + objID.getID() + "'");
-    			}catch(Exception ex){
-    				ex.printStackTrace();
-    			}
-    			return;
-    		}
     		e.printStackTrace();
-		}
-    }
- 
-
-    public void close(PreparedStatement ps,ResultSet rs){
-        try {
-            if (ps != null) ps.close();
-            if (rs != null) rs.close();
-        } catch (SQLException ex) {
-            ex.printStackTrace();
-        }
-    }
-    
-    public void close(){
-    	try {
-			connection.close();
-			connection = null;
-		} catch (SQLException e) {
-			e.printStackTrace();
 		}
     }
 }

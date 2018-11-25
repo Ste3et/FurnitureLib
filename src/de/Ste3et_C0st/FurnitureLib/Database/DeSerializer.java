@@ -1,9 +1,9 @@
 package de.Ste3et_C0st.FurnitureLib.Database;
 
 import java.io.ByteArrayInputStream;
+import java.util.Base64;
 import java.util.HashSet;
 import java.util.UUID;
-import org.apache.commons.codec.binary.Base64;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -28,7 +28,7 @@ public class DeSerializer {
 		ObjectID obj = new ObjectID(null, null, null);
 		obj.setID(objId);
 		try {
-			byte[] by = Base64.decodeBase64(in);
+			byte[] by = Base64.getDecoder().decode(in);
 			ByteArrayInputStream bin = new ByteArrayInputStream(by);
 			NBTTagCompound compound = NBTCompressedStreamTools.read(bin);
 			bin.close();

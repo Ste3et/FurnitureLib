@@ -3,9 +3,9 @@ package de.Ste3et_C0st.FurnitureLib.ShematicLoader;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
-import org.apache.commons.codec.binary.Base64;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -109,11 +109,11 @@ public class ProjektInventory implements Listener{
 		}
 		inventory.setInt("size", getInv().getSize());
 		inventory.set("inventory", items);
-		return Base64.encodeBase64String(armorStandtoBytes(inventory));
+		return Base64.getEncoder().encodeToString(armorStandtoBytes(inventory));
 	}
 	
 	public void setItems(String string){
-		byte[] by = Base64.decodeBase64(string);
+		byte[] by = Base64.getDecoder().decode(string);
 		ByteArrayInputStream bin = new ByteArrayInputStream(by);
 		try {
 			NBTTagCompound compound = NBTCompressedStreamTools.read(bin);

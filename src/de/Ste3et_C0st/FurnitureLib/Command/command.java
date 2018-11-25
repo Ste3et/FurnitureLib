@@ -80,16 +80,12 @@ public class command implements CommandExecutor, Listener{
 			final SQLAction action = e.getID().getSQLAction();
 			manager.updateFurniture(e.getID());
 			playerList.remove(p);
-			Bukkit.getScheduler().runTaskLater(plugin, new Runnable() {
-				
-				@Override
-				public void run() {
-					for(fEntity stand : e.getID().getPacketList()){
-						stand.setGlowing(false);
-					}
-					manager.updateFurniture(e.getID());
-					e.getID().setSQLAction(action);
+			Bukkit.getScheduler().runTaskLater(plugin, () -> {
+				for(fEntity stand : e.getID().getPacketList()){
+					stand.setGlowing(false);
 				}
+				manager.updateFurniture(e.getID());
+				e.getID().setSQLAction(action);
 			}, 20*5);
 			
 			

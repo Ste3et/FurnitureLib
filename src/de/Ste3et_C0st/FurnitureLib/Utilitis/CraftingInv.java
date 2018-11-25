@@ -6,8 +6,6 @@ import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -17,19 +15,16 @@ import java.util.Map;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.inventory.InventoryClickEvent;
 import org.bukkit.event.inventory.InventoryCloseEvent;
-import org.bukkit.event.inventory.InventoryType.SlotType;
-import org.bukkit.inventory.CraftingInventory;
+import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.InventoryView;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.material.MaterialData;
 import org.bukkit.plugin.Plugin;
 
 public class CraftingInv implements Listener
@@ -43,20 +38,30 @@ public class CraftingInv implements Listener
 	  Bukkit.getPluginManager().registerEvents(this, pl);
 	  plugin=pl;
   }
-
  
+  private List<Integer> slots = new ArrayList<Integer>();
+  
 public void openCrafting(final Player p, Project project, boolean editable)
   {
 	if(!editable && project.getCraftingFile().isEnable()){ p.sendMessage("This Furniture has not recipe"); return;}
 	this.project = project;
 	this.editable = editable;
-    HumanEntity clicker = p;
-    InventoryView invView = clicker.openWorkbench(null, true);
-    final CraftingInventory inv = (CraftingInventory)invView.getTopInventory();
+    Inventory inv = Bukkit.createInventory(null, 54, project.getName());
+
     ShapedRecipe recipe = project.getCraftingFile().getRecipe();
     final ItemStack is = recipe.getResult();
     is.setAmount(1);
-    inv.setResult(is);
+    
+    ItemStack stack = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
+    ItemMeta meta = stack.getItemMeta();
+    meta.setDisplayName("§c");
+    stack.setItemMeta(meta);
+    for(int i = 0; i<inv.getSize();i++) {
+    	inv.setItem(i, stack);
+    }
+    
+    inv.setItem(25, is);
+    slots.add(25);
     
     final String[] recipeShape = recipe.getShape();
 	final Map<Character, ItemStack> ingredientMap = recipe.getIngredientMap();
@@ -65,84 +70,69 @@ public void openCrafting(final Player p, Project project, boolean editable)
 		for (int k = 0; k < recipeShape[j].length(); k++)
 		{
 			final ItemStack item = ingredientMap.get(recipeShape[j].toCharArray()[k]);
+			int i = (9 + ((9 * j) + k)) + 1;
+			slots.add(i);
 			if (item == null)
 			{
+				inv.setItem(i, new ItemStack(Material.AIR));
 				continue;
 			}
 			item.setAmount(1);
-			invView.getTopInventory().setItem(j * 3 + k + 1, item);
+			inv.setItem(i, item);
 		}
 	}
-	
-	plugin.getServer().getScheduler().scheduleSyncDelayedTask(plugin, new Runnable()
-    {
-      public void run()
-      {
-        inv.setResult(is);
-        p.updateInventory();
-      }
-    }, 2L);
-	
-      playerList.add(p);
+	p.openInventory(inv);
+    playerList.add(p);
   }
   
   @EventHandler
   private void onClick(InventoryClickEvent e){
 	  if(playerList.contains((Player) e.getWhoClicked())){
 		  if(!editable){e.setCancelled(true);return;}
-	  		if(e.getSlotType().equals(SlotType.RESULT)){
-	  			if(e.getCurrentItem()==null){
-		  			e.setCancelled(true);
-		  			ItemStack stack = e.getCurrentItem();
-		  			stack.setAmount(1);
-		  			e.getInventory().setItem(e.getSlot(), stack);
-		  			return;
-	  			}else{
-		  			e.setCancelled(true);
-		  			ItemStack stack = e.getCursor();
-		  			stack.setAmount(1);
-		  			e.getInventory().setItem(e.getSlot(), stack);
-		  			return;
+	  		if(!this.slots.contains(e.getRawSlot())) {
+	  			InventoryView view = e.getView();
+	  			if(e.getClickedInventory() == null) {
+	  				e.setCancelled(true);
+	  				return;
+	  			}
+	  			if(e.getClickedInventory().equals(view.getTopInventory())) {
+	  				e.setCancelled(true);
 	  			}
 	  		}
 	  }
   }
   
   
-  List<String> stringList = Arrays.asList("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "X");
-  @SuppressWarnings("deprecation")
+List<String> stringList = Arrays.asList("A", "B", "C", "D", "E", "F", "G", "H", "I", "J", "X");
 @EventHandler
   private void onClose(InventoryCloseEvent e){
 	  if(playerList.contains(e.getPlayer())){
 		  if(editable){
 			  String s = "";
-			  HashMap<String, MaterialData> materialList = new HashMap<String, MaterialData>();
-			  ItemStack result = null;
-			  for(int i = 0; i<10;i++){
-				  if(i!=0){
+			  HashMap<String, Material> materialList = new HashMap<String, Material>();
+			  ItemStack result = e.getInventory().getItem(25);
+			  int l = 0;
+			  for(int j = 0; j<3;j++) {
+				  for(int k = 0; k<3;k++) {
+					  int i = (9 + ((9 * j) + k)) + 1;
 					  ItemStack stack = e.getInventory().getItem(i);
 					  if(stack!=null){
-						  s+=stringList.get(i);
-						  materialList.put(stringList.get(i), stack.getData());
+						  s+=stringList.get(l);
+						  materialList.put(stringList.get(l), stack.getType());
 					  }else{
 						  s+=stringList.get(10);
-						  materialList.put(stringList.get(10), new MaterialData(Material.AIR));
+						  materialList.put(stringList.get(10), Material.AIR);
 					  }
-					switch (i) {
-						case 3: s+=",";break;
-						case 6: s+=",";break;
-						default:break;
-					}
-				  }else{
-					  result = e.getInventory().getItem(i);
+					  l++;
 				  }
+				  s+=",";
 			  }
-			  
 			  CraftingFile file = this.project.getCraftingFile();
 			  if(s.equalsIgnoreCase("xxx,xxx,xxx")){
 				  //file.setCraftingDisabled(true);
 				  file.removeCrafting(file.getItemstack());
 				  YamlConfiguration conf = YamlConfiguration.loadConfiguration(file.getFilePath());
+				  conf.set(file.getFileHeader() + ".crafting.disable", true);
 				  setItem(result, conf, file.getFileHeader());
 				  save(conf, file.getFilePath());
 			  }else{
@@ -154,15 +144,9 @@ public void openCrafting(final Player p, Project project, boolean editable)
 				  save(conf, file.getFilePath());
 				  setItem(result, conf, file.getFileHeader());
 				  conf.set(file.getFileHeader() + ".crafting.recipe", s);
+				  conf.set(file.getFileHeader() + ".crafting.disable", false);
 				  for(String str : materialList.keySet()){
-					  MaterialData data = materialList.get(str);
-					  String l = "";
-					  if(data.getItemType().equals(Material.AIR)){
-						  l = "0";
-					  }else{
-						  l = data.getItemType().getId() + ":" + data.getData();
-					  }
-					  conf.set(file.getFileHeader() + ".crafting.index." + str, l);
+					  conf.set(file.getFileHeader() + ".crafting.index." + str, materialList.get(str).name());
 				  }
 				  save(conf, file.getFilePath());
 				  file.setFileConfiguration(conf);
@@ -177,37 +161,31 @@ public void openCrafting(final Player p, Project project, boolean editable)
   public void save(YamlConfiguration yml, File file){
 	  try {
 		  yml.save(file);
-		  if(project.isEditorProject()){
-			  Files.copy(file.toPath(), new File("plugins/FurnitureLib/plugin/DiceEditor/" + file.getName()).toPath(), StandardCopyOption.REPLACE_EXISTING);
-		  }
 	  } catch (IOException e1) {e1.printStackTrace();}
   }
   
-  @SuppressWarnings("deprecation")
-public void setItem(ItemStack stack, YamlConfiguration conf, String header){
-	  if(stack!=null){
-		  if(!stack.getType().equals(Material.AIR)){
-			  String name = "";
-			  Material material = FurnitureLib.getInstance().getDefaultSpawnMaterial();
-			  byte data = 0;
-			  List<String> lore = new ArrayList<String>();
-			  material = stack.getType();
-			  data = (byte) stack.getDurability();
-			  if(stack.hasItemMeta()){
-				  ItemMeta meta = stack.getItemMeta();
-				  name = meta.getDisplayName();
-				  if(meta.hasLore()){
-					  for(String s : lore){
-						  if(!HiddenStringUtils.hasHiddenString(s)){
-							  lore.add(s);
+	public void setItem(ItemStack stack, YamlConfiguration conf, String header){
+		  if(stack!=null){
+			  if(!stack.getType().equals(Material.AIR)){
+				  String name = "";
+				  Material material = FurnitureLib.getInstance().getDefaultSpawnMaterial();
+				  List<String> lore = new ArrayList<String>();
+				  material = stack.getType();
+				  if(stack.hasItemMeta()){
+					  ItemMeta meta = stack.getItemMeta();
+					  name = meta.getDisplayName();
+					  if(meta.hasLore()){
+						  for(String s : lore){
+							  if(!HiddenStringUtils.hasHiddenString(s)){
+								  lore.add(s);
+							  }
 						  }
 					  }
 				  }
+				  conf.set(header + ".displayName", name);
+				  conf.set(header + ".spawnMaterial", material.name());
+				  conf.set(header + ".itemLore", lore);
 			  }
-			  conf.set(header + ".name", name);
-			  conf.set(header + ".material", material.getId() + ":" + data);
-			  conf.set(header + ".lore", lore);
 		  }
 	  }
-  }
 }

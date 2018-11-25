@@ -193,10 +193,9 @@ public class ManageInv  implements Listener{
 				break;
 			}
 			if(!obj.getUUID().equals(uuid)){
-				skull.setOwner(p.getName());
+				skull.setOwningPlayer(p);
 				skull.setDisplayName(p.getName());
 				itemStack.setItemMeta(skull);
-				itemStack.setDurability((short) 3);
 				inv.addItem(itemStack);
 			}
 		}
@@ -272,7 +271,7 @@ public class ManageInv  implements Listener{
 	}
 	
 	public ItemStack getItemStack(String s){
-		ItemStack is = new ItemStack(lang.getMaterial(s), 1, lang.getShort(s));
+		ItemStack is = new ItemStack(lang.getMaterial(s), 1);
 		ItemMeta im = is.getItemMeta();
 		im.setDisplayName(lang.getName(s));
 		if(lang.getStringList(s)!=null){

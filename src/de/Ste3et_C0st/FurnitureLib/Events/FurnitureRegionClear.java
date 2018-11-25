@@ -9,7 +9,7 @@ import de.Ste3et_C0st.FurnitureLib.Utilitis.ZoneVector;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
-import de.Ste3et_C0st.ProtectionLib.main.RegionClearEvent;
+import de.Ste3et_C0st.ProtectionLib.events.RegionClearEvent;
 
 public class FurnitureRegionClear implements Listener {
 

@@ -1,6 +1,7 @@
 package de.Ste3et_C0st.FurnitureLib.main.entity;
 
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
@@ -14,12 +15,9 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitRunnable;
-
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.EnumWrappers;
-import com.comphenix.protocol.wrappers.EnumWrappers.Particle;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.Registry;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
@@ -49,9 +47,8 @@ public abstract class fEntity extends fSerializer{
 	private fInventory i;
 	private Location l;
 	private String customName = "";
-	private Entity passanger;
-	private boolean fire = false, nameVisible = false, isKilled = false, isPlayed = false, glowing = false, invisible = false, gravity = false;
-	
+	private boolean fire = false, nameVisible = false, isPlayed = false, glowing = false, invisible = false, gravity = false;
+	private List<Integer> passangerIDs = new ArrayList<Integer>();
 	public abstract Entity toRealEntity();
 	public abstract boolean isRealEntity();
 	public abstract void setEntity(Entity e);
@@ -61,12 +58,10 @@ public abstract class fEntity extends fSerializer{
 		this.a = EntityID.nextEntityId();
 		this.c = 1;
 		this.i = new fInventory(this.a);
-		setLocation(loc);
 		getHandle().getModifier().writeDefaults();
 		getHandle().getIntegers().write(0, a).write(1, c);
 		getHandle().getUUIDs().write(0, b);
-		getHandle().getDoubles().write(0, d).write(1, e).write(2, f);
-		getHandle().getBytes().write(0, j).write(1, k);
+		setLocation(loc);
 	}
 	
 	public boolean isParticlePlayed(){
@@ -162,8 +157,8 @@ public abstract class fEntity extends fSerializer{
 		return getCustomName();
 	}
 
-	public Entity getPassanger() {
-		return this.passanger;
+	public List<Integer> getPassanger() {
+		return this.passangerIDs;
 	}
 
 	public Server getServer() {
@@ -247,7 +242,6 @@ public abstract class fEntity extends fSerializer{
 		loc.setYaw(loc.getYaw() + yaw);
 		loc.setPitch(loc.getPitch() + pitch);
 		setLocation(loc);
-		
 		PacketContainer c = new PacketContainer(PacketType.Play.Server.ENTITY_LOOK);
 		c.getIntegers().write(0, getEntityID());
 		c.getBytes().write(0, this.j).write(1, this.k);
@@ -326,7 +320,7 @@ public abstract class fEntity extends fSerializer{
 	}
 	
 	public void kill(){
-		 for(Player p : getObjID().getPlayerList()){kill(p, false);}
+		 getObjID().getPlayerList().stream().forEach(p -> {kill(p,false);});
 	}
 
 	public fEntity setFire(boolean b) {
@@ -355,7 +349,6 @@ public abstract class fEntity extends fSerializer{
 	
 	public void setPassanger(Entity e) {
 		setPassanger(Arrays.asList(e.getEntityId()));
-		this.passanger = e;
 		if(!FurnitureLib.getInstance().isRotateOnSitEnable()){return;}
 		if(e.getType().equals(EntityType.PLAYER)){
 			PacketContainer container = new PacketContainer(PacketType.Play.Server.ENTITY_LOOK);
@@ -378,8 +371,7 @@ public abstract class fEntity extends fSerializer{
 	public void setPassanger(final List<Integer> entityIDs){
 		if(!FurnitureLib.getInstance().canSitting()){return;}
 		if (entityIDs == null) {return;}
-		int[] passangerID = new int[entityIDs.size()];
-		for(int i = 0; i<entityIDs.size();i++){passangerID[i] = entityIDs.get(i);}
+		int[] passangerID = entityIDs.stream().mapToInt(Integer::intValue).toArray();
 		PacketContainer container = new PacketContainer(PacketType.Play.Server.MOUNT);
 		container.getIntegers().write(0, getEntityID());
 		container.getIntegerArrays().write(0, passangerID);
@@ -390,12 +382,28 @@ public abstract class fEntity extends fSerializer{
 				e.printStackTrace();
 			}
 		});
+		entityIDs.stream().filter(passanger -> !this.passangerIDs.contains(passanger)).forEach(this.passangerIDs::add);
+	}
+	
+	public void eject(Integer i) {
+		if (this.passangerIDs == null || this.passangerIDs.isEmpty()) return;
+		if(this.passangerIDs.remove(i)) {
+			int[] passangerID = this.passangerIDs.stream().mapToInt(Integer::intValue).toArray();
+			PacketContainer container = new PacketContainer(PacketType.Play.Server.MOUNT);
+			container.getIntegers().write(0, getEntityID());
+			container.getIntegerArrays().write(0, passangerID);
+			getObjID().getPlayerList().forEach(player -> {
+				try {
+					getManager().sendServerPacket(player, container);
+				} catch (InvocationTargetException e) {
+					e.printStackTrace();
+				}
+			});
+		}
 	}
 
 	public void eject() {
-		if (passanger == null) {
-			return;
-		}
+		if (this.passangerIDs == null || this.passangerIDs.isEmpty()) return;
 		int[] i = {};
 		PacketContainer container = new PacketContainer(PacketType.Play.Server.MOUNT);
 		container.getIntegers().write(0, getEntityID());
@@ -407,6 +415,7 @@ public abstract class fEntity extends fSerializer{
 				e.printStackTrace();
 			}
 		});
+		this.passangerIDs.clear();
 	}
 
 	public void sendInventoryPacket(final Player player) {
@@ -476,6 +485,8 @@ public abstract class fEntity extends fSerializer{
 		this.f = loc.getZ();
 		this.j = ((byte) (int) (loc.getYaw() * 256.0F / 360.0F));
 		this.k = ((byte) (int) (loc.getPitch() * 256.0F / 360.0F));
+		getHandle().getDoubles().write(0, d).write(1, e).write(2, f);
+		getHandle().getBytes().write(0, j).write(1, k);
 	}
 	
 	public void loadDefMetadata(NBTTagCompound metadata){

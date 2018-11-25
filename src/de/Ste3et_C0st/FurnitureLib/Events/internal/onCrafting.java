@@ -24,6 +24,10 @@ public class onCrafting implements Listener{
 		ItemStack is = e.getInventory().getResult().clone();
 		is.setAmount(1);
 		for(Project pro : manager.getProjects()){
+			if(pro == null) continue;
+			if(pro.getCraftingFile() == null) continue;
+			if(pro.getCraftingFile().getRecipe() == null) continue;
+			if(pro.getCraftingFile().getRecipe().getResult() == null) continue;
 			if(is.equals(pro.getCraftingFile().getRecipe().getResult())){
 				if(!hasPermissions(p, pro.getSystemID())){
 					e.getInventory().setResult(null);

@@ -186,13 +186,11 @@ public class FurnitureFunctions extends FurnitureHelper {
 		if(!j){
 			for(fEntity stand : getfAsList()){
 				if(stand.getName().startsWith("#Mount:") || stand.getName().startsWith("#SITZ")){
-					if(stand.getPassanger()==null){
+					if(stand.getPassanger().isEmpty()){
 						stand.setPassanger(p);
 						return;
 					}else{
-						if(stand.getPassanger().getUniqueId().equals(p.getUniqueId())){
-							stand.eject();
-						}
+						stand.eject(p.getEntityId());
 					}
 				}else if(stand.getName().startsWith("#T_VISIBLE#")){
 					if(stand.isInvisible()){

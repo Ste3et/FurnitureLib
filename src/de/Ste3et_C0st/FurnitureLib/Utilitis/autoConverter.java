@@ -5,10 +5,10 @@ import java.io.File;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.UUID;
 
-import org.apache.commons.codec.binary.Base64;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -79,7 +79,7 @@ public class autoConverter {
 					if(config.contains(header + ".ProjectModels.ArmorStands")) {
 						config.getConfigurationSection(header + ".ProjectModels.ArmorStands").getKeys(false).stream().forEach(letter -> {
 							String md5 = config.getString(header + ".ProjectModels.ArmorStands." + letter);
-							byte[] by = Base64.decodeBase64(md5);
+							byte[] by = Base64.getDecoder().decode(md5);
 							ByteArrayInputStream bin = new ByteArrayInputStream(by);
 							try {
 								NBTTagCompound metadata = NBTCompressedStreamTools.read(bin);
@@ -95,7 +95,7 @@ public class autoConverter {
 								}
 								metadata.set("Inventory", updatetInventory);
 								byte[] out = NBTCompressedStreamTools.toByte(metadata);
-								newConfig.set(header + ".projectData.entitys." + letter, Base64.encodeBase64String(out));
+								newConfig.set(header + ".projectData.entitys." + letter, Base64.getEncoder().encodeToString(out));
 							} catch (Exception e) {
 								e.printStackTrace();
 							}
@@ -113,6 +113,9 @@ public class autoConverter {
 								newConfig.set(header + ".projectData.blockList."+letter+".yOffset", y);
 								newConfig.set(header + ".projectData.blockList."+letter+".zOffset", z);
 								newConfig.set(header + ".projectData.blockList."+letter+".material", materialBlock.name());
+								if(config.contains(header + ".ProjectModels.Block." + letter + ".Rotation")) {
+									newConfig.set(header + ".projectData.blockList."+letter+".Rotation", config.get(header + ".ProjectModels.Block." + letter + ".Rotation"));
+								}
 							});
 						}
 					}

@@ -3,7 +3,6 @@ package de.Ste3et_C0st.FurnitureLib.ShematicLoader;
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
 import org.bukkit.inventory.Inventory;
-import org.bukkit.material.MaterialData;
 
 public class ProjectMaterial {
 
@@ -26,8 +25,6 @@ public class ProjectMaterial {
 	public Material getMaterial(){return this.mat;}
 	public Inventory getInventory(){return this.inv;}
 	public boolean isDirectional(){return this.rootable;}
-	@SuppressWarnings("deprecation")
-	public MaterialData getMaterialData(){return new MaterialData(getMaterial());}
 	public void setBlockFace(BlockFace face) {this.face = face;this.rootable = true;}
 	public void setInventory(Inventory inv) {this.inv = inv;}
 }

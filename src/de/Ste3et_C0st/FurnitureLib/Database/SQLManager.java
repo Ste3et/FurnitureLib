@@ -1,7 +1,6 @@
 package de.Ste3et_C0st.FurnitureLib.Database;
 
 import java.io.File;
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -16,11 +15,9 @@ import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 
 public class SQLManager {
 
-	MySQL mysql;
-	SQLite sqlite;
+	private Database mysql, sqlite;
 	FurnitureLib plugin;
 	BukkitTask sqlSaveIntervall;
-	Connection con;
 	
 	public SQLManager(FurnitureLib plugin){
 		this.plugin = plugin;
@@ -33,8 +30,6 @@ public class SQLManager {
 		if(plugin.getConfig().getString("config.Database.type").equalsIgnoreCase("SQLite")){
 			String database = plugin.getConfig().getString("config.Database.database");
 			this.sqlite = new SQLite(plugin, database);
-			this.sqlite.load();
-			this.con = this.sqlite.getSQLConnection();
 		}else if(plugin.getConfig().getString("config.Database.type").equalsIgnoreCase("Mysql")){
 			isExist();
 			String database = plugin.getConfig().getString("config.Database.database");
@@ -43,8 +38,6 @@ public class SQLManager {
 			String port = plugin.getConfig().getString("config.Database.port");
 			String host = plugin.getConfig().getString("config.Database.host");
 			this.mysql = new MySQL(plugin, host, database, password, user, port);
-			this.mysql.load();
-			this.con = this.mysql.getSQLConnection();
 		}else{
 			plugin.getLogger().warning("Database Type not supported: Plugin shutdown");
 			Bukkit.getPluginManager().disablePlugin(plugin);
@@ -74,10 +67,8 @@ public class SQLManager {
 		}
 		if(fileDB!=null){
 			this.sqlite = new SQLite(plugin, fileDB.getName().replace(".db", ""));
-			this.sqlite.load();
 			this.sqlite.loadAll(SQLAction.SAVE);
 			plugin.getLogger().info("Import finish");
-			this.sqlite.close();
 			this.sqlite = null;
 			plugin.getLogger().info("Make old Database unusable.");
 			fileDB.renameTo(new File("plugins/" + plugin.getName(), fileDB.getName() + ".old"));
@@ -89,7 +80,6 @@ public class SQLManager {
 	public void save(){
 		plugin.getLogger().info("Furniture save started");
 		if(!plugin.getFurnitureManager().getObjectList().isEmpty()){
-			if(this.mysql == null && this.sqlite == null){initialize();}
 			List<ObjectID> objList = new ArrayList<ObjectID>();
 			int j = 0, i = 0, l = 0;
 			HashSet<ObjectID> idList = (HashSet<ObjectID>) plugin.getFurnitureManager().getObjectList().clone();
@@ -160,16 +150,6 @@ public class SQLManager {
 		if(sqlSaveIntervall!=null){
 			sqlSaveIntervall.cancel();
 			sqlSaveIntervall = null;
-		}
-	}
-
-	public void close() {
-		if(this.sqlite!=null){
-			this.sqlite.close();
-			this.sqlite=null;
-		}else if(this.mysql!=null){
-			this.mysql.close();
-			this.mysql=null;
 		}
 	}
 

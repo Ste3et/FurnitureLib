@@ -1,7 +1,8 @@
 package de.Ste3et_C0st.FurnitureLib.main.entity;
 
 import java.io.ByteArrayOutputStream;
-import org.apache.commons.codec.binary.Base64;
+import java.util.Base64;
+
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
@@ -104,7 +105,7 @@ public abstract class fSerializer extends fProtocol{
 	}
 	
 	public String toString(fArmorStand stand){
-		return Base64.encodeBase64String(getByte(getNBTField()));
+		return Base64.getEncoder().encodeToString(getByte(getNBTField()));
 	}
 	
 	public byte[] getByte(NBTTagCompound compound){
