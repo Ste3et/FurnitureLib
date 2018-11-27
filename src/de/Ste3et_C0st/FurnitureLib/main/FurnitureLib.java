@@ -70,7 +70,7 @@ public class FurnitureLib extends JavaPlugin{
 	private HashMap<String, List<String>> permissionKit = new HashMap<String, List<String>>();
 	private boolean useGamemode = true, canSit = true, update = true, useParticle = true, useRegionMemberAccess = false, 
 					autoPurge = false, removePurge = false, creativeInteract = true, creativePlace = true, glowing = true, 
-					spamBreak = true, spamPlace = true, rotateOnSit = true, autoFileUpdater = true;
+					spamBreak = true, spamPlace = true, rotateOnSit = true, autoFileUpdater = true,useSSL =false;
 	private CraftingInv craftingInv;
 	private LanguageManager lmanager;
 	private SQLManager sqlManager;
@@ -148,6 +148,7 @@ public class FurnitureLib extends JavaPlugin{
 	public boolean isBoolean(String s){try {Boolean.parseBoolean(s.toLowerCase());}catch (Exception e) {return false;}return true;}
 	public boolean isInt(String s){try{Integer.parseInt(s);}catch(NumberFormatException e){return false;}return true;}
 	public boolean isAfterDate(long time, int purgeTime){return System.currentTimeMillis() - (time+purgeTimeMS) >0;}
+	public boolean useSSL() {return this.useSSL;}
 	private boolean isRightProtocollib(String s){return s.startsWith("4");}
 	public boolean checkPurge(ObjectID obj, UUID uuid){return checkPurge(obj, uuid, this.purgeTime);}
 	public boolean checkPurge(ObjectID obj, OfflinePlayer player){return checkPurge(obj, player.getUniqueId());}
@@ -195,7 +196,8 @@ public class FurnitureLib extends JavaPlugin{
 			this.spamBreakTime = getConfig().getLong("config.spamBlock.Place.time");
 			this.timePattern = getConfig().getString("config.spamBlock.timeDisplay");
 			this.rotateOnSit = getConfig().getBoolean("config.rotateOnSit");
-				
+			this.useSSL = getConfig().getBoolean("config.Database.useSSL");
+			
 			this.purgeTimeMS = TimeUnit.DAYS.toMillis(purgeTime);
 			this.pManager = new ProjectManager();
 			this.permissionHandler = new PermissionHandler();

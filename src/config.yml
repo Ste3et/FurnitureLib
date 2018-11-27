@@ -60,6 +60,7 @@ config:
       password: "123abcdefg"
       port: 3306
       host: "localhost"
+      useSSL: false
       importCheck: false
    Purge:
       time: 30

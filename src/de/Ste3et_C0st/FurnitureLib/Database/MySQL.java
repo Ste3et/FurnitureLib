@@ -36,7 +36,7 @@ public class MySQL extends Database{
     public Connection getSQLConnection() {
         try {
             Class.forName("com.mysql.jdbc.Driver");
-            String connectionString = "jdbc:mysql://"+host+":"+port+"/"+DBname + "?autoReconnect=true";
+            String connectionString = "jdbc:mysql://"+host+":"+port+"/"+DBname + "?autoReconnect=true&useSSL=" + FurnitureLib.getInstance().useSSL();
             return DriverManager.getConnection(connectionString,DBuser,DBPsw);
         } catch (SQLException ex) {
             plugin.getLogger().log(Level.SEVERE,"MySQL exception on initialize", ex);
