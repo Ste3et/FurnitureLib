@@ -20,6 +20,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.ShapedRecipe;
+import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import de.Ste3et_C0st.FurnitureLib.Utilitis.HiddenStringUtils;
@@ -163,7 +164,6 @@ public class CraftingFile {
 	
 	private ItemStack returnResult(String s){
 		Material mat = FurnitureLib.getInstance().getDefaultSpawnMaterial();
-		short durability = 0;
 		if(file.contains(header + ".spawnMaterial")) {
 			String str = file.getString(header + ".spawnMaterial");
 			if(!str.equalsIgnoreCase("383")) {
@@ -199,8 +199,20 @@ public class CraftingFile {
 			}
 		}
 		is.setAmount(1);
-		is.setDurability(durability);
 		im.setLore(loreText);
+		
+		try{
+			if(file.contains(header + ".durability")) {
+				int str = file.getInt(header + ".durability", 0);
+				if(im instanceof Damageable) {
+					((Damageable) im).setDamage(str);
+					System.out.println(str);
+				}
+			}
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 		is.setItemMeta(im);
 		return is;
 	}
