@@ -15,6 +15,8 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.data.Directional;
+import org.bukkit.block.data.Bisected.Half;
+import org.bukkit.block.data.type.TrapDoor;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.event.inventory.InventoryType;
@@ -201,6 +203,11 @@ public class ProjectLoader extends Furniture{
 						BlockFace face = BlockFace.valueOf(config.getString(header+".projectData.blockList." + s + ".Rotation"));
 						material.setBlockFace(face);
 					}
+					//handle materials that have the Bisected/Half interface
+					if(config.isSet(header+".projectData.blockList." + s + ".Half")){
+						Half half = Half.valueOf(config.getString(header+".projectData.blockList." + s + ".Half"));
+						material.setHalf(half);
+					}
 					
 					if(config.isSet(header+".projectData.blockList." + s + ".Inventory")){
 						InventoryType type = InventoryType.valueOf(config.getString(header+".projectData.blockList." + s + ".Inventory.type"));
@@ -307,7 +314,18 @@ public class ProjectLoader extends Furniture{
 									getLutil().setBed(face, blockLocation, material.getMaterial());
 									registerBlock(block);
 									continue;
-								}if(material.getMaterial().name().endsWith("DOOR")){
+								}
+								if(material.getMaterial().name().endsWith("TRAPDOOR")){
+									//Bottom block
+									TrapDoor d = (TrapDoor) state.getBlockData();
+									d.setHalf(material.getHalf());
+									d.setFacing(face);
+									state.setBlockData(d);
+									state.update(true);
+									registerBlock(block);
+									continue;
+								}
+								if(material.getMaterial().name().endsWith("DOOR")){
 									//Bottom block
 									Door d = (Door) state.getData();
 									d.setTopHalf(false);
