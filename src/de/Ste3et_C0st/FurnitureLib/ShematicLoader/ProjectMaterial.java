@@ -2,9 +2,8 @@ package de.Ste3et_C0st.FurnitureLib.ShematicLoader;
 
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.data.BlockData;
 import org.bukkit.inventory.Inventory;
-
-import com.bekvon.bukkit.residence.utils.ParticleEffects.BlockData;
 
 public class ProjectMaterial {
 
