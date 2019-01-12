@@ -37,6 +37,7 @@ public class FurnitureFunctions extends FurnitureHelper {
 					if(p.getInventory().getItemInMainHand().getAmount() > 0){
 						String command = stand.getName();
 						command = command.toUpperCase();
+						//DYE_HEAD{type:*_SLAB,consume:true}
 						if(command.startsWith("#DYE")){
 							String[] selector = command.split(":");
 							String arg1 = selector[0].replace("#DYE_", "");

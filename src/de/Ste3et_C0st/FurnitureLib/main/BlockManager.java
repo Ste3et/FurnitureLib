@@ -38,7 +38,7 @@ public class BlockManager implements Listener{
 					if(dropBlock) {
 						loc.getBlock().breakNaturally();
 					}else {
-						loc.getBlock().setType(Material.AIR);
+						loc.getBlock().setType(Material.AIR, false);
 					}
 					this.locList.remove(loc);
 				}

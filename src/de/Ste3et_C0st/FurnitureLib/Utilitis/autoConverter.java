@@ -113,9 +113,10 @@ public class autoConverter {
 								newConfig.set(header + ".projectData.blockList."+letter+".yOffset", y);
 								newConfig.set(header + ".projectData.blockList."+letter+".zOffset", z);
 								newConfig.set(header + ".projectData.blockList."+letter+".material", materialBlock.name());
-								if(config.contains(header + ".ProjectModels.Block." + letter + ".Rotation")) {
-									newConfig.set(header + ".projectData.blockList."+letter+".Rotation", config.get(header + ".ProjectModels.Block." + letter + ".Rotation"));
-								}
+								
+								String str = "minecraft:" + materialBlock.name().toLowerCase();
+								if(config.contains(header + ".ProjectModels.Block." + letter + ".Rotation")) str += "[facing="+config.get(header + ".ProjectModels.Block." + letter + ".Rotation")+"]";
+								newConfig.set(header + ".projectData.blockList."+letter+".blockData", str);
 							});
 						}
 					}

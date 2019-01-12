@@ -204,10 +204,16 @@ public class downloadCommand {
 					file.set(project+".projectData.blockList." + str + ".xOffset", block.getDouble("xOffset"));
 					file.set(project+".projectData.blockList." + str + ".yOffset", block.getDouble("yOffset"));
 					file.set(project+".projectData.blockList." + str + ".zOffset", block.getDouble("zOffset"));
-					file.set(project+".projectData.blockList." + str + ".material", block.getString("material"));
-					if(block.hasKey("Rotation")) {
-						file.set(project + ".projectData.blockList."+str+".Rotation", block.getString("Rotation"));
+					if(block.hasKey("material")) {
+						System.out.println("old material");
+						String blockData = "minecraft:" + block.getString("material");
+						if(block.hasKey("Rotation")) blockData += "[facing=" + block.getString("Rotation") + "]";
+						file.set(project+".projectData.blockList." + str + ".blockData", blockData);
+					}else if(block.hasKey("blockData")) {
+						System.out.println("new material");
+						file.set(project+".projectData.blockList." + str + ".blockData", block.getString("blockData"));
 					}
+					
 				}
 			}
 		}
@@ -295,10 +301,9 @@ public class downloadCommand {
 					file.set(project+".projectData.blockList." + str + ".yOffset", block.getDouble("Y-Offset"));
 					file.set(project+".projectData.blockList." + str + ".zOffset", block.getDouble("Z-Offset"));
 					Material materialBlock = MaterialConverter.getMaterialFromOld(block.getString("Type"));
-					file.set(project+".projectData.blockList." + str + ".material", materialBlock.name());
-					if(block.hasKey("Rotation")) {
-						file.set(project + ".projectData.blockList."+str+".Rotation", block.getString("Rotation"));
-					}
+					String blockData = "minecraft:" + materialBlock.name().toLowerCase();
+					if(block.hasKey("Rotation")) blockData += "[facing=" + block.getString("Rotation") + "]";
+					file.set(project+".projectData.blockList." + str + ".blockData", blockData);
 				}
 			}
 		}

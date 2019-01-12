@@ -6,6 +6,7 @@ import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.Relative;
 import de.Ste3et_C0st.FurnitureLib.main.Type;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fArmorStand;
+import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fInventory;
 
 import java.io.ByteArrayOutputStream;
@@ -92,20 +93,11 @@ public class ProjectMetadata
     this.metadata.set(field, value);
   }
   
-  public NBTTagCompound getMetaData(fArmorStand stand, Location Start)
+  public NBTTagCompound getMetaData(fEntity stand, Location Start)
   {
-    setMetadata("Name", stand.getName());
-    setMetadata("Arms", Boolean.valueOf(stand.hasArms()));
-    setMetadata("BasePlate", Boolean.valueOf(stand.hasBasePlate()));
-    setMetadata("Fire", Boolean.valueOf(stand.isFire()));
-    setMetadata("Invisible", Boolean.valueOf(stand.isInvisible()));
-    setMetadata("Small", Boolean.valueOf(stand.isSmall()));
-    setMetadata("NameVisible", Boolean.valueOf(stand.isCustomNameVisible()));
-    setMetadata("Marker", Boolean.valueOf(stand.isMarker()));
-    setMetadata("Glowing", false);
+    this.metadata = stand.getMetaData();
     setMetadata(stand.getLocation(), Start);
-    setMetadata(stand.getInventory());
-    setMetadata(stand);
+    setMetadata("Glowing", false);
     return this.metadata;
   }
   
@@ -163,7 +155,7 @@ public class ProjectMetadata
     return inventory;
   }
   
-  public String toString(fArmorStand stand, Location Start)
+  public String toString(fEntity stand, Location Start)
   {
     NBTTagCompound nbt = getMetaData(stand, Start);
     return Base64.getEncoder().encodeToString(getByte(nbt));
