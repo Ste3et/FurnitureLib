@@ -173,6 +173,7 @@ public class ProjectLoader extends Furniture{
 	public boolean setBlocks(Location startLocation, YamlConfiguration config, boolean rotable) {
 		List<Block> blockList = new ArrayList<Block>();
 		if(config.isConfigurationSection(header+".projectData.blockList")) {
+			HashMap<Location, BlockData> data = new HashMap<Location, BlockData>();
 			for(String s : config.getConfigurationSection(header+".projectData.blockList").getKeys(false)) {
 				double x = config.getDouble(header+".projectData.blockList." + s + ".xOffset");
 				double y = config.getDouble(header+".projectData.blockList." + s + ".yOffset");
@@ -180,6 +181,7 @@ public class ProjectLoader extends Furniture{
 				String materialStr = config.getString(header+".projectData.blockList." + s + ".material");
 				Location armorLocation = getRelative(getLocation(), getBlockFace(), -z, -x).add(0, y, 0);
 				String str = "";
+				
 				if(config.contains(header+".projectData.blockList." + s + ".blockData")) {
 					try {
 						str = config.getString(header+".projectData.blockList." + s + ".blockData");
@@ -201,7 +203,7 @@ public class ProjectLoader extends Furniture{
 				 * CheckPlaceAble
 				 */
 				
-				HashMap<Location, BlockData> data = new HashMap<Location, BlockData>();
+				
 				if(!str.isEmpty()) {
 					try {
 						BlockData blockData = Bukkit.createBlockData(str);
@@ -223,36 +225,32 @@ public class ProjectLoader extends Furniture{
 						e.printStackTrace();
 					}
 				}
-				
-				if(!str.isEmpty()) {
-					/**
-					 * PlaceBlocks
-					 */
-				
-					data.entrySet().forEach(entry -> {
-						Block b = getWorld().getBlockAt(entry.getKey());
-						b.setBlockData(entry.getValue(), false);
-						if(entry.getValue().getMaterial().name().toUpperCase().endsWith("BED")) {
-							BlockFace face = ((Directional) entry.getValue()).getFacing();
-							Block top = b.getRelative(face);
+			}
+			
+			if(!data.isEmpty()) {
+				data.entrySet().forEach(entry -> {
+					Block b = getWorld().getBlockAt(entry.getKey());
+					b.setBlockData(entry.getValue(), false);
+					if(entry.getValue().getMaterial().name().toUpperCase().endsWith("BED")) {
+						BlockFace face = ((Directional) entry.getValue()).getFacing();
+						Block top = b.getRelative(face);
+						top.setBlockData(entry.getValue(), false);
+						Bed bed = (Bed) top.getBlockData();
+						bed.setPart(Part.HEAD);
+						top.setBlockData(bed, false);
+						blockList.add(top);
+					}else if(entry.getValue().getMaterial().name().toUpperCase().endsWith("DOOR")) {
+						if(!entry.getValue().getMaterial().name().toUpperCase().contains("TRAP")) {
+							Block top = b.getRelative(BlockFace.UP);
 							top.setBlockData(entry.getValue(), false);
-							Bed bed = (Bed) top.getBlockData();
-							bed.setPart(Part.HEAD);
-							top.setBlockData(bed, false);
+							Door door = (Door) top.getBlockData();
+							door.setHalf(Half.TOP);
+							top.setBlockData(door, false);
 							blockList.add(top);
-						}else if(entry.getValue().getMaterial().name().toUpperCase().endsWith("DOOR")) {
-							if(!entry.getValue().getMaterial().name().toUpperCase().contains("TRAP")) {
-								Block top = b.getRelative(BlockFace.UP);
-								top.setBlockData(entry.getValue(), false);
-								Door door = (Door) top.getBlockData();
-								door.setHalf(Half.TOP);
-								top.setBlockData(door, false);
-								blockList.add(top);
-							}
 						}
-						blockList.add(b);
-					});
-				}				
+					}
+					blockList.add(b);
+				});
 			}
 		}
 		getObjID().addBlock(blockList);
