@@ -209,15 +209,11 @@ public class ProjectLoader extends Furniture{
 						BlockData blockData = Bukkit.createBlockData(str);
 						if(blockData instanceof Directional) {
 							Directional r = (Directional) blockData;
-							BlockFace start = BlockFace.NORTH;
-							BlockFace newFace = getBlockFace();
-							BlockFace oldBlockFace = r.getFacing();
-							float yaw1 = getLutil().FaceToYaw(start);
-							float yaw2 = getLutil().FaceToYaw(newFace);
-							float yaw3 = getLutil().FaceToYaw(oldBlockFace);
-							float newYaw4 = yaw1 + yaw2 + yaw3;
-							BlockFace face = getLutil().yawToFace(newYaw4);
-							((Directional) blockData).setFacing(face);
+							BlockFace original = r.getFacing();
+							float yaw = getLutil().FaceToYaw(original);
+							yaw += getYaw();
+							original = getLutil().yawToFace(yaw);
+							((Directional) blockData).setFacing(original.getOppositeFace());
 						}
 						if(!armorLocation.getBlock().isEmpty()) return true;
 						data.put(armorLocation, blockData);
