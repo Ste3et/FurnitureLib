@@ -210,10 +210,12 @@ public class ProjectLoader extends Furniture{
 						if(blockData instanceof Directional) {
 							Directional r = (Directional) blockData;
 							BlockFace original = r.getFacing();
-							float yaw = getLutil().FaceToYaw(original);
-							yaw += getYaw();
-							original = getLutil().yawToFace(yaw);
-							((Directional) blockData).setFacing(original.getOppositeFace());
+							if(!(original.equals(BlockFace.UP) || original.equals(BlockFace.DOWN))) {
+								float yaw = getLutil().FaceToYaw(original);
+								yaw += getYaw();
+								original = getLutil().yawToFace(yaw);
+								((Directional) blockData).setFacing(original.getOppositeFace());
+							}
 						}
 						if(!armorLocation.getBlock().isEmpty()) return true;
 						data.put(armorLocation, blockData);
