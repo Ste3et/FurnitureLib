@@ -1,8 +1,8 @@
-name: FurnitureLib
-version: 2.0.6
-description: FurnitureLib is an Libary to make ArmorStand creations easer
+name: ${project.name}
+version: ${project.version}
+description: ${project.description}
 author: Ste3et_C0st
-website: http://dicecraft.de
+website: ${project.url}
 depend: [ProtocolLib]
 softdepend: [ProtectionLib,LightAPI,Multiverse,Multiverse-Core,Multiworld, Vault]
 main: de.Ste3et_C0st.FurnitureLib.main.FurnitureLib
