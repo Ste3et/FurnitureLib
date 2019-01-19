@@ -12,7 +12,7 @@
   <build>
 <defaultGoal>clean package install</defaultGoal>
     <sourceDirectory>src</sourceDirectory>
-    <finalName>FurnitureLib-${project.version}</finalName>
+    <finalName>FurnitureLib</finalName>
     <resources>
       <resource>
         <directory>src</directory>
