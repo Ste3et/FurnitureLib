@@ -136,6 +136,7 @@ public class command implements CommandExecutor, Listener{
 					case "download": new downloadCommand(sender, cmd, arg2, args); return true;
 					case "save": new saveCommand(sender, cmd, arg2, args); return true;
 					case "delete": new deleteCommand(sender, cmd, arg2, args); return true;
+					case "reload": new reloadCommand(sender, cmd, arg2, args); return true;
 					default:
 						for(SubCommand sCmd : subCommands){
 							if(sCmd.getSubcommand().equalsIgnoreCase(args[0])){

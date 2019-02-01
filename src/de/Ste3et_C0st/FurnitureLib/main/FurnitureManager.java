@@ -2,19 +2,23 @@ package de.Ste3et_C0st.FurnitureLib.main;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
+import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
+import de.Ste3et_C0st.FurnitureLib.LimitationManager.LimitationObject;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fArmorStand;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fCreeper;
@@ -200,6 +204,24 @@ public class FurnitureManager {
 	
 	public Project getProject(String s){
 		return projects.stream().filter(projects -> projects.getName().equalsIgnoreCase(s)).findFirst().orElse(null);
+	}
+	
+	public List<ObjectID> getFromPlayer(UUID uuid){
+		return this.objecte.stream().filter(obj -> isValid(obj) && obj.getUUID().equals(uuid)).collect(Collectors.toList());
+	}
+	
+	public List<ObjectID> getInChunk(Chunk c){
+		return this.objecte.stream().filter(obj -> isValid(obj) && obj.getChunk().equals(c)).collect(Collectors.toList());
+	}
+	
+	public List<ObjectID> getInWorld(World w) {
+		return this.objecte.stream().filter(obj -> isValid(obj) && obj.getWorld().equals(w)).collect(Collectors.toList());
+	}
+	
+	public boolean isValid(ObjectID obj) {
+		if(obj == null) return false;
+		if(obj.getSQLAction().equals(SQLAction.REMOVE)) return false;
+		return true;
 	}
 	
 	public static FurnitureManager getInstance() {return manager;}

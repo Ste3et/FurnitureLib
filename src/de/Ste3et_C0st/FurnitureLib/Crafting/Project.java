@@ -77,10 +77,7 @@ public class Project{
 		this.file = new CraftingFile(name, craftingFile);
 		this.side = side;
 		FurnitureLib.getInstance().getFurnitureManager().addProject(this);
-		addDefaultWorld();
-		addDefault("chunk");
-		addDefault("player");
-		this.chunkLimit = getDefault("chunk");
+		loadDefaults();
 		FurnitureLib.getInstance().getLimitManager().loadDefault(this.project);
 	}
 	
@@ -91,10 +88,7 @@ public class Project{
 		this.file = new CraftingFile(name, craftingFile);
 		this.side = this.file.getPlaceAbleSide();
 		FurnitureLib.getInstance().getFurnitureManager().addProject(this);
-		addDefaultWorld();
-		addDefault("chunk");
-		addDefault("player");
-		this.chunkLimit = getDefault("chunk");
+		loadDefaults();
 		FurnitureLib.getInstance().getLimitManager().loadDefault(this.project);
 	}
 	
@@ -103,10 +97,7 @@ public class Project{
 		this.plugin = plugin;
 		this.clas = clas;
 		FurnitureLib.getInstance().getFurnitureManager().addProject(this);
-		addDefaultWorld();
-		addDefault("chunk");
-		addDefault("player");
-		this.chunkLimit = getDefault("chunk");
+		loadDefaults();
 		this.side = side;
 		FurnitureLib.getInstance().getLimitManager().loadDefault(this.project);
 	}
@@ -129,6 +120,13 @@ public class Project{
 		}
 		p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("NoPermissions"));
 		return false;
+	}
+	
+	public void loadDefaults() {
+		addDefaultWorld();
+		addDefault("chunk");
+		addDefault("player");
+		this.chunkLimit = getDefault("chunk");
 	}
 	
 	private void addDefaultWorld(){

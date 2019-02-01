@@ -32,7 +32,6 @@ public final class FurnitureBlockClickEvent extends Event implements Cancellable
     	this.b = b;
     	this.o = o;
     	this.l = b.getLocation();
-    	FurnitureLib.getInstance().getFurnitureManager();
     }
     
     public Block getBlock(){return this.b;}

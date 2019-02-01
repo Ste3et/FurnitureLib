@@ -35,11 +35,15 @@
 # Access: "INTERACT/BREAK/BREAK_INTERACT" : it means the player have permissions to interact or break another Furnitures !
 config:
    UseMetrics: true
+   debugMode: false
    Language: "EN_en"
    useParticles: true
    DisableSitting: false
    viewDistance: 100
-   LimitType: "PLAYER"
+   limit:
+      limitConfig: "PLAYER"
+      #You can give your player the permissions furniture.globallimit.# | furniture.globallimit.125 -> let the player can place 125 furnitures objects it override the limitconfig
+      limitGlobal: 150
    glowing: true
    CheckUpdate: true
    rotateOnSit: true

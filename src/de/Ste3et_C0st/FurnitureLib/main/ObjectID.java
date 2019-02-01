@@ -106,11 +106,7 @@ public class ObjectID{
 	
 	
 	public void setUUID(UUID uuid){
-		if(FurnitureLib.getInstance().getLimitManager()!=null){
-			if(this.uuid!=null&&!this.uuid.equals(uuid)) FurnitureLib.getInstance().getLimitManager().removePlayer(this);
-			if(uuid!=null) FurnitureLib.getInstance().getLimitManager().addPlayer(this.uuid, this);
-			this.uuid=uuid;
-		}
+		this.uuid=uuid;
 	}
 	
 	public void setID(String s){
@@ -155,12 +151,10 @@ public class ObjectID{
 	
 	public void remove(Player p,boolean dropItem, boolean deleteEffect){
 		this.packetList.stream().filter(entity -> entity.isFire()).forEach(entity -> entity.setFire(false));
-		FurnitureLib.getInstance().getLimitManager().removePlayer(this);
 		if(p!=null) if(dropItem) dropItem(p, loc.clone().add(0, 1, 0), getProjectOBJ());
 		if(deleteEffect) deleteEffect(packetList);
 		removeAll();
 		FurnitureManager.getInstance().remove(this);
-		FurnitureLib.getInstance().getLimitManager().removePlayer(this);
 	}
 	
 	public void dropItem(Player p, Location loc, Project porject){

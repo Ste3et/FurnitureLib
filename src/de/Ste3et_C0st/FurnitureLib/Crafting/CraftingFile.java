@@ -1,22 +1,28 @@
 
 package de.Ste3et_C0st.FurnitureLib.Crafting;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
 import java.io.Reader;
+import java.io.StringReader;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.zip.GZIPOutputStream;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.NamespacedKey;
-import org.bukkit.attribute.Attribute;
-import org.bukkit.attribute.AttributeModifier;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemFlag;
@@ -26,6 +32,11 @@ import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import com.comphenix.protocol.wrappers.nbt.io.NbtTextSerializer;
+import com.google.common.base.Charsets;
+
+import de.Ste3et_C0st.FurnitureLib.NBT.NBTCompressedStreamTools;
+import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.HiddenStringUtils;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.Type.PlaceableSide;
@@ -37,6 +48,7 @@ public class CraftingFile {
 	private ShapedRecipe recipe;
 	private boolean isDisable;
 	private PlaceableSide side = null;
+	private HashSet<NBTTagCompound> functionList = new HashSet<NBTTagCompound>(); 
 	public ShapedRecipe getRecipe(){return this.recipe;}
 	public ItemStack getItemstack(){return getRecipe().getResult();}
 	public boolean isEnable(){return this.isDisable;}
@@ -46,6 +58,7 @@ public class CraftingFile {
 	public File filePath;
 	public File getFilePath(){return this.filePath;}
 	public String getFileHeader(){return this.header;}
+	public HashSet<NBTTagCompound> getFunctionList(){return this.functionList;}
 	
 	public CraftingFile(String name,InputStream file){
 		this.name = name;
@@ -118,10 +131,67 @@ public class CraftingFile {
 					}
 				}
 				getPlaceAbleSide();
+				loadFunction();
 		}catch(Exception e){
 			e.printStackTrace();
 		}
 	}
+	
+	public void loadFunction() {
+		if(this.file.contains(header+".projectData.functions")) {
+//			NBTTagCompound compoundTest = new NBTTagCompound();
+//			compoundTest.setString("function", "replace");
+//			
+//			NBTTagCompound dataTest = new NBTTagCompound();
+//			
+//			dataTest.setString("type", "*_STAINED_GLASS_PANE");
+//			dataTest.setBoolean("consume", true);
+//			
+//			compoundTest.set("data", dataTest);
+//			
+//			System.out.println(compoundTest.toString());
+//			
+//			functionList.clear();
+//			for(String str : this.file.getStringList(header+".projectData.functions")) {
+//				try {
+//					
+//					ByteArrayInputStream bin = new ByteArrayInputStream(encStage1(str));
+//					NBTTagCompound compound = NBTCompressedStreamTools.read(bin);
+//					NBTCompressedStreamTools.read(inputstream)
+//					functionList.add(compound);
+//				}catch (Exception e) {
+//					e.printStackTrace();
+//					continue;
+//				}
+//			}
+			
+//			String testString = "{ChestedHorse:true,Items:[{ Slot:2b, id:stone, Count:1 }],SaddleItem:{ id:saddle, Count:1 },Tame:true}";
+//			
+//			try{
+//				byte[] b = compress(testString);
+//				ByteArrayInputStream bin = new ByteArrayInputStream(b);
+//				NBTTagCompound compound = NBTCompressedStreamTools.read(bin);
+//				bin.close();
+//				System.out.println(compound.toString());
+//			}catch (Exception e) {
+//				e.printStackTrace();
+//			}
+		}
+	}
+	
+	public static byte[] compress(String str) throws Exception {
+	    if (str == null || str.length() == 0) {
+	        return null;
+	    }
+	    System.out.println("String length : " + str.length());
+	    ByteArrayOutputStream obj=new ByteArrayOutputStream();
+	    GZIPOutputStream gzip = new GZIPOutputStream(obj);
+	    gzip.write(str.getBytes("UTF-8"));
+	    gzip.close();
+	    
+	    return obj.toByteArray();
+	 }
+
 	
 	private boolean isKeyRegistred(NamespacedKey key) {
 		Iterator<Recipe> recipes = Bukkit.getServer().recipeIterator();
@@ -209,7 +279,6 @@ public class CraftingFile {
 				int str = file.getInt(header + ".durability", 0);
 				if(im instanceof Damageable) {
 					((Damageable) im).setDamage(str);
-					System.out.println(str);
 				}
 			}
 		}catch (Exception e) {

@@ -124,7 +124,6 @@ public class ChunkOnLoad implements Listener{
 							FurnitureBlockClickEvent e = new FurnitureBlockClickEvent(p, b, objID);
 							Bukkit.getPluginManager().callEvent(e);
 						}
-						
 					}});
 			}
 		}

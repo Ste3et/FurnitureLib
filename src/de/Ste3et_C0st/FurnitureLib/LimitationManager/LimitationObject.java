@@ -54,6 +54,7 @@ public class LimitationObject {
 			for(String s : file.getConfigurationSection("PlayerLimit." + section + ".projects").getKeys(false)){
 				int i = file.getInt("PlayerLimit." + section + ".projects." + s, -1);
 				if(!projectList.containsKey(s)){
+					System.out.println(i);
 					projectList.put(s, i);
 				}
 			}

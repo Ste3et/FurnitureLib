@@ -28,7 +28,6 @@ public final class FurnitureLateSpawnEvent extends Event implements Cancellable 
     	this.pro = pro;
     	this.objID = objID;
     	this.l = l;
-    	FurnitureLib.getInstance().getLimitManager().addPlayer(p.getUniqueId(), objID);
     }
     
     public ObjectID getID(){return this.objID;}

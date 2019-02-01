@@ -86,7 +86,7 @@ public class FurnitureLib extends JavaPlugin{
 	private ProjectManager pManager;
 	private PermissionHandler permissionHandler;
 	private String timePattern = "mm:ss:SSS";
-	private int purgeTime = 30, viewDistance = 100;
+	private int purgeTime = 30, viewDistance = 100, limitGlobal = -1;
 	private long purgeTimeMS = 0, spamBreakTime = 5000, spamPlaceTime = 5000;
 	private Material defMaterial = Material.COW_SPAWN_EGG;
 	public HashMap<Project, Long> deleteMap = new HashMap<Project, Long>();
@@ -123,6 +123,7 @@ public class FurnitureLib extends JavaPlugin{
 	public PermissionHandler getPermission(){return this.permissionHandler;}
 	public int getPurgeTime(){return this.purgeTime;}
 	public int getViewDistance(){return this.viewDistance;}
+	public int getLimitGlobal() {return this.limitGlobal;}
 	public long getBreakTime(){return this.spamBreakTime;}
 	public long getPlaceTime(){return this.spamPlaceTime;}
 	public static FurnitureLib getInstance(){return instance;}
@@ -173,31 +174,7 @@ public class FurnitureLib extends JavaPlugin{
 			this.serializeNew = new Serializer();
 			this.deSerializerNew = new DeSerializer();
 			this.lightMgr = new LightManager(this);
-			this.lmanager = new LanguageManager(instance, getConfig().getString("config.Language"));
-			this.useGamemode = !getConfig().getBoolean("config.Creative.RemoveItems");
-			this.creativeInteract = getConfig().getBoolean("config.Creative.Interact");
-			this.creativePlace = getConfig().getBoolean("config.Creative.Place");
-			this.useRegionMemberAccess = getConfig().getBoolean("config.ProtectionLib.RegeionMemberAccess");
-			this.canSit = !getConfig().getBoolean("config.DisableSitting");
-			this.useParticle = getConfig().getBoolean("config.useParticles");
-			this.purgeTime = getConfig().getInt("config.Purge.time");
-			this.autoPurge = getConfig().getBoolean("config.Purge.autoPurge");
-			this.removePurge = getConfig().getBoolean("config.Purge.removePurge");
-			this.viewDistance = (Bukkit.getViewDistance()*16)-2;
-			this.autoFileUpdater = getConfig().getBoolean("config.autoFileUpdater");
-			if(this.viewDistance>=getConfig().getInt("config.viewDistance")){
-				this.viewDistance = getConfig().getInt("config.viewDistance");
-			}
-				
-			this.glowing = getConfig().getBoolean("config.glowing");
-			this.spamBreak = getConfig().getBoolean("config.spamBlock.Break.Enable");
-			this.spamPlace = getConfig().getBoolean("config.spamBlock.Place.Enable");
-			this.spamBreakTime = getConfig().getLong("config.spamBlock.Break.time");
-			this.spamBreakTime = getConfig().getLong("config.spamBlock.Place.time");
-			this.timePattern = getConfig().getString("config.spamBlock.timeDisplay");
-			this.rotateOnSit = getConfig().getBoolean("config.rotateOnSit");
 			this.useSSL = getConfig().getBoolean("config.Database.useSSL");
-			
 			this.purgeTimeMS = TimeUnit.DAYS.toMillis(purgeTime);
 			this.pManager = new ProjectManager();
 			this.permissionHandler = new PermissionHandler();
@@ -211,24 +188,21 @@ public class FurnitureLib extends JavaPlugin{
 			send("Furniture Website: §e" + this.getDescription().getWebsite());
 			String s = getPluginManager().getPlugin("ProtocolLib").getDescription().getVersion();
 			boolean protocollib = isRightProtocollib(s);
-			this.limitManager = new LimitationManager(this, LimitationType.valueOf(getConfig().getString("config.LimitType", "PLAYER").toUpperCase()));
 			if(protocollib){
 				send("Furniture start load");
 				Boolean b = isEnable("ProtectionLib", false);
 				send("Furniture find ProtectionLib: §e" + b.toString());
-				this.type = EventType.valueOf(getConfig().getString("config.PlaceMode.Access", "INTERACT"));
-				this.mode = PublicMode.valueOf(getConfig().getString("config.PlaceMode.Mode", "PRIVATE"));
 				this.bmanager = new BlockManager();
 				this.craftingInv = new CraftingInv(this);
 				loadPermissionKit();
-				loadMetrics();
-				this.update = getConfig().getBoolean("config.CheckUpdate");
-				this.updater = new Updater();
 				Bukkit.getOnlinePlayers().stream().filter(p -> p!=null && p.isOp()).forEach(p -> getUpdater().sendPlayer(p));
+				this.autoFileUpdater = getConfig().getBoolean("config.autoFileUpdater");
+				autoConverter.modelConverter(getServer().getConsoleSender());
+				
+				loadPluginConfig();
+				loadMetrics();
 				this.sqlManager = new SQLManager(instance);
 				this.sqlManager.initialize();
-				this.loadIgnore();
-				autoConverter.modelConverter(getServer().getConsoleSender());
 				autoConverter.databaseConverter(getServer().getConsoleSender());
 				new FurnitureEvents(instance, manager);
 				getServer().getPluginManager().registerEvents(new onCrafting(), getInstance());
@@ -252,6 +226,78 @@ public class FurnitureLib extends JavaPlugin{
 				getPluginManager().disablePlugin(this);
 			}
 		}
+	}
+	
+	private void loadPluginConfig() {
+		this.enableDebug = getConfig().getBoolean("config.debugMode", false);
+		this.lmanager = new LanguageManager(instance, getConfig().getString("config.Language"));
+		this.useGamemode = !getConfig().getBoolean("config.Creative.RemoveItems");
+		this.creativeInteract = getConfig().getBoolean("config.Creative.Interact");
+		this.creativePlace = getConfig().getBoolean("config.Creative.Place");
+		this.useRegionMemberAccess = getConfig().getBoolean("config.ProtectionLib.RegeionMemberAccess");
+		this.canSit = !getConfig().getBoolean("config.DisableSitting");
+		this.useParticle = getConfig().getBoolean("config.useParticles");
+		this.purgeTime = getConfig().getInt("config.Purge.time");
+		this.autoPurge = getConfig().getBoolean("config.Purge.autoPurge");
+		this.removePurge = getConfig().getBoolean("config.Purge.removePurge");
+		this.viewDistance = (Bukkit.getViewDistance()*16)-2;
+		if(this.viewDistance>=getConfig().getInt("config.viewDistance")){
+			this.viewDistance = getConfig().getInt("config.viewDistance");
+		}
+			
+		this.glowing = getConfig().getBoolean("config.glowing");
+		this.spamBreak = getConfig().getBoolean("config.spamBlock.Break.Enable");
+		this.spamPlace = getConfig().getBoolean("config.spamBlock.Place.Enable");
+		this.spamBreakTime = getConfig().getLong("config.spamBlock.Break.time");
+		this.spamPlaceTime = getConfig().getLong("config.spamBlock.Place.time");
+		this.timePattern = getConfig().getString("config.spamBlock.timeDisplay");
+		this.rotateOnSit = getConfig().getBoolean("config.rotateOnSit");
+		String limitConfig = getConfig().getString("config.limit.limitConfig", "PLAYER");
+		this.limitManager = new LimitationManager(this, LimitationType.valueOf(limitConfig.toUpperCase()));
+		this.limitGlobal = getConfig().getInt("config.limit.limitGlobal", -1);
+		this.type = EventType.valueOf(getConfig().getString("config.PlaceMode.Access", "INTERACT"));
+		this.mode = PublicMode.valueOf(getConfig().getString("config.PlaceMode.Mode", "PRIVATE"));
+		this.update = getConfig().getBoolean("config.CheckUpdate");
+		this.updater = new Updater();
+		this.loadIgnore();
+		
+		debug("Config->useGamemode:" + useGamemode);
+		debug("Config->creativeInteract:" + creativeInteract);
+		debug("Config->creativePlace:" + creativePlace);
+		debug("Config->useRegionMemberAccess:" + useRegionMemberAccess);
+		debug("Config->canSit:" + canSit);
+		debug("Config->useParticle:" + useParticle);
+		debug("Config->purgeTime" + purgeTime);
+		debug("Config->autoPurge:" + autoPurge);
+		debug("Config->removePurge:" + removePurge);
+		debug("Config->viewDistance:" + viewDistance);
+		debug("Config->glowing:" + glowing);
+		debug("Config->spamBreak:" + spamBreak);
+		debug("Config->spamPlace:" + spamPlace);
+		debug("Config->spamBreakTime:" + spamBreakTime);
+		debug("Config->spamPlaceTime:" + spamPlaceTime);
+		debug("Config->timePattern:" + timePattern);
+		debug("Config->rotateOnSit:" + rotateOnSit);
+		debug("Config->limitConfig:" + limitConfig);
+		debug("Config->limitGlobal:" + limitGlobal);
+		debug("Config->PlaceMode.Access:" + type.name);
+		debug("Config->PlaceMode.Mode:" + mode.name);
+		debug("Config->update:" + update);
+		
+	}
+	
+	private boolean enableDebug = false;
+	
+	public void debug(String str) {
+		if(enableDebug) System.out.println(str);
+	}
+	
+	public void reloadPluginConfig() {
+		this.enableDebug = true;
+		this.reloadConfig();
+		this.loadPluginConfig();
+		
+		FurnitureManager.getInstance().getProjects().stream().forEach(Project::loadDefaults);
 	}
 	
 	private void loadIgnore() {

@@ -1,9 +1,14 @@
 package de.Ste3et_C0st.FurnitureLib.Utilitis;
 
+import java.lang.reflect.Field;
 import java.util.List;
+import java.util.Optional;
 
+import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
+import org.bukkit.Keyed;
 import org.bukkit.Material;
+import org.bukkit.Tag;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
@@ -59,6 +64,52 @@ public class ColorUtil {
 		p.updateInventory();
 	}
 	
+	@SuppressWarnings("unchecked")
+	public static Tag<Material> getMaterialTag(String name) throws NullPointerException{
+		if(name == null) return null;
+		Class<?> tag = Tag.class;
+		try {
+			return (Tag<Material>) tag.getDeclaredField(name).get(null);
+		}catch (Exception e) {
+			return null;
+		}
+	}
+	
+	public static String getTagName(Tag<Material> material) throws NullPointerException {
+		if(material == null) return null;
+		Class<?> tag = Tag.class;
+		try {
+			for(Field f : tag.getFields()) {
+				if(f.get(null).equals(material)) {
+					return f.getName();
+				}
+			}
+		}catch (Exception e) {
+			return null;
+		}
+		return null;
+	}
+	
+	public static Tag<Material> contains(Material mat){
+		if(mat == null) return null;
+		Class<?> tag = Tag.class;
+		try {
+			for(Field f : tag.getFields()) {
+				if(f.getType().equals(tag)) {
+					@SuppressWarnings("unchecked")
+					Tag<Material> matTag = (Tag<Material>) f.get(null);
+					if(matTag == null) continue;
+					if(matTag.isTagged(mat)) {
+						return matTag;
+					}
+				}
+			}
+		}catch (Exception e) {
+			return null;
+		}
+		return null;
+	}
+ 	
 	@Deprecated
 	private void colorBanner(Player p, boolean canBuild, Material m, ObjectID obj, int row){
 //		if(!canBuild){return;}

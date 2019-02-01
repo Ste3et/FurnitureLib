@@ -1,6 +1,7 @@
 package de.Ste3et_C0st.FurnitureLib.main;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -61,6 +62,7 @@ public abstract class FurnitureHelper{
 	public void send(){getManager().send(obj);}
 	public void update(){getManager().updateFurniture(obj);}
 	public void delete(){this.obj=null;}
+	
 	public void consumeItem(Player p){
 		if(p.getGameMode().equals(GameMode.CREATIVE) && FurnitureLib.getInstance().useGamemode()) return;
 		ItemStack is = p.getInventory().getItemInMainHand();
@@ -89,6 +91,10 @@ public abstract class FurnitureHelper{
 			}
 		}
 		return null;
+	}
+	
+	public List<fEntity> entitysByCustomName(String str){
+		return getfAsList().stream().filter(e -> e.getCustomName().equalsIgnoreCase(str)).collect(Collectors.toList());
 	}
 	
 	public void toggleLight(boolean change){

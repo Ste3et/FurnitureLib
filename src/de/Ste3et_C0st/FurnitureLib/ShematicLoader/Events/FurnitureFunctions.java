@@ -1,13 +1,22 @@
 package de.Ste3et_C0st.FurnitureLib.ShematicLoader.Events;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
 import org.bukkit.DyeColor;
 import org.bukkit.Material;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BannerMeta;
+
+import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
+import de.Ste3et_C0st.FurnitureLib.ShematicLoader.ProjectTag;
 import de.Ste3et_C0st.FurnitureLib.ShematicLoader.ProjektInventory;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureHelper;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
+import de.Ste3et_C0st.FurnitureLib.main.Type.BodyPart;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
 
 public class FurnitureFunctions extends FurnitureHelper {
@@ -223,6 +232,72 @@ public class FurnitureFunctions extends FurnitureHelper {
 			}
 			}
 		}
+	}
+	
+	
+	
+	public void runFuncitons(Player actor) {
+		for (NBTTagCompound compound : getObjID().getProjectOBJ().getCraftingFile().getFunctionList()){
+			if(compound.hasKey("funtion")) {
+				String tag = null;
+				if(compound.hasKey("tag")) tag = compound.getString("tag");
+				
+				String function = compound.getString("function");
+				if(function.equalsIgnoreCase("replace")) {
+					//{function:replace,data:{type:name,toType:name,consume:true},tag:#a#}
+					if(compound.hasKey("data")) {
+						NBTTagCompound data = compound.getCompound("data");
+						String equipmentSlot = "HEAD";
+						boolean consume = false;
+						if(data.hasKey("equipmentslot")) data.getString("equipmentslot");
+						if(data.hasKey("consume")) consume = data.getBoolean("consume");
+						
+						String a = data.getString("type");
+						String b = data.getString("totype");
+						
+						if(consume) {
+							if(actor.getInventory().getItemInMainHand() == null) return;
+							Material mat = actor.getInventory().getItemInMainHand().getType();
+							if(a != null) {
+								if(matchType(a, mat)) {
+									List<fEntity> entityList = new ArrayList<fEntity>();
+									if(tag != null) {
+										entityList = this.entitysByCustomName(tag);
+									}else {
+										entityList = this.getfAsList().stream().filter(entity -> entity.getEquipment().getSlot("") != null && matchType(a, entity.getEquipment().getSlot("").getType())).collect(Collectors.toList());
+									}
+									
+									if(entityList != null && !entityList.isEmpty()) {
+										consumeItem(actor);
+										entityList.stream().forEach(e -> {
+											e.getEquipment().setSlot(equipmentSlot, new ItemStack(mat));
+										});
+									}
+								}
+							}
+						}
+						
+						
+						
+					}else{
+						return;
+					}
+				}
+			}else {
+				return;
+			}
+		}
+	}
+	
+	private boolean matchType(String str, Material mat) {
+		if(str.startsWith("*")) {
+			String reg = str.replace("*", "");
+			return mat.name().endsWith(reg.toUpperCase());
+		}else if(str.endsWith("*")) {
+			String reg = str.replace("*", "");
+			return mat.name().startsWith(reg.toUpperCase());
+		}
+		return false;
 	}
 	
 	public void toggleLight(boolean change){
