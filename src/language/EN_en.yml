@@ -35,3 +35,4 @@ message:
   LimitReached: '&cThe limit of this object is reached.'
   LimitReachedMaximum: '&cThe of maximum furniture is reached.'
   BlockOfInstability: '&cPlease try to place the furniture on another location'
+  reload: '&7FurnitureLib has been &2&lreloaded'

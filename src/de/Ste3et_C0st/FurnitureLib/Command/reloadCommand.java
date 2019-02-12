@@ -11,7 +11,7 @@ public class reloadCommand {
 		//furniture purge <days>
 		if(!command.noPermissions(sender, "furniture.reload")) return;
 		FurnitureLib.getInstance().reloadPluginConfig();
-		sender.sendMessage("Furniture Config Reloadet !");
+		sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("reload"));
 		return;
 	}
 	

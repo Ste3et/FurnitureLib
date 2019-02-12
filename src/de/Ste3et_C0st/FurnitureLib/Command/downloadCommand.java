@@ -79,7 +79,7 @@ public class downloadCommand {
 					
 					PrintStream stream = new PrintStream(connection.getOutputStream());
 					stream.println("id=" + name);
-					stream.println("&spigot=" + FurnitureLib.getInstance().getBukkitVersion());
+					stream.println("&spigot=1.13");
 					
 					BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 					
@@ -207,12 +207,10 @@ public class downloadCommand {
 					file.set(project+".projectData.blockList." + str + ".yOffset", block.getDouble("yOffset"));
 					file.set(project+".projectData.blockList." + str + ".zOffset", block.getDouble("zOffset"));
 					if(block.hasKey("material")) {
-						System.out.println("old material");
 						String blockData = "minecraft:" + block.getString("material");
 						if(block.hasKey("Rotation")) blockData += "[facing=" + block.getString("Rotation") + "]";
 						file.set(project+".projectData.blockList." + str + ".blockData", blockData);
 					}else if(block.hasKey("blockData")) {
-						System.out.println("new material");
 						file.set(project+".projectData.blockList." + str + ".blockData", block.getString("blockData"));
 					}
 					

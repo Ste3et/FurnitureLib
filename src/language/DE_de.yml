@@ -35,3 +35,4 @@ message:
    LimitReached: '&cDas Limit dieses Objekts wurde erreicht.'
    LimitReachedMaximum: '&cDas maximal Limit der platzierten Objekte wurde erreicht.'
    BlockOfInstability: '&cBitte platziere das Objekt wo anders.'
+   reload: '&7FurnitureLib wurde &2&lneu geladen'

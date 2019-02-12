@@ -46,3 +46,4 @@ message:
   LimitReached: '&cДостигнут предел количества этого объекта.'
   LimitReachedMaximum: '&cДостигнуто максимальное число мебели.'
   BlockOfInstability: '&cПопробуйте поместить мебель в другое место'
+  reload: '&7FurnitureLib has been &2&lreloaded'
