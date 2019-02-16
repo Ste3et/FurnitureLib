@@ -30,6 +30,7 @@ public class Type {
 	public enum SQLAction{SAVE, UPDATE, REMOVE, PURGE,NOTHING;}
 	public enum CenterType{LEFT, RIGHT, CENTER, FRONT}
 	public enum PlaceableSide{TOP,BOTTOM,SIDE, WATER}
+	public enum Reason{BLOCK,ENTITY}
 	
 	public enum DyeColor
 	{

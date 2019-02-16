@@ -8,6 +8,7 @@ import org.bukkit.event.Listener;
 import de.Ste3et_C0st.FurnitureLib.Events.FurnitureClickEvent;
 import de.Ste3et_C0st.FurnitureLib.ShematicLoader.ProjektInventory;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
+import de.Ste3et_C0st.FurnitureLib.main.Type.Reason;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 
 public class FurnitureEntityClickEventListener extends FurnitureFunctions implements Listener{
@@ -23,7 +24,7 @@ public class FurnitureEntityClickEventListener extends FurnitureFunctions implem
 		if(e.getID()==null) return;
 		if(!e.getID().equals(getObjID())) return;
 		if(!e.canBuild()){return;}
-		ProjectClickEvent event = new ProjectClickEvent(e.getPlayer(), e.getID());
+		ProjectClickEvent event = new ProjectClickEvent(e.getPlayer(), e.getID(), Reason.ENTITY);
 		Bukkit.getPluginManager().callEvent(event);
 		if(!event.isCancelled()){
 			runFunction(e.getPlayer());
