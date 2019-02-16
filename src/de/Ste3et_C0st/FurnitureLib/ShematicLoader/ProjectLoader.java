@@ -2,6 +2,7 @@ package de.Ste3et_C0st.FurnitureLib.ShematicLoader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
@@ -113,9 +114,15 @@ public class ProjectLoader extends Furniture{
 	public void spawn(Location loc, YamlConfiguration config, boolean rotate) {
 		try {
 			for(String s : config.getConfigurationSection(header+".projectData.entitys").getKeys(false)){
-				
 				String md5 = config.getString(header+".projectData.entitys."+s);
-				byte[] by = Base64Coder.decode(md5);
+				byte[] by = null;
+				
+				try {
+					by = Base64.getDecoder().decode(md5);
+				}catch (Exception e) {
+					by = Base64.getUrlDecoder().decode(md5);
+				}
+				
 				ByteArrayInputStream bin = new ByteArrayInputStream(by);
 				NBTTagCompound metadata = NBTCompressedStreamTools.read(bin);
 				String customName = metadata.getString("Name");

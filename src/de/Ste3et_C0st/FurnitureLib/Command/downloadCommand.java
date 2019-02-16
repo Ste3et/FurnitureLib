@@ -116,7 +116,7 @@ public class downloadCommand {
 						sender.sendMessage("§6Createt from: " + playerName);
 						if(s!=null){
 							projectName=s;
-							sender.sendMessage(projectName);
+							sender.sendMessage("§7Saved as Project: §e" + projectName);
 						}
 						add(config, playerName, projectName, sender);
 					}
