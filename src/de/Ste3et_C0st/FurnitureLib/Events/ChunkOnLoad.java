@@ -13,7 +13,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
@@ -37,6 +36,9 @@ public class ChunkOnLoad implements Listener{
 	
 	@EventHandler
 	public void onSpawn(final PlayerInteractEvent e) {
+		if(e.getHand() == EquipmentSlot.OFF_HAND) {
+			return;
+		}
 		if(e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
 			final Block b = e.getClickedBlock();
 			final ItemStack stack = e.getItem();
@@ -88,6 +90,9 @@ public class ChunkOnLoad implements Listener{
 	
 	@EventHandler
 	public void onRightClickBlock(final PlayerInteractEvent e) {
+		if(e.getHand() == EquipmentSlot.OFF_HAND) {
+			return;
+		}
 		if(e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
 			final Block b = e.getClickedBlock();
 			if(b== null) return;
@@ -131,6 +136,9 @@ public class ChunkOnLoad implements Listener{
 	
 	@EventHandler
 	public void onClick(final PlayerInteractEvent event){
+		if(event.getHand() == EquipmentSlot.OFF_HAND) {
+			return;
+		}
 		final Player p = event.getPlayer();
 		if(p==null) return;
 		if(p.getGameMode().equals(GameMode.SPECTATOR)){return;}
@@ -182,6 +190,9 @@ public class ChunkOnLoad implements Listener{
 	
 	@EventHandler
 	public void onEntityRightClick(PlayerInteractEntityEvent e) {
+		if(e.getHand() == EquipmentSlot.OFF_HAND) {
+			return;
+		}
 		if(e.getRightClicked() != null && e.getPlayer() != null) {
 			PlayerInventory inv = e.getPlayer().getInventory();
 			if(getProjectByItem(inv.getItemInMainHand()) != null) {
