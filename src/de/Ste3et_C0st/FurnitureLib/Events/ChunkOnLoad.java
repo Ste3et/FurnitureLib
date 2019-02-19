@@ -13,7 +13,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
-import org.bukkit.event.player.PlayerInteractAtEntityEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.inventory.EquipmentSlot;
@@ -93,6 +92,7 @@ public class ChunkOnLoad implements Listener{
 			if(b== null) return;
 			if(!FurnitureLib.getInstance().getBlockManager().getList().contains(b.getLocation())) return;
 			e.setCancelled(true);
+			if(!e.getHand().equals(EquipmentSlot.HAND)) return;
 			final Location loc = b.getLocation();
 			final Player p = e.getPlayer();
 			loc.setYaw(FurnitureLib.getInstance().getLocationUtil().FaceToYaw(FurnitureLib.getInstance().getLocationUtil().yawToFace(p.getLocation().getYaw())));
@@ -155,6 +155,7 @@ public class ChunkOnLoad implements Listener{
 				}
 				
 				event.setCancelled(true);
+				if(!event.getHand().equals(EquipmentSlot.HAND)) return;
 				if(!objID.getSQLAction().equals(SQLAction.REMOVE)){
 					final ObjectID o = objID;
 					if(FurnitureLib.getInstance().getFurnitureManager().getIgnoreList().contains(p.getUniqueId())){
@@ -182,6 +183,7 @@ public class ChunkOnLoad implements Listener{
 	
 	@EventHandler
 	public void onEntityRightClick(PlayerInteractEntityEvent e) {
+		if(!e.getHand().equals(EquipmentSlot.HAND)) return;
 		if(e.getRightClicked() != null && e.getPlayer() != null) {
 			PlayerInventory inv = e.getPlayer().getInventory();
 			if(getProjectByItem(inv.getItemInMainHand()) != null) {
