@@ -255,7 +255,10 @@ public class ProjectLoader extends Furniture{
 	public void onClick(Player player) {
 		runFunction(player);
 	}
-
+	
+	/**
+	 * This is the called Function onBreak
+	 */
 	@Override
 	public void onBreak(Player player) {
 		if(getObjID() == null) return;
