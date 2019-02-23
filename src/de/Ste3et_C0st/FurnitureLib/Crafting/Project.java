@@ -1,10 +1,7 @@
 package de.Ste3et_C0st.FurnitureLib.Crafting;
 
 import java.io.InputStream;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
-
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -30,7 +27,7 @@ public class Project{
 	private PlaceableSide side;
 	private boolean EditorProject = false, silent = false;
 	private InputStream model = null;
-	private List<String> complete = new ArrayList<String>();
+	
 	public InputStream getModel(){return this.model;}
 	public String getName(){return project;}
 	public Plugin getPlugin(){return plugin;}
@@ -55,13 +52,6 @@ public class Project{
 	public int getAmountChunk(){return this.chunkLimit;}
 	public void setSilent(boolean b){silent = b;}
 	
-	public boolean isCompleteLimitation(String s){
-		if(this.complete.contains(s)){
-			return true;
-		}
-		return false;
-	}
-	
 	public Project setSize(Integer witdh, Integer height, Integer length, CenterType type){		
 		this.witdh = witdh;
 		this.height = height;
@@ -82,29 +72,10 @@ public class Project{
 	}
 	
 	public Project(String name, Plugin plugin,InputStream craftingFile){
-		this.project = name;
-		this.plugin = plugin;
-		this.clas = ProjectLoader.class;
-		this.file = new CraftingFile(name, craftingFile);
-		this.side = this.file.getPlaceAbleSide();
-		FurnitureLib.getInstance().getFurnitureManager().addProject(this);
-		loadDefaults();
-		FurnitureLib.getInstance().getLimitManager().loadDefault(this.project);
-	}
-	
-	public Project(String name, Plugin plugin,PlaceableSide side, Class<?> clas){
-		this.project = name;
-		this.plugin = plugin;
-		this.clas = clas;
-		FurnitureLib.getInstance().getFurnitureManager().addProject(this);
-		loadDefaults();
-		this.side = side;
-		FurnitureLib.getInstance().getLimitManager().loadDefault(this.project);
+		this(name, plugin, craftingFile, PlaceableSide.TOP, ProjectLoader.class);
 	}
 	
 	public boolean hasPermissions(Player p){
-		if(p.isOp()) return true;
-		if(FurnitureLib.getInstance().getPermission().hasPerm(p,"furniture.admin")) return true;
 		if(FurnitureLib.getInstance().getPermission().hasPerm(p,"furniture.player")) return true;
 		if(FurnitureLib.getInstance().getPermission().hasPerm(p,"furniture.place." + getSystemID())) return true;
 		if(FurnitureLib.getInstance().getPermission().hasPerm(p,"furniture.place.all")) return true;

@@ -24,7 +24,7 @@ public class DeSerializer {
 	public FurnitureLib lib = FurnitureLib.getInstance();
 
 	@SuppressWarnings("unchecked")
-	public void Deserialze(String objId,String in, SQLAction action, boolean autoPurge, String world){
+	public ObjectID Deserialze(String objId,String in, SQLAction action, boolean autoPurge, String world){
 		ObjectID obj = new ObjectID(null, null, null);
 		obj.setID(objId);
 		try {
@@ -32,7 +32,7 @@ public class DeSerializer {
 			ByteArrayInputStream bin = new ByteArrayInputStream(by);
 			NBTTagCompound compound = NBTCompressedStreamTools.read(bin);
 			bin.close();
-			if(compound == null) {return;}
+			if(compound == null) {return null;}
 			EventType evType = EventType.valueOf(compound.getString("EventType"));
 			PublicMode pMode = PublicMode.valueOf(compound.getString("PublicMode")); 
 			UUID uuid = uuidFetcher(compound.getString("Owner-UUID"));
@@ -41,7 +41,7 @@ public class DeSerializer {
 			if(startLocation==null){
 				obj.setSQLAction(SQLAction.REMOVE);
 				FurnitureLib.getInstance().getFurnitureManager().addObjectID(obj);
-				return;
+				return null;
 			}
 			obj.setStartLocation(startLocation);
 			obj.setEventTypeAccess(evType);
@@ -63,9 +63,10 @@ public class DeSerializer {
 				FurnitureManager.getInstance().createFromType(metadata.getString("EntityType"), loc, obj).loadMetadata(metadata);
 			});
 			if(world == null || world.isEmpty() || world.equals("null")) obj.setSQLAction(SQLAction.UPDATE);
+			return obj;
 		}catch (Exception e) {
 			e.printStackTrace();
-			return;
+			return null;
 		}
 	}
 

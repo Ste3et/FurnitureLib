@@ -15,5 +15,4 @@ public abstract class Furniture extends FurnitureHelper implements Listener{
 	public abstract void spawn(Location location);
 	public abstract void onFurnitureBreak(FurnitureBreakEvent e);
 	public abstract void onFurnitureClick(FurnitureClickEvent e);
-
 }

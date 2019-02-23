@@ -198,7 +198,6 @@ public class FurnitureLib extends JavaPlugin{
 				Bukkit.getOnlinePlayers().stream().filter(p -> p!=null && p.isOp()).forEach(p -> getUpdater().sendPlayer(p));
 				this.autoFileUpdater = getConfig().getBoolean("config.autoFileUpdater");
 				autoConverter.modelConverter(getServer().getConsoleSender());
-				
 				loadPluginConfig();
 				loadMetrics();
 				this.sqlManager = new SQLManager(instance);

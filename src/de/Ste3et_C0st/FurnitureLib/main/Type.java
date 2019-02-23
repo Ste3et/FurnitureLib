@@ -179,31 +179,28 @@ public class Type {
 	}
 
 	public enum EventType{
-		PLACE(null, null, null, null),
-		BREAK(lang.getName("Break"), lang.getMaterial("Break"), lang.getShort("Break"), 1),
-		INTERACT(lang.getName("Interact"), lang.getMaterial("Interact"), lang.getShort("Interact"), 1),
-		BREAK_INTERACT(lang.getName("Break_interact"), lang.getMaterial("Break_interact"), lang.getShort("Break_interact"), 1),
-		NONE(lang.getName("None"), lang.getMaterial("None"), lang.getShort("None"), 1);
+		PLACE(null, null, null),
+		BREAK(lang.getName("Break"), lang.getMaterial("Break"), 1),
+		INTERACT(lang.getName("Interact"), lang.getMaterial("Interact"), 1),
+		BREAK_INTERACT(lang.getName("Break_interact"), lang.getMaterial("Break_interact"), 1),
+		NONE(lang.getName("None"), lang.getMaterial("None"), 1);
 		
 		String name;
 		Material material;
-		Short durability;
 		Integer amount;
 		
 		public String getName(){return this.name;}
 		public Material getMaterial(){return this.material;}
-		public Short getDurability(){return this.durability;}
 		public Integer getAmount(){return this.amount;}
 		
-		EventType(String name,Material material,Short durability, Integer amount){
+		EventType(String name,Material material, Integer amount){
             this.name=name;
             this.material=material;
-            this.durability = durability;
             this.amount = amount;
 		}
 		
 		public ItemStack getItemStack() {
-			ItemStack is = new ItemStack(material, amount, durability);
+			ItemStack is = new ItemStack(material, amount);
 			ItemMeta im = is.getItemMeta();
 			im.setDisplayName(name);
 			is.setItemMeta(im);
@@ -227,31 +224,29 @@ public class Type {
 	}
 	
 	public enum PublicMode{
-		PRIVATE(lang.getName("Private"), lang.getMaterial("Private"), lang.getShort("Private"), 1, lang.getStringList("Private")), 
-		MEMBERS(lang.getName("Member"), lang.getMaterial("Member"), lang.getShort("Member"), 1, lang.getStringList("Member")), 
-		PUBLIC(lang.getName("Public"), lang.getMaterial("Public"), lang.getShort("Public"), 1, lang.getStringList("Public"));
+		PRIVATE(lang.getName("Private"), lang.getMaterial("Private"), 1, lang.getStringList("Private")), 
+		MEMBERS(lang.getName("Member"), lang.getMaterial("Member"), 1, lang.getStringList("Member")), 
+		PUBLIC(lang.getName("Public"), lang.getMaterial("Public"), 1, lang.getStringList("Public"));
 		
 		String name;
 		Material material;
-		Short durability;
 		Integer amount;
 		List<String> stringl;
 		
 		public String getName(){return this.name;}
 		public Material getMaterial(){return this.material;}
-		public Short getDurability(){return this.durability;}
 		public Integer getAmount(){return this.amount;}
 		public List<String> getStringList(){return this.stringl;}
 		
-		PublicMode(String name,Material material,Short durability, Integer amount, List<String> stringl){
+		PublicMode(String name,Material material, Integer amount, List<String> stringl){
             this.name=name;
             this.material=material;
-            this.durability = durability;
             this.amount = amount;
             this.stringl = stringl;
         }
+		
 		public ItemStack getItemStack() {
-			ItemStack is = new ItemStack(material, amount, durability);
+			ItemStack is = new ItemStack(material, amount);
 			ItemMeta im = is.getItemMeta();
 			im.setLore(stringl);
 			im.setDisplayName(name);

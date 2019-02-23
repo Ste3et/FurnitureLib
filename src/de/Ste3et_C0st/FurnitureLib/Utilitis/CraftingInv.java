@@ -175,7 +175,7 @@ List<String> stringList = Arrays.asList("A", "B", "C", "D", "E", "F", "G", "H", 
 					  ItemMeta meta = stack.getItemMeta();
 					  name = meta.getDisplayName();
 					  if(meta.hasLore()){
-						  for(String s : lore){
+						  for(String s : meta.getLore()){
 							  if(!HiddenStringUtils.hasHiddenString(s)){
 								  lore.add(s);
 							  }

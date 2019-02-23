@@ -18,7 +18,6 @@ public class BlockManager implements Listener{
 	public HashSet<Location> locList = new HashSet<Location>();
 	private List<Material> activatePhysic = Arrays.asList(Material.TORCH);
 	private boolean isActive = false;
-	
 	public BlockManager(){}
 	
 	public void addBlock(Block block) {
@@ -49,12 +48,9 @@ public class BlockManager implements Listener{
 
 	public HashSet<Location> getList() {return locList;}
 	
-	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
-	private void onPhysiks(BlockPhysicsEvent e){
+	@EventHandler(priority = EventPriority.HIGHEST)
+	public void onPhysics(BlockPhysicsEvent e){
 		  Block b = e.getBlock();
-		  if(b == null || locList.isEmpty()) return;
-		  if(activatePhysic.contains(b.getType())){
-			  if(locList.contains(b.getLocation())) e.setCancelled(true);
-		  }
+		  e.setCancelled(locList.contains(b.getLocation()));
 	}
 }

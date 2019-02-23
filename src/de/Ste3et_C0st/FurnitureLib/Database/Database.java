@@ -7,13 +7,17 @@ import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.Base64;
 import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 
 import com.comphenix.protocol.wrappers.EnumWrappers;
+import com.google.common.hash.HashingInputStream;
+
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTCompressedStreamTools;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.CallbackBoolean;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.MaterialConverter;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
@@ -165,16 +169,21 @@ public abstract class Database {
 		return 0;
     }
     
-	public void loadAsynchron(final int chunkX, final int chunkz, final String worldName) {
+	public void loadAsynchron(final int chunkX, final int chunkz, final String worldName, CallbackBoolean callBack) {
 		Bukkit.getScheduler().runTaskAsynchronously(FurnitureLib.getInstance(), () -> {
-			try (Connection con = getSQLConnection();ResultSet rs = con.createStatement().executeQuery("SELECT ObjID,Data FROM furnitureLibData WHERE x=" + chunkX + " AND z=" + chunkz + " AND world='"+worldName+"'")){
+			try (Connection con = getSQLConnection();ResultSet rs = con.createStatement().executeQuery("SELECT ObjID,Data,world FROM furnitureLibData WHERE x=" + chunkX + " AND z=" + chunkz + " AND world='"+worldName+"'")){
+				HashSet<ObjectID> idList = new HashSet<ObjectID>();
 				while (rs.next()){
 	    			if(rs != null){
 	    				String a = rs.getString(1), c = rs.getString(2), d = rs.getString(3);
-	    				if(!(a.isEmpty() || c.isEmpty())) FurnitureLib.getInstance().getDeSerializer().Deserialze(a, c, SQLAction.NOTHING, false, d);
+	    				if(!(a.isEmpty() || c.isEmpty())) {
+	    					ObjectID obj = FurnitureLib.getInstance().getDeSerializer().Deserialze(a, c, SQLAction.NOTHING, false, d);
+	    					if(obj != null) idList.add(obj);
+	    				}
 	    			}
 	    		}
 	    		rs.close();
+	    		callBack.onResult(idList);
 			}catch (Exception e) {
 				e.printStackTrace();
 			}

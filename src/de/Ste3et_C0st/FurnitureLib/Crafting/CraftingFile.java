@@ -9,14 +9,18 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Reader;
+import java.io.StringBufferInputStream;
 import java.io.StringReader;
+import java.nio.ByteBuffer;
 import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
+import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 import org.bukkit.Bukkit;
@@ -31,11 +35,16 @@ import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.json.simple.parser.JSONParser;
 
 import com.comphenix.protocol.wrappers.nbt.io.NbtTextSerializer;
 import com.google.common.base.Charsets;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
+import de.Ste3et_C0st.FurnitureLib.NBT.NBTBase;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTCompressedStreamTools;
+import de.Ste3et_C0st.FurnitureLib.NBT.NBTReadLimiter;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.HiddenStringUtils;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
@@ -166,32 +175,38 @@ public class CraftingFile {
 //			}
 			
 //			String testString = "{ChestedHorse:true,Items:[{ Slot:2b, id:stone, Count:1 }],SaddleItem:{ id:saddle, Count:1 },Tame:true}";
-//			
 //			try{
-//				byte[] b = compress(testString);
-//				ByteArrayInputStream bin = new ByteArrayInputStream(b);
-//				NBTTagCompound compound = NBTCompressedStreamTools.read(bin);
-//				bin.close();
-//				System.out.println(compound.toString());
+//				NBTTagCompound tag = NBTCompressedStreamTools.read(testString.getBytes("UTF-8"), NBTReadLimiter.unlimited);
+//				System.out.println(tag.toString());
 //			}catch (Exception e) {
 //				e.printStackTrace();
 //			}
+			
+//			JsonObject obj = new JsonParser().parse("{ChestedHorse:true,Items:[{ Slot:2b, id:stone, Count:1 }],SaddleItem:{ id:saddle, Count:1 },Tame:true}").getAsJsonObject();
+//			System.out.println(obj.toString());
+//			System.out.println(obj.get("Items").toString());
+//			System.out.println(obj.getAsJsonObject("Items").getAsJsonObject("id").toString());
 		}
 	}
 	
-	public static byte[] compress(String str) throws Exception {
-	    if (str == null || str.length() == 0) {
-	        return null;
-	    }
-	    System.out.println("String length : " + str.length());
-	    ByteArrayOutputStream obj=new ByteArrayOutputStream();
-	    GZIPOutputStream gzip = new GZIPOutputStream(obj);
-	    gzip.write(str.getBytes("UTF-8"));
-	    gzip.close();
-	    
-	    return obj.toByteArray();
-	 }
-
+	public static byte[] compress(String str) throws IOException
+	{
+	    byte[] blockcopy = ByteBuffer
+	            .allocate(4)
+	            .order(java.nio.ByteOrder.LITTLE_ENDIAN)
+	            .putInt(str.length())
+	            .array();
+	    ByteArrayOutputStream os = new ByteArrayOutputStream(str.length());
+	    GZIPOutputStream gos = new GZIPOutputStream(os);
+	    gos.write(str.getBytes());
+	    gos.close();
+	    os.close();
+	    byte[] compressed = new byte[4 + os.toByteArray().length];
+	    System.arraycopy(blockcopy, 0, compressed, 0, 4);
+	    System.arraycopy(os.toByteArray(), 0, compressed, 4,
+	            os.toByteArray().length);
+	    return Base64.getEncoder().encode(compressed);
+	}
 	
 	private boolean isKeyRegistred(NamespacedKey key) {
 		Iterator<Recipe> recipes = Bukkit.getServer().recipeIterator();

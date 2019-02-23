@@ -2,7 +2,6 @@ package de.Ste3et_C0st.FurnitureLib.main;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
@@ -18,7 +17,6 @@ import org.bukkit.entity.Player;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
-import de.Ste3et_C0st.FurnitureLib.LimitationManager.LimitationObject;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fArmorStand;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fCreeper;
@@ -27,13 +25,15 @@ import de.Ste3et_C0st.FurnitureLib.main.entity.fGiant;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fPig;
 
 public class FurnitureManager {
+	
 	private HashSet<ObjectID> objecte = new HashSet<ObjectID>();
 	private List<Project> projects = new ArrayList<Project>();
 	private List<UUID> ignoreList = new ArrayList<UUID>();
+	
 	private static FurnitureManager manager;
 	public HashSet<ObjectID> getObjectList(){return this.objecte;}
-	public List<Chunk> chunkList = new ArrayList<Chunk>();
 	public List<UUID> getIgnoreList(){return this.ignoreList;}
+	
 	public FurnitureManager() {
 		manager = this;
 	}
