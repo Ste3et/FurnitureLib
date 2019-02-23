@@ -1,5 +1,6 @@
 package de.Ste3et_C0st.FurnitureLib.main;
 
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -22,6 +23,7 @@ import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 
 public class ObjectID{
+	
 	private String ObjectID, serial, Project, plugin, worldName;
 	private HashSet<Location> locList = new HashSet<Location>();
 	private Location loc;
@@ -70,7 +72,7 @@ public class ObjectID{
 	public void addArmorStand(fEntity packet) {packetList.add(packet);}
 	public void setPublicMode(PublicMode publicMode){this.publicMode = publicMode;}
 	public void setPrivate(boolean b){this.Private = b;}
-	public Object instance = null;
+	public Object functionObject = null;
 	
 	public int viewDistance = 100;
 	
@@ -97,12 +99,21 @@ public class ObjectID{
 		}
 	}
 	
-	public Object getProjectInstance() {
-		return this.instance;
+	public Object getFunctionObject() {
+		return this.functionObject;
 	}
 	
-	public void setObject(Object obj) {
-		this.instance = obj;
+	public void setFunctionObject(Object obj) {
+		this.functionObject = obj;
+	}
+	
+	public void callFunction(String function, Player player) {
+		try {
+			Method m = getFunctionObject().getClass().getDeclaredMethod(function, Player.class);
+			m.invoke(getFunctionObject(), player);
+		}catch(Exception ex) {
+			ex.printStackTrace();
+		}
 	}
 	
 	public void removePacket(Player p){
@@ -164,7 +175,7 @@ public class ObjectID{
 		if(deleteEffect) deleteEffect(packetList);
 		removeAll();
 		FurnitureManager.getInstance().remove(this);
-		this.setObject(null);
+		this.setFunctionObject(null);
 	}
 	
 	public void dropItem(Player p, Location loc, Project porject){

@@ -48,7 +48,7 @@ public class FurnitureEvents {
 									Bukkit.getScheduler().runTask(FurnitureLib.getInstance(), () -> {
 										ProjectBreakEvent projectBreakEvent = new ProjectBreakEvent(p, objID);
 										if(!projectBreakEvent.isCancelled()) {
-											projectBreakEvent.callFunction(objID, "onBreak", p);
+											objID.callFunction("onBreak", p);
 										}
 									});
 									break;
@@ -57,7 +57,7 @@ public class FurnitureEvents {
 									Bukkit.getScheduler().runTask(FurnitureLib.getInstance(), () -> {
 										ProjectClickEvent projectBreakEvent = new ProjectClickEvent(p, objID);
 										if(!projectBreakEvent.isCancelled()) {
-											projectBreakEvent.callFunction(objID, "onClick", p);
+											objID.callFunction("onClick", p);
 										}
 									});
 									break;

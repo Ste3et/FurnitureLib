@@ -419,7 +419,8 @@ public class FurnitureLib extends JavaPlugin{
 		Class<?> c = pro.getclass();
 		if(c==null ){return;}
 		try {
-			obj.setObject(c.getConstructor(ObjectID.class).newInstance(obj));
+			Object o = c.getConstructor(ObjectID.class).newInstance(obj);
+			if(obj.getFunctionObject() == null) obj.setFunctionObject(o);
 			obj.setFinish();
 		} catch (Exception e) {e.printStackTrace();}
 	}

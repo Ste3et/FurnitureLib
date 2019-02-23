@@ -111,11 +111,11 @@ public class ChunkOnLoad implements Listener{
 					}
 				}
 				
-				if(FurnitureLib.getInstance().getFurnitureManager().getIgnoreList().contains(p.getUniqueId())){
+				if(!FurnitureLib.getInstance().getFurnitureManager().getIgnoreList().contains(p.getUniqueId())){
 					Bukkit.getScheduler().runTask(FurnitureLib.getInstance(), () -> {
 						ProjectClickEvent projectBreakEvent = new ProjectClickEvent(p, objID);
 						if(!projectBreakEvent.isCancelled()) {
-							projectBreakEvent.callFunction(objID, "onClick", p);
+							objID.callFunction("onClick", p);
 						}
 					});
 					return;
@@ -148,16 +148,15 @@ public class ChunkOnLoad implements Listener{
 				}else{
 					return;
 				}
-				
 				event.setCancelled(true);
 				if(!event.getHand().equals(EquipmentSlot.HAND)) return;
 				if(!objID.getSQLAction().equals(SQLAction.REMOVE)){
 					final ObjectID o = objID;
-					if(FurnitureLib.getInstance().getFurnitureManager().getIgnoreList().contains(p.getUniqueId())){
+					if(!FurnitureLib.getInstance().getFurnitureManager().getIgnoreList().contains(p.getUniqueId())){
 						Bukkit.getScheduler().runTask(FurnitureLib.getInstance(), () -> {
 							ProjectBreakEvent projectBreakEvent = new ProjectBreakEvent(p, o);
 							if(!projectBreakEvent.isCancelled()) {
-								projectBreakEvent.callFunction(o, "onBreak", p);
+								o.callFunction("onBreak", p);
 							}
 						});
 						return;

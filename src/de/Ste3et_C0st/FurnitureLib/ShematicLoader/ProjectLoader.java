@@ -253,7 +253,7 @@ public class ProjectLoader extends Furniture{
 
 	@Override
 	public void onClick(Player player) {
-		player.sendMessage("Click §c" + getObjID().getID() + " §6" + getClass().getName());
+		runFunction(player);
 	}
 
 	@Override

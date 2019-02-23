@@ -1,7 +1,5 @@
 package de.Ste3et_C0st.FurnitureLib.ShematicLoader.Events;
 
-import java.lang.reflect.Method;
-
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
@@ -35,13 +33,4 @@ public final class ProjectClickEvent extends Event implements Cancellable{
     public Player getPlayer(){return this.p;}
     public Location getLocation(){return this.l;}
 	public boolean canBuild(){return FurnitureLib.getInstance().canBuild(p, o, EventType.INTERACT);}
-	
-	public void callFunction(ObjectID objectID, String function, Player player) {
-		try {
-			Method m = objectID.getProjectInstance().getClass().getDeclaredMethod(function, Player.class);
-			m.invoke(objectID.getProjectInstance(), player);
-		}catch(Exception ex) {
-			ex.printStackTrace();
-		}
-	}
 }
