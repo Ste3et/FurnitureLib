@@ -347,4 +347,14 @@ public class FurnitureFunctions extends FurnitureHelper {
 	    }
 	    return false;
 	}
+
+	@Override
+	public void onClick(Player player) {
+		player.sendMessage("hello");
+	}
+
+	@Override
+	public void onBreak(Player player) {
+		player.sendMessage("hello Player");
+	}
 }

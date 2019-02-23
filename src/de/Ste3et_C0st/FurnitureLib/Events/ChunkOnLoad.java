@@ -1,6 +1,5 @@
 package de.Ste3et_C0st.FurnitureLib.Events;
 
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 
@@ -16,12 +15,13 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
-import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
+import de.Ste3et_C0st.FurnitureLib.ShematicLoader.Events.ProjectBreakEvent;
+import de.Ste3et_C0st.FurnitureLib.ShematicLoader.Events.ProjectClickEvent;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.HiddenStringUtils;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
@@ -112,21 +112,14 @@ public class ChunkOnLoad implements Listener{
 				}
 				
 				if(FurnitureLib.getInstance().getFurnitureManager().getIgnoreList().contains(p.getUniqueId())){
-					PostFurnitureGhostBlockClickEvent pEvent = new PostFurnitureGhostBlockClickEvent(p, b, objID);
-					Bukkit.getPluginManager().callEvent(pEvent);
-					if(!pEvent.isCancelled()) p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("FurnitureToggleEvent"));
+					Bukkit.getScheduler().runTask(FurnitureLib.getInstance(), () -> {
+						ProjectClickEvent projectBreakEvent = new ProjectClickEvent(p, objID);
+						if(!projectBreakEvent.isCancelled()) {
+							projectBreakEvent.callFunction(objID, "onClick", p);
+						}
+					});
 					return;
 				}
-				Bukkit.getScheduler().scheduleSyncDelayedTask(FurnitureLib.getInstance(), new Runnable() {
-					@Override
-					public void run() {
-						PostFurnitureBlockClickEvent pEvent = new PostFurnitureBlockClickEvent(p, b, objID);
-						Bukkit.getPluginManager().callEvent(pEvent);
-						if(!pEvent.isCancelled()){
-							FurnitureBlockClickEvent e = new FurnitureBlockClickEvent(p, b, objID);
-							Bukkit.getPluginManager().callEvent(e);
-						}
-					}});
 			}
 		}
 	}
@@ -161,23 +154,14 @@ public class ChunkOnLoad implements Listener{
 				if(!objID.getSQLAction().equals(SQLAction.REMOVE)){
 					final ObjectID o = objID;
 					if(FurnitureLib.getInstance().getFurnitureManager().getIgnoreList().contains(p.getUniqueId())){
-						PostFurnitureGhostBlockClickEvent pEvent = new PostFurnitureGhostBlockClickEvent(p, event.getClickedBlock(), o);
-						Bukkit.getPluginManager().callEvent(pEvent);
-						if(!pEvent.isCancelled()){
-							p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("FurnitureToggleEvent"));
-						}
+						Bukkit.getScheduler().runTask(FurnitureLib.getInstance(), () -> {
+							ProjectBreakEvent projectBreakEvent = new ProjectBreakEvent(p, o);
+							if(!projectBreakEvent.isCancelled()) {
+								projectBreakEvent.callFunction(o, "onBreak", p);
+							}
+						});
 						return;
 					}
-					Bukkit.getScheduler().scheduleSyncDelayedTask(FurnitureLib.getInstance(), new Runnable() {
-						@Override
-						public void run() {
-							PostFurnitureBlockBreakEvent pEvent = new PostFurnitureBlockBreakEvent(p, event.getClickedBlock(), o);
-							Bukkit.getPluginManager().callEvent(pEvent);
-							if(!pEvent.isCancelled()){
-								FurnitureBlockBreakEvent e = new FurnitureBlockBreakEvent(p, event.getClickedBlock(), o);
-								Bukkit.getPluginManager().callEvent(e);
-							}
-						}});
 				}
 			}
 		}

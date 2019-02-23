@@ -117,4 +117,7 @@ public abstract class FurnitureHelper{
 		});
 		update();
 	}
+	
+	public abstract void onClick(Player player);
+	public abstract void onBreak(Player player);
 }

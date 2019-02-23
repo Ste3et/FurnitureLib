@@ -1,6 +1,5 @@
 package de.Ste3et_C0st.FurnitureLib.Command;
 
-import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -8,21 +7,15 @@ import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 
-import de.Ste3et_C0st.FurnitureLib.Events.PostFurnitureClickEvent;
-import de.Ste3et_C0st.FurnitureLib.Utilitis.ManageInv;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
-import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
-import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
 
 public class command implements CommandExecutor, Listener{
 
@@ -42,67 +35,67 @@ public class command implements CommandExecutor, Listener{
 		subCommands.add(subcommand);
 	}
 	
-	@EventHandler
-	public void onArmorRightClick(final PostFurnitureClickEvent e){
-		if(playerList.contains(e.getPlayer())){
-			e.setCancelled(true);
-			Player p = e.getPlayer();
-			p.sendMessage("§6Furniture Info about§e " + e.getID().getSerial());
-			p.sendMessage("§6Plugin:§e " + e.getID().getPlugin());
-			p.sendMessage("§6Type:§e " + e.getID().getProject());
-			p.sendMessage("§6PublicMode:§e " + e.getID().getPublicMode().name().toLowerCase());
-			p.sendMessage("§6Owner: §2" + e.getID().getPlayerName());
-			p.sendMessage("§6PublicEventAccess: §e" + e.getID().getEventType().name().toLowerCase());
-			p.sendMessage("§6ArmorStands: §e" + e.getID().getPacketList().size());
-			p.sendMessage("§6FromDatabase: §c" + e.getID().isFromDatabase());
-			p.sendMessage("§6Object Finish: §c" + e.getID().isFinish());
-			p.sendMessage("§6Members: §e" + e.getID().getMemberList().size());
-			p.sendMessage("§6SQL State: §e" + e.getID().getSQLAction().name().toLowerCase());
-			p.sendMessage("§6Size: §e" + e.getID().getProjectOBJ().getLength()+":"+ e.getID().getProjectOBJ().getHeight()+":"+e.getID().getProjectOBJ().getWitdh());
-			p.sendMessage("§6Blocks: §a" + e.getID().getBlockList().size());
-			p.sendMessage("§6Project-Model: §e" + e.getID().getProjectOBJ().isEditorProject());
-			p.sendMessage("§6Placeable Side: §e" + e.getID().getProjectOBJ().getPlaceableSide().name());
-			if(e.getID().getUUID()!=null){
-				OfflinePlayer player = Bukkit.getOfflinePlayer(e.getID().getUUID());
-				if(player.hasPlayedBefore()&&!player.isOnline()){
-					long mili1 = System.currentTimeMillis();
-					long mili2 = player.getLastPlayed();
-					long mili3 = mili1-mili2;
-					SimpleDateFormat time = new SimpleDateFormat("D:HH:mm:ss.SSS");
-			    	String timeStr = time.format(mili3);
-			    	p.sendMessage("§6Player Offline: " + timeStr);
-				}
-			}
-			
-			for(fEntity stand : e.getID().getPacketList()){
-				stand.setGlowing(true);
-			}
-			final SQLAction action = e.getID().getSQLAction();
-			manager.updateFurniture(e.getID());
-			playerList.remove(p);
-			Bukkit.getScheduler().runTaskLater(plugin, () -> {
-				for(fEntity stand : e.getID().getPacketList()){
-					stand.setGlowing(false);
-				}
-				manager.updateFurniture(e.getID());
-				e.getID().setSQLAction(action);
-			}, 20*5);
-			
-			
-		}else if(manageList.contains(e.getPlayer())){
-			e.setCancelled(true);
-			Player p = e.getPlayer();
-			manageList.remove(p);
-			if(!e.getID().getUUID().equals(p.getUniqueId())){
-				if(!lib.getPermission().hasPerm(p, "furniture.admin") && !p.isOp() && !lib.getPermission().hasPerm(p, "furniture.manage.other")){
-					p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("WrongOwner"));
-					return;
-				}
-			}
-			new ManageInv(p, e.getID());
-			
-		}
-	}
+//	@EventHandler
+//	public void onArmorRightClick(final PostFurnitureClickEvent e){
+//		if(playerList.contains(e.getPlayer())){
+//			e.setCancelled(true);
+//			Player p = e.getPlayer();
+//			p.sendMessage("§6Furniture Info about§e " + e.getID().getSerial());
+//			p.sendMessage("§6Plugin:§e " + e.getID().getPlugin());
+//			p.sendMessage("§6Type:§e " + e.getID().getProject());
+//			p.sendMessage("§6PublicMode:§e " + e.getID().getPublicMode().name().toLowerCase());
+//			p.sendMessage("§6Owner: §2" + e.getID().getPlayerName());
+//			p.sendMessage("§6PublicEventAccess: §e" + e.getID().getEventType().name().toLowerCase());
+//			p.sendMessage("§6ArmorStands: §e" + e.getID().getPacketList().size());
+//			p.sendMessage("§6FromDatabase: §c" + e.getID().isFromDatabase());
+//			p.sendMessage("§6Object Finish: §c" + e.getID().isFinish());
+//			p.sendMessage("§6Members: §e" + e.getID().getMemberList().size());
+//			p.sendMessage("§6SQL State: §e" + e.getID().getSQLAction().name().toLowerCase());
+//			p.sendMessage("§6Size: §e" + e.getID().getProjectOBJ().getLength()+":"+ e.getID().getProjectOBJ().getHeight()+":"+e.getID().getProjectOBJ().getWitdh());
+//			p.sendMessage("§6Blocks: §a" + e.getID().getBlockList().size());
+//			p.sendMessage("§6Project-Model: §e" + e.getID().getProjectOBJ().isEditorProject());
+//			p.sendMessage("§6Placeable Side: §e" + e.getID().getProjectOBJ().getPlaceableSide().name());
+//			if(e.getID().getUUID()!=null){
+//				OfflinePlayer player = Bukkit.getOfflinePlayer(e.getID().getUUID());
+//				if(player.hasPlayedBefore()&&!player.isOnline()){
+//					long mili1 = System.currentTimeMillis();
+//					long mili2 = player.getLastPlayed();
+//					long mili3 = mili1-mili2;
+//					SimpleDateFormat time = new SimpleDateFormat("D:HH:mm:ss.SSS");
+//			    	String timeStr = time.format(mili3);
+//			    	p.sendMessage("§6Player Offline: " + timeStr);
+//				}
+//			}
+//			
+//			for(fEntity stand : e.getID().getPacketList()){
+//				stand.setGlowing(true);
+//			}
+//			final SQLAction action = e.getID().getSQLAction();
+//			manager.updateFurniture(e.getID());
+//			playerList.remove(p);
+//			Bukkit.getScheduler().runTaskLater(plugin, () -> {
+//				for(fEntity stand : e.getID().getPacketList()){
+//					stand.setGlowing(false);
+//				}
+//				manager.updateFurniture(e.getID());
+//				e.getID().setSQLAction(action);
+//			}, 20*5);
+//			
+//			
+//		}else if(manageList.contains(e.getPlayer())){
+//			e.setCancelled(true);
+//			Player p = e.getPlayer();
+//			manageList.remove(p);
+//			if(!e.getID().getUUID().equals(p.getUniqueId())){
+//				if(!lib.getPermission().hasPerm(p, "furniture.admin") && !p.isOp() && !lib.getPermission().hasPerm(p, "furniture.manage.other")){
+//					p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("WrongOwner"));
+//					return;
+//				}
+//			}
+//			new ManageInv(p, e.getID());
+//			
+//		}
+//	}
 	
 	public static boolean noPermissions(CommandSender sender, String s){
 		if(sender.isOp()) return true;

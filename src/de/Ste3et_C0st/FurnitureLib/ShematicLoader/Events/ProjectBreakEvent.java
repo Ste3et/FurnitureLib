@@ -1,5 +1,7 @@
 package de.Ste3et_C0st.FurnitureLib.ShematicLoader.Events;
 
+import java.lang.reflect.Method;
+
 import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.Cancellable;
@@ -41,5 +43,14 @@ public final class ProjectBreakEvent extends Event implements Cancellable{
 	
 	public void remove(boolean dropItem, boolean deleteEffect){
 		o.remove(p, dropItem, deleteEffect);
+	}
+	
+	public void callFunction(ObjectID objectID, String function, Player player) {
+		try {
+			Method m = objectID.getProjectInstance().getClass().getDeclaredMethod(function, Player.class);
+			m.invoke(objectID.getProjectInstance(), player);
+		}catch(Exception ex) {
+			ex.printStackTrace();
+		}
 	}
 }

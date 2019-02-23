@@ -20,16 +20,9 @@ import org.bukkit.block.data.type.Bed.Part;
 import org.bukkit.block.data.type.Door;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
-import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
-import de.Ste3et_C0st.FurnitureLib.Events.FurnitureBreakEvent;
-import de.Ste3et_C0st.FurnitureLib.Events.FurnitureClickEvent;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTCompressedStreamTools;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
-import de.Ste3et_C0st.FurnitureLib.ShematicLoader.Events.FurnitureBlockBreakEventListener;
-import de.Ste3et_C0st.FurnitureLib.ShematicLoader.Events.FurnitureBlockClickEventListener;
-import de.Ste3et_C0st.FurnitureLib.ShematicLoader.Events.FurnitureEntityBreakEventListener;
-import de.Ste3et_C0st.FurnitureLib.ShematicLoader.Events.FurnitureEntityClickEventListener;
 import de.Ste3et_C0st.FurnitureLib.main.Furniture;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
@@ -38,23 +31,12 @@ import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
 
 public class ProjectLoader extends Furniture{
+	
 	public String header;
 	private ProjektInventory inv=null;
 	
 	public ProjectLoader(ObjectID id){
 		this(id, true);
-		registerEvents();
-	}
-	
-	private void registerEvents(){
-		if(!getObjID().getPacketList().isEmpty()){
-			Bukkit.getPluginManager().registerEvents(new FurnitureEntityClickEventListener(getObjID(), inv), FurnitureLib.getInstance());
-			Bukkit.getPluginManager().registerEvents(new FurnitureEntityBreakEventListener(getObjID(), inv), FurnitureLib.getInstance());
-		}
-		if(!getObjID().getBlockList().isEmpty()){
-			Bukkit.getPluginManager().registerEvents(new FurnitureBlockClickEventListener(getObjID(), inv), FurnitureLib.getInstance());
-			Bukkit.getPluginManager().registerEvents(new FurnitureBlockBreakEventListener(getObjID(), inv), FurnitureLib.getInstance());
-		}
 	}
 	
 	public ProjectLoader(ObjectID id, boolean rotate){
@@ -270,8 +252,17 @@ public class ProjectLoader extends Furniture{
 	public void spawn(Location arg0) {}
 
 	@Override
-	public void onFurnitureBreak(FurnitureBreakEvent e) {}
+	public void onClick(Player player) {
+		player.sendMessage("Click §c" + getObjID().getID() + " §6" + getClass().getName());
+	}
 
 	@Override
-	public void onFurnitureClick(FurnitureClickEvent e) {}
+	public void onBreak(Player player) {
+		if(getObjID() == null) return;
+		if(getObjID().getSQLAction().equals(SQLAction.REMOVE)) return;
+		if(player == null) return;
+		if(canBuild(player)) {
+			this.destroy(player);
+		}
+	}
 }

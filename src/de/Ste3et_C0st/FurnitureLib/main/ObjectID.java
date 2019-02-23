@@ -70,6 +70,7 @@ public class ObjectID{
 	public void addArmorStand(fEntity packet) {packetList.add(packet);}
 	public void setPublicMode(PublicMode publicMode){this.publicMode = publicMode;}
 	public void setPrivate(boolean b){this.Private = b;}
+	public Object instance = null;
 	
 	public int viewDistance = 100;
 	
@@ -94,6 +95,14 @@ public class ObjectID{
 				players.remove(player);
 			}
 		}
+	}
+	
+	public Object getProjectInstance() {
+		return this.instance;
+	}
+	
+	public void setObject(Object obj) {
+		this.instance = obj;
 	}
 	
 	public void removePacket(Player p){
@@ -155,6 +164,7 @@ public class ObjectID{
 		if(deleteEffect) deleteEffect(packetList);
 		removeAll();
 		FurnitureManager.getInstance().remove(this);
+		this.setObject(null);
 	}
 	
 	public void dropItem(Player p, Location loc, Project porject){

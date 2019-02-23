@@ -1,5 +1,6 @@
 package de.Ste3et_C0st.FurnitureLib.Events;
 
+import java.lang.reflect.Method;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -10,7 +11,6 @@ import com.comphenix.protocol.events.ListenerPriority;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.EnumWrappers.EntityUseAction;
-
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
@@ -18,8 +18,8 @@ import de.Ste3et_C0st.FurnitureLib.main.Type.EntityMoving;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fArmorStand;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
-import de.Ste3et_C0st.FurnitureLib.Events.FurnitureBreakEvent;
-import de.Ste3et_C0st.FurnitureLib.Events.FurnitureClickEvent;
+import de.Ste3et_C0st.FurnitureLib.ShematicLoader.Events.ProjectBreakEvent;
+import de.Ste3et_C0st.FurnitureLib.ShematicLoader.Events.ProjectClickEvent;
 
 public class FurnitureEvents {
 
@@ -42,43 +42,22 @@ public class FurnitureEvents {
                             	EntityUseAction action = event.getPacket().getEntityUseActions().read(0);
                             	if(loc==null){return;}
                             	if(p==null){return;}
-								final Player player = p;
-								final fEntity packet = asPacket;
-								final ObjectID objectID = objID;
-								final Location location = loc;
 								switch (action) {
 								case ATTACK:
 									if(p.getGameMode().equals(GameMode.SPECTATOR)){return;}
-									Bukkit.getScheduler().scheduleSyncDelayedTask(FurnitureLib.getInstance(), new Runnable() {
-										@Override
-										public void run() {
-											PostFurnitureBreakEvent pEvent = new PostFurnitureBreakEvent(player, packet, objectID, location);
-											Bukkit.getServer().getPluginManager().callEvent(pEvent);
-											if(!pEvent.isCancelled()){
-												if(pEvent.spamBreak()){
-													FurnitureBreakEvent event = new FurnitureBreakEvent(player, packet, objectID, location);
-													Bukkit.getServer().getPluginManager().callEvent(event);
-												}
-											}
+									Bukkit.getScheduler().runTask(FurnitureLib.getInstance(), () -> {
+										ProjectBreakEvent projectBreakEvent = new ProjectBreakEvent(p, objID);
+										if(!projectBreakEvent.isCancelled()) {
+											projectBreakEvent.callFunction(objID, "onBreak", p);
 										}
 									});
 									break;
 								case INTERACT_AT:
 									if(p.getGameMode().equals(GameMode.SPECTATOR)){return;}
-									if(p.getGameMode().equals(GameMode.CREATIVE)&&!FurnitureLib.getInstance().creativeInteract()){
-										if(!FurnitureLib.getInstance().getPermission().hasPerm(p, "furniture.bypass.creative.interact")){
-											return;
-										}
-									}
-									Bukkit.getScheduler().scheduleSyncDelayedTask(FurnitureLib.getInstance(), new Runnable() {
-									@Override
-										public void run() {
-											PostFurnitureClickEvent pEvent = new PostFurnitureClickEvent(player, (fArmorStand) packet, objectID, location);
-											Bukkit.getServer().getPluginManager().callEvent(pEvent);	
-											if(!pEvent.isCancelled()){
-												FurnitureClickEvent event = new FurnitureClickEvent(player, (fArmorStand) packet, objectID, location);
-												Bukkit.getServer().getPluginManager().callEvent(event);	
-											}
+									Bukkit.getScheduler().runTask(FurnitureLib.getInstance(), () -> {
+										ProjectClickEvent projectBreakEvent = new ProjectClickEvent(p, objID);
+										if(!projectBreakEvent.isCancelled()) {
+											projectBreakEvent.callFunction(objID, "onClick", p);
 										}
 									});
 									break;
