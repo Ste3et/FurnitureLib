@@ -114,11 +114,14 @@ public class ChunkOnLoad implements Listener{
 				if(!FurnitureLib.getInstance().getFurnitureManager().getIgnoreList().contains(p.getUniqueId())){
 					Bukkit.getScheduler().runTask(FurnitureLib.getInstance(), () -> {
 						ProjectClickEvent projectBreakEvent = new ProjectClickEvent(p, objID);
+						Bukkit.getPluginManager().callEvent(projectBreakEvent);
 						if(!projectBreakEvent.isCancelled()) {
 							objID.callFunction("onClick", p);
 						}
 					});
 					return;
+				}else {
+					e.getPlayer().sendMessage(FurnitureLib.getInstance().getLangManager().getString("FurnitureToggleEvent"));
 				}
 			}
 		}
@@ -155,11 +158,14 @@ public class ChunkOnLoad implements Listener{
 					if(!FurnitureLib.getInstance().getFurnitureManager().getIgnoreList().contains(p.getUniqueId())){
 						Bukkit.getScheduler().runTask(FurnitureLib.getInstance(), () -> {
 							ProjectBreakEvent projectBreakEvent = new ProjectBreakEvent(p, o);
+							Bukkit.getPluginManager().callEvent(projectBreakEvent);
 							if(!projectBreakEvent.isCancelled()) {
 								o.callFunction("onBreak", p);
 							}
 						});
 						return;
+					}else {
+						event.getPlayer().sendMessage(FurnitureLib.getInstance().getLangManager().getString("FurnitureToggleEvent"));
 					}
 				}
 			}

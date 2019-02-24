@@ -1,6 +1,5 @@
 package de.Ste3et_C0st.FurnitureLib.Events;
 
-import java.lang.reflect.Method;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -45,21 +44,31 @@ public class FurnitureEvents {
 								switch (action) {
 								case ATTACK:
 									if(p.getGameMode().equals(GameMode.SPECTATOR)){return;}
-									Bukkit.getScheduler().runTask(FurnitureLib.getInstance(), () -> {
-										ProjectBreakEvent projectBreakEvent = new ProjectBreakEvent(p, objID);
-										if(!projectBreakEvent.isCancelled()) {
-											objID.callFunction("onBreak", p);
-										}
-									});
+									if(!FurnitureLib.getInstance().getFurnitureManager().getIgnoreList().contains(p.getUniqueId())){
+										Bukkit.getScheduler().runTask(FurnitureLib.getInstance(), () -> {
+											ProjectBreakEvent projectBreakEvent = new ProjectBreakEvent(p, objID);
+											Bukkit.getPluginManager().callEvent(projectBreakEvent);
+											if(!projectBreakEvent.isCancelled()) {
+												objID.callFunction("onBreak", p);
+											}
+										});
+									}else {
+										event.getPlayer().sendMessage(FurnitureLib.getInstance().getLangManager().getString("FurnitureToggleEvent"));
+									}
 									break;
 								case INTERACT_AT:
 									if(p.getGameMode().equals(GameMode.SPECTATOR)){return;}
-									Bukkit.getScheduler().runTask(FurnitureLib.getInstance(), () -> {
-										ProjectClickEvent projectBreakEvent = new ProjectClickEvent(p, objID);
-										if(!projectBreakEvent.isCancelled()) {
-											objID.callFunction("onClick", p);
-										}
-									});
+									if(!FurnitureLib.getInstance().getFurnitureManager().getIgnoreList().contains(p.getUniqueId())){
+										Bukkit.getScheduler().runTask(FurnitureLib.getInstance(), () -> {
+											ProjectClickEvent projectBreakEvent = new ProjectClickEvent(p, objID);
+											Bukkit.getPluginManager().callEvent(projectBreakEvent);
+											if(!projectBreakEvent.isCancelled()) {
+												objID.callFunction("onClick", p);
+											}
+										});
+									}else {
+										event.getPlayer().sendMessage(FurnitureLib.getInstance().getLangManager().getString("FurnitureToggleEvent"));
+									}
 									break;
 								default: break;
 								}
