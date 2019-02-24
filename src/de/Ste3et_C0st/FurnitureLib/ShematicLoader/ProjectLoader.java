@@ -20,6 +20,7 @@ import org.bukkit.block.data.type.Bed.Part;
 import org.bukkit.block.data.type.Door;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTCompressedStreamTools;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
@@ -253,6 +254,15 @@ public class ProjectLoader extends Furniture{
 
 	@Override
 	public void onClick(Player player) {
+		if(getObjID() == null) return;
+		if(getObjID().getSQLAction().equals(SQLAction.REMOVE)) return;
+		if(player == null) return;
+		if(canBuild(player)) {
+			if(this.inv != null) {
+				this.inv.openInventory(player);
+				return;
+			}
+		}
 		runFunction(player);
 	}
 	
@@ -265,6 +275,13 @@ public class ProjectLoader extends Furniture{
 		if(getObjID().getSQLAction().equals(SQLAction.REMOVE)) return;
 		if(player == null) return;
 		if(canBuild(player)) {
+			if(this.inv != null) {
+				for(ItemStack stack : inv.getInv().getContents()){
+					if(stack != null){
+						getWorld().dropItemNaturally(getLocation().clone().add(0, .5, 0), stack);
+					}
+				}
+			}
 			this.destroy(player);
 		}
 	}

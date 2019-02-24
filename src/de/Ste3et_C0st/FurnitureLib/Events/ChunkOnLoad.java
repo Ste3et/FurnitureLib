@@ -1,8 +1,6 @@
 package de.Ste3et_C0st.FurnitureLib.Events;
 
 import java.util.HashSet;
-import java.util.List;
-
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -213,29 +211,14 @@ public class ChunkOnLoad implements Listener{
 	}
 	
 	private Project getProjectByItem(ItemStack is){
-		ItemStack stack = getItemStackCopy(is);
-		if(stack==null) return null;
-		String systemID = "";
+		if(is==null) return null;
+		ItemStack stack = is.clone();
 		if(stack.hasItemMeta()){
 			if(stack.getItemMeta().hasLore()){
-				List<String> s = stack.getItemMeta().getLore();
-				if(HiddenStringUtils.hasHiddenString(s.get(0))) systemID = HiddenStringUtils.extractHiddenString(s.get(0));
+				String projectString = HiddenStringUtils.extractHiddenString(stack.getItemMeta().getLore().get(0));
+				if(projectString != null) return FurnitureManager.getInstance().getProjects().stream().filter(pro -> pro.getSystemID().equalsIgnoreCase(projectString)).findFirst().orElse(null);
 			}
 		}
-		for(Project pro : FurnitureLib.getInstance().getFurnitureManager().getProjects()){
-			if(pro==null) continue;
-			if(pro.getSystemID()==null) continue;
-			if(pro.getSystemID().equalsIgnoreCase(systemID)){
-				return pro;
-			}
-		}
-		
 		return null;
-	}
-	
-	private ItemStack getItemStackCopy(ItemStack is){
-		ItemStack copy = is.clone();
-		copy.setAmount(1);
-		return copy;
 	}
 }

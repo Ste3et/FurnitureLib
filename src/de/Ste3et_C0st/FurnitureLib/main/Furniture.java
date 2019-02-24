@@ -14,16 +14,15 @@ public abstract class Furniture extends FurnitureHelper implements Listener{
 	
 	public abstract void spawn(Location location);
 	
-	public void runFunction(Player p) {
+	public boolean runFunction(Player p) {
 		for(fEntity stand : getfAsList()){
 			if(stand.getName().startsWith("#Mount:") || stand.getName().startsWith("#SITZ")){
 				if(stand.getPassanger().isEmpty()){
 					stand.setPassanger(p);
-					return;
-				}else{
-					stand.eject(p.getEntityId());
+					return true;
 				}
 			}
 		}
+		return false;
 	}
 }
