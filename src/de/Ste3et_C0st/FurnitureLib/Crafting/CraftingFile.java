@@ -1,26 +1,18 @@
 
 package de.Ste3et_C0st.FurnitureLib.Crafting;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.OutputStream;
 import java.io.Reader;
-import java.io.StringBufferInputStream;
-import java.io.StringReader;
 import java.nio.ByteBuffer;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
-import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
 
 import org.bukkit.Bukkit;
@@ -35,17 +27,10 @@ import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.json.simple.parser.JSONParser;
 
-import com.comphenix.protocol.wrappers.nbt.io.NbtTextSerializer;
-import com.google.common.base.Charsets;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import de.Ste3et_C0st.FurnitureLib.NBT.NBTBase;
-import de.Ste3et_C0st.FurnitureLib.NBT.NBTCompressedStreamTools;
-import de.Ste3et_C0st.FurnitureLib.NBT.NBTReadLimiter;
-import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.HiddenStringUtils;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.Type.PlaceableSide;
@@ -57,7 +42,7 @@ public class CraftingFile {
 	private ShapedRecipe recipe;
 	private boolean isDisable;
 	private PlaceableSide side = null;
-	private HashSet<NBTTagCompound> functionList = new HashSet<NBTTagCompound>(); 
+	
 	public ShapedRecipe getRecipe(){return this.recipe;}
 	public ItemStack getItemstack(){return getRecipe().getResult();}
 	public boolean isEnable(){return this.isDisable;}
@@ -67,7 +52,6 @@ public class CraftingFile {
 	public File filePath;
 	public File getFilePath(){return this.filePath;}
 	public String getFileHeader(){return this.header;}
-	public HashSet<NBTTagCompound> getFunctionList(){return this.functionList;}
 	
 	public CraftingFile(String name,InputStream file){
 		this.name = name;
@@ -146,47 +130,19 @@ public class CraftingFile {
 		}
 	}
 	
-	public void loadFunction() {
+	public List<JsonObject> loadFunction() {
+		List<JsonObject> jsonList = new ArrayList<JsonObject>();
 		if(this.file.contains(header+".projectData.functions")) {
-//			NBTTagCompound compoundTest = new NBTTagCompound();
-//			compoundTest.setString("function", "replace");
-//			
-//			NBTTagCompound dataTest = new NBTTagCompound();
-//			
-//			dataTest.setString("type", "*_STAINED_GLASS_PANE");
-//			dataTest.setBoolean("consume", true);
-//			
-//			compoundTest.set("data", dataTest);
-//			
-//			System.out.println(compoundTest.toString());
-//			
-//			functionList.clear();
-//			for(String str : this.file.getStringList(header+".projectData.functions")) {
-//				try {
-//					
-//					ByteArrayInputStream bin = new ByteArrayInputStream(encStage1(str));
-//					NBTTagCompound compound = NBTCompressedStreamTools.read(bin);
-//					NBTCompressedStreamTools.read(inputstream)
-//					functionList.add(compound);
-//				}catch (Exception e) {
-//					e.printStackTrace();
-//					continue;
-//				}
-//			}
-			
-//			String testString = "{ChestedHorse:true,Items:[{ Slot:2b, id:stone, Count:1 }],SaddleItem:{ id:saddle, Count:1 },Tame:true}";
-//			try{
-//				NBTTagCompound tag = NBTCompressedStreamTools.read(testString.getBytes("UTF-8"), NBTReadLimiter.unlimited);
-//				System.out.println(tag.toString());
-//			}catch (Exception e) {
-//				e.printStackTrace();
-//			}
-			
-//			JsonObject obj = new JsonParser().parse("{ChestedHorse:true,Items:[{ Slot:2b, id:stone, Count:1 }],SaddleItem:{ id:saddle, Count:1 },Tame:true}").getAsJsonObject();
-//			System.out.println(obj.toString());
-//			System.out.println(obj.get("Items").toString());
-//			System.out.println(obj.getAsJsonObject("Items").getAsJsonObject("id").toString());
+			List<String> stringList = this.file.getStringList(header+".projectData.functions");
+			for(String str : stringList) {
+				try {
+					jsonList.add(new JsonParser().parse(str).getAsJsonObject());
+				}catch (Exception e) {
+					e.printStackTrace();
+				}
+			}
 		}
+		return jsonList;
 	}
 	
 	public static byte[] compress(String str) throws IOException

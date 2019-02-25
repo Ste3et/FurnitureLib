@@ -13,8 +13,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 
 import com.comphenix.protocol.wrappers.EnumWrappers;
-import com.google.common.hash.HashingInputStream;
-
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTCompressedStreamTools;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.CallbackBoolean;

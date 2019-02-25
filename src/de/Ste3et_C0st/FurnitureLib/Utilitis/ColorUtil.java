@@ -2,11 +2,7 @@ package de.Ste3et_C0st.FurnitureLib.Utilitis;
 
 import java.lang.reflect.Field;
 import java.util.List;
-import java.util.Optional;
-
-import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
-import org.bukkit.Keyed;
 import org.bukkit.Material;
 import org.bukkit.Tag;
 import org.bukkit.entity.Player;
@@ -109,36 +105,4 @@ public class ColorUtil {
 		}
 		return null;
 	}
- 	
-	@Deprecated
-	private void colorBanner(Player p, boolean canBuild, Material m, ObjectID obj, int row){
-//		if(!canBuild){return;}
-//		ItemStack is = p.getInventory().getItemInMainHand();
-//		Integer Amount = is.getAmount();
-//		List<fEntity> asp = manager.getfArmorStandByObjectID(obj);
-//		BannerMeta meta = (BannerMeta) is.getItemMeta();
-//		DyeColor color = meta.getBaseColor();
-//		int j = row;
-//		for(fEntity packet : asp){
-//			if(packet.getInventory().getHelmet()!=null&&packet.getInventory().getHelmet().getType().name().toLowerCase().contains("_banner")&&Amount>0){
-//				DyeColor color2 = ((BannerMeta) packet.getInventory().getHelmet().getItemMeta()).getBaseColor();
-//				if(color2 != color){
-//					packet.getInventory().setHelmet(getNewIS(packet.getInventory().getHelmet(), color));
-//					if(!p.getGameMode().equals(GameMode.CREATIVE) || !lib.useGamemode()){j--;if(j==0){Amount--;j=row;}}
-//				}
-//			}
-//		}
-//		removeIS(obj, p, Amount);
-	}
-	
-//	@SuppressWarnings("deprecation")
-//	private ItemStack getNewIS(ItemStack helmet, DyeColor color) {
-////		//ItemStack is = new ItemStack(helmet.getType(), 1, helmet.getDurability());
-////		ItemStack is = helmet.clone();
-////		is.setAmount(1);
-////		BannerMeta im = (BannerMeta) helmet.getItemMeta();
-////		im.setBaseColor(color);
-////		is.setItemMeta(im);
-//		return is;
-//	}
 }

@@ -263,7 +263,9 @@ public class ProjectLoader extends Furniture{
 				return;
 			}
 		}
-		runFunction(player);
+		if(runFunction(player)) {
+			update();
+		}
 	}
 	
 	/**

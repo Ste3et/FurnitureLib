@@ -42,13 +42,10 @@ public class fInventory implements Cloneable{
 	}
 	
 	public ItemStack getSlot(String s) {
-		switch (s) {
-		case "MAINHAND":return getSlot(0);
-		case "OFFHAND":return getSlot(1);
-		case "FEET":return getSlot(2);
-		case "LEGS":return getSlot(3);
-		case "CHEST":return getSlot(4);
-		case "HEAD":return getSlot(5);
+		try {
+			return getSlot(EquipmentSlot.valueOf(s).getSlot());
+		}catch (Exception e) {
+			e.printStackTrace();
 		}
 		return null;
 	}
@@ -75,17 +72,29 @@ public class fInventory implements Cloneable{
 	}
 	
 	public void setSlot(String s, ItemStack item) {
-		if (item == null) {
-			item = new ItemStack(Material.AIR, 1);
+		if (item == null) item = new ItemStack(Material.AIR, 1);
+		try {
+			setSlot(EquipmentSlot.valueOf(s).getSlot(), item);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	public static enum EquipmentSlot{
+		MAINHAND(0),
+		OFFHAND(1),
+		FEET(2),
+		LEGS(3),
+		CHEST(4),
+		HEAD(5);
+		
+		private int slot;
+		EquipmentSlot(int i){
+			this.slot = i;
 		}
 		
-		switch (s) {
-		case "MAINHAND":setSlot(0, item);break;
-		case "OFFHAND":setSlot(1, item);break;
-		case "FEET":setSlot(2, item);break;
-		case "LEGS":setSlot(3, item);break;
-		case "CHEST":setSlot(4, item);break;
-		case "HEAD":setSlot(5, item);break;
+		public int getSlot() {
+			return this.slot;
 		}
 	}
 	

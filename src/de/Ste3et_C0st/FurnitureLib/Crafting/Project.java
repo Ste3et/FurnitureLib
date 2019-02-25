@@ -2,11 +2,15 @@ package de.Ste3et_C0st.FurnitureLib.Crafting;
 
 import java.io.InputStream;
 import java.util.HashMap;
+import java.util.List;
+
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+
+import com.google.gson.JsonObject;
 
 import de.Ste3et_C0st.FurnitureLib.ShematicLoader.ProjectLoader;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.config;
@@ -23,6 +27,7 @@ public class Project{
 	private config limitationConfig;
 	private FileConfiguration limitationFile;
 	private HashMap<World, Integer> limitationWorld = new HashMap<World, Integer>();
+	private List<JsonObject> functionList;
 	private CenterType type = CenterType.RIGHT;
 	private PlaceableSide side;
 	private boolean EditorProject = false, silent = false;
@@ -44,6 +49,7 @@ public class Project{
 	public Project setEditorProject(boolean b){this.EditorProject = b;return this;}
 	public Project setClass(Class<?> clas) {this.clas = clas;return this;}
 	public Project setName(String name){this.project = name;return this;}
+	public List<JsonObject> getFunctions(){return this.functionList;}
 	public boolean isSilent(){return this.silent;}
 	public int getWitdh(){return this.witdh;}
 	public int getHeight(){return this.height;}
@@ -66,6 +72,7 @@ public class Project{
 		this.clas = clas;
 		this.file = new CraftingFile(name, craftingFile);
 		this.side = side;
+		this.functionList = this.file.loadFunction();
 		FurnitureLib.getInstance().getFurnitureManager().addProject(this);
 		loadDefaults();
 		FurnitureLib.getInstance().getLimitManager().loadDefault(this.project);
