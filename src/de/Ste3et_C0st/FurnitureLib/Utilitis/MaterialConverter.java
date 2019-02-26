@@ -109,6 +109,13 @@ public class MaterialConverter {
 			matID = 0;
 		}
 		
+		try {
+			Material materi = Material.valueOf(material.toUpperCase());
+			if(materi != null) {
+				return materi;
+			}
+		}catch (Exception e) {}
+		
 		if(matID != 0) {
 			mat = convertMaterial(matID, (byte) sub);
 		}else {

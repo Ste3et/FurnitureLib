@@ -3,6 +3,7 @@ package de.Ste3et_C0st.FurnitureLib.Command;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
@@ -13,6 +14,7 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
@@ -24,6 +26,7 @@ import com.comphenix.protocol.wrappers.EnumWrappers;
 import de.Ste3et_C0st.FurnitureLib.Command.command;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTCompressedStreamTools;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
+import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagList;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.MaterialConverter;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.Type.PlaceableSide;
@@ -156,7 +159,6 @@ public class downloadCommand {
 				+ "                                      #\n"
 				+ "------------------------------------  #\n");
 		file.options().copyHeader(true);
-		
 		NBTTagCompound crafting = compound.getCompound("crafting");
 		NBTTagCompound index = crafting.getCompound("index");
 		NBTTagCompound lore = crafting.getCompound("lore");
@@ -215,8 +217,24 @@ public class downloadCommand {
 				}
 			}
 		}
+		
+		if(compound.hasKey("function")) {
+			NBTTagCompound stringList = compound.getCompound("function");
+			List<String> functions = new ArrayList<String>();
+			for(int j = 0; j < stringList.c().size(); j++) {
+				functions.add(stringList.getString(j + ""));
+			}
+			file.set(project + ".projectData.functions", functions);
+		}
 		file.save(new File("plugins/"+FurnitureLib.getInstance().getName()+"/models/" + project + ".dModel"));
-		FurnitureLib.getInstance().getProjectManager().registerProeject(project, side);
+		final PlaceableSide s = side;
+		Bukkit.getScheduler().runTask(FurnitureLib.getInstance(), () ->{
+			try {
+				FurnitureLib.getInstance().getProjectManager().registerProeject(project, s);
+			} catch (FileNotFoundException e) {
+				e.printStackTrace();
+			}
+		});
 	}
 	
 	private void convert(NBTTagCompound compound, String project) throws IOException{
