@@ -46,6 +46,7 @@ public class ProtectionManager {
 	
 	private boolean blockStateParser(BlockData blockData) {
 		boolean b = false;
+		if(blockData.getMaterial().name().contains("_FENCE")) return true;
 		if(blockData instanceof Slab) {return !((Slab) blockData).getType().name().equalsIgnoreCase("BOTTOM");}
 		if(blockData instanceof Stairs){return !((Stairs) blockData).getHalf().name().equalsIgnoreCase("BOTTOM");}
 		return b;

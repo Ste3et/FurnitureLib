@@ -9,6 +9,8 @@ import java.util.Base64;
 import java.util.List;
 import java.util.UUID;
 
+import org.bukkit.Bukkit;
+import org.bukkit.Chunk;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -17,7 +19,9 @@ import com.comphenix.protocol.wrappers.EnumWrappers;
 
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTCompressedStreamTools;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
+import de.Ste3et_C0st.FurnitureLib.main.ChunkData;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
+import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
 import de.Ste3et_C0st.FurnitureLib.main.Type.PlaceableSide;
 
 public class autoConverter {
@@ -135,7 +139,17 @@ public class autoConverter {
 	
 	public static void databaseConverter(CommandSender sender) {
 		if(!FurnitureLib.getInstance().isAutoFileUpdater()) {
-			FurnitureLib.getInstance().getSQLManager().loadALL();
+			if(FurnitureLib.getInstance().isSync()) {
+				FurnitureLib.getInstance().getSQLManager().loadALL();
+			}else{
+				Bukkit.getWorlds().stream().forEach(world -> {
+					for(Chunk c : world.getLoadedChunks()) {
+						ChunkData data = FurnitureManager.getInstance().getChunkDataList().stream().findFirst().filter(chunk -> c.equals(chunk)).orElse(new ChunkData(c));
+						if(!data.isLoadet()) data.load();
+						if(!FurnitureManager.getInstance().getChunkDataList().contains(data)) FurnitureManager.getInstance().getChunkDataList().add(data);
+					}
+				});
+			}
 			return;
 		}
 		FurnitureLib.getInstance().getSQLManager().convert(sender);

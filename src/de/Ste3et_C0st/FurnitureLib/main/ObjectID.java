@@ -68,7 +68,7 @@ public class ObjectID{
 	public List<fEntity> getPacketList() {return packetList;}
 	public void setPacketList(List<fEntity> packetList) {this.packetList = packetList;}
 	public boolean isInRange(Player player) {return (getStartLocation().distance(player.getLocation()) <= viewDistance);}
-	public boolean isInWorld(Player player) {return getStartLocation().getWorld().equals(player.getLocation().getWorld());}
+	public boolean isInWorld(Player player) {return getWorld().equals(player.getWorld());}
 	public void addArmorStand(fEntity packet) {packetList.add(packet);}
 	public void setPublicMode(PublicMode publicMode){this.publicMode = publicMode;}
 	public void setPrivate(boolean b){this.Private = b;}
@@ -108,6 +108,7 @@ public class ObjectID{
 	}
 	
 	public void callFunction(String function, Player player) {
+		if(getFunctionObject() == null) return;
 		try {
 			Method m = getFunctionObject().getClass().getDeclaredMethod(function, Player.class);
 			m.invoke(getFunctionObject(), player);

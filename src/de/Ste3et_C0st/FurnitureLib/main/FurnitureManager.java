@@ -30,10 +30,13 @@ public class FurnitureManager {
 	private List<Project> projects = new ArrayList<Project>();
 	private List<UUID> ignoreList = new ArrayList<UUID>();
 	
+	private HashSet<ChunkData> chunkList = new HashSet<ChunkData>();
+	
 	private static FurnitureManager manager;
 	public HashSet<ObjectID> getObjectList(){return this.objecte;}
+	public HashSet<ChunkData> getChunkDataList(){return this.chunkList;}
 	public List<UUID> getIgnoreList(){return this.ignoreList;}
-	
+
 	public FurnitureManager() {
 		manager = this;
 	}
@@ -74,7 +77,7 @@ public class FurnitureManager {
 	
 	public void updatePlayerView(Player player) {
 		if(this.objecte.isEmpty() || !player.isOnline()){return;}
-		objecte.stream().forEach(obj -> obj.updatePlayerView(player));
+		objecte.stream().filter(obj -> obj != null && obj.isFinish()).forEach(obj -> obj.updatePlayerView(player));
 	}
 	
 	public void updateFurniture(ObjectID obj) {

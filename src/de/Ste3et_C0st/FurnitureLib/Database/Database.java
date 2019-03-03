@@ -180,7 +180,6 @@ public abstract class Database {
 	    				}
 	    			}
 	    		}
-	    		rs.close();
 	    		callBack.onResult(idList);
 			}catch (Exception e) {
 				e.printStackTrace();

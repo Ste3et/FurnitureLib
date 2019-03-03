@@ -9,7 +9,8 @@ import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 public class FunctionTypes{
 	
 	public enum FunctionType{
-		RECOLOR("recolor", new recolorFunction());
+		RECOLOR("recolor", new recolorFunction()),
+		REPLACE("replace", new replaceFunction());
 		
 		String functionName = "";
 		projectFunction function = null;

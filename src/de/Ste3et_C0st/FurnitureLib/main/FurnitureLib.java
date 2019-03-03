@@ -89,6 +89,7 @@ public class FurnitureLib extends JavaPlugin{
 	private int purgeTime = 30, viewDistance = 100, limitGlobal = -1;
 	private long purgeTimeMS = 0, spamBreakTime = 5000, spamPlaceTime = 5000;
 	private Material defMaterial = Material.COW_SPAWN_EGG;
+	private boolean sync = true;
 	public HashMap<Project, Long> deleteMap = new HashMap<Project, Long>();
 	public HashMap<UUID, Long> timeStampPlace = new HashMap<UUID, Long>();
 	public HashMap<UUID, Long> timeStampBreak = new HashMap<UUID, Long>();
@@ -153,6 +154,7 @@ public class FurnitureLib extends JavaPlugin{
 	private boolean isRightProtocollib(String s){return s.startsWith("4");}
 	public boolean checkPurge(ObjectID obj, UUID uuid){return checkPurge(obj, uuid, this.purgeTime);}
 	public boolean checkPurge(ObjectID obj, OfflinePlayer player){return checkPurge(obj, player.getUniqueId());}
+	public boolean isSync() {return this.sync;}
 	
 	@Override
 	public void onEnable(){
@@ -258,6 +260,7 @@ public class FurnitureLib extends JavaPlugin{
 		this.mode = PublicMode.valueOf(getConfig().getString("config.PlaceMode.Mode", "PRIVATE"));
 		this.update = getConfig().getBoolean("config.CheckUpdate");
 		this.updater = new Updater();
+		//this.sync = !getConfig().getBoolean("config.asyncLoading", false);
 		this.loadIgnore();
 		
 		debug("Config->useGamemode:" + useGamemode);
