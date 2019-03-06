@@ -284,6 +284,16 @@ public class ProjectLoader extends Furniture{
 					}
 				}
 			}
+			
+			getfAsList().stream().filter(entity -> entity.getName().equalsIgnoreCase("#ITEM#") || entity.getName().equalsIgnoreCase("#BLOCK#")).
+			forEach(entity -> {
+				for(ItemStack stack : entity.getInventory().getIS()) {
+					if(stack != null){
+						getWorld().dropItemNaturally(getLocation().clone().add(0, .5, 0), stack);
+					}
+				}
+			});
+			
 			this.destroy(player);
 		}
 	}
