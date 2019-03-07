@@ -263,6 +263,7 @@ public class ProjectLoader extends Furniture{
 				return;
 			}
 		}
+		toggleLight(true);
 		if(runFunction(player)) {
 			update();
 		}
