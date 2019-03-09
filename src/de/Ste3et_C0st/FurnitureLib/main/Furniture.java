@@ -2,6 +2,7 @@ package de.Ste3et_C0st.FurnitureLib.main;
 
 import java.util.List;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
@@ -41,12 +42,13 @@ public abstract class Furniture extends FurnitureHelper implements Listener{
 				return true;
 			}
 		}
-		
-		for(fEntity stand : getfAsList()){
-			if(stand.getName().startsWith("#Mount:") || stand.getName().startsWith("#SITZ")){
-				if(stand.getPassanger().isEmpty()){
-					stand.setPassanger(p);
-					return true;
+		if(!p.isSneaking()) {
+			for(fEntity stand : getfAsList()){
+				if(stand.getName().startsWith("#Mount:") || stand.getName().startsWith("#SITZ")){
+					if(stand.getPassanger().isEmpty()){
+						stand.setPassanger(p);
+						return true;
+					}
 				}
 			}
 		}
