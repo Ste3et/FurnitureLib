@@ -56,33 +56,31 @@ public abstract class Furniture extends FurnitureHelper implements Listener{
 	}
 	
 	private boolean runOldFunctions(Player p) {
-		if(this.canBuild(p)) {
-			ItemStack stack = p.getInventory().getItemInMainHand();
-			if(stack != null) {
-				Material m = stack.getType();
-				if(m.equals(Material.AIR) || !m.isBlock()){
-					for(fEntity stand : getfAsList()){
-						if(stand.getName().startsWith("#ITEM")){
-							if(stand.getInventory().getItemInMainHand()!=null&&!stand.getInventory().getItemInMainHand().getType().equals(Material.AIR)){
-								ItemStack is = stand.getInventory().getItemInMainHand();
-								is.setAmount(1);
-								getWorld().dropItem(getLocation(), is);
-							}
-							if(p.getInventory().getItemInMainHand()!=null){
-								ItemStack is = p.getInventory().getItemInMainHand().clone();
-								if(is.getAmount()<=0){
-									is.setAmount(0);
-								}else{
-									is.setAmount(1);
-								}
-								stand.setItemInMainHand(is);
-								stand.update();
-								consumeItem(p);	
-							}
-							return true;
+		ItemStack stack = p.getInventory().getItemInMainHand();
+		if(stack != null) {
+			Material m = stack.getType();
+			if(m.equals(Material.AIR) || !m.isBlock()){
+				for(fEntity stand : getfAsList()){
+					if(stand.getName().startsWith("#ITEM")){
+						if(stand.getInventory().getItemInMainHand()!=null&&!stand.getInventory().getItemInMainHand().getType().equals(Material.AIR)){
+							ItemStack is = stand.getInventory().getItemInMainHand();
+							is.setAmount(1);
+							getWorld().dropItem(getLocation(), is);
 						}
+						if(p.getInventory().getItemInMainHand()!=null){
+							ItemStack is = p.getInventory().getItemInMainHand().clone();
+							if(is.getAmount()<=0){
+								is.setAmount(0);
+							}else{
+								is.setAmount(1);
+							}
+							stand.setItemInMainHand(is);
+							stand.update();
+							consumeItem(p);	
+						}
+						return true;
 					}
-				}
+					}
 			}
 		}
 		return false;
