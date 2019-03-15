@@ -136,6 +136,7 @@ public class FurnitureLib extends JavaPlugin{
 	public boolean isGlowing(){return this.glowing;}
 	public boolean isAutoPurge(){return this.autoPurge;}
 	public boolean isPurgeRemove(){return this.removePurge;}
+	public boolean canBuild(Player p, ObjectID id, EventType type, boolean sendMessage){ return Pmanager.canBuild(p, id, type, sendMessage);}
 	public boolean canBuild(Player p, ObjectID id, EventType type){ return Pmanager.canBuild(p, id, type);}
 	public boolean isUpdate(){return this.update;}
 	public boolean isParticleEnable(){return this.useParticle;}

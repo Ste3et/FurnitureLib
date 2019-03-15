@@ -258,15 +258,20 @@ public class ProjectLoader extends Furniture{
 		if(getObjID() == null) return;
 		if(getObjID().getSQLAction().equals(SQLAction.REMOVE)) return;
 		if(player == null) return;
-		if(canBuild(player)) {
+		boolean b = false;
+		if(canBuild(player, false)){
 			if(this.inv != null) {
 				this.inv.openInventory(player);
 				return;
 			}
+			if(runFunction(player)) {
+				update();
+				return;
+			}
+			b = true;
 		}
-		toggleLight(true);
-		if(runFunction(player)) {
-			update();
+		if(!this.passangerFunction(player) && b) {
+			player.sendMessage(FurnitureLib.getInstance().getLangManager().getString("NoPermissions"));
 		}
 	}
 	

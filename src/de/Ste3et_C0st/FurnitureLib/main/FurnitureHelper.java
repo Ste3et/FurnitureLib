@@ -76,6 +76,7 @@ public abstract class FurnitureHelper{
 		p.updateInventory();
 	}
 	
+	public boolean canBuild(Player p, boolean echo){return FurnitureLib.getInstance().canBuild(p, getObjID(), Type.EventType.BREAK, echo);} 
 	public boolean canBuild(Player p){return FurnitureLib.getInstance().canBuild(p, getObjID(), Type.EventType.BREAK);} 
 	public boolean canInteract(Player p){return FurnitureLib.getInstance().canBuild(p, getObjID(), Type.EventType.INTERACT);} 
 	

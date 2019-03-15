@@ -67,6 +67,10 @@ public class ProtectionManager {
 	}
 	
 	public boolean canBuild(Player p, ObjectID id, EventType type){
+		return canBuild(p, id, type, true);
+	}
+	
+	public boolean canBuild(Player p, ObjectID id, EventType type, boolean sendMessage){
 		if(p.isOp() || FurnitureLib.getInstance().getPermission().hasPerm(p,"furniture.bypass.protection") || FurnitureLib.getInstance().getPermission().hasPerm(p,"furniture.admin")){return true;}
 		PublicMode publicMode = id.getPublicMode();
 		UUID userID = p.getUniqueId();
@@ -84,7 +88,7 @@ public class ProtectionManager {
 		}else if(publicMode.equals(PublicMode.PUBLIC)){
 			b = isEventType(id, type);
 		}
-		if(!b){p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("NoPermissions"));}
+		if(!b && sendMessage){p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("NoPermissions"));}
 		return b;
 	}
 	

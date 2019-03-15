@@ -42,6 +42,10 @@ public abstract class Furniture extends FurnitureHelper implements Listener{
 				return true;
 			}
 		}
+		return false;
+	}
+	
+	public boolean passangerFunction(Player p) {
 		if(!p.isSneaking()) {
 			for(fEntity stand : getfAsList()){
 				if(stand.getName().startsWith("#Mount:") || stand.getName().startsWith("#SITZ")){
