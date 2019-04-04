@@ -11,7 +11,10 @@ import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
+import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.block.BlockPhysicsEvent;
+
+import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 
 public class BlockManager implements Listener{
 	
@@ -52,5 +55,10 @@ public class BlockManager implements Listener{
 	public void onPhysics(BlockPhysicsEvent e){
 		  Block b = e.getBlock();
 		  e.setCancelled(locList.contains(b.getLocation()));
+	}
+	
+	@EventHandler
+	public void onWaterFlow(BlockFromToEvent e){
+		e.setCancelled(locList.contains(e.getBlock().getLocation()));
 	}
 }

@@ -131,6 +131,7 @@ public class ProjectLoader extends Furniture{
 				|| customName.equalsIgnoreCase("#BLOCK#") 
 				|| customName.equalsIgnoreCase("#SITZ#") 
 				|| customName.startsWith("#Light")
+				|| customName.startsWith("/")
 				|| customName.toUpperCase().startsWith("#DYE_")){
 					packet.setNameVasibility(false);
 				}

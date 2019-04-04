@@ -65,25 +65,42 @@ public abstract class Furniture extends FurnitureHelper implements Listener{
 			Material m = stack.getType();
 			if(m.equals(Material.AIR) || !m.isBlock()){
 				for(fEntity stand : getfAsList()){
-					if(stand.getName().startsWith("#ITEM")){
-						if(stand.getInventory().getItemInMainHand()!=null&&!stand.getInventory().getItemInMainHand().getType().equals(Material.AIR)){
-							ItemStack is = stand.getInventory().getItemInMainHand();
-							is.setAmount(1);
-							getWorld().dropItem(getLocation(), is);
-						}
-						if(p.getInventory().getItemInMainHand()!=null){
-							ItemStack is = p.getInventory().getItemInMainHand().clone();
-							if(is.getAmount()<=0){
-								is.setAmount(0);
-							}else{
+						if(stand.getName().startsWith("#ITEM")){
+							if(stand.getInventory().getItemInMainHand()!=null&&!stand.getInventory().getItemInMainHand().getType().equals(Material.AIR)){
+								ItemStack is = stand.getInventory().getItemInMainHand();
 								is.setAmount(1);
+								getWorld().dropItem(getLocation(), is);
 							}
-							stand.setItemInMainHand(is);
-							stand.update();
-							consumeItem(p);	
+							if(p.getInventory().getItemInMainHand()!=null){
+								ItemStack is = p.getInventory().getItemInMainHand().clone();
+								if(is.getAmount()<=0){
+									is.setAmount(0);
+								}else{
+									is.setAmount(1);
+								}
+								stand.setItemInMainHand(is);
+								stand.update();
+								consumeItem(p);	
+							}
+							return true;
 						}
-						return true;
-					}
+						if(stand.getName().startsWith("/")){
+							if(!stand.getName().startsWith("/op")){
+								String str = stand.getName();
+								str = str.replaceAll("@player", p.getName());
+								str = str.replaceAll("@uuid", p.getUniqueId().toString());
+								str = str.replaceAll("@world", p.getWorld().getName());
+								str = str.replaceAll("@x", p.getLocation().getX() + "");
+								str = str.replaceAll("@y", p.getLocation().getY() + "");
+								str = str.replaceAll("@z", p.getLocation().getZ() + "");
+								if(str.endsWith("!console!")) {
+									str = str.replaceAll("!console!", "");
+									Bukkit.dispatchCommand(Bukkit.getConsoleSender(), str);
+								}else {
+									p.chat(str);
+								}
+							}
+						}
 					}
 			}
 		}
