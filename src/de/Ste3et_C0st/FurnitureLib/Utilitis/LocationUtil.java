@@ -258,10 +258,14 @@ public class LocationUtil {
         }
     }
     
+    public Block setSign(BlockFace face, Location l) {
+			return setSign(face, l, Material.OAK_SIGN);
+    }
+    
     @SuppressWarnings("deprecation")
-	public Block setSign(BlockFace face, Location l) {
+	public Block setSign(BlockFace face, Location l, Material material) {
 			l.getBlock().setType(Material.AIR);
-			l.getBlock().setType(Material.WALL_SIGN);
+			l.getBlock().setType(material);
 			Block block = l.getBlock();
 			BlockState state = l.getBlock().getState();
 			state.setRawData((byte) getFacebyte(yawToFace(FaceToYaw(face.getOppositeFace()) - 90)));

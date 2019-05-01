@@ -130,7 +130,7 @@ public class FurnitureLib extends JavaPlugin{
 	public static FurnitureLib getInstance(){return instance;}
 	
 	public void send(String s){getServer().getConsoleSender().sendMessage(s);}
-	private void loadMetrics(){try{if(getConfig().getBoolean("config.UseMetrics")){new bStats(getInstance());}}catch(Exception e){e.printStackTrace();}}
+	private void loadMetrics(){if(getConfig().getBoolean("config.UseMetrics")){return;}}
 
 	public boolean isAutoFileUpdater() {return this.autoFileUpdater;}
 	public boolean isGlowing(){return this.glowing;}
@@ -159,7 +159,7 @@ public class FurnitureLib extends JavaPlugin{
 	
 	@Override
 	public void onEnable(){
-		if(!getBukkitVersion().startsWith("v1_13")) {
+		if(!getBukkitVersion().startsWith("v1_14")) {
 			send("§cYour Server version is not Supportet please use §c1.13.x");
 			getPluginManager().disablePlugin(this);
 			return;

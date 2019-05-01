@@ -68,7 +68,8 @@ public class ManageInv  implements Listener{
 			ItemStack f = getItemStack("setOwner");
 			ItemStack prevPage = getItemStack("PrevPage");
 			ItemStack nextPage = getItemStack("NextPage");
-			String invTitle = inv.getName();
+			//NEEED TO REWORK
+			String invTitle = e.getView().getTitle();
 			String addTitle = lang.getName("playerAddInvName");
 			String remTitle = lang.getName("playerRemoveInvName");
 			String setTitle = lang.getName("playerSetInvName");

@@ -31,25 +31,27 @@ public class Type {
 	public enum CenterType{LEFT, RIGHT, CENTER, FRONT}
 	public enum PlaceableSide{TOP,BOTTOM,SIDE, WATER}
 	public enum Reason{BLOCK,ENTITY}
+
+	public static String version = "1.14";
 	
 	public enum DyeColor
 	{
-	  WHITE(Material.BONE_MEAL),  
+	  WHITE(version == "1.13" ? Material.valueOf("BONE_MEAL") : Material.valueOf("WHITE_DYE")),  
 	  ORANGE(Material.ORANGE_DYE),  
 	  MAGENTA(Material.MAGENTA_DYE),  
 	  LIGHT_BLUE(Material.LIGHT_BLUE_DYE),  
-	  YELLOW(Material.DANDELION_YELLOW),  
+	  YELLOW(version == "1.13" ? Material.valueOf("DANDELION_YELLOW") : Material.valueOf("YELLOW_DYE")),  
 	  LIME(Material.LIME_DYE),  
 	  PINK(Material.PINK_DYE),  
 	  LIGHT_GRAY(Material.LIGHT_GRAY_DYE),
 	  GRAY(Material.GRAY_DYE),  
 	  CYAN(Material.CYAN_DYE),  
 	  PURPLE(Material.PURPLE_DYE),  
-	  BLUE(Material.LAPIS_LAZULI),  
-	  BROWN(Material.COCOA_BEANS),  
-	  GREEN(Material.CACTUS_GREEN),  
-	  RED(Material.ROSE_RED),  
-	  BLACK(Material.INK_SAC);
+	  BLUE(version == "1.13" ? Material.valueOf("LAPIS_LAZULI") : Material.valueOf("BLUE_DYE")),  
+	  BROWN(version == "1.13" ? Material.valueOf("COCOA_BEANS") : Material.valueOf("BROWN_DYE")),  
+	  GREEN(Material.GREEN_DYE),  
+	  RED(version == "1.13" ? Material.valueOf("ROSE_RED") : Material.valueOf("RED_DYE")),  
+	  BLACK(version == "1.13" ? Material.valueOf("INK_SACK") : Material.valueOf("BLACK_DYE"));
 
 	  private Material mat;
 	  
@@ -100,7 +102,7 @@ public class Type {
 		  stack.setItemMeta(meta);
 		  return stack;
 	  }
-	}
+	} 
 	
 	public enum BodyPart{
 		HEAD("Head",12, new EulerAngle(0D,0D,0D)), 

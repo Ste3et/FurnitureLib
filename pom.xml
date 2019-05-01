@@ -112,13 +112,13 @@
     <dependency>
            <groupId>org.spigotmc</groupId>
            <artifactId>spigot-api</artifactId>
-           <version>1.13.2-R0.1-SNAPSHOT</version>
+           <version>1.14-R0.1-SNAPSHOT</version>
            <scope>provided</scope>
     </dependency>
     <dependency>
             <groupId>org.bukkit</groupId>
             <artifactId>bukkit</artifactId>
-            <version>1.13.2-R0.1-SNAPSHOT</version>
+            <version>1.14-R0.1-SNAPSHOT</version>
             <scope>provided</scope>
     </dependency>
 
@@ -139,7 +139,7 @@
   	<dependency>
 	   <groupId>de.Ste3et_C0st.furniture</groupId>
 	   <artifactId>ProtectionLib</artifactId>
-	   <version>LATEST</version>
+	   <version>0.9.7</version>
 	   <scope>provided</scope>
 	</dependency>
 	
