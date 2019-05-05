@@ -81,26 +81,26 @@ public class fArmorStand extends fEntity {
 	  }
 	
 	public fArmorStand setSmall(boolean b){
-		setBitMask(b, 11, 0);
+		setBitMask(b, Type.field.getBitMask(), 0);
 		this.small = b;
 		return this;
 	}
 
 	public fArmorStand setArms(boolean b) {
-		setBitMask(b, 11, 2);
+		setBitMask(b, Type.field.getBitMask(), 2);
 		this.arms = b;
 		return this;
 	}
 	
 	  public fArmorStand setBasePlate(boolean b)
 	  {
-		setBitMask(!b, 11, 3);
+		setBitMask(!b, Type.field.getBitMask(), 3);
 	    this.baseplate = b;
 	    return this;
 	  }
 	
 	public fArmorStand setMarker(boolean b){
-		setBitMask(!b, 11, 4);
+		setBitMask(!b, Type.field.getBitMask(), 4);
 		this.marker = b;
 		return this;
 	}

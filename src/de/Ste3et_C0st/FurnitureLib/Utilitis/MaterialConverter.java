@@ -130,7 +130,8 @@ public class MaterialConverter {
 	}
 	
 	public static Material convertMaterial(int ID, byte Data) {
-	    for(Material i : EnumSet.allOf(Material.class)) if(i.getId() == ID) return Bukkit.getUnsafe().fromLegacy(new MaterialData(i, Data));
-	    return null;
+		Material mat = EnumSet.allOf(Material.class).stream().filter(m -> m.isLegacy()).filter(m -> m.getId() == ID).findFirst().orElse(null);
+		if(mat != null) mat = Bukkit.getUnsafe().fromLegacy(new MaterialData(mat, Data));
+	    return mat;
 	}
 }

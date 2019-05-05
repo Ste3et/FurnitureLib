@@ -27,6 +27,7 @@ import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.EntityID;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
+import de.Ste3et_C0st.FurnitureLib.main.Type;
 
 public abstract class fEntity extends fSerializer{
 	
@@ -267,9 +268,10 @@ public abstract class fEntity extends fSerializer{
 		}
 	}
 	
+	/* NEED BACKWARDS 1.13(7) -> 1.14(8) */
 	public fEntity setHealth(float health){
 		if(health==0){return this;}
-		getWatcher().setObject(new WrappedDataWatcherObject(7, Registry.get(Float.class)), health);
+		getWatcher().setObject(new WrappedDataWatcherObject(Type.field.getHealth(), Registry.get(Float.class)), health);
 		return this;
 	}
 
@@ -333,6 +335,10 @@ public abstract class fEntity extends fSerializer{
 		}
 		this.fire = b;
 		return this;
+	}
+	
+	public fEntity setCustomName(String str) {
+		return setName(str);
 	}
 
 	public fEntity setName(String str) {

@@ -33,6 +33,7 @@ public class Type {
 	public enum Reason{BLOCK,ENTITY}
 
 	public static String version = "1.14";
+	public static ProtocolFields field = ProtocolFields.getField(version);
 	
 	public enum DyeColor
 	{
@@ -102,15 +103,15 @@ public class Type {
 		  stack.setItemMeta(meta);
 		  return stack;
 	  }
-	} 
+	}
 	
 	public enum BodyPart{
-		HEAD("Head",12, new EulerAngle(0D,0D,0D)), 
-		BODY("Body",13, new EulerAngle(0D,0D,0D)), 
-		LEFT_ARM("Left_Arm",14, new EulerAngle(-0.174533, 0.0D, -0.174533)), 
-		RIGHT_ARM("Right_Arm",15, new EulerAngle(-0.261799, 0.0D, 0.174533)), 
-		LEFT_LEG("Left_Leg",16, new EulerAngle(-0.0174533, 0.0D, -0.0174533)), 
-		RIGHT_LEG("Right_Leg",17, new EulerAngle(0.0174533, 0.0D, 0.0174533));
+		HEAD("Head",Type.field.getHeadRotation(), new EulerAngle(0D,0D,0D)), 
+		BODY("Body",Type.field.getBodyRotation(), new EulerAngle(0D,0D,0D)), 
+		LEFT_ARM("Left_Arm",Type.field.getLeftArmRotation(), new EulerAngle(-0.174533, 0.0D, -0.174533)), 
+		RIGHT_ARM("Right_Arm",Type.field.getRightArmRotation(), new EulerAngle(-0.261799, 0.0D, 0.174533)), 
+		LEFT_LEG("Left_Leg",Type.field.getLeftLegRotation(), new EulerAngle(-0.0174533, 0.0D, -0.0174533)), 
+		RIGHT_LEG("Right_Leg",Type.field.getRightLegRotation(), new EulerAngle(0.0174533, 0.0D, 0.0174533));
 		
 		String name;
 		EulerAngle angle;
@@ -137,11 +138,13 @@ public class Type {
 	
 
 	public enum ProtocolFields{
-		Spigot19(10,11,12,13,14,15,16,9),
-		Spigot110(11,12,13,14,15,16,17,10);
+		Spigot19(10,11,12,13,14,15,16,9,7),
+		Spigot110(11,12,13,14,15,16,17,10,7),
+		Spigot114(13,14,15,16,17,18,19,11,8);
 
-		int bitMask, HeadRotation, BodyRotation, LeftArmRotation, RightArmRotation, LeftLegRotation, RightLegRotation, wrapperBit;
-		ProtocolFields(int a,int b, int c, int d, int e, int f, int g,int h){
+		int bitMask, HeadRotation, BodyRotation, LeftArmRotation, RightArmRotation, LeftLegRotation, RightLegRotation, wrapperBit, healthField;
+		
+		ProtocolFields(int a,int b, int c, int d, int e, int f, int g,int h,int health){
 			this.bitMask = a;
 			this.HeadRotation = b;
 			this.BodyRotation = c;
@@ -150,6 +153,7 @@ public class Type {
 			this.LeftLegRotation = f;
 			this.RightLegRotation = g;
 			this.wrapperBit = h;
+			this.healthField = health;
 		}
 		
 		public int getBitMask(){return this.bitMask;}
@@ -160,10 +164,12 @@ public class Type {
 		public int getLeftLegRotation(){return this.LeftLegRotation;}
 		public int getRightLegRotation(){return this.RightLegRotation;}
 		public int getWrapperBit(){return this.wrapperBit;}
+		public int getHealth() {return this.healthField;}
 		
 		public static ProtocolFields getField(String s){
 			if(s.startsWith("1.9")){return Spigot19;}
 			if(s.startsWith("1.10")){return Spigot110;}
+			if(s.startsWith("1.14")){return Spigot114;}
 			return Spigot110;
 		}
 		

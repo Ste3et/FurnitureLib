@@ -80,7 +80,7 @@ public class downloadCommand {
 					
 					PrintStream stream = new PrintStream(connection.getOutputStream());
 					stream.println("id=" + name);
-					stream.println("&spigot=1.13");
+					stream.println("&spigot=1.14");
 					
 					BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 					

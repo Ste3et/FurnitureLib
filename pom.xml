@@ -85,14 +85,15 @@
         <url>https://ci.ender.zone/plugin/repository/everything/</url>
     </repository>
 	
-	<repository>
+<!--	<repository>
 	    <id>dmulloy2-repo</id>
 	    <url>http://repo.dmulloy2.net/nexus/repository/public/</url>
   	</repository>
+-->
   	
 	<repository>
-		<id>ProtectionLib</id>
-		<url>http://nexus.dicecraft.de/repository/ProtectionLib/</url>
+	 	<id>jitpack.io</id>
+		<url>https://jitpack.io</url>
 	</repository>
   	
 </repositories>
@@ -129,18 +130,18 @@
         <scope>provided</scope>
     </dependency>
     
-	<dependency>
+<!--	<dependency>
 	   <groupId>com.comphenix.protocol</groupId>
 	   <artifactId>ProtocolLib-API</artifactId>
-	   <version>4.4.0</version>
+	   <version>4.5.0</version>
 	   <scope>provided</scope>
 	</dependency>
+-->
 
-  	<dependency>
-	   <groupId>de.Ste3et_C0st.furniture</groupId>
-	   <artifactId>ProtectionLib</artifactId>
-	   <version>0.9.7</version>
-	   <scope>provided</scope>
+	<dependency>
+	    <groupId>com.gitlab.Ste3et_C0st</groupId>
+	    <artifactId>protectionlib</artifactId>
+	    <version>v0.9.7</version>
 	</dependency>
 	
 	<dependency>
@@ -149,6 +150,14 @@
       <version>3.2.7</version>
       <scope>system</scope>
       <systemPath>${project.basedir}/lib/LightAPI.jar</systemPath>
+    </dependency>
+    
+    <dependency>
+      <groupId>com.comphenix.protocol</groupId>
+      <artifactId>ProtocolLib</artifactId>
+      <version>4.5.0</version>
+      <scope>system</scope>
+      <systemPath>${project.basedir}/lib/ProtocolLib.jar</systemPath>
     </dependency>
 	
 </dependencies>

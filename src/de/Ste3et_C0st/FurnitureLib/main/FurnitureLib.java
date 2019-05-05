@@ -159,11 +159,12 @@ public class FurnitureLib extends JavaPlugin{
 	
 	@Override
 	public void onEnable(){
-		if(!getBukkitVersion().startsWith("v1_14")) {
+		if(!(getBukkitVersion().startsWith("v1_14") || getBukkitVersion().startsWith("v1_13")) ) {
 			send("§cYour Server version is not Supportet please use §c1.13.x");
 			getPluginManager().disablePlugin(this);
 			return;
 		}
+		
 		if(!isEnable("ProtocolLib", true)){send("§cProtocolLib not found");getPluginManager().disablePlugin(this);}else{
 			instance = this;
 			getConfig().addDefaults(YamlConfiguration.loadConfiguration(loadStream("config.yml")));
@@ -220,6 +221,7 @@ public class FurnitureLib extends JavaPlugin{
 				send("§2Furniture load finish :)");
 				if(getConfig().getBoolean("config.timer.Enable")){int time = getConfig().getInt("config.timer.time");sqlManager.saveIntervall(time);}
 				send("==========================================");
+				Type.version = "1." + getBukkitVersion().split("_")[1];
 			}else{
 				send("Furniture Lib deosn't find the correct ProtocolLib");
 				send("Please Install Protocollib §c4.x");
