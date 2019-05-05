@@ -3,7 +3,6 @@ image: maven:3-jdk-8
 stages:
 - build
 - tag
-- deploy
 
 FurnitureLib:
   stage: build
@@ -12,12 +11,5 @@ FurnitureLib:
   artifacts:
      paths:
      - target/*.jar
-  only:
-    - master
-    
-FurnitureLib-Nexus:
-  stage: deploy
-  script:
-     - mvn deploy
   only:
     - master
