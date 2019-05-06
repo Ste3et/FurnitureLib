@@ -160,7 +160,7 @@ public class FurnitureLib extends JavaPlugin{
 	@Override
 	public void onEnable(){
 		if(!(getBukkitVersion().startsWith("v1_14") || getBukkitVersion().startsWith("v1_13")) ) {
-			send("§cYour Server version is not Supportet please use §c1.13.x");
+			send("§cYour Server version is not Supportet please use > §c1.13.x");
 			getPluginManager().disablePlugin(this);
 			return;
 		}

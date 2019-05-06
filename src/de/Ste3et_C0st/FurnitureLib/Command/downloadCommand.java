@@ -98,12 +98,14 @@ public class downloadCommand {
 						if(line.equalsIgnoreCase("#NOTEXIST") || line.equalsIgnoreCase("Invalid Page")){
 							sender.sendMessage("§cProject Not Found");
 						}else{
-							switch (i) {
-							case 0:config = line;
-							case 1:playerName = line;
-							case 2:projectName = line;
+							if(!line.isEmpty()) {
+								switch (i) {
+								case 0:config = line;
+								case 1:playerName = line;
+								case 2:projectName = line;
+								}
+								i++;
 							}
-							i++;
 						}
 					}
 					
