@@ -194,6 +194,7 @@ public class FurnitureLib extends JavaPlugin{
 			boolean protocollib = isRightProtocollib(s);
 			if(protocollib){
 				send("Furniture start load");
+				
 				Boolean b = isEnable("ProtectionLib", false);
 				send("Furniture find ProtectionLib: §e" + b.toString());
 				this.bmanager = new BlockManager();
@@ -221,7 +222,6 @@ public class FurnitureLib extends JavaPlugin{
 				send("§2Furniture load finish :)");
 				if(getConfig().getBoolean("config.timer.Enable")){int time = getConfig().getInt("config.timer.time");sqlManager.saveIntervall(time);}
 				send("==========================================");
-				Type.version = "1." + getBukkitVersion().split("_")[1];
 			}else{
 				send("Furniture Lib deosn't find the correct ProtocolLib");
 				send("Please Install Protocollib §c4.x");

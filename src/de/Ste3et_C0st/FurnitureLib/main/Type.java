@@ -32,7 +32,7 @@ public class Type {
 	public enum PlaceableSide{TOP,BOTTOM,SIDE, WATER}
 	public enum Reason{BLOCK,ENTITY}
 
-	public static String version = "1.14";
+	public static String version = "1." + FurnitureLib.getInstance().getBukkitVersion().split("_")[1];
 	public static ProtocolFields field = ProtocolFields.getField(version);
 	
 	public enum DyeColor

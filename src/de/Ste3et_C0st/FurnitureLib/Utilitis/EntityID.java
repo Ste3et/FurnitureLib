@@ -1,10 +1,10 @@
 package de.Ste3et_C0st.FurnitureLib.Utilitis;
 
 import java.lang.reflect.Field;
-import java.util.concurrent.atomic.AtomicInteger;
 
 import org.bukkit.Bukkit;
 
+import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.Type;
 
 public class EntityID {
@@ -15,8 +15,11 @@ public class EntityID {
 			f.setAccessible(true);
 			int id = f.getInt(null);
 			f.set(null, id+1);
+			FurnitureLib.getInstance().debug("EntityID: " + id);
 			return id;
 		}catch(Exception e){
+			FurnitureLib.getInstance().debug("nextEntityIDOld");
+			FurnitureLib.getInstance().debug(e.getMessage());
 			return 0;
 		}
 	}
@@ -25,10 +28,13 @@ public class EntityID {
 		try {
 			Field f = Reflection.getNMSClass("Entity").getDeclaredField("entityCount"); 
 			f.setAccessible(true);
-			
 			Object obj = f.get(null);
-			return (int) obj.getClass().getMethod("incrementAndGet").invoke(obj);
+			int id = (int) obj.getClass().getMethod("incrementAndGet").invoke(obj);
+			FurnitureLib.getInstance().debug("EntityID: " + id);
+			return id;
 		}catch (Exception e) {
+			FurnitureLib.getInstance().debug("nextEntityIDNew");
+			FurnitureLib.getInstance().debug(e.getMessage());
 			return 0;
 		}
 	}
