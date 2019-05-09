@@ -135,7 +135,6 @@ public class ProjectLoader extends Furniture{
 				|| customName.toUpperCase().startsWith("#DYE_")){
 					packet.setNameVasibility(false);
 				}
-				System.out.println(packet.getEntityID());
 			}
 			send();
 		} catch (Exception e) {

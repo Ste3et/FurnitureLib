@@ -52,6 +52,12 @@ public class ProtectionManager {
 		if(blockData instanceof Stairs){return !((Stairs) blockData).getHalf().name().equalsIgnoreCase("BOTTOM");}
 		return b;
 	}
+	
+	public int getSize() {
+		if(FP==null){return 0;}
+		ProtectionLib fp = (ProtectionLib) this.FP;
+		return fp.getWatchers().size();
+	}
     
 	
 	public boolean canBuild(Player p, Location loc){
@@ -95,6 +101,7 @@ public class ProtectionManager {
 	private boolean canBuild(Player p, ObjectID id){
 		if(p.getUniqueId().equals(id.getUUID())) return true;
 		if(FP==null) return false;
+		if(getSize()==0) return false;
 		boolean memberOfRegion = canBuild(p, id.getStartLocation());
 		boolean ownerOfRegion = isOwner(p, id.getStartLocation());
 		
