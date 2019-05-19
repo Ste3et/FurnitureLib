@@ -17,6 +17,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
+import org.bukkit.World;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -48,6 +49,7 @@ import de.Ste3et_C0st.FurnitureLib.Utilitis.ColorUtil;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.CraftingInv;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.LanguageManager;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.LocationUtil;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.Metrics;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.autoConverter;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.config;
 import de.Ste3et_C0st.FurnitureLib.main.Type.EventType;
@@ -90,6 +92,7 @@ public class FurnitureLib extends JavaPlugin{
 	private long purgeTimeMS = 0, spamBreakTime = 5000, spamPlaceTime = 5000;
 	private Material defMaterial = Material.COW_SPAWN_EGG;
 	private boolean sync = true;
+	private Metrics metrics = null;
 	public HashMap<Project, Long> deleteMap = new HashMap<Project, Long>();
 	public HashMap<UUID, Long> timeStampPlace = new HashMap<UUID, Long>();
 	public HashMap<UUID, Long> timeStampBreak = new HashMap<UUID, Long>();
@@ -130,8 +133,7 @@ public class FurnitureLib extends JavaPlugin{
 	public static FurnitureLib getInstance(){return instance;}
 	
 	public void send(String s){getServer().getConsoleSender().sendMessage(s);}
-	private void loadMetrics(){if(getConfig().getBoolean("config.UseMetrics")){return;}}
-
+	
 	public boolean isAutoFileUpdater() {return this.autoFileUpdater;}
 	public boolean isGlowing(){return this.glowing;}
 	public boolean isAutoPurge(){return this.autoPurge;}
@@ -204,7 +206,7 @@ public class FurnitureLib extends JavaPlugin{
 				this.autoFileUpdater = getConfig().getBoolean("config.autoFileUpdater");
 				autoConverter.modelConverter(getServer().getConsoleSender());
 				loadPluginConfig();
-				loadMetrics();
+				if(getConfig().getBoolean("config.UseMetrics")) metrics = new Metrics(this);
 				this.sqlManager = new SQLManager(instance);
 				this.sqlManager.initialize();
 				autoConverter.databaseConverter(getServer().getConsoleSender());

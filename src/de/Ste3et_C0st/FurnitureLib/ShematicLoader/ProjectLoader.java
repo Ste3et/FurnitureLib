@@ -270,8 +270,15 @@ public class ProjectLoader extends Furniture{
 				return;
 			}
 			b = true;
+		}else {
+			if(canInteract(player)) {
+				if(runOldFunctions(player)) {
+					return;
+				}
+			}
 		}
 		if(!this.passangerFunction(player) && b) {
+			//here
 			player.sendMessage(FurnitureLib.getInstance().getLangManager().getString("NoPermissions"));
 		}
 	}

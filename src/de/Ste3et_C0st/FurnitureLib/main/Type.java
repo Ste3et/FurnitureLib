@@ -37,33 +37,34 @@ public class Type {
 	
 	public enum DyeColor
 	{
-	  WHITE(version == "1.13" ? Material.valueOf("BONE_MEAL") : Material.valueOf("WHITE_DYE")),  
-	  ORANGE(Material.ORANGE_DYE),  
-	  MAGENTA(Material.MAGENTA_DYE),  
-	  LIGHT_BLUE(Material.LIGHT_BLUE_DYE),  
-	  YELLOW(version == "1.13" ? Material.valueOf("DANDELION_YELLOW") : Material.valueOf("YELLOW_DYE")),  
-	  LIME(Material.LIME_DYE),  
-	  PINK(Material.PINK_DYE),  
-	  LIGHT_GRAY(Material.LIGHT_GRAY_DYE),
-	  GRAY(Material.GRAY_DYE),  
-	  CYAN(Material.CYAN_DYE),  
-	  PURPLE(Material.PURPLE_DYE),  
-	  BLUE(version == "1.13" ? Material.valueOf("LAPIS_LAZULI") : Material.valueOf("BLUE_DYE")),  
-	  BROWN(version == "1.13" ? Material.valueOf("COCOA_BEANS") : Material.valueOf("BROWN_DYE")),  
-	  GREEN(Material.GREEN_DYE),  
-	  RED(version == "1.13" ? Material.valueOf("ROSE_RED") : Material.valueOf("RED_DYE")),  
-	  BLACK(version == "1.13" ? Material.valueOf("INK_SACK") : Material.valueOf("BLACK_DYE"));
+	  WHITE("BONE_MEAL","WHITE_DYE"),  
+	  ORANGE("ORANGE_DYE", "ORANGE_DYE"),  
+	  MAGENTA("MAGENTA_DYE", "MAGENTA_DYE"),  
+	  LIGHT_BLUE("LIGHT_BLUE_DYE", "LIGHT_BLUE_DYE"),  
+	  YELLOW("DANDELION_YELLOW","YELLOW_DYE"),  
+	  LIME("LIME_DYE", "LIME_DYE"),  
+	  PINK("PINK_DYE", "PINK_DYE"),  
+	  LIGHT_GRAY("LIGHT_GRAY_DYE", "LIGHT_GRAY_DYE"),
+	  GRAY("GRAY_DYE", "GRAY_DYE"),  
+	  CYAN("CYAN_DYE", "CYAN_DYE"),  
+	  PURPLE("PURPLE_DYE", "PURPLE_DYE"),  
+	  BLUE("LAPIS_LAZULI","BLUE_DYE"),  
+	  BROWN("COCOA_BEANS","BROWN_DYE"),  
+	  GREEN("CACTUS_GREEN", "GREEN_DYE"),  
+	  RED("ROSE_RED","RED_DYE"),  
+	  BLACK("INK_SAC","BLACK_DYE");
 
-	  private Material mat;
+	  private String material113, material114;
 	  
-	  private DyeColor(Material mat)
+	  private DyeColor(String material113, String material114)
 	  {
-	    this.mat = mat;
+	    this.material113 = material113;
+	    this.material114 = material114;
 	  }
 
 	  public Material getMaterial()
 	  {
-	    return this.mat;
+	    return Material.getMaterial(version.equalsIgnoreCase("1.13") ? this.material113 : this.material114);
 	  }
 	  
 	  public org.bukkit.DyeColor getDyeColor() {

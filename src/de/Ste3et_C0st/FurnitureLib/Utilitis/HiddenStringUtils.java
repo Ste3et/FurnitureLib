@@ -8,7 +8,6 @@ public class HiddenStringUtils {
 	private static final String SEQUENCE_HEADER = "" + ChatColor.RESET + ChatColor.DARK_AQUA + ChatColor.UNDERLINE + ChatColor.MAGIC + ChatColor.RESET;
 	private static final String SEQUENCE_FOOTER = "" + ChatColor.RESET + ChatColor.DARK_AQUA + ChatColor.ITALIC + ChatColor.MAGIC + ChatColor.RESET;
 	
-	
 	public static String encodeString(String hiddenString) {
 		return quote(stringToColors(hiddenString));
 	}

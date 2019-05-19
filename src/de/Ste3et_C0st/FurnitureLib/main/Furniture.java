@@ -38,9 +38,7 @@ public abstract class Furniture extends FurnitureHelper implements Listener{
 				return update;
 			}
 		}else {
-			if(runOldFunctions(p)) {
-				return true;
-			}
+			return runOldFunctions(p);
 		}
 		return false;
 	}
@@ -59,7 +57,7 @@ public abstract class Furniture extends FurnitureHelper implements Listener{
 		return false;
 	}
 	
-	private boolean runOldFunctions(Player p) {
+	public boolean runOldFunctions(Player p) {
 		ItemStack stack = p.getInventory().getItemInMainHand();
 		if(stack != null) {
 			Material m = stack.getType();
