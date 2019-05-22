@@ -1,6 +1,7 @@
 package de.Ste3et_C0st.FurnitureLib.main;
 
 import java.util.List;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -23,6 +24,35 @@ public abstract class Furniture extends FurnitureHelper implements Listener{
 	
 	public abstract void spawn(Location location);
 	
+	
+	public boolean runPublicFunctions(Player p){
+		if(!p.isSneaking()) {
+			for(fEntity stand : getfAsList()){
+				if(stand.getName().startsWith("#Mount:") || stand.getName().startsWith("#SITZ")){
+					FurnitureLib.getInstance().debug("Furniture -> publicFunction[#Mount/#SITZ]");
+					if(stand.getPassanger().isEmpty()){
+						stand.setPassanger(p);
+						return true;
+					}
+				}
+			}
+		}
+		return false;
+	}
+	
+	public boolean hasFunction() {
+		List<JsonObject> functions = getObjID().getProjectOBJ().getFunctions();
+		if(!functions.isEmpty()) {
+			return true;
+		}else {
+			AtomicBoolean b = new AtomicBoolean(false);
+			getfAsList().stream().forEach(as -> {
+				if(as.getName().startsWith("#ITEM") || as.getName().startsWith("/")){if(!b.get()) b.set(true);}
+			});
+			return b.get();
+		}
+	}
+	
 	public boolean runFunction(Player p) {
 		List<JsonObject> functions = getObjID().getProjectOBJ().getFunctions();
 		if(!functions.isEmpty()) {
@@ -39,20 +69,6 @@ public abstract class Furniture extends FurnitureHelper implements Listener{
 			}
 		}else {
 			return runOldFunctions(p);
-		}
-		return false;
-	}
-	
-	public boolean passangerFunction(Player p) {
-		if(!p.isSneaking()) {
-			for(fEntity stand : getfAsList()){
-				if(stand.getName().startsWith("#Mount:") || stand.getName().startsWith("#SITZ")){
-					if(stand.getPassanger().isEmpty()){
-						stand.setPassanger(p);
-						return true;
-					}
-				}
-			}
 		}
 		return false;
 	}

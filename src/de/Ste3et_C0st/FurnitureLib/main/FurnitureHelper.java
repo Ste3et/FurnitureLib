@@ -76,9 +76,10 @@ public abstract class FurnitureHelper{
 		p.updateInventory();
 	}
 	
-	public boolean canBuild(Player p, boolean echo){return FurnitureLib.getInstance().canBuild(p, getObjID(), Type.EventType.BREAK, echo);} 
+	public boolean canBuild(Player p, boolean echo){return canBuild(p, echo);} 
 	public boolean canBuild(Player p){return FurnitureLib.getInstance().canBuild(p, getObjID(), Type.EventType.BREAK);} 
-	public boolean canInteract(Player p){return FurnitureLib.getInstance().canBuild(p, getObjID(), Type.EventType.INTERACT);} 
+	public boolean canInteract(Player p){return canInteract(p, true);}
+	public boolean canInteract(Player p, boolean echo){return FurnitureLib.getInstance().canBuild(p, getObjID(), Type.EventType.INTERACT, echo);} 
 	
 	public Location getCenter(){
 		Location loc = getLutil().getCenter(getLocation());

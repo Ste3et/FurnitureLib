@@ -259,8 +259,14 @@ public class ProjectLoader extends Furniture{
 		if(getObjID() == null) return;
 		if(getObjID().getSQLAction().equals(SQLAction.REMOVE)) return;
 		if(player == null) return;
-		boolean b = false;
-		if(canBuild(player, false)){
+		boolean canInteract = canInteract(player, false);
+		boolean function = hasFunction();
+		
+		FurnitureLib.getInstance().debug("ProjectLoader -> onClick[project:"+ getObjID().getProject() + "]");
+		FurnitureLib.getInstance().debug("ProjectLoader -> onClick[hasFunction:"+ function + "]");
+		FurnitureLib.getInstance().debug("ProjectLoader -> onClick[canInteract:"+ canInteract + "]");
+		
+		if(function && canInteract) {
 			if(this.inv != null) {
 				this.inv.openInventory(player);
 				return;
@@ -269,18 +275,16 @@ public class ProjectLoader extends Furniture{
 				update();
 				return;
 			}
-			b = true;
-		}else {
-			if(canInteract(player)) {
-				if(runOldFunctions(player)) {
-					return;
-				}
+		}else if(function && !canInteract) {
+			if(!runPublicFunctions(player)) {
+				player.sendMessage(FurnitureLib.getInstance().getLangManager().getString("NoPermissions"));
+				return;
+			}else {
+				return;
 			}
 		}
-		if(!this.passangerFunction(player) && b) {
-			//here
-			player.sendMessage(FurnitureLib.getInstance().getLangManager().getString("NoPermissions"));
-		}
+		
+		runPublicFunctions(player);
 	}
 	
 	/**
