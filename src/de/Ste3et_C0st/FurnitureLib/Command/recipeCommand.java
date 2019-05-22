@@ -8,18 +8,23 @@ import org.bukkit.entity.Player;
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 
-public class recipeCommand {
+public class recipeCommand extends iCommand{
 
-	public recipeCommand(CommandSender sender, Command cmd, String arg2,String[] args) {
+	public recipeCommand(String subCommand, String permissions, String ...args) {
+		super(subCommand, permissions);
+	}
+
+	@Override
+	public void execute(CommandSender sender, String[] args) {
 		Project pro = null;
 		if(args.length>1){
 			pro = getProject(args[1]);
 			if(pro == null){
-				sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("ProjectNotFound").replaceAll("#PROJECT#", args[1]));
+				sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.ProjectNotFound").replaceAll("#PROJECT#", args[1]));
 				return;
 			}
 		}else{
-			sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("WrongArgument"));
+			sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.WrongArgument"));
 			return;
 		}
 		
@@ -27,11 +32,11 @@ public class recipeCommand {
 		
 		if(args.length==2){
 			if(sender instanceof Player){
-				if(!command.noPermissions(sender, "furniture.recipe")) return;
+				if(!hasCommandPermission(sender)) return;
 				FurnitureLib.getInstance().getCraftingInv().openCrafting((Player) sender, pro, false);
 				return;
 			}else{
-				sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("WrongArgument"));
+				sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.WrongArgument"));
 				return;
 			}
 		}else if(args.length==3){
@@ -40,39 +45,39 @@ public class recipeCommand {
 					FurnitureLib.getInstance().getCraftingInv().openCrafting(Bukkit.getPlayer(args[2]), pro, false);
 					return;
 				}else{
-					String s = FurnitureLib.getInstance().getLangManager().getString("PlayerNotOnline");
+					String s = FurnitureLib.getInstance().getLangManager().getString("message.PlayerNotOnline");
 					s = s.replace("#PLAYER#", args[2]);
 					sender.sendMessage(s);
 					return;
 				}
 			}else{
 				if(args[2].equalsIgnoreCase("edit")){
-					if(!command.noPermissions(sender, "furniture.recipe.edit")) return;
+					if(!hasCommandPermission(sender, ".edit")) return;
 					pro = getProject(args[1]);
 					if(pro == null){
-						sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("ProjectNotFound").replaceAll("#PROJECT#", args[1]));
+						sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.ProjectNotFound").replaceAll("#PROJECT#", args[1]));
 						return;
 					}
 					FurnitureLib.getInstance().getCraftingInv().openCrafting((Player) sender, pro, true);
 					return;
 				}else if(args[2].equalsIgnoreCase("remove")){
-					if(!command.noPermissions(sender, "furniture.recipe.remove")) return;
+					if(!hasCommandPermission(sender, ".remove")) return;
 					pro = getProject(args[1]);
 					if(pro == null){
-						sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("ProjectNotFound").replaceAll("#PROJECT#", args[1]));
+						sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.ProjectNotFound").replaceAll("#PROJECT#", args[1]));
 						return;
 					}
 					pro.getCraftingFile().removeCrafting(pro.getCraftingFile().getItemstack());
 					//pro.getCraftingFile().setCraftingDisabled(true);
-					sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("CraftingRemove"));
+					sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.CraftingRemove"));
 					return;
 				}else{
-					sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("WrongArgument"));
+					sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.WrongArgument"));
 					return;
 				}
 			}
 		}else{
-			sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("WrongArgument"));
+			sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.WrongArgument"));
 			return;
 		}
 	}

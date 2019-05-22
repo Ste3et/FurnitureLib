@@ -26,40 +26,40 @@ import com.comphenix.protocol.wrappers.EnumWrappers;
 import de.Ste3et_C0st.FurnitureLib.Command.command;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTCompressedStreamTools;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
-import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagList;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.MaterialConverter;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.Type.PlaceableSide;
 
-public class downloadCommand {
+public class downloadCommand extends iCommand{
 
-	public downloadCommand(CommandSender sender, Command cmd, String arg2, String[] args){
+	public downloadCommand(String subCommand, String permissions, String ...args) {
+		super(subCommand, permissions);
+	}
+
+
+	public void execute(CommandSender sender, String[] args) {
 		if(sender instanceof Player){
 			if(args.length==2){
-				if(args[0].equalsIgnoreCase("download")){
-					try{
-						if(!command.noPermissions(sender, "furniture.download")) return;
-						String name = args[1];
-						final URL url = new URL("http://api.dicecraft.de/furniture/download.php");
-						sender.sendMessage("§7§m+-------------------§7[§2Download§7]§m--------------------+");
-						sender.sendMessage("§6Download startet from: " + name);
-						downLoadData(name, url, sender, null);
-					}catch(Exception e){
-						e.printStackTrace();
-					}
+				try{
+					if(!hasCommandPermission(sender)) return;
+					String name = args[1];
+					final URL url = new URL("http://api.dicecraft.de/furniture/download.php");
+					sender.sendMessage("§7§m+-------------------§7[§2Download§7]§m--------------------+");
+					sender.sendMessage("§6Download startet from: " + name);
+					downLoadData(name, url, sender, null);
+				}catch(Exception e){
+					e.printStackTrace();
 				}
 			}else if(args.length==3){
-				if(args[0].equalsIgnoreCase("download")){
-					try{
-						if(!command.noPermissions(sender, "furniture.download")) return;
-						String name = args[1];
-						final URL url = new URL("http://api.dicecraft.de/furniture/download.php");
-						sender.sendMessage("§7§m+-------------------§7[§2Download§7]§m--------------------+");
-						sender.sendMessage("§6Download startet from: " + name);
-						downLoadData(name, url, sender, args[2]);
-					}catch(Exception e){
-						e.printStackTrace();
-					}
+				try{
+					if(!hasCommandPermission(sender)) return;
+					String name = args[1];
+					final URL url = new URL("http://api.dicecraft.de/furniture/download.php");
+					sender.sendMessage("§7§m+-------------------§7[§2Download§7]§m--------------------+");
+					sender.sendMessage("§6Download startet from: " + name);
+					downLoadData(name, url, sender, args[2]);
+				}catch(Exception e){
+					e.printStackTrace();
 				}
 			}else{
 				command.sendHelp((Player) sender);return;

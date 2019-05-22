@@ -152,7 +152,7 @@ List<String> stringList = Arrays.asList("A", "B", "C", "D", "E", "F", "G", "H", 
 				  file.setFileConfiguration(conf);
 				  file.loadCrafting(file.getFileName());
 			  }
-			  e.getPlayer().sendMessage(FurnitureLib.getInstance().getLangManager().getString("CraftingEdit"));
+			  e.getPlayer().sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.CraftingEdit"));
 		  }
 		  e.getInventory().clear();
 		  playerList.remove(e.getPlayer());}

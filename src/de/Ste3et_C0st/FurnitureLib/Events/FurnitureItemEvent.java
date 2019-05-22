@@ -63,7 +63,7 @@ public final class FurnitureItemEvent extends Event implements Cancellable {
 	public boolean canBuild(){
 		if(p==null||obj==null||getProject()==null) return true;
 		BlockFace face = isOnTheRightSide();
-		if(face==null){p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("NotONThisSide"));return false;}
+		if(face==null){p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.NotONThisSide"));return false;}
 		if(!FurnitureLib.getInstance().getPermManager().canBuild(p, obj.getStartLocation())){return false;}
 		if(clickedFace.equals(BlockFace.DOWN)){
 			if(!FurnitureLib.getInstance().getLocationUtil().canBuild(l.clone().add(0, -2, 0), pro, p)){return false;}
@@ -91,7 +91,7 @@ public final class FurnitureItemEvent extends Event implements Cancellable {
 					long dif = FurnitureLib.getInstance().getPlaceTime();
 					if(newCurrent < dif){
 						String str = FurnitureLib.getInstance().getTimeDif(since, dif, FurnitureLib.getInstance().getTimePattern());
-						String msg = FurnitureLib.getInstance().getLangManager().getString("FurnitureToFastPlace");
+						String msg = FurnitureLib.getInstance().getLangManager().getString("message.FurnitureToFastPlace");
 						msg = msg.replace("#TIME#", str);
 						getPlayer().sendMessage(msg);
 						return false;

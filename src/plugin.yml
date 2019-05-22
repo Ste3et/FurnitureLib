@@ -15,49 +15,49 @@ commands:
 permissions:
   furniture.player:
     children:
-      furniture.help: true
-      furniture.recipe: true
+      furniture.command.help: true
+      furniture.command.recipe: true
       furniture.crafting.*: true
       furniture.craft.*: true
       furniture.place.*: true
-      furniture.toggle: true
-      furniture.manage: true
+      furniture.command.toggle: true
+      furniture.command.manage: true
   furniture.admin:
     children:
-      furniture.debug: true
-      furniture.list: true
-      furniture.list.plugin: true
-      furniture.list.type: true
-      furniture.list.world: true
-      furniture.remove: true
-      furniture.remove.distance: true
-      furniture.remove.obj: true
-      furniture.remove.plugin: true
-      furniture.remove.type: true
-      furniture.remove.all: true
-      furniture.remove.player: true
-      furniture.remove.world: true
-      furniture.remove.lookat: true
-      furniture.give: true
-      furniture.give.player: true
+      furniture.command.debug: true
+      furniture.command.list: true
+      furniture.command.list.plugin: true
+      furniture.command.list.type: true
+      furniture.command.list.world: true
+      furniture.command.remove: true
+      furniture.command.remove.distance: true
+      furniture.command.remove.obj: true
+      furniture.command.remove.plugin: true
+      furniture.command.remove.type: true
+      furniture.command.remove.all: true
+      furniture.command.remove.player: true
+      furniture.command.remove.world: true
+      furniture.command.remove.lookat: true
+      furniture.command.give: true
+      furniture.command.give.other: true
       furniture.limit.bypass: true
-      furniture.manage.other: true
-      furniture.purge: true
+      furniture.command.manage.other: true
+      furniture.command.purge: true
       furniture.bypass.breakSpam: true
       furniture.bypass.placeSpam: true
-      furniture.help: true
-      furniture.recipe: true
+      furniture.command.help: true
+      furniture.command.help: true
       furniture.crafting.*: true
       furniture.place.*: true
       furniture.toggle: true
-      furniture.manage: true
-      furniture.toggle.another: true
-      furniture.download: true
-      furniture.delete: true
-      furniture.create: true
-      furniture.edit: true
-      furniture.upload: true
+      furniture.command.manage: true
+      furniture.command.toggle.other: true
+      furniture.command.download: true
+      furniture.command.delete: true
+      furniture.command.create: true
+      furniture.command.edit: true
+      furniture.command.upload: true
       furniture.update: true
-      furniture.import: true
+      furniture.command.import: true
       ProtectionLib.admin: true
       furniture.player: true

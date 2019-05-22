@@ -68,12 +68,12 @@ public class LimitationManager {
 				for(int i = limitGlobal; i > 0; i--) {
 					if(p.hasPermission("furniture.globallimit." + i)) {
 						if(playerTotal < i) {
-							String s = lib.getLangManager().getString("LimitAouncer");
+							String s = lib.getLangManager().getString("message.LimitAouncer");
 							s = s.replace("#TYPE#", pro.getName()).replace("#CURRENT#", player+1+"").replace("#MAX#", i+"");
 							p.sendMessage(s);
 							return true;
 						}else {
-							p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("LimitReachedMaximum"));
+							p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.LimitReachedMaximum"));
 							return false;
 						}
 					}
@@ -85,12 +85,12 @@ public class LimitationManager {
 			FurnitureLib.getInstance().debug("LimitationManager -> {Player} " + player + "/" + maxPlayer);
 			if(maxPlayer == -1) return true;
 			if(player < maxPlayer) {
-				String s = lib.getLangManager().getString("LimitAouncer");
+				String s = lib.getLangManager().getString("message.LimitAouncer");
 				s = s.replace("#TYPE#", pro.getName()).replace("#CURRENT#", player+1+"").replace("#MAX#", maxPlayer+"");
 				p.sendMessage(s);
 				return true;
 			}else {
-				p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("LimitReachedMaximum"));
+				p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.LimitReachedMaximum"));
 				return false;
 			}
 		}else if(this.type.equals(LimitationType.WORLD)) {
@@ -100,7 +100,7 @@ public class LimitationManager {
 			if(world < maxWorld || maxWorld == -1) {
 				return true;
 			}else {
-				p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("LimitReachedWorld"));
+				p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.LimitReachedWorld"));
 				return false;
 			}
 		}else if(this.type.equals(LimitationType.CHUNK)) {
@@ -110,7 +110,7 @@ public class LimitationManager {
 			if(chunk < maxChunk || maxChunk == -1) {
 				return true;
 			}else {
-				p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("LimitReachedChunk"));
+				p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.LimitReachedChunk"));
 				return false;
 			}
 		}

@@ -119,7 +119,7 @@ public class ChunkOnLoad implements Listener{
 					});
 					return;
 				}else {
-					e.getPlayer().sendMessage(FurnitureLib.getInstance().getLangManager().getString("FurnitureToggleEvent"));
+					e.getPlayer().sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.FurnitureToggleEvent"));
 				}
 			}
 		}
@@ -163,7 +163,7 @@ public class ChunkOnLoad implements Listener{
 						});
 						return;
 					}else {
-						event.getPlayer().sendMessage(FurnitureLib.getInstance().getLangManager().getString("FurnitureToggleEvent"));
+						event.getPlayer().sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.FurnitureToggleEvent"));
 					}
 				}
 			}
@@ -191,7 +191,7 @@ public class ChunkOnLoad implements Listener{
 		if(!e.getProject().hasPermissions(e.getPlayer())){return;}
 		ObjectID obj = e.getObjID();
 		if(FurnitureLib.getInstance().getFurnitureManager().getIgnoreList().contains(e.getPlayer().getUniqueId())){
-			e.getPlayer().sendMessage(FurnitureLib.getInstance().getLangManager().getString("FurnitureToggleEvent"));
+			e.getPlayer().sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.FurnitureToggleEvent"));
 			return;
 		}
 		FurnitureLib.getInstance().spawn(obj.getProjectOBJ(), obj);

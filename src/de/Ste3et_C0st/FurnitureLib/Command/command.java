@@ -4,6 +4,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
@@ -18,6 +20,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 
 import de.Ste3et_C0st.FurnitureLib.ShematicLoader.Events.ProjectClickEvent;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.LanguageManager;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.ManageInv;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
@@ -33,9 +36,25 @@ public class command implements CommandExecutor, Listener{
 	public static List<Player> manageList = new ArrayList<Player>();
 	public static List<SubCommand> subCommands = new ArrayList<SubCommand>();
 	
+	private static List<iCommand> commands = new ArrayList<iCommand>();
+	
 	public command(Plugin plugin){
 		this.plugin = plugin;
 		Bukkit.getPluginManager().registerEvents(this, plugin);
+		commands.add(new debugCommand("debug", "debug"));
+		commands.add(new deleteCommand("delete", "delete"));
+		commands.add(new downloadCommand("download", "download"));
+		commands.add(new giveCommand("give", "give"));
+		commands.add(new listCommand("list", "list"));
+		commands.add(new manageCommand("manage", "manage"));
+		commands.add(new purgeCommand("purge", "purge"));
+		commands.add(new recipeCommand("recipe", "recipe"));
+		commands.add(new reloadCommand("reload", "reload"));
+		commands.add(new removeCommand("remove", "remove"));
+		commands.add(new saveCommand("save", "save"));
+		commands.add(new spawnCommand("spawn", "spawn").setHide(true));
+		commands.add(new toggleCommand("toggle", "toggle"));
+		commands.add(new versionCommand("version", "version"));
 	}
 	
 	public static void addCommand(SubCommand subcommand){
@@ -96,7 +115,7 @@ public class command implements CommandExecutor, Listener{
 			manageList.remove(p);
 			if(!e.getID().getUUID().equals(p.getUniqueId())){
 				if(!lib.getPermission().hasPerm(p, "furniture.admin") && !p.isOp() && !lib.getPermission().hasPerm(p, "furniture.manage.other")){
-					p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("WrongOwner"));
+					p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.WrongOwner"));
 					return;
 				}
 			}
@@ -104,11 +123,12 @@ public class command implements CommandExecutor, Listener{
 		}
 	}
 	
+	@Deprecated
 	public static boolean noPermissions(CommandSender sender, String s){
 		if(sender.isOp()) return true;
 		if(lib.getPermission().hasPerm(sender,"furniture.admin")) return true;
 		if(!lib.getPermission().hasPerm(sender,s.toLowerCase())){
-			sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("NoPermissions"));
+			sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.NoPermissions"));
 			return false;
 		}
 		return true;
@@ -117,122 +137,77 @@ public class command implements CommandExecutor, Listener{
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String arg2, String[] args) {
 			if(cmd.getName().equalsIgnoreCase("furniture")){
-				Player p = null;
-				if(sender instanceof Player){p=(Player) sender;}
-				if(args.length==0){
-					sendHelp(p);
-					return true;
-				}else{		
-					switch (args[0]) {
-					case "list": new listCommand(sender, cmd, arg2, args); return true;
-					case "give": new giveCommand(sender, cmd, arg2, args); return true;
-					case "recipe": new recipeCommand(sender, cmd, arg2, args); return true;
-					case "debug": new debugCommand(sender, cmd, arg2, args); return true;
-					case "manage": new manageCommand(sender, cmd, arg2, args); return true;
-					case "remove": new removeCommand(sender, cmd, arg2, args); return true;
-					case "spawn": new spawnCommand(sender, cmd, arg2, args); return true;
-					case "purge": new purgeCommand(sender, cmd, arg2, args); return true;
-					case "toggle" : new toggleCommand(sender, cmd, arg2, args); return true;
-					case "download": new downloadCommand(sender, cmd, arg2, args); return true;
-					case "save": new saveCommand(sender, cmd, arg2, args); return true;
-					case "delete": new deleteCommand(sender, cmd, arg2, args); return true;
-					case "reload": new reloadCommand(sender, cmd, arg2, args); return true;
-					default:
-						for(SubCommand sCmd : subCommands){
-							if(sCmd.getSubcommand().equalsIgnoreCase(args[0])){
-								if(p!=null){
-									if(sCmd.getSubcommand().equalsIgnoreCase("create")){
-										if(lib.getFurnitureManager().getIgnoreList().contains(p.getUniqueId())){
-											sender.sendMessage(lib.getLangManager().getString("FurnitureToggleEvent"));
-											return true;
-										}
+				if(!sender.hasPermission("furniture.command.help")) return true;
+				if(sender instanceof Player) {
+					if(args.length > 0) {
+						iCommand comm = commands.stream()
+								.filter(command -> command.getSubCommand().equalsIgnoreCase(args[0]) || command.getAliasList().contains(args[0].toLowerCase()))
+								.findFirst().orElse(null);
+						if(comm == null) {
+							SubCommand sub = subCommands.stream().filter(command -> command.getSubcommand().equalsIgnoreCase(args[0])).findFirst().orElse(null);
+							if(sub != null) {
+								if(sub.getSubcommand().equalsIgnoreCase("create")) {
+									if(lib.getFurnitureManager().getIgnoreList().contains(((Player) sender).getUniqueId())){
+										sender.sendMessage(lib.getLangManager().getString("message.FurnitureToggleEvent"));
+										return true;
 									}
 								}
-								sCmd.runCommand(sender, cmd, arg2, args);
+								sub.runCommand(sender, cmd, arg2, args);
 								return true;
 							}
+							sendHelp((Player) sender);
+							return true;
 						}
-						sendHelp(p);
-						return true;
+						comm.execute(sender, args);
+					}else {
+						sendHelp((Player) sender);
 					}
 				}
+				return true;
 			}
 		return false;
 	}
 	
-	public static void sendHelp(Player player){
-		if(player==null) return;
+	public static void sendHelp(Player p){
+		if(p==null) return;
+		p.sendMessage(LanguageManager.getInstance().getString("command.help.header"));
 		
-		String version = FurnitureLib.getInstance().getDescription().getVersion();
-		String Author = FurnitureLib.getInstance().getDescription().getAuthors().get(0);
-		String update = FurnitureLib.getInstance().getUpdater().getUpdate();
+		commands.stream().forEach(str -> {
+			if(str.hasCommandPermission(p, str.getPermissions()) && !str.isHide()){
+				p.spigot().sendMessage(jsonText(str.getLanguageID()));
+			}
+		});
 		
-		String str = "";
-		if(Bukkit.getPluginManager().isPluginEnabled("FurnitureMaker")){
-			str = "\n§2Models";
+		if(!subCommands.isEmpty()) {
+			for(SubCommand commands : subCommands){
+				ComponentBuilder builder = new ComponentBuilder(commands.getCommand()).event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(commands.getHoverText()).create())).event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, commands.getSuggest_Command()));
+				p.spigot().sendMessage(builder.create());
+			}
 		}
-		
-		
-		if(!lib.getPermission().hasPerm(player,"furniture.help")) return;
 
-		ComponentBuilder  builder = new ComponentBuilder("§7§m+--------------------§7[")
-		.append("§2Furniture").event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("§6§lVersion: §7" + version + "\n"
-				+ "§6§lAuthor: §2" + Author +  update).create()))
-		.append("§7]§m---------------------+\n")
-		.append("§6/furniture list §e(Option) §c(side)\n")
-			.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("§6list all available furniture\n\n§cOption:\n§6Plugin\n§6Type\n§6World"+str).create()))
-			.event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/furniture list (Option)"))
-		.append("§6/furniture give §e<furniture> §c(player) §d(Amount)\n")
-			.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("§6if the §cPlayer not set:\n"
-				+ "§cyou become a furniture\n" + 
-				"§6if the Player set:\n" + 
-				"§cgive the player one furniture").create()))
-			.event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/furniture give <FURNITURE> (player)"))
-		.append("§6/furniture debug \n")
-			.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("§6You can become some information about\n§6abaout the furniture you are rightclicked").create()))
-			.event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/furniture debug"))
-		.append("§6/furniture manage \n")
-			.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("§6You can config the furniture\n§6that you are rightclicked").create()))
-			.event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/furniture manage"))
-		.append("§6/furniture purge §e<Time>\n")
-			.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("§6Marked all furnitures to remove from the database").create()))
-			.event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/furniture purge <time>"))
-		.append("§6/furniture recipe §e<type> §a(edit/remove)\n")
-			.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("§6View recipe from a furniture").create()))
-			.event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/furniture recipe <type>"))
-		.append("§6/furniture remove §e<type/player/world/plugin/ID/Distance>\n")
-			.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("§6You can remove furnitures with the type:"
-					+ "\n§4Exemples: "
-					+ "\n§ctype = tent1"
-					+ "\n§cplayer = " + player.getName()
-					+ "\n§cworld = " + player.getWorld().getName()
-					+ "\n§cID = TOm4nvkoLW" 
-					+ "\n§cDistance = 5").create()))
-			.event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/furniture remove <type>"))
-		.append("§6/furniture remove §elookat\n")
-			.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("§6Remove a furniture at you looked").create()))
-			.event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/furniture remove lookat"))
-		.append("§6/furniture remove §eall\n")
-			.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("§6Remove all furniture and reset database").create()))
-			.event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/furniture remove all"))
-		.append("§6/furniture toggle\n")
-			.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("§6Hide/Show furniture to you").create()))
-			.event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/furniture toggle"))
-		.append("§6/furniture download §e<id> §a(newName)\n")
-			.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("§6You can donload an furniture").create()))
-			.event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/furniture donwnload <id>"))
-		.append("§6/furniture delete §e<name>\n")
-			.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("§6You can delete a Furniture Model").create()))
-			.event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/furniture delete <name>"))
-		.append("§6/furniture save\n")
-			.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("§6The is the manuell saving command").create()))
-			.event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/furniture save"));
-		for(SubCommand commands : subCommands){
-			builder.append(commands.getCommand() + "\n").event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(commands.getHoverText()).create())).event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, commands.getSuggest_Command()));
-		}
-		builder.append("\n").append("§6You need help with the commands look at the ").append("§cCommand Page").event(new ClickEvent(ClickEvent.Action.OPEN_URL, "http://dicecraft.de/furniture/cmdperm.php"));
-		builder.append("\n").append("§e§lTIP: §r§7Try to §e§nclick§7 or §e§nhover§7 the commands").
-		append("§7§m+--------------------------------------------------+");
-		player.spigot().sendMessage(builder.create());
+		p.sendMessage(LanguageManager.getInstance().getString("command.help.footer"));
+	}
+	
+	public static BaseComponent[] jsonText(String key) {
+		String cmd = LanguageManager.getInstance().getString("command." + key + ".help_name");
+		String hover = LanguageManager.getInstance().getString("command." + key + ".help_hover");
+		return new ComponentBuilder("§6" + cmd).event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(hover).create())).event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, ChatColor.stripColor(cmd))).create();
+	}
+	
+	public static BaseComponent[] jsonText(String key, de.Ste3et_C0st.FurnitureLib.Utilitis.StringTranslater ... stringTranslaters) {
+		String cmd = LanguageManager.getInstance().getString("command." + key + ".help_name", stringTranslaters);
+		String hover = LanguageManager.getInstance().getString("command." + key + ".help_hover", stringTranslaters);
+		return new ComponentBuilder("§6" + cmd).event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(hover).create())).event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, ChatColor.stripColor(cmd))).create();
+	}
+	
+	public boolean sendMessages(Player p, String helpClass){
+		boolean b = commands.stream().filter(str -> !str.getHelpClass().isEmpty() && str.getHelpClass().equalsIgnoreCase(helpClass)).findFirst().isPresent();
+		if(!b) return false;
+		commands.stream().filter(str -> !str.getHelpClass().isEmpty() && str.getHelpClass().equalsIgnoreCase(helpClass)).forEach(str -> {
+			if(str.hasCommandPermission(p, str.getPermissions())) {
+				p.spigot().sendMessage(jsonText(str.getLanguageID().replaceAll("commands.", "")));
+			}
+		});
+		return true;
 	}
 }

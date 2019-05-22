@@ -15,10 +15,8 @@ public class EntityID {
 			f.setAccessible(true);
 			int id = f.getInt(null);
 			f.set(null, id+1);
-			FurnitureLib.getInstance().debug("EntityID: " + id);
 			return id;
 		}catch(Exception e){
-			FurnitureLib.getInstance().debug("nextEntityIDOld");
 			FurnitureLib.getInstance().debug(e.getMessage());
 			return 0;
 		}
@@ -30,10 +28,8 @@ public class EntityID {
 			f.setAccessible(true);
 			Object obj = f.get(null);
 			int id = (int) obj.getClass().getMethod("incrementAndGet").invoke(obj);
-			FurnitureLib.getInstance().debug("EntityID: " + id);
 			return id;
 		}catch (Exception e) {
-			FurnitureLib.getInstance().debug("nextEntityIDNew");
 			FurnitureLib.getInstance().debug(e.getMessage());
 			return 0;
 		}

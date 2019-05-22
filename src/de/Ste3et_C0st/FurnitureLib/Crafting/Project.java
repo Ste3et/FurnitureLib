@@ -96,7 +96,7 @@ public class Project{
 				}
 			}
 		}
-		p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("NoPermissions"));
+		p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.NoPermissions"));
 		return false;
 	}
 	

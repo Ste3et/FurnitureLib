@@ -1,26 +1,30 @@
 package de.Ste3et_C0st.FurnitureLib.Command;
 
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 
-public class purgeCommand {
+public class purgeCommand extends iCommand{
 
-	public purgeCommand(CommandSender sender, Command cmd, String arg2,String[] args) {
+	public purgeCommand(String subCommand, String permissions, String ...args) {
+		super(subCommand, permissions);
+	}
+
+	@Override
+	public void execute(CommandSender sender, String[] args) {
 		//furniture purge <days>
-		if(!command.noPermissions(sender, "furniture.purge")) return;
+		if(!hasCommandPermission(sender)) return;
 		int purgeTime = FurnitureLib.getInstance().getPurgeTime();
 		if(args.length==2){
 			if(FurnitureLib.getInstance().isInt(args[1])){
 				purgeTime = Integer.parseInt(args[1]);
 			}else{
-				sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("WrongArgument"));
+				sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.WrongArgument"));
 				return;
 			}
 		}else{
-			sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("WrongArgument"));
+			sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.WrongArgument"));
 			return;
 		}
 		
@@ -33,11 +37,11 @@ public class purgeCommand {
 		}
 		
 		if(!FurnitureLib.getInstance().isPurgeRemove()){
-			sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("PurgeMarked").replace("#AMOUNT#", i + ""));
+			sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.PurgeMarked").replace("#AMOUNT#", i + ""));
 			return;
 		}
 		
-		sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("RemoveDistance").replace("#AMOUNT#", i + ""));
+		sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.RemoveDistance").replace("#AMOUNT#", i + ""));
 		return;
 	}
 }

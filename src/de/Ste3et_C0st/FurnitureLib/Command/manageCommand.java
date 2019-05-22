@@ -1,22 +1,26 @@
 package de.Ste3et_C0st.FurnitureLib.Command;
 
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 
-public class manageCommand {
+public class manageCommand extends iCommand{
 
-	public manageCommand(CommandSender sender, Command cmd, String arg2,String[] args) {
-		if(args.length!=1){sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("WrongArgument"));return;}
+	public manageCommand(String subCommand, String permissions, String ...args) {
+		super(subCommand, permissions);
+	}
+
+	@Override
+	public void execute(CommandSender sender, String[] args) {
+		if(args.length!=1){sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.WrongArgument"));return;}
 		if(sender instanceof Player){
-			if(FurnitureLib.getInstance().getPermission().hasPerm(sender, "furniture.manage") || FurnitureLib.getInstance().getPermission().hasPerm(sender, "furniture.player")){
+			if(hasCommandPermission(sender)){
 				command.manageList.add((Player) sender);
-				sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("ManageModeEntered"));
+				sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.ManageModeEntered"));
 				return;
 			}else{
-				sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("NoPermissions"));
+				sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.NoPermissions"));
 			}
 		}
 	}

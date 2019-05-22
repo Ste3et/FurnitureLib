@@ -22,12 +22,15 @@ public class LanguageManager{
 	private HashMap<String, Material> invMatList = new HashMap<String, Material>();
 	private HashMap<String, String> invStringList = new HashMap<String, String>();
 	private HashMap<String, Short> invShortList = new HashMap<String, Short>();
+	private static LanguageManager instance;
 	
 	config c;
 	FileConfiguration file;
 	
 	public LanguageManager(Plugin plugin, String lang){
-		this.lang = lang;
+		instance = this;
+		//this.lang = lang;
+		this.lang = "EN_en";
 		this.plugin = plugin;
 		addDefault();
 		addDefaultInv();
@@ -51,10 +54,32 @@ public class LanguageManager{
 			file.options().copyHeader(true);
 			c.saveConfig(lang, file, "/lang/");
 			
-			for(String str : file.getConfigurationSection("message").getKeys(false)){
-				String string = file.getString("message"+"."+str);
-				hash.put(str, string);
-			}
+			file.getConfigurationSection("").getKeys(true).stream().forEach(key -> {
+				if(key.startsWith(".")) key = key.replaceFirst(".", "");
+				if(file.isString(key)) {
+					String value = file.getString(key);
+					hash.put(key.toLowerCase(), value);
+				}else if(file.isList(key)) {
+					String value = "";
+					List<String> stringList = file.getStringList(key);
+					int end = (stringList.size() - 1);
+					for(String a : stringList) {
+						if(stringList.indexOf(a) != end) {
+							value+=a+"\n";
+						}else {
+							value+=a;
+						}
+					}
+					hash.put(key.toLowerCase(), value);
+				}else {
+					hash.put(key.toLowerCase(), key.toLowerCase() + " is Missing");
+				}
+			});
+			
+//			for(String str : file.getConfigurationSection("").getKeys(true)){
+//				String string = file.getString("message"+"."+str);
+//				hash.put(str, string);
+//			}
 		}catch(NullPointerException ex){
 			ex.printStackTrace();
 			return;
@@ -118,10 +143,23 @@ public class LanguageManager{
 	
 	
 	public String getString(String a){
+		a = a.toLowerCase();
 		if(hash.isEmpty()) return "§cHash is empty";
 		if(!hash.containsKey(a)) return "§ckey not found";
 		String b = hash.get(a);
 		return ChatColor.translateAlternateColorCodes('&', b);
+	}
+	
+	public String getString(String key, StringTranslater ... stringTranslaters) {
+		String a = getString(key);
+		if(stringTranslaters != null) {
+			for(StringTranslater trans : stringTranslaters) {
+				if(trans.getkey() != null && trans.getValue() != null) {
+					a = a.replaceAll(trans.getkey(), trans.getValue());
+				}
+			}
+		}
+		return a;
 	}
 
 	public List<String> getStringList(String a) {
@@ -147,4 +185,9 @@ public class LanguageManager{
 	public Material getMaterial(String a){
 		return invMatList.get(a);
 	}
+	
+	public static LanguageManager getInstance() {
+		return instance;
+	}
+	
 }

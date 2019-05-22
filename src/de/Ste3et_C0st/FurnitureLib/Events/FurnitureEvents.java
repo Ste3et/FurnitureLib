@@ -53,7 +53,7 @@ public class FurnitureEvents {
 											}
 										});
 									}else {
-										event.getPlayer().sendMessage(FurnitureLib.getInstance().getLangManager().getString("FurnitureToggleEvent"));
+										event.getPlayer().sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.FurnitureToggleEvent"));
 									}
 									break;
 								case INTERACT_AT:
@@ -67,7 +67,7 @@ public class FurnitureEvents {
 											}
 										});
 									}else {
-										event.getPlayer().sendMessage(FurnitureLib.getInstance().getLangManager().getString("FurnitureToggleEvent"));
+										event.getPlayer().sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.FurnitureToggleEvent"));
 									}
 									break;
 								default: break;

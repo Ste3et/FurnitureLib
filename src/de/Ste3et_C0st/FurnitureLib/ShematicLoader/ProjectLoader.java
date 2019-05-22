@@ -277,7 +277,7 @@ public class ProjectLoader extends Furniture{
 			}
 		}else if(function && !canInteract) {
 			if(!runPublicFunctions(player)) {
-				player.sendMessage(FurnitureLib.getInstance().getLangManager().getString("NoPermissions"));
+				player.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.NoPermissions"));
 				return;
 			}else {
 				return;

@@ -13,7 +13,6 @@ import net.md_5.bungee.api.chat.HoverEvent;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.World;
-import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
@@ -22,7 +21,7 @@ import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 
-public class listCommand {
+public class listCommand extends iCommand{
 
 	
 	
@@ -118,9 +117,13 @@ public class listCommand {
 //		
 //	}
 
-	public listCommand(CommandSender sender, Command cmd, String arg2,String[] args) {
-		Player p = null;
-		if(sender instanceof Player){p = (Player) sender;}
+	
+	public listCommand(String subCommand, String permissions, String ...args) {
+		super(subCommand, permissions);
+	}
+	
+	@Override
+	public void execute(CommandSender sender, String[] args){	
 		List<ComponentBuilder> objList = new ArrayList<ComponentBuilder>();
 		List<String> strList = new ArrayList<String>();
 		HashMap<String, String> proList = new HashMap<String, String>();
@@ -141,9 +144,10 @@ public class listCommand {
 		SortedSet<String> values = new TreeSet<String>(proList.values());
 		
 		
-		
+		if(sender instanceof Player == false) return;
+		Player p =  (Player) sender;
 		if(args.length==1){
-			if(!command.noPermissions(sender, "furniture.list")) return;
+			if(!hasCommandPermission(sender)) return;
 			boolean recipe = false, give = false, detail = true;
 			if(FurnitureLib.getInstance().getPermission().hasPerm(sender, "furniture.recipe")){recipe = true;}
 			if(FurnitureLib.getInstance().getPermission().hasPerm(sender, "furniture.give")){give = true;}
@@ -179,21 +183,21 @@ public class listCommand {
 		}else if(args.length==2){
 			String subcommand = "";
 			if(args[1].equalsIgnoreCase("Type")){
-				if(!command.noPermissions(sender, "furniture.list.type")) return;
+				if(!hasCommandPermission(sender, ".type")) return;
 				for(Project pro : FurnitureLib.getInstance().getFurnitureManager().getProjects()){
 					List<ObjectID> objectList = getByType(pro);
 					objList.add(new ComponentBuilder("§6- " +pro.getName()).event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("§eObjecte: §c" + objectList.size()).create())));
 				}
 				subcommand = " type";
 			}else if(args[1].equalsIgnoreCase("World")){
-				if(!command.noPermissions(sender, "furniture.list.world")) return;
+				if(!hasCommandPermission(sender, ".world")) return;
 				for(World w : Bukkit.getWorlds()){
 					List<ObjectID> objectList = getByWorld(w);
 					objList.add(new ComponentBuilder("§6- " + w.getName()).event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("§eObjecte: §c" + objectList.size()).create())));
 				}
 				subcommand = " world";
 			}else if(args[1].equalsIgnoreCase("Plugin")){
-				if(!command.noPermissions(sender, "furniture.list.plugin")) return;
+				if(!hasCommandPermission(sender, ".plugin")) return;
 				List<String> plugins = new ArrayList<String>();
 				for(Project pro : FurnitureLib.getInstance().getFurnitureManager().getProjects()){
 					String plugin = pro.getPlugin().getName();
@@ -205,7 +209,7 @@ public class listCommand {
 				}
 				subcommand = " plugin";
 			}else if(args[1].equalsIgnoreCase("models")){
-				if(!command.noPermissions(sender, "furniture.list.models")) return;
+				if(!hasCommandPermission(sender, ".models")) return;
 				for(Project pro : FurnitureLib.getInstance().getFurnitureManager().getProjects()){
 					if(pro.isEditorProject()){
 						List<ObjectID> objectList = getByModel(pro);
@@ -214,7 +218,8 @@ public class listCommand {
 				}
 				subcommand = " models";
 			}else if(FurnitureLib.getInstance().isInt(args[1])){
-				if(!command.noPermissions(sender, "furniture.list")) return;
+				if(!hasCommandPermission(sender)) return;
+				if(sender instanceof Player == false) return;
 				boolean recipe = false, give = false, detail = true;
 				if(FurnitureLib.getInstance().getPermission().hasPerm(sender, "furniture.recipe")){recipe = true;}
 				if(FurnitureLib.getInstance().getPermission().hasPerm(sender, "furniture.give")){give = true;}
@@ -256,21 +261,21 @@ public class listCommand {
 		}else if(args.length==3){
 			String subcommand = "";
 			if(args[1].equalsIgnoreCase("Type")){
-				if(!command.noPermissions(sender, "furniture.list.type")) return;
+				if(!hasCommandPermission(sender, ".type")) return;
 				for(Project pro : FurnitureLib.getInstance().getFurnitureManager().getProjects()){
 					List<ObjectID> objectList = getByType(pro);
 					objList.add(new ComponentBuilder("§6- " +pro.getName()).event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("§eObjecte: §c" + objectList.size()).create())));
 				}
 				subcommand = " type";
 			}else if(args[1].equalsIgnoreCase("World")){
-				if(!command.noPermissions(sender, "furniture.list.world")) return;
+				if(!hasCommandPermission(sender, ".world")) return;
 				for(World w : Bukkit.getWorlds()){
 					List<ObjectID> objectList = getByWorld(w);
 					objList.add(new ComponentBuilder("§6- " + w.getName()).event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("§eObjecte: §c" + objectList.size()).create())));
 				}
 				subcommand = " world";
 			}else if(args[1].equalsIgnoreCase("models")){
-				if(!command.noPermissions(sender, "furniture.list.models")) return;
+				if(!hasCommandPermission(sender, ".models")) return;
 				for(Project pro : FurnitureLib.getInstance().getFurnitureManager().getProjects()){
 					if(pro.isEditorProject()){
 						List<ObjectID> objectList = getByModel(pro);
@@ -279,7 +284,8 @@ public class listCommand {
 				}
 				subcommand = " models";
 			}else if(args[1].equalsIgnoreCase("Plugin")){
-				if(!command.noPermissions(sender, "furniture.list.plugin")) return;
+				if(!hasCommandPermission(sender, ".plugin")) return;
+				if(sender instanceof Player == false) return;
 				List<String> plugins = new ArrayList<String>();
 				for(Project pro : FurnitureLib.getInstance().getFurnitureManager().getProjects()){
 					String plugin = pro.getPlugin().getName();

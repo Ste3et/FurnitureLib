@@ -92,7 +92,6 @@ public class FurnitureLib extends JavaPlugin{
 	private long purgeTimeMS = 0, spamBreakTime = 5000, spamPlaceTime = 5000;
 	private Material defMaterial = Material.COW_SPAWN_EGG;
 	private boolean sync = true;
-	private Metrics metrics = null;
 	public HashMap<Project, Long> deleteMap = new HashMap<Project, Long>();
 	public HashMap<UUID, Long> timeStampPlace = new HashMap<UUID, Long>();
 	public HashMap<UUID, Long> timeStampBreak = new HashMap<UUID, Long>();
@@ -184,9 +183,6 @@ public class FurnitureLib extends JavaPlugin{
 			this.purgeTimeMS = TimeUnit.DAYS.toMillis(purgeTime);
 			this.pManager = new ProjectManager();
 			this.permissionHandler = new PermissionHandler();
-			PluginCommand c = getCommand("furniture");
-			c.setExecutor(new command(this));
-			c.setTabCompleter(new TabCompleterHandler(this));
 			this.Pmanager = new ProtectionManager(instance);
 			send("==========================================");
 			send("FurnitureLibary Version: §e" + this.getDescription().getVersion());
@@ -196,17 +192,15 @@ public class FurnitureLib extends JavaPlugin{
 			boolean protocollib = isRightProtocollib(s);
 			if(protocollib){
 				send("Furniture start load");
-				
 				Boolean b = isEnable("ProtectionLib", false);
 				send("Furniture find ProtectionLib: §e" + b.toString());
 				this.bmanager = new BlockManager();
 				this.craftingInv = new CraftingInv(this);
 				loadPermissionKit();
-				Bukkit.getOnlinePlayers().stream().filter(p -> p!=null && p.isOp()).forEach(p -> getUpdater().sendPlayer(p));
 				this.autoFileUpdater = getConfig().getBoolean("config.autoFileUpdater");
 				autoConverter.modelConverter(getServer().getConsoleSender());
 				loadPluginConfig();
-				if(getConfig().getBoolean("config.UseMetrics")) metrics = new Metrics(this);
+				if(getConfig().getBoolean("config.UseMetrics")) new Metrics(this);
 				this.sqlManager = new SQLManager(instance);
 				this.sqlManager.initialize();
 				autoConverter.databaseConverter(getServer().getConsoleSender());
@@ -224,6 +218,11 @@ public class FurnitureLib extends JavaPlugin{
 				send("§2Furniture load finish :)");
 				if(getConfig().getBoolean("config.timer.Enable")){int time = getConfig().getInt("config.timer.time");sqlManager.saveIntervall(time);}
 				send("==========================================");
+				Bukkit.getOnlinePlayers().stream().filter(p -> p!=null && p.isOp()).forEach(p -> getUpdater().sendPlayer(p));
+				
+				PluginCommand c = getCommand("furniture");
+				c.setExecutor(new command(this));
+				c.setTabCompleter(new TabCompleterHandler(this));
 			}else{
 				send("Furniture Lib deosn't find the correct ProtocolLib");
 				send("Please Install Protocollib §c4.x");

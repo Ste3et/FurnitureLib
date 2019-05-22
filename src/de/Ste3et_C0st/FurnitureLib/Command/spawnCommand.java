@@ -9,9 +9,14 @@ import org.bukkit.command.CommandSender;
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 
-public class spawnCommand {
+public class spawnCommand extends iCommand{
+	
+	public spawnCommand(String subCommand, String permissions, String ...args) {
+		super(subCommand, permissions);
+	}
 
-	public spawnCommand(CommandSender sender, Command cmd, String arg2,String[] args) {
+	@Override
+	public void execute(CommandSender sender, String[] args) {
 		if(sender instanceof BlockCommandSender){
 			if(args.length==6){
 				BlockCommandSender bs = (BlockCommandSender) sender;

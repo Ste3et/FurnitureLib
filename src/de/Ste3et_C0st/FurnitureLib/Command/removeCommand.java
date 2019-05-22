@@ -18,10 +18,15 @@ import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
 
-public class removeCommand {
+public class removeCommand extends iCommand{
 
-	public removeCommand(CommandSender sender, Command cmd, String arg2,String[] args) {
-		if(!command.noPermissions(sender, "furniture.remove")) return;
+	public removeCommand(String subCommand, String permissions, String ...args) {
+		super(subCommand, permissions);
+	}
+
+	@Override
+	public void execute(CommandSender sender, String[] args) {
+		if(!hasCommandPermission(sender)) return;
 		if(args.length==2){
 			Project pro = getProject(args[1]);
 			World world = getWorld(args[1]);
@@ -30,62 +35,62 @@ public class removeCommand {
 			ObjectID serial = getSerial(args[1]);
 			
 			if(pro != null){
-				if(!command.noPermissions(sender, "furniture.remove.project")) return;
+				if(!hasCommandPermission(sender, ".project")) return;
 				int i = removeListObj(getObject(pro));
-				String str = FurnitureLib.getInstance().getLangManager().getString("RemoveDistance");
+				String str = FurnitureLib.getInstance().getLangManager().getString("message.RemoveDistance");
 				str = str.replace("#AMOUNT#", i+"");
 				sender.sendMessage(str);
 				return;
 			}
 			
 			if(world != null){
-				if(!command.noPermissions(sender, "furniture.remove.world")) return;
+				if(!hasCommandPermission(sender, ".world")) return;
 				int i = removeListObj(getObject(world));
-				String str = FurnitureLib.getInstance().getLangManager().getString("RemoveDistance");
+				String str = FurnitureLib.getInstance().getLangManager().getString("message.RemoveDistance");
 				str = str.replace("#AMOUNT#", i+"");
 				sender.sendMessage(str);
 				return;
 			}
 			
 			if(palyer != null){
-				if(!command.noPermissions(sender, "furniture.remove.player")) return;
+				if(!hasCommandPermission(sender, ".player")) return;
 				removeListObj(getObject(palyer));
-				String str = FurnitureLib.getInstance().getLangManager().getString("RemovePlayer");
+				String str = FurnitureLib.getInstance().getLangManager().getString("message.RemovePlayer");
 				str = str.replace("#PLAYER#", palyer);
 				sender.sendMessage(str);
 				return;
 			}
 			
 			if(serial != null){
-				if(!command.noPermissions(sender, "furniture.remove.obj")) return;
+				if(!hasCommandPermission(sender, ".obj")) return;
 				FurnitureLib.getInstance().getFurnitureManager().remove(serial);
-				sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("RemoveID").replaceAll("#OBJID#", serial.getID()));
+				sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.RemoveID").replaceAll("#OBJID#", serial.getID()));
 				return;
 			}
 			
 			if(plugin != null){
-				if(!command.noPermissions(sender, "furniture.remove.plugin")) return;
+				if(!hasCommandPermission(sender, ".plugin")) return;
 				removeListObj(getObjectPlugin(plugin));
-				sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("RemovePlugin").replaceAll("#PLUGIN#", plugin));
+				sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.RemovePlugin").replaceAll("#PLUGIN#", plugin));
 				return;
 			}
 			
 			if(args[1].equalsIgnoreCase("all")){
-				if(!command.noPermissions(sender, "furniture.remove.all")) return;
+				if(!hasCommandPermission(sender, ".all")) return;
 				removeListObj(FurnitureLib.getInstance().getFurnitureManager().getObjectList());
-				sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("RemoveAll"));
+				sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.RemoveAll"));
 				return;
 			}
 			
 			if(FurnitureLib.getInstance().isInt(args[1])){
-				if(!command.noPermissions(sender, "furniture.remove.distance")) return;
+				if(!hasCommandPermission(sender, ".distance")) return;
 				if(sender instanceof Player){
 					int distance = Integer.parseInt(args[1]);
 					Player p = (Player) sender;
 					World w = p.getWorld();
 					HashSet<ObjectID> worldObjList = getObject(w);
 					int i = removeListObj(getObject(p.getLocation(), worldObjList, distance));
-					String s = FurnitureLib.getInstance().getLangManager().getString("RemoveDistance");
+					String s = FurnitureLib.getInstance().getLangManager().getString("message.RemoveDistance");
 					s = s.replace("#AMOUNT#", i+"");
 					p.sendMessage(s);return;
 				}else if(sender instanceof CommandSender){
@@ -94,7 +99,7 @@ public class removeCommand {
 					World w = commandBlock.getBlock().getWorld();
 					HashSet<ObjectID> worldObjList = getObject(w);
 					int i = removeListObj(getObject(commandBlock.getBlock().getLocation(), worldObjList, distance));
-					String s = FurnitureLib.getInstance().getLangManager().getString("RemoveDistance");
+					String s = FurnitureLib.getInstance().getLangManager().getString("message.RemoveDistance");
 					s = s.replace("#AMOUNT#", i+"");
 					sender.sendMessage(s);return;
 				}
@@ -102,20 +107,20 @@ public class removeCommand {
 			}
 			
 			if(args[1].equalsIgnoreCase("lookat")){
-				if(!command.noPermissions(sender, "furniture.remove.lookat")) return;
+				if(!hasCommandPermission(sender, ".lookat")) return;
 				if(sender instanceof Player){
 					Player p = (Player) sender;
 					ObjectID obj = getFromSight(p.getLocation());
 					if(obj!=null){
 						FurnitureLib.getInstance().getFurnitureManager().remove(obj);
-						p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("RemoveLookat").replaceAll("#SERIAL#", obj.getSerial()));
+						p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.RemoveLookat").replaceAll("#SERIAL#", obj.getSerial()));
 					}
 					return;
 				}
 				return;
 			}
 			
-			sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("WrongArgument"));
+			sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.WrongArgument"));
 			return;
 		}
 	}

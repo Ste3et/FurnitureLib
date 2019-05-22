@@ -7,41 +7,46 @@ import org.bukkit.entity.Player;
 
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 
-public class toggleCommand {
-	
-	public toggleCommand(CommandSender sender, Command cmd, String arg2,String[] args) {
+public class toggleCommand extends iCommand{
+
+	public toggleCommand(String subCommand, String permissions, String ...args) {
+		super(subCommand, permissions);
+	}
+
+	@Override
+	public void execute(CommandSender sender, String[] args) {
 		if(args.length == 1){
 			if(sender instanceof Player){
-				if(FurnitureLib.getInstance().getPermission().hasPerm(sender, "furniture.toggle") || FurnitureLib.getInstance().getPermission().hasPerm(sender, "furniture.player")){
+				if(hasCommandPermission(sender)){
 					if(!FurnitureLib.getInstance().getFurnitureManager().getIgnoreList().contains(((Player) sender).getUniqueId())){
 						FurnitureLib.getInstance().getFurnitureManager().getIgnoreList().add(((Player) sender).getUniqueId());
 						FurnitureLib.getInstance().getFurnitureManager().removeFurniture((Player) sender);
-						sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("FurnitureToggleCMDOff"));
+						sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.FurnitureToggleCMDOff"));
 					}else{
 						FurnitureLib.getInstance().getFurnitureManager().getIgnoreList().remove(((Player) sender).getUniqueId());
 						FurnitureLib.getInstance().getFurnitureManager().updatePlayerView((Player) sender);
-						sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("FurnitureToggleCMDOn"));
+						sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.FurnitureToggleCMDOn"));
 					}
 				}
 			}
 		}else if(args.length == 2){
-			if(FurnitureLib.getInstance().getPermission().hasPerm(sender, "furniture.toggle.another")){
+			if(hasCommandPermission(sender, ".other")){
 				Player player = Bukkit.getPlayer(args[1]);
-				if(player == null){sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("PlayerNotOnline"));return;}
+				if(player == null){sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.PlayerNotOnline"));return;}
 				if(!FurnitureLib.getInstance().getFurnitureManager().getIgnoreList().contains(player.getUniqueId())){
 					FurnitureLib.getInstance().getFurnitureManager().getIgnoreList().add(player.getUniqueId());
 					FurnitureLib.getInstance().getFurnitureManager().removeFurniture(player);
-					sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("FurnitureToggleCMDOff"));
-					player.sendMessage(FurnitureLib.getInstance().getLangManager().getString("FurnitureToggleCMDOff"));
+					sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.FurnitureToggleCMDOff"));
+					player.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.FurnitureToggleCMDOff"));
 				}else{
 					FurnitureLib.getInstance().getFurnitureManager().getIgnoreList().remove(player.getUniqueId());
 					FurnitureLib.getInstance().getFurnitureManager().updatePlayerView(player);
-					sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("FurnitureToggleCMDOn"));
-					player.sendMessage(FurnitureLib.getInstance().getLangManager().getString("FurnitureToggleCMDOn"));
+					sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.FurnitureToggleCMDOn"));
+					player.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.FurnitureToggleCMDOn"));
 				}
 			}
 		}else{
-			sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("WrongArgument"));return;
+			sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.WrongArgument"));return;
 		}
 	}
 }

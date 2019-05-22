@@ -91,7 +91,7 @@ public class LocationUtil {
 			Vector v1 = obj.getStartLocation().toVector();
 			if(v1.equals(v2)){
 				if(!obj.getSQLAction().equals(SQLAction.REMOVE)){
-					p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("FurnitureOnThisPlace"));
+					p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.FurnitureOnThisPlace"));
 					return false;
 				}
 			}
@@ -174,7 +174,7 @@ public class LocationUtil {
 			for(Location location : blockList){
 				particleBlock(location.getBlock(), p);
 			}	
-			p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("NotEnoughSpace"));
+			p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.NotEnoughSpace"));
 			return false;
 		}
 	}
