@@ -12,26 +12,8 @@ import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 
 public class TabCompleterHandler implements TabCompleter {
-	private List<String> str = new ArrayList<String>();
-	private List<String> str2 = new ArrayList<String>();
-	private List<String> str3 = new ArrayList<String>();
 	private FurnitureLib lib;
 	private boolean b = true;
-	public TabCompleterHandler(FurnitureLib furnitureLib) {
-		this.lib = furnitureLib;
-		str.add("list");
-		str.add("give");
-		str.add("debug");
-		str.add("manage");
-		str.add("recipe");
-		str.add("remove");
-		str.add("save");
-		str.add("download");
-		str2.add("type");
-		str2.add("world");
-		str2.add("plugin");
-		str3.add("download");
-	}
 
 	@Override
 	public List<String> onTabComplete(CommandSender sender, Command cmd, String arg2, String[] args) {
@@ -39,48 +21,23 @@ public class TabCompleterHandler implements TabCompleter {
 			if(cmd!=null&&cmd.getName().equalsIgnoreCase("furniture")){
 				if(args.length==1){
 					String s = args[0];
-					return getTabCompleter(s, str);
+					return getTabCompleter(sender, s);
 				}
 				if(args.length==2){
 					String s = args[1];
-					if(args[0].equalsIgnoreCase("list")){
-						return getTabCompleter(s, str2);
-					}else if(args[0].equalsIgnoreCase("give")){
-						return getTabCompleter(s, getProjectNames());
-					}else if(args[0].equalsIgnoreCase("remove")){
-						List<String> stringList = getProjectNames();
-						stringList.add("all");
-						stringList.add("distance");
-						stringList.add("lookat");
-						return getTabCompleter(s, getProjectPlugins(stringList));
-					}else if(args[0].equalsIgnoreCase("recipe")){
-						return getTabCompleter(s, getProjectNames());
-					}else if(str3.contains(s.toLowerCase())){
-						return getTabCompleter(s, getModels());
-					}
+					
 				}
 			}
 		}
 		return null;
 	}
 
-	private List<String> getTabCompleter(String s, List<String> strL){
-		if(b){
-			if(Bukkit.getPluginManager().isPluginEnabled("FurnitureMaker")){
-				this.str.add("create");
-				this.str.add("upload");
-				this.str.add("edit");
-				this.str3.add("upload");
-				this.str3.add("edit");
-				this.str2.add("models");
-			}
-			this.b = false;
-		}
+	private List<String> getTabCompleter(CommandSender sender, String s){
 		List<String> strAL = new ArrayList<String>();
-		for(String str : strL){
-			if(strAL.contains(str)){continue;}
-			if(str.toLowerCase().startsWith(s.toLowerCase())){strAL.add(str);}
-		}
+		command.commands.stream()
+			.filter(cmd -> cmd.getSubCommand().toLowerCase().contains(s.toLowerCase()))
+			.filter(cmd -> sender.hasPermission(cmd.getFormatedPerms()))
+			.forEach(cmd -> strAL.add(cmd.getSubCommand()));
 		return strAL;
 	}
 	

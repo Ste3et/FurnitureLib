@@ -34,9 +34,8 @@ public class command implements CommandExecutor, Listener{
 	Plugin plugin;
 	public static List<Player> playerList = new ArrayList<Player>();
 	public static List<Player> manageList = new ArrayList<Player>();
-	public static List<SubCommand> subCommands = new ArrayList<SubCommand>();
 	
-	private static List<iCommand> commands = new ArrayList<iCommand>();
+	public static List<iCommand> commands = new ArrayList<iCommand>();
 	
 	public command(Plugin plugin){
 		this.plugin = plugin;
@@ -57,9 +56,9 @@ public class command implements CommandExecutor, Listener{
 		commands.add(new versionCommand("version", "version"));
 	}
 	
-	public static void addCommand(SubCommand subcommand){
-		if(subCommands.contains(subcommand)) return;
-		subCommands.add(subcommand);
+	public static void addCommand(iCommand command){
+		if(commands.contains(command)) return;
+		commands.add(command);
 	}
 	
 	@EventHandler
@@ -123,17 +122,6 @@ public class command implements CommandExecutor, Listener{
 		}
 	}
 	
-	@Deprecated
-	public static boolean noPermissions(CommandSender sender, String s){
-		if(sender.isOp()) return true;
-		if(lib.getPermission().hasPerm(sender,"furniture.admin")) return true;
-		if(!lib.getPermission().hasPerm(sender,s.toLowerCase())){
-			sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.NoPermissions"));
-			return false;
-		}
-		return true;
-	}
-	
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String arg2, String[] args) {
 			if(cmd.getName().equalsIgnoreCase("furniture")){
@@ -143,22 +131,16 @@ public class command implements CommandExecutor, Listener{
 						iCommand comm = commands.stream()
 								.filter(command -> command.getSubCommand().equalsIgnoreCase(args[0]) || command.getAliasList().contains(args[0].toLowerCase()))
 								.findFirst().orElse(null);
-						if(comm == null) {
-							SubCommand sub = subCommands.stream().filter(command -> command.getSubcommand().equalsIgnoreCase(args[0])).findFirst().orElse(null);
-							if(sub != null) {
-								if(sub.getSubcommand().equalsIgnoreCase("create")) {
-									if(lib.getFurnitureManager().getIgnoreList().contains(((Player) sender).getUniqueId())){
-										sender.sendMessage(lib.getLangManager().getString("message.FurnitureToggleEvent"));
-										return true;
-									}
+						if(comm != null) {
+							if(comm.getSubCommand().equalsIgnoreCase("create")) {
+								if(lib.getFurnitureManager().getIgnoreList().contains(((Player) sender).getUniqueId())){
+									sender.sendMessage(lib.getLangManager().getString("message.FurnitureToggleEvent"));
+									return true;
 								}
-								sub.runCommand(sender, cmd, arg2, args);
-								return true;
 							}
-							sendHelp((Player) sender);
+							comm.execute(sender, args);
 							return true;
 						}
-						comm.execute(sender, args);
 					}else {
 						sendHelp((Player) sender);
 					}
@@ -177,14 +159,6 @@ public class command implements CommandExecutor, Listener{
 				p.spigot().sendMessage(jsonText(str.getLanguageID()));
 			}
 		});
-		
-		if(!subCommands.isEmpty()) {
-			for(SubCommand commands : subCommands){
-				ComponentBuilder builder = new ComponentBuilder(commands.getCommand()).event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(commands.getHoverText()).create())).event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, commands.getSuggest_Command()));
-				p.spigot().sendMessage(builder.create());
-			}
-		}
-
 		p.sendMessage(LanguageManager.getInstance().getString("command.help.footer"));
 	}
 	

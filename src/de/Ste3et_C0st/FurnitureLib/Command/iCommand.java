@@ -12,7 +12,7 @@ import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 
 public abstract class iCommand {
 
-	private String subCommand = "", permissions = "", languageID = "", helpClass = "", pluginName = "furniture";
+	private String subCommand = "", permissions = "", languageID = "", helpClass = "";
 	private String[] alias;
 	private List<String> aliasList = new ArrayList<String>();
 	private boolean b = false, console = false, hideFromHelp = false;
@@ -51,12 +51,12 @@ public abstract class iCommand {
 	   if (!(paramCommandSender instanceof Player)) {
 	     return true;
 	   }
-	   System.out.println("command." + getLanguageID() + ".permissions");
-	   System.out.println(getLHandler().getString("command." + getLanguageID() + ".permissions") + paramString);
-	   if (paramCommandSender.hasPermission(this.pluginName + ".command.*")) {
+	   String perm = "furniture.command." + getSubCommand() + paramString;
+	   if (paramCommandSender.hasPermission("furniture.command.*")) {
 	     return true;
 	   }
-	   boolean b = paramCommandSender.hasPermission(getLHandler().getString(getLanguageID() + ".permissions") + paramString);
+	   boolean b = paramCommandSender.hasPermission(perm);
+	   if(!b) FurnitureLib.getInstance().debug("FurnitureLib: " + paramCommandSender.getName() + " is missing perm " + perm); 
 	   return b;
 	}
 	
@@ -81,6 +81,10 @@ public abstract class iCommand {
 
 	private void setPermissions(String permissions) {
 		this.permissions = permissions;
+	}
+	
+	public String getFormatedPerms() {
+		return "furniture.command." + getSubCommand();
 	}
 
 	private void setSubCommand(String subCommand) {

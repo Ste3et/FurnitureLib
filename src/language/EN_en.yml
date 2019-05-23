@@ -1,7 +1,6 @@
 message:
   FurnitureOnThisPlace: '&aThere is already a piece of furniture at this position.'
   NotEnoughSpace: '&aThere is not enough space to place this object.'
-  NoPermissions: '&cYou do not have permissions to do this.'
   PlayerNotOnline: '&cThe player #PLAYER# is not online.'
   ProjectNotFound: '&cThe project #PROJECT# does not exist.'
   ProjectAlreadyExist: '&cThe project #PROJECT# already exists.'
@@ -54,14 +53,12 @@ command:
             - "&6You can become some information about"
             - "&6abaout the furniture you are rightclicked"
         suggest: "/furniture debug"
-        permissions: "furniture.command.debug"
     delete:
         help_name: "&7/furniture &edelete &a[systemID] {confirm}"
         help_hover: 
             - "&6Use this command if you want to remove"
             - "&6a Model from the system"
         suggest: "/furniture delete systemID"
-        permissions: "furniture.command.delete"
         wrongUsage: "&cPlease use /furniture delete [systemID]"
     download:
         help_name: '&7/furniture &edownload &a[id]'
@@ -69,14 +66,12 @@ command:
             - '&6Download a furniture model from'
             - '&6dicecraft.de/furniture'
         suggest: '/furniture download [id]'
-        permissions: 'furniture.command.download'
         wrongUsage: '&cPlease use /furniture download [id]'
     give:
         help_name: "&7/furniture &egive &a[systemID] &b(player) &b(amount)"
         help_hover: 
             - "&6Give a model Item to a Player"
         suggest: "/furniture give [systemID]"
-        permissions: "furniture.command.give"
         wrongUsage: "&cPlease use /furniture give [systemID]"
     list:
         help_name: "&7/furniture &elist (option) (side)"
@@ -87,33 +82,28 @@ command:
             - "&6 - type"
             - "&6 - world"
         suggest: "/furniture list"
-        permissions: "furniture.command.list"
         wrongUsage: "Please use /furniture list (option)"
     manage:
         help_name: "&7/furniture &emanage"
         help_hover:
             - "Change the settings of a Furniture Model"
         suggest: "/furniture manage"
-        permissions: "furniture.command.manage"
     purge:
         help_name: "&7/furniture &epurge &a[time]"
         help_hover:
             - "Remove old User Furnitures"
         suggest: "/furniture purge"
-        permissions: "furniture.command.purge"
         wrongUsage: "Please use /furniture purge [time]"
     recipe:
         help_name: "&7/furniture &erecipe &a[systemID] &b(edit)"
         help_hover:
             - "View or edit a recipe of a Furniture"
         suggest: "/furniture recipe"
-        permissions: "furniture.command.recipe"
         wrongUsage: "Please use /furniture recipe [systemID]"
     reload:
         help_name: "&7/furniture &ereload"
         help_hover: "Reload all Settings of the FurnitureLib"
         suggest: "/furniture reload"
-        permissions: "furniture.command.reload"
     remove:
         help_name: "&7/furniture &eremove &a[type]"
         help_hover:
@@ -127,13 +117,11 @@ command:
             - " - lookat: Furniture you are looking it"
             - " - all: clear the Server"
         suggest: "/furniture remove"
-        permissions: "furniture.command.remove"
         wrongUsage: "Please use /furniture remove [type]"
     save:
         help_name: "&7/furniture &esave"
         help_hover: "Save all furniture changes manually"
         suggest: "/furniture save"
-        permissions: "furniture.command.save"
     spawn:
         help_name: "&7/furniture &espawn [x] [y] [z] [yaw] [systemID] {world}"
         help_hover: 
@@ -141,17 +129,14 @@ command:
             - "World is optional by console"
         suggest: "/furniture spawn [x] [y] [z] [yaw] [systemID] {world}"
         help_hide: true
-        permissions: "furniture.command.spawn"
         wrongUsage: "Please use /furniture spawn [x] [y] [z] [yaw] [systemID] {world}"
     toggle:
         help_name: "&7/furniture &etoggle (player)"
         help_hover:
             - "Hide/show the existen furnitures"
         suggest: "/furniture toggle"
-        permissions: "furniture.command.toggle"
         wrongUsage: "Please use /furniture toggle &b(player)"
     version:
         help_name: "&7/furniture &eversion"
         help_hover: "Give feedback about the Version of FurnitureLib"
         suggest: "/furniture version"
-        permissions: "furniture.command.version"

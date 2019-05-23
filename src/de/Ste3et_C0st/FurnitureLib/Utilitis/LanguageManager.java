@@ -1,5 +1,7 @@
 package de.Ste3et_C0st.FurnitureLib.Utilitis;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
 
@@ -30,7 +32,7 @@ public class LanguageManager{
 	public LanguageManager(Plugin plugin, String lang){
 		instance = this;
 		//this.lang = lang;
-		this.lang = "EN_en";
+		this.lang = lang;
 		this.plugin = plugin;
 		addDefault();
 		addDefaultInv();
@@ -75,11 +77,6 @@ public class LanguageManager{
 					hash.put(key.toLowerCase(), key.toLowerCase() + " is Missing");
 				}
 			});
-			
-//			for(String str : file.getConfigurationSection("").getKeys(true)){
-//				String string = file.getString("message"+"."+str);
-//				hash.put(str, string);
-//			}
 		}catch(NullPointerException ex){
 			ex.printStackTrace();
 			return;
@@ -190,4 +187,15 @@ public class LanguageManager{
 		return instance;
 	}
 	
+	public void addText(YamlConfiguration configuration) {
+		YamlConfiguration conf = YamlConfiguration.loadConfiguration(new File("plugin/FurnitureLib/lang/" + this.lang + ".yml"));
+		conf.addDefaults(configuration);
+		conf.options().copyDefaults(true);
+		try {
+			conf.save(new File("plugin/FurnitureLib/lang/" + this.lang + ".yml"));
+			addDefault();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+	}
 }

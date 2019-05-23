@@ -222,7 +222,7 @@ public class FurnitureLib extends JavaPlugin{
 				
 				PluginCommand c = getCommand("furniture");
 				c.setExecutor(new command(this));
-				c.setTabCompleter(new TabCompleterHandler(this));
+				c.setTabCompleter(new TabCompleterHandler());
 			}else{
 				send("Furniture Lib deosn't find the correct ProtocolLib");
 				send("Please Install Protocollib §c4.x");
