@@ -13,6 +13,7 @@ public class spawnCommand extends iCommand{
 	
 	public spawnCommand(String subCommand, String permissions, String ...args) {
 		super(subCommand, permissions);
+		setTab("x", "y", "z", "yaw", "installedModels");
 	}
 
 	@Override

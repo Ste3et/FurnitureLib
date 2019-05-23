@@ -22,6 +22,7 @@ public class removeCommand extends iCommand{
 
 	public removeCommand(String subCommand, String permissions, String ...args) {
 		super(subCommand, permissions);
+		setTab("project/world/player/lookat/distance/all/obj");
 	}
 
 	@Override

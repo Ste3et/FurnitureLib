@@ -18,6 +18,7 @@ public class deleteCommand extends iCommand {
 
 	public deleteCommand(String subCommand, String permissions, String ...args) {
 		super(subCommand, permissions);
+		setTab("installedDModels");
 	}
 	
 	@Override

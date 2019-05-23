@@ -13,6 +13,7 @@ public class giveCommand extends iCommand{
 	
 	public giveCommand(String subCommand, String permissions, String ...args) {
 		super(subCommand, permissions);
+		setTab("installedModels", "players");
 	}
 	
 	@Override

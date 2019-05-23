@@ -13,18 +13,12 @@ import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 public abstract class iCommand {
 
 	private String subCommand = "", permissions = "", languageID = "", helpClass = "";
-	private String[] alias;
+	private String[] alias, tab;
 	private List<String> aliasList = new ArrayList<String>();
 	private boolean b = false, console = false, hideFromHelp = false;
 	
 	public iCommand(String subCommand, String permissions, String ... alias) {
-		this.setSubCommand(subCommand);
-		this.setPermissions(permissions);
-		this.setLanguageID(subCommand);
-		if(alias.length > 0) {
-			this.alias = alias;
-			this.aliasList = Arrays.asList(alias);
-		}
+		this(subCommand, permissions, "", alias);
 	}
 	
 	public iCommand(String subCommand, String permissions,String helpClass, String ... alias) {
@@ -44,6 +38,15 @@ public abstract class iCommand {
 	
 	public LanguageManager getLHandler() {
 		return LanguageManager.getInstance();
+	}
+	
+	public iCommand setTab(String ... str) {
+		this.tab = str;
+		return this;
+	}
+	
+	public String[] getTabs() {
+		return this.tab;
 	}
 
 	public boolean hasCommandPermission(CommandSender paramCommandSender, String paramString)

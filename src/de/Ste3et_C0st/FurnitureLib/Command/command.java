@@ -9,6 +9,8 @@ import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.HoverEvent.Action;
+
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
@@ -22,6 +24,7 @@ import org.bukkit.plugin.Plugin;
 import de.Ste3et_C0st.FurnitureLib.ShematicLoader.Events.ProjectClickEvent;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.LanguageManager;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.ManageInv;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.StringTranslater;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
@@ -152,7 +155,16 @@ public class command implements CommandExecutor, Listener{
 	
 	public static void sendHelp(Player p){
 		if(p==null) return;
-		p.sendMessage(LanguageManager.getInstance().getString("command.help.header"));
+		p.spigot().sendMessage(
+				new ComponentBuilder(LanguageManager.getInstance().getString("command.help.header"))
+					.event(new HoverEvent(Action.SHOW_TEXT, 
+						   new ComponentBuilder(LanguageManager.getInstance().getString("command.help.hover",
+								   	new StringTranslater("#VERSION#", FurnitureLib.getInstance().getDescription().getVersion()),
+								   	new StringTranslater("#AUTHOR#", "Ste3et_C0st")))
+						   .create()
+					)
+				).create()
+		);
 		
 		commands.stream().forEach(str -> {
 			if(str.hasCommandPermission(p, str.getPermissions()) && !str.isHide()){

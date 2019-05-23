@@ -120,6 +120,7 @@ public class listCommand extends iCommand{
 	
 	public listCommand(String subCommand, String permissions, String ...args) {
 		super(subCommand, permissions);
+		setTab("type/world/plugin/models");
 	}
 	
 	@Override

@@ -1,8 +1,8 @@
 package de.Ste3et_C0st.FurnitureLib.Command;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
@@ -10,6 +10,7 @@ import org.bukkit.entity.Player;
 
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
+import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
 
 public class TabCompleterHandler implements TabCompleter {
 	private FurnitureLib lib;
@@ -23,9 +24,40 @@ public class TabCompleterHandler implements TabCompleter {
 					String s = args[0];
 					return getTabCompleter(sender, s);
 				}
-				if(args.length==2){
-					String s = args[1];
-					
+				if(args.length>1){
+					iCommand iCommandParam = command.commands.stream().filter(c -> c.getSubCommand().equalsIgnoreCase(args[0])).findFirst().orElse(null);
+					if(iCommandParam != null) {
+						if(iCommandParam.getTabs() != null && iCommandParam.getTabs().length > 0) {
+							int index = args.length - 2;
+							if(index < iCommandParam.getTabs().length) {
+								String str = iCommandParam.getTabs()[index];
+								if(str.equalsIgnoreCase("installedModels")) {
+									List<String> strAL = new ArrayList<String>();
+									FurnitureManager.getInstance().getProjects().stream()
+										.filter(p -> p.getName().toLowerCase().contains(args[1].toLowerCase()))
+										.forEach(p -> strAL.add(p.getName()));
+									return strAL;
+								}else if(str.equalsIgnoreCase("installedDModels")) {
+									List<String> strAL = new ArrayList<String>();
+									FurnitureManager.getInstance().getProjects().stream()
+										.filter(p -> p.isEditorProject() && p.getName().toLowerCase().contains(args[1].toLowerCase()))
+										.forEach(p -> strAL.add(p.getName()));
+									return strAL;
+								}else if(str.equalsIgnoreCase("players")) {
+									return null;
+								}else{
+									List<String> strAL = new ArrayList<String>();
+									if(str.contains("/")) {
+										Arrays.asList(str.split("/")).forEach(strAL::add);
+										return strAL;
+									}else {
+										strAL.add(str);
+										return strAL;
+									}
+								}
+							}
+						}
+					}
 				}
 			}
 		}

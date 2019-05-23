@@ -188,11 +188,12 @@ public class LanguageManager{
 	}
 	
 	public void addText(YamlConfiguration configuration) {
-		YamlConfiguration conf = YamlConfiguration.loadConfiguration(new File("plugin/FurnitureLib/lang/" + this.lang + ".yml"));
+		File lang = new File("plugins/FurnitureLib/lang/" + this.lang + ".yml");
+		YamlConfiguration conf = YamlConfiguration.loadConfiguration(lang);
 		conf.addDefaults(configuration);
 		conf.options().copyDefaults(true);
 		try {
-			conf.save(new File("plugin/FurnitureLib/lang/" + this.lang + ".yml"));
+			conf.save(lang);
 			addDefault();
 		} catch (IOException e) {
 			e.printStackTrace();

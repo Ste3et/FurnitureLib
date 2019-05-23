@@ -12,6 +12,7 @@ public class recipeCommand extends iCommand{
 
 	public recipeCommand(String subCommand, String permissions, String ...args) {
 		super(subCommand, permissions);
+		setTab("installedModels","edit");
 	}
 
 	@Override

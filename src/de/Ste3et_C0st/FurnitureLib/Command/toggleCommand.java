@@ -11,6 +11,7 @@ public class toggleCommand extends iCommand{
 
 	public toggleCommand(String subCommand, String permissions, String ...args) {
 		super(subCommand, permissions);
+		setTab("players");
 	}
 
 	@Override

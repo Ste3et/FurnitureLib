@@ -38,7 +38,7 @@ message:
 command:
     help:
         header: 
-            - "&7&m+--------------------&7[Furniture&7]&m---------------------+"
+            - "&7&m+-------------------&7[&2&lFurniture&7]&m--------------------+"
             - "&7 "
         footer:
             - "&7 " 
@@ -50,93 +50,93 @@ command:
     debug:
         help_name: "&7/furniture &edebug"
         help_hover:
-            - "&6You can become some information about"
-            - "&6abaout the furniture you are rightclicked"
+            - "&7You can become some &einformation &7about"
+            - "&7the furniture you are &erightclicked"
         suggest: "/furniture debug"
     delete:
         help_name: "&7/furniture &edelete &a[systemID] {confirm}"
         help_hover: 
-            - "&6Use this command if you want to remove"
-            - "&6a Model from the system"
+            - "&7Use this command if you want to &edelete"
+            - "&7a Model from the &esystem"
         suggest: "/furniture delete systemID"
         wrongUsage: "&cPlease use /furniture delete [systemID]"
     download:
         help_name: '&7/furniture &edownload &a[id]'
         help_hover:
-            - '&6Download a furniture model from'
-            - '&6dicecraft.de/furniture'
+            - '&7Download a &efurniture model &7from'
+            - '&e&ndicecraft.de/furniture'
         suggest: '/furniture download [id]'
         wrongUsage: '&cPlease use /furniture download [id]'
     give:
         help_name: "&7/furniture &egive &a[systemID] &b(player) &b(amount)"
         help_hover: 
-            - "&6Give a model Item to a Player"
+            - "&7Give a &emodel Item &7to a &ePlayer"
         suggest: "/furniture give [systemID]"
         wrongUsage: "&cPlease use /furniture give [systemID]"
     list:
         help_name: "&7/furniture &elist (option) (side)"
         help_hover:
-            - "&6List all installed or placed Furnitures"
-            - "&6Option:"
-            - "&6 - plugin"
-            - "&6 - type"
-            - "&6 - world"
+            - "&eList &7all installed or placed Furnitures"
+            - "&7Option:"
+            - "&7 - &eplugin"
+            - "&7 - &etype"
+            - "&7 - &eworld"
         suggest: "/furniture list"
         wrongUsage: "Please use /furniture list (option)"
     manage:
         help_name: "&7/furniture &emanage"
         help_hover:
-            - "Change the settings of a Furniture Model"
+            - "&7Change the &esettings &7of a Furniture Model"
         suggest: "/furniture manage"
     purge:
         help_name: "&7/furniture &epurge &a[time]"
         help_hover:
-            - "Remove old User Furnitures"
+            - "&eRemove &7old User Furnitures"
+            - "&7clean your &eDatabase"
         suggest: "/furniture purge"
         wrongUsage: "Please use /furniture purge [time]"
     recipe:
         help_name: "&7/furniture &erecipe &a[systemID] &b(edit)"
         help_hover:
-            - "View or edit a recipe of a Furniture"
+            - "&eView &7or &eedit &7a recipe of a Furniture"
         suggest: "/furniture recipe"
         wrongUsage: "Please use /furniture recipe [systemID]"
     reload:
         help_name: "&7/furniture &ereload"
-        help_hover: "Reload all Settings of the FurnitureLib"
+        help_hover: "&eReload &7all &eSettings &7of the FurnitureLib"
         suggest: "/furniture reload"
     remove:
         help_name: "&7/furniture &eremove &a[type]"
         help_hover:
-            - "Remove a furniture by the Type"
-            - "Options:"
-            - " - type: ProjectName"
-            - " - player: All furnitures by playerName"
-            - " - world: All furnitures from World"
-            - " - systemID: Furniture by systemID"
-            - " - distance: Furniture by distance"
-            - " - lookat: Furniture you are looking it"
-            - " - all: clear the Server"
+            - "&7Remove a furniture by the Type"
+            - "&7Options:"
+            - " - &etype&7: ProjectName"
+            - " - &eplayer&7: All furnitures by playerName"
+            - " - &eworld&7: All furnitures from World"
+            - " - &esystemID&7: Furniture by systemID"
+            - " - &edistance&7: Furniture by distance"
+            - " - &elookat&7: Furniture you are looking it"
+            - " - &eall&7: clear the Server"
         suggest: "/furniture remove"
         wrongUsage: "Please use /furniture remove [type]"
     save:
         help_name: "&7/furniture &esave"
-        help_hover: "Save all furniture changes manually"
+        help_hover: "&7Save all furniture changes manually"
         suggest: "/furniture save"
     spawn:
         help_name: "&7/furniture &espawn [x] [y] [z] [yaw] [systemID] {world}"
         help_hover: 
-            - "Spawn a furniture on position"
-            - "World is optional by console"
+            - "&7Spawn a furniture on &eposition"
         suggest: "/furniture spawn [x] [y] [z] [yaw] [systemID] {world}"
         help_hide: true
         wrongUsage: "Please use /furniture spawn [x] [y] [z] [yaw] [systemID] {world}"
     toggle:
         help_name: "&7/furniture &etoggle (player)"
         help_hover:
-            - "Hide/show the existen furnitures"
+            - "&7Hide/show the existen furnitures"
         suggest: "/furniture toggle"
         wrongUsage: "Please use /furniture toggle &b(player)"
     version:
         help_name: "&7/furniture &eversion"
-        help_hover: "Give feedback about the Version of FurnitureLib"
+        help_hover: "&7Give feedback about the &eVersion &7of &eFurnitureLib"
         suggest: "/furniture version"
