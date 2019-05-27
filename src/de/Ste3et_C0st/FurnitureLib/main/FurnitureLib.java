@@ -12,6 +12,7 @@ import java.util.List;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
+import java.lang.reflect.InvocationTargetException
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -429,6 +430,14 @@ public class FurnitureLib extends JavaPlugin{
 			Object o = c.getConstructor(ObjectID.class).newInstance(obj);
 			if(obj.getFunctionObject() == null) obj.setFunctionObject(o);
 			obj.setFinish();
-		} catch (Exception e) {e.printStackTrace();}
+		} catch (InvocationTargetException e) {
+
+    // Answer:
+    e.getCause().printStackTrace();
+} catch (Exception e) {
+
+    // generic exception handling
+    e.printStackTrace();
+}
 	}
 }
