@@ -12,6 +12,7 @@ import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
@@ -161,6 +162,20 @@ public class FurnitureManager {
 			}
 		}
 		return null;
+	}
+	
+	public List<fEntity> getArmorStandFromPassanger(Player p) {
+		if(this.objecte.isEmpty()){return null;}
+		if(p==null) return null;
+		List<fEntity> entityList = new ArrayList<fEntity>();
+		for(ObjectID obj : objecte){
+			for(fEntity packet : obj.getPacketList()){
+				if(!packet.getPassanger().isEmpty() && packet.getPassanger().contains(p.getEntityId())){
+					entityList.add(packet);
+				}
+			}
+		}
+		return entityList;
 	}
 	
 	public ObjectID getObjectIDByID(Integer entityID) {

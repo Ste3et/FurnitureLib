@@ -393,12 +393,12 @@ public abstract class fEntity extends fSerializer{
 	
 	public void eject(Integer i) {
 		if (this.passangerIDs == null || this.passangerIDs.isEmpty()) return;
-		if(this.passangerIDs.remove(i)) {
+		if(removePassanger(i)) {
 			int[] passangerID = this.passangerIDs.stream().mapToInt(Integer::intValue).toArray();
 			PacketContainer container = new PacketContainer(PacketType.Play.Server.MOUNT);
 			container.getIntegers().write(0, getEntityID());
 			container.getIntegerArrays().write(0, passangerID);
-			getObjID().getPlayerList().forEach(player -> {
+			getObjID().getPlayerList().stream().forEach(player -> {
 				try {
 					getManager().sendServerPacket(player, container);
 				} catch (InvocationTargetException e) {
@@ -406,6 +406,11 @@ public abstract class fEntity extends fSerializer{
 				}
 			});
 		}
+	}
+	
+	public boolean removePassanger(Integer i) {
+		if (this.passangerIDs == null || this.passangerIDs.isEmpty()) return false;
+		return this.passangerIDs.remove(i);
 	}
 
 	public void eject() {
@@ -517,4 +522,5 @@ public abstract class fEntity extends fSerializer{
 	}
 	
 	public abstract void loadMetadata(NBTTagCompound metadata);
+	
 }

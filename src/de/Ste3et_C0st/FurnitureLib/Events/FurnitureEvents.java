@@ -1,5 +1,7 @@
 package de.Ste3et_C0st.FurnitureLib.Events;
 
+import java.util.List;
+
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -82,48 +84,11 @@ public class FurnitureEvents {
                     public void onPacketReceiving(PacketEvent event) {
                         if (event.getPacketType() == PacketType.Play.Client.STEER_VEHICLE) {
                         	final Player p = event.getPlayer();
-                        	float a = event.getPacket().getFloat().read(0);
-                    		float b = event.getPacket().getFloat().read(1);
-                    		boolean c = event.getPacket().getBooleans().read(0);
-                    		boolean d = event.getPacket().getBooleans().read(1);
-                    		EntityMoving moving = null;
-                    		if(a>0){moving = EntityMoving.LEFT;}
-                    		if(a<0){moving = EntityMoving.RIGHT;}
-                    		if(b>0){moving = EntityMoving.FORWARD;}
-                    		if(b<0){moving = EntityMoving.BACKWARD;}
-                        	if(c){moving = EntityMoving.JUMPING;}
-                        	if(d){moving = EntityMoving.SNEEKING;}
-                        	
-                        	if(a>0&&b>0){moving = EntityMoving.LEFT_FORWARD;}
-                        	if(a<0&&b>0){moving = EntityMoving.RIGHT_FORWARD;}
-                        	if(a<0&&b<0){moving = EntityMoving.RIGHT_BACKWARD;}
-                        	if(a>0&&b<0){moving = EntityMoving.LEFT_BACKWARD;}
-                        	if(moving==null) return;
-                        	for(final ObjectID obj : manager.getObjectList()){
-                        		//if(obj.isInRange(p)){
-                        			for(final fEntity packet : obj.getPacketList()){
-                        				if(!packet.getPassanger().isEmpty()){
-                        					if(packet.getPassanger().contains(p.getEntityId())){
-                            					event.setCancelled(true);
-                            					moving.setValues(a,b,c);
-                            					final EntityMoving action = moving;
-                            					Bukkit.getScheduler().scheduleSyncDelayedTask(getPlugin(), new Runnable() {
-    												@Override
-    												public void run() {
-    													FurnitureMoveEvent event = new FurnitureMoveEvent(p, (fArmorStand) packet, obj, action);
-														Bukkit.getServer().getPluginManager().callEvent(event);
-														if(!event.isCancelled()){
-															if(action.equals(EntityMoving.SNEEKING)){
-																packet.eject(p.getEntityId());return;
-															}
-														}
-    												}
-                            					});
-                        					}
-                        				}
-                        			}
-                        		//}
-                        	}
+                    		EntityMoving moving = event.getPacket().getBooleans().read(1) ? EntityMoving.SNEEKING : null;
+                    		if(moving != null && moving.equals(EntityMoving.SNEEKING)) {
+                    			List<fEntity> e = FurnitureManager.getInstance().getArmorStandFromPassanger(p);
+                    			if(e != null && !e.isEmpty()) e.stream().findFirst().get().eject();
+                    		}
                         }
                     }
         });
