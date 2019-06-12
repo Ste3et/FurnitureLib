@@ -87,7 +87,12 @@ public class FurnitureEvents {
                     		EntityMoving moving = event.getPacket().getBooleans().read(1) ? EntityMoving.SNEEKING : null;
                     		if(moving != null && moving.equals(EntityMoving.SNEEKING)) {
                     			List<fEntity> e = FurnitureManager.getInstance().getArmorStandFromPassanger(p);
-                    			if(e != null && !e.isEmpty()) e.stream().findFirst().get().eject();
+                    			if(e != null && !e.isEmpty()) {
+                    				fEntity f = e.stream().findFirst().get();
+                    				if(f!=null) {
+                    					f.eject();
+                    				}
+                    			}
                     		}
                         }
                     }
