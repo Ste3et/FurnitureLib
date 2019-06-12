@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.UnsupportedEncodingException;
+import java.lang.reflect.InvocationTargetException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -430,6 +431,10 @@ public class FurnitureLib extends JavaPlugin{
 			Object o = c.getConstructor(ObjectID.class).newInstance(obj);
 			if(obj.getFunctionObject() == null) obj.setFunctionObject(o);
 			obj.setFinish();
-		} catch (Exception e) {e.printStackTrace();}
+		} catch (InvocationTargetException e) {
+			e.getCause().printStackTrace();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }
