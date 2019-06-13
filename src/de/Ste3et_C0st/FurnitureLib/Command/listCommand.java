@@ -150,9 +150,9 @@ public class listCommand extends iCommand{
 		if(args.length==1){
 			if(!hasCommandPermission(sender)) return;
 			boolean recipe = false, give = false, detail = true;
-			if(FurnitureLib.getInstance().getPermission().hasPerm(sender, "furniture.recipe")){recipe = true;}
-			if(FurnitureLib.getInstance().getPermission().hasPerm(sender, "furniture.give")){give = true;}
-			if(FurnitureLib.getInstance().getPermission().hasPerm(sender, "furniture.debug")){detail = false;}
+			if(FurnitureLib.getInstance().getPermission().hasPerm(sender, "furniture.command.recipe")){recipe = true;}
+			if(FurnitureLib.getInstance().getPermission().hasPerm(sender, "furniture.command.give")){give = true;}
+			if(FurnitureLib.getInstance().getPermission().hasPerm(sender, "furniture.command.debug")){detail = false;}
 			
 			for(String str : getProjects(keys, values, proList, give)){
 				String s = "";
@@ -222,9 +222,9 @@ public class listCommand extends iCommand{
 				if(!hasCommandPermission(sender)) return;
 				if(sender instanceof Player == false) return;
 				boolean recipe = false, give = false, detail = true;
-				if(FurnitureLib.getInstance().getPermission().hasPerm(sender, "furniture.recipe")){recipe = true;}
-				if(FurnitureLib.getInstance().getPermission().hasPerm(sender, "furniture.give")){give = true;}
-				if(FurnitureLib.getInstance().getPermission().hasPerm(sender, "furniture.debug")){detail = false;}
+				if(FurnitureLib.getInstance().getPermission().hasPerm(sender, "furniture.command.recipe")){recipe = true;}
+				if(FurnitureLib.getInstance().getPermission().hasPerm(sender, "furniture.command.give")){give = true;}
+				if(FurnitureLib.getInstance().getPermission().hasPerm(sender, "furniture.command.debug")){detail = false;}
 				
 				for(String str : getProjects(keys, values, proList, give)){
 					String s = "";
