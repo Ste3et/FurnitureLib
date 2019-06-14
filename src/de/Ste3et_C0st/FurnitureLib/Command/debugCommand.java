@@ -7,8 +7,8 @@ import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 
 public class debugCommand extends iCommand{
 	
-	public debugCommand(String subCommand, String permissions, String ...args) {
-		super(subCommand, permissions);
+	public debugCommand(String subCommand, String ...args) {
+		super(subCommand);
 	}
 
 	@Override

@@ -10,8 +10,8 @@ import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 
 public class recipeCommand extends iCommand{
 
-	public recipeCommand(String subCommand, String permissions, String ...args) {
-		super(subCommand, permissions);
+	public recipeCommand(String subCommand, String ...args) {
+		super(subCommand);
 		setTab("installedModels","edit/remove");
 	}
 

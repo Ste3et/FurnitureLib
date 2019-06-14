@@ -11,8 +11,8 @@ import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 
 public class spawnCommand extends iCommand{
 	
-	public spawnCommand(String subCommand, String permissions, String ...args) {
-		super(subCommand, permissions);
+	public spawnCommand(String subCommand, String ...args) {
+		super(subCommand);
 		setTab("x", "y", "z", "yaw", "installedModels");
 	}
 

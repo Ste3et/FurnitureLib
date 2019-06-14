@@ -7,8 +7,8 @@ import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 
 public class saveCommand  extends iCommand{
 
-	public saveCommand(String subCommand, String permissions, String ...args) {
-		super(subCommand, permissions);
+	public saveCommand(String subCommand, String ...args) {
+		super(subCommand);
 	}
 
 	@Override

@@ -32,8 +32,8 @@ import de.Ste3et_C0st.FurnitureLib.main.Type.PlaceableSide;
 
 public class downloadCommand extends iCommand{
 
-	public downloadCommand(String subCommand, String permissions, String ...args) {
-		super(subCommand, permissions);
+	public downloadCommand(String subCommand, String ...args) {
+		super(subCommand);
 	}
 
 

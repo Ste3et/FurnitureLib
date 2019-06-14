@@ -43,20 +43,20 @@ public class command implements CommandExecutor, Listener{
 	public command(Plugin plugin){
 		this.plugin = plugin;
 		Bukkit.getPluginManager().registerEvents(this, plugin);
-		commands.add(new debugCommand("debug", "debug"));
-		commands.add(new deleteCommand("delete", "delete"));
-		commands.add(new downloadCommand("download", "download"));
-		commands.add(new giveCommand("give", "give"));
-		commands.add(new listCommand("list", "list"));
-		commands.add(new manageCommand("manage", "manage"));
-		commands.add(new purgeCommand("purge", "purge"));
-		commands.add(new recipeCommand("recipe", "recipe"));
-		commands.add(new reloadCommand("reload", "reload"));
-		commands.add(new removeCommand("remove", "remove"));
-		commands.add(new saveCommand("save", "save"));
-		commands.add(new spawnCommand("spawn", "spawn").setHide(true));
-		commands.add(new toggleCommand("toggle", "toggle"));
-		commands.add(new versionCommand("version", "version"));
+		commands.add(new debugCommand("debug"));
+		commands.add(new deleteCommand("delete"));
+		commands.add(new downloadCommand("download"));
+		commands.add(new giveCommand("give"));
+		commands.add(new listCommand("list"));
+		commands.add(new manageCommand("manage"));
+		commands.add(new purgeCommand("purge"));
+		commands.add(new recipeCommand("recipe"));
+		commands.add(new reloadCommand("reload"));
+		commands.add(new removeCommand("remove"));
+		commands.add(new saveCommand("save"));
+		commands.add(new spawnCommand("spawn").setHide(true));
+		commands.add(new toggleCommand("toggle"));
+		commands.add(new versionCommand("version"));
 	}
 	
 	public static void addCommand(iCommand command){
@@ -167,7 +167,7 @@ public class command implements CommandExecutor, Listener{
 		);
 		
 		commands.stream().forEach(str -> {
-			if(str.hasCommandPermission(p, str.getPermissions()) && !str.isHide()){
+			if(str.hasCommandPermission(p) && !str.isHide()){
 				p.spigot().sendMessage(jsonText(str.getLanguageID()));
 			}
 		});

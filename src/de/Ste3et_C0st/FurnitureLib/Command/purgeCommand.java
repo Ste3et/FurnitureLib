@@ -7,8 +7,8 @@ import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 
 public class purgeCommand extends iCommand{
 
-	public purgeCommand(String subCommand, String permissions, String ...args) {
-		super(subCommand, permissions);
+	public purgeCommand(String subCommand, String ...args) {
+		super(subCommand);
 	}
 
 	@Override

@@ -12,18 +12,17 @@ import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 
 public abstract class iCommand {
 
-	private String subCommand = "", permissions = "", languageID = "", helpClass = "";
+	private String subCommand = "", languageID = "", helpClass = "";
 	private String[] alias, tab;
 	private List<String> aliasList = new ArrayList<String>();
 	private boolean b = false, console = false, hideFromHelp = false;
 	
-	public iCommand(String subCommand, String permissions, String ... alias) {
-		this(subCommand, permissions, "", alias);
+	public iCommand(String subCommand, String ... alias) {
+		this(subCommand, "", alias);
 	}
 	
-	public iCommand(String subCommand, String permissions,String helpClass, String ... alias) {
+	public iCommand(String subCommand,String helpClass, String ... alias) {
 		this.setSubCommand(subCommand);
-		this.setPermissions(permissions);
 		this.setLanguageID(subCommand);
 		this.helpClass = helpClass;
 		if(alias.length > 0) {
@@ -54,7 +53,7 @@ public abstract class iCommand {
 	   if (!(paramCommandSender instanceof Player)) {
 	     return true;
 	   }
-	   String perm = "furniture.command." + getSubCommand() + paramString;
+	   String perm = new StringBuilder(getPermissions()).append(paramString).toString().toLowerCase();
 	   if (paramCommandSender.hasPermission("furniture.command.*")) {
 	     return true;
 	   }
@@ -78,14 +77,6 @@ public abstract class iCommand {
 		return this.aliasList;
 	}
 
-	public String getPermissions() {
-		return permissions;
-	}
-
-	private void setPermissions(String permissions) {
-		this.permissions = permissions;
-	}
-	
 	public String getFormatedPerms() {
 		return "furniture.command." + getSubCommand();
 	}
@@ -151,5 +142,9 @@ public abstract class iCommand {
 	public iCommand setHide(boolean b) {
 		this.hideFromHelp = b;
 		return this;
+	}
+
+	public String getPermissions() {
+		return new StringBuilder("furniture.command.").append(getSubCommand()).toString().toLowerCase();
 	}
 }

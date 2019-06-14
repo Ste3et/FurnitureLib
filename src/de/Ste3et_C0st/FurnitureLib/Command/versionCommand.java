@@ -6,8 +6,8 @@ import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 
 public class versionCommand extends iCommand{
 
-	public versionCommand(String subCommand, String permissions, String ...args) {
-		super(subCommand, permissions);
+	public versionCommand(String subCommand, String ...args) {
+		super(subCommand);
 	}
 
 	@Override

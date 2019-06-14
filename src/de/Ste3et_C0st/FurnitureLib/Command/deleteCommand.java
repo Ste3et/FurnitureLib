@@ -16,8 +16,8 @@ import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 
 public class deleteCommand extends iCommand {
 
-	public deleteCommand(String subCommand, String permissions, String ...args) {
-		super(subCommand, permissions);
+	public deleteCommand(String subCommand, String ...args) {
+		super(subCommand);
 		setTab("installedDModels");
 	}
 	

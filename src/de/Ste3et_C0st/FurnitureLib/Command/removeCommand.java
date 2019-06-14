@@ -20,8 +20,8 @@ import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
 
 public class removeCommand extends iCommand{
 
-	public removeCommand(String subCommand, String permissions, String ...args) {
-		super(subCommand, permissions);
+	public removeCommand(String subCommand, String ...args) {
+		super(subCommand);
 		setTab("project/world/player/lookat/distance/all/obj");
 	}
 

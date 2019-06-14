@@ -118,8 +118,8 @@ public class listCommand extends iCommand{
 //	}
 
 	
-	public listCommand(String subCommand, String permissions, String ...args) {
-		super(subCommand, permissions);
+	public listCommand(String subCommand, String ...args) {
+		super(subCommand);
 		setTab("type/world/plugin/models");
 	}
 	

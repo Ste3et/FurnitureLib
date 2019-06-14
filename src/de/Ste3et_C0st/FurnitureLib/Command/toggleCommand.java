@@ -9,8 +9,8 @@ import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 
 public class toggleCommand extends iCommand{
 
-	public toggleCommand(String subCommand, String permissions, String ...args) {
-		super(subCommand, permissions);
+	public toggleCommand(String subCommand, String ...args) {
+		super(subCommand);
 		setTab("players");
 	}
 

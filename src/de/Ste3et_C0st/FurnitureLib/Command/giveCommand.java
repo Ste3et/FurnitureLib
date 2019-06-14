@@ -11,8 +11,8 @@ import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 
 public class giveCommand extends iCommand{
 	
-	public giveCommand(String subCommand, String permissions, String ...args) {
-		super(subCommand, permissions);
+	public giveCommand(String subCommand, String ...args) {
+		super(subCommand);
 		setTab("installedModels", "players");
 	}
 	

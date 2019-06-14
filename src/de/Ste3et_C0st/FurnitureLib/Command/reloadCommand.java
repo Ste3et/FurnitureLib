@@ -6,8 +6,8 @@ import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 
 public class reloadCommand extends iCommand{
 
-	public reloadCommand(String subCommand, String permissions, String ...args) {
-		super(subCommand, permissions);
+	public reloadCommand(String subCommand, String ...args) {
+		super(subCommand);
 	}
 
 	@Override
