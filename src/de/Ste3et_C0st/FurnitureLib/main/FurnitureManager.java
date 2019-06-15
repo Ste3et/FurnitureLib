@@ -12,7 +12,6 @@ import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.Player;
 
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
@@ -118,13 +117,7 @@ public class FurnitureManager {
 	}
 	
 	public boolean isArmorStand(Integer entityID){
-		if(this.objecte.isEmpty()){return false;}
-		for(ObjectID obj : objecte){
-			for(fEntity packet : obj.getPacketList()){
-				if(packet.getEntityID() == entityID) return true;
-			}
-		}
-		return false;
+		return getfArmorStandByID(entityID) != null;
 	}
 	
 	public fArmorStand createArmorStand(ObjectID id, Location loc){
@@ -154,37 +147,21 @@ public class FurnitureManager {
 	public fEntity getfArmorStandByID(Integer entityID) {
 		if(this.objecte.isEmpty()){return null;}
 		if(entityID==null) return null;
-		for(ObjectID obj : objecte){
-			for(fEntity packet : obj.getPacketList()){
-				if(packet.getEntityID() == entityID){
-					return packet;
-				}
-			}
-		}
-		return null;
+		return objecte.stream().flatMap(obj -> obj.getPacketList().stream()).filter(e -> entityID.equals(e.getEntityID())).findFirst().orElse(null);
 	}
 	
 	public List<fEntity> getArmorStandFromPassanger(Player p) {
 		if(this.objecte.isEmpty()){return null;}
 		if(p==null) return null;
-		List<fEntity> entityList = new ArrayList<fEntity>();
-		for(ObjectID obj : objecte){
-			for(fEntity packet : obj.getPacketList()){
-				if(!packet.getPassanger().isEmpty() && packet.getPassanger().contains(p.getEntityId())){
-					entityList.add(packet);
-				}
-			}
-		}
-		return entityList;
+		List<fEntity> entityList = objecte.stream().flatMap(obj -> obj.getPacketList().stream()).filter(e -> e.getPassanger().isEmpty() == false && e.getPassanger().contains(p.getEntityId())).collect(Collectors.toList());
+		return entityList == null ? new ArrayList<fEntity>() : entityList;
 	}
 	
 	public ObjectID getObjectIDByID(Integer entityID) {
 		if(this.objecte.isEmpty()){return null;}
 		if(entityID==null) return null;
-		for(ObjectID obj : objecte){
-			if(obj.getPacketList().stream().filter(entity -> entity.getEntityID() == entityID).findFirst().isPresent()) return obj;
-		}
-		return null;
+		fEntity e = getfArmorStandByID(entityID);
+		return e != null ? e.getObjID() : null;
 	}
 	
 	public ObjectID getObjectIDByString(String objID){
