@@ -21,8 +21,6 @@ import org.bukkit.block.data.type.Door;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
-
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTCompressedStreamTools;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
 import de.Ste3et_C0st.FurnitureLib.main.Furniture;
@@ -263,9 +261,9 @@ public class ProjectLoader extends Furniture{
 		boolean canInteract = canInteract(player, false);
 		boolean function = hasFunction();
 		
-		FurnitureLib.getInstance().debug("ProjectLoader -> onClick[project:"+ getObjID().getProject() + "]");
-		FurnitureLib.getInstance().debug("ProjectLoader -> onClick[hasFunction:"+ function + "]");
-		FurnitureLib.getInstance().debug("ProjectLoader -> onClick[canInteract:"+ canInteract + "]");
+		FurnitureLib.debug("ProjectLoader -> onClick[project:"+ getObjID().getProject() + "]");
+		FurnitureLib.debug("ProjectLoader -> onClick[hasFunction:"+ function + "]");
+		FurnitureLib.debug("ProjectLoader -> onClick[canInteract:"+ canInteract + "]");
 		
 		if(function && canInteract) {
 			if(this.inv != null) {

@@ -8,13 +8,9 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
 import org.bukkit.entity.Player;
 
-import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
-import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
 
 public class TabCompleterHandler implements TabCompleter {
-	private FurnitureLib lib;
-	private boolean b = true;
 
 	@Override
 	public List<String> onTabComplete(CommandSender sender, Command cmd, String arg2, String[] args) {
@@ -73,34 +69,34 @@ public class TabCompleterHandler implements TabCompleter {
 		return strAL;
 	}
 	
-	private List<String> getProjectPlugins(List<String> s){
-		for(Project pro : lib.getFurnitureManager().getProjects()){
-			if(!s.contains(pro.getPlugin().getName())){
-				s.add(pro.getPlugin().getName());
-			}
-		}
-		return s;
-	}
-	
-	private List<String> getProjectNames(){
-		List<String> projectName = new ArrayList<String>();
-		for(Project pro : lib.getFurnitureManager().getProjects()){
-			if(!projectName.contains(pro.getName())){
-				projectName.add(pro.getName());
-			}
-		}
-		return projectName;
-	}
-	
-	private List<String> getModels(){
-		List<String> projectName = new ArrayList<String>();
-		for(Project pro : lib.getFurnitureManager().getProjects()){
-			if(!projectName.contains(pro.getName())){
-				if(pro.isEditorProject()){
-					projectName.add(pro.getName());
-				}
-			}
-		}
-		return projectName;
-	}
+//	private List<String> getProjectPlugins(List<String> s){
+//		for(Project pro : lib.getFurnitureManager().getProjects()){
+//			if(!s.contains(pro.getPlugin().getName())){
+//				s.add(pro.getPlugin().getName());
+//			}
+//		}
+//		return s;
+//	}
+//	
+//	private List<String> getProjectNames(){
+//		List<String> projectName = new ArrayList<String>();
+//		for(Project pro : lib.getFurnitureManager().getProjects()){
+//			if(!projectName.contains(pro.getName())){
+//				projectName.add(pro.getName());
+//			}
+//		}
+//		return projectName;
+//	}
+//	
+//	private List<String> getModels(){
+//		List<String> projectName = new ArrayList<String>();
+//		for(Project pro : lib.getFurnitureManager().getProjects()){
+//			if(!projectName.contains(pro.getName())){
+//				if(pro.isEditorProject()){
+//					projectName.add(pro.getName());
+//				}
+//			}
+//		}
+//		return projectName;
+//	}
 }

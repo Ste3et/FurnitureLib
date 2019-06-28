@@ -29,7 +29,7 @@ public abstract class Furniture extends FurnitureHelper implements Listener{
 		if(!p.isSneaking()) {
 			for(fEntity stand : getfAsList()){
 				if(stand.getName().startsWith("#Mount:") || stand.getName().startsWith("#SITZ")){
-					FurnitureLib.getInstance().debug("Furniture -> publicFunction[#Mount/#SITZ]");
+					FurnitureLib.debug("Furniture -> publicFunction[#Mount/#SITZ]");
 					if(stand.getPassanger().isEmpty()){
 						FurnitureManager.getInstance().getArmorStandFromPassanger(p).stream().filter(s -> s.getPassanger().isEmpty() == false).forEach(s -> s.removePassanger(p.getEntityId()));
 						stand.setPassanger(p);

@@ -37,6 +37,7 @@ public class MySQL extends Database{
         try {
             Class.forName("com.mysql.jdbc.Driver");
             String connectionString = "jdbc:mysql://"+host+":"+port+"/"+DBname + "?autoReconnect=true&useSSL=" + FurnitureLib.getInstance().useSSL();
+            FurnitureLib.debug("MySQL connectionString -> " + connectionString);
             return DriverManager.getConnection(connectionString,DBuser,DBPsw);
         } catch (SQLException ex) {
             plugin.getLogger().log(Level.SEVERE,"MySQL exception on initialize", ex);
@@ -49,7 +50,9 @@ public class MySQL extends Database{
     public void createTable() {
         try (Connection con = getSQLConnection(); Statement stmt = con.createStatement()){
         	stmt.executeUpdate(Objects);
+        	FurnitureLib.debug("MySQL createTable -> " + Objects);
         } catch (SQLException e) {
+        	FurnitureLib.debug("MySQL createTable: Fail");
             e.printStackTrace();
         }
     }

@@ -14,8 +14,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.block.BlockPhysicsEvent;
 
-import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
-
 public class BlockManager implements Listener{
 	
 	public HashSet<Location> locList = new HashSet<Location>();

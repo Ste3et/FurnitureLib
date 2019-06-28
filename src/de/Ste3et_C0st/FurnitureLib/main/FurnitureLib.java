@@ -18,7 +18,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
-import org.bukkit.World;
 import org.bukkit.command.PluginCommand;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -235,7 +234,7 @@ public class FurnitureLib extends JavaPlugin{
 	}
 	
 	private void loadPluginConfig() {
-		this.enableDebug = getConfig().getBoolean("config.debugMode", false);
+		enableDebug = getConfig().getBoolean("config.debugMode", false);
 		this.lmanager = new LanguageManager(instance, getConfig().getString("config.Language"));
 		this.useGamemode = !getConfig().getBoolean("config.Creative.RemoveItems");
 		this.creativeInteract = getConfig().getBoolean("config.Creative.Interact");
@@ -293,14 +292,14 @@ public class FurnitureLib extends JavaPlugin{
 		
 	}
 	
-	private boolean enableDebug = false;
+	private static boolean enableDebug = false;
 	
-	public void debug(String str) {
+	public static void debug(String str) {
 		if(enableDebug) System.out.println(str);
 	}
 	
 	public void reloadPluginConfig() {
-		this.enableDebug = true;
+		enableDebug = true;
 		this.reloadConfig();
 		this.loadPluginConfig();
 		

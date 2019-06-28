@@ -17,7 +17,7 @@ public class EntityID {
 			f.set(null, id+1);
 			return id;
 		}catch(Exception e){
-			FurnitureLib.getInstance().debug(e.getMessage());
+			FurnitureLib.debug(e.getMessage());
 			return 0;
 		}
 	}
@@ -30,7 +30,7 @@ public class EntityID {
 			int id = (int) obj.getClass().getMethod("incrementAndGet").invoke(obj);
 			return id;
 		}catch (Exception e) {
-			FurnitureLib.getInstance().debug(e.getMessage());
+			FurnitureLib.debug(e.getMessage());
 			return 0;
 		}
 	}

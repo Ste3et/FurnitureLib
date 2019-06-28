@@ -82,7 +82,7 @@ public class LimitationManager {
 			//Permissions range check end
 			
 			int maxPlayer = limitOBJ.getAmountFromType(pro.getName());
-			FurnitureLib.getInstance().debug("LimitationManager -> {Player} " + player + "/" + maxPlayer);
+			FurnitureLib.debug("LimitationManager -> {Player} " + player + "/" + maxPlayer);
 			if(maxPlayer == -1) return true;
 			if(player < maxPlayer) {
 				String s = lib.getLangManager().getString("message.LimitAouncer");
@@ -96,7 +96,7 @@ public class LimitationManager {
 		}else if(this.type.equals(LimitationType.WORLD)) {
 			int maxWorld = pro.getAmountWorld(obj.getWorld());
 			int world = returnProjectWorld(obj.getWorld(), pro);
-			FurnitureLib.getInstance().debug("LimitationManager -> {World} " + world + "/" + maxWorld);
+			FurnitureLib.debug("LimitationManager -> {World} " + world + "/" + maxWorld);
 			if(world < maxWorld || maxWorld == -1) {
 				return true;
 			}else {
@@ -106,7 +106,7 @@ public class LimitationManager {
 		}else if(this.type.equals(LimitationType.CHUNK)) {
 			int maxChunk = pro.getAmountChunk();
 			int chunk = returnIntProjectChunk(obj.getChunk(), pro);
-			FurnitureLib.getInstance().debug("LimitationManager -> {Chunk} " + chunk + "/" + maxChunk);
+			FurnitureLib.debug("LimitationManager -> {Chunk} " + chunk + "/" + maxChunk);
 			if(chunk < maxChunk || maxChunk == -1) {
 				return true;
 			}else {
