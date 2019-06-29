@@ -31,7 +31,7 @@ public class MySQL extends Database{
 			"`x` int NOT NULL," +
 			"`z` int NOT NULL," +
 			"`uuid` TEXT NOT NULL, PRIMARY KEY (ObjID)" +
-    		");";
+    		") ENGINE=InnoDB DEFAULT CHARSET=utf8;";
     
     public Connection getSQLConnection() {
         try {
