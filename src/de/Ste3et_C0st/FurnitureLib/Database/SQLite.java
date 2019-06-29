@@ -33,6 +33,7 @@ public class SQLite extends Database{
  
     public Connection getSQLConnection() {
         try {
+        	if(!plugin.getDataFolder().exists()) plugin.getDataFolder().mkdirs();
         	File dataFolder = new File(plugin.getDataFolder(), dbname+".db");
         	if (!dataFolder.exists()){
                 try {

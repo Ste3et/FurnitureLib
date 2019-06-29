@@ -30,7 +30,7 @@ public class ChunkData{
 			@Override
 			public void onResult(HashSet<ObjectID> idList) {
 				if(!idList.isEmpty()) {
-					objectSet = idList;
+					idList.stream().forEach(ObjectID::sendAll);
 					System.out.println(idList.size());
 					System.out.println("TPS: " + FurnitureLib.getInstance().getSQLManager().getTPS());
 				}

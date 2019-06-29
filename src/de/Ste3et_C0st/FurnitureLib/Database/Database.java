@@ -180,6 +180,7 @@ public abstract class Database {
 	    				}
 	    			}
 	    		}
+				idList.forEach(ObjectID::setFinish);
 	    		callBack.onResult(idList);
 			}catch (Exception e) {
 				e.printStackTrace();

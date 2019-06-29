@@ -15,7 +15,7 @@ public class onChunkChange implements Listener{
 
 	private FurnitureManager manager = FurnitureManager.getInstance();
 	
-//	private HashSet<ChunkData> data = new HashSet<ChunkData>();
+	//private HashSet<ChunkData> data = new HashSet<ChunkData>();
 	
 	@EventHandler
 	public void onPlayerMove(PlayerMoveEvent e){
@@ -25,6 +25,15 @@ public class onChunkChange implements Listener{
 	 	Chunk oldChunk = e.getFrom().getChunk();
 	 	Chunk newChunk = e.getTo().getChunk();
 	 	if (!oldChunk.equals(newChunk)) manager.updatePlayerView(player);
+//	 	if (!oldChunk.equals(newChunk)) {
+//	 		FurnitureLib.debug("Furniture.PlayerMoveEvent:");
+//	 		ChunkData data = this.data.stream().filter(d -> d.equals(newChunk) == true).findFirst().orElse(new ChunkData(newChunk));
+//	 		if(!this.data.contains(data)) {
+//	 			FurnitureLib.debug("Furniture.PlayerMoveEvent: ChunkData not found");
+//	 			data.load();
+//	 			this.data.add(data);
+//	 		}
+//	 	}
 	}
 	
 	@EventHandler

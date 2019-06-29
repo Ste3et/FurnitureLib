@@ -83,6 +83,7 @@ public class ObjectID{
 		if(isPrivate()){return;}
 		if(getPacketList().isEmpty()){return;}
 		if(getSQLAction().equals(SQLAction.REMOVE)){return;}
+		if(!isFinish() && !FurnitureLib.getInstance().isSync()) return;
 		if(!isInWorld(player)){
 			if(players.contains(player)) players.remove(player);
 			return;
