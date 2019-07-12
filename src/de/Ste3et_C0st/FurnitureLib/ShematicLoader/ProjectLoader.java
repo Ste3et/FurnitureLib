@@ -4,14 +4,19 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.Skull;
 import org.bukkit.block.data.Bisected.Half;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Directional;
@@ -166,81 +171,85 @@ public class ProjectLoader extends Furniture{
 	public boolean setBlocks(Location startLocation, YamlConfiguration config, boolean rotable) {
 		List<Block> blockList = new ArrayList<Block>();
 		if(config.isConfigurationSection(header+".projectData.blockList")) {
-			HashMap<Location, BlockData> data = new HashMap<Location, BlockData>();
-			for(String s : config.getConfigurationSection(header+".projectData.blockList").getKeys(false)) {
-				double x = config.getDouble(header+".projectData.blockList." + s + ".xOffset");
-				double y = config.getDouble(header+".projectData.blockList." + s + ".yOffset");
-				double z = config.getDouble(header+".projectData.blockList." + s + ".zOffset");
-				String materialStr = config.getString(header+".projectData.blockList." + s + ".material");
+			HashSet<ProjectMaterial> data = new HashSet<ProjectMaterial>();
+			AtomicBoolean b = new AtomicBoolean(false);
+			config.getConfigurationSection(header+".projectData.blockList").getKeys(false).stream().forEach(key -> {
+				String dataKey = header+".projectData.blockList." + key;
+				double x = config.getDouble(dataKey + ".xOffset");
+				double y = config.getDouble(dataKey + ".yOffset");
+				double z = config.getDouble(dataKey + ".zOffset");
+				
+				String str = config.getString(dataKey + ".blockData", "");
+				String materialStr = config.getString(dataKey + ".material", "");
+				
 				Location armorLocation = getRelative(getLocation(), getBlockFace(), -z, -x).add(0, y, 0);
-				String str = "";
-				
-				if(config.contains(header+".projectData.blockList." + s + ".blockData")) {
-					try {
-						str = config.getString(header+".projectData.blockList." + s + ".blockData");
-					}catch (Exception e) {
-						e.printStackTrace();
-					}
-				}
-				
+
 				if(str.isEmpty()) {
-					if(materialStr == null || materialStr.isEmpty()) continue;
-					String blockDataString = "minecraft:" + materialStr.toLowerCase();
-					if(config.isSet(header+".projectData.blockList." + s + ".Rotation")){
-						blockDataString += "[facing="+config.getString(header+".projectData.blockList." + s + ".Rotation")+"]";
+					if(!materialStr.isEmpty()) {
+						String blockDataString = "minecraft:" + materialStr.toLowerCase();
+						if(config.isSet(dataKey + ".Rotation")){
+							blockDataString += "[facing="+config.getString(dataKey + ".Rotation")+"]";
+						}
+						str = blockDataString;
 					}
-					str = blockDataString;
 				}
 				
-				/**
-				 * CheckPlaceAble
-				 */
-				
+				if(!armorLocation.getBlock().isEmpty()) {b.set(true); return;}
 				
 				if(!str.isEmpty()) {
-					try {
-						BlockData blockData = Bukkit.createBlockData(str);
-						if(blockData instanceof Directional) {
-							Directional r = (Directional) blockData;
-							BlockFace original = r.getFacing();
-							if(!(original.equals(BlockFace.UP) || original.equals(BlockFace.DOWN))) {
-								float yaw = getLutil().FaceToYaw(original);
-								yaw += getYaw();
-								original = getLutil().yawToFace(yaw);
-								((Directional) blockData).setFacing(original.getOppositeFace());
-							}
+					BlockData blockData = Bukkit.createBlockData(str);
+					if(blockData instanceof Directional) {
+						Directional r = (Directional) blockData;
+						BlockFace original = r.getFacing();
+						if(!(original.equals(BlockFace.UP) || original.equals(BlockFace.DOWN))) {
+							float yaw = getLutil().FaceToYaw(original);
+							yaw += getYaw();
+							original = getLutil().yawToFace(yaw);
+							((Directional) blockData).setFacing(original.getOppositeFace());
 						}
-						if(!armorLocation.getBlock().isEmpty()) return true;
-						data.put(armorLocation, blockData);
-					}catch (Exception e) {
-						e.printStackTrace();
 					}
+					data.add(new ProjectMaterial(dataKey, armorLocation, blockData));
 				}
-			}
+			});
 			
+			if(b.get()) return true;
 			if(!data.isEmpty()) {
-				data.entrySet().forEach(entry -> {
-					Block b = getWorld().getBlockAt(entry.getKey());
-					b.setBlockData(entry.getValue(), false);
-					if(entry.getValue().getMaterial().name().toUpperCase().endsWith("BED")) {
-						BlockFace face = ((Directional) entry.getValue()).getFacing();
-						Block top = b.getRelative(face);
-						top.setBlockData(entry.getValue(), false);
+				data.stream().forEach(entry -> {
+					Block block = getWorld().getBlockAt(entry.getLocation());
+					block.setBlockData(entry.getData(), false);
+					if(entry.getData().getMaterial().name().toUpperCase().endsWith("BED")) {
+						BlockFace face = ((Directional) entry.getData()).getFacing();
+						Block top = block.getRelative(face);
+						top.setBlockData(entry.getData(), false);
 						Bed bed = (Bed) top.getBlockData();
 						bed.setPart(Part.HEAD);
 						top.setBlockData(bed, false);
 						blockList.add(top);
-					}else if(entry.getValue().getMaterial().name().toUpperCase().endsWith("DOOR")) {
-						if(!entry.getValue().getMaterial().name().toUpperCase().contains("TRAP")) {
-							Block top = b.getRelative(BlockFace.UP);
-							top.setBlockData(entry.getValue(), false);
+					}else if(entry.getData().getMaterial().name().toUpperCase().endsWith("DOOR")) {
+						if(!entry.getData().getMaterial().name().toUpperCase().contains("TRAP")) {
+							Block top = block.getRelative(BlockFace.UP);
+							top.setBlockData(entry.getData(), false);
 							Door door = (Door) top.getBlockData();
 							door.setHalf(Half.TOP);
 							top.setBlockData(door, false);
 							blockList.add(top);
 						}
+					}else if(entry.getData().getMaterial().equals(Material.PLAYER_HEAD) || entry.getData().getMaterial().equals(Material.PLAYER_WALL_HEAD)) {
+						System.out.println(entry.getKey() + ".headMeta");
+						if(config.contains(entry.getKey() + ".headMeta")) {
+							UUID uuid = UUID.fromString(config.getString(entry.getKey() + ".headMeta"));
+							OfflinePlayer player = uuid == null ? null : Bukkit.getOfflinePlayer(uuid);
+							if(player != null) {
+								System.out.println("headMeta: load");
+								Skull s = (Skull) block.getState();
+								s.setOwningPlayer(player);
+								s.update(true, false);
+							}else {
+								System.out.println("offlinePlayer = null");
+							}
+						}
 					}
-					blockList.add(b);
+					blockList.add(block);
 				});
 			}
 		}

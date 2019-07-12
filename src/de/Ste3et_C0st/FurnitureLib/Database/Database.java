@@ -123,6 +123,7 @@ public abstract class Database {
 									metadata.set("Inventory", updatetInventory);
 									armorStands.set((String) entity, metadata);
 								});
+								
 								compound.set("entitys", armorStands);
 								compound.remove("ArmorStands");
 								String g = Base64.getEncoder().encodeToString(Serializer.armorStandtoBytes(compound));

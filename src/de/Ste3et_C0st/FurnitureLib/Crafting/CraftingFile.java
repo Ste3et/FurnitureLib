@@ -58,10 +58,9 @@ public class CraftingFile {
 		this.filePath = new File("plugins/" + FurnitureLib.getInstance().getName() + "/models/" + name + ".dModel");
 		this.file = YamlConfiguration.loadConfiguration(filePath);
 		if(file == null) {System.out.println("problems to load " + name);return;}
-		Reader inReader = new InputStreamReader(file);
-		this.file.addDefaults(YamlConfiguration.loadConfiguration(inReader));
-		this.file.options().copyDefaults(true);
-		try {
+		try (Reader inReader = new InputStreamReader(file)) {
+			this.file.addDefaults(YamlConfiguration.loadConfiguration(inReader));
+			this.file.options().copyDefaults(true);
 			this.file.save(filePath);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -110,21 +109,19 @@ public class CraftingFile {
 
 	public void loadCrafting(String s){
 		try{
-				this.isDisable = file.getBoolean(header+".crafting.disable");
-				NamespacedKey key = new NamespacedKey(FurnitureLib.getInstance(), this.name);
-				this.recipe = new ShapedRecipe(key, returnResult(s)).shape(returnFragment(s)[0], returnFragment(s)[1], returnFragment(s)[2]);
-				for(Character c : returnMaterial(s).keySet()){
-					if(!returnMaterial(s).get(c).equals(Material.AIR)){
-						this.recipe.setIngredient(c.charValue(), returnMaterial(s).get(c));
-					}
-				}				
-				if(!isDisable){
-					if(!isKeyRegistred(key)) {
-						Bukkit.getServer().addRecipe(this.recipe);
-					}
+			this.isDisable = file.getBoolean(header+".crafting.disable", false);
+			NamespacedKey key = new NamespacedKey(FurnitureLib.getInstance(), this.name);
+			this.recipe = new ShapedRecipe(key, returnResult(s)).shape(returnFragment(s)[0], returnFragment(s)[1], returnFragment(s)[2]);
+			returnMaterial(s).entrySet().stream().filter(c -> c.getKey() != null && c.getValue() != null).filter(c -> !c.getValue().equals(Material.AIR)).forEach(c -> {
+				this.recipe.setIngredient(c.getKey(), c.getValue());
+			});			
+			if(!isDisable){
+				if(!isKeyRegistred(key)) {
+					Bukkit.getServer().addRecipe(this.recipe);
 				}
-				getPlaceAbleSide();
-				loadFunction();
+			}
+			getPlaceAbleSide();
+			loadFunction();
 		}catch(Exception e){
 			e.printStackTrace();
 		}
@@ -179,14 +176,7 @@ public class CraftingFile {
 	}
 	
 	public PlaceableSide getPlaceAbleSide(){
-		if(this.side != null) return this.side;
-		if(file.isSet(header+".PlaceAbleSide")) {
-			String str = file.getString(header+".PlaceAbleSide", "TOP");
-			PlaceableSide side = PlaceableSide.valueOf(str);
-			this.side = side;
-			return side;
-		}
-		this.side = PlaceableSide.TOP;
+		this.side = PlaceableSide.valueOf(file.getString(header+".PlaceAbleSide", "TOP").toUpperCase());
 		return this.side;
 	}
 	
@@ -263,9 +253,7 @@ public class CraftingFile {
 	}
 	
 	private String[] returnFragment(String s){
-		String recipe = this.file.getString(header+".crafting.recipe", "");
-		String[] fragments = recipe.split(",");
-		return fragments;
+		return this.file.getString(header+".crafting.recipe", "").split(",");
 	}
 	
 	private HashMap<Character,Material> returnMaterial(String s){
@@ -283,8 +271,7 @@ public class CraftingFile {
 	private List<String> returnCharacters(String s){
 		List<String> stringList = new ArrayList<String>();
 		for(String str: returnFragment(s)){
-			String[] sl = str.split("(?!^)");
-			for(String o : sl){
+			for(String o : str.split("(?!^)")){
 				if(!stringList.contains(o)){
 					stringList.add(o);
 				}
@@ -298,8 +285,8 @@ public class CraftingFile {
 		Recipe recipe;
 		while(it.hasNext())
 		{
-		recipe = it.next();
-		if (recipe != null && recipe.getResult().equals(stack)){it.remove();}
+			recipe = it.next();
+			if (recipe != null && recipe.getResult().equals(stack)){it.remove();}
 		}
 	}
 }

@@ -100,7 +100,7 @@ public abstract class fSerializer extends fProtocol{
 		if (flag) {
 			getWatcher().setObject(new WrappedDataWatcherObject(field, Registry.get(Byte.class)), (byte) (b0 | 1 << i));
 		} else {
-			getWatcher().setObject(new WrappedDataWatcherObject(field, Registry.get(Byte.class)), Byte.valueOf((byte) (b0 & (1 << i ^ 0xFFFFFFFF))));
+			getWatcher().setObject(new WrappedDataWatcherObject(field, Registry.get(Byte.class)), Byte.valueOf((byte) (b0 & ~(1 << i))));
 		}
 	}
 	

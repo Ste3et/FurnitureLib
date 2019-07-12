@@ -189,6 +189,11 @@ public class FurnitureLib extends JavaPlugin{
 			send("Furniture Autor: §6" + this.getDescription().getAuthors().get(0));
 			send("Furniture Website: §e" + this.getDescription().getWebsite());
 			String s = getPluginManager().getPlugin("ProtocolLib").getDescription().getVersion();
+			if(getBukkitVersion().startsWith("v1_14")) {
+				send("§5Info: §eFor Spigot 1.14.x you need §6ProtocolLib 4.5.0 Build #8 §eor above");
+				send("§5Download it here: §l§9http://ci.dmulloy2.net/job/ProtocolLib%20Gradle/lastStableBuild/");
+				send("§5Otherwise you will receive: §cNoClassDefFoundError: org/apache/commons/lang3/Validate");
+			}
 			boolean protocollib = isRightProtocollib(s);
 			if(protocollib){
 				send("Furniture start load");
