@@ -7,6 +7,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.config;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
+import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
 import de.Ste3et_C0st.FurnitureLib.main.Type.LimitationType;
 
 public class LimitationObject {
@@ -37,9 +38,9 @@ public class LimitationObject {
 		config c = new config(FurnitureLib.getInstance());
 		FileConfiguration file = c.getConfig(type.name().toLowerCase(), "/limitation/");
 		if(type.equals(LimitationType.PLAYER)){
-			for(Project p : FurnitureLib.getInstance().getFurnitureManager().getProjects()){
-				file.addDefault("PlayerLimit." + section + ".projects." + p.getName(), 10);
-			}
+			FurnitureManager.getInstance().getProjects().stream().forEach(pro -> {
+				file.addDefault("PlayerLimit." + section + ".projects." + pro.getName(), 10);
+			});
 			file.addDefault("PlayerLimit." + section + ".total.enable", false);
 			file.addDefault("PlayerLimit." + section + ".total.amount", -1);
 		}

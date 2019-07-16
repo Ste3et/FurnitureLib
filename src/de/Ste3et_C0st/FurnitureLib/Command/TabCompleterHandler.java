@@ -33,6 +33,12 @@ public class TabCompleterHandler implements TabCompleter {
 										.filter(p -> p.getName().toLowerCase().contains(args[1].toLowerCase()))
 										.forEach(p -> strAL.add(p.getName()));
 									return strAL;
+								}else if(str.equalsIgnoreCase("editorProjects")) {
+									List<String> strAL = new ArrayList<String>();
+									FurnitureManager.getInstance().getProjects().stream()
+										.filter(p -> p.isEditorProject() && p.getName().toLowerCase().contains(args[1].toLowerCase()))
+										.forEach(p -> strAL.add(p.getName()));
+									return strAL;
 								}else if(str.equalsIgnoreCase("installedDModels")) {
 									List<String> strAL = new ArrayList<String>();
 									FurnitureManager.getInstance().getProjects().stream()

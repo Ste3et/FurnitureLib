@@ -1,20 +1,16 @@
 
 package de.Ste3et_C0st.FurnitureLib.Crafting;
 
-import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.nio.ByteBuffer;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import java.util.zip.GZIPOutputStream;
-
+import java.util.Objects;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -112,14 +108,10 @@ public class CraftingFile {
 			this.isDisable = file.getBoolean(header+".crafting.disable", false);
 			NamespacedKey key = new NamespacedKey(FurnitureLib.getInstance(), this.name);
 			this.recipe = new ShapedRecipe(key, returnResult(s)).shape(returnFragment(s)[0], returnFragment(s)[1], returnFragment(s)[2]);
-			returnMaterial(s).entrySet().stream().filter(c -> c.getKey() != null && c.getValue() != null).filter(c -> !c.getValue().equals(Material.AIR)).forEach(c -> {
+			returnMaterial(s).entrySet().stream().filter(c -> !Objects.isNull(c)).filter(c -> !c.getValue().equals(Material.AIR)).forEach(c -> {
 				this.recipe.setIngredient(c.getKey(), c.getValue());
 			});			
-			if(!isDisable){
-				if(!isKeyRegistred(key)) {
-					Bukkit.getServer().addRecipe(this.recipe);
-				}
-			}
+			if(!isDisable && !isKeyRegistred(key)) Bukkit.getServer().addRecipe(this.recipe);
 			getPlaceAbleSide();
 			loadFunction();
 		}catch(Exception e){
@@ -140,25 +132,6 @@ public class CraftingFile {
 			}
 		}
 		return jsonList;
-	}
-	
-	public static byte[] compress(String str) throws IOException
-	{
-	    byte[] blockcopy = ByteBuffer
-	            .allocate(4)
-	            .order(java.nio.ByteOrder.LITTLE_ENDIAN)
-	            .putInt(str.length())
-	            .array();
-	    ByteArrayOutputStream os = new ByteArrayOutputStream(str.length());
-	    GZIPOutputStream gos = new GZIPOutputStream(os);
-	    gos.write(str.getBytes());
-	    gos.close();
-	    os.close();
-	    byte[] compressed = new byte[4 + os.toByteArray().length];
-	    System.arraycopy(blockcopy, 0, compressed, 0, 4);
-	    System.arraycopy(os.toByteArray(), 0, compressed, 4,
-	            os.toByteArray().length);
-	    return Base64.getEncoder().encode(compressed);
 	}
 	
 	private boolean isKeyRegistred(NamespacedKey key) {
@@ -185,15 +158,12 @@ public class CraftingFile {
 		ItemMeta im = is.getItemMeta();
 		im.setDisplayName(s);
 		is.setItemMeta(im);
-		@SuppressWarnings("deprecation")
-		ShapedRecipe recipe = new ShapedRecipe(is).shape(this.getRecipe().getShape());
-		for(Character c : recipe.getIngredientMap().keySet()){
-			recipe.setIngredient(c, this.recipe.getIngredientMap().get(c).getData());
-		}
+		
+		NamespacedKey key = new NamespacedKey(FurnitureLib.getInstance(), this.name);
+		ShapedRecipe recipe = new ShapedRecipe(key, is).shape(this.getRecipe().getShape());
+		this.recipe.getIngredientMap().entrySet().forEach(a -> recipe.setIngredient(a.getKey(), a.getValue().getData()));
 		this.recipe = recipe;
-		if(!isDisable){
-			Bukkit.getServer().addRecipe(this.recipe);
-		}
+		if(!isDisable) Bukkit.getServer().addRecipe(this.recipe);
 	}
 	
 	private ItemStack returnResult(String s){
