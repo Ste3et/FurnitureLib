@@ -34,6 +34,7 @@ import de.Ste3et_C0st.FurnitureLib.Database.Serializer;
 import de.Ste3et_C0st.FurnitureLib.Database.SQLManager;
 import de.Ste3et_C0st.FurnitureLib.Events.ChunkOnLoad;
 import de.Ste3et_C0st.FurnitureLib.Events.FurnitureEvents;
+import de.Ste3et_C0st.FurnitureLib.Events.internal.onBlockDispense;
 import de.Ste3et_C0st.FurnitureLib.Events.internal.onChunkChange;
 import de.Ste3et_C0st.FurnitureLib.Events.internal.onCrafting;
 import de.Ste3et_C0st.FurnitureLib.Events.internal.onEntityExplode;
@@ -206,11 +207,13 @@ public class FurnitureLib extends JavaPlugin{
 				autoConverter.modelConverter(getServer().getConsoleSender());
 				loadPluginConfig();
 				if(getConfig().getBoolean("config.UseMetrics")) new Metrics(this);
+				if(!this.isSync()) this.pManager.loadProjectFiles();
 				this.sqlManager = new SQLManager(instance);
 				this.sqlManager.initialize();
 				autoConverter.databaseConverter(getServer().getConsoleSender());
 				new FurnitureEvents(instance, manager);
 				getServer().getPluginManager().registerEvents(new onCrafting(), getInstance());
+				getServer().getPluginManager().registerEvents(new onBlockDispense(), getInstance());
 				getServer().getPluginManager().registerEvents(new onEntityExplode(), getInstance());
 				getServer().getPluginManager().registerEvents(new onPlayerChangeWorld(), getInstance());
 				getServer().getPluginManager().registerEvents(new onPlayerDeath(), getInstance());
@@ -224,7 +227,6 @@ public class FurnitureLib extends JavaPlugin{
 				if(getConfig().getBoolean("config.timer.Enable")){int time = getConfig().getInt("config.timer.time");sqlManager.saveIntervall(time);}
 				send("==========================================");
 				Bukkit.getOnlinePlayers().stream().filter(p -> p!=null && p.isOp()).forEach(p -> getUpdater().sendPlayer(p));
-				
 				PluginCommand c = getCommand("furniture");
 				c.setExecutor(new command(this));
 				c.setTabCompleter(new TabCompleterHandler());

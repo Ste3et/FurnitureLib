@@ -3,7 +3,10 @@ package de.Ste3et_C0st.FurnitureLib.Database;
 import java.io.ByteArrayInputStream;
 import java.util.Base64;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -19,7 +22,7 @@ import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 
 public class DeSerializer {
 	
-	public int armorStands = 0;
+	public AtomicInteger armorStands = new AtomicInteger(0);
 	public int purged = 0;
 	public FurnitureLib lib = FurnitureLib.getInstance();
 
@@ -55,11 +58,11 @@ public class DeSerializer {
 
 			NBTTagCompound armorStands = compound.getCompound("entitys");
 			
-			armorStands.c().stream().filter(packet -> packet != null).forEach(packet -> {
+			armorStands.c().stream().filter(Objects::nonNull).forEach(packet -> {
 				NBTTagCompound metadata = armorStands.getCompound((String) packet);
 				if(autoPurge){if(FurnitureLib.getInstance().checkPurge(obj, uuid)){purged++;return;}}
 				Location loc = locationFetcher(metadata.getCompound("Location"));
-				this.armorStands++;
+				this.armorStands.incrementAndGet();
 				FurnitureManager.getInstance().createFromType(metadata.getString("EntityType"), loc, obj).loadMetadata(metadata);
 			});
 			if(world == null || world.isEmpty() || world.equals("null")) obj.setSQLAction(SQLAction.UPDATE);

@@ -225,10 +225,10 @@ public class FurnitureManager {
 		if(!objecte.contains(obj)){this.objecte.add(obj);}
 		fEntity e = null;
 		switch (str.toLowerCase()) {
-		case "creeper": e = new fCreeper(loc, obj);break;
-		case "armor_stand": e = new fArmorStand(loc, obj);break;
-		case "pig": e = new fPig(loc, obj);break;
-		case "giant": e = new fGiant(loc, obj);break;
+			case "creeper": e = new fCreeper(loc, obj);break;
+			case "armor_stand": e = new fArmorStand(loc, obj);break;
+			case "pig": e = new fPig(loc, obj);break;
+			case "giant": e = new fGiant(loc, obj);break;
 		default:break;
 		}
 		if(e!=null) {

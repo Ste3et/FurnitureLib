@@ -1,6 +1,7 @@
 package de.Ste3et_C0st.FurnitureLib.Database;
 
 import java.io.ByteArrayInputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.Statement;
@@ -13,11 +14,14 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 
 import com.comphenix.protocol.wrappers.EnumWrappers;
+
+import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTCompressedStreamTools;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.CallbackBoolean;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.MaterialConverter;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
+import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.DataBaseType;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
@@ -181,7 +185,15 @@ public abstract class Database {
 	    				}
 	    			}
 	    		}
-				idList.forEach(ObjectID::setFinish);
+				idList.forEach(obj -> {
+					try {
+						obj.setFunctionObject(obj.getProjectOBJ().getclass().getDeclaredConstructor(ObjectID.class).newInstance(obj));
+					} catch (Exception e) {
+						e.printStackTrace();
+					}finally {
+						obj.setFinish();
+					}
+				});
 	    		callBack.onResult(idList);
 			}catch (Exception e) {
 				e.printStackTrace();
@@ -204,7 +216,7 @@ public abstract class Database {
     		long time2 = System.currentTimeMillis();
 	    	SimpleDateFormat time = new SimpleDateFormat("mm:ss.SSS");
 	    	String timeStr = time.format(time2-time1);
-	    	int ArmorStands = FurnitureLib.getInstance().getDeSerializer().armorStands;
+	    	int ArmorStands = FurnitureLib.getInstance().getDeSerializer().armorStands.get();
 	    	int purged = FurnitureLib.getInstance().getDeSerializer().purged;
 	    	plugin.getLogger().info("FurnitureLib have loadet " + ArmorStands + " in " +timeStr);
 	    	plugin.getLogger().info("FurnitureLib have purged " + purged + " Objects");

@@ -210,7 +210,7 @@ public class ChunkOnLoad implements Listener{
 		}, 1);
 	}
 	
-	private Project getProjectByItem(ItemStack is){
+	public static Project getProjectByItem(ItemStack is){
 		if(is==null) return null;
 		ItemStack stack = is.clone();
 		if(stack.hasItemMeta()){
