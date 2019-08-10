@@ -15,9 +15,10 @@ public class fPig extends fEntity{
 
 	private boolean saddle = false;
 	private Pig entity;
+	public static EntityType type = EntityType.PIG;
 	
 	public fPig(Location loc, ObjectID obj) {
-		super(loc, EntityType.PIG, obj);
+		super(loc, type, obj);
 	}
 	
 	public fPig setSaddle(boolean b){

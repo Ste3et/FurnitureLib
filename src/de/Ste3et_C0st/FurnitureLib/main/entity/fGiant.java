@@ -15,9 +15,10 @@ public class fGiant extends fEntity {
 
 	private boolean AI = true;
 	private Giant entity = null;
+	public static EntityType type = EntityType.GIANT;
 	
 	public fGiant(Location loc, ObjectID id) {
-		super(loc, EntityType.GIANT, id);
+		super(loc, type, id);
 	}
 	
 	public fGiant moveRelative(int x, int y, int z, float yaw, float pitch, boolean onGround){

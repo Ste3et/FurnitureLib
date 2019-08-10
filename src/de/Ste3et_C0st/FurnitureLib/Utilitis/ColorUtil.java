@@ -2,6 +2,8 @@ package de.Ste3et_C0st.FurnitureLib.Utilitis;
 
 import java.lang.reflect.Field;
 import java.util.List;
+import java.util.Objects;
+
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.Tag;
@@ -38,6 +40,7 @@ public class ColorUtil {
 		List<fEntity> asp = manager.getfArmorStandByObjectID(obj);
 		DyeColor start = DyeColor.getDyeColor(is.getType());
 		int j = row;
+
 		for(fEntity packet : asp){
 			if(packet.getInventory().getHelmet()!=null&&packet.getInventory().getHelmet().getType().name().contains(identifier)&&Amount>0){
 				DyeColor now = DyeColor.getDyeToReplace(packet.getInventory().getHelmet().getType());

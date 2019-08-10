@@ -15,9 +15,10 @@ public class fCreeper extends fEntity{
 
 	private boolean charged = false, ignited = false;
 	private Creeper entity = null;
+	public static EntityType type = EntityType.CREEPER;
 	
 	public fCreeper(Location loc, ObjectID obj) {
-		super(loc, EntityType.CREEPER, obj);
+		super(loc, type, obj);
 	}
 
 	public boolean isCharged() {

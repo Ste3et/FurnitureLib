@@ -1,6 +1,8 @@
 package de.Ste3et_C0st.FurnitureLib.Command;
 
 import java.util.HashSet;
+import java.util.Objects;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -13,6 +15,7 @@ import org.bukkit.util.Vector;
 
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
+import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
@@ -30,7 +33,7 @@ public class removeCommand extends iCommand{
 		if(args.length==2){
 			Project pro = getProject(args[1]);
 			World world = getWorld(args[1]);
-			String palyer = getUUID(args[1]);
+			String palyer = getByPlayerName(args[1]);
 			String plugin = getPlugin(args[1]);
 			ObjectID serial = getSerial(args[1]);
 			
@@ -148,31 +151,15 @@ public class removeCommand extends iCommand{
 	
 	
 	private String getPlugin(String string) {
-		for(ObjectID obj : FurnitureLib.getInstance().getFurnitureManager().getObjectList()){
-			if(obj.getPlugin().equalsIgnoreCase(string)){
-				return string;
-			}
-		}
-		return null;
+		return FurnitureManager.getInstance().getObjectList().stream().filter(Objects::nonNull).filter(obj -> obj.getPlugin().equalsIgnoreCase(string)).findFirst().isPresent() ? string : null;
 	}
 
 	private ObjectID getSerial(String string) {
-		for(ObjectID obj : FurnitureLib.getInstance().getFurnitureManager().getObjectList()){
-			if(obj.getSerial().equalsIgnoreCase(string)){
-				return obj;
-			}
-		}
-		return null;
+		return FurnitureManager.getInstance().getObjectList().stream().filter(Objects::nonNull).filter(obj -> obj.getSerial().equalsIgnoreCase(string)).findFirst().orElse(null);
 	}
 
-	private String getUUID(String string) {
-		for(ObjectID obj : FurnitureLib.getInstance().getFurnitureManager().getObjectList()){
-			if(obj.getPlayerName().equalsIgnoreCase(string)){
-				return string;
-			}
-		}
-		
-		return null;
+	private String getByPlayerName(String string) {
+		return FurnitureManager.getInstance().getObjectList().stream().filter(Objects::nonNull).filter(obj -> obj.getPlayerName().equalsIgnoreCase(string)).findFirst().isPresent() ? string : null;
 	}
 
 	private int removeListObj(HashSet<ObjectID> objList){

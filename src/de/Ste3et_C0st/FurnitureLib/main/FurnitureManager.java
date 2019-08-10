@@ -2,8 +2,10 @@ package de.Ste3et_C0st.FurnitureLib.main;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -12,6 +14,7 @@ import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
@@ -29,6 +32,13 @@ public class FurnitureManager {
 	private HashSet<ObjectID> objecte = new HashSet<ObjectID>();
 	private List<Project> projects = new ArrayList<Project>();
 	private List<UUID> ignoreList = new ArrayList<UUID>();
+	
+	private HashMap<String, Class<? extends fEntity>> packetClasses = new HashMap<String, Class<? extends fEntity>>(){{
+		put(EntityType.ARMOR_STAND.name().toLowerCase(), fArmorStand.class);
+		put(EntityType.PIG.name().toLowerCase(), fPig.class);
+		put(EntityType.CREEPER.name().toLowerCase(), fCreeper.class);
+		put(EntityType.GIANT.name().toLowerCase(), fGiant.class);
+	}};
 	
 	private HashSet<ChunkData> chunkList = new HashSet<ChunkData>();
 	
@@ -121,19 +131,19 @@ public class FurnitureManager {
 	}
 	
 	public fArmorStand createArmorStand(ObjectID id, Location loc){
-		return (fArmorStand) createFromType("armor_stand", loc, id);	
+		return (fArmorStand) spawnEntity("armor_stand", loc, id);	
 	}
 	
 	public fPig createPig(ObjectID id, Location loc){
-		return (fPig) createFromType("pig", loc, id);	
+		return (fPig) spawnEntity("pig", loc, id);	
 	}
 	
 	public fGiant createGiant(ObjectID id, Location loc){
-		return (fGiant) createFromType("giant", loc, id);
+		return (fGiant) spawnEntity("giant", loc, id);
 	}
 	
 	public fCreeper createCreeper(ObjectID id, Location loc){
-		return (fCreeper) createFromType("creeper", loc, id);
+		return (fCreeper) spawnEntity("creeper", loc, id);
 	}	
 	
 	public void addArmorStand(Object obj){
@@ -220,20 +230,37 @@ public class FurnitureManager {
 	}
 	
 	public static FurnitureManager getInstance() {return manager;}
-
+	
+	
+	public Class<? extends fEntity> getPacketClass(String str, Class<? extends fEntity> clas){
+		try {
+			if(clas.getField("type").get(null).toString().equalsIgnoreCase(str)) return clas;
+		}catch (Exception e) {
+			return null;
+		}
+		return null;
+	}
+	
+	public fEntity spawnEntity(EntityType type, Location loc, ObjectID obj) {
+		return this.spawnEntity(type.name(), loc, obj);
+	}
+	
 	public fEntity createFromType(String str, Location loc, ObjectID obj) {
+		return this.spawnEntity(str, loc, obj);
+	}
+	
+	public fEntity spawnEntity(String str, Location loc, ObjectID obj) {
 		if(!objecte.contains(obj)){this.objecte.add(obj);}
-		fEntity e = null;
-		switch (str.toLowerCase()) {
-			case "creeper": e = new fCreeper(loc, obj);break;
-			case "armor_stand": e = new fArmorStand(loc, obj);break;
-			case "pig": e = new fPig(loc, obj);break;
-			case "giant": e = new fGiant(loc, obj);break;
-		default:break;
+		Class<? extends fEntity> packetClass = this.packetClasses.getOrDefault(str.toLowerCase(), null);
+		if(Objects.nonNull(packetClass)) {
+			try {
+				fEntity e = packetClass.getConstructor(Location.class, ObjectID.class).newInstance(loc, obj);
+				obj.addArmorStand(e);
+				return e;
+			}catch (Exception e) {
+				return null;
+			}
 		}
-		if(e!=null) {
-			obj.addArmorStand(e);
-		}
-		return e;
+		return null;
 	}
 }

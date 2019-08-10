@@ -96,6 +96,7 @@ public class LocationUtil {
 				}
 			}
 		}
+		
 		switch (type) {
 		case RIGHT:
 			if(!pro.getPlaceableSide().equals(PlaceableSide.SIDE)){

@@ -25,6 +25,7 @@ public class fArmorStand extends fEntity {
 	private boolean arms=false,small=false,marker=true,baseplate=true;
 	private HashMap<BodyPart, EulerAngle> angle = new HashMap<Type.BodyPart, EulerAngle>();
 	private ArmorStand entity = null;
+	public static EntityType type = EntityType.ARMOR_STAND;
 	
 	public EulerAngle getBodyPose(){return getPose(BodyPart.BODY);}
 	public EulerAngle getLeftArmPose(){return getPose(BodyPart.LEFT_ARM);}
@@ -58,7 +59,7 @@ public class fArmorStand extends fEntity {
 	}
 	
 	public fArmorStand(Location loc, ObjectID obj) {
-		super(loc, EntityType.ARMOR_STAND, obj);
+		super(loc, type, obj);
 	}
 
 	public EulerAngle getPose(BodyPart part){

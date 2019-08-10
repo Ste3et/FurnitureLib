@@ -63,6 +63,7 @@ public class MaterialConverter {
 					}
 					nmsMap.put(obj.get("Minecraft ID").getAsString() + ":" + id + "s", obj.get("1.13 ID").getAsString());
 				}
+				
 				return true;
 			}catch (Exception e) {
 				e.printStackTrace();

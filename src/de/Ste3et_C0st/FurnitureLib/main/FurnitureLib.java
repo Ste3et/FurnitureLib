@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
@@ -420,8 +421,7 @@ public class FurnitureLib extends JavaPlugin{
 	}
 	
 	public void spawn(Project pro, Location l){
-		Class<?> c = pro.getclass();
-		if(c==null ){return;}
+		if(Objects.isNull(pro.getclass())){return;}
 		ObjectID obj = new ObjectID(pro.getName(), pro.getPlugin().getName(), l);
 		spawn(pro, obj);
 	}

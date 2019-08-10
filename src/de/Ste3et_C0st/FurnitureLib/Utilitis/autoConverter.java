@@ -144,7 +144,7 @@ public class autoConverter {
 			}else{
 				Bukkit.getWorlds().stream().forEach(world -> {
 					for(Chunk c : world.getLoadedChunks()) {
-						ChunkData data = FurnitureManager.getInstance().getChunkDataList().stream().findFirst().filter(chunk -> c.equals(chunk)).orElse(new ChunkData(c));
+						ChunkData data = FurnitureManager.getInstance().getChunkDataList().stream().findFirst().filter(chunk -> c.getX() == chunk.getX() && c.getZ() == chunk.getZ()).orElse(new ChunkData(c));
 						if(!data.isLoadet()) data.load();
 						if(!FurnitureManager.getInstance().getChunkDataList().contains(data)) FurnitureManager.getInstance().getChunkDataList().add(data);
 					}
