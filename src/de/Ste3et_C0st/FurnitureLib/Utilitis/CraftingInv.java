@@ -3,6 +3,7 @@ package de.Ste3et_C0st.FurnitureLib.Utilitis;
 import de.Ste3et_C0st.FurnitureLib.Crafting.CraftingFile;
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
+import de.Ste3et_C0st.FurnitureLib.main.Type;
 
 import java.io.File;
 import java.io.IOException;
@@ -181,10 +182,15 @@ List<String> stringList = Arrays.asList("A", "B", "C", "D", "E", "F", "G", "H", 
 							  }
 						  }
 					  }
+					  
+					  if(Type.version.equalsIgnoreCase("1.14")) {
+						  if(meta.hasCustomModelData()) conf.set(header + ".custommodeldata", meta.getCustomModelData());
+					  }
 				  }
 				  conf.set(header + ".displayName", name);
 				  conf.set(header + ".spawnMaterial", material.name());
 				  conf.set(header + ".itemLore", lore);
+				  
 			  }
 		  }
 	  }

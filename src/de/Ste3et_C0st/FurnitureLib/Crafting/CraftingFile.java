@@ -29,6 +29,7 @@ import com.google.gson.JsonParser;
 
 import de.Ste3et_C0st.FurnitureLib.Utilitis.HiddenStringUtils;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
+import de.Ste3et_C0st.FurnitureLib.main.Type;
 import de.Ste3et_C0st.FurnitureLib.main.Type.PlaceableSide;
 
 public class CraftingFile {
@@ -191,7 +192,11 @@ public class CraftingFile {
 		List<String> loreText = new ArrayList<String>();
 		if(im.getLore()!=null) loreText = im.getLore();
 		loreText.add(HiddenStringUtils.encodeString(getSystemID()));
-
+		
+		if(file.contains(header + ".custommodeldata") && Type.version.equalsIgnoreCase("1.14")) {
+			im.setCustomModelData(file.getInt(header + ".custommodeldata"));
+		}
+		
 		if(file.contains(header+".itemLore")){
 			if(file.isList(header+".itemLore")){
 				List<String> lore = file.getStringList(header+".itemLore");
