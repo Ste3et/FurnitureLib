@@ -13,6 +13,10 @@ import de.Ste3et_C0st.FurnitureLib.main.Type.DyeColor;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
 
 public class recolorFunction extends projectFunction{
+	
+	public recolorFunction() {
+		super("{}");
+	}
 
 	@Override
 	public boolean parse(JsonObject jsonObject, ObjectID id, Player p) {

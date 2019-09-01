@@ -15,10 +15,20 @@ import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fInventory.EquipmentSlot;
 
-public abstract class projectFunction {
-
+public abstract class projectFunction{
+	
+	private String constructor = "";
+	
 	public abstract boolean parse(JsonObject jsonObject, ObjectID id, Player p);
-
+	
+	public projectFunction(String constructor) {
+		this.constructor = constructor;
+	}
+	
+	public String getConstructor() {
+		return this.constructor;
+	}
+	
 	public void consumeItem(Player p){
 		if(p.getGameMode().equals(GameMode.CREATIVE) && FurnitureLib.getInstance().useGamemode()) return;
 		ItemStack is = p.getInventory().getItemInMainHand();

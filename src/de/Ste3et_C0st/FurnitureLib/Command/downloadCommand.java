@@ -166,28 +166,29 @@ public class downloadCommand extends iCommand{
 		String systemID = project;
 		if(compound.hasKey("system-ID")) systemID = compound.getString("system-ID");
 		if(!systemID.equalsIgnoreCase(project)) systemID = project;
-		file.set(project + ".displayName", compound.getString("displayName"));
-		file.set(project + ".system-ID", systemID);
-		file.set(project + ".spawnMaterial", compound.getString("spawnMaterial"));
-		file.set(project + ".itemGlowEffect", compound.getBoolean("itemGlowEffect"));
+		String header = project.replace(".", "");
+		file.set(header + ".displayName", compound.getString("displayName"));
+		file.set(header + ".system-ID", systemID);
+		file.set(header + ".spawnMaterial", compound.getString("spawnMaterial"));
+		file.set(header + ".itemGlowEffect", compound.getBoolean("itemGlowEffect"));
 		List<String> loreText = new ArrayList<String>();
 		for(Object s : lore.c()){
 			loreText.add(lore.getString((String) s));
 		}
-		file.set(project + ".itemLore", loreText);
+		file.set(header + ".itemLore", loreText);
 		
-		file.set(project + ".crafting.disable", crafting.getBoolean("disable"));
-		file.set(project + ".crafting.recipe", crafting.getString("recipe"));
+		file.set(header + ".crafting.disable", crafting.getBoolean("disable"));
+		file.set(header + ".crafting.recipe", crafting.getString("recipe"));
 		for(Object s : index.c()){
 			Material mat = MaterialConverter.getMaterialFromOld(index.getString((String) s));
-			file.set(project + ".crafting.index." + ((String) s), mat.name());
+			file.set(header + ".crafting.index." + ((String) s), mat.name());
 		}
 		
 		if(compound.hasKey("entitys")){
 			NBTTagCompound armorStands = compound.getCompound("entitys");
 			for(Object s : armorStands.c()){
 				String str = armorStands.getString((String) s);
-				file.set(project+".projectData.entitys."+ ((String) s), str);
+				file.set(header+".projectData.entitys."+ ((String) s), str);
 			}
 		}
 		
@@ -204,15 +205,15 @@ public class downloadCommand extends iCommand{
 				String str = (String) s;
 				if(blocks.hasKey(str)){
 					NBTTagCompound block = blocks.getCompound(str);
-					file.set(project+".projectData.blockList." + str + ".xOffset", block.getDouble("xOffset"));
-					file.set(project+".projectData.blockList." + str + ".yOffset", block.getDouble("yOffset"));
-					file.set(project+".projectData.blockList." + str + ".zOffset", block.getDouble("zOffset"));
+					file.set(header+".projectData.blockList." + str + ".xOffset", block.getDouble("xOffset"));
+					file.set(header+".projectData.blockList." + str + ".yOffset", block.getDouble("yOffset"));
+					file.set(header+".projectData.blockList." + str + ".zOffset", block.getDouble("zOffset"));
 					if(block.hasKey("material")) {
 						String blockData = "minecraft:" + block.getString("material");
 						if(block.hasKey("Rotation")) blockData += "[facing=" + block.getString("Rotation") + "]";
-						file.set(project+".projectData.blockList." + str + ".blockData", blockData);
+						file.set(header+".projectData.blockList." + str + ".blockData", blockData);
 					}else if(block.hasKey("blockData")) {
-						file.set(project+".projectData.blockList." + str + ".blockData", block.getString("blockData"));
+						file.set(header+".projectData.blockList." + str + ".blockData", block.getString("blockData"));
 					}
 					
 				}
@@ -225,7 +226,7 @@ public class downloadCommand extends iCommand{
 			for(int j = 0; j < stringList.c().size(); j++) {
 				functions.add(stringList.getString(j + ""));
 			}
-			file.set(project + ".projectData.functions", functions);
+			file.set(header + ".projectData.functions", functions);
 		}
 		file.save(new File("plugins/"+FurnitureLib.getInstance().getName()+"/models/" + project + ".dModel"));
 		final PlaceableSide s = side;
@@ -249,25 +250,25 @@ public class downloadCommand extends iCommand{
 				+ "                                      #\n"
 				+ "------------------------------------  #\n");
 		file.options().copyHeader(true);
-		
+		String header = project.replace(".", "");
 		NBTTagCompound crafting = compound.getCompound("crafting");
 		NBTTagCompound index = crafting.getCompound("index");
 		NBTTagCompound lore = crafting.getCompound("lore");
 		String systemID = project;
 		if(compound.hasKey("systemID")) systemID = compound.getString("systemID");
 		if(!systemID.equalsIgnoreCase(project)) systemID = project;
-		file.set(project + ".displayName", compound.getString("name"));
-		file.set(project + ".system-ID", systemID);
-		file.set(project + ".spawnMaterial", MaterialConverter.getMaterialFromOld(compound.getString("material")).name());
-		file.set(project + ".itemGlowEffect", compound.getBoolean("glow"));
+		file.set(header + ".displayName", compound.getString("name"));
+		file.set(header + ".system-ID", systemID);
+		file.set(header + ".spawnMaterial", MaterialConverter.getMaterialFromOld(compound.getString("material")).name());
+		file.set(header + ".itemGlowEffect", compound.getBoolean("glow"));
 		List<String> loreText = new ArrayList<String>();
 		for(Object s : lore.c()){
 			loreText.add(lore.getString((String) s));
 		}
-		file.set(project + ".itemLore", loreText);
+		file.set(header + ".itemLore", loreText);
 		
-		file.set(project + ".crafting.disable", crafting.getBoolean("disable"));
-		file.set(project + ".crafting.recipe", crafting.getString("recipe"));
+		file.set(header + ".crafting.disable", crafting.getBoolean("disable"));
+		file.set(header + ".crafting.recipe", crafting.getString("recipe"));
 		for(Object s : index.c()){
 			Material mat = MaterialConverter.getMaterialFromOld(index.getString((String) s));
 			file.set(project + ".crafting.index." + ((String) s), mat.name());
@@ -314,13 +315,13 @@ public class downloadCommand extends iCommand{
 				String str = (String) s;
 				if(blocks.hasKey(str)){
 					NBTTagCompound block = blocks.getCompound(str);
-					file.set(project+".projectData.blockList." + str + ".xOffset", block.getDouble("X-Offset"));
-					file.set(project+".projectData.blockList." + str + ".yOffset", block.getDouble("Y-Offset"));
-					file.set(project+".projectData.blockList." + str + ".zOffset", block.getDouble("Z-Offset"));
+					file.set(header+".projectData.blockList." + str + ".xOffset", block.getDouble("X-Offset"));
+					file.set(header+".projectData.blockList." + str + ".yOffset", block.getDouble("Y-Offset"));
+					file.set(header+".projectData.blockList." + str + ".zOffset", block.getDouble("Z-Offset"));
 					Material materialBlock = MaterialConverter.getMaterialFromOld(block.getString("Type"));
 					String blockData = "minecraft:" + materialBlock.name().toLowerCase();
 					if(block.hasKey("Rotation")) blockData += "[facing=" + block.getString("Rotation") + "]";
-					file.set(project+".projectData.blockList." + str + ".blockData", blockData);
+					file.set(header+".projectData.blockList." + str + ".blockData", blockData);
 				}
 			}
 		}

@@ -8,7 +8,9 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
+import org.bukkit.event.Event.Result;
 import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
@@ -34,16 +36,19 @@ public class ChunkOnLoad implements Listener{
 	 * Spawn furniture from Project
 	 */
 	
-	@EventHandler
+	@EventHandler(priority=EventPriority.HIGH)
 	public void onSpawn(final PlayerInteractEvent e) {
 		if(e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
+			if(!e.hasBlock()) return;
+			if(!e.hasItem()) return;
+			if(e.useInteractedBlock().equals(Result.DENY)) return;
+			if(e.useItemInHand().equals(Result.DENY)) return;
 			final Block b = e.getClickedBlock();
 			final ItemStack stack = e.getItem();
 			if(stack == null) return;
 			final Project pro = getProjectByItem(stack);
 			if(pro == null) return;
 			e.setCancelled(true);
-			if(b == null) return;
 			if(FurnitureLib.getInstance().getBlockManager().getList().contains(b.getLocation())) return;
 			if(eventList.contains(e.getPlayer())) return;
 			if(b.isLiquid()) return;

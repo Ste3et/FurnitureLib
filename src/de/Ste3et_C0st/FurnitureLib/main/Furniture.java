@@ -12,7 +12,8 @@ import org.bukkit.inventory.ItemStack;
 
 import com.google.gson.JsonObject;
 
-import de.Ste3et_C0st.FurnitureLib.ShematicLoader.functions.FunctionTypes.FunctionType;
+import de.Ste3et_C0st.FurnitureLib.ShematicLoader.functions.functionManager;
+import de.Ste3et_C0st.FurnitureLib.ShematicLoader.functions.projectFunction;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fArmorStand;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
 
@@ -60,8 +61,8 @@ public abstract class Furniture extends FurnitureHelper implements Listener{
 			boolean update = false;
 			for(JsonObject function : functions) {
 				if(function.has("function") && function.has("data")) {
-					FunctionType type = FunctionType.valueOf(function.get("function").getAsString().toUpperCase());
-					boolean b = type.parse(function.getAsJsonObject("data"), getObjID(), p);
+					projectFunction pFunction = functionManager.getByName(function.get("function").getAsString());
+					boolean b = pFunction.parse(function.getAsJsonObject("data"), getObjID(), p);
 					if(b) update = true;
 				}
 			}
