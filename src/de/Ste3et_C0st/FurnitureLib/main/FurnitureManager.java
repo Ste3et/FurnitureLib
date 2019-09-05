@@ -18,6 +18,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
+import com.google.common.base.Preconditions;
 
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
@@ -165,6 +166,11 @@ public class FurnitureManager {
 		if(p==null) return null;
 		List<fEntity> entityList = objecte.stream().flatMap(obj -> obj.getPacketList().stream()).filter(e -> e.getPassanger().isEmpty() == false && e.getPassanger().contains(p.getEntityId())).collect(Collectors.toList());
 		return entityList == null ? new ArrayList<fEntity>() : entityList;
+	}
+	
+	public List<ObjectID> getPluginObjects(FurniturePlugin plugin){
+		if(Objects.isNull(plugin)) return new ArrayList<ObjectID>();
+		return objecte.stream().filter(obj -> !obj.getSQLAction().equals(SQLAction.REMOVE)).filter(obj -> obj.getPlugin().equalsIgnoreCase(plugin.getName())).collect(Collectors.toList());
 	}
 	
 	public ObjectID getObjectIDByID(Integer entityID) {

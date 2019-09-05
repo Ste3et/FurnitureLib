@@ -8,8 +8,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
@@ -94,6 +94,7 @@ public class FurnitureLib extends JavaPlugin{
 	private long purgeTimeMS = 0, spamBreakTime = 5000, spamPlaceTime = 5000;
 	private Material defMaterial = Material.COW_SPAWN_EGG;
 	private boolean sync = true;
+	private HashSet<FurniturePlugin> furnitureAddon = new HashSet<FurniturePlugin>();
 	public HashMap<Project, Long> deleteMap = new HashMap<Project, Long>();
 	public HashMap<UUID, Long> timeStampPlace = new HashMap<UUID, Long>();
 	public HashMap<UUID, Long> timeStampBreak = new HashMap<UUID, Long>();
@@ -380,10 +381,9 @@ public class FurnitureLib extends JavaPlugin{
 		return true;
 	}
 	
+	@Deprecated
 	public void registerPluginFurnitures(Plugin plugin){
-		List<ObjectID> objList = new ArrayList<ObjectID>();
 		manager.getObjectList().stream().filter(obj -> obj != null && obj.getPlugin() != null).forEach(obj -> {
-			objList.add(obj);
 			if(!obj.getSQLAction().equals(SQLAction.REMOVE)) {
 				if(obj.getPlugin().equalsIgnoreCase(plugin.getName())){
 					spawn(obj.getProjectOBJ(), obj);
@@ -418,6 +418,10 @@ public class FurnitureLib extends JavaPlugin{
 		}
 		this.saveIgnore();
 		getLogger().info("==========================================");
+	}
+	
+	public void addFurnitureAddon(FurniturePlugin plugin) {
+		if(!furnitureAddon.contains(plugin)) this.furnitureAddon.add(plugin);
 	}
 	
 	public void spawn(Project pro, Location l){
