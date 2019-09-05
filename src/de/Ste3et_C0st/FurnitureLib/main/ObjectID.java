@@ -162,8 +162,10 @@ public class ObjectID{
 	public void addBlock(List<Block> bl){
 		if(bl==null||bl.isEmpty()){return;}
 		for(Block b : bl){
-			FurnitureLib.getInstance().getBlockManager().addBlock(b);
-			this.locList.add(b.getLocation());
+			if(Objects.nonNull(b)) {
+				FurnitureLib.getInstance().getBlockManager().addBlock(b);
+				this.locList.add(b.getLocation());
+			}
 		}
 	}
 

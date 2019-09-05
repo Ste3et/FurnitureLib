@@ -173,6 +173,11 @@ public class FurnitureManager {
 		return objecte.stream().filter(obj -> !obj.getSQLAction().equals(SQLAction.REMOVE)).filter(obj -> obj.getPlugin().equalsIgnoreCase(plugin.getName())).collect(Collectors.toList());
 	}
 	
+	public List<Project> getPluginProjects(FurniturePlugin plugin){
+		if(Objects.isNull(plugin)) return new ArrayList<Project>();
+		return projects.stream().filter(pro -> pro.getPlugin().getName().equals(plugin.getName())).collect(Collectors.toList());
+	}
+	
 	public ObjectID getObjectIDByID(Integer entityID) {
 		if(this.objecte.isEmpty()){return null;}
 		if(entityID==null) return null;

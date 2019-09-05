@@ -1,9 +1,9 @@
 package de.Ste3et_C0st.FurnitureLib.Database;
 
 import java.io.ByteArrayInputStream;
-import java.lang.reflect.InvocationTargetException;
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.Base64;
@@ -11,22 +11,19 @@ import java.util.EnumSet;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicInteger;
-
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 
 import com.comphenix.protocol.wrappers.EnumWrappers;
+import com.zaxxer.hikari.HikariConfig;
+import com.zaxxer.hikari.HikariDataSource;
 
-import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTCompressedStreamTools;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.CallbackBoolean;
-import de.Ste3et_C0st.FurnitureLib.Utilitis.DoubleKey;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.MaterialConverter;
 import de.Ste3et_C0st.FurnitureLib.main.ChunkData;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
-import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.DataBaseType;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
@@ -34,13 +31,33 @@ import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 public abstract class Database {
 	public FurnitureLib plugin;
     public int stepSize = 250, offset = 0, dataFiles = 0, step = 1, stepComplete = 0;
+    private HikariConfig config;
+    private HikariDataSource dataSource;
     
-    public Database(FurnitureLib instance){
+    public Database(FurnitureLib instance, HikariConfig config){
         this.plugin = instance;
+        this.config = config;
+        this.dataSource = new HikariDataSource(config);
     }
     
-    public abstract Connection getSQLConnection();
     public abstract DataBaseType getType();
+    
+    public HikariConfig getConfig() {
+    	return this.config;
+    }
+    
+	public Connection getConnection() {
+		 try{
+			 Connection connection = this.dataSource.getConnection();
+		     if (connection == null) {
+		          throw new SQLException("Unable to get a connection from the pool.");
+		     }
+		     return connection;
+		}catch (Exception e) {
+			e.printStackTrace();
+			return null;
+		}
+	}
 
     public boolean save(ObjectID id){
     	String binary = FurnitureLib.getInstance().getSerializer().SerializeObjectID(id);
@@ -54,7 +71,7 @@ public abstract class Database {
     			+x+"," +
     			+z+"," +
     			"'"+id.getUUID().toString()+"');";
-    	try(Connection con = getSQLConnection(); Statement stmt = con.createStatement()){
+    	try(Connection con = getConnection(); Statement stmt = con.createStatement()){
     		stmt.executeUpdate(sql);
     		return true;
     	}catch(Exception e){
@@ -65,7 +82,7 @@ public abstract class Database {
     
     public void startConvert(CommandSender sender) {
     	String sql = "SELECT COUNT(*) FROM `FurnitureLib_Objects`";
-    	try (Connection con = getSQLConnection();ResultSet rs = con.createStatement().executeQuery(sql)) {
+    	try (Connection con = getConnection();ResultSet rs = con.createStatement().executeQuery(sql)) {
 			while (rs.next()){
 				dataFiles = rs.getInt(1);
 				if(dataFiles != 0) {
@@ -92,7 +109,7 @@ public abstract class Database {
     @SuppressWarnings("unchecked")
 	private void convert(CommandSender sender) {
     	Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-				try (Connection con = getSQLConnection();ResultSet rs = con.createStatement().executeQuery("SELECT * FROM FurnitureLib_Objects LIMIT " + stepSize + " OFFSET " + offset)) {
+				try (Connection con = getConnection();ResultSet rs = con.createStatement().executeQuery("SELECT * FROM FurnitureLib_Objects LIMIT " + stepSize + " OFFSET " + offset)) {
 					sender.sendMessage("§7Convert Models Step §e" + step + "/" + stepComplete + " start ! §7[§e"+getTPS()+"§7]");
 					while (rs.next()){
 						if(rs != null){
@@ -180,7 +197,7 @@ public abstract class Database {
 	public void loadAsynchron(ChunkData chunkdata, CallbackBoolean callBack) {
 		Bukkit.getScheduler().runTaskAsynchronously(FurnitureLib.getInstance(), () -> {
 			String query = "SELECT ObjID,Data,world FROM furnitureLibData WHERE x=" + chunkdata.getX() + " AND z=" + chunkdata.getZ() + " AND world='"+chunkdata.getWorld()+"'";
-			try (Connection con = getSQLConnection();ResultSet rs = con.createStatement().executeQuery(query)){
+			try (Connection con = getConnection();ResultSet rs = con.createStatement().executeQuery(query)){
 				HashSet<ObjectID> idList = new HashSet<ObjectID>();
 				if(rs.next() == false) {
 					System.out.println("Keine Modelle Gefunden: " + chunkdata.getX() + ":" + chunkdata.getZ());
@@ -216,7 +233,7 @@ public abstract class Database {
     public void loadAll(SQLAction action){
     	long time1 = System.currentTimeMillis();
     	boolean b = FurnitureLib.getInstance().isAutoPurge();
-    	try (Connection con = getSQLConnection();ResultSet rs = con.createStatement().executeQuery("SELECT ObjID,Data,world FROM furnitureLibData")){    		
+    	try (Connection con = getConnection();ResultSet rs = con.createStatement().executeQuery("SELECT ObjID,Data,world FROM furnitureLibData")){    		
     		while (rs.next()){
     			if(rs != null){
     				String a = rs.getString(1), c = rs.getString(2), d = rs.getString(3);
@@ -240,7 +257,7 @@ public abstract class Database {
     }
 
     public void delete(ObjectID objID){
-    	try(Connection con = getSQLConnection(); Statement stmt = con.createStatement()){
+    	try(Connection con = getConnection(); Statement stmt = con.createStatement()){
     		stmt.execute("DELETE FROM furnitureLibData WHERE ObjID = '" + objID.getID() + "'");
 		} catch (Exception e) {
     		e.printStackTrace();

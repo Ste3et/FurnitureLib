@@ -4,10 +4,13 @@ import java.io.File;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.scheduler.BukkitTask;
+
+import com.zaxxer.hikari.HikariConfig;
 
 import de.Ste3et_C0st.FurnitureLib.Utilitis.CallbackBoolean;
 import de.Ste3et_C0st.FurnitureLib.main.ChunkData;
@@ -17,7 +20,7 @@ import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 
 public class SQLManager {
 
-	private Database mysql, sqlite;
+	private Database database;
 	FurnitureLib plugin;
 	BukkitTask sqlSaveIntervall;
 	
@@ -31,15 +34,26 @@ public class SQLManager {
 		if(plugin.getConfig().getString("config.Database.type")==null) return;
 		if(plugin.getConfig().getString("config.Database.type").equalsIgnoreCase("SQLite")){
 			String database = plugin.getConfig().getString("config.Database.database");
-			this.sqlite = new SQLite(plugin, database);
+			HikariConfig config = new HikariConfig();
+			config.setJdbcUrl("jdbc:sqlite:plugins/FurnitureLib/"+database+".db");
+			this.database = new SQLite(plugin, config);
 		}else if(plugin.getConfig().getString("config.Database.type").equalsIgnoreCase("Mysql")){
 			isExist();
 			String database = plugin.getConfig().getString("config.Database.database");
 			String user = plugin.getConfig().getString("config.Database.user");
 			String password = plugin.getConfig().getString("config.Database.password");
-			String port = plugin.getConfig().getString("config.Database.port");
+			String port = plugin.getConfig().getString("config.Database.port", "3306");
 			String host = plugin.getConfig().getString("config.Database.host");
-			this.mysql = new MySQL(plugin, host, database, password, user, port);
+			
+			HikariConfig config = new HikariConfig();
+			config.setJdbcUrl("jdbc:mysql://"+host + ":" + port +"/" + database + "useSSL=true");
+			config.setUsername(user);
+			config.setPassword(password);
+			config.setPoolName("FurnitureLib");
+			config.setMaxLifetime(1800000);
+			config.setInitializationFailTimeout(-1);
+			
+			this.database = new MySQL(plugin, config);
 		}else{
 			plugin.getLogger().warning("Database Type not supported: Plugin shutdown");
 			Bukkit.getPluginManager().disablePlugin(plugin);
@@ -48,8 +62,7 @@ public class SQLManager {
 	}
 	
 	public void loadALL(){
-		if(this.sqlite!=null) this.sqlite.loadAll(SQLAction.NOTHING);
-		if(this.mysql!=null) this.mysql.loadAll(SQLAction.NOTHING);
+		if(Objects.nonNull(database)) database.loadAll(SQLAction.NOTHING);
 		FurnitureLib.getInstance().getFurnitureManager().sendAll();
 	}
 	
@@ -68,10 +81,11 @@ public class SQLManager {
 			}
 		}
 		if(fileDB!=null){
-			this.sqlite = new SQLite(plugin, fileDB.getName().replace(".db", ""));
-			this.sqlite.loadAll(SQLAction.SAVE);
+			HikariConfig config = new HikariConfig();
+			config.setJdbcUrl("jdbc:sqlite:plugins/FurnitureLib/"+fileDB.getName());
+			SQLite database = new SQLite(FurnitureLib.getInstance(), config);
+			database.loadAll(SQLAction.SAVE);
 			plugin.getLogger().info("Import finish");
-			this.sqlite = null;
 			plugin.getLogger().info("Make old Database unusable.");
 			fileDB.renameTo(new File("plugins/" + plugin.getName(), fileDB.getName() + ".old"));
 			fileDB.delete();
@@ -110,33 +124,19 @@ public class SQLManager {
 	
 	
 	public void save(ObjectID obj){
-		if(obj==null) return;
-		try{
-			if(this.sqlite!=null){this.sqlite.save(obj);}
-			else if(this.mysql!=null){this.mysql.save(obj);}
-			else{FurnitureLib.getInstance().getLogger().warning("No SQLite and mySQL instance found");}
-		}catch(Exception ex){
-			initialize();
-			if(this.sqlite!=null){this.sqlite.save(obj);}
-			else if(this.mysql!=null){this.mysql.save(obj);}
-			else{FurnitureLib.getInstance().getLogger().warning("No SQLite and mySQL instance found");}
-			ex.printStackTrace();
+		if(Objects.nonNull(database)) {
+			database.save(obj);
+			return;
 		}
+		FurnitureLib.getInstance().getLogger().warning("No SQLite and mySQL instance found");
 	}
 	
 	public void remove(ObjectID obj){
-		if(obj==null) return;
-		try{
-			if(this.sqlite!=null){this.sqlite.delete(obj);}
-			else if(this.mysql!=null){this.mysql.delete(obj);}
-			else{FurnitureLib.getInstance().getLogger().warning("No SQLite and mySQL instance found");}
-		}catch(Exception ex){
-			initialize();
-			if(this.sqlite!=null){this.sqlite.delete(obj);}
-			else if(this.mysql!=null){this.mysql.delete(obj);}
-			else{FurnitureLib.getInstance().getLogger().warning("No SQLite and mySQL instance found");}
-			ex.printStackTrace();
+		if(Objects.nonNull(database)) {
+			database.delete(obj);
+			return;
 		}
+		FurnitureLib.getInstance().getLogger().warning("No SQLite and mySQL instance found");
 	}
 	
 	public void saveIntervall(int time){
@@ -156,15 +156,14 @@ public class SQLManager {
 	}
 
 	public void convert(CommandSender sender) {
-		if(this.sqlite!=null){this.sqlite.startConvert(sender);}
-		if(this.mysql!=null){this.mysql.startConvert(sender);}
+		database.startConvert(sender);
 	}
 
 	public void loadAsynchron(ChunkData data, CallbackBoolean callBack) {
-		this.sqlite.loadAsynchron(data, callBack);
+		database.loadAsynchron(data, callBack);
 	}
 	
 	public int getTPS() {
-		return this.sqlite.getTPS();
+		return database.getTPS();
 	}
 }

@@ -12,7 +12,7 @@
 	<name>FurnitureLib</name>
 
 	<build>
-		<defaultGoal>clean package install</defaultGoal>
+		<defaultGoal>clean package install assembly:single</defaultGoal>
 		<sourceDirectory>src</sourceDirectory>
 		<finalName>FurnitureLib</finalName>
 		<resources>
@@ -25,6 +25,7 @@
 			</resource>
 		</resources>
 		<plugins>
+
 			<plugin>
 				<artifactId>maven-compiler-plugin</artifactId>
 				<version>3.7.0</version>
@@ -35,55 +36,23 @@
 			</plugin>
 
 			<plugin>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<configuration>
-					<archive>
-						<manifest>
-							<mainClass>
-								de.Ste3et_C0st.FurnitureLib.main.FurnitureLib
-							</mainClass>
-						</manifest>
-					</archive>
-					<descriptorRefs>
-						<descriptorRef>jar-with-dependencies</descriptorRef>
-					</descriptorRefs>
-					<appendAssemblyId>false</appendAssemblyId>
-				</configuration>
-			</plugin>
-
-			<plugin>
-				<artifactId>maven-deploy-plugin</artifactId>
-				<version>2.8.1</version>
-				<executions>
-					<execution>
-						<id>default-deploy</id>
-						<phase>deploy</phase>
-						<goals>
-							<goal>deploy</goal>
-						</goals>
-					</execution>
-				</executions>
-			</plugin>
-
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-deploy-plugin</artifactId>
-				<version>3.0.0-M1</version>
-				<configuration>
-					<skip>false</skip>
-				</configuration>
-			</plugin>
+	          <artifactId>maven-assembly-plugin</artifactId>
+	          <configuration>
+	            <archive>
+	              <manifest>
+	                <mainClass>
+	                  de.Ste3et_C0st.FurnitureLib.main.FurnitureLib
+	                </mainClass>
+	              </manifest>
+	            </archive>
+	            <descriptorRefs>
+	              <descriptorRef>jar-with-dependencies</descriptorRef>
+	            </descriptorRefs>
+	            <appendAssemblyId>false</appendAssemblyId>
+	          </configuration>
+	        </plugin>
 		</plugins>
 	</build>
-
-	<profiles>
-		<profile>
-			<id>localBuild</id>
-			<build>
-				<directory>${dir}</directory>
-			</build>
-		</profile>
-	</profiles>
 
 	<repositories>
 		<repository>
@@ -100,19 +69,7 @@
 			<id>jitpack.io</id>
 			<url>https://jitpack.io</url>
 		</repository>
-
 	</repositories>
-
-	<distributionManagement>
-		<downloadUrl>http://207.180.192.228:8081/repository/FurnitureLib/</downloadUrl>
-		<repository>
-			<uniqueVersion>false</uniqueVersion>
-			<id>dev-repo</id>
-			<name>Corporate Repository</name>
-			<url>http://207.180.192.228:8081/repository/FurnitureLib/</url>
-			<layout>default</layout>
-		</repository>
-	</distributionManagement>
 
 	<dependencies>
 		<dependency>
@@ -121,12 +78,25 @@
 			<version>1.14-R0.1-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
+		
 		<dependency>
 			<groupId>org.bukkit</groupId>
 			<artifactId>bukkit</artifactId>
 			<version>1.14-R0.1-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
+		
+	    <dependency> 
+		  <groupId>org.slf4j</groupId>
+		  <artifactId>slf4j-jdk14</artifactId>
+		  <version>1.7.10</version>
+		</dependency>  
+		
+		<dependency>
+	        <groupId>com.zaxxer</groupId>
+	        <artifactId>HikariCP</artifactId>
+	        <version>3.3.1</version>
+	    </dependency>
 
 		<dependency>
 			<groupId>net.milkbowl.vault</groupId>

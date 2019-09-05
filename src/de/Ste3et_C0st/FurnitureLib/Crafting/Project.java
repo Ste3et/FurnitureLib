@@ -3,6 +3,7 @@ package de.Ste3et_C0st.FurnitureLib.Crafting;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -15,8 +16,11 @@ import com.google.gson.JsonObject;
 import de.Ste3et_C0st.FurnitureLib.ShematicLoader.ProjectLoader;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.config;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
+import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
+import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.CenterType;
 import de.Ste3et_C0st.FurnitureLib.main.Type.PlaceableSide;
+import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 
 public class Project{
 	private String project;
@@ -157,5 +161,20 @@ public class Project{
 			}
 		}
 		return -1;
+	}
+	
+	public List<ObjectID> getObjects(){
+		return FurnitureManager.getInstance().getObjectList().stream().filter(obj -> !obj.getSQLAction().equals(SQLAction.REMOVE)).filter(obj -> obj.getProject().equalsIgnoreCase(getName())).collect(Collectors.toList());
+	}
+	
+	public void applyFunction() {
+		Class<?> functionClass = getclass();
+		getObjects().forEach(obj -> {
+			try {
+				obj.setFunctionObject(functionClass.getConstructor(ObjectID.class).newInstance(obj));
+			}catch (Exception e) {
+				e.printStackTrace();
+			}
+		});
 	}
 }
