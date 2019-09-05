@@ -24,7 +24,10 @@ public class ProjectManager {
 		File folder = new File("plugins/FurnitureLib/models/");
 		if(folder.exists()){
 			Arrays.asList(folder.listFiles()).stream().filter(Objects::nonNull).forEach(file -> {
-				loadFile(file);
+				String str = loadFile(file);
+				if(Objects.nonNull(str)) {
+					if(!projectList.contains(str)) projectList.add(str);
+				}
 			});
 		}
 		
@@ -40,7 +43,7 @@ public class ProjectManager {
 		}
 	}
 	
-	private void loadFile(File file) {
+	private String loadFile(File file) {
 		if(!file.getName().toLowerCase().endsWith(".dmodel")) {
 			System.out.println("Cannot load " + file.getName() + " < 1.13 file");
 		}else {
@@ -77,11 +80,13 @@ public class ProjectManager {
 						Width = minLentgh + maxLentgh + 1;
 					}
 					p.setSize(Width, Height, Lentgh, CenterType.RIGHT);
+					return systemID;
 				}
 			}catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
+		return null;
 	}
 	
 	public String getHeader(YamlConfiguration file, String fileName){

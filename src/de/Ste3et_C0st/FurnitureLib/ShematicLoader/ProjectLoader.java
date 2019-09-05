@@ -53,7 +53,6 @@ public class ProjectLoader extends Furniture{
 			UUID uuid = getObjID().getUUID();
 			
 			if(!getObjID().isFromDatabase()) {
-				System.out.println("ProjectLoader " + getObjID().getProject() + " !fromDatabase");
 				boolean blocked = setBlocks(id.getStartLocation(), config, rotate);
 				if(blocked) {
 					Player player = Bukkit.getPlayer(uuid);
@@ -66,7 +65,6 @@ public class ProjectLoader extends Furniture{
 					return;
 				}
 			}else {
-				System.out.println("ProjectLoader " + getObjID().getProject() + " fromDatabase");
 				registerBlocks(id.getStartLocation(), config, rotate);
 			}
 			
@@ -151,9 +149,7 @@ public class ProjectLoader extends Furniture{
 	public void registerBlocks(Location startLocation, YamlConfiguration config, boolean rotable) {
 		List<Block> blockList = new ArrayList<Block>();
 		if(config.isConfigurationSection(header+".projectData.blockList")) {
-			System.out.println("blockList " + header);
 			for(String s : config.getConfigurationSection(header+".projectData.blockList").getKeys(false)) {
-				System.out.println(s);
 				double x = config.getDouble(header+".projectData.blockList." + s + ".xOffset");
 				double y = config.getDouble(header+".projectData.blockList." + s + ".yOffset");
 				double z = config.getDouble(header+".projectData.blockList." + s + ".zOffset");
