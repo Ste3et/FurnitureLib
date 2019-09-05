@@ -43,7 +43,7 @@ public class fCreeper extends fEntity{
 	
 	public Creeper toRealEntity() {
 		if(entity!=null){if(!entity.isDead()){return entity;}}
-		entity = (Creeper) getWorld().spawnEntity(getLocation(), getEntityType());
+		entity = (Creeper) getObjID().getWorld().spawnEntity(getLocation(), getEntityType());
 		entity.setPowered(charged);
 		
 		return entity;

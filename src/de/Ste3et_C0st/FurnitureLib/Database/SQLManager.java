@@ -10,6 +10,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.scheduler.BukkitTask;
 
 import de.Ste3et_C0st.FurnitureLib.Utilitis.CallbackBoolean;
+import de.Ste3et_C0st.FurnitureLib.main.ChunkData;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
@@ -159,8 +160,8 @@ public class SQLManager {
 		if(this.mysql!=null){this.mysql.startConvert(sender);}
 	}
 
-	public void loadAsynchron(final int chunkX, final int chunkz, final String worldName, CallbackBoolean callBack) {
-		this.sqlite.loadAsynchron(chunkX, chunkz, worldName, callBack);
+	public void loadAsynchron(ChunkData data, CallbackBoolean callBack) {
+		this.sqlite.loadAsynchron(data, callBack);
 	}
 	
 	public int getTPS() {

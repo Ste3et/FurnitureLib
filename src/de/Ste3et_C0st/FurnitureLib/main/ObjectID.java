@@ -4,6 +4,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
@@ -47,7 +48,6 @@ public class ObjectID{
 	public SQLAction getSQLAction(){return this.sqlAction;}
 	public boolean isFixed(){return this.fixed;}
 	public boolean isFinish() {return this.finish;}
-	public void setWorldName(String name) {this.worldName = name;}
 	public void setFinish(){this.finish = true;}
 	public void setEventTypeAccess(EventType type){this.memberType = type;}
 	public void setSQLAction(SQLAction action){this.sqlAction=action;}
@@ -76,7 +76,7 @@ public class ObjectID{
 	
 	public int viewDistance = 100;
 	
-	public void setStartLocation(Location loc) {this.loc = loc;this.worldName=this.loc.getWorld().getName();}
+	public void setStartLocation(Location loc) {this.loc = loc;this.worldName = loc.getWorld().getName();}
 	
 	public void updatePlayerView(Player player){
 		if(FurnitureManager.getInstance().getIgnoreList().contains(player.getUniqueId())){return;}
@@ -152,7 +152,7 @@ public class ObjectID{
 			this.plugin = plugin;
 			this.serial = RandomStringGenerator.generateRandomString(10,RandomStringGenerator.Mode.ALPHANUMERIC);
 			this.ObjectID = name+":"+this.serial+":"+plugin;
-			if(startLocation!=null){this.loc = startLocation;this.worldName = this.loc.getWorld().getName();}
+			if(Objects.nonNull(startLocation)) setStartLocation(startLocation);
 			this.viewDistance = FurnitureLib.getInstance().getViewDistance();
 		} catch (Exception e) {
 			e.printStackTrace();

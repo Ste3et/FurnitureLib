@@ -19,12 +19,12 @@ public class fProtocol{
 	private ProtocolManager manager;
 	private WrappedDataWatcher watcher;
 	private PacketContainer container;
-	private World w;
+	//private World w;
 	private EntityType type;
 	private ObjectID id;
 	private ProtocolFields fields = ProtocolFields.Spigot19;
 	
-	public World getWorld(){return this.w;}
+	//public World getWorld(){return this.w;}
 	public EntityType getEntityType(){return this.type;}
 	public ProtocolManager getManager(){return this.manager;}
 	public WrappedDataWatcher getWatcher(){return this.watcher;}
@@ -36,7 +36,7 @@ public class fProtocol{
 	
 	public fProtocol(World w, EntityType type, ObjectID id){
 		this.manager = ProtocolLibrary.getProtocolManager();
-		this.w = w;
+		//this.w = w;
 		this.id = id;
 		this.type = type;
 		this.container = new PacketContainer(PacketType.Play.Server.SPAWN_ENTITY_LIVING);

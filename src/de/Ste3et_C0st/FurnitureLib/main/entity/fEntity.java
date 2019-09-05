@@ -187,7 +187,7 @@ public abstract class fEntity extends fSerializer{
 	}
 	
 	public void sendParticle() {
-		getWorld().playEffect(getLocation(), Effect.STEP_SOUND, getHelmet().getType());
+		getObjID().getWorld().playEffect(getLocation(), Effect.STEP_SOUND, getHelmet().getType());
 	}
 	
 	

@@ -76,6 +76,15 @@
 		</plugins>
 	</build>
 
+	<profiles>
+		<profile>
+			<id>localBuild</id>
+			<build>
+				<directory>${dir}</directory>
+			</build>
+		</profile>
+	</profiles>
+
 	<repositories>
 		<repository>
 			<id>spigot-repo</id>

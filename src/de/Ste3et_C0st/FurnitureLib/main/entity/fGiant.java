@@ -60,7 +60,7 @@ public class fGiant extends fEntity {
 
 	public Giant toRealEntity() {
 		if(entity!=null){if(!entity.isDead()){return entity;}}
-		entity = (Giant) getWorld().spawnEntity(getLocation(), getEntityType());
+		entity = (Giant) getObjID().getWorld().spawnEntity(getLocation(), getEntityType());
 		entity.setAI(this.AI);
 		return entity;
 	}

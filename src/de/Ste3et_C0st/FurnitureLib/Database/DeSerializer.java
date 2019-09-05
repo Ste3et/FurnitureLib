@@ -30,18 +30,16 @@ public class DeSerializer {
 	public ObjectID Deserialze(String objId,String in, SQLAction action, boolean autoPurge, String world){
 		ObjectID obj = new ObjectID(null, null, null);
 		obj.setID(objId);
-		try {
-			byte[] by = Base64.getDecoder().decode(in);
-			ByteArrayInputStream bin = new ByteArrayInputStream(by);
+		byte[] by = Base64.getDecoder().decode(in);
+		try(ByteArrayInputStream bin = new ByteArrayInputStream(by)) {
 			NBTTagCompound compound = NBTCompressedStreamTools.read(bin);
-			bin.close();
-			if(compound == null) {return null;}
+			if(Objects.isNull(compound)) {return null;}
 			EventType evType = EventType.valueOf(compound.getString("EventType"));
 			PublicMode pMode = PublicMode.valueOf(compound.getString("PublicMode")); 
 			UUID uuid = uuidFetcher(compound.getString("Owner-UUID"));
 			HashSet<UUID> members = membersFetcher(compound.getList("Members"));
 			Location startLocation = locationFetcher(compound.getCompound("Location"));
-			if(startLocation==null){
+			if(Objects.isNull(startLocation)){
 				obj.setSQLAction(SQLAction.REMOVE);
 				FurnitureLib.getInstance().getFurnitureManager().addObjectID(obj);
 				return null;
@@ -52,20 +50,19 @@ public class DeSerializer {
 			obj.setMemberList(members);
 			obj.setUUID(uuid);
 			obj.setFinish();
-			obj.setWorldName(startLocation.getWorld().getName());
-			if(action!=null&&action.equals(SQLAction.SAVE)){obj.setSQLAction(SQLAction.SAVE);}else{obj.setSQLAction(SQLAction.NOTHING);}
+			obj.setSQLAction((action != null && action.equals(SQLAction.SAVE)) ? SQLAction.SAVE : SQLAction.NOTHING);
 			obj.setFromDatabase(true);
 
 			NBTTagCompound armorStands = compound.getCompound("entitys");
 			
 			armorStands.c().stream().filter(Objects::nonNull).forEach(packet -> {
 				NBTTagCompound metadata = armorStands.getCompound((String) packet);
-				if(autoPurge){if(FurnitureLib.getInstance().checkPurge(obj, uuid)){purged++;return;}}
 				Location loc = locationFetcher(metadata.getCompound("Location"));
-				this.armorStands.incrementAndGet();
 				FurnitureManager.getInstance().createFromType(metadata.getString("EntityType"), loc, obj).loadMetadata(metadata);
 			});
+			this.armorStands.addAndGet(armorStands.c().size());
 			if(world == null || world.isEmpty() || world.equals("null")) obj.setSQLAction(SQLAction.UPDATE);
+			if(autoPurge){if(FurnitureLib.getInstance().checkPurge(obj, uuid)){purged++;}}
 			return obj;
 		}catch (Exception e) {
 			e.printStackTrace();

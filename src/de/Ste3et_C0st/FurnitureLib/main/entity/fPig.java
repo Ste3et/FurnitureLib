@@ -31,7 +31,7 @@ public class fPig extends fEntity{
 
 	public Pig toRealEntity() {
 		if(entity!=null){if(!entity.isDead()){return entity;}}
-		entity = (Pig) getWorld().spawnEntity(getLocation(), getEntityType());
+		entity = (Pig) getObjID().getWorld().spawnEntity(getLocation(), getEntityType());
 		entity.setSaddle(saddle);
 		return entity;
 	}

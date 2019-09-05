@@ -427,11 +427,9 @@ public class FurnitureLib extends JavaPlugin{
 	}
 	
 	public void spawn(Project pro, ObjectID obj){
-		if(pro==null)return;
+		if(Objects.isNull(pro) || Objects.isNull(obj))return;
 		if(pro.getClass()==null)return;
-		if(obj==null)return;
 		Class<?> c = pro.getclass();
-		if(c==null ){return;}
 		try {
 			Object o = c.getConstructor(ObjectID.class).newInstance(obj);
 			if(obj.getFunctionObject() == null) obj.setFunctionObject(o);

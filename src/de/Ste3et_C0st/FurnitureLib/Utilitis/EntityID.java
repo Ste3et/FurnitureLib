@@ -11,7 +11,8 @@ public class EntityID {
 
 	public static int nextEntityIdOld(){
 		try{
-			Field f = Reflection.getNMSClass("Entity").getDeclaredField("entityCount");
+			Class<?> entityClass = Class.forName("net.minecraft.server." + getVersion() + "Entity");
+			Field f = entityClass.getDeclaredField("entityCount");
 			f.setAccessible(true);
 			int id = f.getInt(null);
 			f.set(null, id+1);
@@ -24,7 +25,8 @@ public class EntityID {
 	
 	public static int nextEntityIdNew(){
 		try {
-			Field f = Reflection.getNMSClass("Entity").getDeclaredField("entityCount"); 
+			Class<?> entityClass = Class.forName("net.minecraft.server." + getVersion() + "Entity");
+			Field f = entityClass.getDeclaredField("entityCount"); 
 			f.setAccessible(true);
 			Object obj = f.get(null);
 			int id = (int) obj.getClass().getMethod("incrementAndGet").invoke(obj);

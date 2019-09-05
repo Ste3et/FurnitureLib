@@ -132,7 +132,7 @@ public class fArmorStand extends fEntity {
 	
 	public ArmorStand toRealEntity(){
 		if(entity!=null){if(!entity.isDead()){return entity;}}
-		entity = (ArmorStand) getWorld().spawnEntity(getLocation(), getEntityType());
+		entity = (ArmorStand) getObjID().getWorld().spawnEntity(getLocation(), getEntityType());
 		entity.setArms(this.hasArms());
 		entity.setVisible(!this.isInvisible());
 		entity.setSmall(isSmall());

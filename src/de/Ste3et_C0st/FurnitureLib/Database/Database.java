@@ -9,7 +9,10 @@ import java.text.SimpleDateFormat;
 import java.util.Base64;
 import java.util.EnumSet;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 
@@ -19,7 +22,9 @@ import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTCompressedStreamTools;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.CallbackBoolean;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.DoubleKey;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.MaterialConverter;
+import de.Ste3et_C0st.FurnitureLib.main.ChunkData;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
@@ -172,28 +177,35 @@ public abstract class Database {
 		return 0;
     }
     
-	public void loadAsynchron(final int chunkX, final int chunkz, final String worldName, CallbackBoolean callBack) {
+	public void loadAsynchron(ChunkData chunkdata, CallbackBoolean callBack) {
 		Bukkit.getScheduler().runTaskAsynchronously(FurnitureLib.getInstance(), () -> {
-			try (Connection con = getSQLConnection();ResultSet rs = con.createStatement().executeQuery("SELECT ObjID,Data,world FROM furnitureLibData WHERE x=" + chunkX + " AND z=" + chunkz + " AND world='"+worldName+"'")){
+			String query = "SELECT ObjID,Data,world FROM furnitureLibData WHERE x=" + chunkdata.getX() + " AND z=" + chunkdata.getZ() + " AND world='"+chunkdata.getWorld()+"'";
+			try (Connection con = getSQLConnection();ResultSet rs = con.createStatement().executeQuery(query)){
 				HashSet<ObjectID> idList = new HashSet<ObjectID>();
-				while (rs.next()){
-	    			if(rs != null){
-	    				String a = rs.getString(1), c = rs.getString(2), d = rs.getString(3);
-	    				if(!(a.isEmpty() || c.isEmpty())) {
+				if(rs.next() == false) {
+					System.out.println("Keine Modelle Gefunden: " + chunkdata.getX() + ":" + chunkdata.getZ());
+				}else {
+					int i = 0; 
+					do {
+						String a = rs.getString(1), c = rs.getString(2), d = rs.getString(3);
+	    				if(Objects.nonNull(a) && Objects.nonNull(c)) {
 	    					ObjectID obj = FurnitureLib.getInstance().getDeSerializer().Deserialze(a, c, SQLAction.NOTHING, false, d);
 	    					if(obj != null) idList.add(obj);
 	    				}
-	    			}
-	    		}
-				idList.forEach(obj -> {
-					try {
-						obj.setFunctionObject(obj.getProjectOBJ().getclass().getDeclaredConstructor(ObjectID.class).newInstance(obj));
-					} catch (Exception e) {
-						e.printStackTrace();
-					}finally {
-						obj.setFinish();
-					}
-				});
+	    				i++;
+					}while(rs.next());
+					idList.forEach(obj -> {
+						try {
+							obj.setFunctionObject(obj.getProjectOBJ().getclass().getDeclaredConstructor(ObjectID.class).newInstance(obj));
+						} catch (Exception e) {
+							e.printStackTrace();
+						}finally {
+							obj.setFinish();
+						}
+					});
+					System.out.println("Modelle geladen:" + i + " x:" + chunkdata.getX() + " z:" + chunkdata.getZ());
+				}
+				
 	    		callBack.onResult(idList);
 			}catch (Exception e) {
 				e.printStackTrace();
@@ -211,7 +223,6 @@ public abstract class Database {
     				if(!(a.isEmpty() || c.isEmpty())) FurnitureLib.getInstance().getDeSerializer().Deserialze(a, c, action, b, d);
     			}
     		}
-    		rs.close();
     		plugin.getLogger().info("FurnitureLib load " + FurnitureLib.getInstance().getFurnitureManager().getObjectList().size()  +  " Objects from: " + getType().name() + " Database");
     		long time2 = System.currentTimeMillis();
 	    	SimpleDateFormat time = new SimpleDateFormat("mm:ss.SSS");
