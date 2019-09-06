@@ -7,7 +7,7 @@ stages:
 FurnitureLib:
   stage: build
   script:
-     - mvn clean package
+     - mvn clean package assembly:single
   artifacts:
      paths:
      - target/*.jar
