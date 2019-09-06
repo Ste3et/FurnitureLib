@@ -12,7 +12,7 @@
 	<name>FurnitureLib</name>
 
 	<build>
-		<defaultGoal>clean package install assembly:single</defaultGoal>
+		<defaultGoal>clean package install</defaultGoal>
 		<sourceDirectory>src</sourceDirectory>
 		<finalName>FurnitureLib</finalName>
 		<resources>
@@ -109,6 +109,7 @@
 			<groupId>com.gitlab.Ste3et_C0st</groupId>
 			<artifactId>protectionlib</artifactId>
 			<version>v0.9.7</version>
+			<scope>provided</scope>
 		</dependency>
 
 		<dependency>
