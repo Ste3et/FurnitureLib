@@ -93,7 +93,7 @@ public class FurnitureLib extends JavaPlugin{
 	private int purgeTime = 30, viewDistance = 100, limitGlobal = -1;
 	private long purgeTimeMS = 0, spamBreakTime = 5000, spamPlaceTime = 5000;
 	private Material defMaterial = Material.COW_SPAWN_EGG;
-	private boolean sync = true;
+	private boolean sync = false;
 	private HashSet<FurniturePlugin> furnitureAddon = new HashSet<FurniturePlugin>();
 	public HashMap<Project, Long> deleteMap = new HashMap<Project, Long>();
 	public HashMap<UUID, Long> timeStampPlace = new HashMap<UUID, Long>();

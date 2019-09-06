@@ -23,7 +23,7 @@ import de.Ste3et_C0st.FurnitureLib.main.Type.BodyPart;
 public abstract class fSerializer extends fProtocol{
 
 	private NBTTagCompound metadata = new NBTTagCompound();
-	public fSerializer(World w, EntityType type, ObjectID id) {super(w, type, id);}
+	public fSerializer(World w,EntityType type, ObjectID id) {super(w,type, id);}
 	public NBTTagCompound getNBTField() {return this.metadata;}
 	
 	public void setMetadata(String field, String value){metadata.setString(field, value);}

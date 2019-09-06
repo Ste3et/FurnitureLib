@@ -2,6 +2,7 @@ package de.Ste3et_C0st.FurnitureLib.main;
 
 import java.util.HashSet;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 
 import de.Ste3et_C0st.FurnitureLib.Utilitis.CallbackBoolean;
@@ -11,7 +12,6 @@ public class ChunkData{
 
 	private DoubleKey<Integer> points;
 	private String world;
-	private HashSet<ObjectID> objectSet = new HashSet<ObjectID>();
 	private boolean loadet = false;
 
 	public ChunkData(Chunk c) {
@@ -29,10 +29,17 @@ public class ChunkData{
 			@Override
 			public void onResult(HashSet<ObjectID> idList) {
 				if(!idList.isEmpty()) {
-					System.out.println("!idList.isEmpty() == true");
-					FurnitureManager.getInstance().getObjectList().addAll(idList);
-					System.out.println(idList.size());
-					System.out.println("TPS: " + FurnitureLib.getInstance().getSQLManager().getTPS());
+					Bukkit.getScheduler().runTask(FurnitureLib.getInstance(), () -> {
+						idList.forEach(obj -> {
+							try {
+								obj.setFunctionObject(obj.getProjectOBJ().getclass().getDeclaredConstructor(ObjectID.class).newInstance(obj));
+							} catch (Exception e) {
+								e.printStackTrace();
+							}finally {
+								obj.setFinish();
+							}
+						});
+					});
 				}
 			}
 		});
@@ -42,10 +49,6 @@ public class ChunkData{
 
 	public boolean isLoadet() {
 		return this.loadet;
-	}
-	
-	public HashSet<ObjectID> getHashSet(){
-		return this.objectSet;
 	}
 	
 	public int getX() {

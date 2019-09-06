@@ -17,8 +17,6 @@ public class onChunkChange implements Listener{
 
 	private FurnitureManager manager = FurnitureManager.getInstance();
 	
-	private HashSet<ChunkData> data = new HashSet<ChunkData>();
-	
 	@EventHandler
 	public void onPlayerMove(PlayerMoveEvent e){
 	 	if (e.getTo().getBlock().getLocation().equals(e.getFrom().getBlock().getLocation())) return;
@@ -31,25 +29,19 @@ public class onChunkChange implements Listener{
 	 		if(FurnitureLib.getInstance().isSync()) {
 		 		manager.updatePlayerView(player);
 		 	}else {
-			 		FurnitureLib.debug("Furniture.PlayerMoveEvent:");
-			 		ChunkData data = this.data.stream().filter(d -> d.equals(newChunk) == true).findFirst().orElse(new ChunkData(newChunk));
-			 		if(!this.data.contains(data)) {
-			 			FurnitureLib.debug("Furniture.PlayerMoveEvent: ChunkData not found");
-			 			data.load();
-			 			this.data.add(data);
-			 		}
+			 	manager.updatePlayerView(player);
 		 	}
 	 	}
 	}
 	
-//	@EventHandler
-//	public void onChunkLoad(ChunkLoadEvent e) {
-//		if(!FurnitureLib.getInstance().isSync()) {
-//			ChunkData data = manager.getChunkDataList().stream().findFirst().filter(c -> c.equals(e.getChunk())).orElse(new ChunkData(e.getChunk()));
-//			if(!manager.getChunkDataList().contains(data)) {
-//				manager.getChunkDataList().add(data);
-//				if(!data.isLoadet()) data.load();
-//			}
-//		}
-//	}
+	@EventHandler
+	public void onChunkLoad(ChunkLoadEvent e) {
+		if(!FurnitureLib.getInstance().isSync()) {
+			ChunkData data = manager.getChunkDataList().stream().findFirst().filter(c -> c.equals(e.getChunk())).orElse(new ChunkData(e.getChunk()));
+			if(!manager.getChunkDataList().contains(data)) {
+				manager.getChunkDataList().add(data);
+				if(!data.isLoadet()) data.load();
+			}
+		}
+	}
 }

@@ -17,6 +17,6 @@ public class onPlayerJoin extends EventLibary implements Listener {
 			public void run() {
 				getFurnitureMgr().updatePlayerView(player);
 			}
-		},10);
+		},40);
 	}
 }

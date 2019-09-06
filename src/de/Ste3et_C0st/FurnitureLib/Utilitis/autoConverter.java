@@ -5,6 +5,7 @@ import java.io.File;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
 import java.util.UUID;
@@ -142,13 +143,15 @@ public class autoConverter {
 			if(FurnitureLib.getInstance().isSync()) {
 				FurnitureLib.getInstance().getSQLManager().loadALL();
 			}else{
-				Bukkit.getWorlds().stream().forEach(world -> {
-					for(Chunk c : world.getLoadedChunks()) {
-						ChunkData data = FurnitureManager.getInstance().getChunkDataList().stream().findFirst().filter(chunk -> c.getX() == chunk.getX() && c.getZ() == chunk.getZ()).orElse(new ChunkData(c));
-						if(!data.isLoadet()) data.load();
-						if(!FurnitureManager.getInstance().getChunkDataList().contains(data)) FurnitureManager.getInstance().getChunkDataList().add(data);
-					}
-				});
+				Bukkit.getScheduler().runTaskLater(FurnitureLib.getInstance(), () -> {
+					Bukkit.getWorlds().stream().forEach(world -> {
+						Arrays.asList(world.getLoadedChunks()).forEach(c -> {
+							ChunkData data = FurnitureManager.getInstance().getChunkDataList().stream().findFirst().filter(chunk -> c.getX() == chunk.getX() && c.getZ() == chunk.getZ()).orElse(new ChunkData(c));
+							if(!data.isLoadet()) data.load();
+							if(!FurnitureManager.getInstance().getChunkDataList().contains(data)) FurnitureManager.getInstance().getChunkDataList().add(data);
+						});
+					});
+				}, 10);
 			}
 			return;
 		}

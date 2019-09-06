@@ -199,28 +199,15 @@ public abstract class Database {
 			String query = "SELECT ObjID,Data,world FROM furnitureLibData WHERE x=" + chunkdata.getX() + " AND z=" + chunkdata.getZ() + " AND world='"+chunkdata.getWorld()+"'";
 			try (Connection con = getConnection();ResultSet rs = con.createStatement().executeQuery(query)){
 				HashSet<ObjectID> idList = new HashSet<ObjectID>();
-				if(rs.next() == false) {
-					System.out.println("Keine Modelle Gefunden: " + chunkdata.getX() + ":" + chunkdata.getZ());
-				}else {
-					int i = 0; 
+				if(rs.next()) {
 					do {
 						String a = rs.getString(1), c = rs.getString(2), d = rs.getString(3);
 	    				if(Objects.nonNull(a) && Objects.nonNull(c)) {
-	    					ObjectID obj = FurnitureLib.getInstance().getDeSerializer().Deserialze(a, c, SQLAction.NOTHING, false, d);
-	    					if(obj != null) idList.add(obj);
+	    					ObjectID obj = FurnitureLib.getInstance().getDeSerializer().Deserialize(a, c, SQLAction.NOTHING, d);
+	    					if(Objects.nonNull(obj)) idList.add(obj);
 	    				}
-	    				i++;
 					}while(rs.next());
-					idList.forEach(obj -> {
-						try {
-							obj.setFunctionObject(obj.getProjectOBJ().getclass().getDeclaredConstructor(ObjectID.class).newInstance(obj));
-						} catch (Exception e) {
-							e.printStackTrace();
-						}finally {
-							obj.setFinish();
-						}
-					});
-					System.out.println("Modelle geladen:" + i + " x:" + chunkdata.getX() + " z:" + chunkdata.getZ());
+					FurnitureLib.debug("FurnitureLib load " + idList.size() + " Models for chunk " + " x:" + chunkdata.getX() + " z:" + chunkdata.getZ() + " TPS: " + getTPS());
 				}
 				
 	    		callBack.onResult(idList);
@@ -232,14 +219,27 @@ public abstract class Database {
     
     public void loadAll(SQLAction action){
     	long time1 = System.currentTimeMillis();
-    	boolean b = FurnitureLib.getInstance().isAutoPurge();
     	try (Connection con = getConnection();ResultSet rs = con.createStatement().executeQuery("SELECT ObjID,Data,world FROM furnitureLibData")){    		
-    		while (rs.next()){
-    			if(rs != null){
-    				String a = rs.getString(1), c = rs.getString(2), d = rs.getString(3);
-    				if(!(a.isEmpty() || c.isEmpty())) FurnitureLib.getInstance().getDeSerializer().Deserialze(a, c, action, b, d);
-    			}
-    		}
+//    		while (rs.next()){
+////    			if(rs != null){
+////    				String a = rs.getString(1), c = rs.getString(2), d = rs.getString(3);
+////    				if(!(a.isEmpty() || c.isEmpty())) FurnitureLib.getInstance().getDeSerializer().Deserialze(a, c, action, b, d);
+////    			}
+//    		
+//	    		
+//    		}	
+    		
+    		if(rs.next() == true) {
+    			long time2 = System.currentTimeMillis();
+    	    	SimpleDateFormat time = new SimpleDateFormat("mm:ss.SSS");
+    	    	String timeStr = time.format(time2-time1);
+    			System.out.println("FurnitureLib load data from Source Finish Start deserialize ["+timeStr+"]");
+				do {
+					String a = rs.getString(1), c = rs.getString(2), d = rs.getString(3);
+					if(!(a.isEmpty() || c.isEmpty())) FurnitureLib.getInstance().getDeSerializer().Deserialize(a, c, action, d);
+				}while(rs.next());
+			}
+    		
     		plugin.getLogger().info("FurnitureLib load " + FurnitureLib.getInstance().getFurnitureManager().getObjectList().size()  +  " Objects from: " + getType().name() + " Database");
     		long time2 = System.currentTimeMillis();
 	    	SimpleDateFormat time = new SimpleDateFormat("mm:ss.SSS");

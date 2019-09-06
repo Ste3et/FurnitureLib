@@ -24,10 +24,9 @@ public class DeSerializer {
 	
 	public AtomicInteger armorStands = new AtomicInteger(0);
 	public int purged = 0;
-	public FurnitureLib lib = FurnitureLib.getInstance();
-
+	
 	@SuppressWarnings("unchecked")
-	public ObjectID Deserialze(String objId,String in, SQLAction action, boolean autoPurge, String world){
+	public ObjectID Deserialize(String objId,String in, SQLAction action, String world){
 		ObjectID obj = new ObjectID(null, null, null);
 		obj.setID(objId);
 		byte[] by = Base64.getDecoder().decode(in);
@@ -61,8 +60,8 @@ public class DeSerializer {
 				FurnitureManager.getInstance().createFromType(metadata.getString("EntityType"), loc, obj).loadMetadata(metadata);
 			});
 			this.armorStands.addAndGet(armorStands.c().size());
-			if(world == null || world.isEmpty() || world.equals("null")) obj.setSQLAction(SQLAction.UPDATE);
-			if(autoPurge){if(FurnitureLib.getInstance().checkPurge(obj, uuid)){purged++;}}
+			if(world == null || world.equals("null")) obj.setSQLAction(SQLAction.UPDATE);
+			//if(autoPurge){if(FurnitureLib.getInstance().checkPurge(obj, uuid)){purged++;}} <-- why is this here ?
 			return obj;
 		}catch (Exception e) {
 			e.printStackTrace();
