@@ -151,7 +151,7 @@ public class autoConverter {
 							if(!FurnitureManager.getInstance().getChunkDataList().contains(data)) FurnitureManager.getInstance().getChunkDataList().add(data);
 						});
 					});
-				}, 10);
+				}, 20*10);
 			}
 			return;
 		}

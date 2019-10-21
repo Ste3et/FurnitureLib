@@ -67,14 +67,16 @@ public class ObjectID{
 	public void remMember(UUID uuid){uuidList.remove(uuid);}
 	public List<fEntity> getPacketList() {return packetList;}
 	public void setPacketList(List<fEntity> packetList) {this.packetList = packetList;}
-	public boolean isInRange(Player player) {return (getStartLocation().distance(player.getLocation()) <= viewDistance);}
+	public boolean isInRange(Player player) {return (getStartLocation().distanceSquared(player.getLocation()) < viewDistanceSquared);}
 	public boolean isInWorld(Player player) {return getWorld().equals(player.getWorld());}
+	public void addEntity(fEntity packet) {packetList.add(packet);}
 	public void addArmorStand(fEntity packet) {packetList.add(packet);}
 	public void setPublicMode(PublicMode publicMode){this.publicMode = publicMode;}
 	public void setPrivate(boolean b){this.Private = b;}
 	public Object functionObject = null;
 	
 	public int viewDistance = 100;
+	public int viewDistanceSquared = this.viewDistance * this.viewDistance;
 	
 	public void setStartLocation(Location loc) {this.loc = loc;this.worldName = loc.getWorld().getName();}
 	
@@ -99,6 +101,25 @@ public class ObjectID{
 				players.remove(player);
 			}
 		}
+	}
+	
+	public void sendAllInView() {
+		if(isPrivate()) return;
+		if(getPacketList().isEmpty()) return;
+		if(getSQLAction().equals(SQLAction.REMOVE)) return;
+		getWorld().getPlayers().forEach(player -> {
+			if(isInRange(player)) {
+				if(!players.contains(player)) {
+					players.add(player);
+					this.packetList.stream().forEach(stand -> stand.send(player));
+				}
+			}else {
+				if(players.contains(player)) {
+					players.remove(player);
+					this.packetList.stream().forEach(stand -> stand.kill(player, false));
+				}
+			}
+		});
 	}
 	
 	public Object getFunctionObject() {

@@ -71,4 +71,9 @@ public class fCreeper extends fEntity{
 		boolean i = (metadata.getInt("Ignite")==1), f = (metadata.getInt("Charged")==1);
 		this.setIgnited(i).setCharged(f);
 	}
+
+	@Override
+	public fEntity clone() {
+		return null;
+	}
 }

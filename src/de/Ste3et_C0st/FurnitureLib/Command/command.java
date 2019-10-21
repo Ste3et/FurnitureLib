@@ -71,7 +71,7 @@ public class command implements CommandExecutor, Listener{
 			Player p = e.getPlayer();
 			p.sendMessage("§6Furniture Info about§e " + e.getID().getSerial());
 			p.sendMessage("§6Plugin:§e " + e.getID().getPlugin());
-			p.sendMessage("§6Class: §c" + e.getID().getProjectOBJ().getclass().getSimpleName());
+			p.sendMessage("§6Class: §c" + e.getID().getProjectOBJ().getFunctionClazz().getSimpleName());
 			p.sendMessage("§6Type:§e " + e.getID().getProject());
 			p.sendMessage("§6PublicMode:§e " + e.getID().getPublicMode().name().toLowerCase());
 			p.sendMessage("§6Owner: §2" + e.getID().getPlayerName());

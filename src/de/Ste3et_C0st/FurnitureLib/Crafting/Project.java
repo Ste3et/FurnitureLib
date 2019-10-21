@@ -3,6 +3,7 @@ package de.Ste3et_C0st.FurnitureLib.Crafting;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
@@ -10,11 +11,15 @@ import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.util.BoundingBox;
 
 import com.google.gson.JsonObject;
 
+import de.Ste3et_C0st.FurnitureLib.ModelLoader.ModelHandler;
+import de.Ste3et_C0st.FurnitureLib.ModelLoader.Modelschematic;
 import de.Ste3et_C0st.FurnitureLib.ShematicLoader.ProjectLoader;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.config;
+import de.Ste3et_C0st.FurnitureLib.main.Furniture;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
@@ -26,7 +31,8 @@ public class Project{
 	private String project;
 	private CraftingFile file;
 	private Plugin plugin;
-	private Class<?> clas;
+	private Class<? extends Furniture> clazz;
+	
 	private Integer witdh = 0,height = 0,length = 0,chunkLimit = -1;
 	private config limitationConfig;
 	private FileConfiguration limitationFile;
@@ -36,22 +42,21 @@ public class Project{
 	private PlaceableSide side;
 	private boolean EditorProject = false, silent = false;
 	private InputStream model = null;
+	private ModelHandler modelschematic = null;
 	
-	public InputStream getModel(){return this.model;}
 	public String getName(){return project;}
 	public Plugin getPlugin(){return plugin;}
 	public CraftingFile getCraftingFile(){return file;}
-	public Class<?> getclass(){return this.clas;}
 	public CenterType getCenterType(){return this.type;}
 	public PlaceableSide getPlaceableSide(){return this.side;}
 	public String getSystemID(){return getCraftingFile().getSystemID();}
 	public boolean isEditorProject(){return this.EditorProject;}
+	public Class<? extends Furniture> getFunctionClazz(){return this.clazz;}
 	public Project setModel(InputStream stream){this.model = stream;return this;}
 	public Project setCraftingFile(CraftingFile file){this.file = file;return this;}
 	public Project setPlugin(Plugin plugin) {this.plugin = plugin;return this;}
 	public Project setPlaceableSide(PlaceableSide side){this.side = side;return this;}
 	public Project setEditorProject(boolean b){this.EditorProject = b;return this;}
-	public Project setClass(Class<?> clas) {this.clas = clas;return this;}
 	public Project setName(String name){this.project = name;return this;}
 	public List<JsonObject> getFunctions(){return this.functionList;}
 	public boolean isSilent(){return this.silent;}
@@ -62,30 +67,41 @@ public class Project{
 	public int getAmountChunk(){return this.chunkLimit;}
 	public void setSilent(boolean b){silent = b;}
 	
-	public Project setSize(Integer witdh, Integer height, Integer length, CenterType type){		
-		this.witdh = witdh;
-		this.height = height;
-		this.length = length;
+	public Project setSize(Integer x, Integer y, Integer z, CenterType type){		
+		if(Objects.nonNull(getModelschematic())) getModelschematic().setBoundingBox(new BoundingBox(0, 0, 0, x, y, z));
 		this.type = type;
 		return this;
 	}
 	
-	public Project(String name, Plugin plugin,InputStream craftingFile,PlaceableSide side, Class<?> clas){
+	public Project(String name, Plugin plugin,InputStream craftingFile,PlaceableSide side, Class<? extends Furniture> clazz){
 		this.project = name;
 		this.plugin = plugin;
-		this.clas = clas;
 		this.file = new CraftingFile(name, craftingFile);
 		this.side = side;
 		this.functionList = this.file.loadFunction();
+		this.clazz = clazz;
+		try {
+			this.modelschematic = new ModelHandler(this.file.getFilePath());
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		
 		FurnitureLib.getInstance().getFurnitureManager().addProject(this);
 		loadDefaults();
 		FurnitureLib.getInstance().getLimitManager().loadDefault(this.project);
+	}
+	
+	public Project(String name, Plugin plugin,InputStream craftingFile, Class<? extends Furniture> clazz){
+		this(name, plugin, craftingFile, PlaceableSide.TOP, ProjectLoader.class);
 	}
 	
 	public Project(String name, Plugin plugin,InputStream craftingFile){
 		this(name, plugin, craftingFile, PlaceableSide.TOP, ProjectLoader.class);
 	}
 	
+	public ModelHandler getModelschematic() {
+		return this.modelschematic;
+	}
 	public boolean hasPermissions(Player p){
 		if(FurnitureLib.getInstance().getPermission().hasPerm(p,"furniture.player")) return true;
 		if(FurnitureLib.getInstance().getPermission().hasPerm(p,"furniture.place." + getSystemID())) return true;
@@ -167,14 +183,14 @@ public class Project{
 		return FurnitureManager.getInstance().getObjectList().stream().filter(obj -> !obj.getSQLAction().equals(SQLAction.REMOVE)).filter(obj -> obj.getProject().equalsIgnoreCase(getName())).collect(Collectors.toList());
 	}
 	
-	public void applyFunction() {
-		Class<?> functionClass = getclass();
-		getObjects().forEach(obj -> {
-			try {
-				obj.setFunctionObject(functionClass.getConstructor(ObjectID.class).newInstance(obj));
-			}catch (Exception e) {
-				e.printStackTrace();
-			}
-		});
-	}
+//	public void applyFunction() {
+//		Class<?> functionClass = getclass();
+//		getObjects().forEach(obj -> {
+//			try {
+//				obj.setFunctionObject(functionClass.getConstructor(ObjectID.class).newInstance(obj));
+//			}catch (Exception e) {
+//				e.printStackTrace();
+//			}
+//		});
+//	}
 }

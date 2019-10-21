@@ -10,6 +10,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
@@ -26,6 +27,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
+
+import com.comphenix.protocol.wrappers.WrappedDataWatcher;
+import com.comphenix.protocol.wrappers.EnumWrappers.Direction;
 
 import de.Ste3et_C0st.FurnitureLib.Command.TabCompleterHandler;
 import de.Ste3et_C0st.FurnitureLib.Command.command;
@@ -93,8 +97,7 @@ public class FurnitureLib extends JavaPlugin{
 	private int purgeTime = 30, viewDistance = 100, limitGlobal = -1;
 	private long purgeTimeMS = 0, spamBreakTime = 5000, spamPlaceTime = 5000;
 	private Material defMaterial = Material.COW_SPAWN_EGG;
-	private boolean sync = false;
-	private HashSet<FurniturePlugin> furnitureAddon = new HashSet<FurniturePlugin>();
+	private boolean sync = true;
 	public HashMap<Project, Long> deleteMap = new HashMap<Project, Long>();
 	public HashMap<UUID, Long> timeStampPlace = new HashMap<UUID, Long>();
 	public HashMap<UUID, Long> timeStampBreak = new HashMap<UUID, Long>();
@@ -135,31 +138,34 @@ public class FurnitureLib extends JavaPlugin{
 	public static FurnitureLib getInstance(){return instance;}
 	
 	public void send(String s){getServer().getConsoleSender().sendMessage(s);}
+
+	public boolean canBuild(Player p, ObjectID id, EventType type, boolean sendMessage){ return Pmanager.canBuild(p, id, type, sendMessage);}
+	public boolean canBuild(Player p, ObjectID id, EventType type){ return Pmanager.canBuild(p, id, type);}
 	
+	public boolean canSitting(){return this.canSit;}
+	public boolean creativeInteract(){return this.creativeInteract;}
+	public boolean creativePlace(){return this.creativePlace;}
+	public boolean haveRegionMemberAccess(){return this.useRegionMemberAccess;}
 	public boolean isAutoFileUpdater() {return this.autoFileUpdater;}
+	public boolean useSSL() {return this.useSSL;}
+	public boolean checkPurge(ObjectID obj, UUID uuid){return checkPurge(obj, uuid, this.purgeTime);}
+	public boolean checkPurge(ObjectID obj, OfflinePlayer player){return checkPurge(obj, player.getUniqueId());}
+	
+	public boolean isSync() {return this.sync;}
 	public boolean isGlowing(){return this.glowing;}
 	public boolean isAutoPurge(){return this.autoPurge;}
 	public boolean isPurgeRemove(){return this.removePurge;}
-	public boolean canBuild(Player p, ObjectID id, EventType type, boolean sendMessage){ return Pmanager.canBuild(p, id, type, sendMessage);}
-	public boolean canBuild(Player p, ObjectID id, EventType type){ return Pmanager.canBuild(p, id, type);}
 	public boolean isUpdate(){return this.update;}
 	public boolean isParticleEnable(){return this.useParticle;}
 	public boolean isSpamPlace(){return this.spamPlace;}
 	public boolean isSpamBreak(){return this.spamBreak;}
-	public boolean canSitting(){return this.canSit;}
-	public boolean creativeInteract(){return this.creativeInteract;}
-	public boolean creativePlace(){return this.creativePlace;}
 	public boolean isRotateOnSitEnable(){return this.rotateOnSit;}
-	public boolean haveRegionMemberAccess(){return this.useRegionMemberAccess;}
 	public boolean isDouble(String s){try{Double.parseDouble(s);}catch(NumberFormatException e){return false;}return true;}
 	public boolean isBoolean(String s){try {Boolean.parseBoolean(s.toLowerCase());}catch (Exception e) {return false;}return true;}
 	public boolean isInt(String s){try{Integer.parseInt(s);}catch(NumberFormatException e){return false;}return true;}
 	public boolean isAfterDate(long time, int purgeTime){return System.currentTimeMillis() - (time+purgeTimeMS) >0;}
-	public boolean useSSL() {return this.useSSL;}
 	private boolean isRightProtocollib(String s){return s.startsWith("4");}
-	public boolean checkPurge(ObjectID obj, UUID uuid){return checkPurge(obj, uuid, this.purgeTime);}
-	public boolean checkPurge(ObjectID obj, OfflinePlayer player){return checkPurge(obj, player.getUniqueId());}
-	public boolean isSync() {return this.sync;}
+	
 	
 	@Override
 	public void onEnable(){
@@ -187,6 +193,8 @@ public class FurnitureLib extends JavaPlugin{
 			this.pManager = new ProjectManager();
 			this.permissionHandler = new PermissionHandler();
 			this.Pmanager = new ProtectionManager(instance);
+			this.sync = getConfig().getBoolean("config.sync", true);
+			
 			send("==========================================");
 			send("FurnitureLibary Version: §e" + this.getDescription().getVersion());
 			send("Furniture Autor: §6" + this.getDescription().getAuthors().get(0));
@@ -381,7 +389,6 @@ public class FurnitureLib extends JavaPlugin{
 		return true;
 	}
 	
-	@Deprecated
 	public void registerPluginFurnitures(Plugin plugin){
 		manager.getObjectList().stream().filter(obj -> obj != null && obj.getPlugin() != null).forEach(obj -> {
 			if(!obj.getSQLAction().equals(SQLAction.REMOVE)) {
@@ -420,12 +427,8 @@ public class FurnitureLib extends JavaPlugin{
 		getLogger().info("==========================================");
 	}
 	
-	public void addFurnitureAddon(FurniturePlugin plugin) {
-		if(!furnitureAddon.contains(plugin)) this.furnitureAddon.add(plugin);
-	}
-	
 	public void spawn(Project pro, Location l){
-		Class<?> c = pro.getclass();
+		Class<?> c = pro.getFunctionClazz();
 		if(c==null ){return;}
 		ObjectID obj = new ObjectID(pro.getName(), pro.getPlugin().getName(), l);
 		spawn(pro, obj);
@@ -435,11 +438,12 @@ public class FurnitureLib extends JavaPlugin{
 		if(pro==null)return;
 		if(pro.getClass()==null)return;
 		if(obj==null)return;
-		Class<?> c = pro.getclass();
-		if(c==null ){return;}
+		Class<?> c = pro.getFunctionClazz();
+		if(Objects.isNull(c)){return;}
 		try {
 			Object o = c.getConstructor(ObjectID.class).newInstance(obj);
 			if(obj.getFunctionObject() == null) obj.setFunctionObject(o);
+			obj.getProjectOBJ().getModelschematic().spawn(obj);
 			obj.setFinish();
 		} catch (InvocationTargetException e) {
 			e.getCause().printStackTrace();

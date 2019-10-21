@@ -1,11 +1,15 @@
 package de.Ste3et_C0st.FurnitureLib.main;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.HashSet;
+import java.util.Objects;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 
-import de.Ste3et_C0st.FurnitureLib.Utilitis.CallbackBoolean;
+import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
+import de.Ste3et_C0st.FurnitureLib.ShematicLoader.ProjectLoader;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.CallbackObjectIDs;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.DoubleKey;
 
 public class ChunkData{
@@ -25,27 +29,54 @@ public class ChunkData{
 	}
 
 	public ChunkData load() {
-		FurnitureLib.getInstance().getSQLManager().loadAsynchron(this, new CallbackBoolean() {
-			@Override
-			public void onResult(HashSet<ObjectID> idList) {
-				if(!idList.isEmpty()) {
-					Bukkit.getScheduler().runTask(FurnitureLib.getInstance(), () -> {
-						idList.forEach(obj -> {
-							try {
-								obj.setFunctionObject(obj.getProjectOBJ().getclass().getDeclaredConstructor(ObjectID.class).newInstance(obj));
-							} catch (Exception e) {
-								e.printStackTrace();
-							}finally {
-								obj.setFinish();
-							}
+		if(!loadet) {
+			FurnitureLib.getInstance().getSQLManager().loadAsynchron(this, new CallbackObjectIDs() {
+				@Override
+				public void onResult(HashSet<ObjectID> idList) {
+					if(!idList.isEmpty()) {
+						Bukkit.getScheduler().runTask(FurnitureLib.getInstance(), () -> {
+							idList.stream().forEach(obj -> {
+								Project pro = obj.getProjectOBJ();
+								try {
+//									if(Objects.nonNull(pro.getFunctionClass()) && Objects.isNull(obj.getFunctionObject())) {
+//										Class<?> c = pro.getFunctionClass();
+//										Object o = c.getConstructor(ObjectID.class).newInstance(obj);
+//										obj.setFunctionObject(o);
+//									}
+									obj.setFinish();
+								} catch (Exception e) {
+									e.printStackTrace();
+								}finally {
+									obj.setFinish();
+									obj.sendAllInView();
+								}
+							});
+							FurnitureManager.getInstance().addObjectID(idList);
 						});
-					});
+					}
 				}
-			}
-		});
-		this.loadet = true;
+			});
+			this.loadet = true;
+		}
 		return this;
 	}
+	
+//	public void spawn(Project pro, ObjectID obj){
+//		if(pro==null)return;
+//		if(pro.getClass()==null)return;
+//		if(obj==null)return;
+//		Class<?> c = pro.getclass();
+//		if(c==null ){return;}
+//		try {
+//			Object o = c.getConstructor(ObjectID.class).newInstance(obj);
+//			if(obj.getFunctionObject() == null) obj.setFunctionObject(o);
+//			obj.setFinish();
+//		} catch (InvocationTargetException e) {
+//			e.getCause().printStackTrace();
+//		} catch (Exception e) {
+//		    e.printStackTrace();
+//		}
+//	}
 
 	public boolean isLoadet() {
 		return this.loadet;

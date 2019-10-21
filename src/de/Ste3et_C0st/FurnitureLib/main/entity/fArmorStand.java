@@ -58,6 +58,12 @@ public class fArmorStand extends fEntity {
 		return clone(relative.getSecondLocation());
 	}
 	
+	public fArmorStand clone(Location location) {
+		fArmorStand entity = clone();
+		entity.setLocation(location);
+		return entity;
+	}
+	
 	public fArmorStand(Location loc, ObjectID obj) {
 		super(loc, type, obj);
 	}
@@ -105,9 +111,10 @@ public class fArmorStand extends fEntity {
 		this.marker = b;
 		return this;
 	}
-
-	public fArmorStand clone(Location location){
-		fArmorStand nStand = new fArmorStand(location, getObjID());
+	
+	@Override
+	public fArmorStand clone(){
+		fArmorStand nStand = new fArmorStand(null, getObjID());
 		fInventory inv = new fInventory(nStand.getEntityID());
 		for(int i = 0; i<7;i++){
 			if(getInventory().getSlot(i)==null) continue;
@@ -126,7 +133,6 @@ public class fArmorStand extends fEntity {
 		for(BodyPart part : BodyPart.values()){
 			nStand.setPose(this.getPose(part), part);
 		}
-		FurnitureLib.getInstance().getFurnitureManager().addArmorStand(nStand);
 		return nStand;
 	}
 	

@@ -8,6 +8,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
@@ -19,8 +20,6 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
-import com.google.common.base.Preconditions;
-
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fArmorStand;
@@ -34,6 +33,7 @@ public class FurnitureManager {
 	private HashSet<ObjectID> objecte = new HashSet<ObjectID>();
 	private List<Project> projects = new ArrayList<Project>();
 	private List<UUID> ignoreList = new ArrayList<UUID>();
+	 private ReentrantLock lock = new ReentrantLock();
 	
 	private HashMap<String, Class<? extends fEntity>> packetClasses = new HashMap<String, Class<? extends fEntity>>(){{
 		put(EntityType.ARMOR_STAND.name().toLowerCase(), fArmorStand.class);
@@ -64,8 +64,6 @@ public class FurnitureManager {
 	public List<Project> getProjects(){return this.projects;}
 	public WrappedDataWatcher watcher=null;
 	
-	public void addObjectID(ObjectID id){if(!objecte.contains(id)) objecte.add(id);}
-	
 	public ObjectID getObjBySerial(String serial){
 		return getObjectList().stream()
 				.filter(obj -> obj.getSerial().equalsIgnoreCase(serial)).findFirst()
@@ -86,15 +84,23 @@ public class FurnitureManager {
 				sender.sendMessage("§n§7--------------------------------------");
 		});
 	}
-	
+	//tp -537.81 69.00 13337.07
 	public void updatePlayerView(Player player) {
 		if(this.objecte.isEmpty() || !player.isOnline()){return;}
-		for (Iterator<ObjectID> iterator = objecte.iterator(); iterator.hasNext(); ) {
-			ObjectID obj = iterator.next();
-			if(Objects.nonNull(obj) && obj.isFinish()) {
-				obj.updatePlayerView(player);
+		lock.lock();
+		try {
+			for (Iterator<ObjectID> iterator = objecte.iterator(); iterator.hasNext(); ) {
+				ObjectID obj = iterator.next();
+				if(Objects.nonNull(obj) && obj.isFinish()) {
+					obj.updatePlayerView(player);
+				}
 			}
+		}catch (Exception e) {
+			e.printStackTrace();
+		}finally {
+			lock.unlock();
 		}
+		
 	}
 	
 	public void updateFurniture(ObjectID obj) {
@@ -157,7 +163,7 @@ public class FurnitureManager {
 		if(obj instanceof fArmorStand == false){return;}
 		fArmorStand stand = (fArmorStand) obj;
 		ObjectID id = stand.getObjID();
-		if(!objecte.contains(id)){this.objecte.add(id);}
+		//if(!objecte.contains(id)){this.objecte.add(id);}
 		id.addArmorStand(stand);
 	}
 
@@ -172,16 +178,6 @@ public class FurnitureManager {
 		if(p==null) return null;
 		List<fEntity> entityList = objecte.stream().flatMap(obj -> obj.getPacketList().stream()).filter(e -> e.getPassanger().isEmpty() == false && e.getPassanger().contains(p.getEntityId())).collect(Collectors.toList());
 		return entityList == null ? new ArrayList<fEntity>() : entityList;
-	}
-	
-	public List<ObjectID> getPluginObjects(FurniturePlugin plugin){
-		if(Objects.isNull(plugin)) return new ArrayList<ObjectID>();
-		return objecte.stream().filter(obj -> !obj.getSQLAction().equals(SQLAction.REMOVE)).filter(obj -> obj.getPlugin().equalsIgnoreCase(plugin.getName())).collect(Collectors.toList());
-	}
-	
-	public List<Project> getPluginProjects(FurniturePlugin plugin){
-		if(Objects.isNull(plugin)) return new ArrayList<Project>();
-		return projects.stream().filter(pro -> pro.getPlugin().getName().equals(plugin.getName())).collect(Collectors.toList());
 	}
 	
 	public ObjectID getObjectIDByID(Integer entityID) {
@@ -267,17 +263,35 @@ public class FurnitureManager {
 	}
 	
 	public fEntity spawnEntity(String str, Location loc, ObjectID obj) {
-		if(!objecte.contains(obj)){this.objecte.add(obj);}
+		fEntity entity = readEntity(str, loc, obj);
+		if(Objects.nonNull(entity)) {obj.addArmorStand(entity);}
+		return entity;
+	}
+	
+	public fEntity readEntity(String str, Location loc, ObjectID obj) {
 		Class<? extends fEntity> packetClass = this.packetClasses.getOrDefault(str.toLowerCase(), null);
 		if(Objects.nonNull(packetClass)) {
 			try {
 				fEntity e = packetClass.getConstructor(Location.class, ObjectID.class).newInstance(loc, obj);
-				obj.addArmorStand(e);
 				return e;
 			}catch (Exception e) {
+				e.printStackTrace();
 				return null;
 			}
 		}
 		return null;
+	}
+	
+	public boolean addObjectID(ObjectID obj) {
+		if(!objecte.contains(obj)){this.objecte.add(obj); return true;}
+		return false;
+	}
+	
+	public void addObjectIDs(ObjectID ... obj) {
+		for(ObjectID o : obj) addObjectID(o);
+	}
+	
+	public void addObjectID(Iterable<ObjectID> objI) {
+		objI.forEach(obj -> addObjectID(obj));
 	}
 }
