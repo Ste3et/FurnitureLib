@@ -71,7 +71,7 @@ public class ChunkOnLoad implements Listener{
 								if(e.sendAnouncer()){
 									if(Objects.nonNull(e.getProject().getModelschematic())){
 										spawn(e);
-										p.sendMessage("spawn Object");
+										pro.getModelschematic().isPlaceable(loc);
 									}
 								}
 							}

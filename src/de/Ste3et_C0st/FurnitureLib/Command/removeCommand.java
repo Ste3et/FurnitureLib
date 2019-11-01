@@ -12,10 +12,11 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.BlockFace;
-import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
+
+import com.comphenix.net.sf.cglib.core.CollectionUtils;
 
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.StringTranslater;
@@ -97,9 +98,18 @@ public class removeCommand extends iCommand{
 				langID = "message.RemoveLookat";
 			}
 			
+			if(argument.equalsIgnoreCase("all")) {
+				if(!hasCommandPermission(sender, ".all")) return;
+				removeList = new ArrayList<ObjectID>(FurnitureManager.getInstance().getObjectList());
+			}
+			
 			if(Objects.nonNull(removeList) && !removeList.isEmpty()) {
 				int i = removeListObj(removeList);
 				sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString(langID, translaters.toArray(new StringTranslater[translaters.size()])));
+				removeList.forEach(obj -> {
+					obj.remove(false);
+					obj.setSQLAction(SQLAction.REMOVE);
+				});
 			}
 		}
 	}

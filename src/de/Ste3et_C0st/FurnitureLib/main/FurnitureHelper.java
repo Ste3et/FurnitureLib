@@ -1,6 +1,7 @@
 package de.Ste3et_C0st.FurnitureLib.main;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.bukkit.GameMode;
@@ -16,7 +17,7 @@ import de.Ste3et_C0st.FurnitureLib.Utilitis.LocationUtil;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fArmorStand;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
 
-public abstract class FurnitureHelper{
+public abstract class FurnitureHelper {
 
 	private BlockFace b;
 	private World w;
@@ -25,9 +26,9 @@ public abstract class FurnitureHelper{
 	private FurnitureLib lib;
 	private LocationUtil lutil;
 	private Plugin plugin;
-	
-	public FurnitureHelper(ObjectID id){
-		if(id==null){return;}
+
+	public FurnitureHelper(ObjectID id) {
+		if (id == null) return;
 		this.lib = FurnitureLib.getInstance();
 		this.lutil = lib.getLocationUtil();
 		this.manager = lib.getFurnitureManager();
@@ -36,90 +37,160 @@ public abstract class FurnitureHelper{
 		this.plugin = id.getProjectOBJ().getPlugin();
 		this.obj = id;
 	}
-	
-	public fArmorStand spawnArmorStand(Location loc){return getManager().createArmorStand(getObjID(), loc);}
-	public Location getLocation(){
+
+	public fArmorStand spawnArmorStand(Location loc) {
+		return getManager().createArmorStand(getObjID(), loc);
+	}
+
+	public Location getLocation() {
 		Location loc = obj.getStartLocation().getBlock().getLocation();
 		loc.setYaw(obj.getStartLocation().getYaw());
-		return loc;}
-	public BlockFace getBlockFace(){return this.b;}
-	public World getWorld(){return this.w;}
-	public ObjectID getObjID(){return this.obj;}
-	public FurnitureManager getManager(){return this.manager;}
-	public FurnitureLib getLib(){return this.lib;}
-	public LocationUtil getLutil(){return this.lutil;}
-	public Plugin getPlugin(){return this.plugin;}
-	public List<fEntity> getfAsList(){
-		if(this.obj==null) return null;
-		if(this.getObjID()==null) return null;
-		if(this.getObjID().getPacketList()==null) return null;
-		return getObjID().getPacketList();}
-	public boolean isFinish(){return getObjID().isFinish();}
-	public float getYaw(){return getLutil().FaceToYaw(getBlockFace());}
-	public Location getRelative(Location loc, BlockFace face, double z, double x){return getLutil().getRelativ(loc, b, z, x);}
-	public Location getRelative(Location loc, double z, double x){return getLutil().getRelativ(loc, getBlockFace(), z, x);}
-	public void destroy(Player p){getObjID().remove(p);}
-	public void send(){getManager().send(obj);}
-	public void update(){getManager().updateFurniture(obj);}
-	public void delete(){this.obj=null;}
-	
-	public void consumeItem(Player p){
-		if(p.getGameMode().equals(GameMode.CREATIVE) && FurnitureLib.getInstance().useGamemode()) return;
+		return loc;
+	}
+
+	public BlockFace getBlockFace() {
+		return this.b;
+	}
+
+	public World getWorld() {
+		return this.w;
+	}
+
+	public ObjectID getObjID() {
+		return this.obj;
+	}
+
+	public FurnitureManager getManager() {
+		return this.manager;
+	}
+
+	public FurnitureLib getLib() {
+		return this.lib;
+	}
+
+	public LocationUtil getLutil() {
+		return this.lutil;
+	}
+
+	public Plugin getPlugin() {
+		return this.plugin;
+	}
+
+	public List<fEntity> getfAsList() {
+		return Objects.nonNull(this.getObjID()) ? this.getObjID().getPacketList() : null;
+	}
+
+	public boolean isFinish() {
+		return getObjID().isFinish();
+	}
+
+	public float getYaw() {
+		return getLutil().FaceToYaw(getBlockFace());
+	}
+
+	public Location getRelative(Location loc, BlockFace face, double z, double x) {
+		return getLutil().getRelativ(loc, b, z, x);
+	}
+
+	public Location getRelative(Location loc, double z, double x) {
+		return getLutil().getRelativ(loc, getBlockFace(), z, x);
+	}
+
+	public void destroy(Player p) {
+		getObjID().remove(p);
+	}
+
+	public void send() {
+		getManager().send(obj);
+	}
+
+	public void update() {
+		getManager().updateFurniture(obj);
+	}
+
+	public void delete() {
+		this.obj = null;
+	}
+
+	public void consumeItem(Player p) {
+		if (p.getGameMode().equals(GameMode.CREATIVE) && FurnitureLib.getInstance().useGamemode())
+			return;
 		ItemStack is = p.getInventory().getItemInMainHand();
-		if((is.getAmount()-1)<=0){
+		if ((is.getAmount() - 1) <= 0) {
 			is.setType(Material.AIR);
-		}else{
-			is.setAmount(is.getAmount()-1);
+		} else {
+			is.setAmount(is.getAmount() - 1);
 		}
 
 		p.getInventory().setItem(p.getInventory().getHeldItemSlot(), is);
 		p.updateInventory();
 	}
-	
-	public boolean canBuild(Player p, boolean echo){return canBuild(p, echo);} 
-	public boolean canBuild(Player p){return FurnitureLib.getInstance().canBuild(p, getObjID(), Type.EventType.BREAK);} 
-	public boolean canInteract(Player p){return canInteract(p, true);}
-	public boolean canInteract(Player p, boolean echo){return FurnitureLib.getInstance().canBuild(p, getObjID(), Type.EventType.INTERACT, echo);} 
-	
-	public Location getCenter(){
+
+	public boolean canBuild(Player p, boolean echo) {
+		return canBuild(p, echo);
+	}
+
+	public boolean canBuild(Player p) {
+		return FurnitureLib.getInstance().canBuild(p, getObjID(), Type.EventType.BREAK);
+	}
+
+	public boolean canInteract(Player p) {
+		return canInteract(p, true);
+	}
+
+	public boolean canInteract(Player p, boolean echo) {
+		return FurnitureLib.getInstance().canBuild(p, getObjID(), Type.EventType.INTERACT, echo);
+	}
+
+	public Location getCenter() {
 		Location loc = getLutil().getCenter(getLocation());
 		loc.setYaw(getLutil().FaceToYaw(getBlockFace()));
-		return loc;}
-	
-	public fEntity entityByCustomName(String str){
-		for(fEntity entity : getfAsList()){
-			if(entity.getCustomName().equalsIgnoreCase(str)){
+		return loc;
+	}
+
+	public fEntity entityByCustomName(String str) {
+		for (fEntity entity : getfAsList()) {
+			if (entity.getCustomName().equalsIgnoreCase(str)) {
 				return entity;
 			}
 		}
 		return null;
 	}
-	
-	public List<fEntity> entitysByCustomName(String str){
+
+	public List<fEntity> entitysByCustomName(String str) {
 		return getfAsList().stream().filter(e -> e.getCustomName().equalsIgnoreCase(str)).collect(Collectors.toList());
 	}
-	
-	public void toggleLight(boolean change){
+
+	public void toggleLight(boolean change) {
 		getfAsList().stream().forEach(stand -> {
-			if(stand.getName().startsWith("#Light:")){
+			if (stand.getName().startsWith("#Light:")) {
 				String[] str = stand.getName().split(":");
 				String lightBool = str[2];
-				if(change){
-					if(lightBool.equalsIgnoreCase("off#")){
+				if (change) {
+					if (lightBool.equalsIgnoreCase("off#")) {
 						stand.setName(stand.getName().replace("off#", "on#"));
-						if(!stand.isFire()){stand.setFire(true);}
-					}else if(lightBool.equalsIgnoreCase("on#")){
+						if (!stand.isFire()) {
+							stand.setFire(true);
+						}
+					} else if (lightBool.equalsIgnoreCase("on#")) {
 						stand.setName(stand.getName().replace("on#", "off#"));
-						if(stand.isFire()){stand.setFire(false);}
+						if (stand.isFire()) {
+							stand.setFire(false);
+						}
 					}
-				}else{
-					if(lightBool.equalsIgnoreCase("on#")){if(!stand.isFire()){stand.setFire(true);}}
+				} else {
+					if (lightBool.equalsIgnoreCase("on#")) {
+						if (!stand.isFire()) {
+							stand.setFire(true);
+						}
+					}
 				}
 			}
 		});
 		update();
 	}
-	
+
 	public abstract void onClick(Player player);
+	
 	public abstract void onBreak(Player player);
 }

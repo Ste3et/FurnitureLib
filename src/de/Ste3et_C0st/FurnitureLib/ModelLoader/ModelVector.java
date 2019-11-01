@@ -27,6 +27,14 @@ public class ModelVector {
 		this.pitch = pitch;
 	}
 	
+	public ModelVector(Location loc) {
+		this(loc.getX(), loc.getY(), loc.getZ(), loc.getYaw(), loc.getPitch());
+	}
+	
+	public ModelVector(Vector v) {
+		this(v.getX(), v.getY(), v.getZ());
+	}
+	
 	public ModelVector(NBTTagCompound nbtTagCompound) {
 		this.x = nbtTagCompound.getDouble("X-Offset");
 		this.y = nbtTagCompound.getDouble("Y-Offset");
@@ -61,5 +69,10 @@ public class ModelVector {
 	
 	public Location toLocation(World world) {
 		return toVector().toLocation(world, yaw, pitch);
+	}
+	
+	@Override
+	public String toString() {
+		return "ModelVector [x=" + getX() + ", y=" + getY() + ", z=" + getZ() + ", yaw=" + getYaw() + ", pitch=" + getPitch() + "]";
 	}
 }

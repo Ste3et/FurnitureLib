@@ -33,7 +33,7 @@ public class FurnitureEvents {
                             	event.setCancelled(true);
                             	fEntity asPacket = manager.getfArmorStandByID(PacketID);
                             	if(asPacket==null){return;}
-                            	ObjectID objID = manager.getObjectIDByID(PacketID);
+                            	ObjectID objID = manager.getObjectIDByEntityID(PacketID);
                             	if(objID==null){return;}
                             	if(objID.getSQLAction().equals(SQLAction.REMOVE)){return;}
                             	if(objID.isPrivate()){return;}

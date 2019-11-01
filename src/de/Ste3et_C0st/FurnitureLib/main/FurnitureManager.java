@@ -8,7 +8,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.concurrent.locks.ReentrantLock;
 import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
@@ -33,14 +32,15 @@ public class FurnitureManager {
 	private HashSet<ObjectID> objecte = new HashSet<ObjectID>();
 	private List<Project> projects = new ArrayList<Project>();
 	private List<UUID> ignoreList = new ArrayList<UUID>();
-	 private ReentrantLock lock = new ReentrantLock();
 	
-	private HashMap<String, Class<? extends fEntity>> packetClasses = new HashMap<String, Class<? extends fEntity>>(){{
-		put(EntityType.ARMOR_STAND.name().toLowerCase(), fArmorStand.class);
-		put(EntityType.PIG.name().toLowerCase(), fPig.class);
-		put(EntityType.CREEPER.name().toLowerCase(), fCreeper.class);
-		put(EntityType.GIANT.name().toLowerCase(), fGiant.class);
-	}};
+	private static HashMap<String, Class<? extends fEntity>> packetClasses = new HashMap<String, Class<? extends fEntity>>();
+	
+	static {
+		packetClasses.put(EntityType.ARMOR_STAND.name().toLowerCase(), fArmorStand.class);
+		packetClasses.put(EntityType.PIG.name().toLowerCase(), fPig.class);
+		packetClasses.put(EntityType.CREEPER.name().toLowerCase(), fCreeper.class);
+		packetClasses.put(EntityType.GIANT.name().toLowerCase(), fGiant.class);
+	}
 	
 	private HashSet<ChunkData> chunkList = new HashSet<ChunkData>();
 	
@@ -84,10 +84,9 @@ public class FurnitureManager {
 				sender.sendMessage("§n§7--------------------------------------");
 		});
 	}
-	//tp -537.81 69.00 13337.07
+	
 	public void updatePlayerView(Player player) {
 		if(this.objecte.isEmpty() || !player.isOnline()){return;}
-		lock.lock();
 		try {
 			for (Iterator<ObjectID> iterator = objecte.iterator(); iterator.hasNext(); ) {
 				ObjectID obj = iterator.next();
@@ -97,10 +96,7 @@ public class FurnitureManager {
 			}
 		}catch (Exception e) {
 			e.printStackTrace();
-		}finally {
-			lock.unlock();
 		}
-		
 	}
 	
 	public void updateFurniture(ObjectID obj) {
@@ -180,7 +176,7 @@ public class FurnitureManager {
 		return entityList == null ? new ArrayList<fEntity>() : entityList;
 	}
 	
-	public ObjectID getObjectIDByID(Integer entityID) {
+	public ObjectID getObjectIDByEntityID(Integer entityID) {
 		if(this.objecte.isEmpty()){return null;}
 		if(entityID==null) return null;
 		fEntity e = getfArmorStandByID(entityID);

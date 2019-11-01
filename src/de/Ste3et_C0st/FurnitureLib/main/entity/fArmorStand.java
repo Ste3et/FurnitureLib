@@ -118,7 +118,7 @@ public class fArmorStand extends fEntity {
 		fInventory inv = new fInventory(nStand.getEntityID());
 		for(int i = 0; i<7;i++){
 			if(getInventory().getSlot(i)==null) continue;
-			inv.setSlot(i, getInventory().getSlot(i));
+			inv.setSlot(i, getInventory().getSlot(i).clone());
 		}
 		nStand.setInventory(inv);
 		nStand.setSmall(this.isSmall());
@@ -133,6 +133,7 @@ public class fArmorStand extends fEntity {
 		for(BodyPart part : BodyPart.values()){
 			nStand.setPose(this.getPose(part), part);
 		}
+		
 		return nStand;
 	}
 	
