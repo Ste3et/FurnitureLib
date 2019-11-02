@@ -4,8 +4,6 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Arrays;
-import java.util.Objects;
-
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.ShematicLoader.ProjectLoader;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;

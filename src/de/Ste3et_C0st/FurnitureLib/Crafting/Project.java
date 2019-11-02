@@ -38,7 +38,6 @@ public class Project {
 	private HashMap<World, Integer> limitationWorld = new HashMap<World, Integer>();
 	private List<JsonObject> functionList;
 	private CenterType type = CenterType.RIGHT;
-	private PlaceableSide side;
 	private boolean EditorProject = false, silent = false;
 	private ModelHandler modelschematic = null;
 
@@ -59,7 +58,7 @@ public class Project {
 	}
 
 	public PlaceableSide getPlaceableSide() {
-		return this.side;
+		return getModelschematic().getPlaceableSide();
 	}
 
 	public String getSystemID() {
@@ -80,7 +79,7 @@ public class Project {
 	}
 
 	public Project setPlaceableSide(PlaceableSide side) {
-		this.side = side;
+		this.modelschematic.setPlaceableSide(side);
 		return this;
 	}
 
@@ -152,7 +151,6 @@ public class Project {
 		this.project = name;
 		this.plugin = plugin;
 		this.file = new CraftingFile(name, craftingFile);
-		this.side = side;
 		this.functionList = this.file.loadFunction();
 		this.clazz = clazz;
 		try {

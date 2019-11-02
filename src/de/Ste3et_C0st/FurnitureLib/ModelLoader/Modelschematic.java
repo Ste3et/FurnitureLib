@@ -6,11 +6,17 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -20,25 +26,29 @@ import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTCompressedStreamTools;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.LocationUtil;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
+import de.Ste3et_C0st.FurnitureLib.main.Type.PlaceableSide;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
 
 public abstract class Modelschematic{
 	
-	private HashMap<fEntity, ModelVector> entityMap = new HashMap<fEntity, ModelVector>();
-	private HashMap<BlockData, ModelVector> blockDataMap = new HashMap<BlockData, ModelVector>();
-	private Vector min = new Vector(), max = new Vector();
-	protected BoundingBox boundingbox = new BoundingBox();
+	private HashMap<ModelVector, fEntity> entityMap = new HashMap<ModelVector, fEntity>();
+	private HashMap<ModelVector, BlockData> blockDataMap = new HashMap<ModelVector, BlockData>();
+	protected Vector min = new Vector(), max = new Vector();
+	protected PlaceableSide placeableSide = PlaceableSide.TOP;
+	protected String name;
 	
 	public Modelschematic(InputStream stream){
 		try{
 			InputStreamReader reader = new InputStreamReader(stream);
 			YamlConfiguration config = YamlConfiguration.loadConfiguration(reader);
 			String yamlHeader = getHeader(config);
+			this.name = yamlHeader;
 			this.loadEntitys(yamlHeader, config);
 			this.loadBlockData(yamlHeader, config);
-			this.boundingbox = BoundingBox.of(min, max);
+			this.placeableSide = PlaceableSide.valueOf(config.getString(yamlHeader + ".placeAbleSide", "TOP").toUpperCase());
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -50,12 +60,16 @@ public abstract class Modelschematic{
 	
 	public Modelschematic() {}
 	
-	public HashMap<fEntity, ModelVector> getEntityMap(){
+	public HashMap<ModelVector, fEntity> getEntityMap(){
 		return this.entityMap;
 	}
 	
-	public HashMap<BlockData, ModelVector> getBlockMap(){
+	public HashMap<ModelVector, BlockData> getBlockMap(){
 		return this.blockDataMap;
+	}
+	
+	public PlaceableSide getPlaceableSide() {
+		return this.placeableSide;
 	}
 	
 	public String getHeader(YamlConfiguration config){
@@ -90,7 +104,7 @@ public abstract class Modelschematic{
 				
 				if(!str.isEmpty()) {
 					BlockData blockData = Bukkit.createBlockData(str);
-					this.blockDataMap.put(blockData, vector);
+					this.blockDataMap.put(vector, blockData);
 					this.setMax(vector);
 				}
 			});
@@ -113,9 +127,7 @@ public abstract class Modelschematic{
 					ModelVector vector = new ModelVector(entityData.getCompound("Location"));
 					fEntity entity = readNBTtag(entityData);
 					if(Objects.nonNull(vector) && Objects.nonNull(entity)) {
-						this.entityMap.put(entity, vector);
-						//this.boundingbox = this.boundingbox.expand(new Vector(Math.round(vector.getX()), Math.round(vector.getY()), Math.round(vector.getZ())));
-						//this.setMax(vector);
+						this.entityMap.put(vector, entity);
 					}
 				}catch (Exception e) {
 					e.printStackTrace();
@@ -128,7 +140,7 @@ public abstract class Modelschematic{
 		double x = vector.getX();
 		double y = vector.getY();
 		double z = vector.getZ();
-		
+		direction = getPlaceableSide().equals(PlaceableSide.SIDE) ? direction.getOppositeFace() : direction;
 		ModelVector returnVector = new ModelVector(x, y, z, vector.getYaw(), vector.getPitch());
 		switch(direction) {
 			case SOUTH: returnVector = new ModelVector(-x, y, -z, vector.getYaw() + 180f, vector.getPitch());break;
@@ -136,6 +148,7 @@ public abstract class Modelschematic{
 			case EAST: returnVector = new ModelVector(-z, y, x, vector.getYaw() + 90f, vector.getPitch());break;
 			default: break;
 		}
+		
 		return returnVector;
 	}
 	
@@ -145,10 +158,49 @@ public abstract class Modelschematic{
 	}
 	
 	public boolean isPlaceable(Location loc, BlockFace face) {
+		AtomicBoolean returnValue = new AtomicBoolean(true);
 		if(Objects.nonNull(loc)) {
-			BoundingBox box = this.boundingbox.clone();
-			ModelVector vector = new ModelVector(loc);
+			ModelVector min = rotateVector(new ModelVector(this.min), face.getOppositeFace());
+			ModelVector max = rotateVector(new ModelVector(this.max), face.getOppositeFace());
+			BoundingBox box = BoundingBox.of(min.toVector(), max.toVector());
+			box.shift(loc);
+			List<Vector> vectorList = getBlocksInArea(box.getMin(), box.getMax());
+			World world = loc.getWorld();
+			vectorList.forEach(vector -> {
+				Location location = vector.toLocation(world);
+				Block block = location.getBlock();
+				if(block.getType().isSolid()) {
+					returnValue.set(false);
+					LocationUtil.particleBlock(block);
+				}
+			});
 		}
-		return false;
+		return returnValue.get();
 	}
+	
+	private List<Vector> getBlocksInArea(Vector start, Vector end) {
+        List<Vector> vectorList = new ArrayList<Vector>();
+		int topBlockX = (start.getBlockX() < end.getBlockX() ? end.getBlockX() : start.getBlockX());
+        int bottomBlockX = (start.getBlockX() > end.getBlockX() ? end.getBlockX() : start.getBlockX());
+
+        int topBlockY = (start.getBlockY() < end.getBlockY() ? end.getBlockY() : start.getBlockY());
+        int bottomBlockY = (start.getBlockY() > end.getBlockY() ? end.getBlockY() : start.getBlockY());
+
+        int topBlockZ = (start.getBlockZ() < end.getBlockZ() ? end.getBlockZ() : start.getBlockZ());
+        int bottomBlockZ = (start.getBlockZ() > end.getBlockZ() ? end.getBlockZ() : start.getBlockZ());
+
+        for(int x = bottomBlockX; x <= topBlockX; x++)
+        {
+            for(int z = bottomBlockZ; z <= topBlockZ; z++)
+            {
+                for(int y = bottomBlockY; y <= topBlockY; y++)
+                {
+                	Vector vector = new Vector(x, y, z);
+                	vectorList.add(vector);
+                }
+            }
+        }
+        return vectorList;
+    }
+	
 }

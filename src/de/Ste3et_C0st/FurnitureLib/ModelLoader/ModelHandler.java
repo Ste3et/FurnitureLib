@@ -16,6 +16,7 @@ import org.bukkit.util.BoundingBox;
 
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
+import de.Ste3et_C0st.FurnitureLib.main.Type.PlaceableSide;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
 
 public class ModelHandler extends Modelschematic{
@@ -39,8 +40,8 @@ public class ModelHandler extends Modelschematic{
 	public HashMap<Location, BlockData> getBlockData(Location startLocation, BlockFace direction) {
 		HashMap<Location, BlockData> locationList = new HashMap<Location, BlockData>();
 		getBlockMap().entrySet().forEach(entry -> {
-			ModelVector rotateVector = rotateVector(entry.getValue(), direction);
-			BlockData blockData = entry.getKey().clone();
+			ModelVector rotateVector = rotateVector(entry.getKey(), direction);
+			BlockData blockData = entry.getValue().clone();
 			if(Directional.class.isInstance(blockData)) {
 				Directional directional = Directional.class.cast(blockData);
 				
@@ -69,8 +70,8 @@ public class ModelHandler extends Modelschematic{
 	private List<fEntity> addEntity(Location startLocation, BlockFace direction, ObjectID id) {
 		List<fEntity> entityList = new ArrayList<fEntity>();
 		getEntityMap().entrySet().forEach(entry -> {
-			fEntity entity = entry.getKey().clone();
-			ModelVector rotateVector = rotateVector(entry.getValue(), direction);
+			fEntity entity = entry.getValue().clone();
+			ModelVector rotateVector = rotateVector(entry.getKey(), direction);
 			Location entityLocation = startLocation.clone().add(rotateVector.toVector());
 			entityLocation.setYaw(rotateVector.getYaw());
 			entityLocation.setPitch(rotateVector.getPitch());
@@ -82,11 +83,16 @@ public class ModelHandler extends Modelschematic{
 	}
 	
 	public BoundingBox getBoundingBox() {
-		return this.boundingbox;
+		return BoundingBox.of(super.min, super.max);
 	}
 	
 	public void setBoundingBox(BoundingBox boundingbox) {
-		super.boundingbox = boundingbox;
+		super.min = boundingbox.getMin();
+		super.max = boundingbox.getMax();
+	}
+	
+	public void setPlaceableSide(PlaceableSide side) {
+		this.placeableSide = side;
 	}
 	
 }

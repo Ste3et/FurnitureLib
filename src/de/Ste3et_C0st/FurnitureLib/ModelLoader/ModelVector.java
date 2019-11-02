@@ -2,6 +2,7 @@ package de.Ste3et_C0st.FurnitureLib.ModelLoader;
 
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;

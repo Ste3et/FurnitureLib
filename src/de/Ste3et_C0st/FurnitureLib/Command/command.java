@@ -20,6 +20,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.util.BoundingBox;
 
 import de.Ste3et_C0st.FurnitureLib.ShematicLoader.Events.ProjectClickEvent;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.LanguageManager;
@@ -81,7 +82,8 @@ public class command implements CommandExecutor, Listener{
 			p.sendMessage("§6Object Finish: §c" + e.getID().isFinish());
 			p.sendMessage("§6Members: §e" + e.getID().getMemberList().size());
 			p.sendMessage("§6SQL State: §e" + e.getID().getSQLAction().name().toLowerCase());
-			p.sendMessage("§6Size: §e" + e.getID().getProjectOBJ().getLength()+":"+ e.getID().getProjectOBJ().getHeight()+":"+e.getID().getProjectOBJ().getWitdh());
+			BoundingBox box = e.getID().getProjectOBJ().getModelschematic().getBoundingBox();
+			p.sendMessage("§6Size: §e" + box);
 			p.sendMessage("§6Blocks: §a" + e.getID().getBlockList().size());
 			p.sendMessage("§6Project-Model: §e" + e.getID().getProjectOBJ().isEditorProject());
 			p.sendMessage("§6Placeable Side: §e" + e.getID().getProjectOBJ().getPlaceableSide().name());

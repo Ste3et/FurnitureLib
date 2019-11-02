@@ -15,6 +15,7 @@ message:
   RemoveAll: '&eSuccessfully removed all furnitures.'
   RemovePlayer: '&eSuccessfully removed all objects by the player #PLAYER#.'
   RemoveLookat: '&eSuccessfully removed #SERIAL#.'
+  RemoveWorld: '&eSucessfully removed all furnitures from World %WORLD%'
   SideNotFound: '&cThis page does not exist.'
   SideNavigation: '&eType /furniture list <option> (0-#MAX#) to list all furniture.'
   WrongOwner: '&cYou are not the owner of this piece of furniture!'

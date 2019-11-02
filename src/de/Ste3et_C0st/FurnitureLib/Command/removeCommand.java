@@ -49,6 +49,7 @@ public class removeCommand extends iCommand{
 				Project pro = FurnitureManager.getInstance().getProject(str);
 				if(Objects.nonNull(pro)) removeList = FurnitureManager.getInstance().getObjectList().stream().filter(obj -> obj.getProject().equalsIgnoreCase(pro.getName())).collect(Collectors.toList());
 				langID = "message.RemoveType";
+				translaters.add(new StringTranslater("#TYPE#", pro.getName()));
 			}
 			
 			if(argument.startsWith("-world:")) {
@@ -57,6 +58,7 @@ public class removeCommand extends iCommand{
 				World w = Bukkit.getWorlds().stream().filter(world -> world.getName().equalsIgnoreCase(str)).findFirst().orElse(null);
 				if(Objects.nonNull(w)) removeList = FurnitureManager.getInstance().getObjectList().stream().filter(obj -> obj.getWorld().equals(w)).collect(Collectors.toList());
 				langID = "message.RemoveWorld";
+				translaters.add(new StringTranslater("#WORLD#", str));
 			}
 			
 			if(argument.startsWith("-player:")) {
@@ -65,6 +67,7 @@ public class removeCommand extends iCommand{
 				String palyer = getByPlayerName(str);
 				if(Objects.nonNull(palyer)) removeList = FurnitureManager.getInstance().getObjectList().stream().filter(obj -> obj.getPlayerName().equalsIgnoreCase(str)).collect(Collectors.toList());
 				langID = "message.RemovePlayer";
+				translaters.add(new StringTranslater("#PLAYER#", palyer));
 			}
 			
 			if(argument.startsWith("-distance:")) {
@@ -79,6 +82,7 @@ public class removeCommand extends iCommand{
 					removeList = worldObjList.stream().filter(obj -> obj.getStartLocation().distance(loc) <= distance).collect(Collectors.toList());
 				}
 				langID = "message.RemoveDistance";
+				translaters.add(new StringTranslater("#AMOUNT#", removeList.size() + ""));
 			}
 			
 			if(argument.startsWith("-obj:")) {
@@ -86,6 +90,7 @@ public class removeCommand extends iCommand{
 				ObjectID serial = getSerial(str);
 				if(Objects.nonNull(serial)) removeList = Arrays.asList(serial);
 				langID = "message.RemoveID";
+				translaters.add(new StringTranslater("#OBJID#", serial.getID()));
 			}
 			
 			if(argument.equalsIgnoreCase("lookat")) {
@@ -94,6 +99,7 @@ public class removeCommand extends iCommand{
 					Player p = (Player) sender;
 					ObjectID obj = getFromSight(p.getLocation());
 					if(Objects.nonNull(obj)) removeList = Arrays.asList(obj);
+					translaters.add(new StringTranslater("#SERIAL#", obj.getID()));
 				}
 				langID = "message.RemoveLookat";
 			}

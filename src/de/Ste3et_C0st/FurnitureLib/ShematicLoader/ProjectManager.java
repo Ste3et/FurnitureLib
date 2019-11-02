@@ -1,10 +1,8 @@
 package de.Ste3et_C0st.FurnitureLib.ShematicLoader;
 
-import java.io.FileNotFoundException;
 import org.bukkit.configuration.file.YamlConfiguration;
 
 import de.Ste3et_C0st.FurnitureLib.ModelLoader.ModelFileLoader;
-import de.Ste3et_C0st.FurnitureLib.main.Type.PlaceableSide;
 
 public class ProjectManager {
 

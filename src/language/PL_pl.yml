@@ -17,6 +17,7 @@ message:
   RemoveAll: '&eWszystkie meble zostaly usuniete.'
   RemovePlayer: '&eUsunieto meble postawione przez gracz #PLAYER#.'
   RemoveLookat: '&eUsunieto #SERIAL#.'
+  RemoveWorld: '&eSucessfully removed all furnitures from World %WORLD%'
   SideNotFound: '&cTa strona nie istnieje.'
   SideNavigation: '&eWpisz /furniture list <opcja> (0-#MAX#) aby wyswietlic wszystkie meble.'
   WrongOwner: '&cNie jestes wlascicielem tego mebla.'

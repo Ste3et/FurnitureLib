@@ -14,6 +14,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -289,5 +290,9 @@ public class FurnitureManager {
 	
 	public void addObjectID(Iterable<ObjectID> objI) {
 		objI.forEach(obj -> addObjectID(obj));
+	}
+	
+	public boolean furnitureAlreadyExistOnBlock(Block block) {
+		return getInChunk(block.getChunk()).stream().filter(entry -> entry.getStartLocation().getBlock().equals(block)).findFirst().isPresent();
 	}
 }

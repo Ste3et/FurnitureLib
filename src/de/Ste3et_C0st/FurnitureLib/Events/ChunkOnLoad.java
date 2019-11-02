@@ -70,8 +70,11 @@ public class ChunkOnLoad implements Listener{
 							if(e.isTimeToPlace()){
 								if(e.sendAnouncer()){
 									if(Objects.nonNull(e.getProject().getModelschematic())){
-										spawn(e);
-										pro.getModelschematic().isPlaceable(loc);
+										if(pro.getModelschematic().isPlaceable(e.getObjID().getStartLocation())) {
+											spawn(e);
+										}else {
+											p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.NotEnoughSpace"));
+										}
 									}
 								}
 							}
@@ -202,6 +205,10 @@ public class ChunkOnLoad implements Listener{
 		ObjectID obj = e.getObjID();
 		if(FurnitureLib.getInstance().getFurnitureManager().getIgnoreList().contains(e.getPlayer().getUniqueId())){
 			e.getPlayer().sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.FurnitureToggleEvent"));
+			return;
+		}
+		if(FurnitureManager.getInstance().furnitureAlreadyExistOnBlock(obj.getStartLocation().getBlock())) {
+			e.getPlayer().sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.FurnitureOnThisPlace"));
 			return;
 		}
 		FurnitureLib.getInstance().spawn(obj.getProjectOBJ(), obj);
