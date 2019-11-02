@@ -83,4 +83,9 @@ public class fGiant extends fEntity {
 	public void loadMetadata(NBTTagCompound metadata) {
 		loadDefMetadata(metadata);
 	}
+	
+	@Override
+	public fEntity clone() {
+		return null;
+	}
 }

@@ -1,7 +1,5 @@
 package de.Ste3et_C0st.FurnitureLib.Events.internal;
 
-import java.util.HashSet;
-
 import org.bukkit.Chunk;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;

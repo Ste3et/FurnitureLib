@@ -12,7 +12,7 @@ import org.bukkit.scheduler.BukkitTask;
 
 import com.zaxxer.hikari.HikariConfig;
 
-import de.Ste3et_C0st.FurnitureLib.Utilitis.CallbackBoolean;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.CallbackObjectIDs;
 import de.Ste3et_C0st.FurnitureLib.main.ChunkData;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
@@ -159,7 +159,7 @@ public class SQLManager {
 		database.startConvert(sender);
 	}
 
-	public void loadAsynchron(ChunkData data, CallbackBoolean callBack) {
+	public void loadAsynchron(ChunkData data, CallbackObjectIDs callBack) {
 		database.loadAsynchron(data, callBack);
 	}
 	

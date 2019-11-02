@@ -75,137 +75,21 @@ public class LocationUtil {
 //	}
 	
 	/* Check if the Furniture have enougth space */
-	public boolean canBuild(Location loc, Project pro, Player p){
-		BlockFace face = yawToFace(loc.getYaw()).getOppositeFace();
-		loc = loc.add(0, 1, 0);
-		//if(!FurnitureLib.getInstance().getPermManager().canBuild(p, loc)){return false;}
-		int w = pro.getWitdh();
-		int h = pro.getHeight();
-		int l = pro.getLength();
-		CenterType type = pro.getCenterType();
-		List<Location> blockList = new ArrayList<Location>();
-		Vector v2 = loc.toVector();
-		for(ObjectID obj : FurnitureLib.getInstance().getFurnitureManager().getObjectList()){
-			if(obj==null) continue;
-			if(obj.getStartLocation()==null) continue;
-			Vector v1 = obj.getStartLocation().toVector();
-			if(v1.equals(v2)){
-				if(!obj.getSQLAction().equals(SQLAction.REMOVE)){
-					p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.FurnitureOnThisPlace"));
-					return false;
-				}
-			}
-		}
-		
-		switch (type) {
-		case RIGHT:
-			if(!pro.getPlaceableSide().equals(PlaceableSide.SIDE)){
-				for(int a = 0; a<w;a++){
-					for(int b = 0; b<h;b++){
-						for(int c = 0;c<l;c++){
-							Location location = FurnitureLib.getInstance().getLocationUtil().getRelativ(loc, face,(double) -a,(double) c).add(0, b, 0);
-							//if(!FurnitureLib.getInstance().getPermManager().canBuild(p, location)){return false;}
-							if(!location.getBlock().getType().equals(Material.AIR)){blockList.add(location);}
-						}
-					}
-				}
-			}else{
-				for(int a = 0; a<w;a++){
-					for(int b = 0; b<h;b++){
-						for(int c = 0;c>l;c--){
-							Location location = FurnitureLib.getInstance().getLocationUtil().getRelativ(loc, face,(double) -a,(double) c).add(0, b, 0);
-							//if(!FurnitureLib.getInstance().getPermManager().canBuild(p, location)){return false;}
-							if(!location.getBlock().getType().equals(Material.AIR)){blockList.add(location);}
-						}
-					}
-				}
-			}
-			break;
-		case LEFT:
-			for(int a = 0; a<w;a++){
-				for(int b = 0; b<h;b++){
-					for(int c = 0;c<l;c++){
-						Location location = FurnitureLib.getInstance().getLocationUtil().getRelativ(loc, face,(double) -a,(double) c).add(0, b, 0);
-						//if(!FurnitureLib.getInstance().getPermManager().canBuild(p, location)){return false;}
-						if(!location.getBlock().getType().equals(Material.AIR)){blockList.add(location);}
-					}
-				}
-			}
-			break;
-		case FRONT:
-			for(int a = 0; a<w;a++){
-				for(int b = 0; b<h;b++){
-					for(int c = 0;c<l;c++){
-						Location location = FurnitureLib.getInstance().getLocationUtil().getRelativ(loc, face,(double) a,(double) c).add(0, b, 0);
-						//if(!FurnitureLib.getInstance().getPermManager().canBuild(p, location)){return false;}
-						if(!location.getBlock().getType().equals(Material.AIR)){blockList.add(location);}
-					}
-				}
-			}
-			break;
-		case CENTER:
-			Double d = Math.ceil((double) l/2);
-			int w1 = d.intValue();
-			for(int a = 0; a<w;a++){
-				for(int b = 0; b<h;b++){
-					for(int c = 0;c<w1;c++){
-						Location location = FurnitureLib.getInstance().getLocationUtil().getRelativ(loc, face,(double) -a,(double) c).add(0, b, 0);
-						//if(!FurnitureLib.getInstance().getPermManager().canBuild(p, location)){return false;}
-						if(!location.getBlock().getType().equals(Material.AIR)){blockList.add(location);}
-					}
-				}
-			}
-			for(int a = 0; a<w;a++){
-				for(int b = 0; b<h;b++){
-					for(int c = 0;c<w1;c++){
-						Location location = FurnitureLib.getInstance().getLocationUtil().getRelativ(loc, face,(double) -a,(double) -c).add(0, b, 0);
-						//if(!FurnitureLib.getInstance().getPermManager().canBuild(p, location)){return false;}
-						if(!location.getBlock().getType().equals(Material.AIR)){blockList.add(location);}
-					}
-				}
-			}
-			break;
-		}
-		
-		
-		
-		if(blockList.isEmpty()){
-			return true;
-		}else{
-			for(Location location : blockList){
-				particleBlock(location.getBlock(), p);
-			}	
-			p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.NotEnoughSpace"));
-			return false;
-		}
+	public static void particleBlock(Block b){
+		particleBlock(b, org.bukkit.Particle.REDSTONE, 1);
 	}
 	
-	public void particleBlock(Block b, Player p){
-		particleBlock(b, p, org.bukkit.Particle.REDSTONE, 1);
-	}
-	
-	public void particleBlock(Block b, Player p, org.bukkit.Particle particleData, float value){
+	public static void particleBlock(Block b, org.bukkit.Particle particleData, float value){
 		if(!FurnitureLib.getInstance().isParticleEnable()) return;
 		try{
 			Location loc = b.getLocation();
+			World world = loc.getWorld();
 			for(double x = .0; x<1d; x+=.3){
 				for(double y = .0; y<1d; y+=.3){
 					for(double z = .0; z<1d; z+=.3){
 						Location location = loc.clone();
 						location = location.add(x, y, z);
-//						WrapperPlayServerWorldParticles particle = new WrapperPlayServerWorldParticles();
-//						particle.setX((float) location.getX());
-//						particle.setY((float) location.getY());
-//						particle.setZ((float) location.getZ());
-//						particle.setOffsetX(.1F);
-//						particle.setOffsetY(.1F);
-//						particle.setOffsetZ(.1F);
-//						particle.setLongDistance(true);
-//						particle.setNumberOfParticles(1);
-//						particle.setParticleData(value);s
-//						particle.setParticleType(particleData);
-//						particle.sendPacket(p);
-						p.spawnParticle(particleData, location, 1, new Particle.DustOptions(Color.RED, 1));
+						world.spawnParticle(particleData, location, 1, new Particle.DustOptions(Color.RED, 1));
 					}
 				}
 			}
@@ -221,19 +105,6 @@ public class LocationUtil {
         } else {
             return false;
         }
-    }
-    
-    public Vector getRelativ(Vector v1, double x, BlockFace bf){
-    	switch(bf){
-    	case NORTH: v1.add(new Vector(0, 0,x)); break;
-    	case EAST: v1.add(new Vector(x, 0, 0)); break;
-    	case SOUTH: v1.add(new Vector(0, 0,-x)); break;
-    	case WEST: v1.add(new Vector(x, 0, 0)); break;
-    	case DOWN:v1.add(new Vector(0, -x, 0));break;
-    	case UP:v1.add(new Vector(0, x, 0));break;
-		default: v1.add(new Vector(x, 0, 0)); break;
-    	}
-    	return v1;
     }
     
     public BlockFace StringToFace(final String face) {

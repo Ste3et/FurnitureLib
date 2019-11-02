@@ -57,4 +57,9 @@ public class fPig extends fEntity{
 		boolean s = (metadata.getInt("Saddle")==1);
 		this.setSaddle(s);
 	}
+	
+	@Override
+	public fEntity clone() {
+		return null;
+	}
 }

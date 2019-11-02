@@ -1,6 +1,8 @@
 package de.Ste3et_C0st.FurnitureLib.Events;
 
 import java.util.HashSet;
+import java.util.Objects;
+
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -67,7 +69,13 @@ public class ChunkOnLoad implements Listener{
 						if(e.canBuild()){
 							if(e.isTimeToPlace()){
 								if(e.sendAnouncer()){
-									spawn(e);
+									if(Objects.nonNull(e.getProject().getModelschematic())){
+										if(pro.getModelschematic().isPlaceable(e.getObjID().getStartLocation())) {
+											spawn(e);
+										}else {
+											p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.NotEnoughSpace"));
+										}
+									}
 								}
 							}
 						}
@@ -199,9 +207,14 @@ public class ChunkOnLoad implements Listener{
 			e.getPlayer().sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.FurnitureToggleEvent"));
 			return;
 		}
+		if(FurnitureManager.getInstance().furnitureAlreadyExistOnBlock(obj.getStartLocation().getBlock())) {
+			e.getPlayer().sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.FurnitureOnThisPlace"));
+			return;
+		}
 		FurnitureLib.getInstance().spawn(obj.getProjectOBJ(), obj);
 		e.finish();
 		e.removeItem();
+		FurnitureManager.getInstance().addObjectID(obj);
 	}
 	
 	private void removePlayer(final Player p){

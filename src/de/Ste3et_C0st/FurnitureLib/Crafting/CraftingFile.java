@@ -154,6 +154,10 @@ public class CraftingFile {
 		return this.side;
 	}
 	
+	public FileConfiguration getFile() {
+		return this.file;
+	}
+	
 	public void setName(String s){
 		ItemStack is = getRecipe().getResult();
 		ItemMeta im = is.getItemMeta();

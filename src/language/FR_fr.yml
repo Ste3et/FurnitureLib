@@ -23,6 +23,7 @@ message:
   RemoveAll: "&eSupprime avec succès tous les meubles.."
   RemovePlayer: "&eSupprime avec succès tous les objets par le joueur #PLAYER#."
   RemoveLookat: "&eSupprimé avec succès #SERIAL#."
+  RemoveWorld: "&eSucessfully removed all furnitures from World %WORLD%"
   SideNotFound: "&cCette page n'existe pas."
   SideNavigation: "&eFaites /furniture list <option> (0-#MAX#) pour répertorier tous les meubles."
   WrongOwner: "&cVous n''êtes pas le propriétaire de ce meuble!"

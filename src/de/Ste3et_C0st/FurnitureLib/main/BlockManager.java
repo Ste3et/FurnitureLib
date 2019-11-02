@@ -29,6 +29,11 @@ public class BlockManager implements Listener{
 			isActive = true;
 		}
 	}
+	
+	public void addBlock(Location loc) {
+		if(loc == null) return;
+		locList.add(loc);
+	}
 
 	public void destroy(HashSet<Location> locList,boolean dropBlock){
 		if(locList.isEmpty()){return;}

@@ -4,6 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -11,6 +12,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Effect;
 import org.bukkit.Location;
 import org.bukkit.Server;
+import org.bukkit.World;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
@@ -53,9 +55,10 @@ public abstract class fEntity extends fSerializer{
 	public abstract Entity toRealEntity();
 	public abstract boolean isRealEntity();
 	public abstract void setEntity(Entity e);
+	public World world;
 	
 	public fEntity(Location loc, EntityType type, ObjectID id) {
-		super(loc.getWorld(), type, id);
+		super(type, id);
 		this.a = EntityID.nextEntityId();
 		this.c = 1;
 		this.i = new fInventory(this.a);
@@ -190,6 +193,8 @@ public abstract class fEntity extends fSerializer{
 		getObjID().getWorld().playEffect(getLocation(), Effect.STEP_SOUND, getHelmet().getType());
 	}
 	
+	public World getWorld(){return this.world;}
+	
 	
 	public fEntity setInvisible(boolean b) {
 		setBitMask(b, 0, 5);
@@ -260,9 +265,7 @@ public abstract class fEntity extends fSerializer{
 		try {
 			getManager().sendServerPacket(player, getHandle());
 			sendInventoryPacket(player);
-			if (getPassanger() != null) {
-				setPassanger(getPassanger());
-			}
+			if (Objects.nonNull(getPassanger())) setPassanger(getPassanger());
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -490,14 +493,17 @@ public abstract class fEntity extends fSerializer{
     }
 	
 	public void setLocation(Location loc){
-		this.l = loc;
-		this.d = loc.getX();
-		this.e = loc.getY();
-		this.f = loc.getZ();
-		this.j = ((byte) (int) (loc.getYaw() * 256.0F / 360.0F));
-		this.k = ((byte) (int) (loc.getPitch() * 256.0F / 360.0F));
-		getHandle().getDoubles().write(0, d).write(1, e).write(2, f);
-		getHandle().getBytes().write(0, j).write(1, k);
+		if(Objects.nonNull(loc)) {
+			this.l = loc;
+			this.world = l.getWorld();
+			this.d = loc.getX();
+			this.e = loc.getY();
+			this.f = loc.getZ();
+			this.j = ((byte) (int) (loc.getYaw() * 256.0F / 360.0F));
+			this.k = ((byte) (int) (loc.getPitch() * 256.0F / 360.0F));
+			getHandle().getDoubles().write(0, d).write(1, e).write(2, f);
+			getHandle().getBytes().write(0, j).write(1, k);
+		}
 	}
 	
 	public void loadDefMetadata(NBTTagCompound metadata){
@@ -522,5 +528,5 @@ public abstract class fEntity extends fSerializer{
 	}
 	
 	public abstract void loadMetadata(NBTTagCompound metadata);
-	
+	public abstract fEntity clone();
 }

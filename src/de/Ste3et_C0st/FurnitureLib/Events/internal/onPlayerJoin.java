@@ -9,6 +9,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 
 public class onPlayerJoin extends EventLibary implements Listener {
+	
 	@EventHandler
 	public void onPlayerJoinEvent(PlayerJoinEvent event) {
 		final Player player = event.getPlayer();
@@ -17,6 +18,6 @@ public class onPlayerJoin extends EventLibary implements Listener {
 			public void run() {
 				getFurnitureMgr().updatePlayerView(player);
 			}
-		},40);
+		},20);
 	}
 }

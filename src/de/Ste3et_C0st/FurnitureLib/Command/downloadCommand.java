@@ -23,6 +23,7 @@ import org.bukkit.entity.Player;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 
 import de.Ste3et_C0st.FurnitureLib.Command.command;
+import de.Ste3et_C0st.FurnitureLib.ModelLoader.ModelFileLoader;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTCompressedStreamTools;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.MaterialConverter;
@@ -229,13 +230,8 @@ public class downloadCommand extends iCommand{
 			file.set(header + ".projectData.functions", functions);
 		}
 		file.save(new File("plugins/"+FurnitureLib.getInstance().getName()+"/models/" + project + ".dModel"));
-		final PlaceableSide s = side;
 		Bukkit.getScheduler().runTask(FurnitureLib.getInstance(), () ->{
-			try {
-				FurnitureLib.getInstance().getProjectManager().registerProeject(project, s);
-			} catch (FileNotFoundException e) {
-				e.printStackTrace();
-			}
+			ModelFileLoader.loadModelFile(new File("plugins/"+FurnitureLib.getInstance().getName()+"/models/" + project + ".dModel"));
 		});
 	}
 	
@@ -326,6 +322,6 @@ public class downloadCommand extends iCommand{
 			}
 		}
 		file.save(new File("plugins/"+FurnitureLib.getInstance().getName()+"/models/" + project + ".dModel"));
-		FurnitureLib.getInstance().getProjectManager().registerProeject(project, side);
+		ModelFileLoader.loadModelFile(new File("plugins/"+FurnitureLib.getInstance().getName()+"/models/" + project + ".dModel"));
 	}
 }

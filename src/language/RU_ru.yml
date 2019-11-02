@@ -23,6 +23,7 @@ message:
   RemoveAll: '&eУспешно удалили всю мебель'
   RemovePlayer: '&eУспешно удалили все объекты игроку #PLAYER#.'
   RemoveLookat: '&eУдалено #SERIAL#.'
+  RemoveWorld: '&eSucessfully removed all furnitures from World %WORLD%'
   SideNotFound: '&cЭта страница не существует.'
   SideNavigation: '&eType /furniture list <option> (0-#MAX#) для просмотра всего списка
     мебели'

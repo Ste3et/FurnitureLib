@@ -16,6 +16,7 @@ message:
   RemoveAll: '&e成功删除所有家具.'
   RemovePlayer: '&e成功删除所有#PLAYER#放置的家具.'
   RemoveLookat: '&e成功删除#SERIAL#.'
+  RemoveWorld: '&eSucessfully removed all furnitures from World %WORLD%'
   SideNotFound: '&c这一页面不存在.'
   SideNavigation: '&e输入 /furniture list <option> (0-#MAX#) 列出所有的家具.'
   WrongOwner: '&c你不是这件家具的拥有者!'
