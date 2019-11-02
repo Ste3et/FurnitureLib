@@ -12,6 +12,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.BoundingBox;
+import org.bukkit.util.Vector;
 
 import com.google.gson.JsonObject;
 
@@ -131,7 +132,7 @@ public class Project {
 
 	public Project setSize(Integer x, Integer y, Integer z, CenterType type) {
 		if (Objects.nonNull(getModelschematic()))
-			getModelschematic().setBoundingBox(new BoundingBox(0, 0, 0, x, y, z));
+		getModelschematic().setMax(new Vector(x, y, z));
 		this.type = type;
 		return this;
 	}

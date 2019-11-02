@@ -13,6 +13,7 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Directional;
 import org.bukkit.util.BoundingBox;
+import org.bukkit.util.Vector;
 
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
@@ -89,6 +90,10 @@ public class ModelHandler extends Modelschematic{
 	public void setBoundingBox(BoundingBox boundingbox) {
 		super.min = boundingbox.getMin();
 		super.max = boundingbox.getMax();
+	}
+	
+	public void setMax(Vector vector) {
+		super.max = vector;
 	}
 	
 	public void setPlaceableSide(PlaceableSide side) {
