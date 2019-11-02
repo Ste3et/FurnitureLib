@@ -12,6 +12,7 @@ import org.bukkit.inventory.ItemStack;
 
 import com.google.gson.JsonObject;
 
+import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.ShematicLoader.functions.functionManager;
 import de.Ste3et_C0st.FurnitureLib.ShematicLoader.functions.projectFunction;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fArmorStand;
@@ -131,5 +132,9 @@ public abstract class Furniture extends FurnitureHelper implements Listener {
 			}
 		}
 		return false;
+	}
+	
+	public Project getProject() {
+		return this.getObjID().getProjectOBJ();
 	}
 }

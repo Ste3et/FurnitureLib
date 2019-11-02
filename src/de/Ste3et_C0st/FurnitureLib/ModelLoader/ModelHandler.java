@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 import org.bukkit.Location;
@@ -35,11 +36,10 @@ public class ModelHandler extends Modelschematic{
 		id.sendAll();
 	}
 	
-	private List<Block> addBlocks(Location startLocation, BlockFace direction) {
-		List<Block> blockList = new ArrayList<Block>();
+	public HashMap<Location, BlockData> getBlockData(Location startLocation, BlockFace direction) {
+		HashMap<Location, BlockData> locationList = new HashMap<Location, BlockData>();
 		getBlockMap().entrySet().forEach(entry -> {
 			ModelVector rotateVector = rotateVector(entry.getValue(), direction);
-			Block block = startLocation.clone().add(rotateVector.toVector()).getBlock();
 			BlockData blockData = entry.getKey().clone();
 			if(Directional.class.isInstance(blockData)) {
 				Directional directional = Directional.class.cast(blockData);
@@ -51,8 +51,17 @@ public class ModelHandler extends Modelschematic{
 				
 				directional.setFacing(FurnitureLib.getInstance().getLocationUtil().yawToFace(newYaw));
 			}
-			block.setBlockData(blockData, false);
-			blockList.add(block);
+			locationList.put(startLocation.clone().add(rotateVector.toVector()), blockData);
+		});
+		return locationList;
+	}
+	
+	private List<Block> addBlocks(Location startLocation, BlockFace direction) {
+		List<Block> blockList = new ArrayList<Block>();
+		this.getBlockData(startLocation, direction).entrySet().forEach(entry -> {
+			Block b = entry.getKey().getBlock();
+			b.setBlockData(entry.getValue(), false);
+			blockList.add(b);
 		});
 		return blockList;
 	}

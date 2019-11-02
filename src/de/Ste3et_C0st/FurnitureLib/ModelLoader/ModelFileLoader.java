@@ -25,7 +25,8 @@ public class ModelFileLoader {
 	public static void loadModelFile(File file) {
 		try(InputStream stream = new FileInputStream(file)) {
 			String name = file.getName().replace(".dModel", "");
-			Project pro = new Project(name, FurnitureLib.getInstance(), stream, PlaceableSide.TOP, ProjectLoader.class).applyFunction();
+			Project pro = new Project(name, FurnitureLib.getInstance(), stream, PlaceableSide.TOP, ProjectLoader.class);
+			pro.applyFunction();
 		}catch (Exception e) {
 			e.printStackTrace();
 		}

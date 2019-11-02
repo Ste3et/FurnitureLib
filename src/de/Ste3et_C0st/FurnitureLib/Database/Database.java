@@ -18,6 +18,7 @@ import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
+import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTCompressedStreamTools;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.CallbackObjectIDs;
@@ -25,6 +26,7 @@ import de.Ste3et_C0st.FurnitureLib.Utilitis.MaterialConverter;
 import de.Ste3et_C0st.FurnitureLib.main.ChunkData;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
+import de.Ste3et_C0st.FurnitureLib.main.FurniturePlugin;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.DataBaseType;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
@@ -221,6 +223,7 @@ public abstract class Database {
     
     public void loadAll(SQLAction action){
     	long time1 = System.currentTimeMillis();
+    	FurnitureLib.getInstance().getProjectManager().loadProjectFiles();
     	try (Connection con = getConnection();ResultSet rs = con.createStatement().executeQuery("SELECT ObjID,Data,world FROM furnitureLibData")){    		
     		HashSet<ObjectID> idList = new HashSet<ObjectID>();
     		if(rs.next() == true) {
@@ -247,12 +250,11 @@ public abstract class Database {
 	    	int purged = FurnitureLib.getInstance().getDeSerializer().purged;
 	    	plugin.getLogger().info("FurnitureLib have loadet " + ArmorStands + " in " +timeStr);
 	    	plugin.getLogger().info("FurnitureLib have purged " + purged + " Objects");
-	    	Bukkit.getScheduler().scheduleSyncDelayedTask(plugin, () -> {
-	    		FurnitureLib.getInstance().getProjectManager().loadProjectFiles();
-	    	});
     	}catch(Exception e){
     		e.printStackTrace();
-    	}
+    	}finally {
+			FurnitureManager.getInstance().getProjects().forEach(Project::applyFunction);
+		}
     }
 
     public void delete(ObjectID objID){

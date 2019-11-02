@@ -140,6 +140,7 @@ public class autoConverter {
 	
 	public static void databaseConverter(CommandSender sender) {
 		if(!FurnitureLib.getInstance().isAutoFileUpdater()) {
+			System.out.println("Load Furniture from database -> " + (FurnitureLib.getInstance().isSync() ? "Synchron" : "Asynchron"));
 			if(FurnitureLib.getInstance().isSync()) {
 				FurnitureLib.getInstance().getSQLManager().loadALL();
 			}else{

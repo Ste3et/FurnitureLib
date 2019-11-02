@@ -329,6 +329,11 @@ public class ObjectID {
 			}
 		}
 	}
+	
+	public void addBlock(Location loc) {
+		FurnitureLib.getInstance().getBlockManager().addBlock(loc);
+		this.locList.add(loc);
+	}
 
 	public void remove(Player p) {
 		remove(p, true, true);

@@ -94,6 +94,7 @@ public class FurnitureLib extends JavaPlugin {
 	private long purgeTimeMS = 0, spamBreakTime = 5000, spamPlaceTime = 5000;
 	private Material defMaterial = Material.COW_SPAWN_EGG;
 	private boolean sync = true;
+	private static List<FurniturePlugin> furniturePlugins = new ArrayList<FurniturePlugin>();
 	public HashMap<Project, Long> deleteMap = new HashMap<Project, Long>();
 	public HashMap<UUID, Long> timeStampPlace = new HashMap<UUID, Long>();
 	public HashMap<UUID, Long> timeStampBreak = new HashMap<UUID, Long>();
@@ -313,6 +314,10 @@ public class FurnitureLib extends JavaPlugin {
 	public boolean isRotateOnSitEnable() {
 		return this.rotateOnSit;
 	}
+	
+	public static List<FurniturePlugin> getFurniturePlugins(){
+		return furniturePlugins;
+	}
 
 	public boolean isDouble(String s) {
 		try {
@@ -501,6 +506,12 @@ public class FurnitureLib extends JavaPlugin {
 	}
 
 	private static boolean enableDebug = false;
+	
+	public static void registerPlugin(FurniturePlugin plugin) {
+		furniturePlugins.add(plugin);
+		plugin.registerProjects();
+		plugin.applyPluginFunctions();
+	}
 
 	public static void debug(String str) {
 		if (enableDebug)
@@ -661,5 +672,4 @@ public class FurnitureLib extends JavaPlugin {
 			e.printStackTrace();
 		}
 	}
-
 }
