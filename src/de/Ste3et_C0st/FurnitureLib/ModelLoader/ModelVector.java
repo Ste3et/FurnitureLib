@@ -12,6 +12,10 @@ public class ModelVector {
 	private final double x,y,z;
 	private final float yaw,pitch;
 	
+	public ModelVector() {
+		this(0, 0, 0, 0, 0);
+	}
+	
 	public ModelVector(double x, double y, double z) {
 		this(x, y, z, 0, 0);
 	}

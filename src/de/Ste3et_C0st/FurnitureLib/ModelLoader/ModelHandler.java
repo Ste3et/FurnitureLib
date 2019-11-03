@@ -6,8 +6,12 @@ import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.data.BlockData;
@@ -15,6 +19,7 @@ import org.bukkit.block.data.Directional;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 
+import de.Ste3et_C0st.FurnitureLib.Utilitis.LocationUtil;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.PlaceableSide;
@@ -92,12 +97,51 @@ public class ModelHandler extends Modelschematic{
 		super.max = boundingbox.getMax();
 	}
 	
+	public void setSize(Vector min, Vector max) {
+		super.min = min;
+		super.max = max;
+	}
+	
 	public void setMax(Vector vector) {
 		super.max = vector;
 	}
 	
 	public void setPlaceableSide(PlaceableSide side) {
 		this.placeableSide = side;
+	}
+	
+	public Vector getPoint1() {
+		return super.min;
+	}
+	
+	public Vector getPoint2() {
+		return super.max;
+	}
+	
+	public boolean isPlaceable(Location loc) {
+		BlockFace direction = FurnitureLib.getInstance().getLocationUtil().yawToFace(loc.getYaw());
+		return isPlaceable(loc, direction);
+	}
+	
+	public boolean isPlaceable(Location startLocation, BlockFace direction) {
+		AtomicBoolean returnValue = new AtomicBoolean(true);
+		if(Objects.nonNull(startLocation)) {
+			ModelVector min = rotateVector(new ModelVector(this.min), direction.getOppositeFace());
+			ModelVector max = rotateVector(new ModelVector(this.max), direction.getOppositeFace());
+			BoundingBox box = BoundingBox.of(min.toVector(), max.toVector());
+			box.shift(startLocation);
+			List<Vector> vectorList = getBlocksInArea(box.getMin(), box.getMax());
+			World world = startLocation.getWorld();
+			vectorList.forEach(vector -> {
+				Location location = vector.toLocation(world);
+				Block block = location.getBlock();
+				if(block.getType().isSolid()) {
+					returnValue.set(false);
+					LocationUtil.particleBlock(block);
+				}
+			});
+		}
+		return returnValue.get();
 	}
 	
 }

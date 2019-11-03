@@ -22,6 +22,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.BoundingBox;
 
+import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.ShematicLoader.Events.ProjectClickEvent;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.LanguageManager;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.ManageInv;
@@ -70,10 +71,12 @@ public class command implements CommandExecutor, Listener{
 		if(playerList.contains(e.getPlayer())){
 			e.setCancelled(true);
 			Player p = e.getPlayer();
+			Project project = e.getID().getProjectOBJ();
+			
 			p.sendMessage("§6Furniture Info about§e " + e.getID().getSerial());
 			p.sendMessage("§6Plugin:§e " + e.getID().getPlugin());
-			p.sendMessage("§6Class: §c" + e.getID().getProjectOBJ().getFunctionClazz().getSimpleName());
-			p.sendMessage("§6Type:§e " + e.getID().getProject());
+			p.sendMessage("§6Class: §c" + project.getFunctionClazz().getSimpleName());
+			p.sendMessage("§6Type:§e " + project.getName());
 			p.sendMessage("§6PublicMode:§e " + e.getID().getPublicMode().name().toLowerCase());
 			p.sendMessage("§6Owner: §2" + e.getID().getPlayerName());
 			p.sendMessage("§6PublicEventAccess: §e" + e.getID().getEventType().name().toLowerCase());
@@ -82,11 +85,10 @@ public class command implements CommandExecutor, Listener{
 			p.sendMessage("§6Object Finish: §c" + e.getID().isFinish());
 			p.sendMessage("§6Members: §e" + e.getID().getMemberList().size());
 			p.sendMessage("§6SQL State: §e" + e.getID().getSQLAction().name().toLowerCase());
-			BoundingBox box = e.getID().getProjectOBJ().getModelschematic().getBoundingBox();
-			p.sendMessage("§6Size: §e" + box);
+			p.sendMessage("§6Size: §e[Length:" + project.getLength()+",Height:"+ project.getHeight()+",Witdh:"+project.getWitdh() + "]");
 			p.sendMessage("§6Blocks: §a" + e.getID().getBlockList().size());
-			p.sendMessage("§6Project-Model: §e" + e.getID().getProjectOBJ().isEditorProject());
-			p.sendMessage("§6Placeable Side: §e" + e.getID().getProjectOBJ().getPlaceableSide().name());
+			p.sendMessage("§6Project-Model: §e" + project.isEditorProject());
+			p.sendMessage("§6Placeable Side: §e" + project.getPlaceableSide().name());
 			if(e.getID().getUUID()!=null){
 				OfflinePlayer player = Bukkit.getOfflinePlayer(e.getID().getUUID());
 				if(player.hasPlayedBefore()&&!player.isOnline()){

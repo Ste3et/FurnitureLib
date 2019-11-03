@@ -152,33 +152,31 @@ public abstract class Modelschematic{
 		return returnVector;
 	}
 	
-	public boolean isPlaceable(Location loc) {
-		BlockFace direction = FurnitureLib.getInstance().getLocationUtil().yawToFace(loc.getYaw());
-		return isPlaceable(loc, direction);
-	}
+//	public boolean isPlaceable(Location loc, BlockFace face) {
+//		AtomicBoolean returnValue = new AtomicBoolean(true);
+////		if(Objects.nonNull(loc)) {
+////			ModelVector min = rotateVector(new ModelVector(this.min), face.getOppositeFace());
+////			ModelVector max = rotateVector(new ModelVector(this.max), face.getOppositeFace());
+////			BoundingBox box = BoundingBox.of(min.toVector(), max.toVector());
+////			box.shift(loc);
+////			List<Vector> vectorList = getBlocksInArea(box.getMin(), box.getMax());
+////			World world = loc.getWorld();
+////			vectorList.forEach(vector -> {
+////				Location location = vector.toLocation(world);
+////				Block block = location.getBlock();
+////				if(block.getType().isSolid()) {
+////					returnValue.set(false);
+////					LocationUtil.particleBlock(block);
+////				}
+////			});
+////		}
+//		
+//		get
+//		
+//		return returnValue.get();
+//	}
 	
-	public boolean isPlaceable(Location loc, BlockFace face) {
-		AtomicBoolean returnValue = new AtomicBoolean(true);
-		if(Objects.nonNull(loc)) {
-			ModelVector min = rotateVector(new ModelVector(this.min), face.getOppositeFace());
-			ModelVector max = rotateVector(new ModelVector(this.max), face.getOppositeFace());
-			BoundingBox box = BoundingBox.of(min.toVector(), max.toVector());
-			box.shift(loc);
-			List<Vector> vectorList = getBlocksInArea(box.getMin(), box.getMax());
-			World world = loc.getWorld();
-			vectorList.forEach(vector -> {
-				Location location = vector.toLocation(world);
-				Block block = location.getBlock();
-				if(block.getType().isSolid()) {
-					returnValue.set(false);
-					LocationUtil.particleBlock(block);
-				}
-			});
-		}
-		return returnValue.get();
-	}
-	
-	private List<Vector> getBlocksInArea(Vector start, Vector end) {
+	protected List<Vector> getBlocksInArea(Vector start, Vector end) {
         List<Vector> vectorList = new ArrayList<Vector>();
 		int topBlockX = (start.getBlockX() < end.getBlockX() ? end.getBlockX() : start.getBlockX());
         int bottomBlockX = (start.getBlockX() > end.getBlockX() ? end.getBlockX() : start.getBlockX());

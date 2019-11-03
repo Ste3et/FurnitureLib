@@ -17,6 +17,7 @@ import org.bukkit.util.Vector;
 import com.google.gson.JsonObject;
 
 import de.Ste3et_C0st.FurnitureLib.ModelLoader.ModelHandler;
+import de.Ste3et_C0st.FurnitureLib.ModelLoader.ModelVector;
 import de.Ste3et_C0st.FurnitureLib.ShematicLoader.ProjectLoader;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.config;
 import de.Ste3et_C0st.FurnitureLib.main.Furniture;
@@ -33,7 +34,7 @@ public class Project {
 	private Plugin plugin;
 	private Class<? extends Furniture> clazz;
 
-	private Integer witdh = 0, height = 0, length = 0, chunkLimit = -1;
+	private Integer chunkLimit = -1;
 	private config limitationConfig;
 	private FileConfiguration limitationFile;
 	private HashMap<World, Integer> limitationWorld = new HashMap<World, Integer>();
@@ -103,15 +104,20 @@ public class Project {
 	}
 
 	public int getWitdh() {
-		return this.witdh;
+		BoundingBox box = getModelschematic().getBoundingBox();
+		int witdh = Math.abs(box.getMax().getBlockX() - box.getMin().getBlockX());
+		return witdh + 1;
 	}
 
 	public int getHeight() {
-		return this.height;
+		BoundingBox box = getModelschematic().getBoundingBox();
+		return (int) box.getHeight() + 1;
 	}
 
 	public int getLength() {
-		return this.length;
+		BoundingBox box = getModelschematic().getBoundingBox();
+		int length = Math.abs(box.getMax().getBlockZ() - box.getMin().getBlockZ());
+		return length + 1;
 	}
 
 	public int getAmountWorld(World w) {
@@ -130,10 +136,29 @@ public class Project {
 		silent = b;
 	}
 
-	public Project setSize(Integer x, Integer y, Integer z, CenterType type) {
-		if (Objects.nonNull(getModelschematic()))
-		getModelschematic().setMax(new Vector(x, y, z));
-		this.type = type;
+	public Project setSize(Integer length, Integer height, Integer width, CenterType type) {
+		if (Objects.nonNull(getModelschematic())) {
+			length = length - 1;
+			height = height - 1;
+			width = width - 1;
+			
+			Vector pos1 = new Vector();
+			Vector pos2 = new Vector(width,height,length);
+			
+			if(type.equals(CenterType.RIGHT)) {
+				pos2.setZ(-length);
+			}else if(type.equals(CenterType.CENTER)) {
+				width = Math.round((width) / 2);
+				pos1.setX(-width);
+				pos2.setX(width);
+				pos2.setZ(-length);
+			}if(type.equals(CenterType.LEFT)) {
+				pos2.setZ(-length);
+				pos2.setX(-width);
+			}
+			getModelschematic().setSize(pos1,pos2);
+			this.type = type;
+		}
 		return this;
 	}
 
