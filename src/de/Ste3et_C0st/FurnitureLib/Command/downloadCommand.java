@@ -206,17 +206,16 @@ public class downloadCommand extends iCommand{
 				String str = (String) s;
 				if(blocks.hasKey(str)){
 					NBTTagCompound block = blocks.getCompound(str);
-					file.set(header+".projectData.blockList." + str + ".xOffset", block.getDouble("xOffset"));
-					file.set(header+".projectData.blockList." + str + ".yOffset", block.getDouble("yOffset"));
-					file.set(header+".projectData.blockList." + str + ".zOffset", block.getDouble("zOffset"));
+					String blockData = block.hasKey("material") ? "minecraft:" + block.getString("material") : block.getString("blockData");
 					if(block.hasKey("material")) {
-						String blockData = "minecraft:" + block.getString("material");
 						if(block.hasKey("Rotation")) blockData += "[facing=" + block.getString("Rotation") + "]";
-						file.set(header+".projectData.blockList." + str + ".blockData", blockData);
-					}else if(block.hasKey("blockData")) {
-						file.set(header+".projectData.blockList." + str + ".blockData", block.getString("blockData"));
 					}
-					
+					if(!blockData.isEmpty() && !blockData.contains("air")) {
+						file.set(header+".projectData.blockList." + str + ".blockData", blockData);
+						file.set(header+".projectData.blockList." + str + ".xOffset", block.getDouble("xOffset"));
+						file.set(header+".projectData.blockList." + str + ".yOffset", block.getDouble("yOffset"));
+						file.set(header+".projectData.blockList." + str + ".zOffset", block.getDouble("zOffset"));
+					}
 				}
 			}
 		}

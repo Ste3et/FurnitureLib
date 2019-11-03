@@ -24,11 +24,13 @@ import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
+import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTCompressedStreamTools;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.LocationUtil;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
+import de.Ste3et_C0st.FurnitureLib.main.Type.CenterType;
 import de.Ste3et_C0st.FurnitureLib.main.Type.PlaceableSide;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
 
@@ -49,6 +51,12 @@ public abstract class Modelschematic{
 			this.loadEntitys(yamlHeader, config);
 			this.loadBlockData(yamlHeader, config);
 			this.placeableSide = PlaceableSide.valueOf(config.getString(yamlHeader + ".placeAbleSide", "TOP").toUpperCase());
+			
+//			BoundingBox box = getBoundingBox();
+//			int width = (Math.abs(box.getMax().getBlockX() - box.getMin().getBlockX())) + 1;
+//			int height = (int) box.getHeight() + 1;
+//			int length = Math.abs(box.getMax().getBlockZ() - box.getMin().getBlockZ()) + 1;
+//			setSize(length, height, width, CenterType.RIGHT);
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -104,8 +112,10 @@ public abstract class Modelschematic{
 				
 				if(!str.isEmpty()) {
 					BlockData blockData = Bukkit.createBlockData(str);
-					this.blockDataMap.put(vector, blockData);
-					this.setMax(vector);
+					if(!blockData.getMaterial().equals(Material.AIR)) {
+						this.blockDataMap.put(vector, blockData);
+						this.setMax(vector);
+					}
 				}
 			});
 		}
@@ -128,6 +138,7 @@ public abstract class Modelschematic{
 					fEntity entity = readNBTtag(entityData);
 					if(Objects.nonNull(vector) && Objects.nonNull(entity)) {
 						this.entityMap.put(vector, entity);
+						//setMax(vector);
 					}
 				}catch (Exception e) {
 					e.printStackTrace();
@@ -136,6 +147,8 @@ public abstract class Modelschematic{
 		}
 	}
 	
+	
+
 	protected ModelVector rotateVector(ModelVector vector, BlockFace direction){
 		double x = vector.getX();
 		double y = vector.getY();
@@ -152,29 +165,8 @@ public abstract class Modelschematic{
 		return returnVector;
 	}
 	
-//	public boolean isPlaceable(Location loc, BlockFace face) {
-//		AtomicBoolean returnValue = new AtomicBoolean(true);
-////		if(Objects.nonNull(loc)) {
-////			ModelVector min = rotateVector(new ModelVector(this.min), face.getOppositeFace());
-////			ModelVector max = rotateVector(new ModelVector(this.max), face.getOppositeFace());
-////			BoundingBox box = BoundingBox.of(min.toVector(), max.toVector());
-////			box.shift(loc);
-////			List<Vector> vectorList = getBlocksInArea(box.getMin(), box.getMax());
-////			World world = loc.getWorld();
-////			vectorList.forEach(vector -> {
-////				Location location = vector.toLocation(world);
-////				Block block = location.getBlock();
-////				if(block.getType().isSolid()) {
-////					returnValue.set(false);
-////					LocationUtil.particleBlock(block);
-////				}
-////			});
-////		}
-//		
-//		get
-//		
-//		return returnValue.get();
-//	}
+	public abstract BoundingBox getBoundingBox();
+	public abstract void setSize(Integer length, Integer height, Integer width, CenterType type);
 	
 	protected List<Vector> getBlocksInArea(Vector start, Vector end) {
         List<Vector> vectorList = new ArrayList<Vector>();

@@ -1,6 +1,7 @@
 package de.Ste3et_C0st.FurnitureLib.main;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.bukkit.Bukkit;
@@ -71,9 +72,10 @@ public abstract class Furniture extends FurnitureHelper implements Listener {
 			for (JsonObject function : functions) {
 				if (function.has("function") && function.has("data")) {
 					projectFunction pFunction = functionManager.getByName(function.get("function").getAsString());
-					boolean b = pFunction.parse(function.getAsJsonObject("data"), getObjID(), p);
-					if (b)
-						update = true;
+					if(Objects.nonNull(pFunction)) {
+						boolean b = pFunction.parse(function.getAsJsonObject("data"), getObjID(), p);
+						if (b) update = true;
+					}
 				}
 			}
 			if (update) {

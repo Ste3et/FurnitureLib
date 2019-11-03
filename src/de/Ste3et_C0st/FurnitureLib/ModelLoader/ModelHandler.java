@@ -19,9 +19,11 @@ import org.bukkit.block.data.Directional;
 import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 
+import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.LocationUtil;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
+import de.Ste3et_C0st.FurnitureLib.main.Type.CenterType;
 import de.Ste3et_C0st.FurnitureLib.main.Type.PlaceableSide;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
 
@@ -84,6 +86,15 @@ public class ModelHandler extends Modelschematic{
 			entity.setLocation(entityLocation);
 			entity.setObjectID(id);
 			entityList.add(entity);
+			String customName = entity.getCustomName();
+			if(customName.equalsIgnoreCase("#ITEM#") 
+					|| customName.equalsIgnoreCase("#BLOCK#") 
+					|| customName.equalsIgnoreCase("#SITZ#") 
+					|| customName.startsWith("#Light")
+					|| customName.startsWith("/")
+					|| customName.toUpperCase().startsWith("#DYE_")){
+						entity.setNameVasibility(false);
+			}
 		});
 		return entityList;
 	}
@@ -142,6 +153,28 @@ public class ModelHandler extends Modelschematic{
 			});
 		}
 		return returnValue.get();
+	}
+	
+	public void setSize(Integer length, Integer height, Integer width, CenterType type) {
+		length = length - 1;
+		height = height - 1;
+		width = width - 1;
+		
+		Vector pos1 = new Vector();
+		Vector pos2 = new Vector(width,height,length);
+		
+		if(type.equals(CenterType.RIGHT)) {
+			pos2.setZ(-length);
+		}else if(type.equals(CenterType.CENTER)) {
+			width = Math.round((width) / 2);
+			pos1.setX(-width);
+			pos2.setX(width);
+			pos2.setZ(-length);
+		}if(type.equals(CenterType.LEFT)) {
+			pos2.setZ(-length);
+			pos2.setX(-width);
+		}
+		setSize(pos1,pos2);
 	}
 	
 }

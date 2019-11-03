@@ -25,6 +25,7 @@ public class ModelFileLoader {
 			String name = file.getName().replace(".dModel", "");
 			Project pro = new Project(name, FurnitureLib.getInstance(), stream, PlaceableSide.TOP, ProjectLoader.class);
 			pro.applyFunction();
+			pro.setEditorProject(true);
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
