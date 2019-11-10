@@ -36,21 +36,21 @@
 			</plugin>
 
 			<plugin>
-	          <artifactId>maven-assembly-plugin</artifactId>
-	          <configuration>
-	            <archive>
-	              <manifest>
-	                <mainClass>
-	                  de.Ste3et_C0st.FurnitureLib.main.FurnitureLib
-	                </mainClass>
-	              </manifest>
-	            </archive>
-	            <descriptorRefs>
-	              <descriptorRef>jar-with-dependencies</descriptorRef>
-	            </descriptorRefs>
-	            <appendAssemblyId>false</appendAssemblyId>
-	          </configuration>
-	        </plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<configuration>
+					<archive>
+						<manifest>
+							<mainClass>
+								de.Ste3et_C0st.FurnitureLib.main.FurnitureLib
+							</mainClass>
+						</manifest>
+					</archive>
+					<descriptorRefs>
+						<descriptorRef>jar-with-dependencies</descriptorRef>
+					</descriptorRefs>
+					<appendAssemblyId>false</appendAssemblyId>
+				</configuration>
+			</plugin>
 		</plugins>
 	</build>
 
@@ -75,28 +75,28 @@
 		<dependency>
 			<groupId>org.spigotmc</groupId>
 			<artifactId>spigot-api</artifactId>
-			<version>1.13-R0.1-SNAPSHOT</version>
+			<version>1.14-R0.1-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
-		
+
 		<dependency>
 			<groupId>org.bukkit</groupId>
 			<artifactId>bukkit</artifactId>
-			<version>1.13-R0.1-SNAPSHOT</version>
+			<version>1.14-R0.1-SNAPSHOT</version>
 			<scope>provided</scope>
 		</dependency>
-		
-	    <dependency> 
-		  <groupId>org.slf4j</groupId>
-		  <artifactId>slf4j-jdk14</artifactId>
-		  <version>1.7.10</version>
-		</dependency>  
-		
+
 		<dependency>
-	        <groupId>com.zaxxer</groupId>
-	        <artifactId>HikariCP</artifactId>
-	        <version>3.3.1</version>
-	    </dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-jdk14</artifactId>
+			<version>1.7.10</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.zaxxer</groupId>
+			<artifactId>HikariCP</artifactId>
+			<version>3.3.1</version>
+		</dependency>
 
 		<dependency>
 			<groupId>net.milkbowl.vault</groupId>
@@ -126,6 +126,12 @@
 			<version>4.5.0</version>
 			<scope>system</scope>
 			<systemPath>${project.basedir}/lib/ProtocolLib.jar</systemPath>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jetbrains</groupId>
+			<artifactId>annotations</artifactId>
+			<version>15.0</version>
 		</dependency>
 
 	</dependencies>

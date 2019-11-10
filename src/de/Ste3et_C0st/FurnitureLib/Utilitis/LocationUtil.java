@@ -25,6 +25,7 @@ import org.bukkit.util.Vector;
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
+import de.Ste3et_C0st.FurnitureLib.main.Type;
 import de.Ste3et_C0st.FurnitureLib.main.Type.CenterType;
 import de.Ste3et_C0st.FurnitureLib.main.Type.PlaceableSide;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
@@ -131,7 +132,7 @@ public class LocationUtil {
     }
     
     public Block setSign(BlockFace face, Location l) {
-			return setSign(face, l, Material.OAK_SIGN);
+			return setSign(face, l, Material.valueOf(Type.version.equalsIgnoreCase("1.13") ? "SIGN" : "OAK_SIGN"));
     }
     
     @SuppressWarnings("deprecation")

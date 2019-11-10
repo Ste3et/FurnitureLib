@@ -11,7 +11,6 @@ import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.util.BoundingBox;
 import org.bukkit.util.Vector;
 
 import com.google.gson.JsonObject;
@@ -19,6 +18,7 @@ import com.google.gson.JsonObject;
 import de.Ste3et_C0st.FurnitureLib.ModelLoader.ModelHandler;
 import de.Ste3et_C0st.FurnitureLib.ModelLoader.ModelVector;
 import de.Ste3et_C0st.FurnitureLib.ShematicLoader.ProjectLoader;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.BoundingBox;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.config;
 import de.Ste3et_C0st.FurnitureLib.main.Furniture;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
