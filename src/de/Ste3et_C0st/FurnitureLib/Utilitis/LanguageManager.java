@@ -142,7 +142,7 @@ public class LanguageManager{
 	public String getString(String a){
 		a = a.toLowerCase();
 		if(hash.isEmpty()) return "§cHash is empty";
-		if(!hash.containsKey(a)) return "§ckey not found";
+		if(!hash.containsKey(a)) return "§fkey not found: §5" + a;
 		String b = hash.get(a);
 		return ChatColor.translateAlternateColorCodes('&', b);
 	}
