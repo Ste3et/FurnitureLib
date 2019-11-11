@@ -10,10 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
-import org.bukkit.Bukkit;
-import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
-import org.bukkit.block.data.BlockData;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.util.Vector;
 import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
@@ -21,6 +18,7 @@ import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTCompressedStreamTools;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.BoundingBox;
+import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
 import de.Ste3et_C0st.FurnitureLib.main.Type.CenterType;
 import de.Ste3et_C0st.FurnitureLib.main.Type.PlaceableSide;
@@ -29,7 +27,7 @@ import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
 public abstract class Modelschematic{
 	
 	private HashMap<ModelVector, fEntity> entityMap = new HashMap<ModelVector, fEntity>();
-	private HashMap<ModelVector, BlockData> blockDataMap = new HashMap<ModelVector, BlockData>();
+	private HashMap<ModelVector, ModelBlock> blockDataMap = new HashMap<ModelVector, ModelBlock>();
 	protected Vector min = new Vector(), max = new Vector();
 	protected PlaceableSide placeableSide = PlaceableSide.TOP;
 	protected String name;
@@ -64,7 +62,7 @@ public abstract class Modelschematic{
 		return this.entityMap;
 	}
 	
-	public HashMap<ModelVector, BlockData> getBlockMap(){
+	public HashMap<ModelVector, ModelBlock> getBlockMap(){
 		return this.blockDataMap;
 	}
 	
@@ -83,31 +81,14 @@ public abstract class Modelschematic{
 	}
 	
 	private void loadBlockData(String yamlHeader, YamlConfiguration config) {
-		if(config.isConfigurationSection(yamlHeader+".projectData.blockList")) {
-			config.getConfigurationSection(yamlHeader+".projectData.blockList").getKeys(false).stream().forEach(key -> {
-				String dataString = yamlHeader+".projectData.blockList." + key + ".";
-				double x = config.getDouble(dataString + "xOffset");
-				double y = config.getDouble(dataString + "yOffset");
-				double z = config.getDouble(dataString + "zOffset");
-				String str = config.getString(dataString + "blockData", "");
-				String materialStr = config.getString(dataString + "material", "");
-				ModelVector vector = new ModelVector(x, y, z);
-				if(str.isEmpty()) {
-					if(!materialStr.isEmpty()) {
-						String blockDataString = "minecraft:" + materialStr.toLowerCase();
-						if(config.isSet(dataString + "Rotation")){
-							blockDataString += "[facing="+config.getString(dataString + "Rotation")+"]";
-						}
-						str = blockDataString;
-					}
-				}
-				
-				if(!str.isEmpty()) {
-					BlockData blockData = Bukkit.createBlockData(str);
-					if(!blockData.getMaterial().equals(Material.AIR)) {
-						this.blockDataMap.put(vector, blockData);
-						this.setMax(vector);
-					}
+		boolean aquatic = FurnitureLib.isNewVersion();
+		String loadParser = yamlHeader + "." + (aquatic ? ModelBlockAquaticUpdate.CONFIGKEY : ModelBlockCombatUpdate.CONFIGKEY);
+		if(config.isConfigurationSection(loadParser)) {
+			config.getConfigurationSection(loadParser).getKeys(false).stream().forEach(key -> {
+				ModelBlock block = aquatic ? new ModelBlockAquaticUpdate(config, loadParser + "." + key) : new ModelBlockCombatUpdate(config, loadParser + "." + key);
+				if(Objects.nonNull(block)) {
+					this.blockDataMap.put(block.getVector(), block);
+					this.setMax(block.getVector());
 				}
 			});
 		}
@@ -119,10 +100,12 @@ public abstract class Modelschematic{
 	}
 	
 	private void loadEntitys(String yamlHeader, YamlConfiguration config) {
-		if(config.isConfigurationSection(yamlHeader+".projectData.entitys")) {
-			config.getConfigurationSection(yamlHeader+".projectData.entitys").getKeys(false).stream().forEach(key -> {
+		String configString = FurnitureLib.isNewVersion() ? yamlHeader+".projectData.entitys" : yamlHeader+".ProjectModels.ArmorStands";
+		
+		if(config.isConfigurationSection(configString)) {
+			config.getConfigurationSection(configString).getKeys(false).stream().forEach(key -> {
 				try {
-					String md5 = config.getString(yamlHeader+".projectData.entitys."+key);
+					String md5 = config.getString(configString + "." + key);
 					byte[] by = Base64Coder.decode(md5);
 					ByteArrayInputStream bin = new ByteArrayInputStream(by);
 					NBTTagCompound entityData = NBTCompressedStreamTools.read(bin);

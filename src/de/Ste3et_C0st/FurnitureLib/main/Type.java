@@ -3,6 +3,9 @@ package de.Ste3et_C0st.FurnitureLib.main;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.BannerMeta;
@@ -13,17 +16,20 @@ import de.Ste3et_C0st.FurnitureLib.Utilitis.LanguageManager;
 
 public class Type {
 	static LanguageManager lang = FurnitureLib.getInstance().getLangManager();
-	static List<Material> swords = Arrays.asList(Material.WOODEN_SWORD, Material.STONE_SWORD, Material.IRON_SWORD, Material.GOLDEN_SWORD, Material.DIAMOND_SWORD);
-	static List<Material> spades = Arrays.asList(Material.WOODEN_SHOVEL, Material.STONE_SHOVEL, Material.IRON_SHOVEL, Material.GOLDEN_SHOVEL, Material.DIAMOND_SHOVEL);
-	static List<Material> axt = Arrays.asList(Material.WOODEN_AXE, Material.STONE_AXE, Material.IRON_AXE, Material.GOLDEN_AXE, Material.DIAMOND_AXE);
-	static List<Material> pickaxe = Arrays.asList(Material.WOODEN_PICKAXE, Material.STONE_PICKAXE, Material.IRON_PICKAXE, Material.GOLDEN_PICKAXE, Material.DIAMOND_PICKAXE);
-	static List<Material> hoes = Arrays.asList(Material.WOODEN_HOE, Material.STONE_HOE, Material.IRON_HOE, Material.GOLDEN_HOE, Material.DIAMOND_HOE);
-	static List<Material> weapons = Arrays.asList(Material.WOODEN_SWORD, Material.STONE_SWORD, Material.IRON_SWORD, Material.GOLDEN_SWORD, Material.DIAMOND_SWORD,
-												  Material.WOODEN_AXE, Material.STONE_AXE, Material.IRON_AXE, Material.GOLDEN_AXE, Material.DIAMOND_AXE);
-	static List<Material> tools = Arrays.asList(Material.WOODEN_AXE, Material.STONE_AXE, Material.IRON_AXE, Material.GOLDEN_AXE, Material.DIAMOND_AXE,
-												Material.WOODEN_SHOVEL, Material.STONE_SHOVEL, Material.IRON_SHOVEL, Material.GOLDEN_SHOVEL, Material.DIAMOND_SHOVEL,
-												Material.WOODEN_PICKAXE, Material.STONE_PICKAXE, Material.IRON_PICKAXE, Material.GOLDEN_PICKAXE, Material.DIAMOND_PICKAXE,
-												Material.WOODEN_HOE, Material.STONE_HOE, Material.IRON_HOE, Material.GOLDEN_HOE, Material.DIAMOND_HOE);
+	static List<Material> swords, spades, axt, pickaxe,hoes, weapons, tools;
+	
+	static {
+		List<Material> matList = Arrays.asList(Material.values());
+		swords = matList.stream().filter(mat -> mat.name().contains("SWORD")).collect(Collectors.toList());
+		spades = matList.stream().filter(mat -> mat.name().contains("SHOVEL")).collect(Collectors.toList());
+		axt = matList.stream().filter(mat -> mat.name().endsWith("_AXE")).collect(Collectors.toList());
+		pickaxe = matList.stream().filter(mat -> mat.name().contains("PICKAXE")).collect(Collectors.toList());
+		hoes = matList.stream().filter(mat -> mat.name().contains("HOE")).collect(Collectors.toList());
+		weapons = Stream.concat(swords.stream(), axt.stream()).collect(Collectors.toList());
+		tools = Stream.concat(axt.stream(), pickaxe.stream()).collect(Collectors.toList());
+		tools.addAll(Stream.concat(hoes.stream(), spades.stream()).collect(Collectors.toList()));
+	}
+	
 	public enum DataBaseType{MySQL, SQLite;}
 	public enum ColorType{BLOCK, BANNER;}
 	public enum LimitationType{PLAYER, CHUNK, WORLD;}

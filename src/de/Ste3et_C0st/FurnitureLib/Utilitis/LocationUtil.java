@@ -1,7 +1,6 @@
 package de.Ste3et_C0st.FurnitureLib.Utilitis;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
@@ -15,20 +14,9 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
-import org.bukkit.block.data.Directional;
-import org.bukkit.block.data.type.Bed;
-import org.bukkit.block.data.type.Bed.Part;
-import org.bukkit.entity.Player;
 import org.bukkit.util.EulerAngle;
-import org.bukkit.util.Vector;
-
-import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
-import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type;
-import de.Ste3et_C0st.FurnitureLib.main.Type.CenterType;
-import de.Ste3et_C0st.FurnitureLib.main.Type.PlaceableSide;
-import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 
 public class LocationUtil {
 
@@ -157,37 +145,37 @@ public class LocationUtil {
     }
     
     public Location setBed(BlockFace face, Location l, Material mat) {
-		Block block = l.getBlock();
-		block.setType(mat);
-		if(block.getBlockData() instanceof Directional) {
-			Directional bState = (Directional) block.getBlockData();
-			bState.setFacing(face.getOppositeFace());
-			block.setBlockData(bState, false);
-			block = block.getRelative(face.getOppositeFace());
-			block.setType(mat, false);
-			if(block.getBlockData() instanceof Directional) {
-				bState = (Directional) block.getBlockData();
-				bState.setFacing(face.getOppositeFace());
-				if(block.getBlockData() instanceof Bed) {
-					Bed head = (Bed) bState;
-					head.setPart(Part.HEAD);
-				}
-				block.setBlockData(bState, false);
-			}
-		}
+//		Block block = l.getBlock();
+//		block.setType(mat);
+//		if(block.getBlockData() instanceof Directional) {
+//			Directional bState = (Directional) block.getBlockData();
+//			bState.setFacing(face.getOppositeFace());
+//			block.setBlockData(bState, false);
+//			block = block.getRelative(face.getOppositeFace());
+//			block.setType(mat, false);
+//			if(block.getBlockData() instanceof Directional) {
+//				bState = (Directional) block.getBlockData();
+//				bState.setFacing(face.getOppositeFace());
+//				if(block.getBlockData() instanceof Bed) {
+//					Bed head = (Bed) bState;
+//					head.setPart(Part.HEAD);
+//				}
+//				block.setBlockData(bState, false);
+//			}
+//		}
 		return l;
     }
     
     public Block setHalfBed(BlockFace face, Location l, Material mat) {
-    	Block block = l.getBlock();
-		block.setType(mat);
-		if(block.getBlockData() instanceof Directional) {
-			Directional bState = (Directional) block.getBlockData();
-			bState.setFacing(face);
-			block.setBlockData(bState, false);
-			block.getRelative(face.getOppositeFace()).setType(Material.AIR);
-			return block;
-		}
+//    	Block block = l.getBlock();
+//		block.setType(mat);
+//		if(block.getBlockData() instanceof Directional) {
+//			Directional bState = (Directional) block.getBlockData();
+//			bState.setFacing(face);
+//			block.setBlockData(bState, false);
+//			block.getRelative(face.getOppositeFace()).setType(Material.AIR);
+//			return block;
+//		}
 		return null;
     }
     

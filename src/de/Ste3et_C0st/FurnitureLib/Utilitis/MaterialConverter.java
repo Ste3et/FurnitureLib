@@ -7,8 +7,10 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Method;
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.Objects;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -87,52 +89,67 @@ public class MaterialConverter {
 	}
 	
 	public static Material getMaterialFromOld(String material) {
-		Material mat = Material.AIR;
-		String subID = "0";
-		int sub = 0, matID = 0;
-		if(material.contains(":")) {
-			String[] arr = material.split(":");
-			material = arr[0];
-			subID = arr[1];
-		}
-		
-		if(!subID.equalsIgnoreCase("0")){
+		if(Objects.nonNull(material)) {
+			Material mat = Material.AIR;
+			String subID = "0";
+			int sub = 0, matID = 0;
+			if(material.contains(":")) {
+				String[] arr = material.split(":");
+				material = arr[0];
+				subID = arr[1];
+			}
+			
+			if(!subID.equalsIgnoreCase("0")){
+				try {
+					sub = Integer.parseInt(subID);
+				}catch (NumberFormatException e) {
+					sub = 0;
+				}
+			}
+			
 			try {
-				sub = Integer.parseInt(subID);
+				matID = Integer.parseInt(material);
 			}catch (NumberFormatException e) {
-				sub = 0;
+				matID = 0;
 			}
-		}
-		
-		try {
-			matID = Integer.parseInt(material);
-		}catch (NumberFormatException e) {
-			matID = 0;
-		}
-		
-		try {
-			Material materi = Material.valueOf(material.toUpperCase());
-			if(materi != null) {
-				return materi;
-			}
-		}catch (Exception e) {}
-		
-		if(matID != 0) {
-			mat = convertMaterial(matID, (byte) sub);
-		}else {
-			if(material.equalsIgnoreCase("0")) return Material.AIR;
-			Material m = Material.valueOf("LEGACY_" + material.toUpperCase());
-			if(m == null) {
+			
+			try {
+				Material materi = Material.valueOf(material.toUpperCase());
+				if(materi != null) {
+					return materi;
+				}
+			}catch (Exception e) {}
+			
+			if(matID != 0) {
 				mat = convertMaterial(matID, (byte) sub);
-				if(mat == null) {return mat;}
-			}else return convertMaterial(m.getId(), (byte) sub);
+			}else {
+				if(material.equalsIgnoreCase("0")) return Material.AIR;
+				Material m = Material.valueOf("LEGACY_" + material.toUpperCase());
+				if(m == null) {
+					mat = convertMaterial(matID, (byte) sub);
+					if(mat == null) {return mat;}
+				}else return convertMaterial(m.getId(), (byte) sub);
+			}
+			return mat;
 		}
-		return mat;
+		return null;
 	}
 	
 	public static Material convertMaterial(int ID, byte Data) {
-		Material mat = EnumSet.allOf(Material.class).stream().filter(m -> m.isLegacy()).filter(m -> m.getId() == ID).findFirst().orElse(null);
-		if(mat != null) mat = Bukkit.getUnsafe().fromLegacy(new MaterialData(mat, Data));
+		Material mat = null;
+		if(FurnitureLib.isNewVersion()) {
+			EnumSet.allOf(Material.class).stream().filter(m -> m.isLegacy()).filter(m -> m.getId() == ID).findFirst().orElse(null);
+			if(mat != null) mat = Bukkit.getUnsafe().fromLegacy(new MaterialData(mat, Data));
+			return mat;
+		}else {
+			try {
+				Class<?> materialClass = Material.class;
+				Method m = materialClass.getMethod("getMaterial", int.class);
+				mat = (Material) m.invoke(null, ID);
+			}catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
 	    return mat;
 	}
 }

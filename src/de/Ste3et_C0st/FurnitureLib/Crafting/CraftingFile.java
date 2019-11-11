@@ -28,6 +28,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import de.Ste3et_C0st.FurnitureLib.Utilitis.HiddenStringUtils;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.MaterialConverter;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.Type;
 import de.Ste3et_C0st.FurnitureLib.main.Type.PlaceableSide;
@@ -39,22 +40,48 @@ public class CraftingFile {
 	private ShapedRecipe recipe;
 	private boolean isDisable;
 	private PlaceableSide side = null;
-	
-	public ShapedRecipe getRecipe(){return this.recipe;}
-	public ItemStack getItemstack(){return getRecipe().getResult();}
-	public boolean isEnable(){return this.isDisable;}
-	public String getFileName(){return this.name;}
+
+	public ShapedRecipe getRecipe() {
+		return this.recipe;
+	}
+
+	public ItemStack getItemstack() {
+		return getRecipe().getResult();
+	}
+
+	public boolean isEnable() {
+		return this.isDisable;
+	}
+
+	public String getFileName() {
+		return this.name;
+	}
+
 	public String systemID = "";
-	public String getSystemID(){return this.systemID;}
+
+	public String getSystemID() {
+		return this.systemID;
+	}
+
 	public File filePath;
-	public File getFilePath(){return this.filePath;}
-	public String getFileHeader(){return this.header;}
-	
-	public CraftingFile(String name,InputStream file){
+
+	public File getFilePath() {
+		return this.filePath;
+	}
+
+	public String getFileHeader() {
+		return this.header;
+	}
+
+	public CraftingFile(String name, InputStream file) {
 		this.name = name;
+		if(Objects.isNull(this.name)) return;
 		this.filePath = new File("plugins/" + FurnitureLib.getInstance().getName() + "/models/" + name + ".dModel");
 		this.file = YamlConfiguration.loadConfiguration(filePath);
-		if(file == null) {System.out.println("problems to load " + name);return;}
+		if (file == null) {
+			System.out.println("problems to load " + name);
+			return;
+		}
 		try (Reader inReader = new InputStreamReader(file)) {
 			this.file.addDefaults(YamlConfiguration.loadConfiguration(inReader));
 			this.file.options().copyDefaults(true);
@@ -63,15 +90,11 @@ public class CraftingFile {
 			e.printStackTrace();
 		}
 		header = getHeader();
-		if(!this.file.contains(header + ".displayName")) {
-			System.out.println("Cannot load " + name + " (Old format)");
-			return;
-		}
 		
-		if(this.file.isSet(header+".system-ID")){
-			systemID = this.file.getString(header+".system-ID");
-		}else{
-			this.file.set(header+".system-ID", name);
+		if (this.file.contains(header + ".system-ID")) {
+			systemID = this.file.getString(header + ".system-ID");
+		} else {
+			this.file.set(header + ".system-ID", name);
 			systemID = name;
 			try {
 				this.file.save(filePath);
@@ -79,133 +102,162 @@ public class CraftingFile {
 				e.printStackTrace();
 			}
 		}
-		
+
 		this.file = YamlConfiguration.loadConfiguration(filePath);
 		loadCrafting(name);
 	}
-	
-	public void setFileConfiguration(FileConfiguration file){
+
+	public void setFileConfiguration(FileConfiguration file) {
 		this.file = file;
 	}
-	
-	public String getHeader(){
-		try{
+
+	public String getHeader() {
+		try {
 			return (String) this.file.getConfigurationSection("").getKeys(false).toArray()[0];
-		}catch(ArrayIndexOutOfBoundsException ex){
+		} catch (ArrayIndexOutOfBoundsException ex) {
 			return this.name;
 		}
 	}
-	
-	public void rename(String name){
-		if(name==null||name.equalsIgnoreCase("")) return;
+
+	public void rename(String name) {
+		if (name == null || name.equalsIgnoreCase(""))
+			return;
 		ItemStack stack = getRecipe().getResult();
 		ItemMeta meta = stack.getItemMeta();
 		meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', name));
 		stack.setItemMeta(meta);
 	}
 
-	public void loadCrafting(String s){
-		try{
-			this.isDisable = file.getBoolean(header+".crafting.disable", false);
-			NamespacedKey key = new NamespacedKey(FurnitureLib.getInstance(), this.name);
-			this.recipe = new ShapedRecipe(key, returnResult(s)).shape(returnFragment(s)[0], returnFragment(s)[1], returnFragment(s)[2]);
-			returnMaterial(s).entrySet().stream().filter(c -> !Objects.isNull(c)).filter(c -> !c.getValue().equals(Material.AIR)).forEach(c -> {
+	@SuppressWarnings("deprecation")
+	public void loadCrafting119111(String s) {
+		try {
+			this.isDisable = file.getBoolean(header + ".crafting.disable");
+			this.recipe = new ShapedRecipe(returnResult(s)).shape(returnFragment(s)[0], returnFragment(s)[1],
+					returnFragment(s)[2]);
+			returnMaterial(s).entrySet().stream().filter(c -> !Objects.isNull(c))
+			.filter(c -> !c.getValue().equals(Material.AIR)).forEach(c -> {
 				this.recipe.setIngredient(c.getKey(), c.getValue());
-			});			
-			if(!isDisable && !isKeyRegistred(key)) Bukkit.getServer().addRecipe(this.recipe);
+			});
+			if (!isDisable) {
+				Bukkit.getServer().addRecipe(this.recipe);
+			}
 			getPlaceAbleSide();
-			loadFunction();
-		}catch(Exception e){
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
-	
+
+
+	public void loadCrafting(String s) {
+		try {
+			this.isDisable = file.getBoolean(header + ".crafting.disable", false);
+			NamespacedKey key = new NamespacedKey(FurnitureLib.getInstance(), this.name); // <-- Key
+			this.recipe = new ShapedRecipe(key, returnResult(s)).shape(returnFragment(s)[0], returnFragment(s)[1],
+					returnFragment(s)[2]);
+			returnMaterial(s).entrySet().stream().filter(c -> !Objects.isNull(c))
+					.filter(c -> !c.getValue().equals(Material.AIR)).forEach(c -> {
+						this.recipe.setIngredient(c.getKey(), c.getValue());
+					});
+			if (!isDisable && !isKeyRegistred(key))
+				Bukkit.getServer().addRecipe(this.recipe);
+			getPlaceAbleSide();
+			loadFunction();
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
 	public List<JsonObject> loadFunction() {
 		List<JsonObject> jsonList = new ArrayList<JsonObject>();
-		if(this.file.contains(header+".projectData.functions")) {
-			List<String> stringList = this.file.getStringList(header+".projectData.functions");
-			for(String str : stringList) {
+		if (this.file.contains(header + ".projectData.functions")) {
+			List<String> stringList = this.file.getStringList(header + ".projectData.functions");
+			for (String str : stringList) {
 				try {
 					jsonList.add(new JsonParser().parse(str).getAsJsonObject());
-				}catch (Exception e) {
+				} catch (Exception e) {
 					e.printStackTrace();
 				}
 			}
 		}
 		return jsonList;
 	}
-	
+
 	private boolean isKeyRegistred(NamespacedKey key) {
 		Iterator<Recipe> recipes = Bukkit.getServer().recipeIterator();
-		while(recipes.hasNext()) {
+		while (recipes.hasNext()) {
 			Recipe recipe = recipes.next();
-			if(recipe instanceof ShapedRecipe) {
+			if (recipe instanceof ShapedRecipe) {
 				ShapedRecipe r = (ShapedRecipe) recipe;
-				if(r.getKey().equals(key)) {
+				if (r.getKey().equals(key)) {
 					return true;
 				}
 			}
 		}
 		return false;
 	}
-	
-	public PlaceableSide getPlaceAbleSide(){
-		this.side = PlaceableSide.valueOf(file.getString(header+".PlaceAbleSide", "TOP").toUpperCase());
+
+	public PlaceableSide getPlaceAbleSide() {
+		this.side = PlaceableSide.valueOf(file.getString(header + ".PlaceAbleSide", "TOP").toUpperCase());
 		return this.side;
 	}
-	
+
 	public FileConfiguration getFile() {
 		return this.file;
 	}
-	
-	public void setName(String s){
+
+	public void setName(String s) {
 		ItemStack is = getRecipe().getResult();
 		ItemMeta im = is.getItemMeta();
 		im.setDisplayName(s);
 		is.setItemMeta(im);
-		
+
 		NamespacedKey key = new NamespacedKey(FurnitureLib.getInstance(), this.name);
 		ShapedRecipe recipe = new ShapedRecipe(key, is).shape(this.getRecipe().getShape());
-		this.recipe.getIngredientMap().entrySet().forEach(a -> recipe.setIngredient(a.getKey(), a.getValue().getData()));
+		this.recipe.getIngredientMap().entrySet()
+				.forEach(a -> recipe.setIngredient(a.getKey(), a.getValue().getData()));
 		this.recipe = recipe;
-		if(!isDisable) Bukkit.getServer().addRecipe(this.recipe);
+		if (!isDisable)
+			Bukkit.getServer().addRecipe(this.recipe);
 	}
-	
-	private ItemStack returnResult(String s){
+
+	private ItemStack returnResult(String s) {
 		Material mat = FurnitureLib.getInstance().getDefaultSpawnMaterial();
-		if(file.contains(header + ".spawnMaterial")) {
+		if (file.contains(header + ".spawnMaterial")) {
 			String str = file.getString(header + ".spawnMaterial");
-			if(!str.equalsIgnoreCase("383")) {
+			if (!str.equalsIgnoreCase("383")) {
 				mat = Material.getMaterial(str);
 			}
 		}
 		ItemStack is = new ItemStack(mat);
 		ItemMeta im = is.getItemMeta();
-		try{
-			if(file.contains(header + ".unbreakable")) {
+		try {
+			if (file.contains(header + ".unbreakable")) {
 				boolean str = file.getBoolean(header + ".unbreakable", false);
 				im.setUnbreakable(str);
 			}
-		}catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
-		String name = file.getString(header+".displayName", "");
+
+		String name = file.getString(header + (FurnitureLib.isNewVersion() ? ".displayName" : ".name"));
 		im.setDisplayName(ChatColor.translateAlternateColorCodes('&', name));
-		
+
 		List<String> loreText = new ArrayList<String>();
-		if(im.getLore()!=null) loreText = im.getLore();
+		if (im.getLore() != null)
+			loreText = im.getLore();
 		loreText.add(HiddenStringUtils.encodeString(getSystemID()));
-		
-		if(file.contains(header + ".custommodeldata") && Type.version.equalsIgnoreCase("1.14")) {
+
+		if (file.contains(header + ".custommodeldata") && Type.version.equalsIgnoreCase("1.14")) {
 			im.setCustomModelData(file.getInt(header + ".custommodeldata"));
 		}
-		
-		if(file.contains(header+".itemLore")){
-			if(file.isList(header+".itemLore")){
-				List<String> lore = file.getStringList(header+".itemLore");
-				if(im.getLore()!=null) {loreText = im.getLore();}
-				for(String str : lore){
+
+		if (file.contains(header + ".itemLore")) {
+			if (file.isList(header + ".itemLore")) {
+				List<String> lore = file.getStringList(header + ".itemLore");
+				if (im.getLore() != null) {
+					loreText = im.getLore();
+				}
+				for (String str : lore) {
 					String a = ChatColor.translateAlternateColorCodes('&', str);
 					loreText.add(a);
 				}
@@ -213,59 +265,73 @@ public class CraftingFile {
 		}
 		is.setAmount(1);
 		im.setLore(loreText);
-		
-		try{
-			if(file.contains(header + ".durability")) {
+
+		try {
+			if (file.contains(header + ".durability")) {
 				int str = file.getInt(header + ".durability", 0);
-				if(im instanceof Damageable) {
+				if (im instanceof Damageable) {
 					((Damageable) im).setDamage(str);
 				}
 			}
-		}catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		
+
 		im.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE, ItemFlag.HIDE_ATTRIBUTES);
-		
+
 		is.setItemMeta(im);
 		return is;
 	}
-	
-	private String[] returnFragment(String s){
-		return this.file.getString(header+".crafting.recipe", "").split(",");
+
+	private String[] returnFragment(String s) {
+		return this.file.getString(header + ".crafting.recipe", "").split(",");
 	}
-	
-	private HashMap<Character,Material> returnMaterial(String s){
+
+	private HashMap<Character, Material> returnMaterial(String s) {
 		List<String> stringList = returnCharacters(s);
 		HashMap<Character, Material> materialHash = new HashMap<Character, Material>();
 		stringList.stream().forEach(letter -> {
 			Character chars = letter.charAt(0);
-			String part = this.file.getString(header+".crafting.index." + letter, "AIR");
-			materialHash.put(chars, Material.getMaterial(part));
+			String part = this.file.getString(header + ".crafting.index." + letter, "AIR");
+			Material material = Material.AIR;
+			
+			if(!FurnitureLib.isNewVersion()) {
+				try {
+					Integer i = Integer.parseInt(part);
+					material = MaterialConverter.convertMaterial(i, (byte) 0);
+				}catch (Exception e) {
+					Material.getMaterial(part);
+				}
+			}else {
+				Material.getMaterial(part);
+			}
+			
+			materialHash.put(chars, material);
 		});
 
 		return materialHash;
 	}
-	
-	private List<String> returnCharacters(String s){
+
+	private List<String> returnCharacters(String s) {
 		List<String> stringList = new ArrayList<String>();
-		for(String str: returnFragment(s)){
-			for(String o : str.split("(?!^)")){
-				if(!stringList.contains(o)){
+		for (String str : returnFragment(s)) {
+			for (String o : str.split("(?!^)")) {
+				if (!stringList.contains(o)) {
 					stringList.add(o);
 				}
 			}
 		}
 		return stringList;
 	}
-	
-	public void removeCrafting(ItemStack stack){
+
+	public void removeCrafting(ItemStack stack) {
 		Iterator<Recipe> it = Bukkit.getServer().recipeIterator();
 		Recipe recipe;
-		while(it.hasNext())
-		{
+		while (it.hasNext()) {
 			recipe = it.next();
-			if (recipe != null && recipe.getResult().equals(stack)){it.remove();}
+			if (recipe != null && recipe.getResult().equals(stack)) {
+				it.remove();
+			}
 		}
 	}
 }

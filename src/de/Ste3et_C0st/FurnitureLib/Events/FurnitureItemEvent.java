@@ -66,7 +66,7 @@ public final class FurnitureItemEvent extends Event implements Cancellable {
 		if(face==null){p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.NotONThisSide"));return false;}
 		if(!FurnitureLib.getInstance().getPermManager().canBuild(p, obj.getStartLocation())){return false;}
 		if(getBlock()==null) return false;
-	    if(!FurnitureLib.getInstance().getPermManager().isSolid(getBlock().getType(), getProject().getPlaceableSide(), getBlock().getBlockData())){return false;}
+	    if(!FurnitureLib.getInstance().getPermManager().isSolid(getBlock().getType(), getProject().getPlaceableSide(), getBlock())){return false;}
 		if(p.isOp()) return true;
 		if(!pro.hasPermissions(p)){return false;}
 		return true;

@@ -80,7 +80,12 @@ public class downloadCommand extends iCommand{
 					
 					PrintStream stream = new PrintStream(connection.getOutputStream());
 					stream.println("id=" + name);
-					stream.println("&spigot=1.14");
+					String version = FurnitureLib.getInstance().getBukkitVersion();
+					if(version.startsWith("v1_13")) {
+						stream.println("&spigot=1.13");
+					}else if(version.startsWith("v1_14")) {
+						stream.println("&spigot=1.14");
+					}
 					
 					BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 					
@@ -141,7 +146,11 @@ public class downloadCommand extends iCommand{
 			ByteArrayInputStream bin = new ByteArrayInputStream(by);
 			NBTTagCompound compound = NBTCompressedStreamTools.read(bin);
 			if(compound.hasKey("lore")) {
-				convert(compound, project);
+				if(FurnitureLib.isNewVersion()) {
+					convert(compound, project);
+				}else{
+					addOld(compound, project);
+				}
 			}else {
 				save(compound, project);
 			}
@@ -149,6 +158,70 @@ public class downloadCommand extends iCommand{
 			e.printStackTrace();
 		}
 	}
+	
+	private void addOld(NBTTagCompound compound, String project){
+		try{
+			YamlConfiguration file = new YamlConfiguration();
+			NBTTagCompound crafting = compound.getCompound("crafting");
+			NBTTagCompound index = crafting.getCompound("index");
+			NBTTagCompound lore = compound.getCompound("lore");
+			String systemID = project;
+			String fileHeader = project.replace(".", "");
+			if(compound.hasKey("systemID")) systemID = compound.getString("systemID");
+			if(!systemID.equalsIgnoreCase(project)) systemID = project;
+			file.set(fileHeader + ".name", compound.getString("name"));
+			file.set(fileHeader + ".system-ID", systemID);
+			file.set(fileHeader + ".material", compound.getInt("material"));
+			file.set(fileHeader + ".glow", compound.getBoolean("glow"));
+			List<String> loreText = new ArrayList<String>();
+			for(Object s : lore.c()){
+				loreText.add(lore.getString((String) s));
+			}
+			file.set(fileHeader + ".lore", loreText);
+			
+			file.set(fileHeader + ".crafting.disable", crafting.getBoolean("disable"));
+			file.set(fileHeader + ".crafting.recipe", crafting.getString("recipe"));
+			for(Object s : index.c()){
+				file.set(fileHeader + ".crafting.index." + ((String) s), index.getString((String) s));
+			}
+			if(compound.hasKey("ArmorStands")){
+				NBTTagCompound armorStands = compound.getCompound("ArmorStands");
+				for(Object s : armorStands.c()){
+					file.set(fileHeader+".ProjectModels.ArmorStands."+ ((String) s), armorStands.getString((String) s) + "");
+				}
+			}
+			
+			PlaceableSide side = PlaceableSide.TOP;
+			if(compound.hasKey("PlaceAbleSide")){
+				side = PlaceableSide.valueOf(compound.getString("PlaceAbleSide"));
+			}
+			
+			file.set(fileHeader+".PlaceAbleSide", side.toString());
+			
+			if(compound.hasKey("Blocks")){
+				NBTTagCompound blocks = compound.getCompound("Blocks");
+				for(Object s : blocks.c()){
+					String str = (String) s;
+					if(blocks.hasKey(str)){
+						NBTTagCompound block = blocks.getCompound(str);
+						file.set(fileHeader+".ProjectModels.Block." + str + ".X-Offset", block.getDouble("X-Offset"));
+						file.set(fileHeader+".ProjectModels.Block." + str + ".Y-Offset", block.getDouble("Y-Offset"));
+						file.set(fileHeader+".ProjectModels.Block." + str + ".Z-Offset", block.getDouble("Z-Offset"));
+						file.set(fileHeader+".ProjectModels.Block." + str + ".Type", block.getString("Type"));
+						file.set(fileHeader+".ProjectModels.Block." + str + ".Data", block.getInt("Data"));
+					}
+				}
+			}
+			
+			file.save(new File("plugins/"+FurnitureLib.getInstance().getName()+"/Crafting/" + project + ".yml"));
+			Bukkit.getScheduler().runTask(FurnitureLib.getInstance(), () ->{
+				ModelFileLoader.loadModelFile(new File("plugins/"+FurnitureLib.getInstance().getName()+"/Crafting/" + project + ".yml"));
+			});
+		}catch(Exception e){
+			e.printStackTrace();
+		}
+	}
+
 	
 	private void save(NBTTagCompound compound, String project) throws IOException{
 		YamlConfiguration file = new YamlConfiguration();

@@ -16,6 +16,7 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
@@ -37,10 +38,10 @@ public class FurnitureManager {
 	private static HashMap<String, Class<? extends fEntity>> packetClasses = new HashMap<String, Class<? extends fEntity>>();
 	
 	static {
-		packetClasses.put(EntityType.ARMOR_STAND.name().toLowerCase(), fArmorStand.class);
-		packetClasses.put(EntityType.PIG.name().toLowerCase(), fPig.class);
-		packetClasses.put(EntityType.CREEPER.name().toLowerCase(), fCreeper.class);
-		packetClasses.put(EntityType.GIANT.name().toLowerCase(), fGiant.class);
+		packetClasses.put("armor_stand", fArmorStand.class);
+		packetClasses.put("pig", fPig.class);
+		packetClasses.put("creeper", fCreeper.class);
+		packetClasses.put("giant", fGiant.class);
 	}
 	
 	private HashSet<ChunkData> chunkList = new HashSet<ChunkData>();
@@ -99,6 +100,28 @@ public class FurnitureManager {
 			e.printStackTrace();
 		}
 	}
+	
+	public HashMap<World, HashMap<EntityType, WrappedDataWatcher>> defaultWatchers = new HashMap<World, HashMap<EntityType, WrappedDataWatcher>>(); 
+	public WrappedDataWatcher getDefaultWatcher(World w, EntityType type){
+		if(defaultWatchers.containsKey(w)){if(defaultWatchers.get(w).containsKey(type)) return defaultWatchers.get(w).get(type).deepClone();}
+		WrappedDataWatcher watcher = createNew(w, type);
+		if(watcher==null) return null;
+		HashMap<EntityType, WrappedDataWatcher> watcherMap = null;
+		if(defaultWatchers.containsKey(w)) watcherMap = defaultWatchers.get(w);
+		if(watcherMap == null) watcherMap = new HashMap<EntityType, WrappedDataWatcher>();
+		watcherMap.put(type, watcher);
+		defaultWatchers.put(w, watcherMap);
+		return watcher;
+	}
+	
+	private WrappedDataWatcher createNew(World w, EntityType type){
+		Entity entity = w.spawnEntity(new Location(w, 0, 256, 0), type);
+		WrappedDataWatcher watcher = WrappedDataWatcher.getEntityWatcher(entity).deepClone();
+		entity.remove();
+		return watcher;
+	}
+
+
 	
 	public void updateFurniture(ObjectID obj) {
 		if(this.objecte.isEmpty()){return;}
@@ -266,7 +289,7 @@ public class FurnitureManager {
 	}
 	
 	public fEntity readEntity(String str, Location loc, ObjectID obj) {
-		Class<? extends fEntity> packetClass = this.packetClasses.getOrDefault(str.toLowerCase(), null);
+		Class<? extends fEntity> packetClass = packetClasses.getOrDefault(str.toLowerCase(), null);
 		if(Objects.nonNull(packetClass)) {
 			try {
 				fEntity e = packetClass.getConstructor(Location.class, ObjectID.class).newInstance(loc, obj);

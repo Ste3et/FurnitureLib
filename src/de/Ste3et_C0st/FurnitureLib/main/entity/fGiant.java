@@ -18,7 +18,7 @@ public class fGiant extends fEntity {
 	public static EntityType type = EntityType.GIANT;
 	
 	public fGiant(Location loc, ObjectID id) {
-		super(loc, type, id);
+		super(loc, type, type.getTypeId(), id);
 	}
 	
 	public fGiant moveRelative(int x, int y, int z, float yaw, float pitch, boolean onGround){

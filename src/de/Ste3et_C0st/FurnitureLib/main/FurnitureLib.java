@@ -13,6 +13,7 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
+import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 
 import org.bukkit.Bukkit;
@@ -24,6 +25,7 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.plugin.PluginDescriptionFile;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -92,7 +94,7 @@ public class FurnitureLib extends JavaPlugin {
 	private String timePattern = "mm:ss:SSS";
 	private int purgeTime = 30, viewDistance = 100, limitGlobal = -1;
 	private long purgeTimeMS = 0, spamBreakTime = 5000, spamPlaceTime = 5000;
-	private Material defMaterial = Material.COW_SPAWN_EGG;
+	private Material defMaterial = Material.valueOf(isNewVersion() ? "COW_SPAWN_EGG" : "MONSTER_EGG");
 	private boolean sync = true;
 	private static List<FurniturePlugin> furniturePlugins = new ArrayList<FurniturePlugin>();
 	public HashMap<Project, Long> deleteMap = new HashMap<Project, Long>();
@@ -356,7 +358,7 @@ public class FurnitureLib extends JavaPlugin {
 
 	@Override
 	public void onEnable() {
-		if (!(getBukkitVersion().startsWith("v1_14") || getBukkitVersion().startsWith("v1_13"))) {
+		if (!(getBukkitVersion().startsWith("v1_14") || getBukkitVersion().startsWith("v1_13") || getBukkitVersion().startsWith("v1_12"))) {
 			send("§cYour Server version is not Supportet please use > §c1.13.x");
 			getPluginManager().disablePlugin(this);
 			return;
@@ -408,8 +410,9 @@ public class FurnitureLib extends JavaPlugin {
 				loadPluginConfig();
 				if (getConfig().getBoolean("config.UseMetrics"))
 					new Metrics(this);
-				if (!this.isSync())
-					this.pManager.loadProjectFiles();
+//				if (!this.isSync())
+//					this.pManager.loadProjectFiles();
+				this.pManager.loadProjectFiles();
 				this.sqlManager = new SQLManager(instance);
 				this.sqlManager.initialize();
 				autoConverter.databaseConverter(getServer().getConsoleSender());
@@ -670,6 +673,30 @@ public class FurnitureLib extends JavaPlugin {
 			e.getCause().printStackTrace();
 		} catch (Exception e) {
 			e.printStackTrace();
+		}
+	}
+	
+	/**
+	 * Check if the plugin is 1.13 or higher
+	 * @return
+	 */
+	
+	private static Boolean newVersion = null;
+	
+	public static boolean isNewVersion() {
+		if(Objects.isNull(newVersion)) {
+			try {
+				Class<?> descriptionClass = PluginDescriptionFile.class;
+				Field field = descriptionClass.getDeclaredField("apiVersion");
+				boolean bool = Objects.nonNull(field);
+				newVersion = bool;
+				return bool;
+			}catch (Exception e) {
+				newVersion = false;
+				return false;
+			}
+		}else {
+			return newVersion;
 		}
 	}
 }

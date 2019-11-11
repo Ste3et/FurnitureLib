@@ -35,7 +35,7 @@ public class LanguageManager{
 		this.lang = lang;
 		this.plugin = plugin;
 		addDefault();
-		addDefaultInv();
+		if(FurnitureLib.isNewVersion()) { loadNewManageInv();} else {oldManageInv();};
 	}
 	
 	private void addDefault(){
@@ -98,7 +98,7 @@ public class LanguageManager{
 		}
 	}
 	
-	private void addDefaultInv(){
+	private void loadNewManageInv(){
 		c = new config(plugin);
 		file = c.getConfig("inventoryManage", "");
 		if(file==null) return;
@@ -128,6 +128,47 @@ public class LanguageManager{
 		}
 		for(String str : file.getConfigurationSection("inv.admin").getKeys(false)){
 			invMatList.put(str, Material.valueOf(file.getString("inv.admin." + str + ".Material").toUpperCase()));
+			invStringList.put(str, file.getString("inv.admin." + str + ".String"));
+			invShortList.put(str,(short) file.getInt("inv.admin." + str + ".SubID"));
+			invHashList.put(str, file.getStringList("inv.admin." + str + ".Text"));
+		}
+		invStringList.put("manageInvName", file.getString("inv.manageInvName"));
+		invStringList.put("playerAddInvName", file.getString("inv.playerAddInvName"));
+		invStringList.put("playerRemoveInvName", file.getString("inv.playerRemoveInvName"));
+		invStringList.put("playerSetInvName", file.getString("inv.playerSetInvName"));
+	}
+	
+	private void oldManageInv(){
+		c = new config(plugin);
+		file = c.getConfig("manageInv", "");
+		if(file==null) return;
+		file.addDefaults(YamlConfiguration.loadConfiguration(FurnitureLib.getInstance().loadStream("manageInvOld.yml")));
+		file.options().copyDefaults(true);
+		c.saveConfig("manageInv", file, "");
+		
+		for(String str : file.getConfigurationSection("inv.mode").getKeys(false)){
+			invHashList.put(str, file.getStringList("inv.mode." + str + ".Text"));
+			invMatList.put(str, MaterialConverter.convertMaterial(file.getInt("inv.mode." + str + ".Material"), (byte) 0));
+			invStringList.put(str, file.getString("inv.mode." + str + ".String"));
+			invShortList.put(str,(short) file.getInt("inv.mode." + str + ".SubID"));
+		}
+		for(String str : file.getConfigurationSection("inv.event").getKeys(false)){
+			invMatList.put(str, MaterialConverter.convertMaterial(file.getInt("inv.event." + str + ".Material"), (byte) 0));
+			invStringList.put(str, file.getString("inv.event." + str + ".String"));
+			invShortList.put(str,(short) file.getInt("inv.event." + str + ".SubID"));
+		}
+		for(String str : file.getConfigurationSection("inv.player").getKeys(false)){
+			invMatList.put(str, MaterialConverter.convertMaterial(file.getInt("inv.player." + str + ".Material"), (byte) 0));
+			invStringList.put(str, file.getString("inv.player." + str + ".String"));
+			invShortList.put(str,(short) file.getInt("inv.player." + str + ".SubID"));
+		}
+		for(String str : file.getConfigurationSection("inv.controller").getKeys(false)){
+			invMatList.put(str, MaterialConverter.convertMaterial(file.getInt("inv.controller." + str + ".Material"),(byte) 0));
+			invStringList.put(str, file.getString("inv.controller." + str + ".String"));
+			invShortList.put(str,(short) file.getInt("inv.controller." + str + ".SubID"));
+		}
+		for(String str : file.getConfigurationSection("inv.admin").getKeys(false)){
+			invMatList.put(str, MaterialConverter.convertMaterial(file.getInt("inv.admin." + str + ".Material"),(byte) 0));
 			invStringList.put(str, file.getString("inv.admin." + str + ".String"));
 			invShortList.put(str,(short) file.getInt("inv.admin." + str + ".SubID"));
 			invHashList.put(str, file.getStringList("inv.admin." + str + ".Text"));

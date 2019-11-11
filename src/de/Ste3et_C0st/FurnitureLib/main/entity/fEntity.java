@@ -57,10 +57,10 @@ public abstract class fEntity extends fSerializer{
 	public abstract void setEntity(Entity e);
 	public World world;
 	
-	public fEntity(Location loc, EntityType type, ObjectID id) {
+	public fEntity(Location loc, EntityType type, int entityID, ObjectID id) {
 		super(type, id);
 		this.a = EntityID.nextEntityId();
-		this.c = 1;
+		this.c = entityID;
 		this.i = new fInventory(this.a);
 		getHandle().getModifier().writeDefaults();
 		getHandle().getIntegers().write(0, a).write(1, c);
@@ -347,7 +347,12 @@ public abstract class fEntity extends fSerializer{
 	public fEntity setName(String str) {
 		if (str == null) return this;
 		if (str.equalsIgnoreCase("")) setNameVasibility(false);
-		getWatcher().setObject(new WrappedDataWatcherObject(2, Registry.getChatComponentSerializer(true)), Optional.of(WrappedChatComponent.fromText(str).getHandle()));
+		if(FurnitureLib.isNewVersion()) {
+			getWatcher().setObject(new WrappedDataWatcherObject(2, Registry.getChatComponentSerializer(true)), Optional.of(WrappedChatComponent.fromText(str).getHandle()));
+		}else {
+			getWatcher().setObject(new WrappedDataWatcherObject(2, Registry.get(String.class)), str);
+		}
+		
 		this.customName = str;return this;
 	}
 	

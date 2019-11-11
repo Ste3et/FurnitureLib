@@ -29,6 +29,7 @@ public class autoConverter {
 
 	public static void modelConverter(CommandSender sender) {
 		if(!FurnitureLib.getInstance().isAutoFileUpdater()) return;
+		if(!FurnitureLib.isNewVersion()) return;
 		FurnitureLib.getInstance().send("==========================================");
 		FurnitureLib.getInstance().send("Auto-Converter: ");
 		
@@ -139,8 +140,8 @@ public class autoConverter {
 	}
 	
 	public static void databaseConverter(CommandSender sender) {
+		if(!FurnitureLib.isNewVersion()) return;
 		if(!FurnitureLib.getInstance().isAutoFileUpdater()) {
-			System.out.println("Load Furniture from database -> " + (FurnitureLib.getInstance().isSync() ? "Synchron" : "Asynchron"));
 			if(FurnitureLib.getInstance().isSync()) {
 				FurnitureLib.getInstance().getSQLManager().loadALL();
 			}else{

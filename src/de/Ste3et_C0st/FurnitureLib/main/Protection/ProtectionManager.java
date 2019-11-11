@@ -6,14 +6,13 @@ import java.util.UUID;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.block.data.BlockData;
-import org.bukkit.block.data.type.Slab;
-import org.bukkit.block.data.type.Stairs;
+import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 
 import de.Ste3et_C0st.FurnitureLib.Events.FurnitureRegionClear;
+import de.Ste3et_C0st.FurnitureLib.ModelLoader.ModelBlockAquaticUpdate;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.EventType;
@@ -38,18 +37,14 @@ public class ProtectionManager {
 		}
 	}
 	
-	public boolean isSolid(Material mat, PlaceableSide side, BlockData blockData){if(!checkPlaceable(mat, side, blockData)){return false;}{return mat.isSolid();}}
+	public boolean isSolid(Material mat, PlaceableSide side, Block block){if(!checkPlaceable(mat, side, block)){return false;}{return mat.isSolid();}}
 	
-	private boolean checkPlaceable(Material mat, PlaceableSide side, BlockData blockState){
-        return mat.isBlock() && mat.isSolid() && (mat.isOccluding() || blockStateParser(blockState));
+	private boolean checkPlaceable(Material mat, PlaceableSide side, Block block){
+        return mat.isBlock() && mat.isSolid() && (mat.isOccluding() || blockStateParser(block));
 	}
 	
-	private boolean blockStateParser(BlockData blockData) {
-		boolean b = false;
-		if(blockData.getMaterial().name().contains("_FENCE")) return true;
-		if(blockData.getMaterial().name().contains("_WALL")) return true;
-		if(blockData instanceof Slab) {return !((Slab) blockData).getType().name().equalsIgnoreCase("BOTTOM");}
-		if(blockData instanceof Stairs){return !((Stairs) blockData).getHalf().name().equalsIgnoreCase("BOTTOM");}
+	private boolean blockStateParser(Block block) {
+		boolean b = FurnitureLib.isNewVersion() ? ModelBlockAquaticUpdate.isSolid(block) : true;
 		return b;
 	}
 	

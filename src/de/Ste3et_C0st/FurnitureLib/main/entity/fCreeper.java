@@ -17,7 +17,7 @@ public class fCreeper extends fEntity{
 	public static EntityType type = EntityType.CREEPER;
 	
 	public fCreeper(Location loc, ObjectID obj) {
-		super(loc, type, obj);
+		super(loc, type, type.getTypeId(), obj);
 	}
 
 	public boolean isCharged() {

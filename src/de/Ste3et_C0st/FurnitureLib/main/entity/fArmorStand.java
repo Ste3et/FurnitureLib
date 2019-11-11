@@ -64,8 +64,9 @@ public class fArmorStand extends fEntity {
 		return entity;
 	}
 	
+	@SuppressWarnings("deprecation")
 	public fArmorStand(Location loc, ObjectID obj) {
-		super(loc, type, obj);
+		super(loc, type, FurnitureLib.isNewVersion() ? 1 : type.getTypeId() , obj);
 	}
 
 	public EulerAngle getPose(BodyPart part){

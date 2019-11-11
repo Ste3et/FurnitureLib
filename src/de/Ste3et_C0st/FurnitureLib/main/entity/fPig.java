@@ -18,7 +18,7 @@ public class fPig extends fEntity{
 	public static EntityType type = EntityType.PIG;
 	
 	public fPig(Location loc, ObjectID obj) {
-		super(loc, type, obj);
+		super(loc, type, type.getTypeId(), obj);
 	}
 	
 	public fPig setSaddle(boolean b){

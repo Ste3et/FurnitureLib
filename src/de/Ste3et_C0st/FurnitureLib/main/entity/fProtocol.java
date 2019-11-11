@@ -1,5 +1,6 @@
 package de.Ste3et_C0st.FurnitureLib.main.entity;
 
+import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.EntityType;
 
@@ -38,6 +39,7 @@ public class fProtocol{
 		this.type = type;
 		this.container = new PacketContainer(PacketType.Play.Server.SPAWN_ENTITY_LIVING);
 		this.container.getModifier().writeDefaults();
+		this.watcher = FurnitureLib.getInstance().getFurnitureManager().getDefaultWatcher(Bukkit.getWorlds().get(0),getEntityType());
 		this.watcher = new WrappedDataWatcher();
 		this.fields = FurnitureLib.getInstance().getField();
 	}

@@ -10,15 +10,11 @@ import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.block.data.BlockData;
-import org.bukkit.block.data.Directional;
 import org.bukkit.util.Vector;
 
-import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.BoundingBox;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.LocationUtil;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
@@ -45,22 +41,11 @@ public class ModelHandler extends Modelschematic{
 		id.sendAll();
 	}
 	
-	public HashMap<Location, BlockData> getBlockData(Location startLocation, BlockFace direction) {
-		HashMap<Location, BlockData> locationList = new HashMap<Location, BlockData>();
+	public HashMap<Location, ModelBlock> getBlockData(Location startLocation, BlockFace direction) {
+		HashMap<Location, ModelBlock> locationList = new HashMap<Location, ModelBlock>();
 		getBlockMap().entrySet().forEach(entry -> {
 			ModelVector rotateVector = rotateVector(entry.getKey(), direction);
-			BlockData blockData = entry.getValue().clone();
-			if(Directional.class.isInstance(blockData)) {
-				Directional directional = Directional.class.cast(blockData);
-				
-				BlockFace originalBlockFace = directional.getFacing();
-				float originalYaw = FurnitureLib.getInstance().getLocationUtil().FaceToYaw(originalBlockFace);
-				float yawDirection = FurnitureLib.getInstance().getLocationUtil().FaceToYaw(direction);
-				float newYaw = originalYaw + yawDirection;
-				
-				directional.setFacing(FurnitureLib.getInstance().getLocationUtil().yawToFace(newYaw));
-			}
-			locationList.put(startLocation.clone().add(rotateVector.toVector()), blockData);
+			locationList.put(startLocation.clone().add(rotateVector.toVector()), entry.getValue());
 		});
 		return locationList;
 	}
@@ -69,7 +54,7 @@ public class ModelHandler extends Modelschematic{
 		List<Block> blockList = new ArrayList<Block>();
 		this.getBlockData(startLocation, direction).entrySet().forEach(entry -> {
 			Block b = entry.getKey().getBlock();
-			b.setBlockData(entry.getValue(), false);
+			entry.getValue().place(b.getLocation(), direction);
 			blockList.add(b);
 		});
 		return blockList;

@@ -12,7 +12,7 @@ import de.Ste3et_C0st.FurnitureLib.main.Type.PlaceableSide;
 public class ModelFileLoader {
 
 	public static void loadModelFiles() {
-		File folder = new File("plugins/FurnitureLib/models/");
+		File folder = new File(FurnitureLib.isNewVersion() ? "plugins/FurnitureLib/models/" : "plugins/FurnitureLib/Crafting/");
 		if(folder.exists()){
 			Arrays.asList(folder.listFiles()).stream().forEach(file -> {
 				loadModelFile(file);
@@ -22,7 +22,7 @@ public class ModelFileLoader {
 	
 	public static void loadModelFile(File file) {
 		try(InputStream stream = new FileInputStream(file)) {
-			String name = file.getName().replace(".dModel", "");
+			String name = file.getName().replace(".dModel", "").replace(".yml", "");
 			Project pro = new Project(name, FurnitureLib.getInstance(), stream, PlaceableSide.TOP, ProjectLoader.class);
 			pro.applyFunction();
 			pro.setEditorProject(true);
