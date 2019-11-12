@@ -98,6 +98,9 @@ public class LimitationManager {
 			int world = returnProjectWorld(obj.getWorld(), pro);
 			FurnitureLib.debug("LimitationManager -> {World} " + world + "/" + maxWorld);
 			if(world < maxWorld || maxWorld == -1) {
+				String s = lib.getLangManager().getString("message.LimitAouncer");
+				s = s.replace("#TYPE#", pro.getName()).replace("#CURRENT#", world+1+"").replace("#MAX#", maxWorld+"");
+				p.sendMessage(s);
 				return true;
 			}else {
 				p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.LimitReachedWorld"));
@@ -108,6 +111,9 @@ public class LimitationManager {
 			int chunk = returnIntProjectChunk(obj.getChunk(), pro);
 			FurnitureLib.debug("LimitationManager -> {Chunk} " + chunk + "/" + maxChunk);
 			if(chunk < maxChunk || maxChunk == -1) {
+				String s = lib.getLangManager().getString("message.LimitAouncer");
+				s = s.replace("#TYPE#", pro.getName()).replace("#CURRENT#", chunk+1+"").replace("#MAX#", maxChunk+"");
+				p.sendMessage(s);
 				return true;
 			}else {
 				p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.LimitReachedChunk"));

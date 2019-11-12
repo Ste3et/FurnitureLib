@@ -76,7 +76,11 @@ public class CraftingFile {
 	public CraftingFile(String name, InputStream file) {
 		this.name = name;
 		if(Objects.isNull(this.name)) return;
-		this.filePath = new File("plugins/" + FurnitureLib.getInstance().getName() + "/models/" + name + ".dModel");
+		if(FurnitureLib.isNewVersion()) {
+			this.filePath = new File("plugins/" + FurnitureLib.getInstance().getName() + "/models/" + name + ".dModel");
+		}else {
+			this.filePath = new File("plugins/" + FurnitureLib.getInstance().getName() + "/Crafting/" + name + ".yml");
+		}
 		this.file = YamlConfiguration.loadConfiguration(filePath);
 		if (file == null) {
 			System.out.println("problems to load " + name);

@@ -24,8 +24,8 @@ public class objectToSide {
 		if(page<10){b+="0"+page;}else{b=page+"";}
 		
 		if(page>maxPage){
-			p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("SideNotFound"));
-			p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("SideNavigation").replaceAll("#MAX#", maxPage + ""));
+			p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.SideNotFound"));
+			p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.SideNavigation").replaceAll("#MAX#", maxPage + ""));
 			return;
 		}
 		

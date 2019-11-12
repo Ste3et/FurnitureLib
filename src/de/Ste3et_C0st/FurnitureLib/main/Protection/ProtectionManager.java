@@ -89,7 +89,7 @@ public class ProtectionManager {
 		}else if(publicMode.equals(PublicMode.PUBLIC)){
 			b = isEventType(id, type);
 		}
-		if(!b && sendMessage){p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("NoPermissions"));}
+		if(!b && sendMessage){p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.NoPermissions"));}
 		return b;
 	}
 	
