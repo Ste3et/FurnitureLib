@@ -186,12 +186,12 @@ public class Project {
 		}
 
 		FurnitureLib.getInstance().getFurnitureManager().addProject(this);
-		loadDefaults();
+		this.loadDefaults();
 		FurnitureLib.getInstance().getLimitManager().loadDefault(this.project);
 	}
 	
 	public Project(String name, Plugin plugin, InputStream craftingFile, Class<? extends Furniture> clazz) {
-		this(name, plugin, craftingFile, PlaceableSide.TOP, ProjectLoader.class);
+		this(name, plugin, craftingFile, PlaceableSide.TOP, Objects.isNull(clazz) ? ProjectLoader.class : clazz);
 	}
 
 	public Project(String name, Plugin plugin, InputStream craftingFile) {

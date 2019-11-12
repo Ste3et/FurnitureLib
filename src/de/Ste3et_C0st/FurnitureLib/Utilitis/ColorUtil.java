@@ -38,20 +38,38 @@ public class ColorUtil {
 		ItemStack is = p.getInventory().getItemInMainHand();
 		Integer Amount = is.getAmount();
 		List<fEntity> asp = manager.getfArmorStandByObjectID(obj);
-		DyeColor start = DyeColor.getDyeColor(is.getType());
 		int j = row;
 
-		for(fEntity packet : asp){
-			if(packet.getInventory().getHelmet()!=null&&packet.getInventory().getHelmet().getType().name().contains(identifier)&&Amount>0){
-				DyeColor now = DyeColor.getDyeToReplace(packet.getInventory().getHelmet().getType());
-				if(!now.equals(start)){
-					packet.getInventory().setHelmet(start.applyToItemStack(packet.getInventory().getHelmet()));
-					if(!p.getGameMode().equals(GameMode.CREATIVE) || !lib.useGamemode()){j--;if(j==0){Amount--;j=row;}}
+		if(FurnitureLib.isNewVersion()) {
+			DyeColor start = DyeColor.getDyeColor(is.getType());
+			for(fEntity packet : asp){
+				if(Objects.nonNull(packet.getInventory().getHelmet())&&packet.getInventory().getHelmet().getType().name().contains(identifier)&&Amount>0){
+					DyeColor now = DyeColor.getDyeToReplace(packet.getInventory().getHelmet().getType());
+					if(!now.equals(start)){
+						packet.getInventory().setHelmet(start.applyToItemStack(packet.getInventory().getHelmet()));
+						if(!p.getGameMode().equals(GameMode.CREATIVE) || !lib.useGamemode()){j--;if(j==0){Amount--;j=row;}}
+					}
 				}
 			}
+		}else {
+			short color = getFromDey(is.getDurability());
+			for(fEntity packet : asp){
+				if(Objects.nonNull(packet.getInventory().getHelmet())&&packet.getInventory().getHelmet().getType().name().contains(identifier)&&Amount>0){
+					short color2 = packet.getInventory().getHelmet().getDurability();
+					if(color2 != color){
+						ItemStack stack = packet.getInventory().getHelmet().clone();
+						stack.setDurability(color);
+						packet.getInventory().setHelmet(stack);
+						if(!p.getGameMode().equals(GameMode.CREATIVE) || !lib.useGamemode()){j--;if(j==0){Amount--;j=row;}}
+					}
+				}
+			}
+
 		}
 		removeIS(obj, p, Amount);
 	}
+	
+	public short getFromDey(short s){return (short) (15-s);}
 	
 	private void removeIS(ObjectID obj, Player p, int Amount){
 		manager.updateFurniture(obj);

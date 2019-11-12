@@ -15,6 +15,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -664,10 +665,12 @@ public class FurnitureLib extends JavaPlugin {
 			return;
 		}
 		try {
-			Object o = c.getConstructor(ObjectID.class).newInstance(obj);
-			if (obj.getFunctionObject() == null)
-				obj.setFunctionObject(o);
 			obj.getProjectOBJ().getModelschematic().spawn(obj);
+			Object o = c.getConstructor(ObjectID.class).newInstance(obj);
+			if (obj.getFunctionObject() == null) {
+				obj.setFunctionObject(o);
+				//Method m = o.getClass().getMethod("spawn", Location.class);
+			}
 			obj.setFinish();
 		} catch (InvocationTargetException e) {
 			e.getCause().printStackTrace();

@@ -136,20 +136,20 @@ public class MaterialConverter {
 	}
 	
 	public static Material convertMaterial(int ID, byte Data) {
-		Material mat = null;
 		if(FurnitureLib.isNewVersion()) {
-			EnumSet.allOf(Material.class).stream().filter(m -> m.isLegacy()).filter(m -> m.getId() == ID).findFirst().orElse(null);
+			Material mat = EnumSet.allOf(Material.class).stream().filter(m -> m.isLegacy()).filter(m -> m.getId() == ID).findFirst().orElse(null);
 			if(mat != null) mat = Bukkit.getUnsafe().fromLegacy(new MaterialData(mat, Data));
 			return mat;
 		}else {
 			try {
 				Class<?> materialClass = Material.class;
 				Method m = materialClass.getMethod("getMaterial", int.class);
-				mat = (Material) m.invoke(null, ID);
+				Material mat = (Material) m.invoke(null, ID);
+				return mat;
 			}catch (Exception e) {
 				e.printStackTrace();
 			}
 		}
-	    return mat;
+	    return null;
 	}
 }
