@@ -15,8 +15,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;

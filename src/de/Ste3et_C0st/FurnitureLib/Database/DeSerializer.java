@@ -51,15 +51,35 @@ public class DeSerializer {
 			obj.setFinish();
 			obj.setSQLAction((action != null && action.equals(SQLAction.SAVE)) ? SQLAction.SAVE : SQLAction.NOTHING);
 			obj.setFromDatabase(true);
-
-			NBTTagCompound armorStands = compound.getCompound("entitys");
 			
-			armorStands.c().stream().filter(Objects::nonNull).forEach(packet -> {
-				NBTTagCompound metadata = armorStands.getCompound((String) packet);
-				Location loc = locationFetcher(metadata.getCompound("Location"));
-				FurnitureManager.getInstance().createFromType(metadata.getString("EntityType"), loc, obj).loadMetadata(metadata);
-			});
-			this.armorStands.addAndGet(armorStands.c().size());
+			if(compound.hasKey("entitys")) {
+				NBTTagCompound armorStands = compound.getCompound("entitys");
+				armorStands.c().stream().filter(Objects::nonNull).forEach(packet -> {
+					NBTTagCompound metadata = armorStands.getCompound((String) packet);
+					Location loc = locationFetcher(metadata.getCompound("Location"));
+					FurnitureManager.getInstance().createFromType(metadata.getString("EntityType"), loc, obj).loadMetadata(metadata);
+					this.armorStands.addAndGet(armorStands.c().size());
+				});
+			}else if(!FurnitureLib.isNewVersion() && compound.hasKey("ArmorStands")) {
+				NBTTagCompound armorStands = compound.getCompound("ArmorStands");
+				armorStands.c().stream().filter(Objects::nonNull).forEach(packet -> {
+					NBTTagCompound metadata = armorStands.getCompound((String) packet);
+					Location loc = locationFetcher(metadata.getCompound("Location"));
+					FurnitureManager.getInstance().createFromType("armor_stand", loc, obj).loadMetadata(metadata);
+					this.armorStands.addAndGet(armorStands.c().size());
+				});
+			}else {
+				NBTTagCompound armorStands = Converter.convertPacketItemStack(compound.getCompound("ArmorStands"));
+				armorStands.c().stream().filter(Objects::nonNull).forEach(packet -> {
+					NBTTagCompound metadata = armorStands.getCompound((String) packet);
+					Location loc = locationFetcher(metadata.getCompound("Location"));
+					FurnitureManager.getInstance().createFromType("armor_stand", loc, obj).loadMetadata(metadata);
+					this.armorStands.addAndGet(armorStands.c().size());
+				});
+				obj.setSQLAction(SQLAction.UPDATE);
+			}
+			
+			
 			if(world == null || world.equals("null")) obj.setSQLAction(SQLAction.UPDATE);
 			//if(autoPurge){if(FurnitureLib.getInstance().checkPurge(obj, uuid)){purged++;}} <-- why is this here ?
 			return obj;

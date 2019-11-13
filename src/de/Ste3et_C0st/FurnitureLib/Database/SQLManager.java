@@ -52,7 +52,6 @@ public class SQLManager {
 			config.setPoolName("FurnitureLib");
 			config.setMaxLifetime(1800000);
 			config.setInitializationFailTimeout(-1);
-			
 			this.database = new MySQL(plugin, config);
 		}else{
 			plugin.getLogger().warning("Database Type not supported: Plugin shutdown");
@@ -156,7 +155,7 @@ public class SQLManager {
 	}
 
 	public void convert(CommandSender sender) {
-		database.startConvert(sender);
+		database.getConverter().startConvert(sender);
 	}
 
 	public void loadAsynchron(ChunkData data, CallbackObjectIDs callBack) {

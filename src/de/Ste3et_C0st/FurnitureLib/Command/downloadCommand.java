@@ -174,9 +174,7 @@ public class downloadCommand extends iCommand{
 			file.set(fileHeader + ".material", compound.getInt("material"));
 			file.set(fileHeader + ".glow", compound.getBoolean("glow"));
 			List<String> loreText = new ArrayList<String>();
-			for(Object s : lore.c()){
-				loreText.add(lore.getString((String) s));
-			}
+			for(Object s : lore.c()) loreText.add(lore.getString((String) s));
 			file.set(fileHeader + ".lore", loreText);
 			
 			file.set(fileHeader + ".crafting.disable", crafting.getBoolean("disable"));
