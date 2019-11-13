@@ -14,7 +14,6 @@ import java.util.Objects;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.NamespacedKey;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemFlag;
@@ -108,7 +107,13 @@ public class CraftingFile {
 		}
 
 		this.file = YamlConfiguration.loadConfiguration(filePath);
-		loadCrafting(name);
+		try {
+			if(Objects.nonNull(Class.forName("org.bukkit.NamespacedKey"))) {
+				loadCrafting(name);
+			}
+		} catch (ClassNotFoundException e) {
+			loadCrafting119111(name);
+		}
 	}
 
 	public void setFileConfiguration(FileConfiguration file) {
@@ -155,15 +160,17 @@ public class CraftingFile {
 	public void loadCrafting(String s) {
 		try {
 			this.isDisable = file.getBoolean(header + ".crafting.disable", false);
-			NamespacedKey key = new NamespacedKey(FurnitureLib.getInstance(), this.name); // <-- Key
-			this.recipe = new ShapedRecipe(key, returnResult(s)).shape(returnFragment(s)[0], returnFragment(s)[1],
-					returnFragment(s)[2]);
+			org.bukkit.NamespacedKey key = new org.bukkit.NamespacedKey(FurnitureLib.getInstance(), this.name); // <-- Key
+			this.recipe = new ShapedRecipe(key, returnResult(s)).shape(returnFragment(s)[0], returnFragment(s)[1],returnFragment(s)[2]);
 			returnMaterial(s).entrySet().stream().filter(c -> !Objects.isNull(c))
 					.filter(c -> !c.getValue().equals(Material.AIR)).forEach(c -> {
 						this.recipe.setIngredient(c.getKey(), c.getValue());
 					});
-			if (!isDisable && !isKeyRegistred(key))
-				Bukkit.getServer().addRecipe(this.recipe);
+			if (!isDisable && !isKeyRegistred(key)) {
+				if(!this.recipe.getIngredientMap().isEmpty() && this.recipe.getIngredientMap().values().stream().filter(Objects::nonNull).filter(is -> is.getType().equals(Material.AIR)).count() < 8) {
+					Bukkit.getServer().addRecipe(this.recipe);
+				}
+			}
 			getPlaceAbleSide();
 			loadFunction();
 		} catch (Exception e) {
@@ -186,7 +193,7 @@ public class CraftingFile {
 		return jsonList;
 	}
 
-	private boolean isKeyRegistred(NamespacedKey key) {
+	private boolean isKeyRegistred(org.bukkit.NamespacedKey key) {
 		Iterator<Recipe> recipes = Bukkit.getServer().recipeIterator();
 		while (recipes.hasNext()) {
 			Recipe recipe = recipes.next();
@@ -215,7 +222,7 @@ public class CraftingFile {
 		im.setDisplayName(s);
 		is.setItemMeta(im);
 
-		NamespacedKey key = new NamespacedKey(FurnitureLib.getInstance(), this.name);
+		org.bukkit.NamespacedKey key = new org.bukkit.NamespacedKey(FurnitureLib.getInstance(), this.name);
 		ShapedRecipe recipe = new ShapedRecipe(key, is).shape(this.getRecipe().getShape());
 		this.recipe.getIngredientMap().entrySet()
 				.forEach(a -> recipe.setIngredient(a.getKey(), a.getValue().getData()));
@@ -298,16 +305,15 @@ public class CraftingFile {
 			Character chars = letter.charAt(0);
 			String part = this.file.getString(header + ".crafting.index." + letter, "AIR");
 			Material material = Material.AIR;
-			
 			if(!FurnitureLib.isNewVersion()) {
 				try {
 					Integer i = Integer.parseInt(part);
 					material = MaterialConverter.convertMaterial(i, (byte) 0);
 				}catch (Exception e) {
-					Material.getMaterial(part);
+					material = Material.getMaterial(part);
 				}
 			}else {
-				Material.getMaterial(part);
+				material = Material.getMaterial(part);
 			}
 			
 			materialHash.put(chars, material);
