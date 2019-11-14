@@ -12,6 +12,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.material.Directional;
 import org.bukkit.material.MaterialData;
 
+import de.Ste3et_C0st.FurnitureLib.Utilitis.LocationUtil;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 
 public class ModelBlockCombatUpdate extends ModelBlock{
@@ -66,16 +67,20 @@ public class ModelBlockCombatUpdate extends ModelBlock{
 		if(Objects.nonNull(this.blockFace)) {
 			BlockState state = block.getState();
 			BlockFace originalBlockFace = BlockFace.NORTH;
-			
 			float originalYaw = FurnitureLib.getInstance().getLocationUtil().FaceToYaw(originalBlockFace);
 			float yawDirection = FurnitureLib.getInstance().getLocationUtil().FaceToYaw(face);
 			float newYaw = originalYaw + yawDirection;
-			
 			BlockFace newFace = FurnitureLib.getInstance().getLocationUtil().yawToFace(newYaw);
 			
-			Directional directional = (Directional) state.getData();
-			directional.setFacingDirection(newFace);
-			state.setData((MaterialData) directional);
+			if(block.getType().name().contains("SIGN")) {
+				LocationUtil util = FurnitureLib.getInstance().getLocationUtil();
+				state.setRawData(util.getFacebyte(util.yawToFace(newYaw - 90)));
+				state.update(true, false);
+			}else {
+				Directional directional = (Directional) state.getData();
+				directional.setFacingDirection(newFace);
+				state.setData((MaterialData) directional);
+			}
 		}
 	}
 	

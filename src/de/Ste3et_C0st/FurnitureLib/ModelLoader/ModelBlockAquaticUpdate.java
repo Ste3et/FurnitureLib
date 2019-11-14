@@ -15,6 +15,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.NotNull;
 
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
+import de.Ste3et_C0st.FurnitureLib.main.Type;
 
 public class ModelBlockAquaticUpdate extends ModelBlock{
 
@@ -34,7 +35,14 @@ public class ModelBlockAquaticUpdate extends ModelBlock{
 		String str = yamlConfiguration.getString(key + ".blockData", "");
 		String materialStr = yamlConfiguration.getString(key + ".material", "");
 		ModelVector vector = new ModelVector(x, y, z);
-
+		
+		if(Type.version.equalsIgnoreCase("1.14")) {
+			if(materialStr.startsWith("WALL_SIGN")) {
+				materialStr = materialStr.replace("WALL_SIGN", "OAK_WALL_SIGN");
+				yamlConfiguration.set(key + ".material", materialStr);
+			}
+		}
+		
 		if(str.isEmpty()) {
 			if(!materialStr.isEmpty()) {
 				String blockDataString = "minecraft:" + materialStr.toLowerCase();
