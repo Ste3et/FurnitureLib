@@ -3,6 +3,7 @@ package de.Ste3et_C0st.FurnitureLib.Utilitis;
 import java.lang.reflect.Field;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.bukkit.GameMode;
 import org.bukkit.Material;
@@ -22,7 +23,7 @@ public class ColorUtil {
 	private FurnitureManager manager = lib.getFurnitureManager();
 	
 	public void color(Player p, boolean canBuild, String identifier, ObjectID obj, ColorType type, int row){
-		if(identifier.contains("_BANNER")){type=ColorType.BANNER;}
+		if(identifier.contains("BANNER")){type=ColorType.BANNER;}
 		switch (type) {
 		case BLOCK:
 			colorBlock(p, canBuild, identifier, obj, row);
@@ -36,37 +37,38 @@ public class ColorUtil {
 	private void colorBlock(Player p, boolean canBuild, String identifier, ObjectID obj, int row){
 		if(!canBuild){return;}
 		ItemStack is = p.getInventory().getItemInMainHand();
-		Integer Amount = is.getAmount();
+		AtomicInteger Amount = new AtomicInteger(is.getAmount());
 		List<fEntity> asp = manager.getfArmorStandByObjectID(obj);
 		int j = row;
 
 		if(FurnitureLib.isNewVersion()) {
 			DyeColor start = DyeColor.getDyeColor(is.getType());
 			for(fEntity packet : asp){
-				if(Objects.nonNull(packet.getInventory().getHelmet())&&packet.getInventory().getHelmet().getType().name().contains(identifier)&&Amount>0){
+				if(Objects.nonNull(packet.getInventory().getHelmet())&&packet.getInventory().getHelmet().getType().name().contains(identifier)&&Amount.get()>0){
 					DyeColor now = DyeColor.getDyeToReplace(packet.getInventory().getHelmet().getType());
 					if(!now.equals(start)){
 						packet.getInventory().setHelmet(start.applyToItemStack(packet.getInventory().getHelmet()));
-						if(!p.getGameMode().equals(GameMode.CREATIVE) || !lib.useGamemode()){j--;if(j==0){Amount--;j=row;}}
+						if(!p.getGameMode().equals(GameMode.CREATIVE) || !lib.useGamemode()){j--;if(j==0){Amount.getAndDecrement();j=row;}}
 					}
 				}
 			}
 		}else {
-			short color = getFromDey(is.getDurability());
-			for(fEntity packet : asp){
-				if(Objects.nonNull(packet.getInventory().getHelmet())&&packet.getInventory().getHelmet().getType().name().contains(identifier)&&Amount>0){
-					short color2 = packet.getInventory().getHelmet().getDurability();
+			short color = identifier.contains("BANNER") ? is.getDurability() : getFromDey(is.getDurability());
+			
+			asp.stream().filter(entity -> Objects.nonNull(entity.getHelmet())).filter(entity -> entity.getHelmet().getType().name().contains(identifier)).forEach(entity -> {
+				short color2 = entity.getInventory().getHelmet().getDurability();
+				if(Amount.get() > 0) {
 					if(color2 != color){
-						ItemStack stack = packet.getInventory().getHelmet().clone();
+						ItemStack stack = entity.getInventory().getHelmet().clone();
 						stack.setDurability(color);
-						packet.getInventory().setHelmet(stack);
-						if(!p.getGameMode().equals(GameMode.CREATIVE) || !lib.useGamemode()){j--;if(j==0){Amount--;j=row;}}
+						entity.getInventory().setHelmet(stack);
+						if(!p.getGameMode().equals(GameMode.CREATIVE) || !lib.useGamemode()){Amount.getAndDecrement();}
 					}
 				}
-			}
+			});
 
 		}
-		removeIS(obj, p, Amount);
+		removeIS(obj, p, Amount.get());
 	}
 	
 	public short getFromDey(short s){return (short) (15-s);}

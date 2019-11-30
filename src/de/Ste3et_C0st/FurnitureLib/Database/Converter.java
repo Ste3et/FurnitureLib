@@ -27,25 +27,39 @@ public class Converter {
 		this.database = database;
 	}
 	
-	public void startConvert(CommandSender sender) {
-		String sql = "SELECT COUNT(*) FROM `FurnitureLib_Objects`";
-		sender.sendMessage("test");
-		try (Connection con = database.getConnection();ResultSet rs = con.createStatement().executeQuery(sql)) {
-			if(rs.next()) {
-				do {
-					if(Objects.nonNull(rs)){
-						this.dataFiles = rs.getInt(1);
-						if(dataFiles != 0) {
-							stepComplete = (int) Math.ceil(((double) dataFiles) / ((double) stepSize));
-							sender.sendMessage("Convert of " + dataFiles + " from "  + database.getType().name());
-							sender.sendMessage("It takes a while " + stepComplete + " Steps");
-							convert(sender);
-						}
-					}
-				}while(rs.next());
-			}
+	private boolean checkIfTableExist() {
+		boolean b = false;
+		try(Connection con = database.getConnection(); ResultSet rs = database.getConnection().getMetaData().getTables(null, null, "FurnitureLib_Objects", null)){
+			b = rs.next();
 		}catch (Exception e) {
 			e.printStackTrace();
+		}
+		return b;
+	}
+	
+	public void startConvert(CommandSender sender) {
+		String sql = "SELECT COUNT(*) FROM `FurnitureLib_Objects`";
+		if(this.checkIfTableExist()) {
+			System.out.println("FurnitureLib: Found table to convert (FurnitureLib_Objects)");
+			try (Connection con = database.getConnection();ResultSet rs = con.createStatement().executeQuery(sql)) {
+				if(rs.next()) {
+					do {
+						if(Objects.nonNull(rs)){
+							this.dataFiles = rs.getInt(1);
+							if(dataFiles != 0) {
+								stepComplete = (int) Math.ceil(((double) dataFiles) / ((double) stepSize));
+								sender.sendMessage("Convert of " + dataFiles + " from "  + database.getType().name());
+								sender.sendMessage("It takes a while " + stepComplete + " Steps");
+								convert(sender);
+							}
+						}
+					}while(rs.next());
+				}
+			}catch (Exception e) {
+				e.printStackTrace();
+			}
+		}else {
+			System.out.println("FurnitureLib: Found no table to convert");
 		}
 	}
 	

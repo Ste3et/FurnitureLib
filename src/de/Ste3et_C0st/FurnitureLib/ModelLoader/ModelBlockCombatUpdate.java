@@ -76,6 +76,20 @@ public class ModelBlockCombatUpdate extends ModelBlock{
 				LocationUtil util = FurnitureLib.getInstance().getLocationUtil();
 				state.setRawData(util.getFacebyte(util.yawToFace(newYaw - 90)));
 				state.update(true, false);
+			}else if(block.getType().name().contains("BED_BLOCK")) {
+				LocationUtil util = FurnitureLib.getInstance().getLocationUtil();
+				int offset = blockbyte;
+				
+				 switch (face) {
+					case NORTH:break;
+					case EAST:offset += 1;break;
+					case SOUTH:offset += 2;break;
+					case WEST:offset += 3;break;
+						default: break;
+				}
+				 
+				state.setRawData((byte) offset);
+				state.update(true, false);
 			}else {
 				Directional directional = (Directional) state.getData();
 				directional.setFacingDirection(newFace);
