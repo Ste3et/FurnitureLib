@@ -57,12 +57,10 @@ public class giveCommand extends iCommand{
 			}else if(Bukkit.getPlayer(args[2]) != null){
 				if(!hasCommandPermission(sender, ".other")){return;}
 				Player p2 = Bukkit.getPlayer(args[2]);
-				Player p = null;
 				if(p2!=null&&p2.isOnline()){
 					p2.getInventory().addItem(pro.getCraftingFile().getItemstack());
 					p2.updateInventory();
-					if(sender instanceof Player){p = (Player) sender;}
-					if(p!=null&&p.getUniqueId().equals(p2.getUniqueId())){return;}
+					if(sender.equals(p2)){return;}
 					String str = FurnitureLib.getInstance().getLangManager().getString("message.GivePlayer");
 					str = str.replace("#PLAYER#", p2.getName());
 					str = str.replace("#PROJECT#", pro.getName());
@@ -85,7 +83,6 @@ public class giveCommand extends iCommand{
 			if(Bukkit.getPlayer(args[2]) != null){
 				if(!hasCommandPermission(sender, ".other")){return;}
 				Player p2 = Bukkit.getPlayer(args[2]);
-				Player p = null;
 				if(p2.isOnline()){
 					if(FurnitureLib.getInstance().isInt(args[3])){
 						int i = Integer.parseInt(args[3]);
@@ -94,8 +91,7 @@ public class giveCommand extends iCommand{
 						is.setAmount(i);
 						p2.getInventory().addItem(is);
 						p2.updateInventory();
-						if(sender instanceof Player){p = (Player) sender;}
-						if(p!=null&&p.getUniqueId().equals(p2.getUniqueId())){return;}
+						if(sender.equals(p2)){return;}
 						String str = FurnitureLib.getInstance().getLangManager().getString("message.GivePlayer");
 						str = str.replace("#PLAYER#", p2.getName());
 						str = str.replace("#PROJECT#", pro.getName());
