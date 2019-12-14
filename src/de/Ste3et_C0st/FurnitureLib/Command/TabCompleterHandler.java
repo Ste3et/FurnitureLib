@@ -3,6 +3,9 @@ package de.Ste3et_C0st.FurnitureLib.Command;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
+
+import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 import org.bukkit.command.TabCompleter;
@@ -47,6 +50,24 @@ public class TabCompleterHandler implements TabCompleter {
 									return strAL;
 								}else if(str.equalsIgnoreCase("players")) {
 									return null;
+								}else if(removeCommand.class.isInstance(iCommandParam)) {
+									List<String> strAL = Arrays.asList(str.split("/"));
+									String[] split = args[1].toLowerCase().split(":");
+									boolean key = strAL.stream().filter(a -> a.equalsIgnoreCase(split[0] + ":")).findFirst().isPresent();
+									if(key) {
+										String input = split.length > 1 ? split[1].toLowerCase() : "";
+										List<String> tab = new ArrayList<String>();
+										if(split[0].equalsIgnoreCase("-pro")) {
+											FurnitureManager.getInstance().getProjects().stream()
+											.filter(p -> p.getName().toLowerCase().contains(input))
+											.forEach(p -> tab.add("-pro:" + p.getName()));
+										}else if(split[0].equalsIgnoreCase("-world")) {
+											Bukkit.getWorlds().stream().filter(w -> w.getName().toLowerCase().contains(input))
+											.forEach(w -> tab.add("-world:" + w.getName()));
+										}
+										return tab;
+									}
+									return strAL.stream().filter(a -> a.toLowerCase().contains(args[1].toLowerCase())).collect(Collectors.toList());
 								}else{
 									List<String> strAL = new ArrayList<String>();
 									if(str.contains("/")) {

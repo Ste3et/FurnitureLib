@@ -38,7 +38,7 @@ public class EntityID {
 	}
 	
 	public static int nextEntityId() {
-		if(Type.version.equalsIgnoreCase("1.14")) {
+		if(Type.version.equalsIgnoreCase("1.14") || Type.version.equalsIgnoreCase("1.15")) {
 			return nextEntityIdNew();
 		}else {
 			return nextEntityIdOld();

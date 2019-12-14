@@ -147,7 +147,8 @@ public class Type {
 	public enum ProtocolFields{
 		Spigot19(10,11,12,13,14,15,16,9,7),
 		Spigot110(11,12,13,14,15,16,17,10,7),
-		Spigot114(13,14,15,16,17,18,19,11,8);
+		Spigot114(13,14,15,16,17,18,19,11,8),
+		Spigot115(14,15,16,17,18,19,20,12,9);
 
 		int bitMask, HeadRotation, BodyRotation, LeftArmRotation, RightArmRotation, LeftLegRotation, RightLegRotation, wrapperBit, healthField;
 		
@@ -177,6 +178,7 @@ public class Type {
 			if(s.startsWith("1.9")){return Spigot19;}
 			if(s.startsWith("1.10")){return Spigot110;}
 			if(s.startsWith("1.14")){return Spigot114;}
+			if(s.startsWith("1.15")){return Spigot115;}
 			return Spigot110;
 		}
 		

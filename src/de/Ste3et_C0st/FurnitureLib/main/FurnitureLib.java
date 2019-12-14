@@ -354,11 +354,11 @@ public class FurnitureLib extends JavaPlugin {
 	private boolean isRightProtocollib(String s) {
 		return s.startsWith("4");
 	}
-
+	
 	@Override
 	public void onEnable() {
-		if (!(getBukkitVersion().startsWith("v1_14") || getBukkitVersion().startsWith("v1_13") || getBukkitVersion().startsWith("v1_12"))) {
-			send("§cYour Server version is not Supportet please use > §c1.13.x");
+		if (getVersionInt() < 9 || getVersionInt() > 15) {
+			send("§cFurnitureLib only accept Spigot 1.9 - 1.15");
 			getPluginManager().disablePlugin(this);
 			return;
 		}
@@ -390,6 +390,7 @@ public class FurnitureLib extends JavaPlugin {
 			send("FurnitureLibary Version: §e" + this.getDescription().getVersion());
 			send("Furniture Autor: §6" + this.getDescription().getAuthors().get(0));
 			send("Furniture Website: §e" + this.getDescription().getWebsite());
+			send("FurnitureLib load for Minecraft: 1." + getVersionInt());
 			String s = getPluginManager().getPlugin("ProtocolLib").getDescription().getVersion();
 			if (getBukkitVersion().startsWith("v1_14")) {
 				send("§5Info: §eFor Spigot 1.14.x you need §6ProtocolLib 4.5.0 Build #8 §eor above");
@@ -618,6 +619,16 @@ public class FurnitureLib extends JavaPlugin {
 		if (!b && shutdown)
 			getServer().getPluginManager().disablePlugin(this);
 		return b;
+	}
+	
+	private int getVersionInt() {
+		String bukkitVersion = getBukkitVersion();
+		int version = 0;
+		if(bukkitVersion.contains("_")) {
+			String versionString = bukkitVersion.split("_")[1];
+			version = Integer.parseInt(versionString);
+		}
+		return version;
 	}
 
 	@Override

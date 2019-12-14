@@ -7,7 +7,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.bukkit.GameMode;
 import org.bukkit.Material;
-import org.bukkit.Tag;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
@@ -84,19 +83,19 @@ public class ColorUtil {
 	}
 	
 	@SuppressWarnings("unchecked")
-	public static Tag<Material> getMaterialTag(String name) throws NullPointerException{
+	public static org.bukkit.Tag<Material> getMaterialTag(String name) throws NullPointerException{
 		if(name == null) return null;
-		Class<?> tag = Tag.class;
+		Class<?> tag = org.bukkit.Tag.class;
 		try {
-			return (Tag<Material>) tag.getDeclaredField(name).get(null);
+			return (org.bukkit.Tag<Material>) tag.getDeclaredField(name).get(null);
 		}catch (Exception e) {
 			return null;
 		}
 	}
 	
-	public static String getTagName(Tag<Material> material) throws NullPointerException {
+	public static String getTagName(org.bukkit.Tag<Material> material) throws NullPointerException {
 		if(material == null) return null;
-		Class<?> tag = Tag.class;
+		Class<?> tag = org.bukkit.Tag.class;
 		try {
 			for(Field f : tag.getFields()) {
 				if(f.get(null).equals(material)) {
@@ -109,14 +108,14 @@ public class ColorUtil {
 		return null;
 	}
 	
-	public static Tag<Material> contains(Material mat){
+	public static org.bukkit.Tag<Material> contains(Material mat){
 		if(mat == null) return null;
-		Class<?> tag = Tag.class;
+		Class<?> tag = org.bukkit.Tag.class;
 		try {
 			for(Field f : tag.getFields()) {
 				if(f.getType().equals(tag)) {
 					@SuppressWarnings("unchecked")
-					Tag<Material> matTag = (Tag<Material>) f.get(null);
+					org.bukkit.Tag<Material> matTag = (org.bukkit.Tag<Material>) f.get(null);
 					if(matTag == null) continue;
 					if(matTag.isTagged(mat)) {
 						return matTag;

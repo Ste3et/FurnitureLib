@@ -22,7 +22,9 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.Registry;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
+import com.google.common.base.Equivalence.Wrapper;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
+import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 
 import de.Ste3et_C0st.FurnitureLib.NBT.CraftItemStack;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
@@ -261,11 +263,23 @@ public abstract class fEntity extends fSerializer{
 	}
 	
 	public void send(Player player) {
-		getHandle().getDataWatcherModifier().write(0, getWatcher());
+		//getHandle().getDataWatcherModifier().write(0, getWatcher());
 		try {
 			getManager().sendServerPacket(player, getHandle());
 			sendInventoryPacket(player);
 			if (Objects.nonNull(getPassanger())) setPassanger(getPassanger());
+			sendMetadata(player);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+	
+	private void sendMetadata(Player player) {
+		PacketContainer update = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
+		update.getIntegers().write(0, getEntityID());
+		update.getWatchableCollectionModifier().write(0, getWatcher().getWatchableObjects());
+		try {
+			getManager().sendServerPacket(player, update);
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -331,7 +345,6 @@ public abstract class fEntity extends fSerializer{
 	public fEntity setFire(boolean b) {
 		setBitMask(b, 0, 0);
 		if(!b){
-			
 			FurnitureLib.getInstance().getLightManager().removeLight(getLocation());
 		}else{
 			FurnitureLib.getInstance().getLightManager().addLight(getLocation(), 15);
