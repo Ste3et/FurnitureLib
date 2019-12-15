@@ -621,7 +621,7 @@ public class FurnitureLib extends JavaPlugin {
 		return b;
 	}
 	
-	private int getVersionInt() {
+	public int getVersionInt() {
 		String bukkitVersion = getBukkitVersion();
 		int version = 0;
 		if(bukkitVersion.contains("_")) {

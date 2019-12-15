@@ -80,12 +80,7 @@ public class downloadCommand extends iCommand{
 					
 					PrintStream stream = new PrintStream(connection.getOutputStream());
 					stream.println("id=" + name);
-					String version = FurnitureLib.getInstance().getBukkitVersion();
-					if(version.startsWith("v1_13")) {
-						stream.println("&spigot=1.13");
-					}else if(version.startsWith("v1_14")) {
-						stream.println("&spigot=1.14");
-					}
+					stream.println("&spigot=1." + FurnitureLib.getInstance().getVersionInt());
 					
 					BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 					
