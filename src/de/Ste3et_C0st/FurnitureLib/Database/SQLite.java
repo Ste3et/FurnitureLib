@@ -14,7 +14,7 @@ public class SQLite extends Database{
     private DataBaseType type = DataBaseType.SQLite;
     
     public SQLite(FurnitureLib instance, HikariConfig config){
-        super(instance, config);
+    	super(instance, config);
         createTable();
     }
     

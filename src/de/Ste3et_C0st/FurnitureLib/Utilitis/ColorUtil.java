@@ -81,50 +81,50 @@ public class ColorUtil {
 		p.getInventory().setItem(i, item);
 		p.updateInventory();
 	}
-	
-	@SuppressWarnings("unchecked")
-	public static org.bukkit.Tag<Material> getMaterialTag(String name) throws NullPointerException{
-		if(name == null) return null;
-		Class<?> tag = org.bukkit.Tag.class;
-		try {
-			return (org.bukkit.Tag<Material>) tag.getDeclaredField(name).get(null);
-		}catch (Exception e) {
-			return null;
-		}
-	}
-	
-	public static String getTagName(org.bukkit.Tag<Material> material) throws NullPointerException {
-		if(material == null) return null;
-		Class<?> tag = org.bukkit.Tag.class;
-		try {
-			for(Field f : tag.getFields()) {
-				if(f.get(null).equals(material)) {
-					return f.getName();
-				}
-			}
-		}catch (Exception e) {
-			return null;
-		}
-		return null;
-	}
-	
-	public static org.bukkit.Tag<Material> contains(Material mat){
-		if(mat == null) return null;
-		Class<?> tag = org.bukkit.Tag.class;
-		try {
-			for(Field f : tag.getFields()) {
-				if(f.getType().equals(tag)) {
-					@SuppressWarnings("unchecked")
-					org.bukkit.Tag<Material> matTag = (org.bukkit.Tag<Material>) f.get(null);
-					if(matTag == null) continue;
-					if(matTag.isTagged(mat)) {
-						return matTag;
-					}
-				}
-			}
-		}catch (Exception e) {
-			return null;
-		}
-		return null;
-	}
+//	
+//	@SuppressWarnings("unchecked")
+//	public static org.bukkit.Tag<Material> getMaterialTag(String name) throws NullPointerException{
+//		if(name == null) return null;
+//		Class<?> tag = org.bukkit.Tag.class;
+//		try {
+//			return (org.bukkit.Tag<Material>) tag.getDeclaredField(name).get(null);
+//		}catch (Exception e) {
+//			return null;
+//		}
+//	}
+//	
+//	public static String getTagName(org.bukkit.Tag<Material> material) throws NullPointerException {
+//		if(material == null) return null;
+//		Class<?> tag = org.bukkit.Tag.class;
+//		try {
+//			for(Field f : tag.getFields()) {
+//				if(f.get(null).equals(material)) {
+//					return f.getName();
+//				}
+//			}
+//		}catch (Exception e) {
+//			return null;
+//		}
+//		return null;
+//	}
+//	
+//	public static org.bukkit.Tag<Material> contains(Material mat){
+//		if(mat == null) return null;
+//		Class<?> tag = org.bukkit.Tag.class;
+//		try {
+//			for(Field f : tag.getFields()) {
+//				if(f.getType().equals(tag)) {
+//					@SuppressWarnings("unchecked")
+//					org.bukkit.Tag<Material> matTag = (org.bukkit.Tag<Material>) f.get(null);
+//					if(matTag == null) continue;
+//					if(matTag.isTagged(mat)) {
+//						return matTag;
+//					}
+//				}
+//			}
+//		}catch (Exception e) {
+//			return null;
+//		}
+//		return null;
+//	}
 }

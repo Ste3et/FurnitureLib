@@ -36,6 +36,12 @@ public class SQLManager {
 			String database = plugin.getConfig().getString("config.Database.database");
 			HikariConfig config = new HikariConfig();
 			config.setJdbcUrl("jdbc:sqlite:plugins/FurnitureLib/"+database+".db");
+			config.setDriverClassName("org.sqlite.JDBC");
+			config.setPoolName("FurnitureLib");
+			config.setConnectionTestQuery("SELECT 1");
+			config.setMaxLifetime(60000);
+			config.setIdleTimeout(45000);
+			config.setMaximumPoolSize(50);
 			this.database = new SQLite(plugin, config);
 		}else if(plugin.getConfig().getString("config.Database.type").equalsIgnoreCase("Mysql")){
 			isExist();
@@ -50,8 +56,9 @@ public class SQLManager {
 			config.setUsername(user);
 			config.setPassword(password);
 			config.setPoolName("FurnitureLib");
-			config.setMaxLifetime(1800000);
-			config.setInitializationFailTimeout(-1);
+			config.setMaxLifetime(60000);
+			config.setIdleTimeout(45000);
+			config.setMaximumPoolSize(50);
 			this.database = new MySQL(plugin, config);
 		}else{
 			plugin.getLogger().warning("Database Type not supported: Plugin shutdown");
