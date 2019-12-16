@@ -132,26 +132,24 @@ public class command implements CommandExecutor, Listener{
 	public boolean onCommand(CommandSender sender, Command cmd, String arg2, String[] args) {
 			if(cmd.getName().equalsIgnoreCase("furniture")){
 				if(!sender.hasPermission("furniture.command.help")) return true;
-				if(sender instanceof Player) {
-					if(args.length > 0) {
-						iCommand comm = commands.stream()
-								.filter(command -> command.getSubCommand().equalsIgnoreCase(args[0]) || command.getAliasList().contains(args[0].toLowerCase()))
-								.findFirst().orElse(null);
-						if(comm != null) {
-							if(comm.getSubCommand().equalsIgnoreCase("create")) {
-								if(lib.getFurnitureManager().getIgnoreList().contains(((Player) sender).getUniqueId())){
-									sender.sendMessage(lib.getLangManager().getString("message.FurnitureToggleEvent"));
-									return true;
-								}
+				if(args.length > 0) {
+					iCommand comm = commands.stream()
+							.filter(command -> command.getSubCommand().equalsIgnoreCase(args[0]) || command.getAliasList().contains(args[0].toLowerCase()))
+							.findFirst().orElse(null);
+					if(comm != null) {
+						if(comm.getSubCommand().equalsIgnoreCase("create")) {
+							if(lib.getFurnitureManager().getIgnoreList().contains(((Player) sender).getUniqueId())){
+								sender.sendMessage(lib.getLangManager().getString("message.FurnitureToggleEvent"));
+								return true;
 							}
-							comm.execute(sender, args);
-							return true;
 						}
-					}else {
-						sendHelp((Player) sender);
+						comm.execute(sender, args);
+						return true;
 					}
-				}
-				return true;
+				}else {
+					sendHelp((Player) sender);
+			}
+			return true;
 			}
 		return false;
 	}
