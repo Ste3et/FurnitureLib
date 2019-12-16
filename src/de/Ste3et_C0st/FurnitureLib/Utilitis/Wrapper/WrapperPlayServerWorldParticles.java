@@ -20,6 +20,7 @@ package de.Ste3et_C0st.FurnitureLib.Utilitis.Wrapper;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
+import com.comphenix.protocol.wrappers.WrappedParticle;
 import com.comphenix.protocol.wrappers.EnumWrappers.Particle;
 
 public class WrapperPlayServerWorldParticles extends AbstractPacket {
@@ -49,8 +50,8 @@ public class WrapperPlayServerWorldParticles extends AbstractPacket {
 	 * 
 	 * @param value - new value.
 	 */
-	public void setParticleType(Particle value) {
-		handle.getParticles().write(0, value);
+	public void setParticleType(WrappedParticle value) {
+		handle.getNewParticles().write(0, value);
 	}
 
 	/**
@@ -234,27 +235,5 @@ public class WrapperPlayServerWorldParticles extends AbstractPacket {
 	 */
 	public void setLongDistance(boolean value) {
 		handle.getBooleans().write(0, value);
-	}
-
-	/**
-	 * Retrieve Data.
-	 * <p>
-	 * Notes: length depends on particle. IRON_CRACK has a length of 2,
-	 * BLOCK_CRACK and BLOCK_DUST have lengths of 1, the rest have 0.
-	 * 
-	 * @return The current Data
-	 * @see Particle#getDataLength()
-	 */
-	public int[] getData() {
-		return handle.getIntegerArrays().read(0);
-	}
-
-	/**
-	 * Set Data.
-	 * 
-	 * @param value - new value.
-	 */
-	public void setData(int[] value) {
-		handle.getIntegerArrays().write(0, value);
 	}
 }

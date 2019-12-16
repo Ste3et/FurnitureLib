@@ -168,8 +168,4 @@ public class SQLManager {
 	public void loadAsynchron(ChunkData data, CallbackObjectIDs callBack) {
 		database.loadAsynchron(data, callBack);
 	}
-	
-	public int getTPS() {
-		return database.getTPS();
-	}
 }

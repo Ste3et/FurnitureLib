@@ -78,7 +78,11 @@ public class LocationUtil {
 					for(double z = .0; z<1d; z+=.3){
 						Location location = loc.clone();
 						location = location.add(x, y, z);
-						world.spawnParticle(particleData, location, 1, new Particle.DustOptions(Color.RED, 1));
+						if(FurnitureLib.getVersionInt() > 12) {
+							world.spawnParticle(particleData, location, 1, new Particle.DustOptions(Color.RED, 1));
+						}else {
+							world.spawnParticle(particleData, location, 1);
+						}
 					}
 				}
 			}

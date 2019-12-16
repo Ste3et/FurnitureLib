@@ -72,7 +72,7 @@ public class Converter {
 	private void convert(CommandSender sender) {
 		Bukkit.getScheduler().runTaskAsynchronously(FurnitureLib.getInstance(), () -> {
 			try (Connection con = database.getConnection();ResultSet rs = con.createStatement().executeQuery("SELECT * FROM FurnitureLib_Objects LIMIT " + stepSize + " OFFSET " + offset)) {
-				sender.sendMessage("§7Convert Models Step §e" + step + "/" + stepComplete + " start ! §7[§e"+ database.getTPS() +"§7]");
+				sender.sendMessage("§7Convert Models Step §e" + step + "/" + stepComplete + " start !");
 				if(rs.next()) {
 					do {
 						this.offset++;
@@ -121,7 +121,7 @@ public class Converter {
 						}
 					}while(rs.next());
 				}
-				sender.sendMessage("§7Convert Models Step §e" + step + "/" + stepComplete + " Finish ! §7[§e"+this.database.getTPS()+"§7]");
+				sender.sendMessage("§7Convert Models Step §e" + step + "/" + stepComplete + " Finish !");
 				this.step++;
 				rs.close();
 				if(offset != dataFiles) {

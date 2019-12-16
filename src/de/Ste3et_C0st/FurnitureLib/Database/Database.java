@@ -1,5 +1,6 @@
 package de.Ste3et_C0st.FurnitureLib.Database;
 
+import java.lang.reflect.Field;
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -73,15 +74,6 @@ public abstract class Database {
     	return false;
     }
     
-    public int getTPS() {
-    	try {
-			return Class.forName("net.minecraft.server." + plugin.getBukkitVersion() + ".MinecraftServer").getField("TPS").getInt(null);
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return 0;
-    }
-    
 	public void loadAsynchron(ChunkData chunkdata, CallbackObjectIDs callBack) {
 		Bukkit.getScheduler().runTaskAsynchronously(FurnitureLib.getInstance(), () -> {
 			String query = "SELECT ObjID,Data,world FROM furnitureLibData WHERE x=" + chunkdata.getX() + " AND z=" + chunkdata.getZ() + " AND world='"+chunkdata.getWorld()+"'";
@@ -97,7 +89,7 @@ public abstract class Database {
 	    					}
 	    				}
 					}while(rs.next());
-					FurnitureLib.debug("FurnitureLib load " + idList.size() + " Models for chunk " + " x:" + chunkdata.getX() + " z:" + chunkdata.getZ() + " TPS: " + getTPS());
+					FurnitureLib.debug("FurnitureLib load " + idList.size() + " Models for chunk " + " x:" + chunkdata.getX() + " z:" + chunkdata.getZ());
 				}
 	    		callBack.onResult(idList);
 			}catch (Exception e) {

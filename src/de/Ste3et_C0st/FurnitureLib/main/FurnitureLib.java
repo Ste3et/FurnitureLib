@@ -31,6 +31,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import de.Ste3et_C0st.FurnitureLib.Command.TabCompleterHandler;
 import de.Ste3et_C0st.FurnitureLib.Command.command;
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
+import de.Ste3et_C0st.FurnitureLib.Database.Database;
 import de.Ste3et_C0st.FurnitureLib.Database.DeSerializer;
 import de.Ste3et_C0st.FurnitureLib.Database.Serializer;
 import de.Ste3et_C0st.FurnitureLib.Database.SQLManager;
