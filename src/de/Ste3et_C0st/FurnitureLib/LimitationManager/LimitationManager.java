@@ -94,7 +94,7 @@ public class LimitationManager {
 				return false;
 			}
 		}else if(this.type.equals(LimitationType.WORLD)) {
-			int maxWorld = pro.getAmountWorld(obj.getWorld());
+			int maxWorld = limitOBJ.total ? limitOBJ.totalAmount : pro.getAmountWorld(obj.getWorld());
 			int world = returnProjectWorld(obj.getWorld(), pro);
 			FurnitureLib.debug("LimitationManager -> {World} " + world + "/" + maxWorld);
 			if(world < maxWorld || maxWorld == -1) {
@@ -107,7 +107,7 @@ public class LimitationManager {
 				return false;
 			}
 		}else if(this.type.equals(LimitationType.CHUNK)) {
-			int maxChunk = pro.getAmountChunk();
+			int maxChunk = limitOBJ.total ? limitOBJ.totalAmount : pro.getAmountChunk();
 			int chunk = returnIntProjectChunk(obj.getChunk(), pro);
 			FurnitureLib.debug("LimitationManager -> {Chunk} " + chunk + "/" + maxChunk);
 			if(chunk < maxChunk || maxChunk == -1) {
