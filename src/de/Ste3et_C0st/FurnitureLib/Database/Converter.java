@@ -60,6 +60,12 @@ public class Converter {
 			}
 		}else {
 			System.out.println("FurnitureLib: Found no table to convert");
+			
+			FurnitureLib.getInstance().getConfig().set("config.autoFileUpdater", false);
+			FurnitureLib.getInstance().saveConfig();
+			FurnitureLib.getInstance().autoFileUpdater = false;
+			
+			FurnitureLib.getInstance().getSQLManager().loadALL();
 		}
 	}
 	

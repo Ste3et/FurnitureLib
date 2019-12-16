@@ -75,7 +75,8 @@ public class FurnitureLib extends JavaPlugin {
 	private HashMap<String, List<String>> permissionKit = new HashMap<String, List<String>>();
 	private boolean useGamemode = true, canSit = true, update = true, useParticle = true, useRegionMemberAccess = false,
 			autoPurge = false, removePurge = false, creativeInteract = true, creativePlace = true, glowing = true,
-			spamBreak = true, spamPlace = true, rotateOnSit = true, autoFileUpdater = true, useSSL = false;
+			spamBreak = true, spamPlace = true, rotateOnSit = true, useSSL = false;
+	public boolean autoFileUpdater = true;
 	private CraftingInv craftingInv;
 	private LanguageManager lmanager;
 	private SQLManager sqlManager;
@@ -96,6 +97,7 @@ public class FurnitureLib extends JavaPlugin {
 	private Material defMaterial = Material.valueOf(isNewVersion() ? "COW_SPAWN_EGG" : "MONSTER_EGG");
 	private boolean sync = true;
 	private static List<FurniturePlugin> furniturePlugins = new ArrayList<FurniturePlugin>();
+	private static int versionInt = 0;
 	public HashMap<Project, Long> deleteMap = new HashMap<Project, Long>();
 	public HashMap<UUID, Long> timeStampPlace = new HashMap<UUID, Long>();
 	public HashMap<UUID, Long> timeStampBreak = new HashMap<UUID, Long>();
@@ -124,7 +126,7 @@ public class FurnitureLib extends JavaPlugin {
 		return this.craftingInv;
 	}
 
-	public String getBukkitVersion() {
+	public static String getBukkitVersion() {
 		return Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3];
 	}
 
@@ -621,14 +623,17 @@ public class FurnitureLib extends JavaPlugin {
 		return b;
 	}
 	
-	public int getVersionInt() {
-		String bukkitVersion = getBukkitVersion();
-		int version = 0;
-		if(bukkitVersion.contains("_")) {
-			String versionString = bukkitVersion.split("_")[1];
-			version = Integer.parseInt(versionString);
+	public static int getVersionInt() {
+		if(versionInt == 0) {
+			String bukkitVersion = getBukkitVersion();
+			int version = 0;
+			if(bukkitVersion.contains("_")) {
+				String versionString = bukkitVersion.split("_")[1];
+				version = Integer.parseInt(versionString);
+			}
+			versionInt = version;
 		}
-		return version;
+		return versionInt;
 	}
 
 	@Override

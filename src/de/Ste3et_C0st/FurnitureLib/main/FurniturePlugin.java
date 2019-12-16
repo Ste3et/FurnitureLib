@@ -43,7 +43,7 @@ public abstract class FurniturePlugin {
 	
 	public YamlConfiguration saveRessource(String sourceName, String fileName) {
 		File folder = new File("plugins/FurnitureLib/plugin");
-		File file = new File(folder,  fileName + ".yml");
+		File file = new File(folder,  fileName.endsWith(".yml") ? fileName : fileName + ".yml");
 		if(!folder.exists()) folder.mkdirs();
 		try {
 			YamlConfiguration conf = file.exists() ? YamlConfiguration.loadConfiguration(file) : new YamlConfiguration();
