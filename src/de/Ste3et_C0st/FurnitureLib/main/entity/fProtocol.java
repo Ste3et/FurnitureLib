@@ -1,7 +1,6 @@
 package de.Ste3et_C0st.FurnitureLib.main.entity;
 
 import org.bukkit.Bukkit;
-import org.bukkit.World;
 import org.bukkit.entity.EntityType;
 
 import com.comphenix.protocol.PacketType;
@@ -19,7 +18,7 @@ public class fProtocol{
 
 	private ProtocolManager manager;
 	private WrappedDataWatcher watcher;
-	private PacketContainer container, metadata;
+	private PacketContainer container;
 	private EntityType type;
 	private ObjectID id;
 	private ProtocolFields fields = ProtocolFields.Spigot19;
@@ -32,7 +31,6 @@ public class fProtocol{
 	public void setObjectID(ObjectID id){this.id = id;}
 	public ProtocolFields getField(){return this.fields;}
 	public Project getProject(){return getObjID().getProjectOBJ();}
-	protected PacketContainer getMetadata() {return this.metadata;}
 	
 	public fProtocol(EntityType type, ObjectID id){
 		this.manager = ProtocolLibrary.getProtocolManager();
@@ -40,7 +38,6 @@ public class fProtocol{
 		this.type = type;
 		this.container = new PacketContainer(PacketType.Play.Server.SPAWN_ENTITY_LIVING);
 		this.container.getModifier().writeDefaults();
-		this.metadata = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
 		this.watcher = FurnitureLib.getInstance().getFurnitureManager().getDefaultWatcher(Bukkit.getWorlds().get(0),getEntityType());
 		this.watcher = new WrappedDataWatcher();
 		this.fields = FurnitureLib.getInstance().getField();

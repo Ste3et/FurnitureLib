@@ -20,6 +20,7 @@ permissions:
       furniture.crafting.*: true
       furniture.craft.*: true
       furniture.place.*: true
+      furniture.model.sit: true
       furniture.command.toggle: true
       furniture.command.manage: true
   furniture.admin:

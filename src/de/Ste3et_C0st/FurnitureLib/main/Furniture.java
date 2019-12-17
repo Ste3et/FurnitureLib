@@ -33,15 +33,19 @@ public abstract class Furniture extends FurnitureHelper implements Listener {
 
 	public boolean runPublicFunctions(Player p) {
 		if (!p.isSneaking()) {
-			for (fEntity stand : getfAsList()) {
-				if (stand.getName().startsWith("#Mount:") || stand.getName().startsWith("#SITZ")) {
-					FurnitureLib.debug("Furniture -> publicFunction[#Mount/#SITZ]");
-					if (stand.getPassanger().isEmpty()) {
-						FurnitureManager.getInstance().getArmorStandFromPassanger(p).stream()
-								.filter(s -> s.getPassanger().isEmpty() == false)
-								.forEach(s -> s.removePassanger(p.getEntityId()));
-						stand.setPassanger(p);
-						return true;
+			//furniture.model.sit
+			//furniture.model.<systemID>.sit
+			if(p.hasPermission("furniture.model.sit") || p.hasPermission("furniture.model." + getProject().getName().toLowerCase() + ".sit")) {
+				for (fEntity stand : getfAsList()) {
+					if (stand.getName().startsWith("#Mount:") || stand.getName().startsWith("#SITZ")) {
+						FurnitureLib.debug("Furniture -> publicFunction[#Mount/#SITZ]");
+						if (stand.getPassanger().isEmpty()) {
+							FurnitureManager.getInstance().getArmorStandFromPassanger(p).stream()
+									.filter(s -> s.getPassanger().isEmpty() == false)
+									.forEach(s -> s.removePassanger(p.getEntityId()));
+							stand.setPassanger(p);
+							return true;
+						}
 					}
 				}
 			}
