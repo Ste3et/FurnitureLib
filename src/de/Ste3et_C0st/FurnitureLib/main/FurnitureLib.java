@@ -411,10 +411,8 @@ public class FurnitureLib extends JavaPlugin {
 				this.autoFileUpdater = getConfig().getBoolean("config.autoFileUpdater");
 				autoConverter.modelConverter(getServer().getConsoleSender());
 				loadPluginConfig();
-				if (getConfig().getBoolean("config.UseMetrics"))
-					new Metrics(this);
-//				if (!this.isSync())
-//					this.pManager.loadProjectFiles();
+				if (getConfig().getBoolean("config.UseMetrics")) new Metrics(this);
+				//ModelFileLoading #1
 				this.pManager.loadProjectFiles();
 				this.sqlManager = new SQLManager(instance);
 				this.sqlManager.initialize();
@@ -483,7 +481,6 @@ public class FurnitureLib extends JavaPlugin {
 		this.mode = PublicMode.valueOf(getConfig().getString("config.PlaceMode.Mode", "PRIVATE"));
 		this.update = getConfig().getBoolean("config.CheckUpdate");
 		this.updater = new Updater();
-		// this.sync = !getConfig().getBoolean("config.asyncLoading", false);
 		this.loadIgnore();
 
 		debug("Config->useGamemode:" + useGamemode);
@@ -703,16 +700,8 @@ public class FurnitureLib extends JavaPlugin {
 	
 	public static boolean isNewVersion() {
 		if(Objects.isNull(newVersion)) {
-			try {
-				Class<?> descriptionClass = PluginDescriptionFile.class;
-				Field field = descriptionClass.getDeclaredField("apiVersion");
-				boolean bool = Objects.nonNull(field);
-				newVersion = bool;
-				return bool;
-			}catch (Exception e) {
-				newVersion = false;
-				return false;
-			}
+			newVersion = getVersionInt() > 12;
+			return newVersion;
 		}else {
 			return newVersion;
 		}

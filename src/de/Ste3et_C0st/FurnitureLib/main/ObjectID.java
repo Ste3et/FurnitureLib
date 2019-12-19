@@ -310,8 +310,7 @@ public class ObjectID {
 			this.plugin = plugin;
 			this.serial = RandomStringGenerator.generateRandomString(10, RandomStringGenerator.Mode.ALPHANUMERIC);
 			this.ObjectID = name + ":" + this.serial + ":" + plugin;
-			if (Objects.nonNull(startLocation))
-				setStartLocation(startLocation);
+			if (Objects.nonNull(startLocation)) setStartLocation(startLocation);
 			this.viewDistance = FurnitureLib.getInstance().getViewDistance();
 		} catch (Exception e) {
 			e.printStackTrace();

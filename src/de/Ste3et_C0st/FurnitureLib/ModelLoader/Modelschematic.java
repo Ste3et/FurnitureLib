@@ -56,7 +56,10 @@ public abstract class Modelschematic{
 		this(new FileInputStream(file));
 	}
 	
-	public Modelschematic() {}
+	public Modelschematic(String name) {
+		this.placeableSide = PlaceableSide.TOP;
+		this.name = name;
+	}
 	
 	public HashMap<ModelVector, fEntity> getEntityMap(){
 		return this.entityMap;
@@ -113,7 +116,6 @@ public abstract class Modelschematic{
 					fEntity entity = readNBTtag(entityData);
 					if(Objects.nonNull(vector) && Objects.nonNull(entity)) {
 						this.entityMap.put(vector, entity);
-						//setMax(vector);
 					}
 				}catch (Exception e) {
 					e.printStackTrace();

@@ -9,7 +9,6 @@ import java.util.stream.Collectors;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
-import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
@@ -17,7 +16,6 @@ import org.bukkit.util.Vector;
 import com.google.gson.JsonObject;
 
 import de.Ste3et_C0st.FurnitureLib.ModelLoader.ModelHandler;
-import de.Ste3et_C0st.FurnitureLib.ModelLoader.ModelVector;
 import de.Ste3et_C0st.FurnitureLib.ShematicLoader.ProjectLoader;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.BoundingBox;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.config;
@@ -181,7 +179,11 @@ public class Project {
 		this.functionList = this.file.loadFunction();
 		this.clazz = clazz;
 		try {
-			this.modelschematic = new ModelHandler(this.file.getFilePath());
+			if(Objects.nonNull(this.file)) {
+				this.modelschematic = new ModelHandler(this.file.getFilePath());
+			}else {
+				this.modelschematic = new ModelHandler(this.project);
+			}
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -100,7 +100,7 @@ public abstract class Database {
     
     public void loadAll(SQLAction action){
     	long time1 = System.currentTimeMillis();
-    	FurnitureLib.getInstance().getProjectManager().loadProjectFiles();
+    	//FurnitureLib.getInstance().getProjectManager().loadProjectFiles();
     	try (Connection con = getConnection();ResultSet rs = con.createStatement().executeQuery("SELECT ObjID,Data,world FROM furnitureLibData")){    		
     		HashSet<ObjectID> idList = new HashSet<ObjectID>();
     		if(rs.next() == true) {

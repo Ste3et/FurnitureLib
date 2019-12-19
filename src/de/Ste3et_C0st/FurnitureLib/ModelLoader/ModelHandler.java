@@ -33,6 +33,10 @@ public class ModelHandler extends Modelschematic{
 		super(stream);
 	}
 	
+	public ModelHandler(String name) {
+		super(name);
+	}
+	
 	public void spawn(ObjectID id) {
 		Location startLocation = id.getStartLocation().add(.5, 0, .5);
 		BlockFace direction = FurnitureLib.getInstance().getLocationUtil().yawToFace(id.getStartLocation().getYaw()).getOppositeFace();

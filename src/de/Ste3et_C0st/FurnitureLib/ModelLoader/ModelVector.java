@@ -6,9 +6,9 @@ import org.bukkit.util.Vector;
 
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
 
-public class ModelVector {
+public class ModelVector implements Cloneable{
 	
-	private final double x,y,z;
+	private double x,y,z;
 	private final float yaw,pitch;
 	
 	public ModelVector() {
@@ -29,6 +29,17 @@ public class ModelVector {
 		this.z = z;
 		this.yaw = yaw;
 		this.pitch = pitch;
+	}
+	
+	public ModelVector add(Vector vector) {
+		return this.add(vector.getX(), vector.getY(), vector.getZ());
+	}
+	
+	public ModelVector add(double x, double y, double z) {
+		this.x += x;
+		this.y += y;
+		this.z += z;
+		return this;
 	}
 	
 	public ModelVector(Location loc) {
@@ -79,4 +90,9 @@ public class ModelVector {
 	public String toString() {
 		return "ModelVector [x=" + getX() + ", y=" + getY() + ", z=" + getZ() + ", yaw=" + getYaw() + ", pitch=" + getPitch() + "]";
 	}
+	
+	@Override
+    protected ModelVector clone() throws CloneNotSupportedException {
+        return new ModelVector(getX(), getY(), getZ(), getYaw(), getPitch());
+    }
 }
