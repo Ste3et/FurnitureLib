@@ -57,7 +57,7 @@ public class ModelBlockAquaticUpdate extends ModelBlock{
 			this.blockData = Bukkit.createBlockData(str);
 		}catch (IllegalArgumentException e) {
 			System.out.println("Furniture Model File: " + yamlConfiguration.getCurrentPath() + " make Problems with:");
-			System.out.println("Parsing of: " + str);
+			System.out.println("Parsing of: " + str + " -> ("+ key +".blockData)");
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
