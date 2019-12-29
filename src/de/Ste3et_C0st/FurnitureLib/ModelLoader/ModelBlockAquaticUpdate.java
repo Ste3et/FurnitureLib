@@ -29,39 +29,41 @@ public class ModelBlockAquaticUpdate extends ModelBlock{
 	
 	public ModelBlockAquaticUpdate(YamlConfiguration yamlConfiguration, String key) {
 		super(yamlConfiguration, key);
-		double x = yamlConfiguration.getDouble(key + ".xOffset");
-		double y = yamlConfiguration.getDouble(key + ".yOffset");
-		double z = yamlConfiguration.getDouble(key + ".zOffset");
-		String str = yamlConfiguration.getString(key + ".blockData", "");
-		String materialStr = yamlConfiguration.getString(key + ".material", "");
-		ModelVector vector = new ModelVector(x, y, z);
-		
-		if(Type.version.equalsIgnoreCase("1.14") || Type.version.equalsIgnoreCase("1.15")) {
-			if(materialStr.startsWith("WALL_SIGN")) {
-				materialStr = materialStr.replace("WALL_SIGN", "OAK_WALL_SIGN");
-				yamlConfiguration.set(key + ".material", materialStr);
-			}
-		}
-		
-		if(str.isEmpty()) {
-			if(!materialStr.isEmpty()) {
-				String blockDataString = "minecraft:" + materialStr.toLowerCase();
-				if(yamlConfiguration.isSet(key + ".Rotation")){
-					blockDataString += "[facing="+yamlConfiguration.getString(key + ".Rotation")+"]";
+		if(!key.isEmpty()) {
+			double x = yamlConfiguration.getDouble(key + ".xOffset");
+			double y = yamlConfiguration.getDouble(key + ".yOffset");
+			double z = yamlConfiguration.getDouble(key + ".zOffset");
+			String str = yamlConfiguration.getString(key + ".blockData", "");
+			String materialStr = yamlConfiguration.getString(key + ".material", "");
+			ModelVector vector = new ModelVector(x, y, z);
+			
+			if(Type.version.equalsIgnoreCase("1.14") || Type.version.equalsIgnoreCase("1.15")) {
+				if(materialStr.startsWith("WALL_SIGN")) {
+					materialStr = materialStr.replace("WALL_SIGN", "OAK_WALL_SIGN");
+					yamlConfiguration.set(key + ".material", materialStr);
 				}
-				str = blockDataString;
 			}
+			
+			if(str.isEmpty()) {
+				if(!materialStr.isEmpty()) {
+					String blockDataString = "minecraft:" + materialStr.toLowerCase();
+					if(yamlConfiguration.isSet(key + ".Rotation")){
+						blockDataString += "[facing="+yamlConfiguration.getString(key + ".Rotation")+"]";
+					}
+					str = blockDataString;
+				}
+			}
+			
+			try {
+				this.blockData = Bukkit.createBlockData(str.toLowerCase());
+			}catch (IllegalArgumentException e) {
+				System.out.println("Furniture Model File: " + yamlConfiguration.getCurrentPath() + " make Problems with:");
+				System.out.println("Parsing of: " + str + " -> ("+ key +")");
+			}catch (Exception e) {
+				e.printStackTrace();
+			}
+			this.vector = vector;
 		}
-		
-		try {
-			this.blockData = Bukkit.createBlockData(str);
-		}catch (IllegalArgumentException e) {
-			System.out.println("Furniture Model File: " + yamlConfiguration.getCurrentPath() + " make Problems with:");
-			System.out.println("Parsing of: " + str + " -> ("+ key +".blockData)");
-		}catch (Exception e) {
-			e.printStackTrace();
-		}
-		this.vector = vector;
 	}
 
 	@Override

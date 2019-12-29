@@ -24,8 +24,11 @@ import com.comphenix.protocol.wrappers.EnumWrappers;
 
 import de.Ste3et_C0st.FurnitureLib.Command.command;
 import de.Ste3et_C0st.FurnitureLib.ModelLoader.ModelFileLoader;
+import de.Ste3et_C0st.FurnitureLib.NBT.NBTBase;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTCompressedStreamTools;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
+import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagInt;
+import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagString;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.MaterialConverter;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.Type.PlaceableSide;
@@ -80,7 +83,7 @@ public class downloadCommand extends iCommand{
 					
 					PrintStream stream = new PrintStream(connection.getOutputStream());
 					stream.println("id=" + name);
-					stream.println("&spigot=1." + FurnitureLib.getInstance().getVersionInt());
+					stream.println("&spigot=1." + FurnitureLib.getVersionInt());
 					
 					BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 					
@@ -166,7 +169,18 @@ public class downloadCommand extends iCommand{
 			if(!systemID.equalsIgnoreCase(project)) systemID = project;
 			file.set(fileHeader + ".name", compound.getString("name"));
 			file.set(fileHeader + ".system-ID", systemID);
-			file.set(fileHeader + ".material", compound.getInt("material"));
+			
+			
+			
+			NBTBase base = compound.get("material");
+			if(NBTTagString.class.isInstance(base)) {
+				file.set(fileHeader + ".material", compound.getString("material"));
+			}else if(NBTTagInt.class.isInstance(base)) {
+				file.set(fileHeader + ".material", compound.getInt("material"));
+			}else {
+				file.set(fileHeader + ".material", FurnitureLib.getInstance().getDefaultSpawnMaterial());
+			}
+			
 			file.set(fileHeader + ".glow", compound.getBoolean("glow"));
 			List<String> loreText = new ArrayList<String>();
 			for(Object s : lore.c()) loreText.add(lore.getString((String) s));
@@ -320,7 +334,17 @@ public class downloadCommand extends iCommand{
 		if(!systemID.equalsIgnoreCase(project)) systemID = project;
 		file.set(header + ".displayName", compound.getString("name"));
 		file.set(header + ".system-ID", systemID);
-		file.set(header + ".spawnMaterial", MaterialConverter.getMaterialFromOld(compound.getString("material")).name());
+		
+		NBTBase base = compound.get("material");
+		if(NBTTagString.class.isInstance(base)) {
+			file.set(header + ".spawnMaterial", MaterialConverter.getMaterialFromOld(compound.getString("material")).name());
+		}else if(NBTTagInt.class.isInstance(base)) {
+			file.set(header + ".spawnMaterial", MaterialConverter.getMaterialFromOld(compound.getInt("material") + "").name());
+		}else {
+			file.set(header + ".spawnMaterial", FurnitureLib.getInstance().getDefaultSpawnMaterial().name());
+		}
+		
+		
 		file.set(header + ".itemGlowEffect", compound.getBoolean("glow"));
 		List<String> loreText = new ArrayList<String>();
 		for(Object s : lore.c()){
