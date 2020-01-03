@@ -79,7 +79,6 @@ public class DeSerializer {
 				obj.setSQLAction(SQLAction.UPDATE);
 			}
 			
-			
 			if(world == null || world.equals("null")) obj.setSQLAction(SQLAction.UPDATE);
 			//if(autoPurge){if(FurnitureLib.getInstance().checkPurge(obj, uuid)){purged++;}} <-- why is this here ?
 			return obj;

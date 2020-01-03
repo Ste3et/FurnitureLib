@@ -54,7 +54,7 @@ public class ModelHandler extends Modelschematic{
 		return locationList;
 	}
 	
-	private List<Block> addBlocks(Location startLocation, BlockFace direction) {
+	public List<Block> addBlocks(Location startLocation, BlockFace direction) {
 		List<Block> blockList = new ArrayList<Block>();
 		this.getBlockData(startLocation, direction).entrySet().forEach(entry -> {
 			Block b = entry.getKey().getBlock();

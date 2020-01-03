@@ -15,6 +15,7 @@ import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.block.Block;
+import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 
 import de.Ste3et_C0st.FurnitureLib.Utilitis.RandomStringGenerator;
@@ -23,6 +24,8 @@ import de.Ste3et_C0st.FurnitureLib.main.Type.PublicMode;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
+import de.Ste3et_C0st.FurnitureLib.ModelLoader.ModelHandler;
+import de.Ste3et_C0st.FurnitureLib.ModelLoader.Modelschematic;
 
 public class ObjectID {
 
@@ -332,6 +335,17 @@ public class ObjectID {
 	public void addBlock(Location loc) {
 		FurnitureLib.getInstance().getBlockManager().addBlock(loc);
 		this.locList.add(loc);
+	}
+	
+	public void loadBlocks() {
+		if(getBlockList().isEmpty()) {
+			if(Objects.isNull(getProjectOBJ())) return;
+			ModelHandler modelschematic = getProjectOBJ().getModelschematic();
+			if(Objects.nonNull(modelschematic)) {
+				BlockFace direction = FurnitureLib.getInstance().getLocationUtil().yawToFace(this.getStartLocation().getYaw()).getOppositeFace();
+				this.addBlock(modelschematic.addBlocks(this.getStartLocation(), direction));
+			}
+		}
 	}
 
 	public void remove(Player p) {

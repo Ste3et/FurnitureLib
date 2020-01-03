@@ -127,6 +127,11 @@ public abstract class Database {
 	    	int purged = FurnitureLib.getInstance().getDeSerializer().purged;
 	    	plugin.getLogger().info("FurnitureLib have loadet " + ArmorStands + " in " +timeStr);
 	    	plugin.getLogger().info("FurnitureLib have purged " + purged + " Objects");
+	    	
+	    	/* Load Blocks */
+	    	idList.stream().forEach(id -> {
+	    		id.loadBlocks();
+	    	});
     	}catch(Exception e){
     		e.printStackTrace();
     	}finally {
