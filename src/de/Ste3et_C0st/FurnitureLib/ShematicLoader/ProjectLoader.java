@@ -31,6 +31,7 @@ public class ProjectLoader extends Furniture{
 					schematic.getBlockData(id.getStartLocation(),direction).keySet().stream().forEach(getObjID()::addBlock);
 				}
 			}
+			this.registerInventory();
 		}catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -61,13 +62,12 @@ public class ProjectLoader extends Furniture{
 		if(player == null) return;
 		boolean canInteract = canInteract(player, false);
 		boolean function = hasFunction();
-		
 		FurnitureLib.debug("ProjectLoader -> onClick[project:"+ getObjID().getProject() + "]");
 		FurnitureLib.debug("ProjectLoader -> onClick[hasFunction:"+ function + "]");
 		FurnitureLib.debug("ProjectLoader -> onClick[canInteract:"+ canInteract + "]");
 		
-		if(function && canInteract) {
-			if(this.inv != null) {
+		if((function || Objects.nonNull(this.inv)) && canInteract) {
+			if(Objects.nonNull(this.inv)) {
 				this.inv.openInventory(player);
 				return;
 			}
