@@ -1,6 +1,7 @@
 package de.Ste3et_C0st.FurnitureLib.Command;
 
 import org.bukkit.Bukkit;
+import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;

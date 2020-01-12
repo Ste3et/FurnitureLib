@@ -71,6 +71,19 @@ public class downloadCommand extends iCommand{
 		}
 	}
 	
+	private String normalize(String input) {
+		String output = input;
+		output = output.replaceAll("ä", "ae");
+		output = output.replaceAll("ö", "oe");
+		output = output.replaceAll("ü", "ue");
+		output = output.replaceAll("ß", "sz");
+		output = output.replaceAll("Ä", "Ae");
+		output = output.replaceAll("Ö", "Oe");
+		output = output.replaceAll("Ü", "Ue");
+		output = output.replaceAll("ẞ", "Sz");
+		return output;
+	}
+	
 	private void downLoadData(final String name, final URL url, final CommandSender sender, final String s){
 		new Thread(new Runnable() {
 			@Override
@@ -105,7 +118,7 @@ public class downloadCommand extends iCommand{
 								switch (i) {
 								case 0:config = line;
 								case 1:playerName = line;
-								case 2:projectName = line;
+								case 2:projectName = normalize(line);
 								}
 								i++;
 							}

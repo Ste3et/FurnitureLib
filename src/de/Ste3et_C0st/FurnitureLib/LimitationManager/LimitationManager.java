@@ -2,6 +2,8 @@ package de.Ste3et_C0st.FurnitureLib.LimitationManager;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+
 import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -83,7 +85,7 @@ public class LimitationManager {
 			
 			int maxPlayer = limitOBJ.getAmountFromType(pro.getName());
 			FurnitureLib.debug("LimitationManager -> {Player} " + player + "/" + maxPlayer);
-			if(maxPlayer == -1) return true;
+			if(maxPlayer < 0) return true;
 			if(player < maxPlayer) {
 				String s = lib.getLangManager().getString("message.LimitAouncer");
 				s = s.replace("#TYPE#", pro.getName()).replace("#CURRENT#", player+1+"").replace("#MAX#", maxPlayer+"");
@@ -97,7 +99,8 @@ public class LimitationManager {
 			int maxWorld = limitOBJ.total ? limitOBJ.totalAmount : pro.getAmountWorld(obj.getWorld());
 			int world = returnProjectWorld(obj.getWorld(), pro);
 			FurnitureLib.debug("LimitationManager -> {World} " + world + "/" + maxWorld);
-			if(world < maxWorld || maxWorld == -1) {
+			if(maxWorld < 0) return true;
+			if(world < maxWorld) {
 				String s = lib.getLangManager().getString("message.LimitAouncer");
 				s = s.replace("#TYPE#", pro.getName()).replace("#CURRENT#", world+1+"").replace("#MAX#", maxWorld+"");
 				p.sendMessage(s);
@@ -107,10 +110,11 @@ public class LimitationManager {
 				return false;
 			}
 		}else if(this.type.equals(LimitationType.CHUNK)) {
-			int maxChunk = limitOBJ.total ? limitOBJ.totalAmount : pro.getAmountChunk();
+			int maxChunk = (Objects.nonNull(limitOBJ) && limitOBJ.total) ? limitOBJ.totalAmount  : pro.getAmountChunk();
 			int chunk = returnIntProjectChunk(obj.getChunk(), pro);
 			FurnitureLib.debug("LimitationManager -> {Chunk} " + chunk + "/" + maxChunk);
-			if(chunk < maxChunk || maxChunk == -1) {
+			if(maxChunk < 0) return true;
+			if(chunk < maxChunk) {
 				String s = lib.getLangManager().getString("message.LimitAouncer");
 				s = s.replace("#TYPE#", pro.getName()).replace("#CURRENT#", chunk+1+"").replace("#MAX#", maxChunk+"");
 				p.sendMessage(s);
