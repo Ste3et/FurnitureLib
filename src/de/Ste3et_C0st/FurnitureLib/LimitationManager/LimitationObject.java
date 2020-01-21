@@ -13,7 +13,7 @@ import de.Ste3et_C0st.FurnitureLib.main.Type.LimitationType;
 public class LimitationObject {
 	
 	public HashMap<String, Integer> projectList = new HashMap<String, Integer>();
-	public boolean total = false, def = false;
+	public boolean total = false, def = false, global = false;
 	public int totalAmount = -1;
 	public String permission = "";
 	public String section = "";

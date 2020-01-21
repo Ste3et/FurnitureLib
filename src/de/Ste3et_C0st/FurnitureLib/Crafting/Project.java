@@ -15,6 +15,7 @@ import org.bukkit.util.Vector;
 
 import com.google.gson.JsonObject;
 
+import de.Ste3et_C0st.FurnitureLib.LimitationManager.LimitationManager;
 import de.Ste3et_C0st.FurnitureLib.ModelLoader.ModelHandler;
 import de.Ste3et_C0st.FurnitureLib.ShematicLoader.ProjectLoader;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.BoundingBox;
@@ -265,6 +266,7 @@ public class Project {
 			if (!this.limitationFile.isSet("ChunkLimit.total")) {
 				this.limitationFile.addDefault("ChunkLimit.total.enable", false);
 				this.limitationFile.addDefault("ChunkLimit.total.amount", -1);
+				this.limitationFile.addDefault("ChunkLimit.total.global", false);
 			}
 
 			if (!this.limitationFile.isSet("ChunkLimit.projects." + getSystemID())) {
@@ -280,6 +282,7 @@ public class Project {
 		this.limitationFile = this.limitationConfig.getConfig(conf, "/limitation/");
 		if (conf.equalsIgnoreCase("chunk")) {
 			if (limitationFile.getBoolean("ChunkLimit.total.enable", false)) {
+				FurnitureLib.getInstance().getLimitManager().setGlobal(limitationFile.getBoolean("ChunkLimit.total.global", false));
 				return limitationFile.getInt("ChunkLimit.total.amount", -1);
 			} else {
 				return limitationFile.getInt("ChunkLimit.projects." + getSystemID(), -1);

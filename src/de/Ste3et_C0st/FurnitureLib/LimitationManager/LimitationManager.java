@@ -21,11 +21,16 @@ public class LimitationManager {
 	FurnitureLib lib;
 	public List<LimitationObject> objectList = new ArrayList<LimitationObject>();
 	public LimitationType type;
+	private boolean global = false;
 	
 	public LimitationManager(FurnitureLib lib, LimitationType limitationType){
 		this.lib = lib;
 		this.type = limitationType;
 		loadDefault();
+	}
+	
+	public void setGlobal(boolean bool) {
+		this.global = bool;
 	}
 	
 	private Integer returnIntProject(Player p, Project pro){
@@ -97,7 +102,7 @@ public class LimitationManager {
 			}
 		}else if(this.type.equals(LimitationType.WORLD)) {
 			int maxWorld = limitOBJ.total ? limitOBJ.totalAmount : pro.getAmountWorld(obj.getWorld());
-			int world = returnProjectWorld(obj.getWorld(), pro);
+			int world = this.global ? FurnitureManager.getInstance().getInWorld(obj.getWorld()).size() :returnProjectWorld(obj.getWorld(), pro);
 			FurnitureLib.debug("LimitationManager -> {World} " + world + "/" + maxWorld);
 			if(maxWorld < 0) return true;
 			if(world < maxWorld) {
@@ -111,7 +116,7 @@ public class LimitationManager {
 			}
 		}else if(this.type.equals(LimitationType.CHUNK)) {
 			int maxChunk = (Objects.nonNull(limitOBJ) && limitOBJ.total) ? limitOBJ.totalAmount  : pro.getAmountChunk();
-			int chunk = returnIntProjectChunk(obj.getChunk(), pro);
+			int chunk = this.global ? FurnitureManager.getInstance().getInChunk(obj.getChunk()).size() : returnIntProjectChunk(obj.getChunk(), pro);
 			FurnitureLib.debug("LimitationManager -> {Chunk} " + chunk + "/" + maxChunk);
 			if(maxChunk < 0) return true;
 			if(chunk < maxChunk) {
