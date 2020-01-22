@@ -64,20 +64,29 @@ public class ChunkOnLoad implements Listener{
 				@Override
 				public void run() {
 					FurnitureItemEvent e = new FurnitureItemEvent(p, stack, pro, loc, face);
+					FurnitureLib.debug("FurnitureLib -> Place Furniture Start (" + pro.getName() + ").");
 					Bukkit.getPluginManager().callEvent(e);
+					FurnitureLib.debug("FurnitureLib -> Call FurnitureItemEvent cancel ("+ e.isCancelled() +").");
 					if(!e.isCancelled()){
 						if(e.canBuild()){
+							FurnitureLib.debug("FurnitureLib -> Can Place Model (" + pro.getName() + ") here");
 							if(e.isTimeToPlace()){
 								if(e.sendAnouncer()){
 									if(Objects.nonNull(e.getProject().getModelschematic())){
+										FurnitureLib.debug("FurnitureLib -> Model " + pro.getName() + " have Schmeatic place it.");
 										if(pro.getModelschematic().isPlaceable(e.getObjID().getStartLocation())) {
+											FurnitureLib.debug("FurnitureLib -> Model " + pro.getName() + " is Placeable");
 											spawn(e);
 										}else {
 											p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.NotEnoughSpace"));
 										}
+									}else {
+										FurnitureLib.debug("FurnitureLib -> Can't place model [no Modelschematic ("+ pro.getName() +")]");
 									}
 								}
 							}
+						}else {
+							FurnitureLib.debug("FurnitureLib -> Can't place model " + pro.getName() + " here canBuild(" + e.canBuild() + ")");
 						}
 					}
 				}

@@ -64,11 +64,23 @@ public final class FurnitureItemEvent extends Event implements Cancellable {
 		if(p==null||obj==null||getProject()==null) return true;
 		BlockFace face = isOnTheRightSide();
 		if(face==null){p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.NotONThisSide"));return false;}
-		if(!FurnitureLib.getInstance().getPermManager().canBuild(p, obj.getStartLocation())){return false;}
-		if(getBlock()==null) return false;
-	    if(!FurnitureLib.getInstance().getPermManager().isSolid(getBlock().getType(), getProject().getPlaceableSide(), getBlock())){return false;}
+		if(!FurnitureLib.getInstance().getPermManager().canBuild(p, obj.getStartLocation())){
+			FurnitureLib.debug("FurnitureLib -> ProtectionLib can't build here (" + getProject().getName() + ")");
+			return false;
+		}
+		if(getBlock()==null) {
+			FurnitureLib.debug("FurnitureLib -> Didn't find block (" + getProject().getName() + ")");
+			return false;
+		}
+	    if(!FurnitureLib.getInstance().getPermManager().isSolid(getBlock().getType(), getProject().getPlaceableSide(), getBlock())){
+	    	FurnitureLib.debug("FurnitureLib -> Didn't find solid block (" + getProject().getName() + ")" + getBlock().getType().name());
+	    	return false;
+	    }
 		if(p.isOp()) return true;
-		if(!pro.hasPermissions(p)){return false;}
+		if(!pro.hasPermissions(p)){
+			FurnitureLib.debug("FurnitureLib -> Player " + p.getName() + " didn't have permissions to place it" );
+			return false;
+		}
 		return true;
 	}
 
@@ -102,7 +114,7 @@ public final class FurnitureItemEvent extends Event implements Cancellable {
 		BlockFace face = isOnTheRightSide();
 		switch (face) {
 		case UP:return l.getBlock();
-		case DOWN:return l.getBlock().getRelative(BlockFace.DOWN);
+		case DOWN:return l.getBlock();
 		default:return l.getBlock().getRelative(face.getOppositeFace());
 		}
 	}
