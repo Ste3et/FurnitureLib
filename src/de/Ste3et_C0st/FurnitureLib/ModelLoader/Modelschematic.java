@@ -34,10 +34,12 @@ public abstract class Modelschematic{
 	
 	public Modelschematic(InputStream stream){
 		try{
+			
 			InputStreamReader reader = new InputStreamReader(stream);
 			YamlConfiguration config = YamlConfiguration.loadConfiguration(reader);
 			String yamlHeader = getHeader(config);
 			this.name = yamlHeader;
+			FurnitureLib.debug(this.name + " header found.");
 			this.loadEntitys(yamlHeader, config);
 			this.loadBlockData(yamlHeader, config);
 			this.placeableSide = PlaceableSide.valueOf(config.getString(yamlHeader + ".placeAbleSide", "TOP").toUpperCase());
@@ -86,7 +88,9 @@ public abstract class Modelschematic{
 	private void loadBlockData(String yamlHeader, YamlConfiguration config) {
 		boolean aquatic = FurnitureLib.isNewVersion();
 		String loadParser = yamlHeader + "." + (aquatic ? ModelBlockAquaticUpdate.CONFIGKEY : ModelBlockCombatUpdate.CONFIGKEY);
+		FurnitureLib.debug(this.name + " load: " + (aquatic ? ModelBlockAquaticUpdate.CONFIGKEY : ModelBlockCombatUpdate.CONFIGKEY) + " (BlockList)");
 		if(config.isConfigurationSection(loadParser)) {
+			FurnitureLib.debug(this.name + " load: " + (aquatic ? ModelBlockAquaticUpdate.CONFIGKEY : ModelBlockCombatUpdate.CONFIGKEY) + " isConfigurationSection = true");
 			config.getConfigurationSection(loadParser).getKeys(false).stream().forEach(key -> {
 				ModelBlock block = aquatic ? new ModelBlockAquaticUpdate(config, loadParser + "." + key) : new ModelBlockCombatUpdate(config, loadParser + "." + key);
 				if(Objects.nonNull(block)) {
@@ -104,8 +108,9 @@ public abstract class Modelschematic{
 	
 	private void loadEntitys(String yamlHeader, YamlConfiguration config) {
 		String configString = FurnitureLib.isNewVersion() ? yamlHeader+".projectData.entitys" : yamlHeader+".ProjectModels.ArmorStands";
-		
+		FurnitureLib.debug(this.name + " load: " + configString + " (Entitys)");
 		if(config.isConfigurationSection(configString)) {
+			FurnitureLib.debug(this.name + " load: " + configString + " isConfigurationSection = true");
 			config.getConfigurationSection(configString).getKeys(false).stream().forEach(key -> {
 				try {
 					String md5 = config.getString(configString + "." + key);

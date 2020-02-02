@@ -125,7 +125,7 @@ public class ChunkOnLoad implements Listener{
 			if(objID.isPrivate()){return;}
 			e.setCancelled(bool);
 			if(bool && !objID.getSQLAction().equals(SQLAction.REMOVE)) {
-				if(p.getGameMode().equals(GameMode.CREATIVE)&&!FurnitureLib.getInstance().creativeInteract()){
+				if((p.getGameMode() == GameMode.CREATIVE) &&!FurnitureLib.getInstance().creativeInteract()){
 					if(!FurnitureLib.getInstance().getPermission().hasPerm(p, "furniture.bypass.creative.interact")){
 						return;
 					}
@@ -151,7 +151,7 @@ public class ChunkOnLoad implements Listener{
 	public void onClick(final PlayerInteractEvent event){
 		final Player p = event.getPlayer();
 		if(p==null) return;
-		if(p.getGameMode().equals(GameMode.SPECTATOR)){return;}
+		if(p.getGameMode() == GameMode.SPECTATOR){return;}
 		if(event.getAction().equals(Action.LEFT_CLICK_BLOCK)){
 			if(event.getClickedBlock()==null){return;}
 			if(event.getClickedBlock().getLocation()==null){return;}

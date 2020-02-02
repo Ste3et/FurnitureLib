@@ -96,6 +96,10 @@ public class ModelBlockAquaticUpdate extends ModelBlock{
 		}
 	}
 	
+	public boolean isPlaceable() {
+		return false;
+	}
+	
 	public static boolean isSolid(Block b) {
 		boolean bool = false;
 		BlockData blockData = b.getBlockData();
