@@ -9,8 +9,8 @@ import org.bukkit.Chunk;
 
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.ShematicLoader.ProjectLoader;
-import de.Ste3et_C0st.FurnitureLib.Utilitis.CallbackObjectIDs;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.DoubleKey;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.callbacks.CallbackObjectIDs;
 
 public class ChunkData{
 

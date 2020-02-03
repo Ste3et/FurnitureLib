@@ -12,7 +12,7 @@ import org.bukkit.scheduler.BukkitTask;
 
 import com.zaxxer.hikari.HikariConfig;
 
-import de.Ste3et_C0st.FurnitureLib.Utilitis.CallbackObjectIDs;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.callbacks.CallbackObjectIDs;
 import de.Ste3et_C0st.FurnitureLib.main.ChunkData;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;

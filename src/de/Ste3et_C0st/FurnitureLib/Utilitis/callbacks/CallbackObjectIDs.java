@@ -1,4 +1,4 @@
-package de.Ste3et_C0st.FurnitureLib.Utilitis;
+package de.Ste3et_C0st.FurnitureLib.Utilitis.callbacks;
 
 import java.util.HashSet;
 
