@@ -8,7 +8,7 @@ import org.bukkit.event.player.PlayerChangedWorldEvent;
 
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 
-public class onPlayerChangeWorld extends EventLibary implements Listener  {
+public class onPlayerChangeWorld extends EventLibrary implements Listener  {
 	@EventHandler
 	public void onPlayerChangedWorld(PlayerChangedWorldEvent event) {
 		final Player player = event.getPlayer();

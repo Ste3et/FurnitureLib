@@ -39,11 +39,11 @@ public abstract class Furniture extends FurnitureHelper implements Listener {
 				for (fEntity stand : getfAsList()) {
 					if (stand.getName().startsWith("#Mount:") || stand.getName().startsWith("#SITZ")) {
 						FurnitureLib.debug("Furniture -> publicFunction[#Mount/#SITZ]");
-						if (stand.getPassanger().isEmpty()) {
-							FurnitureManager.getInstance().getArmorStandFromPassanger(p).stream()
-									.filter(s -> s.getPassanger().isEmpty() == false)
-									.forEach(s -> s.removePassanger(p.getEntityId()));
-							stand.setPassanger(p);
+						if (stand.getPassenger().isEmpty()) {
+							FurnitureManager.getInstance().getArmorStandFromPassenger(p).stream()
+									.filter(s -> s.getPassenger().isEmpty() == false)
+									.forEach(s -> s.removePassenger(p.getEntityId()));
+							stand.setPassenger(p);
 							return true;
 						}
 					}

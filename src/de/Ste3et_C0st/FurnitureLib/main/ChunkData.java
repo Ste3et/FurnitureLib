@@ -16,7 +16,7 @@ public class ChunkData{
 
 	private DoubleKey<Integer> points;
 	private String world;
-	private boolean loadet = false;
+	private boolean loaded = false;
 
 	public ChunkData(Chunk c) {
 		points = new DoubleKey<Integer>(c.getX(), c.getZ());
@@ -29,7 +29,7 @@ public class ChunkData{
 	}
 
 	public ChunkData load() {
-		if(!loadet) {
+		if(!loaded) {
 			FurnitureLib.getInstance().getSQLManager().loadAsynchron(this, new CallbackObjectIDs() {
 				@Override
 				public void onResult(HashSet<ObjectID> idList) {
@@ -56,7 +56,7 @@ public class ChunkData{
 					}
 				}
 			});
-			this.loadet = true;
+			this.loaded = true;
 		}
 		return this;
 	}
@@ -78,8 +78,8 @@ public class ChunkData{
 //		}
 //	}
 
-	public boolean isLoadet() {
-		return this.loadet;
+	public boolean isLoaded() {
+		return this.loaded;
 	}
 	
 	public int getX() {

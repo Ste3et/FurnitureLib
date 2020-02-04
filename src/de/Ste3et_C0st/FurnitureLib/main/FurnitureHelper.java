@@ -157,7 +157,7 @@ public abstract class FurnitureHelper {
 		return null;
 	}
 
-	public List<fEntity> entitysByCustomName(String str) {
+	public List<fEntity> entitiesByCustomName(String str) {
 		return getfAsList().stream().filter(e -> e.getCustomName().equalsIgnoreCase(str)).collect(Collectors.toList());
 	}
 

@@ -52,8 +52,8 @@ public class DeSerializer {
 			obj.setSQLAction((action != null && action.equals(SQLAction.SAVE)) ? SQLAction.SAVE : SQLAction.NOTHING);
 			obj.setFromDatabase(true);
 			
-			if(compound.hasKey("entitys")) {
-				NBTTagCompound armorStands = compound.getCompound("entitys");
+			if(compound.hasKey("entities")) {
+				NBTTagCompound armorStands = compound.getCompound("entities");
 				armorStands.c().stream().filter(Objects::nonNull).forEach(packet -> {
 					NBTTagCompound metadata = armorStands.getCompound((String) packet);
 					Location loc = locationFetcher(metadata.getCompound("Location"));
@@ -102,14 +102,14 @@ public class DeSerializer {
 		} catch (IllegalArgumentException exception){
 			world = Bukkit.getWorld(str);
 		}
-		if(world == null){FurnitureLib.getInstance().getLogger().info("The world: " + location.getString("World") + " deos not exist.");return null;}
+		if(world == null){FurnitureLib.getInstance().getLogger().info("The world: " + location.getString("World") + " does not exist.");return null;}
 		Location loc = new Location(world, X, Y, Z);
 		loc.setYaw(Yaw);
 		loc.setPitch(Pitch);
 		return loc;
 	}
 	
-	public boolean isWorldLoadet(String s){
+	public boolean isWorldLoaded(String s){
 		boolean loaded = false;
 		for(World w: Bukkit.getServer().getWorlds())
 		{
@@ -122,7 +122,7 @@ public class DeSerializer {
 		return loaded;
 	}
 	
-	public boolean isWorldLoadet(UUID uuid){
+	public boolean isWorldLoaded(UUID uuid){
 		boolean loaded = false;
 		for(World w: Bukkit.getServer().getWorlds())
 		{

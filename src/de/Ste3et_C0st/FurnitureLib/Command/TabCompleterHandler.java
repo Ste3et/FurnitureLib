@@ -91,7 +91,7 @@ public class TabCompleterHandler implements TabCompleter {
 		List<String> strAL = new ArrayList<String>();
 		command.commands.stream()
 			.filter(cmd -> cmd.getSubCommand().toLowerCase().contains(s.toLowerCase()))
-			.filter(cmd -> sender.hasPermission(cmd.getFormatedPerms()))
+			.filter(cmd -> sender.hasPermission(cmd.getFormattedPerms()))
 			.forEach(cmd -> strAL.add(cmd.getSubCommand()));
 		return strAL;
 	}

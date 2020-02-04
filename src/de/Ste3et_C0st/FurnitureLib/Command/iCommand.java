@@ -77,7 +77,7 @@ public abstract class iCommand {
 		return this.aliasList;
 	}
 
-	public String getFormatedPerms() {
+	public String getFormattedPerms() {
 		return "furniture.command." + getSubCommand();
 	}
 

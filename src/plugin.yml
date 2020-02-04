@@ -47,7 +47,6 @@ permissions:
       furniture.bypass.breakSpam: true
       furniture.bypass.placeSpam: true
       furniture.command.help: true
-      furniture.command.help: true
       furniture.crafting.*: true
       furniture.place.*: true
       furniture.toggle: true

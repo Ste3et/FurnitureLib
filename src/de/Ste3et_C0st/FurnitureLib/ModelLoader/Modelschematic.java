@@ -40,7 +40,7 @@ public abstract class Modelschematic{
 			String yamlHeader = getHeader(config);
 			this.name = yamlHeader;
 			FurnitureLib.debug(this.name + " header found.");
-			this.loadEntitys(yamlHeader, config);
+			this.loadEntities(yamlHeader, config);
 			this.loadBlockData(yamlHeader, config);
 			this.placeableSide = PlaceableSide.valueOf(config.getString(yamlHeader + ".placeAbleSide", "TOP").toUpperCase());
 			
@@ -106,9 +106,9 @@ public abstract class Modelschematic{
 		this.max = Vector.getMaximum(vector.toVector(), this.max);
 	}
 	
-	private void loadEntitys(String yamlHeader, YamlConfiguration config) {
-		String configString = FurnitureLib.isNewVersion() ? yamlHeader+".projectData.entitys" : yamlHeader+".ProjectModels.ArmorStands";
-		FurnitureLib.debug(this.name + " load: " + configString + " (Entitys)");
+	private void loadEntities(String yamlHeader, YamlConfiguration config) {
+		String configString = FurnitureLib.isNewVersion() ? yamlHeader+".projectData.entities" : yamlHeader+".ProjectModels.ArmorStands";
+		FurnitureLib.debug(this.name + " load: " + configString + " (Entities)");
 		if(config.isConfigurationSection(configString)) {
 			FurnitureLib.debug(this.name + " load: " + configString + " isConfigurationSection = true");
 			config.getConfigurationSection(configString).getKeys(false).stream().forEach(key -> {

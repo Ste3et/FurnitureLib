@@ -103,10 +103,10 @@ public class Project {
 		return this.silent;
 	}
 
-	public int getWitdh() {
+	public int getWidth() {
 		BoundingBox box = getModelschematic().getBoundingBox();
-		int witdh = Math.abs(box.getMax().getBlockX() - box.getMin().getBlockX());
-		return witdh + 1;
+		int width = Math.abs(box.getMax().getBlockX() - box.getMin().getBlockX());
+		return width + 1;
 	}
 
 	public int getHeight() {

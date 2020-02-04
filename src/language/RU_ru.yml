@@ -39,8 +39,8 @@ message:
     разместить.'
   FurnitureToFastBreak: '&cВы должны подождать &4#TIME# &cпрежде, чем сможете его
     сломать.'
-  LimitAouncer: '&6Вы разместили &2#CURRENT#&6/&c#MAX# из &e#TYPE#.'
-  LimitAouncerMaximum: '&6Вы разместили &2#CURRENT#&6/&c#MAX# из &e#TYPE#&6, &a#AMOUNT#
+  LimitAnnouncer: '&6Вы разместили &2#CURRENT#&6/&c#MAX# из &e#TYPE#.'
+  LimitAnnouncerMaximum: '&6Вы разместили &2#CURRENT#&6/&c#MAX# из &e#TYPE#&6, &a#AMOUNT#
     &6оставшейся мебели'
   LimitReachedWorld: '&cДостигнут предел мебели в этом мире'
   LimitReachedChunk: '&cДостигнут предел мебели в этом чанке'
