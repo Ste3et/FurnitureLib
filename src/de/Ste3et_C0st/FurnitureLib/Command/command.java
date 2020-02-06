@@ -25,6 +25,7 @@ import de.Ste3et_C0st.FurnitureLib.ShematicLoader.Events.ProjectClickEvent;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.LanguageManager;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.ManageInv;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.StringTranslater;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.inventory.InventoryManager;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
@@ -124,7 +125,8 @@ public class command implements CommandExecutor, Listener{
 					return;
 				}
 			}
-			new ManageInv(p, e.getID());
+			//new ManageInv(p, e.getID());
+			FurnitureLib.getInstance().getInventoryManager().openInventory("manage", e.getPlayer(), e.getID());
 		}
 	}
 	

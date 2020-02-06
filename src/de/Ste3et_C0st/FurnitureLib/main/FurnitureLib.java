@@ -53,6 +53,7 @@ import de.Ste3et_C0st.FurnitureLib.Utilitis.LocationUtil;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.Metrics;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.autoConverter;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.config;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.inventory.InventoryManager;
 import de.Ste3et_C0st.FurnitureLib.main.Type.EventType;
 import de.Ste3et_C0st.FurnitureLib.main.Type.LimitationType;
 import de.Ste3et_C0st.FurnitureLib.main.Type.ProtocolFields;
@@ -79,6 +80,7 @@ public class FurnitureLib extends JavaPlugin {
 	private LanguageManager lmanager;
 	private SQLManager sqlManager;
 	private LimitationManager limitManager;
+	private InventoryManager inventoryManager;
 	private ColorUtil colorManager;
 	private Serializer serializeNew;
 	private DeSerializer deSerializerNew;
@@ -426,6 +428,7 @@ public class FurnitureLib extends JavaPlugin {
 				getServer().getPluginManager().registerEvents(new onPlayerTeleportEvent(), getInstance());
 				getServer().getPluginManager().registerEvents(new ChunkOnLoad(), getInstance());
 				getServer().getPluginManager().registerEvents(new onChunkChange(), getInstance());
+				this.inventoryManager = new InventoryManager();
 				send("§2Furniture load finish :)");
 				if (getConfig().getBoolean("config.timer.Enable")) {
 					int time = getConfig().getInt("config.timer.time");
@@ -702,5 +705,9 @@ public class FurnitureLib extends JavaPlugin {
 		}else {
 			return newVersion;
 		}
+	}
+
+	public InventoryManager getInventoryManager() {
+		return this.inventoryManager;
 	}
 }

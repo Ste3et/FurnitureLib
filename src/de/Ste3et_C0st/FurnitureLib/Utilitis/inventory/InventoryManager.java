@@ -28,9 +28,7 @@ public class InventoryManager {
 		Class<? extends InventoryHandler> inventoryClazz = getInventory(key);
 		try {
 			if(Objects.nonNull(inventoryClazz)){
-				Class<?>[] clazzArray = new Class<?>[objects.length];
-				for(int i = 0 ; i < objects.length; i++) clazzArray[i] = objects[i].getClass(); 
-				Constructor<?> constructor = inventoryClazz.getConstructor(clazzArray);
+				Constructor<?> constructor = inventoryClazz.getConstructors()[0];
 				if(Objects.nonNull(constructor)) {
 					Object returnValue = constructor.newInstance(objects);
 					return Objects.nonNull(returnValue) ? InventoryHandler.class.cast(returnValue) : null;

@@ -42,6 +42,7 @@ public class ManageInventoryCombat extends InventoryHandler{
 		});
 		
 		this.update();
+		this.open(getPlayer());
 		
 		super.onClose(new CallbackGUIClose() {
 			@Override
