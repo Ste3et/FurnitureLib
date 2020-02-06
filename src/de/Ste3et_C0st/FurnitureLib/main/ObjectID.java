@@ -372,12 +372,12 @@ public class ObjectID {
 		this.setFunctionObject(null);
 	}
 
-	public void dropItem(Player p, Location loc, Project porject) {
+	public void dropItem(Player p, Location loc, Project project) {
 		if (FurnitureLib.getInstance().useGamemode() && p.getGameMode().equals(GameMode.CREATIVE)) {
 			return;
 		}
 		World w = loc.getWorld();
-		w.dropItemNaturally(loc, porject.getCraftingFile().getRecipe().getResult());
+		w.dropItemNaturally(loc, project.getCraftingFile().getRecipe().getResult());
 	}
 
 	public void deleteEffect(List<fEntity> asList) {
@@ -389,7 +389,7 @@ public class ObjectID {
 	}
 
 	public String getPlayerName() {
-		String name = "§cUNKNOW";
+		String name = "§cUNKNOWN";
 		if (uuid != null) {
 			OfflinePlayer p = Bukkit.getOfflinePlayer(uuid);
 			name = p.getName();

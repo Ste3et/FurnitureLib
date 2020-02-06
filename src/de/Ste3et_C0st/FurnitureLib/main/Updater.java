@@ -36,13 +36,13 @@ public class Updater {
 	}
 	
 	public void sendPlayer(final Player p){
-		if(isUpdateAvaible()){
-			p.sendMessage("§7[§6FurnitureLib§7] §6Update §e" + newVersion + " §6is avaible");
-			p.sendMessage("§7[§6FurnitureLib§7] §6Lookat: §e" + "http://goo.gl/L7w1QQ");
+		if(isUpdateAvailable()){
+			p.sendMessage("§7[§6FurnitureLib§7] §6Update §e" + newVersion + " §6is available");
+			p.sendMessage("§7[§6FurnitureLib§7] §6Look at: §e" + "http://goo.gl/L7w1QQ");
 		}
 	}
 	
-	private boolean isUpdateAvaible(){
+	private boolean isUpdateAvailable(){
 		if(FurnitureLib.getInstance().isUpdate()){
 			if(!currentVersion.equalsIgnoreCase(newVersion)){
 				return true;
@@ -56,7 +56,7 @@ public class Updater {
 	
 	public String getLatestString(){
 		String s = "";
-		if(isUpdateAvaible()){
+		if(isUpdateAvailable()){
 			return newVersion;
 		}
 		return s;
@@ -64,8 +64,8 @@ public class Updater {
 	
 	public String getUpdate(){
 		String s = "";
-		if(isUpdateAvaible()){
-			s = "\n§c§lUpdate Avaible §2§lv" + newVersion;
+		if(isUpdateAvailable()){
+			s = "\n§c§lUpdate Available §2§lv" + newVersion;
 		}
 		return s;
 	}

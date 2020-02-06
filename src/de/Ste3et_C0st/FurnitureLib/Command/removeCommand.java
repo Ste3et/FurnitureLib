@@ -41,7 +41,7 @@ public class removeCommand extends iCommand{
 			String argument = args[1].toLowerCase();
 			String langID = "";
 			List<ObjectID> removeList = new ArrayList<ObjectID>();
-			List<StringTranslater> translaters = new ArrayList<StringTranslater>();
+			List<StringTranslater> translators = new ArrayList<StringTranslater>();
 			
 			if(argument.startsWith("-pro:")) {
 				if(!hasCommandPermission(sender, ".pro")) return;
@@ -49,7 +49,7 @@ public class removeCommand extends iCommand{
 				Project pro = FurnitureManager.getInstance().getProject(str);
 				if(Objects.nonNull(pro)) removeList = FurnitureManager.getInstance().getObjectList().stream().filter(obj -> obj.getProject().equalsIgnoreCase(pro.getName())).collect(Collectors.toList());
 				langID = "message.RemoveType";
-				translaters.add(new StringTranslater("#TYPE#", pro.getName()));
+				translators.add(new StringTranslater("#TYPE#", pro.getName()));
 			}
 			
 			if(argument.startsWith("-world:")) {
@@ -58,16 +58,16 @@ public class removeCommand extends iCommand{
 				World w = Bukkit.getWorlds().stream().filter(world -> world.getName().equalsIgnoreCase(str)).findFirst().orElse(null);
 				if(Objects.nonNull(w)) removeList = FurnitureManager.getInstance().getObjectList().stream().filter(obj -> obj.getWorld().equals(w)).collect(Collectors.toList());
 				langID = "message.RemoveWorld";
-				translaters.add(new StringTranslater("#WORLD#", str));
+				translators.add(new StringTranslater("#WORLD#", str));
 			}
 			
 			if(argument.startsWith("-player:")) {
 				if(!hasCommandPermission(sender, ".player")) return;
 				String str = argument.replace("-player:", "");
-				String palyer = getByPlayerName(str);
-				if(Objects.nonNull(palyer)) removeList = FurnitureManager.getInstance().getObjectList().stream().filter(obj -> obj.getPlayerName().equalsIgnoreCase(str)).collect(Collectors.toList());
+				String player = getByPlayerName(str);
+				if(Objects.nonNull(player)) removeList = FurnitureManager.getInstance().getObjectList().stream().filter(obj -> obj.getPlayerName().equalsIgnoreCase(str)).collect(Collectors.toList());
 				langID = "message.RemovePlayer";
-				translaters.add(new StringTranslater("#PLAYER#", palyer));
+				translators.add(new StringTranslater("#PLAYER#", player));
 			}
 			
 			if(argument.startsWith("-distance:")) {
@@ -82,7 +82,7 @@ public class removeCommand extends iCommand{
 					removeList = worldObjList.stream().filter(obj -> obj.getStartLocation().distance(loc) <= distance).collect(Collectors.toList());
 				}
 				langID = "message.RemoveDistance";
-				translaters.add(new StringTranslater("#AMOUNT#", removeList.size() + ""));
+				translators.add(new StringTranslater("#AMOUNT#", removeList.size() + ""));
 			}
 			
 			if(argument.startsWith("-obj:")) {
@@ -90,7 +90,7 @@ public class removeCommand extends iCommand{
 				ObjectID serial = getSerial(str);
 				if(Objects.nonNull(serial)) removeList = Arrays.asList(serial);
 				langID = "message.RemoveID";
-				translaters.add(new StringTranslater("#OBJID#", serial.getID()));
+				translators.add(new StringTranslater("#OBJID#", serial.getID()));
 			}
 			
 			if(argument.equalsIgnoreCase("lookat")) {
@@ -99,7 +99,7 @@ public class removeCommand extends iCommand{
 					Player p = (Player) sender;
 					ObjectID obj = getFromSight(p.getLocation());
 					if(Objects.nonNull(obj)) removeList = Arrays.asList(obj);
-					translaters.add(new StringTranslater("#SERIAL#", obj.getID()));
+					translators.add(new StringTranslater("#SERIAL#", obj.getID()));
 				}
 				langID = "message.RemoveLookat";
 			}
@@ -111,7 +111,7 @@ public class removeCommand extends iCommand{
 			
 			if(Objects.nonNull(removeList) && !removeList.isEmpty()) {
 				int i = removeListObj(removeList);
-				sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString(langID, translaters.toArray(new StringTranslater[translaters.size()])));
+				sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString(langID, translators.toArray(new StringTranslater[translators.size()])));
 				removeList.forEach(obj -> {
 					obj.remove(false);
 					obj.setSQLAction(SQLAction.REMOVE);
@@ -126,7 +126,7 @@ public class removeCommand extends iCommand{
 //		if(args.length==2){
 //			Project pro = getProject(args[1]);
 //			World world = getWorld(args[1]);
-//			String palyer = getByPlayerName(args[1]);
+//			String player = getByPlayerName(args[1]);
 //			String plugin = getPlugin(args[1]);
 //			ObjectID serial = getSerial(args[1]);
 //			
@@ -148,11 +148,11 @@ public class removeCommand extends iCommand{
 //				return;
 //			}
 //			
-//			if(palyer != null){
+//			if(player != null){
 //				if(!hasCommandPermission(sender, ".player")) return;
-//				removeListObj(getObject(palyer));
+//				removeListObj(getObject(player));
 //				String str = FurnitureLib.getInstance().getLangManager().getString("message.RemovePlayer");
-//				str = str.replace("#PLAYER#", palyer);
+//				str = str.replace("#PLAYER#", player);
 //				sender.sendMessage(str);
 //				return;
 //			}

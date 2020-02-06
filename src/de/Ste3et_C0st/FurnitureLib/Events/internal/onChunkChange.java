@@ -38,7 +38,7 @@ public class onChunkChange implements Listener{
 			ChunkData data = manager.getChunkDataList().stream().findFirst().filter(c -> c.equals(e.getChunk())).orElse(new ChunkData(e.getChunk()));
 			if(!manager.getChunkDataList().contains(data)) {
 				manager.getChunkDataList().add(data);
-				if(!data.isLoadet()) data.load();
+				if(!data.isLoaded()) data.load();
 			}
 		}
 	}

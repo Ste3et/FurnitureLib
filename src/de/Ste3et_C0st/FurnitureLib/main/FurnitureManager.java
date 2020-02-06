@@ -193,10 +193,10 @@ public class FurnitureManager {
 		return objecte.stream().flatMap(obj -> obj.getPacketList().stream()).filter(e -> entityID.equals(e.getEntityID())).findFirst().orElse(null);
 	}
 	
-	public List<fEntity> getArmorStandFromPassanger(Player p) {
+	public List<fEntity> getArmorStandFromPassenger(Player p) {
 		if(this.objecte.isEmpty()){return null;}
 		if(p==null) return null;
-		List<fEntity> entityList = objecte.stream().flatMap(obj -> obj.getPacketList().stream()).filter(e -> e.getPassanger().isEmpty() == false && e.getPassanger().contains(p.getEntityId())).collect(Collectors.toList());
+		List<fEntity> entityList = objecte.stream().flatMap(obj -> obj.getPacketList().stream()).filter(e -> e.getPassenger().isEmpty() == false && e.getPassenger().contains(p.getEntityId())).collect(Collectors.toList());
 		return entityList == null ? new ArrayList<fEntity>() : entityList;
 	}
 	

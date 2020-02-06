@@ -166,7 +166,7 @@ public class CraftingFile {
 					.filter(c -> !c.getValue().equals(Material.AIR)).forEach(c -> {
 						this.recipe.setIngredient(c.getKey(), c.getValue());
 					});
-			if (!isDisable && !isKeyRegistred(key)) {
+			if (!isDisable && !isKeyisKeyRegistered(key)) {
 				if(!this.recipe.getIngredientMap().isEmpty() && this.recipe.getIngredientMap().values().stream().filter(Objects::nonNull).filter(is -> is.getType().equals(Material.AIR)).count() < 8) {
 					Bukkit.getServer().addRecipe(this.recipe);
 				}
@@ -193,7 +193,7 @@ public class CraftingFile {
 		return jsonList;
 	}
 
-	private boolean isKeyRegistred(org.bukkit.NamespacedKey key) {
+	private boolean isKeyisKeyRegistered(org.bukkit.NamespacedKey key) {
 		Iterator<Recipe> recipes = Bukkit.getServer().recipeIterator();
 		while (recipes.hasNext()) {
 			Recipe recipe = recipes.next();

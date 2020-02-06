@@ -125,8 +125,8 @@ public abstract class Database {
 	    	String timeStr = time.format(time2-time1);
 	    	int ArmorStands = FurnitureLib.getInstance().getDeSerializer().armorStands.get();
 	    	int purged = FurnitureLib.getInstance().getDeSerializer().purged;
-	    	plugin.getLogger().info("FurnitureLib have loadet " + ArmorStands + " in " +timeStr);
-	    	plugin.getLogger().info("FurnitureLib have purged " + purged + " Objects");
+	    	plugin.getLogger().info("FurnitureLib has loaded " + ArmorStands + " in " +timeStr);
+	    	plugin.getLogger().info("FurnitureLib has purged " + purged + " Objects");
 	    	
 	    	/* Load Blocks */
 	    	idList.stream().forEach(id -> {

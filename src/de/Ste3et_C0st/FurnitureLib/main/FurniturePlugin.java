@@ -30,7 +30,7 @@ public abstract class FurniturePlugin {
 		return Objects.nonNull(getPlugin()) ? getPlugin().getResource(filename) : null;
 	}
 	
-	private BufferedReader readRessource(String str){
+	private BufferedReader readResource(String str){
 		if(!str.startsWith("/")) str = "/" + str;
 		InputStream stream = getPlugin().getClass().getResourceAsStream(str);
 		try {
@@ -41,13 +41,13 @@ public abstract class FurniturePlugin {
 		}
 	}
 	
-	public YamlConfiguration saveRessource(String sourceName, String fileName) {
+	public YamlConfiguration saveResource(String sourceName, String fileName) {
 		File folder = new File("plugins/FurnitureLib/plugin");
 		File file = new File(folder,  fileName.endsWith(".yml") ? fileName : fileName + ".yml");
 		if(!folder.exists()) folder.mkdirs();
 		try {
 			YamlConfiguration conf = file.exists() ? YamlConfiguration.loadConfiguration(file) : new YamlConfiguration();
-			BufferedReader reader = readRessource(sourceName);
+			BufferedReader reader = readResource(sourceName);
 			if(Objects.nonNull(reader)) conf.addDefaults(YamlConfiguration.loadConfiguration(reader));
 			conf.options().copyDefaults(true);
 			conf.save(file);

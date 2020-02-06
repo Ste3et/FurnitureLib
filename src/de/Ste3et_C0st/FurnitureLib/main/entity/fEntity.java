@@ -40,7 +40,7 @@ public abstract class fEntity extends fSerializer{
 	 * Field b = UUID
 	 * Field c = EntityTypeID
 	 * Field i = InventoryObject
-	 * Field d,e,f = X,Y,Z Coordinats 
+	 * Field d,e,f = X,Y,Z Coordinates
 	 * Field j,k = Yaw/Pitch
 	 */
 	
@@ -53,7 +53,7 @@ public abstract class fEntity extends fSerializer{
 	private Location l;
 	private String customName = "";
 	private boolean fire = false, nameVisible = false, isPlayed = false, glowing = false, invisible = false, gravity = false;
-	private List<Integer> passangerIDs = new ArrayList<Integer>();
+	private List<Integer> passengerIDs = new ArrayList<Integer>();
 	public abstract Entity toRealEntity();
 	public abstract boolean isRealEntity();
 	public abstract void setEntity(Entity e);
@@ -163,8 +163,8 @@ public abstract class fEntity extends fSerializer{
 		return getCustomName();
 	}
 
-	public List<Integer> getPassanger() {
-		return this.passangerIDs;
+	public List<Integer> getPassenger() {
+		return this.passengerIDs;
 	}
 
 	public Server getServer() {
@@ -215,7 +215,7 @@ public abstract class fEntity extends fSerializer{
 		this.i = inv;return this;
 	}
 	
-	public fEntity setNameVasibility(boolean b) {
+	public fEntity setNameVisibility(boolean b) {
 		getWatcher().setObject(new WrappedDataWatcherObject(3, Registry.get(Boolean.class)), b);
 		this.nameVisible = b;return this;
 	}
@@ -267,7 +267,7 @@ public abstract class fEntity extends fSerializer{
 		try {
 			getManager().sendServerPacket(player, getHandle());
 			sendInventoryPacket(player);
-			if (Objects.nonNull(getPassanger())) setPassanger(getPassanger());
+			if (Objects.nonNull(getPassenger())) setPassenger(getPassenger());
 			sendMetadata(player);
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -318,8 +318,8 @@ public abstract class fEntity extends fSerializer{
 		try {
 			getManager().sendServerPacket(p, update);
 			this.sendInventoryPacket(p);
-			if (getPassanger() != null) {
-				setPassanger(getPassanger());
+			if (getPassenger() != null) {
+				setPassenger(getPassenger());
 			}
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -359,7 +359,7 @@ public abstract class fEntity extends fSerializer{
 
 	public fEntity setName(String str) {
 		if (str == null) return this;
-		if (str.equalsIgnoreCase("")) setNameVasibility(false);
+		if (str.equalsIgnoreCase("")) setNameVisibility(false);
 		if(FurnitureLib.isNewVersion()) {
 			getWatcher().setObject(new WrappedDataWatcherObject(2, Registry.getChatComponentSerializer(true)), Optional.of(WrappedChatComponent.fromText(str).getHandle()));
 		}else {
@@ -374,8 +374,8 @@ public abstract class fEntity extends fSerializer{
 		return this;
 	}
 	
-	public void setPassanger(Entity e) {
-		setPassanger(Arrays.asList(e.getEntityId()));
+	public void setPassenger(Entity e) {
+		setPassenger(Arrays.asList(e.getEntityId()));
 		if(!FurnitureLib.getInstance().isRotateOnSitEnable()){return;}
 		if(e.getType().equals(EntityType.PLAYER)){
 			PacketContainer container = new PacketContainer(PacketType.Play.Server.ENTITY_LOOK);
@@ -391,17 +391,17 @@ public abstract class fEntity extends fSerializer{
 		}
 	}
 	///tp -534 69 13328
-	public void setPassanger(Integer EntityID) {
-		setPassanger(Arrays.asList(EntityID));
+	public void setPassenger(Integer EntityID) {
+		setPassenger(Arrays.asList(EntityID));
 	}
 	
-	public void setPassanger(final List<Integer> entityIDs){
+	public void setPassenger(final List<Integer> entityIDs){
 		if(!FurnitureLib.getInstance().canSitting()){return;}
 		if (entityIDs == null) {return;}
-		int[] passangerID = entityIDs.stream().mapToInt(Integer::intValue).toArray();
+		int[] passengerID = entityIDs.stream().mapToInt(Integer::intValue).toArray();
 		PacketContainer container = new PacketContainer(PacketType.Play.Server.MOUNT);
 		container.getIntegers().write(0, getEntityID());
-		container.getIntegerArrays().write(0, passangerID);
+		container.getIntegerArrays().write(0, passengerID);
 		getObjID().getPlayerList().forEach(player -> {
 			try {
 				getManager().sendServerPacket(player, container);
@@ -409,16 +409,16 @@ public abstract class fEntity extends fSerializer{
 				e.printStackTrace();
 			}
 		});
-		entityIDs.stream().filter(passanger -> !this.passangerIDs.contains(passanger)).forEach(this.passangerIDs::add);
+		entityIDs.stream().filter(passenger -> !this.passengerIDs.contains(passenger)).forEach(this.passengerIDs::add);
 	}
 	
 	public void eject(Integer i) {
-		if (this.passangerIDs == null || this.passangerIDs.isEmpty()) return;
-		if(removePassanger(i)) {
-			int[] passangerID = this.passangerIDs.stream().mapToInt(Integer::intValue).toArray();
+		if (this.passengerIDs == null || this.passengerIDs.isEmpty()) return;
+		if(removePassenger(i)) {
+			int[] passengerID = this.passengerIDs.stream().mapToInt(Integer::intValue).toArray();
 			PacketContainer container = new PacketContainer(PacketType.Play.Server.MOUNT);
 			container.getIntegers().write(0, getEntityID());
-			container.getIntegerArrays().write(0, passangerID);
+			container.getIntegerArrays().write(0, passengerID);
 			getObjID().getPlayerList().stream().forEach(player -> {
 				try {
 					getManager().sendServerPacket(player, container);
@@ -429,13 +429,13 @@ public abstract class fEntity extends fSerializer{
 		}
 	}
 	
-	public boolean removePassanger(Integer i) {
-		if (this.passangerIDs == null || this.passangerIDs.isEmpty()) return false;
-		return this.passangerIDs.remove(i);
+	public boolean removePassenger(Integer i) {
+		if (this.passengerIDs == null || this.passengerIDs.isEmpty()) return false;
+		return this.passengerIDs.remove(i);
 	}
 
 	public void eject() {
-		if (this.passangerIDs == null || this.passangerIDs.isEmpty()) return;
+		if (this.passengerIDs == null || this.passengerIDs.isEmpty()) return;
 		int[] i = {};
 		PacketContainer container = new PacketContainer(PacketType.Play.Server.MOUNT);
 		container.getIntegers().write(0, getEntityID());
@@ -447,7 +447,7 @@ public abstract class fEntity extends fSerializer{
 				e.printStackTrace();
 			}
 		});
-		this.passangerIDs.clear();
+		this.passengerIDs.clear();
 	}
 
 	public void sendInventoryPacket(final Player player) {
@@ -538,7 +538,7 @@ public abstract class fEntity extends fSerializer{
 				}
 			}
 		}
-		this.setNameVasibility(n);
+		this.setNameVisibility(n);
 		this.setName(name);
 		this.setFire(f);
 		this.setGlowing(g);

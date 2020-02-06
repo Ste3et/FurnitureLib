@@ -90,18 +90,18 @@ public class autoConverter {
 							try {
 								NBTTagCompound metadata = NBTCompressedStreamTools.read(bin);
 								NBTTagCompound inventory = metadata.getCompound("Inventory");
-								NBTTagCompound updatetInventory = new NBTTagCompound();
+								NBTTagCompound updatedInventory = new NBTTagCompound();
 								for(Object object : EnumWrappers.ItemSlot.values()){
 									if(!inventory.getString(object.toString()).equalsIgnoreCase("NONE")){
 										NBTTagCompound item = MaterialConverter.convertNMSItemStack(inventory.getCompound(object.toString()));
-										updatetInventory.set(object.toString(), item);
+										updatedInventory.set(object.toString(), item);
 									}else {
-										updatetInventory.setString(object.toString(), "NONE");
+										updatedInventory.setString(object.toString(), "NONE");
 									}
 								}
-								metadata.set("Inventory", updatetInventory);
+								metadata.set("Inventory", updatedInventory);
 								byte[] out = NBTCompressedStreamTools.toByte(metadata);
-								newConfig.set(header + ".projectData.entitys." + letter, Base64.getEncoder().encodeToString(out));
+								newConfig.set(header + ".projectData.entities." + letter, Base64.getEncoder().encodeToString(out));
 							} catch (Exception e) {
 								e.printStackTrace();
 							}
@@ -148,7 +148,7 @@ public class autoConverter {
 					Bukkit.getWorlds().stream().forEach(world -> {
 						Arrays.asList(world.getLoadedChunks()).forEach(c -> {
 							ChunkData data = FurnitureManager.getInstance().getChunkDataList().stream().findFirst().filter(chunk -> c.getX() == chunk.getX() && c.getZ() == chunk.getZ()).orElse(new ChunkData(c));
-							if(!data.isLoadet()) data.load();
+							if(!data.isLoaded()) data.load();
 							if(!FurnitureManager.getInstance().getChunkDataList().contains(data)) FurnitureManager.getInstance().getChunkDataList().add(data);
 						});
 					});

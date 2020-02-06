@@ -389,8 +389,8 @@ public class FurnitureLib extends JavaPlugin {
 			this.sync = getConfig().getBoolean("config.sync", true);
 
 			send("==========================================");
-			send("FurnitureLibary Version: §e" + this.getDescription().getVersion());
-			send("Furniture Autor: §6" + this.getDescription().getAuthors().get(0));
+			send("FurnitureLibrary Version: §e" + this.getDescription().getVersion());
+			send("Furniture Author: §6" + this.getDescription().getAuthors().get(0));
 			send("Furniture Website: §e" + this.getDescription().getWebsite());
 			send("FurnitureLib load for Minecraft: 1." + getVersionInt());
 			String s = getPluginManager().getPlugin("ProtocolLib").getDescription().getVersion();
@@ -441,7 +441,7 @@ public class FurnitureLib extends JavaPlugin {
 				c.setExecutor(new command(this));
 				c.setTabCompleter(new TabCompleterHandler());
 			} else {
-				send("Furniture Lib deosn't find the correct ProtocolLib");
+				send("Furniture Lib doesn't find the correct ProtocolLib");
 				send("Please Install Protocollib §c4.x");
 				send("You can it download at: §6§lhttps://www.spigotmc.org/resources/protocollib.1997/");
 				send("==========================================");

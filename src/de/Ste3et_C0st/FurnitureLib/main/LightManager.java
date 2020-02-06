@@ -14,7 +14,7 @@ public class LightManager {
 			if(Bukkit.getPluginManager().getPlugin("LightAPI").getDescription().getVersion().startsWith("3")){
 				this.plugin = plugin;
 			}else{
-				FurnitureLib.getInstance().getLogger().warning("You use a old version of LightAPI this is not supportet: " + Bukkit.getPluginManager().getPlugin("LightAPI").getDescription().getVersion());
+				FurnitureLib.getInstance().getLogger().warning("You use a old version of LightAPI this is not supported: " + Bukkit.getPluginManager().getPlugin("LightAPI").getDescription().getVersion());
 			}
 		}
 	}

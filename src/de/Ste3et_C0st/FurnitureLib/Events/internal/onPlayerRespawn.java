@@ -8,7 +8,7 @@ import org.bukkit.event.player.PlayerRespawnEvent;
 
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 
-public class onPlayerRespawn extends EventLibary implements Listener{
+public class onPlayerRespawn extends EventLibrary implements Listener{
 	@EventHandler
 	public void onPlayerRespawnEvent(PlayerRespawnEvent event) {
 		final Player player = event.getPlayer();

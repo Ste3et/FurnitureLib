@@ -160,9 +160,9 @@ public class ManageInv  implements Listener{
 		this.inv = Bukkit.createInventory(null, 54, lang.getName(s));
 		clear();
 		if(!s.equalsIgnoreCase("playerRemoveInvName")){
-			objects = getAvaiblePlayer(Bukkit.getOnlinePlayers().toArray(), true);
+			objects = getAvailablePlayer(Bukkit.getOnlinePlayers().toArray(), true);
 		}else{
-			objects = getAvaiblePlayer(obj.getMemberList().toArray(), false);
+			objects = getAvailablePlayer(obj.getMemberList().toArray(), false);
 		}
 		
 		addPanel(objects);
@@ -211,7 +211,7 @@ public class ManageInv  implements Listener{
 		return null;
 	}
 	
-	public Object[] getAvaiblePlayer(Object[] objects, Boolean b){
+	public Object[] getAvailablePlayer(Object[] objects, Boolean b){
 			List<UUID> pList = new ArrayList<UUID>();
 			for(Object p : objects){
 				Player player = null;

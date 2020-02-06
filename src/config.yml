@@ -1,21 +1,21 @@
 # Description:
-# UseMetrics: The plugin deos send informations about your server to http://mcstats.org/plugin/Furniturelib
-# Language: current avaible Language: 
+# UseMetrics: The plugin does send information about your server to http://mcstats.org/plugin/Furniturelib
+# Language: currently available Language:
 #       - EN_en: english 
 #       - DE_de: german
 #       - PL_pl: polish | By gabixdev
 #       - FR_fr: france | By Niasios
 # useParticles: you can enable/disable the particles when it is not enough space
 # DisableSitting: you can enable/disable the sit function of my plugin
-# viewDistance: This is the distance how long the player becomes the ArmorStands renderd you can make it smaller to reduce the CLIENT Lags.
+# viewDistance: This is the distance how long the player becomes the ArmorStands rendered you can make it smaller to reduce the CLIENT Lags.
 # LimitType: This is the limitation type
-#       - PLAYER: You can specificate player kits and give your player the permissions furniture.limit.<kit>
-#       - WORLD: You can specificate the limit from models for each world
-#       - CHUNK: You can specificate the limit from models for evrey chunk
-# ProtectionLib/RegeionMemberAccess: You can enable/disable the access for region Owners to interact with another Models
+#       - PLAYER: You can specify player kits and give your player the permissions furniture.limit.<kit>
+#       - WORLD: You can specify the limit from models for each world
+#       - CHUNK: You can specify the limit from models for every chunk
+# ProtectionLib/RegionMemberAccess: You can enable/disable the access for region Owners to interact with another Models
 # Database/type: This is the Database type
-#       - SQLite: this save the Furniture infos at plugins/Furniturelib/*.db
-#       - MySQL: this save the Furniture infos at a extern Database
+#       - SQLite: this saves the Furniture infos at plugins/Furniturelib/*.db
+#       - MySQL: this saves the Furniture infos at a extern Database
 # Database/database: this is the database name
 # Database/user: this is the user to access the database
 # Database/password: this is the password to access the database

@@ -188,10 +188,10 @@ public class LanguageManager{
 		return ChatColor.translateAlternateColorCodes('&', b);
 	}
 	
-	public String getString(String key, StringTranslater ... stringTranslaters) {
+	public String getString(String key, StringTranslater ... stringTranslators) {
 		String a = getString(key);
-		if(stringTranslaters != null) {
-			for(StringTranslater trans : stringTranslaters) {
+		if(stringTranslators != null) {
+			for(StringTranslater trans : stringTranslators) {
 				if(trans.getkey() != null && trans.getValue() != null) {
 					a = a.replaceAll(trans.getkey(), trans.getValue());
 				}

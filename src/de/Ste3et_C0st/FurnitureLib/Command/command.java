@@ -84,7 +84,7 @@ public class command implements CommandExecutor, Listener{
 			p.sendMessage("§6Object Finish: §c" + e.getID().isFinish());
 			p.sendMessage("§6Members: §e" + e.getID().getMemberList().size());
 			p.sendMessage("§6SQL State: §e" + e.getID().getSQLAction().name().toLowerCase());
-			p.sendMessage("§6Size: §e[Length:" + project.getLength()+",Height:"+ project.getHeight()+",Witdh:"+project.getWitdh() + "]");
+			p.sendMessage("§6Size: §e[Length:" + project.getLength()+",Height:"+ project.getHeight()+",Width:"+project.getWidth() + "]");
 			p.sendMessage("§6Blocks: §a" + e.getID().getBlockList().size());
 			p.sendMessage("§6Project-Model: §e" + project.isEditorProject());
 			p.sendMessage("§6Placeable Side: §e" + project.getPlaceableSide().name());
@@ -183,9 +183,9 @@ public class command implements CommandExecutor, Listener{
 		return new ComponentBuilder("§6" + cmd).event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(hover).create())).event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, ChatColor.stripColor(cmd))).create();
 	}
 	
-	public static BaseComponent[] jsonText(String key, de.Ste3et_C0st.FurnitureLib.Utilitis.StringTranslater ... stringTranslaters) {
-		String cmd = LanguageManager.getInstance().getString("command." + key + ".help_name", stringTranslaters);
-		String hover = LanguageManager.getInstance().getString("command." + key + ".help_hover", stringTranslaters);
+	public static BaseComponent[] jsonText(String key, de.Ste3et_C0st.FurnitureLib.Utilitis.StringTranslater ... stringTranslators) {
+		String cmd = LanguageManager.getInstance().getString("command." + key + ".help_name", stringTranslators);
+		String hover = LanguageManager.getInstance().getString("command." + key + ".help_hover", stringTranslators);
 		return new ComponentBuilder("§6" + cmd).event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(hover).create())).event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, ChatColor.stripColor(cmd))).create();
 	}
 	
