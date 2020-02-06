@@ -86,9 +86,9 @@ public class ProjektInventory implements Listener{
 			setItems(file.getString("inventory"));
 		}
 		
-		for(fEntity entitys : this.id.getPacketList()){
-			if(entitys.getName().startsWith("OnInventoryCloseDisplayItem")){
-				this.entityList.add(entitys);
+		for(fEntity entities : this.id.getPacketList()){
+			if(entities.getName().startsWith("OnInventoryCloseDisplayItem")){
+				this.entityList.add(entities);
 			}
 		}
 	}

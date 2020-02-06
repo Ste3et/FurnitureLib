@@ -8,7 +8,7 @@ import org.bukkit.event.player.PlayerJoinEvent;
 
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 
-public class onPlayerJoin extends EventLibary implements Listener {
+public class onPlayerJoin extends EventLibrary implements Listener {
 	
 	@EventHandler
 	public void onPlayerJoinEvent(PlayerJoinEvent event) {

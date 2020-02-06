@@ -82,7 +82,7 @@ public class ModelHandler extends Modelschematic{
 					|| customName.startsWith("#Light")
 					|| customName.startsWith("/")
 					|| customName.toUpperCase().startsWith("#DYE_")){
-						entity.setNameVasibility(false);
+						entity.setNameVisibility(false);
 			}
 		});
 		return entityList;

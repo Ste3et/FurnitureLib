@@ -71,9 +71,9 @@ public class ChunkOnLoad implements Listener{
 						if(e.canBuild()){
 							FurnitureLib.debug("FurnitureLib -> Can Place Model (" + pro.getName() + ") here");
 							if(e.isTimeToPlace()){
-								if(e.sendAnouncer()){
+								if(e.sendAnnouncer()){
 									if(Objects.nonNull(e.getProject().getModelschematic())){
-										FurnitureLib.debug("FurnitureLib -> Model " + pro.getName() + " have Schmeatic place it.");
+										FurnitureLib.debug("FurnitureLib -> Model " + pro.getName() + " have Schematic place it.");
 										if(pro.getModelschematic().isPlaceable(e.getObjID().getStartLocation())) {
 											FurnitureLib.debug("FurnitureLib -> Model " + pro.getName() + " is Placeable");
 											spawn(e);

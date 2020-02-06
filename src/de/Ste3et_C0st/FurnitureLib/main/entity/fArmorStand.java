@@ -130,7 +130,7 @@ public class fArmorStand extends fEntity {
 		nStand.setBasePlate(this.hasBasePlate());
 		nStand.setFire(this.isFire());
 		nStand.setName(this.getCustomName());
-		nStand.setNameVasibility(this.isCustomNameVisible());
+		nStand.setNameVisibility(this.isCustomNameVisible());
 		for(BodyPart part : BodyPart.values()){
 			nStand.setPose(this.getPose(part), part);
 		}

@@ -8,7 +8,7 @@ import org.bukkit.event.player.PlayerTeleportEvent;
 
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 
-public class onPlayerTeleportEvent extends EventLibary implements Listener{
+public class onPlayerTeleportEvent extends EventLibrary implements Listener{
 	@EventHandler
 	public void onPlayerTeleport(PlayerTeleportEvent event){
 		final Player player = event.getPlayer();

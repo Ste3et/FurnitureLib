@@ -84,7 +84,7 @@ public final class FurnitureItemEvent extends Event implements Cancellable {
 		return true;
 	}
 
-	public boolean sendAnouncer(){
+	public boolean sendAnnouncer(){
 		return FurnitureLib.getInstance().getLimitManager().canPlace(p, obj);
 	}
 	

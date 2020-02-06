@@ -75,7 +75,7 @@ public class LimitationManager {
 				for(int i = limitGlobal; i > 0; i--) {
 					if(p.hasPermission("furniture.globallimit." + i)) {
 						if(playerTotal < i) {
-							String s = lib.getLangManager().getString("message.LimitAouncer");
+							String s = lib.getLangManager().getString("message.LimitAnnouncer");
 							s = s.replace("#TYPE#", pro.getName()).replace("#CURRENT#", player+1+"").replace("#MAX#", i+"");
 							p.sendMessage(s);
 							return true;
@@ -92,7 +92,7 @@ public class LimitationManager {
 			FurnitureLib.debug("LimitationManager -> {Player} " + player + "/" + maxPlayer);
 			if(maxPlayer < 0) return true;
 			if(player < maxPlayer) {
-				String s = lib.getLangManager().getString("message.LimitAouncer");
+				String s = lib.getLangManager().getString("message.LimitAnnouncer");
 				s = s.replace("#TYPE#", pro.getName()).replace("#CURRENT#", player+1+"").replace("#MAX#", maxPlayer+"");
 				p.sendMessage(s);
 				return true;
@@ -106,7 +106,7 @@ public class LimitationManager {
 			FurnitureLib.debug("LimitationManager -> {World} " + world + "/" + maxWorld);
 			if(maxWorld < 0) return true;
 			if(world < maxWorld) {
-				String s = lib.getLangManager().getString("message.LimitAouncer");
+				String s = lib.getLangManager().getString("message.LimitAnnouncer");
 				s = s.replace("#TYPE#", pro.getName()).replace("#CURRENT#", world+1+"").replace("#MAX#", maxWorld+"");
 				p.sendMessage(s);
 				return true;
@@ -120,7 +120,7 @@ public class LimitationManager {
 			FurnitureLib.debug("LimitationManager -> {Chunk} " + chunk + "/" + maxChunk);
 			if(maxChunk < 0) return true;
 			if(chunk < maxChunk) {
-				String s = lib.getLangManager().getString("message.LimitAouncer");
+				String s = lib.getLangManager().getString("message.LimitAnnouncer");
 				s = s.replace("#TYPE#", pro.getName()).replace("#CURRENT#", chunk+1+"").replace("#MAX#", maxChunk+"");
 				p.sendMessage(s);
 				return true;
@@ -132,7 +132,7 @@ public class LimitationManager {
 		return true;
 	}
 //	
-//	public void sendAnouncer(Player p, ObjectID obj){
+//	public void sendAnnouncer(Player p, ObjectID obj){
 //		if(p.isOp()) return;
 //		if(FurnitureLib.getInstance().getPermission().hasPerm(p,"furniture.admin")) return;
 //		if(FurnitureLib.getInstance().getPermission().hasPerm(p,"furniture.bypass.limit")) return;
@@ -165,7 +165,7 @@ public class LimitationManager {
 //					if(limitOBJ.total){
 //						if(limitOBJ.totalAmount == -1) return;
 //						if(playerTotal < limitOBJ.totalAmount){
-//							String s = lib.getLangManager().getString("LimitAouncerMaximum");
+//							String s = lib.getLangManager().getString("LimitAnnouncerMaximum");
 //							s = s.replace("#TYPE#", pro.getName()).replace("#CURRENT#", player+1+"").replace("#MAX#", maxPlayer+"").replace("#AMOUNT#", (limitOBJ.totalAmount - (playerTotal + 1)) + "");
 //							p.sendMessage(s);
 //							return;
@@ -175,7 +175,7 @@ public class LimitationManager {
 //						}
 //					}
 //				}
-//				String s = lib.getLangManager().getString("LimitAouncer");
+//				String s = lib.getLangManager().getString("LimitAnnouncer");
 //				s = s.replace("#TYPE#", pro.getName()).replace("#CURRENT#", player+1+"").replace("#MAX#", maxPlayer+"");
 //				p.sendMessage(s);
 //				return;

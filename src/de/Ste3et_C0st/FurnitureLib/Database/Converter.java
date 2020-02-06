@@ -104,7 +104,7 @@ public class Converter {
 							    	con.createStatement().executeUpdate(sql);
 								}else {
 									NBTTagCompound armorStands = compound.getCompound("ArmorStands");
-									compound.set("entitys", convertPacketItemStack(armorStands));
+									compound.set("entities", convertPacketItemStack(armorStands));
 									compound.remove("ArmorStands");
 									String g = Base64.getEncoder().encodeToString(Serializer.armorStandtoBytes(compound));
 							    	String sql = "REPLACE INTO furnitureLibData (ObjID, Data, world, `x`, `z`, `uuid`) " + 
@@ -144,16 +144,16 @@ public class Converter {
 		compound.c().stream().filter(entity -> entity != null).forEach(entity -> {
 			NBTTagCompound metadata = compound.getCompound((String) entity);
 			NBTTagCompound inventory = metadata.getCompound("Inventory");
-			NBTTagCompound updatetInventory = new NBTTagCompound();
+			NBTTagCompound updatedInventory = new NBTTagCompound();
 			EnumSet.allOf(EnumWrappers.ItemSlot.class).stream().forEach(slot ->{
 				if(!inventory.getString(slot.name()).equalsIgnoreCase("NONE")){
 					NBTTagCompound item = MaterialConverter.convertNMSItemStack(inventory.getCompound(slot.name()));
-					updatetInventory.set(slot.name(), item);
+					updatedInventory.set(slot.name(), item);
 				}else {
-					updatetInventory.setString(slot.name(), "NONE");
+					updatedInventory.setString(slot.name(), "NONE");
 				}
 			});
-			metadata.set("Inventory", updatetInventory);
+			metadata.set("Inventory", updatedInventory);
 			compound.set((String) entity, metadata);
 		});
 		return compound;

@@ -48,7 +48,7 @@ public class downloadCommand extends iCommand{
 					String name = args[1];
 					final URL url = new URL("http://api.dicecraft.de/furniture/download.php");
 					sender.sendMessage("§7§m+-------------------§7[§2Download§7]§m--------------------+");
-					sender.sendMessage("§6Download startet from: " + name);
+					sender.sendMessage("§6Download started from: " + name);
 					downLoadData(name, url, sender, null);
 				}catch(Exception e){
 					e.printStackTrace();
@@ -59,7 +59,7 @@ public class downloadCommand extends iCommand{
 					String name = args[1];
 					final URL url = new URL("http://api.dicecraft.de/furniture/download.php");
 					sender.sendMessage("§7§m+-------------------§7[§2Download§7]§m--------------------+");
-					sender.sendMessage("§6Download startet from: " + name);
+					sender.sendMessage("§6Download started from: " + name);
 					downLoadData(name, url, sender, args[2]);
 				}catch(Exception e){
 					e.printStackTrace();
@@ -132,7 +132,7 @@ public class downloadCommand extends iCommand{
 					if(b){
 						sender.sendMessage("§6You have downloaded: " + projectName);
 						sender.sendMessage("§6With the ID: " + name);
-						sender.sendMessage("§6Createt from: " + playerName);
+						sender.sendMessage("§6Created from: " + playerName);
 						if(s!=null){
 							projectName=s;
 							sender.sendMessage("§7Saved as Project: §e" + projectName);
@@ -142,7 +142,7 @@ public class downloadCommand extends iCommand{
 					connection.getInputStream().close();
 					sender.sendMessage("§7§m+------------------------------------------------+");
 				}catch(Exception e){
-					sender.sendMessage("§cThe FurnitureMaker Downloader have an Exception");
+					sender.sendMessage("§cThe FurnitureMaker Downloader has an exception");
 					sender.sendMessage("§cPlease contact the Developer");
 					e.printStackTrace();
 				}
@@ -278,11 +278,11 @@ public class downloadCommand extends iCommand{
 			file.set(header + ".crafting.index." + ((String) s), mat.name());
 		}
 		
-		if(compound.hasKey("entitys")){
-			NBTTagCompound armorStands = compound.getCompound("entitys");
+		if(compound.hasKey("entities")){
+			NBTTagCompound armorStands = compound.getCompound("entities");
 			for(Object s : armorStands.c()){
 				String str = armorStands.getString((String) s);
-				file.set(header+".projectData.entitys."+ ((String) s), str);
+				file.set(header+".projectData.entities."+ ((String) s), str);
 			}
 		}
 		
@@ -381,19 +381,19 @@ public class downloadCommand extends iCommand{
 				try {
 					NBTTagCompound metadata = NBTCompressedStreamTools.read(bin);
 					NBTTagCompound inventory = metadata.getCompound("Inventory");
-					NBTTagCompound updatetInventory = new NBTTagCompound();
+					NBTTagCompound updatedInventory = new NBTTagCompound();
 					for(Object object : EnumWrappers.ItemSlot.values()){
 						if(!inventory.getString(object.toString()).equalsIgnoreCase("NONE")){
 							NBTTagCompound item = MaterialConverter.convertNMSItemStack(inventory.getCompound(object.toString()+""));
-							updatetInventory.set(object.toString(), item);
+							updatedInventory.set(object.toString(), item);
 						}else {
-							updatetInventory.setString(object.toString(), "NONE");
+							updatedInventory.setString(object.toString(), "NONE");
 						}
 					}
-					metadata.set("Inventory", updatetInventory);
+					metadata.set("Inventory", updatedInventory);
 					byte[] out = NBTCompressedStreamTools.toByte(metadata);
 					String str = Base64.getEncoder().encodeToString(out);
-					file.set(project+".projectData.entitys."+ ((String) s), str);
+					file.set(project+".projectData.entities."+ ((String) s), str);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}

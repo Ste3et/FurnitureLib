@@ -26,12 +26,12 @@ public class replaceFunction extends projectFunction{
 			if((jsonObject.has("materialParser") || jsonObject.has("entityName")) && jsonObject.has("equipmentslot")) {
 				AtomicBoolean bool = new AtomicBoolean(false);
 				int equipmentslot = getSlot(jsonObject.get("equipmentslot").getAsString());
-				List<fEntity> entitys = jsonObject.has("materialParser") ? 
+				List<fEntity> entities = jsonObject.has("materialParser") ?
 										this.searchEntityByMaterialName(jsonObject.get("materialParser").getAsString(), equipmentslot, id) : 
 										this.searchEntityByName(jsonObject.get("entityName").getAsString(), id);
-				if(Objects.nonNull(entitys) && !entitys.isEmpty()) {
+				if(Objects.nonNull(entities) && !entities.isEmpty()) {
 					toReplace.setAmount(1);
-					entitys.stream().forEach(entity -> {
+					entities.stream().forEach(entity -> {
 						ItemStack stack = entity.getInventory().getSlot(equipmentslot);
 						if(!stack.equals(toReplace)){
 							bool.set(true);
