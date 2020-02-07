@@ -34,50 +34,50 @@
 # Mode: "PRIVATE/PUBLIC" : set all new placed furnitures to private or public
 # Access: "INTERACT/BREAK/BREAK_INTERACT" : it means the player have permissions to interact or break another Furnitures !
 config:
-   UseMetrics: true
-   debugMode: false
-   Language: "EN_en"
-   useParticles: true
-   DisableSitting: false
-   viewDistance: 100
-   limit:
-      limitConfig: "PLAYER"
-      #You can give your player the permissions furniture.globallimit.# | furniture.globallimit.125 -> let the player can place 125 furnitures objects it override the limitconfig
-      limitGlobal: 150
-   glowing: true
-   CheckUpdate: true
-   rotateOnSit: true
-   autoFileUpdater: true
-   Creative:
-      RemoveItems: false
-      Interact: true
-      Place: true
-   PlaceMode:
-      Mode: "PRIVATE"
-      Access: "INTERACT"
-   ProtectionLib:
-      RegeionMemberAccess: false
-   Database:
-      type: "SQLite"
-      database: "furniture"
-      user: "ROOT"
-      password: "123abcdefg"
-      port: 3306
-      host: "localhost"
-      useSSL: false
-      importCheck: false
-   Purge:
-      time: 30
-      autoPurge: false
-      removePurge: false
-   timer:
-      Enable: false
-      time: 300
-   spamBlock:
-      Place:
-         Enable: true
-         time: 5
-      Break:
-         Enable: true
-         time: 5
-      timeDisplay: "mm:ss:SSS"
+  UseMetrics: true
+  debugMode: false
+  Language: "EN_en"
+  useParticles: true
+  DisableSitting: false
+  viewDistance: 100
+  limit:
+    limitConfig: "PLAYER"
+    #You can give your player the permissions furniture.globallimit.# | furniture.globallimit.125 -> let the player can place 125 furnitures objects it override the limitconfig
+    limitGlobal: 150
+  glowing: true
+  CheckUpdate: true
+  rotateOnSit: true
+  autoFileUpdater: true
+  Creative:
+    RemoveItems: false
+    Interact: true
+    Place: true
+  PlaceMode:
+    Mode: "PRIVATE"
+    Access: "INTERACT"
+  ProtectionLib:
+    RegeionMemberAccess: false
+  Database:
+    type: "SQLite"
+    database: "furniture"
+    user: "ROOT"
+    password: "123abcdefg"
+    port: 3306
+    host: "localhost"
+    useSSL: false
+    importCheck: false
+  Purge:
+    time: 30
+    autoPurge: false
+    removePurge: false
+  timer:
+    Enable: false
+    time: 300
+  spamBlock:
+    Place:
+      Enable: true
+      time: 5
+    Break:
+      Enable: true
+      time: 5
+    timeDisplay: "mm:ss:SSS"

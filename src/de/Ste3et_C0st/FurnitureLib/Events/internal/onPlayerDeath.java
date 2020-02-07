@@ -6,9 +6,9 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.entity.PlayerDeathEvent;
 
 public class onPlayerDeath extends EventLibrary implements Listener {
-	@EventHandler
-	public void onPlayerDeathEvent(PlayerDeathEvent event) {
-		Player player = event.getEntity();
-		getFurnitureMgr().removeFurniture(player);
-	}
+    @EventHandler
+    public void onPlayerDeathEvent(PlayerDeathEvent event) {
+        Player player = event.getEntity();
+        getFurnitureMgr().removeFurniture(player);
+    }
 }

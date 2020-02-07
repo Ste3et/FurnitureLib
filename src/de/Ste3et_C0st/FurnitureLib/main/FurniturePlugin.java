@@ -1,25 +1,38 @@
 package de.Ste3et_C0st.FurnitureLib.main;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
-import java.util.Objects;
-
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.util.Objects;
+
 public abstract class FurniturePlugin {
-	
-	private Plugin pluginInstance;
-	
-	public abstract void registerProjects();
-	public abstract void applyPluginFunctions();
-	public abstract void onFurnitureLateSpawn(ObjectID obj);
-	
-	public FurniturePlugin(Plugin pluginInstance) {
-		this.pluginInstance = pluginInstance;
+
+    private Plugin pluginInstance;
+
+    public FurniturePlugin(Plugin pluginInstance) {
+        this.pluginInstance = pluginInstance;
+    }
+
+    public abstract void registerProjects();
+
+    public abstract void applyPluginFunctions();
+
+    public abstract void onFurnitureLateSpawn(ObjectID obj);
+
+    public Plugin getPlugin() {
+        return this.pluginInstance;
+    }
+
+    public InputStream getResource(String filename) throws NullPointerException {
+        return Objects.nonNull(getPlugin()) ? getPlugin().getResource(filename) : null;
+    }
+
+    private BufferedReader readResource(String str) {
+        if (!str.startsWith("/")) str = "/" + str;
+        InputStream stream = getPlugin().getClass().getResourceAsStream(str);
+		return new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8));
 	}
 	
 	public Plugin getPlugin() {

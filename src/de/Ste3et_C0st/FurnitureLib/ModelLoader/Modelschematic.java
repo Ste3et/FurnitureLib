@@ -24,6 +24,16 @@ import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
 import de.Ste3et_C0st.FurnitureLib.main.Type.CenterType;
 import de.Ste3et_C0st.FurnitureLib.main.Type.PlaceableSide;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
+import org.bukkit.block.BlockFace;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.util.Vector;
+import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
+
+import java.io.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Objects;
 
 public abstract class Modelschematic{
 	
@@ -49,17 +59,16 @@ public abstract class Modelschematic{
 //			int height = (int) box.getHeight() + 1;
 //			int length = Math.abs(box.getMax().getBlockZ() - box.getMin().getBlockZ()) + 1;
 //			setSize(length, height, width, CenterType.RIGHT);
-		}catch (Exception e) {
-			e.printStackTrace();
-		}
-	}
-	
-	public Modelschematic(File file) throws FileNotFoundException{
-		this(new FileInputStream(file));
-	}
-	
-	public Modelschematic(String name) {
-		this.placeableSide = PlaceableSide.TOP;
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public Modelschematic(File file) throws FileNotFoundException {
+        this(new FileInputStream(file));
+    }
+
+    public Modelschematic(String name) {
 		this.name = name;
 	}
 	
@@ -139,48 +148,26 @@ public abstract class Modelschematic{
 		});
 	}
 
-	protected ModelVector rotateVector(ModelVector vector, BlockFace direction){
-		double x = vector.getX();
-		double y = vector.getY();
-		double z = vector.getZ();
-		direction = getPlaceableSide().equals(PlaceableSide.SIDE) ? direction.getOppositeFace() : direction;
-		ModelVector returnVector = new ModelVector(x, y, z, vector.getYaw(), vector.getPitch());
-		switch(direction) {
-			case SOUTH: returnVector = new ModelVector(-x, y, -z, vector.getYaw() + 180f, vector.getPitch());break;
-			case WEST: returnVector = new ModelVector(z, y, -x, vector.getYaw() + 270f, vector.getPitch());break;
-			case EAST: returnVector = new ModelVector(-z, y, x, vector.getYaw() + 90f, vector.getPitch());break;
-			default: break;
-		}
-		
-		return returnVector;
-	}
-	
-	public abstract BoundingBox getBoundingBox();
-	public abstract void setSize(Integer length, Integer height, Integer width, CenterType type);
-	
-	protected List<Vector> getBlocksInArea(Vector start, Vector end) {
-        List<Vector> vectorList = new ArrayList<Vector>();
-		int topBlockX = (start.getBlockX() < end.getBlockX() ? end.getBlockX() : start.getBlockX());
-        int bottomBlockX = (start.getBlockX() > end.getBlockX() ? end.getBlockX() : start.getBlockX());
+    protected List<Vector> getBlocksInArea(Vector start, Vector end) {
+        List<Vector> vectorList = new ArrayList<>();
+        int topBlockX = (Math.max(start.getBlockX(), end.getBlockX()));
+        int bottomBlockX = (Math.min(start.getBlockX(), end.getBlockX()));
 
-        int topBlockY = (start.getBlockY() < end.getBlockY() ? end.getBlockY() : start.getBlockY());
-        int bottomBlockY = (start.getBlockY() > end.getBlockY() ? end.getBlockY() : start.getBlockY());
+        int topBlockY = (Math.max(start.getBlockY(), end.getBlockY()));
+        int bottomBlockY = (Math.min(start.getBlockY(), end.getBlockY()));
 
-        int topBlockZ = (start.getBlockZ() < end.getBlockZ() ? end.getBlockZ() : start.getBlockZ());
-        int bottomBlockZ = (start.getBlockZ() > end.getBlockZ() ? end.getBlockZ() : start.getBlockZ());
+        int topBlockZ = (Math.max(start.getBlockZ(), end.getBlockZ()));
+        int bottomBlockZ = (Math.min(start.getBlockZ(), end.getBlockZ()));
 
-        for(int x = bottomBlockX; x <= topBlockX; x++)
-        {
-            for(int z = bottomBlockZ; z <= topBlockZ; z++)
-            {
-                for(int y = bottomBlockY; y <= topBlockY; y++)
-                {
-                	Vector vector = new Vector(x, y, z);
-                	vectorList.add(vector);
+        for (int x = bottomBlockX; x <= topBlockX; x++) {
+            for (int z = bottomBlockZ; z <= topBlockZ; z++) {
+                for (int y = bottomBlockY; y <= topBlockY; y++) {
+                    Vector vector = new Vector(x, y, z);
+                    vectorList.add(vector);
                 }
             }
         }
         return vectorList;
     }
-	
+
 }
