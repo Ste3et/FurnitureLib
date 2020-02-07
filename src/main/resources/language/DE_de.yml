@@ -1,0 +1,145 @@
+message:
+   FurnitureOnThisPlace: '&aAn dieser Stelle ist schon ein Objekt.'
+   NotEnoughSpace: '&aHier ist nicht genug platz zum aufstellen.'
+   NoPermissions: '&cDazu hast du keine Berechtigung.'
+   PlayerNotOnline: '&c#PLAYER# ist nicht Online.'
+   ProjectNotFound: '&cDas Projekt #PROJECT# existiert nicht.'
+   ProjectAlreadyExist: '&cDas Projekt #PROJECT# existiert bereits.'
+   WrongArgument: '&cDu benutzt falsche Argumente.'
+   GivePlayer: '&aDer Spieler #PLAYER# bekam #PROJECT#(#AMOUNT#).'
+   DebugModeEntered: '&aDu hast den Infomodus betreten, rechtsklicke ein Objekt.'
+   ManageModeEntered: '&aDu hast den Verwaltungsmodus betreten, rechtsklicke ein Objekt.'
+   RemoveDistance: '&eDu hast #AMOUNT# Objekte entfernt.'
+   RemoveID: '&eDu hast #OBJID# entfernt.'
+   RemovePlugin: '&eDu hast alle Objekte, die von #PLUGIN# gesetzt wurden, entfernt.'
+   RemoveType: '&eDu hast alle #TYPE#en entfernt.'
+   RemoveAll: '&eDu hast alle Objekte entfernt.'
+   RemoveLookat: '&eDu hast das Objekt mit der id, #SERIAL#, entfernt.'
+   RemovePlayer: '&eDu hast alle Objekte des Spielers, #PLAYER#, entfernt.'
+   RemoveWorld: '&eDu hast alle Objekte in %WORLD% gelöscht'
+   SideNotFound: '&cDie Seite wurde nicht gefunden.'
+   SideNavigation: '&eBenutze /furniture list <option> (0-#MAX#).'
+   WrongOwner: '&cDas ist nicht deins!'
+   NotONThisSide: '&cDu kannst dieses Mödel nicht auf dieser Seite platzieren.'
+   PurgeMarked: 'Du hast #AMOUNT# Rüstungsständer zum Entfernen aus der DB makiert.'
+   CraftingEdit: '&eDu hast das Möbelherstellungs-Rezept geändert.'
+   CraftingRemove: '&aDu hast das Möbelherstellungs-Rezept entfernt.'
+   FurnitureToggleCMDOff: '&aDu hast alle Möbel &cunsichtbar gemacht.'
+   FurnitureToggleCMDOn: '&aDu hast alle Möbel &2sichtbar gemacht.'
+   FurnitureToggleEvent: '&cDas kannst du nicht machen.'
+   FurnitureToFastPlace: '&cWarte bitte &4#TIME# &cbevor du es platzierst.'
+   FurnitureToFastBreak: '&cWarte bitte &4#TIME# &cbevor du es abbaust.'
+   LimitAnnouncer: '&6Du hast &e#TYPE# &2#CURRENT#&6/&c#MAX# &6platziert.'
+   LimitAnnouncerMaximum: '&6Du hast &e#TYPE# &2#CURRENT#&6/&c#MAX# &6platziert, &a#AMOUNT# &6Objekte verbleiben'
+   LimitReachedWorld: '&cDas Limit dieses Objekts wurde in dieser Welt erreicht.'
+   LimitReachedChunk: '&cDas Limit dieses Objekts wurde in diesem Chunk erreicht.'
+   LimitReached: '&cDas Limit dieses Objekts wurde erreicht.'
+   LimitReachedMaximum: '&cDas maximal Limit der platzierten Objekte wurde erreicht.'
+   BlockOfInstability: '&cBitte platziere das Objekt wo anders.'
+   reload: '&7FurnitureLib wurde &2&lneu geladen'
+command:
+    help:
+        header: 
+            - "&7&m+-------------------&7[&2&lFurniture&7]&m--------------------+"
+            - "&7 "
+        footer:
+            - "&7 " 
+            - "&e&lTip: &7Für Infos &e&nklickt &7oder &e&nhover&7 die Kommandos" 
+            - "&7&m+--------------------------------------------------+"
+        hover: 
+            - "&7Version: &2#VERSION#"
+            - "&7Autor: &2#AUTHOR#"
+    debug:
+        help_name: "&7/furniture &edebug"
+        help_hover:
+            - "&7Damit kannst du dir &eInformationen &7über"
+            - "&7ein Furniture einholen"
+        suggest: "/furniture debug"
+    delete:
+        help_name: "&7/furniture &edelete &a[systemID] {confirm}"
+        help_hover: 
+            - "&7Benutze dieses Kommando um"
+            - "&7ein Furniture zu entfernen."
+            - "&7Das geht allerdings nur bei"
+            - "&7Heruntergeladene dModels."
+        suggest: "/furniture delete systemID"
+        wrongUsage: "&cPlease use /furniture delete [systemID]"
+    download:
+        help_name: '&7/furniture &edownload &a[id]'
+        help_hover:
+            - '&7Download ein &efurniture model &7von'
+            - '&e&ndicecraft.de/furniture'
+        suggest: '/furniture download [id]'
+        wrongUsage: '&cPlease use /furniture download [id]'
+    give:
+        help_name: "&7/furniture &egive &a[systemID] &b(player) &b(amount)"
+        help_hover: 
+            - "&7Gib einem Spieler ein &eModel Item"
+        suggest: "/furniture give [systemID]"
+        wrongUsage: "&cPlease use /furniture give [systemID]"
+    list:
+        help_name: "&7/furniture &elist (option) (side)"
+        help_hover:
+            - "&eZeigt eine Statisik der Platzierten Furniture"
+            - "&7Optionen:"
+            - "&7 - &eplugin"
+            - "&7 - &etype"
+            - "&7 - &eworld"
+        suggest: "/furniture list"
+        wrongUsage: "Please use /furniture list (option)"
+    manage:
+        help_name: "&7/furniture &emanage"
+        help_hover:
+            - "&7Stelle die &eberechtigungen &7eines furniture ein"
+        suggest: "/furniture manage"
+    purge:
+        help_name: "&7/furniture &epurge &a[time]"
+        help_hover:
+            - "&eEntfernt &7allte ungenutzte Furniture"
+        suggest: "/furniture purge"
+        wrongUsage: "Please use /furniture purge [time]"
+    recipe:
+        help_name: "&7/furniture &erecipe &a[systemID] &b(edit)"
+        help_hover:
+            - "&7Bearbeite ein Rezept oder lass es dir anzeigen"
+        suggest: "/furniture recipe"
+        wrongUsage: "Please use /furniture recipe [systemID]"
+    reload:
+        help_name: "&7/furniture &ereload"
+        help_hover: "&eLädt &7die Plugin Informationen neu"
+        suggest: "/furniture reload"
+    remove:
+        help_name: "&7/furniture &eremove &a[type]"
+        help_hover:
+            - "&7Entfernt ein &efurntire &7mit den Optionen"
+            - "&7Optionen:"
+            - " - &etype&7: ProjectName"
+            - " - &eplayer&7: All furnitures by playerName"
+            - " - &eworld&7: All furnitures from World"
+            - " - &esystemID&7: Furniture by systemID"
+            - " - &edistance&7: Furniture by distance"
+            - " - &elookat&7: Furniture you are looking it"
+            - " - &eall&7: clear the Server"
+        suggest: "/furniture remove"
+        wrongUsage: "Please use /furniture remove [type]"
+    save:
+        help_name: "&7/furniture &esave"
+        help_hover: "&7Speichert alle Informationen manuell"
+        suggest: "/furniture save"
+    spawn:
+        help_name: "&7/furniture &espawn [x] [y] [z] [yaw] [systemID] {world}"
+        help_hover: 
+            - "&7Spawn a furniture on &eposition"
+        suggest: "/furniture spawn [x] [y] [z] [yaw] [systemID] {world}"
+        help_hide: true
+        wrongUsage: "Please use /furniture spawn [x] [y] [z] [yaw] [systemID] {world}"
+    toggle:
+        help_name: "&7/furniture &etoggle (player)"
+        help_hover:
+            - "&7Macht alle furniture un/sichtbar"
+        suggest: "/furniture toggle"
+        wrongUsage: "Please use /furniture toggle &b(player)"
+    version:
+        help_name: "&7/furniture &eversion"
+        help_hover: "&7zeigt die FurnitureLib Version an"
+        suggest: "/furniture version"

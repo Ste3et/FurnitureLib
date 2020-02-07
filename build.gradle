@@ -1,0 +1,75 @@
+apply plugin: 'java'
+apply plugin: 'maven'
+
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
+
+compileJava.options.encoding = "UTF-8"
+compileTestJava.options.encoding = "UTF-8"
+
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
+repositories {
+    mavenCentral()
+    maven { url "https://hub.spigotmc.org/nexus/content/repositories/snapshots/" }
+    maven { url "https://ci.ender.zone/plugin/repository/everything/" }
+    maven { url "https://jitpack.io" }
+    maven { url "https://repo.maven.apache.org/maven2" }
+    maven { url "https://repo.dmulloy2.net/nexus/repository/public/" }
+    maven { url "https://maven.enginehub.org/repo/" }
+    maven { url "https://oss.sonatype.org/content/repositories/snapshots" }
+    maven {
+        name "ultimateskyblock"
+        url "https://www.uskyblock.ovh/maven/uskyblock/"
+    }
+    flatDir {
+        dirs("lib")
+    }
+}
+
+dependencies {
+    "implementation"("org.slf4j:slf4j-jdk14:1.7.10")
+    "implementation"("com.zaxxer:HikariCP:3.3.1")
+    "implementation"("org.jetbrains:annotations:15.0")
+    "implementation"("org.spigotmc:spigot-api:1.14.4-R0.1-SNAPSHOT")
+    "implementation"("org.bukkit:bukkit:1.14.4-R0.1-SNAPSHOT")
+    "implementation"("com.github.MilkBowl:VaultAPI:1.7")
+    "implementation"("com.gitlab.Ste3et_C0st:protectionlib:v0.9.7")
+    "implementation"("name:LightAPI")
+    "implementation"("name:ProtectionLib")
+    "implementation"("com.comphenix.protocol:ProtocolLib:4.5.0")
+    "implementation"("com.github.rlf:uSkyBlock-API:2.8.3")
+}
+
+test {
+    systemProperty "file.encoding", "utf-8"
+}
+
+task copyTypeId(type: Copy) {
+    from 'src/main/resources/id.json'
+    into 'build/resources/main'
+}
+
+processResources {
+    from('src/main/resources') {
+        include 'plugin.yml'
+        expand(
+                name: project.name,
+                version: project.version,
+        )
+        include 'config.yml'
+        include 'default.dModel'
+        include 'manageInv.yml'
+        include 'manageInvOld.yml'
+        include 'permissionKit.yml'
+        include 'language/*'
+    }
+}
+
+clean.doFirst {
+    delete "../target"
+}
+
+jar.destinationDirectory = file('./target')
