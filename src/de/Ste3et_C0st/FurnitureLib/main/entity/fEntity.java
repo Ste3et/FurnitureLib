@@ -87,6 +87,10 @@ public abstract class fEntity extends fSerializer {
     public boolean hasGravity() {
         return this.gravity;
     }
+    
+    public fEntity setNameVasibility(boolean b) {
+		return this.setNameVisibility(b);
+	}
 
     public boolean isCustomNameVisible() {
         return this.nameVisible;
@@ -380,11 +384,6 @@ public abstract class fEntity extends fSerializer {
         getWatcher().setObject(new WrappedDataWatcherObject(Type.field.getHealth(), Registry.get(Float.class)), health);
         return this;
     }
-	
-	@Deprecated
-	public List<Integer> getPassanger() {
-		return this.getPassenger();
-	}
 
     public void send(Player[] player) {
         for (Player p : player) {
@@ -398,59 +397,11 @@ public abstract class fEntity extends fSerializer {
         }
     }
 
-	public boolean isInvisible(){
-		return this.invisible;
-	}
-	
-	public boolean isGlowing(){
-		return this.glowing;
-	}
-	
-	public FurnitureLib getPlugin(){
-		return FurnitureLib.getInstance();
-	}
-	
-	public UUID getUUID() {
-		return this.b;
-	}
-	
-	public void delete(){
-		FurnitureLib.getInstance().getFurnitureManager().remove(this);
-	}
-	
-	public void sendParticle() {
-		getObjID().getWorld().playEffect(getLocation(), Effect.STEP_SOUND, getHelmet().getType());
-	}
-	
-	public World getWorld(){return this.world;}
-	
-	
-	public fEntity setInvisible(boolean b) {
-		setBitMask(b, 0, 5);
-		this.invisible = b;
-		return this;
-	}
-	
-	public fEntity setGlowing(boolean b) {
-		if(!FurnitureLib.getInstance().isGlowing()) b = false;
-		setBitMask(b, 0, 6);
-		this.glowing = b;
-		return this;
-	}
-	
-	public fEntity setInventory(fInventory inv) {
-		this.i = inv;return this;
-	}
-	
-	@Deprecated
-	public fEntity setNameVasibility(boolean b) {
-		return this.setNameVisibility(b);
-	}
-	
-	public fEntity setNameVisibility(boolean b) {
-		getWatcher().setObject(new WrappedDataWatcherObject(3, Registry.get(Boolean.class)), b);
-		this.nameVisible = b;return this;
-	}
+    public void update() {
+        for (Player p : getObjID().getPlayerList()) {
+            update(p);
+        }
+    }
 
     public void update(Player p) {
         if (!getObjID().getPlayerList().contains(p)) {

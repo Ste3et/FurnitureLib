@@ -12,6 +12,7 @@ import de.Ste3et_C0st.FurnitureLib.Events.internal.*;
 import de.Ste3et_C0st.FurnitureLib.LimitationManager.LimitationManager;
 import de.Ste3et_C0st.FurnitureLib.SchematicLoader.ProjectManager;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.*;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.inventory.InventoryManager;
 import de.Ste3et_C0st.FurnitureLib.main.Protection.ProtectionManager;
 import de.Ste3et_C0st.FurnitureLib.main.Type.*;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
@@ -27,81 +28,82 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import de.Ste3et_C0st.FurnitureLib.Command.TabCompleterHandler;
-import de.Ste3et_C0st.FurnitureLib.Command.command;
-import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
-import de.Ste3et_C0st.FurnitureLib.Database.DeSerializer;
-import de.Ste3et_C0st.FurnitureLib.Database.Serializer;
-import de.Ste3et_C0st.FurnitureLib.Database.SQLManager;
-import de.Ste3et_C0st.FurnitureLib.Events.ChunkOnLoad;
-import de.Ste3et_C0st.FurnitureLib.Events.FurnitureEvents;
-import de.Ste3et_C0st.FurnitureLib.Events.internal.onBlockDispense;
-import de.Ste3et_C0st.FurnitureLib.Events.internal.onChunkChange;
-import de.Ste3et_C0st.FurnitureLib.Events.internal.onCrafting;
-import de.Ste3et_C0st.FurnitureLib.Events.internal.onEntityExplode;
-import de.Ste3et_C0st.FurnitureLib.Events.internal.onPlayerChangeWorld;
-import de.Ste3et_C0st.FurnitureLib.Events.internal.onPlayerDeath;
-import de.Ste3et_C0st.FurnitureLib.Events.internal.onPlayerJoin;
-import de.Ste3et_C0st.FurnitureLib.Events.internal.onPlayerQuit;
-import de.Ste3et_C0st.FurnitureLib.Events.internal.onPlayerRespawn;
-import de.Ste3et_C0st.FurnitureLib.Events.internal.onPlayerTeleportEvent;
-import de.Ste3et_C0st.FurnitureLib.LimitationManager.LimitationManager;
-import de.Ste3et_C0st.FurnitureLib.ShematicLoader.ProjectManager;
-import de.Ste3et_C0st.FurnitureLib.Utilitis.ColorUtil;
-import de.Ste3et_C0st.FurnitureLib.Utilitis.CraftingInv;
-import de.Ste3et_C0st.FurnitureLib.Utilitis.LanguageManager;
-import de.Ste3et_C0st.FurnitureLib.Utilitis.LocationUtil;
-import de.Ste3et_C0st.FurnitureLib.Utilitis.Metrics;
-import de.Ste3et_C0st.FurnitureLib.Utilitis.autoConverter;
-import de.Ste3et_C0st.FurnitureLib.Utilitis.config;
-import de.Ste3et_C0st.FurnitureLib.Utilitis.inventory.InventoryManager;
-import de.Ste3et_C0st.FurnitureLib.main.Type.EventType;
-import de.Ste3et_C0st.FurnitureLib.main.Type.LimitationType;
-import de.Ste3et_C0st.FurnitureLib.main.Type.ProtocolFields;
-import de.Ste3et_C0st.FurnitureLib.main.Type.PublicMode;
-import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
-import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
-import de.Ste3et_C0st.FurnitureLib.main.Protection.ProtectionManager;
+import java.io.BufferedReader;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.lang.reflect.InvocationTargetException;
+import java.nio.charset.StandardCharsets;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
+import java.util.logging.Logger;
 
 public class FurnitureLib extends JavaPlugin {
 
-	@SuppressWarnings("unused")
-	private Logger logger = Logger.getLogger("Minecraft");
-	private LocationUtil lUtil;
-	private static FurnitureLib instance;
-	private FurnitureManager manager;
-	private ProtectionManager Pmanager;
-	private LightManager lightMgr;
-	private HashMap<String, List<String>> permissionKit = new HashMap<String, List<String>>();
-	private boolean useGamemode = true, canSit = true, update = true, useParticle = true, useRegionMemberAccess = false,
-			autoPurge = false, removePurge = false, creativeInteract = true, creativePlace = true, glowing = true,
-			spamBreak = true, spamPlace = true, rotateOnSit = true, useSSL = false;
-	public boolean autoFileUpdater = true;
-	private CraftingInv craftingInv;
-	private LanguageManager lmanager;
-	private SQLManager sqlManager;
-	private LimitationManager limitManager;
-	private InventoryManager inventoryManager;
-	private ColorUtil colorManager;
-	private Serializer serializeNew;
-	private DeSerializer deSerializerNew;
-	private Updater updater;
-	private BlockManager bmanager;
-	private PublicMode mode;
-	private EventType type;
-	private ProtocolFields field = ProtocolFields.Spigot110;
-	private ProjectManager pManager;
-	private PermissionHandler permissionHandler;
-	private String timePattern = "mm:ss:SSS";
-	private int purgeTime = 30, viewDistance = 100, limitGlobal = -1;
-	private long purgeTimeMS = 0, spamBreakTime = 5000, spamPlaceTime = 5000;
-	private Material defMaterial = Material.valueOf(isNewVersion() ? "COW_SPAWN_EGG" : "MONSTER_EGG");
-	private boolean sync = true;
-	private static List<FurniturePlugin> furniturePlugins = new ArrayList<FurniturePlugin>();
-	private static int versionInt = 0;
-	public HashMap<Project, Long> deleteMap = new HashMap<Project, Long>();
-	public HashMap<UUID, Long> timeStampPlace = new HashMap<UUID, Long>();
-	public HashMap<UUID, Long> timeStampBreak = new HashMap<UUID, Long>();
+    private static FurnitureLib instance;
+    private static List<FurniturePlugin> furniturePlugins = new ArrayList<>();
+    private static int versionInt = 0;
+    private static boolean enableDebug = false;
+    /**
+     * Check if the plugin is 1.13 or higher
+     *
+     * @return
+     */
+
+    private static Boolean newVersion = null;
+    public boolean autoFileUpdater = true;
+    public HashMap<Project, Long> deleteMap = new HashMap<>();
+    public HashMap<UUID, Long> timeStampPlace = new HashMap<>();
+    public HashMap<UUID, Long> timeStampBreak = new HashMap<>();
+    @SuppressWarnings("unused")
+    private Logger logger = Logger.getLogger("Minecraft");
+    private LocationUtil lUtil;
+    private FurnitureManager manager;
+    private ProtectionManager Pmanager;
+    private LightManager lightMgr;
+    private HashMap<String, List<String>> permissionKit = new HashMap<>();
+    private boolean useGamemode = true, canSit = true, update = true, useParticle = true, useRegionMemberAccess = false,
+            autoPurge = false, removePurge = false, creativeInteract = true, creativePlace = true, glowing = true,
+            spamBreak = true, spamPlace = true, rotateOnSit = true, useSSL = false;
+    private CraftingInv craftingInv;
+    private LanguageManager lmanager;
+    private SQLManager sqlManager;
+    private LimitationManager limitManager;
+    private ColorUtil colorManager;
+    private Serializer serializeNew;
+    private DeSerializer deSerializerNew;
+    private Updater updater;
+    private BlockManager bmanager;
+    private InventoryManager inventoryManager;
+    private PublicMode mode;
+    private EventType type;
+    private ProtocolFields field = ProtocolFields.Spigot110;
+    private ProjectManager pManager;
+    private PermissionHandler permissionHandler;
+    private String timePattern = "mm:ss:SSS";
+    private int purgeTime = 30, viewDistance = 100, limitGlobal = -1;
+    private long purgeTimeMS = 0, spamBreakTime = 5000, spamPlaceTime = 5000;
+    private Material defMaterial = Material.valueOf(isNewVersion() ? "COW_SPAWN_EGG" : "MONSTER_EGG");
+    private boolean sync = true;
+    private static final int BSTATS_ID = 454;
+
+    public static String getBukkitVersion() {
+        return Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3];
+    }
+
+    public static FurnitureLib getInstance() {
+        return instance;
+    }
+
+    public static List<FurniturePlugin> getFurniturePlugins() {
+        return furniturePlugins;
+    }
+
+    public static void registerPlugin(FurniturePlugin plugin) {
+        furniturePlugins.add(plugin);
+        plugin.registerProjects();
+        plugin.applyPluginFunctions();
+    }
 
     public static void debug(String str) {
         if (enableDebug)
@@ -140,6 +142,10 @@ public class FurnitureLib extends JavaPlugin {
 
     public ProtectionManager getPermManager() {
         return this.Pmanager;
+    }
+    
+    public InventoryManager getInventoryManager() {
+    	return this.inventoryManager;
     }
 
     public LimitationManager getLimitManager() {
@@ -373,67 +379,13 @@ public class FurnitureLib extends JavaPlugin {
         return s.startsWith("4");
     }
 
-			send("==========================================");
-			send("FurnitureLibrary Version: §e" + this.getDescription().getVersion());
-			send("Furniture Author: §6" + this.getDescription().getAuthors().get(0));
-			send("Furniture Website: §e" + this.getDescription().getWebsite());
-			send("FurnitureLib load for Minecraft: 1." + getVersionInt());
-			String s = getPluginManager().getPlugin("ProtocolLib").getDescription().getVersion();
-			if (getBukkitVersion().startsWith("v1_14")) {
-				send("§5Info: §eFor Spigot 1.14.x you need §6ProtocolLib 4.5.0 Build #8 §eor above");
-				send("§5Download it here: §l§9http://ci.dmulloy2.net/job/ProtocolLib%20Gradle/lastStableBuild/");
-				send("§5Otherwise you will receive: §cNoClassDefFoundError: org/apache/commons/lang3/Validate");
-			}
-			boolean protocollib = isRightProtocollib(s);
-			if (protocollib) {
-				send("Furniture start load");
-				Boolean b = isEnable("ProtectionLib", false);
-				send("Furniture find ProtectionLib: §e" + b.toString());
-				this.bmanager = new BlockManager();
-				this.craftingInv = new CraftingInv(this);
-				loadPermissionKit();
-				this.autoFileUpdater = getConfig().getBoolean("config.autoFileUpdater");
-				autoConverter.modelConverter(getServer().getConsoleSender());
-				loadPluginConfig();
-				if (getConfig().getBoolean("config.UseMetrics")) new Metrics(this);
-				//ModelFileLoading #1
-				this.pManager.loadProjectFiles();
-				this.sqlManager = new SQLManager(instance);
-				this.sqlManager.initialize();
-				autoConverter.databaseConverter(getServer().getConsoleSender());
-				new FurnitureEvents(instance, manager);
-				getServer().getPluginManager().registerEvents(new onCrafting(), getInstance());
-				getServer().getPluginManager().registerEvents(new onBlockDispense(), getInstance());
-				getServer().getPluginManager().registerEvents(new onEntityExplode(), getInstance());
-				getServer().getPluginManager().registerEvents(new onPlayerChangeWorld(), getInstance());
-				getServer().getPluginManager().registerEvents(new onPlayerDeath(), getInstance());
-				getServer().getPluginManager().registerEvents(new onPlayerJoin(), getInstance());
-				getServer().getPluginManager().registerEvents(new onPlayerQuit(), getInstance());
-				getServer().getPluginManager().registerEvents(new onPlayerRespawn(), getInstance());
-				getServer().getPluginManager().registerEvents(new onPlayerTeleportEvent(), getInstance());
-				getServer().getPluginManager().registerEvents(new ChunkOnLoad(), getInstance());
-				getServer().getPluginManager().registerEvents(new onChunkChange(), getInstance());
-				this.inventoryManager = new InventoryManager();
-				send("§2Furniture load finish :)");
-				if (getConfig().getBoolean("config.timer.Enable")) {
-					int time = getConfig().getInt("config.timer.time");
-					sqlManager.saveIntervall(time);
-				}
-				send("==========================================");
-				Bukkit.getOnlinePlayers().stream().filter(p -> p != null && p.isOp())
-						.forEach(p -> getUpdater().sendPlayer(p));
-				PluginCommand c = getCommand("furniture");
-				c.setExecutor(new command(this));
-				c.setTabCompleter(new TabCompleterHandler());
-			} else {
-				send("Furniture Lib doesn't find the correct ProtocolLib");
-				send("Please Install Protocollib §c4.x");
-				send("You can it download at: §6§lhttps://www.spigotmc.org/resources/protocollib.1997/");
-				send("==========================================");
-				getPluginManager().disablePlugin(this);
-			}
-		}
-	}
+    @Override
+    public void onEnable() {
+        if (getVersionInt() < 9 || getVersionInt() > 15) {
+            send("§cFurnitureLib only works on Spigot 1.9 - 1.15");
+            getPluginManager().disablePlugin(this);
+            return;
+        }
 
         if (!isEnable("ProtocolLib", true)) {
             send("§cProtocolLib not found");
@@ -485,6 +437,7 @@ public class FurnitureLib extends JavaPlugin {
                 this.pManager.loadProjectFiles();
                 this.sqlManager = new SQLManager(instance);
                 this.sqlManager.initialize();
+                this.inventoryManager = new InventoryManager();
                 autoConverter.databaseConverter(getServer().getConsoleSender());
                 new FurnitureEvents(instance, manager);
                 getServer().getPluginManager().registerEvents(new onCrafting(), getInstance());
@@ -727,8 +680,4 @@ public class FurnitureLib extends JavaPlugin {
             e.printStackTrace();
         }
     }
-
-	public InventoryManager getInventoryManager() {
-		return this.inventoryManager;
-	}
 }

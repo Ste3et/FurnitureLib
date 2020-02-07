@@ -1,7 +1,8 @@
 package de.Ste3et_C0st.FurnitureLib.Database;
 
 import com.zaxxer.hikari.HikariConfig;
-import de.Ste3et_C0st.FurnitureLib.Utilitis.CallbackObjectIDs;
+
+import de.Ste3et_C0st.FurnitureLib.Utilitis.callbacks.CallbackObjectIDs;
 import de.Ste3et_C0st.FurnitureLib.main.ChunkData;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
@@ -141,11 +142,13 @@ public class SQLManager {
     }
 
 
-import de.Ste3et_C0st.FurnitureLib.Utilitis.callbacks.CallbackObjectIDs;
-import de.Ste3et_C0st.FurnitureLib.main.ChunkData;
-import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
-import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
-import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
+    public void save(ObjectID obj) {
+        if (Objects.nonNull(database)) {
+            database.save(obj);
+            return;
+        }
+        FurnitureLib.getInstance().getLogger().warning("No SQLite and MySQL instance found.");
+    }
 
     public void remove(ObjectID obj) {
         if (Objects.nonNull(database)) {

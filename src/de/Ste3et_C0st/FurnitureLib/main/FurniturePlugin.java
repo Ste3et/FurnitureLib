@@ -4,7 +4,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
 
 import java.io.*;
-import java.nio.charset.StandardCharsets;
 import java.util.Objects;
 
 public abstract class FurniturePlugin {
@@ -24,20 +23,6 @@ public abstract class FurniturePlugin {
     public Plugin getPlugin() {
         return this.pluginInstance;
     }
-
-    public InputStream getResource(String filename) throws NullPointerException {
-        return Objects.nonNull(getPlugin()) ? getPlugin().getResource(filename) : null;
-    }
-
-    private BufferedReader readResource(String str) {
-        if (!str.startsWith("/")) str = "/" + str;
-        InputStream stream = getPlugin().getClass().getResourceAsStream(str);
-		return new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8));
-	}
-	
-	public Plugin getPlugin() {
-		return this.pluginInstance;
-	}
 	
 	public InputStream getResource(String filename) throws NullPointerException {
 		return Objects.nonNull(getPlugin()) ? getPlugin().getResource(filename) : null;

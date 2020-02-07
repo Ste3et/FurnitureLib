@@ -170,4 +170,26 @@ public abstract class Modelschematic{
         return vectorList;
     }
 
+    protected ModelVector rotateVector(ModelVector vector, BlockFace direction) {
+        double x = vector.getX();
+        double y = vector.getY();
+        double z = vector.getZ();
+        direction = getPlaceableSide().equals(PlaceableSide.SIDE) ? direction.getOppositeFace() : direction;
+        ModelVector returnVector = new ModelVector(x, y, z, vector.getYaw(), vector.getPitch());
+        switch (direction) {
+            case SOUTH:
+                returnVector = new ModelVector(-x, y, -z, vector.getYaw() + 180f, vector.getPitch());
+                break;
+            case WEST:
+                returnVector = new ModelVector(z, y, -x, vector.getYaw() + 270f, vector.getPitch());
+                break;
+            case EAST:
+                returnVector = new ModelVector(-z, y, x, vector.getYaw() + 90f, vector.getPitch());
+                break;
+            default:
+                break;
+        }
+
+        return returnVector;
+    }
 }

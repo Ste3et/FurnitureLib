@@ -235,17 +235,6 @@ public class Type {
         }
     }
 
-    public enum EventType {
-        PLACE(null, null, null),
-        BREAK(lang.getName("Break"), lang.getMaterial("Break"), 1),
-        INTERACT(lang.getName("Interact"), lang.getMaterial("Interact"), 1),
-        BREAK_INTERACT(lang.getName("Break_interact"), lang.getMaterial("Break_interact"), 1),
-        NONE(lang.getName("None"), lang.getMaterial("None"), 1);
-
-        String name;
-        Material material;
-        Integer amount;
-
 	public enum EventType{
 		PLACE(null, null, null, null),
 		BREAK(lang.getName("Break"), lang.getMaterial("Break"), lang.getShort("Break"), 1),
@@ -328,44 +317,6 @@ public class Type {
 			return is;
 		}
 	}
-	
-	public enum EntityMoving{
-		LEFT(1,0,false),
-		RIGHT(-1,0,false),
-		FORWARD(0,1,false),
-		BACKWARD(0,-1,false),
-		JUMPING(0,0,true),
-		SNEEKING(0,0,false),
-		LEFT_FORWARD(1,1,false),
-		RIGHT_FORWARD(-1,1,false),
-		LEFT_BACKWARD(1,-1,false),
-		RIGHT_BACKWARD(-1,-1,false);
-
-        public String getName() {
-            return this.name;
-        }
-
-        public Material getMaterial() {
-            return this.material;
-        }
-
-        public Integer getAmount() {
-            return this.amount;
-        }
-
-        public List<String> getStringList() {
-            return this.stringl;
-        }
-
-        public ItemStack getItemStack() {
-            ItemStack is = new ItemStack(material, amount);
-            ItemMeta im = is.getItemMeta();
-            im.setLore(stringl);
-            im.setDisplayName(name);
-            is.setItemMeta(im);
-            return is;
-        }
-    }
 
     public enum EntityMoving {
         LEFT(1, 0, false),

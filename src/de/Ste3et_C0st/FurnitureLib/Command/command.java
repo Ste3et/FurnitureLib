@@ -21,9 +21,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
-import de.Ste3et_C0st.FurnitureLib.ShematicLoader.Events.ProjectClickEvent;
+import de.Ste3et_C0st.FurnitureLib.SchematicLoader.Events.ProjectClickEvent;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.LanguageManager;
-import de.Ste3et_C0st.FurnitureLib.Utilitis.StringTranslater;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.StringTranslator;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
@@ -160,8 +160,8 @@ public class command implements CommandExecutor, Listener{
 				new ComponentBuilder(LanguageManager.getInstance().getString("command.help.header"))
 					.event(new HoverEvent(Action.SHOW_TEXT, 
 						   new ComponentBuilder(LanguageManager.getInstance().getString("command.help.hover",
-								   	new StringTranslater("#VERSION#", FurnitureLib.getInstance().getDescription().getVersion()),
-								   	new StringTranslater("#AUTHOR#", "Ste3et_C0st")))
+								   	new StringTranslator("#VERSION#", FurnitureLib.getInstance().getDescription().getVersion()),
+								   	new StringTranslator("#AUTHOR#", "Ste3et_C0st")))
 						   .create()
 					)
 				).create()
@@ -181,7 +181,7 @@ public class command implements CommandExecutor, Listener{
 		return new ComponentBuilder("§6" + cmd).event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(hover).create())).event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, ChatColor.stripColor(cmd))).create();
 	}
 	
-	public static BaseComponent[] jsonText(String key, de.Ste3et_C0st.FurnitureLib.Utilitis.StringTranslater ... stringTranslators) {
+	public static BaseComponent[] jsonText(String key, de.Ste3et_C0st.FurnitureLib.Utilitis.StringTranslator ... stringTranslators) {
 		String cmd = LanguageManager.getInstance().getString("command." + key + ".help_name", stringTranslators);
 		String hover = LanguageManager.getInstance().getString("command." + key + ".help_hover", stringTranslators);
 		return new ComponentBuilder("§6" + cmd).event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(hover).create())).event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, ChatColor.stripColor(cmd))).create();
