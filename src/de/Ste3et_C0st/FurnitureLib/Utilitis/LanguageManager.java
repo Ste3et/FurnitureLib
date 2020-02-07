@@ -132,6 +132,7 @@ public class LanguageManager{
 			invShortList.put(str,(short) file.getInt("inv.admin." + str + ".SubID"));
 			invHashList.put(str, file.getStringList("inv.admin." + str + ".Text"));
 		}
+		
 		invStringList.put("manageInvName", file.getString("inv.manageInvName"));
 		invStringList.put("playerAddInvName", file.getString("inv.playerAddInvName"));
 		invStringList.put("playerRemoveInvName", file.getString("inv.playerRemoveInvName"));
@@ -173,6 +174,7 @@ public class LanguageManager{
 			invShortList.put(str,(short) file.getInt("inv.admin." + str + ".SubID"));
 			invHashList.put(str, file.getStringList("inv.admin." + str + ".Text"));
 		}
+		
 		invStringList.put("manageInvName", file.getString("inv.manageInvName"));
 		invStringList.put("playerAddInvName", file.getString("inv.playerAddInvName"));
 		invStringList.put("playerRemoveInvName", file.getString("inv.playerRemoveInvName"));

@@ -7,11 +7,13 @@ import java.util.Objects;
 import org.bukkit.Material;
 import org.bukkit.Sound;
 import org.bukkit.entity.Player;
+import org.bukkit.event.inventory.InventoryAction;
 import org.bukkit.inventory.ItemStack;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.ItemStackBuilder;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.callbacks.CallbackGUI;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.callbacks.CallbackGUIClose;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.inventory.InventoryHandler;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.inventory.InventoryManager.InventoryMode;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.EventType;
@@ -19,16 +21,19 @@ import de.Ste3et_C0st.FurnitureLib.main.Type.PublicMode;
 
 public class ManageInventoryCombat extends InventoryHandler{
 
+	private PublicMode publicMode;
+	private EventType eventType;
 	private final ObjectID objectID;
-	private final PublicMode publicMode;
-	private final EventType eventType;
-	private final ItemStack filler = new ItemStackBuilder(Material.BLACK_STAINED_GLASS_PANE).setName("§c").build();
+	private final ItemStack filler = new ItemStackBuilder(Material.valueOf("STAINED_GLASS_PANE")).setDurability((short) 15).setName("§c").build();
+	private int enumCounterPublicMode, enumCounterEventType;
 	
 	public ManageInventoryCombat(Player player, ObjectID objectID) {
 		super(player, 27, getLangManager().getName("manageInvName"));
 		this.objectID = objectID;
 		this.publicMode = getObjectID().getPublicMode();
 		this.eventType = getObjectID().getEventType();
+		this.enumCounterEventType = this.eventType.ordinal();
+		this.enumCounterPublicMode = this.publicMode.ordinal();
 		
 		super.onClick(new CallbackGUI() {
 			@Override
@@ -37,6 +42,51 @@ public class ManageInventoryCombat extends InventoryHandler{
 				if(stack.equals(filler)) return;
 				if(getInventoryPos() == ClickedInventory.TOP) {
 					getPlayer().playSound(getPlayer().getLocation(), Sound.BLOCK_LEVER_CLICK, 1, 1);
+					if(this.getAction().equals(InventoryAction.PICKUP_ALL)) {
+						if(slot == 10) {
+							if(enumCounterPublicMode < (PublicMode.values().length - 1)) {
+								enumCounterPublicMode++;
+							}else {
+								enumCounterPublicMode = 0;
+							}
+							publicMode = PublicMode.values()[enumCounterPublicMode];
+						}else if(slot == 11) {
+							if(enumCounterEventType < (EventType.values().length - 1)) {
+								enumCounterEventType++;
+							}else {
+								enumCounterEventType = 1;
+							}
+							eventType = EventType.values()[enumCounterEventType];
+							
+						}
+						setButtons();
+						getPlayer().updateInventory();
+					}else if(this.getAction().equals(InventoryAction.PICKUP_HALF)) {
+						if(slot == 10) {
+							if(enumCounterPublicMode > 0) {
+								enumCounterPublicMode--;
+							}else {
+								enumCounterPublicMode = (PublicMode.values().length - 1);
+							}
+							publicMode = PublicMode.values()[enumCounterPublicMode];
+						}else if(slot == 11) {
+							if(enumCounterEventType > 1) {
+								enumCounterEventType--;
+							}else {
+								enumCounterEventType = (EventType.values().length - 1);
+							}
+							eventType = EventType.values()[enumCounterEventType];
+						}
+						setButtons();
+						getPlayer().updateInventory();
+					}
+					if(slot == 12) {
+						new PlayerManageInventoryCombat(getPlayer(), getObjectID(), InventoryMode.SETOWNER);
+					}else if(slot == 14) {
+						new PlayerManageInventoryCombat(getPlayer(), getObjectID(), InventoryMode.ADDFRIEND);
+					}else if(slot == 16) {
+						new PlayerManageInventoryCombat(getPlayer(), getObjectID(), InventoryMode.REMOVEFRIEND);
+					}
 				}
 			}
 		});
@@ -79,7 +129,7 @@ public class ManageInventoryCombat extends InventoryHandler{
 	}
 	
 	public ItemStack getItemStack(String s){
-		ItemStackBuilder builder = new ItemStackBuilder(getLangManager().getMaterial(s)).setAmount(1).setName(getLangManager().getName(s));
+		ItemStackBuilder builder = new ItemStackBuilder(getLangManager().getMaterial(s)).setDurability(getLangManager().getShort(s)).setAmount(1).setName(getLangManager().getName(s));
 		if(Objects.nonNull(getLangManager().getStringList(s))){
 			List<String> lore = new ArrayList<String>();
 			

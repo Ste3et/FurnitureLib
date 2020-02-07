@@ -39,4 +39,20 @@ public class InventoryManager {
 		}
 		return null;
 	}
+	
+	public static enum InventoryMode{
+		ADDFRIEND("playerAddInvName"),
+		REMOVEFRIEND("playerRemoveInvName"),
+		SETOWNER("playerSetInvName");
+		
+		String titleName;
+		
+		InventoryMode(String titleName) {
+			this.titleName = titleName;
+		}
+		
+		public String getInvTitle() {
+			return titleName;
+		};
+	}
 }

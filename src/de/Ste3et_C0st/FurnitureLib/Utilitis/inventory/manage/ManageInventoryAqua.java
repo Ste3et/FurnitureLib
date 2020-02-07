@@ -13,6 +13,7 @@ import de.Ste3et_C0st.FurnitureLib.Utilitis.ItemStackBuilder;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.callbacks.CallbackGUI;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.callbacks.CallbackGUIClose;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.inventory.InventoryHandler;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.inventory.InventoryManager.InventoryMode;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.EventType;
@@ -80,7 +81,11 @@ public class ManageInventoryAqua extends InventoryHandler{
 						getPlayer().updateInventory();
 					}
 					if(slot == 12) {
-						new SetOwnerInventoryAqua(getPlayer(), getObjectID());
+						new PlayerManageInventoryAqua(getPlayer(), getObjectID(), InventoryMode.SETOWNER);
+					}else if(slot == 14) {
+						new PlayerManageInventoryAqua(getPlayer(), getObjectID(), InventoryMode.ADDFRIEND);
+					}else if(slot == 16) {
+						new PlayerManageInventoryAqua(getPlayer(), getObjectID(), InventoryMode.REMOVEFRIEND);
 					}
 				}
 			}

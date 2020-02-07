@@ -162,6 +162,11 @@ public abstract class fEntity extends fSerializer{
 	public String getName() {
 		return getCustomName();
 	}
+	
+	@Deprecated
+	public List<Integer> getPassanger() {
+		return this.getPassenger();
+	}
 
 	public List<Integer> getPassenger() {
 		return this.passengerIDs;
@@ -213,6 +218,11 @@ public abstract class fEntity extends fSerializer{
 	
 	public fEntity setInventory(fInventory inv) {
 		this.i = inv;return this;
+	}
+	
+	@Deprecated
+	public fEntity setNameVasibility(boolean b) {
+		return this.setNameVisibility(b);
 	}
 	
 	public fEntity setNameVisibility(boolean b) {
