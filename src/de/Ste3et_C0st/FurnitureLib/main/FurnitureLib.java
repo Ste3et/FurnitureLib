@@ -83,6 +83,7 @@ public class FurnitureLib extends JavaPlugin {
     private long purgeTimeMS = 0, spamBreakTime = 5000, spamPlaceTime = 5000;
     private Material defMaterial = Material.valueOf(isNewVersion() ? "COW_SPAWN_EGG" : "MONSTER_EGG");
     private boolean sync = true;
+    private static final int BSTATS_ID = 454;
 
     public static String getBukkitVersion() {
         return Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3];
@@ -425,7 +426,7 @@ public class FurnitureLib extends JavaPlugin {
                 this.autoFileUpdater = getConfig().getBoolean("config.autoFileUpdater");
                 autoConverter.modelConverter(getServer().getConsoleSender());
                 loadPluginConfig();
-                if (getConfig().getBoolean("config.UseMetrics")) new Metrics(this);
+                if (getConfig().getBoolean("config.UseMetrics")) new Metrics(this, BSTATS_ID);
                 //ModelFileLoading #1
                 this.pManager.loadProjectFiles();
                 this.sqlManager = new SQLManager(instance);
