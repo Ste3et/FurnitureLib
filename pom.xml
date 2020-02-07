@@ -1,0 +1,144 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>de.Ste3et_C0st.furniture</groupId>
+	<artifactId>FurnitureLib</artifactId>
+	<version>2.1.8</version>
+	<packaging>jar</packaging>
+
+	<name>FurnitureLib</name>
+
+	<build>
+		<defaultGoal>clean package install</defaultGoal>
+		<sourceDirectory>src</sourceDirectory>
+		<finalName>FurnitureLib</finalName>
+		<resources>
+			<resource>
+				<directory>src</directory>
+				<excludes>
+					<exclude>**/*.java</exclude>
+				</excludes>
+				<filtering>true</filtering>
+			</resource>
+		</resources>
+		<plugins>
+
+			<plugin>
+				<artifactId>maven-compiler-plugin</artifactId>
+				<version>3.7.0</version>
+				<configuration>
+					<source>1.8</source>
+					<target>1.8</target>
+				</configuration>
+			</plugin>
+
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<configuration>
+					<archive>
+						<manifest>
+							<mainClass>
+								de.Ste3et_C0st.FurnitureLib.main.FurnitureLib
+							</mainClass>
+						</manifest>
+					</archive>
+					<descriptorRefs>
+						<descriptorRef>jar-with-dependencies</descriptorRef>
+					</descriptorRefs>
+					<appendAssemblyId>false</appendAssemblyId>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+
+	<repositories>
+		<repository>
+			<id>spigot-repo</id>
+			<url>https://hub.spigotmc.org/nexus/content/repositories/snapshots/</url>
+		</repository>
+
+		<repository>
+			<id>essx-repo</id>
+			<url>https://ci.ender.zone/plugin/repository/everything/</url>
+		</repository>
+
+		<repository>
+			<id>jitpack.io</id>
+			<url>https://jitpack.io</url>
+		</repository>
+	</repositories>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.spigotmc</groupId>
+			<artifactId>spigot-api</artifactId>
+			<version>1.14-R0.1-SNAPSHOT</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.bukkit</groupId>
+			<artifactId>bukkit</artifactId>
+			<version>1.14-R0.1-SNAPSHOT</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>org.slf4j</groupId>
+			<artifactId>slf4j-jdk14</artifactId>
+			<version>1.7.10</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.zaxxer</groupId>
+			<artifactId>HikariCP</artifactId>
+			<version>3.3.1</version>
+		</dependency>
+
+		<dependency>
+			<groupId>com.github.MilkBowl</groupId>
+			<artifactId>VaultAPI</artifactId>
+			<version>1.7</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>com.gitlab.Ste3et_C0st</groupId>
+			<artifactId>protectionlib</artifactId>
+			<version>v0.9.7</version>
+			<scope>provided</scope>
+		</dependency>
+
+		<dependency>
+			<groupId>ru.beykerykt.lightapi</groupId>
+			<artifactId>LightAPI</artifactId>
+			<version>3.2.7</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/lib/LightAPI.jar</systemPath>
+		</dependency>
+
+		<dependency>
+			<groupId>com.comphenix.protocol</groupId>
+			<artifactId>ProtocolLib</artifactId>
+			<version>4.5.0</version>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/lib/ProtocolLib.jar</systemPath>
+		</dependency>
+
+		<dependency>
+			<groupId>org.jetbrains</groupId>
+			<artifactId>annotations</artifactId>
+			<version>15.0</version>
+		</dependency>
+
+	</dependencies>
+	<description>The FurnitureLib is an API to create packet based entity creations for Spigot based Minecraft Servers.</description>
+	<url>https://dicecraft.de/furniture/</url>
+	<issueManagement>
+		<url>https://github.com/Ste3et/FurnitureLib/issues</url>
+		<system>GitHub</system>
+	</issueManagement>
+</project>
