@@ -52,8 +52,8 @@ public class DeSerializer {
 			obj.setSQLAction((action != null && action.equals(SQLAction.SAVE)) ? SQLAction.SAVE : SQLAction.NOTHING);
 			obj.setFromDatabase(true);
 			
-			if(compound.hasKey("entities")) {
-				NBTTagCompound armorStands = compound.getCompound("entities");
+			if(compound.hasKey("entities") || compound.hasKey("entitys")) {
+				NBTTagCompound armorStands = compound.hasKey("entitys") ? compound.getCompound("entitys") : compound.getCompound("entities");
 				armorStands.c().stream().filter(Objects::nonNull).forEach(packet -> {
 					NBTTagCompound metadata = armorStands.getCompound((String) packet);
 					Location loc = locationFetcher(metadata.getCompound("Location"));

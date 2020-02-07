@@ -286,6 +286,14 @@ public class downloadCommand extends iCommand{
 			}
 		}
 		
+		if(compound.hasKey("entitys")){
+			NBTTagCompound armorStands = compound.getCompound("entitys");
+			for(Object s : armorStands.c()){
+				String str = armorStands.getString((String) s);
+				file.set(header+".projectData.entities."+ ((String) s), str);
+			}
+		}
+		
 		PlaceableSide side = PlaceableSide.TOP;
 		if(compound.hasKey("placeAbleSide")){
 			side = PlaceableSide.valueOf(compound.getString("placeAbleSide"));

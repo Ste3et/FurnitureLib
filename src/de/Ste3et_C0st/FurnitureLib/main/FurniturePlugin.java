@@ -41,6 +41,11 @@ public abstract class FurniturePlugin {
 		}
 	}
 	
+	@Deprecated
+	public YamlConfiguration saveRessource(String sourceName, String fileName) {
+		return this.saveResource(sourceName, fileName);
+	}
+	
 	public YamlConfiguration saveResource(String sourceName, String fileName) {
 		File folder = new File("plugins/FurnitureLib/plugin");
 		File file = new File(folder,  fileName.endsWith(".yml") ? fileName : fileName + ".yml");

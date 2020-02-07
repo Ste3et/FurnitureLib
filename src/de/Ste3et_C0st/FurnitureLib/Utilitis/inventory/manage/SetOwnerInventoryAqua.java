@@ -7,13 +7,16 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 
 import de.Ste3et_C0st.FurnitureLib.Utilitis.ItemStackBuilder;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.callbacks.CallbackGUI;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.inventory.InventoryHandler;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
+import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 
 public class SetOwnerInventoryAqua extends InventoryHandler{
 
@@ -25,9 +28,26 @@ public class SetOwnerInventoryAqua extends InventoryHandler{
 	public SetOwnerInventoryAqua(Player player,ObjectID objectID) {
 		super(player, 54, getLangManager().getName("playerAddInvName"));
 		this.objectID = objectID;
-		this.maxPages = (int) Math.floor((double) Bukkit.getOnlinePlayers().stream().filter(p -> !p.equals(player)).count() / maxItems);
+		this.maxPages = (int) Math.floor((double) Bukkit.getOnlinePlayers().stream().filter(p -> !p.getUniqueId().equals(objectID.getUUID())).count() / maxItems);
 		this.update();
 		this.open(getPlayer());
+		super.onClick(new CallbackGUI() {
+			
+			@Override
+			public void onResult(ItemStack stack, Integer slot) {
+				if(this.getInventoryPos() == ClickedInventory.TOP) {
+					if(Objects.isNull(stack)) return;
+					if(stack.getType().equals(Material.PLAYER_HEAD)) {
+						SkullMeta skull = (SkullMeta) stack.getItemMeta();
+						OfflinePlayer player = skull.getOwningPlayer();
+						if(Objects.isNull(player)) return;
+						objectID.setUUID(player.getUniqueId());
+						objectID.setSQLAction(SQLAction.UPDATE);
+						update();
+					}
+				}
+			}
+		});
 	}
 	
 	public void update() {

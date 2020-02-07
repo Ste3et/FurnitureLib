@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -34,13 +35,12 @@ public abstract class Modelschematic{
 	
 	public Modelschematic(InputStream stream){
 		try{
-			
 			InputStreamReader reader = new InputStreamReader(stream);
 			YamlConfiguration config = YamlConfiguration.loadConfiguration(reader);
 			String yamlHeader = getHeader(config);
 			this.name = yamlHeader;
 			FurnitureLib.debug(this.name + " header found.");
-			this.loadEntities(yamlHeader, config);
+			this.loadEntitiesTypo(yamlHeader, config);
 			this.loadBlockData(yamlHeader, config);
 			this.placeableSide = PlaceableSide.valueOf(config.getString(yamlHeader + ".placeAbleSide", "TOP").toUpperCase());
 			
@@ -106,30 +106,38 @@ public abstract class Modelschematic{
 		this.max = Vector.getMaximum(vector.toVector(), this.max);
 	}
 	
-	private void loadEntities(String yamlHeader, YamlConfiguration config) {
+	private void loadEntitiesTypo(String yamlHeader, YamlConfiguration config) {
 		String configString = FurnitureLib.isNewVersion() ? yamlHeader+".projectData.entities" : yamlHeader+".ProjectModels.ArmorStands";
+		String typoConfigString = FurnitureLib.isNewVersion() ? yamlHeader+".projectData.entitys" : yamlHeader+".ProjectModels.ArmorStands";
 		FurnitureLib.debug(this.name + " load: " + configString + " (Entities)");
 		if(config.isConfigurationSection(configString)) {
 			FurnitureLib.debug(this.name + " load: " + configString + " isConfigurationSection = true");
-			config.getConfigurationSection(configString).getKeys(false).stream().forEach(key -> {
-				try {
-					String md5 = config.getString(configString + "." + key);
-					byte[] by = Base64Coder.decode(md5);
-					ByteArrayInputStream bin = new ByteArrayInputStream(by);
-					NBTTagCompound entityData = NBTCompressedStreamTools.read(bin);
-					ModelVector vector = new ModelVector(entityData.getCompound("Location"));
-					fEntity entity = readNBTtag(entityData);
-					if(Objects.nonNull(vector) && Objects.nonNull(entity)) {
-						this.entityMap.put(vector, entity);
-					}
-				}catch (Exception e) {
-					e.printStackTrace();
-				}
-			});
+			loadEntities(configString, config);
+		}else if(config.isConfigurationSection(typoConfigString)) {
+			FurnitureLib.debug(this.name + " load: " + configString + " isConfigurationSection = true");
+			loadEntities(typoConfigString, config);
 		}
 	}
 	
-	
+	private void loadEntities(String configString, YamlConfiguration config) {
+		//I know "entitys" is a typo but it can't fix easly here;
+		FurnitureLib.debug(this.name + " load: " + configString + " isConfigurationSection = true");
+		config.getConfigurationSection(configString).getKeys(false).stream().forEach(key -> {
+			try {
+				String md5 = config.getString(configString + "." + key);
+				byte[] by = Base64Coder.decode(md5);
+				ByteArrayInputStream bin = new ByteArrayInputStream(by);
+				NBTTagCompound entityData = NBTCompressedStreamTools.read(bin);
+				ModelVector vector = new ModelVector(entityData.getCompound("Location"));
+				fEntity entity = readNBTtag(entityData);
+				if(Objects.nonNull(vector) && Objects.nonNull(entity)) {
+					this.entityMap.put(vector, entity);
+				}
+			}catch (Exception e) {
+				e.printStackTrace();
+			}
+		});
+	}
 
 	protected ModelVector rotateVector(ModelVector vector, BlockFace direction){
 		double x = vector.getX();
