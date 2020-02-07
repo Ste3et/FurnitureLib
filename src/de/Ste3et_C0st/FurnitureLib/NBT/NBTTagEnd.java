@@ -5,29 +5,29 @@ import java.io.DataOutput;
 
 public class NBTTagEnd extends NBTBase {
 
-	NBTTagEnd() {
-	}
+    NBTTagEnd() {
+    }
 
-	@Override
-	public NBTBase clone() {
-		return new NBTTagEnd();
-	}
+    @Override
+    public NBTBase clone() {
+        return new NBTTagEnd();
+    }
 
-	@Override
-	public byte getTypeId() {
-		return (byte) 0;
-	}
+    @Override
+    public byte getTypeId() {
+        return (byte) 0;
+    }
 
-	@Override
-	void load(DataInput datainput, int i, NBTReadLimiter nbtreadlimiter) {
-	}
+    @Override
+    void load(DataInput datainput, int i, NBTReadLimiter nbtreadlimiter) {
+    }
 
-	@Override
-	public String toString() {
-		return "END";
-	}
+    @Override
+    public String toString() {
+        return "END";
+    }
 
-	@Override
-	void write(DataOutput dataoutput) {
-	}
+    @Override
+    void write(DataOutput dataoutput) {
+    }
 }

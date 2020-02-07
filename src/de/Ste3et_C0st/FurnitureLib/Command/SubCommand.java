@@ -1,69 +1,73 @@
 package de.Ste3et_C0st.FurnitureLib.Command;
 
-import java.lang.reflect.Constructor;
-
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandSender;
 
+import java.lang.reflect.Constructor;
+
 public class SubCommand {
 
-	private String HoverText = "";
-	private String subcommand = "";
-	private String Suggest_Command = "";
-	private String command = "";
-	private Class<?> cl;
-	
-	public SubCommand(String subcommand, Class<?> cl, String HoverText, String Suggest_Command, String command){
-		this.setHoverText(HoverText);
-		this.setSubcommand(subcommand);
-		this.setSuggest_Command(Suggest_Command);
-		this.setCommand(command);
-		this.setCl(cl);
-	}
+    private String HoverText = "";
+    private String subcommand = "";
+    private String Suggest_Command = "";
+    private String command = "";
+    private Class<?> cl;
 
-	public String getHoverText() {
-		return HoverText;
-	}
+    public SubCommand(String subcommand, Class<?> cl, String HoverText, String Suggest_Command, String command) {
+        this.setHoverText(HoverText);
+        this.setSubcommand(subcommand);
+        this.setSuggest_Command(Suggest_Command);
+        this.setCommand(command);
+        this.setCl(cl);
+    }
 
-	public void setHoverText(String hoverText) {
-		HoverText = hoverText;
-	}
+    public String getHoverText() {
+        return HoverText;
+    }
 
-	public String getSubcommand() {
-		return subcommand;
-	}
+    public void setHoverText(String hoverText) {
+        HoverText = hoverText;
+    }
 
-	public void setSubcommand(String subcommand) {
-		this.subcommand = subcommand;
-	}
+    public String getSubcommand() {
+        return subcommand;
+    }
 
-	public String getSuggest_Command() {
-		return Suggest_Command;
-	}
+    public void setSubcommand(String subcommand) {
+        this.subcommand = subcommand;
+    }
 
-	public void setSuggest_Command(String suggest_Command) {
-		Suggest_Command = suggest_Command;
-	}
+    public String getSuggest_Command() {
+        return Suggest_Command;
+    }
 
-	public Class<?> getCl() {
-		return cl;
-	}
+    public void setSuggest_Command(String suggest_Command) {
+        Suggest_Command = suggest_Command;
+    }
 
-	public void setCl(Class<?> cl) {
-		this.cl = cl;
-	}
-	
-	public void runCommand(CommandSender sender, Command cmd, String arg2, String[] args){
-		Constructor<?> ctor = getCl().getConstructors()[0];
-		try {ctor.newInstance(sender, cmd, arg2, args);} catch (Exception e) {e.printStackTrace();} 
-	}
+    public Class<?> getCl() {
+        return cl;
+    }
 
-	public String getCommand() {
-		return command;
-	}
+    public void setCl(Class<?> cl) {
+        this.cl = cl;
+    }
 
-	public void setCommand(String command) {
-		this.command = command;
-	}
-	
+    public void runCommand(CommandSender sender, Command cmd, String arg2, String[] args) {
+        Constructor<?> ctor = getCl().getConstructors()[0];
+        try {
+            ctor.newInstance(sender, cmd, arg2, args);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    public String getCommand() {
+        return command;
+    }
+
+    public void setCommand(String command) {
+        this.command = command;
+    }
+
 }

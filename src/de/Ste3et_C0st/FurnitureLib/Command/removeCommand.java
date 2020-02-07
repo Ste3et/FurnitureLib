@@ -1,12 +1,12 @@
 package de.Ste3et_C0st.FurnitureLib.Command;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.stream.Collectors;
-
+import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.StringTranslator;
+import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
+import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
+import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
+import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
+import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -16,109 +16,105 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
-import com.comphenix.net.sf.cglib.core.CollectionUtils;
+import java.util.*;
+import java.util.stream.Collectors;
 
-import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
-import de.Ste3et_C0st.FurnitureLib.Utilitis.StringTranslater;
-import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
-import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
-import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
-import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
-import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
+public class removeCommand extends iCommand {
 
-public class removeCommand extends iCommand{
+    public removeCommand(String subCommand, String... args) {
+        super(subCommand);
+        //setTab("project/world/player/lookat/distance/all/obj");
+        //all
+        setTab("-pro:/-world:/-player:/-distance:/-obj:/lookat");
+    }
 
-	public removeCommand(String subCommand, String ...args) {
-		super(subCommand);
-		//setTab("project/world/player/lookat/distance/all/obj");
-		//all
-		setTab("-pro:/-world:/-player:/-distance:/-obj:/lookat");
-	}
-	
-	public void execute(CommandSender sender,String[] args) {
-		if(!hasCommandPermission(sender)) return;
-		if(args.length == 2) {
-			String argument = args[1].toLowerCase();
-			String langID = "";
-			List<ObjectID> removeList = new ArrayList<ObjectID>();
-			List<StringTranslater> translators = new ArrayList<StringTranslater>();
-			
-			if(argument.startsWith("-pro:")) {
-				if(!hasCommandPermission(sender, ".pro")) return;
-				String str = argument.replace("-pro:", "");
-				Project pro = FurnitureManager.getInstance().getProject(str);
-				if(Objects.nonNull(pro)) removeList = FurnitureManager.getInstance().getObjectList().stream().filter(obj -> obj.getProject().equalsIgnoreCase(pro.getName())).collect(Collectors.toList());
-				langID = "message.RemoveType";
-				translators.add(new StringTranslater("#TYPE#", pro.getName()));
-			}
-			
-			if(argument.startsWith("-world:")) {
-				if(!hasCommandPermission(sender, ".world")) return;
-				String str = argument.replace("-world", "");
-				World w = Bukkit.getWorlds().stream().filter(world -> world.getName().equalsIgnoreCase(str)).findFirst().orElse(null);
-				if(Objects.nonNull(w)) removeList = FurnitureManager.getInstance().getObjectList().stream().filter(obj -> obj.getWorld().equals(w)).collect(Collectors.toList());
-				langID = "message.RemoveWorld";
-				translators.add(new StringTranslater("#WORLD#", str));
-			}
-			
-			if(argument.startsWith("-player:")) {
-				if(!hasCommandPermission(sender, ".player")) return;
-				String str = argument.replace("-player:", "");
-				String player = getByPlayerName(str);
-				if(Objects.nonNull(player)) removeList = FurnitureManager.getInstance().getObjectList().stream().filter(obj -> obj.getPlayerName().equalsIgnoreCase(str)).collect(Collectors.toList());
-				langID = "message.RemovePlayer";
-				translators.add(new StringTranslater("#PLAYER#", player));
-			}
-			
-			if(argument.startsWith("-distance:")) {
-				if(!hasCommandPermission(sender, ".distance")) return;
-				String str = argument.replace("-distance:", "");
-				int distance = Integer.parseInt(str);
-				Player p = (Player) sender;
-				World w = p.getWorld();
-				Location loc = p.getLocation();
-				List<ObjectID> worldObjList = FurnitureManager.getInstance().getInWorld(w);
-				if(Objects.nonNull(worldObjList) && !worldObjList.isEmpty()) {
-					removeList = worldObjList.stream().filter(obj -> obj.getStartLocation().distance(loc) <= distance).collect(Collectors.toList());
-				}
-				langID = "message.RemoveDistance";
-				translators.add(new StringTranslater("#AMOUNT#", removeList.size() + ""));
-			}
-			
-			if(argument.startsWith("-obj:")) {
-				String str = argument.replace("-obj:", "");
-				ObjectID serial = getSerial(str);
-				if(Objects.nonNull(serial)) removeList = Arrays.asList(serial);
-				langID = "message.RemoveID";
-				translators.add(new StringTranslater("#OBJID#", serial.getID()));
-			}
-			
-			if(argument.equalsIgnoreCase("lookat")) {
-				if(!hasCommandPermission(sender, ".lookat")) return;
-				if(sender instanceof Player){
-					Player p = (Player) sender;
-					ObjectID obj = getFromSight(p.getLocation());
-					if(Objects.nonNull(obj)) removeList = Arrays.asList(obj);
-					translators.add(new StringTranslater("#SERIAL#", obj.getID()));
-				}
-				langID = "message.RemoveLookat";
-			}
-			
-			if(argument.equalsIgnoreCase("all")) {
-				if(!hasCommandPermission(sender, ".all")) return;
-				removeList = new ArrayList<ObjectID>(FurnitureManager.getInstance().getObjectList());
-			}
-			
-			if(Objects.nonNull(removeList) && !removeList.isEmpty()) {
-				int i = removeListObj(removeList);
-				sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString(langID, translators.toArray(new StringTranslater[translators.size()])));
-				removeList.forEach(obj -> {
-					obj.remove(false);
-					obj.setSQLAction(SQLAction.REMOVE);
-				});
-			}
-		}
-	}
+    public void execute(CommandSender sender, String[] args) {
+        if (!hasCommandPermission(sender)) return;
+        if (args.length == 2) {
+            String argument = args[1].toLowerCase();
+            String langID = "";
+            List<ObjectID> removeList = new ArrayList<>();
+            List<StringTranslator> translators = new ArrayList<>();
+
+            if (argument.startsWith("-pro:")) {
+                if (!hasCommandPermission(sender, ".pro")) return;
+                String str = argument.replace("-pro:", "");
+                Project pro = FurnitureManager.getInstance().getProject(str);
+                if (Objects.nonNull(pro))
+                    removeList = FurnitureManager.getInstance().getObjectList().stream().filter(obj -> obj.getProject().equalsIgnoreCase(pro.getName())).collect(Collectors.toList());
+                langID = "message.RemoveType";
+                translators.add(new StringTranslator("#TYPE#", pro.getName()));
+            }
+
+            if (argument.startsWith("-world:")) {
+                if (!hasCommandPermission(sender, ".world")) return;
+                String str = argument.replace("-world", "");
+                World w = Bukkit.getWorlds().stream().filter(world -> world.getName().equalsIgnoreCase(str)).findFirst().orElse(null);
+                if (Objects.nonNull(w))
+                    removeList = FurnitureManager.getInstance().getObjectList().stream().filter(obj -> obj.getWorld().equals(w)).collect(Collectors.toList());
+                langID = "message.RemoveWorld";
+                translators.add(new StringTranslator("#WORLD#", str));
+            }
+
+            if (argument.startsWith("-player:")) {
+                if (!hasCommandPermission(sender, ".player")) return;
+                String str = argument.replace("-player:", "");
+                String player = getByPlayerName(str);
+                if (Objects.nonNull(player))
+                    removeList = FurnitureManager.getInstance().getObjectList().stream().filter(obj -> obj.getPlayerName().equalsIgnoreCase(str)).collect(Collectors.toList());
+                langID = "message.RemovePlayer";
+                translators.add(new StringTranslator("#PLAYER#", player));
+            }
+
+            if (argument.startsWith("-distance:")) {
+                if (!hasCommandPermission(sender, ".distance")) return;
+                String str = argument.replace("-distance:", "");
+                int distance = Integer.parseInt(str);
+                Player p = (Player) sender;
+                World w = p.getWorld();
+                Location loc = p.getLocation();
+                List<ObjectID> worldObjList = FurnitureManager.getInstance().getInWorld(w);
+                if (Objects.nonNull(worldObjList) && !worldObjList.isEmpty()) {
+                    removeList = worldObjList.stream().filter(obj -> obj.getStartLocation().distance(loc) <= distance).collect(Collectors.toList());
+                }
+                langID = "message.RemoveDistance";
+                translators.add(new StringTranslator("#AMOUNT#", removeList.size() + ""));
+            }
+
+            if (argument.startsWith("-obj:")) {
+                String str = argument.replace("-obj:", "");
+                ObjectID serial = getSerial(str);
+                if (Objects.nonNull(serial)) removeList = Collections.singletonList(serial);
+                langID = "message.RemoveID";
+                translators.add(new StringTranslator("#OBJID#", serial.getID()));
+            }
+
+            if (argument.equalsIgnoreCase("lookat")) {
+                if (!hasCommandPermission(sender, ".lookat")) return;
+                if (sender instanceof Player) {
+                    Player p = (Player) sender;
+                    ObjectID obj = getFromSight(p.getLocation());
+                    if (Objects.nonNull(obj)) removeList = Collections.singletonList(obj);
+                    translators.add(new StringTranslator("#SERIAL#", obj.getID()));
+                }
+                langID = "message.RemoveLookat";
+            }
+
+            if (argument.equalsIgnoreCase("all")) {
+                if (!hasCommandPermission(sender, ".all")) return;
+                removeList = new ArrayList<ObjectID>(FurnitureManager.getInstance().getObjectList());
+            }
+
+            if (Objects.nonNull(removeList) && !removeList.isEmpty()) {
+                int i = removeListObj(removeList);
+                sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString(langID, translators.toArray(new StringTranslator[0])));
+                removeList.forEach(obj -> {
+                    obj.remove(false);
+                    obj.setSQLAction(SQLAction.REMOVE);
+                });
+            }
+        }
+    }
 
 //	@Override
 //	public void execute(CommandSender sender, String[] args) {
@@ -220,120 +216,138 @@ public class removeCommand extends iCommand{
 //			return;
 //		}
 //	}
-	
-	private ObjectID getFromSight(Location l){
-		if(FurnitureLib.getInstance().getFurnitureManager().getObjectList().isEmpty()){return null;}
-		Integer i = 10;
-		BlockFace face = FurnitureLib.getInstance().getLocationUtil().yawToFace(l.getYaw());
-		for(int j = 0; j<=i;j++){
-			Location loc = FurnitureLib.getInstance().getLocationUtil().getRelativ(l, face,(double) j, 0D);
-			if(loc.getBlock()!=null&&loc.getBlock().getType()!=Material.AIR){return null;}
-			for(ObjectID obj : FurnitureLib.getInstance().getFurnitureManager().getObjectList()){
-				for(fEntity packet : obj.getPacketList()){
-					if(packet.getLocation().getWorld().getName().equalsIgnoreCase(loc.getWorld().getName())){
-						Double d = packet.getLocation().toVector().distanceSquared(loc.toVector());
-						if(d<=2.0){
-							return packet.getObjID();
-						}
-					}
-				}
-			}
-		}
-		return null;
-	}
-	
-	
-	private String getPlugin(String string) {
-		return FurnitureManager.getInstance().getObjectList().stream().filter(Objects::nonNull).filter(obj -> obj.getPlugin().equalsIgnoreCase(string)).findFirst().isPresent() ? string : null;
-	}
 
-	private ObjectID getSerial(String string) {
-		return FurnitureManager.getInstance().getObjectList().stream().filter(Objects::nonNull).filter(obj -> obj.getSerial().equalsIgnoreCase(string)).findFirst().orElse(null);
-	}
+    private ObjectID getFromSight(Location l) {
+        if (FurnitureLib.getInstance().getFurnitureManager().getObjectList().isEmpty()) {
+            return null;
+        }
+        int i = 10;
+        BlockFace face = FurnitureLib.getInstance().getLocationUtil().yawToFace(l.getYaw());
+        for (int j = 0; j <= i; j++) {
+            Location loc = FurnitureLib.getInstance().getLocationUtil().getRelative(l, face, j, 0D);
+            if (loc.getBlock() != null && loc.getBlock().getType() != Material.AIR) {
+                return null;
+            }
+            for (ObjectID obj : FurnitureLib.getInstance().getFurnitureManager().getObjectList()) {
+                for (fEntity packet : obj.getPacketList()) {
+                    if (packet.getLocation().getWorld().getName().equalsIgnoreCase(loc.getWorld().getName())) {
+                        double d = packet.getLocation().toVector().distanceSquared(loc.toVector());
+                        if (d <= 2.0) {
+                            return packet.getObjID();
+                        }
+                    }
+                }
+            }
+        }
+        return null;
+    }
 
-	private String getByPlayerName(String string) {
-		return FurnitureManager.getInstance().getObjectList().stream().filter(Objects::nonNull).filter(obj -> obj.getPlayerName().equalsIgnoreCase(string)).findFirst().isPresent() ? string : null;
-	}
 
-	private int removeListObj(List<ObjectID> objList){
-		int i = 0;
-		if(objList==null){return i;}
-		if(objList.isEmpty()){return i;}
-		for(ObjectID obj : objList){
-			obj.remove();
-			i++;
-		}
-		return i;
-	}
-	
-	private HashSet<ObjectID> getObject(Location loc, HashSet<ObjectID> objL, int distance){
-		HashSet<ObjectID> objList = new HashSet<ObjectID>();
-		Vector v1 = loc.toVector();
-		for(ObjectID obj : objL){
-			Vector v2 = obj.getStartLocation().toVector();
-			if(v1.distance(v2)<=distance){
-				if(obj.getSQLAction().equals(SQLAction.REMOVE)){continue;}
-				objList.add(obj);
-			}
-		}
-		return objList;
-	}
-	
-	private HashSet<ObjectID> getObject(Project pro){
-		HashSet<ObjectID> objList = new HashSet<ObjectID>();
-		for(ObjectID obj : FurnitureLib.getInstance().getFurnitureManager().getObjectList()){
-			if(obj.getProjectOBJ().equals(pro)){
-				if(obj.getSQLAction().equals(SQLAction.REMOVE)){continue;}
-				objList.add(obj);
-			}
-		}
-		return objList;
-	}
-	
-	private HashSet<ObjectID> getObject(World world){
-		HashSet<ObjectID> objList = new HashSet<ObjectID>();
-		for(ObjectID obj : FurnitureLib.getInstance().getFurnitureManager().getObjectList()){
-			if(obj.getWorld().equals(world)){
-				if(obj.getSQLAction().equals(SQLAction.REMOVE)){continue;}
-				objList.add(obj);
-			}
-		}
-		return objList;
-	}
-	
-	private HashSet<ObjectID> getObject(String playerName){
-		HashSet<ObjectID> objList = new HashSet<ObjectID>();
-		for(ObjectID obj : FurnitureLib.getInstance().getFurnitureManager().getObjectList()){
-			if(obj.getPlayerName().equalsIgnoreCase(playerName)){
-				if(obj.getSQLAction().equals(SQLAction.REMOVE)){continue;}
-				objList.add(obj);
-			}
-		}
-		return objList;
-	}
-	
-	private HashSet<ObjectID> getObjectPlugin(String plugin){
-		HashSet<ObjectID> objList = new HashSet<ObjectID>();
-		for(ObjectID obj : FurnitureLib.getInstance().getFurnitureManager().getObjectList()){
-			if(obj.getPlugin().equalsIgnoreCase(plugin)){
-				if(obj.getSQLAction().equals(SQLAction.REMOVE)){continue;}
-				objList.add(obj);
-			}
-		}
-		return objList;
-	}
-	
-	private World getWorld(String world){
-		return Bukkit.getWorld(world);
-	}
-	
-	private Project getProject(String project){
-		for(Project pro : FurnitureLib.getInstance().getFurnitureManager().getProjects()){
-			if(pro.getName().equalsIgnoreCase(project)){
-				return pro;
-			}
-		}
-		return null;
-	}
+    private String getPlugin(String string) {
+        return FurnitureManager.getInstance().getObjectList().stream().filter(Objects::nonNull).anyMatch(obj -> obj.getPlugin().equalsIgnoreCase(string)) ? string : null;
+    }
+
+    private ObjectID getSerial(String string) {
+        return FurnitureManager.getInstance().getObjectList().stream().filter(Objects::nonNull).filter(obj -> obj.getSerial().equalsIgnoreCase(string)).findFirst().orElse(null);
+    }
+
+    private String getByPlayerName(String string) {
+        return FurnitureManager.getInstance().getObjectList().stream().filter(Objects::nonNull).anyMatch(obj -> obj.getPlayerName().equalsIgnoreCase(string)) ? string : null;
+    }
+
+    private int removeListObj(List<ObjectID> objList) {
+        int i = 0;
+        if (objList == null) {
+            return i;
+        }
+        if (objList.isEmpty()) {
+            return i;
+        }
+        for (ObjectID obj : objList) {
+            obj.remove();
+            i++;
+        }
+        return i;
+    }
+
+    private HashSet<ObjectID> getObject(Location loc, HashSet<ObjectID> objL, int distance) {
+        HashSet<ObjectID> objList = new HashSet<ObjectID>();
+        Vector v1 = loc.toVector();
+        for (ObjectID obj : objL) {
+            Vector v2 = obj.getStartLocation().toVector();
+            if (v1.distance(v2) <= distance) {
+                if (obj.getSQLAction().equals(SQLAction.REMOVE)) {
+                    continue;
+                }
+                objList.add(obj);
+            }
+        }
+        return objList;
+    }
+
+    private HashSet<ObjectID> getObject(Project pro) {
+        HashSet<ObjectID> objList = new HashSet<ObjectID>();
+        for (ObjectID obj : FurnitureLib.getInstance().getFurnitureManager().getObjectList()) {
+            if (obj.getProjectOBJ().equals(pro)) {
+                if (obj.getSQLAction().equals(SQLAction.REMOVE)) {
+                    continue;
+                }
+                objList.add(obj);
+            }
+        }
+        return objList;
+    }
+
+    private HashSet<ObjectID> getObject(World world) {
+        HashSet<ObjectID> objList = new HashSet<>();
+        for (ObjectID obj : FurnitureLib.getInstance().getFurnitureManager().getObjectList()) {
+            if (obj.getWorld().equals(world)) {
+                if (obj.getSQLAction().equals(SQLAction.REMOVE)) {
+                    continue;
+                }
+                objList.add(obj);
+            }
+        }
+        return objList;
+    }
+
+    private HashSet<ObjectID> getObject(String playerName) {
+        HashSet<ObjectID> objList = new HashSet<>();
+        for (ObjectID obj : FurnitureLib.getInstance().getFurnitureManager().getObjectList()) {
+            if (obj.getPlayerName().equalsIgnoreCase(playerName)) {
+                if (obj.getSQLAction().equals(SQLAction.REMOVE)) {
+                    continue;
+                }
+                objList.add(obj);
+            }
+        }
+        return objList;
+    }
+
+    private HashSet<ObjectID> getObjectPlugin(String plugin) {
+        HashSet<ObjectID> objList = new HashSet<>();
+        for (ObjectID obj : FurnitureLib.getInstance().getFurnitureManager().getObjectList()) {
+            if (obj.getPlugin().equalsIgnoreCase(plugin)) {
+                if (obj.getSQLAction().equals(SQLAction.REMOVE)) {
+                    continue;
+                }
+                objList.add(obj);
+            }
+        }
+        return objList;
+    }
+
+    private World getWorld(String world) {
+        return Bukkit.getWorld(world);
+    }
+
+    private Project getProject(String project) {
+        for (Project pro : FurnitureLib.getInstance().getFurnitureManager().getProjects()) {
+            if (pro.getName().equalsIgnoreCase(project)) {
+                return pro;
+            }
+        }
+        return null;
+    }
 
 }

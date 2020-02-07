@@ -17,14 +17,12 @@ public class DoubleKey<K extends Comparable<K>> implements Comparable<DoubleKey<
         DoubleKey key = (DoubleKey) object;
 
         if (key1 != null ? !key1.equals(key.key1) : key.key1 != null) return false;
-        if (key2 != null ? !key2.equals(key.key2) : key.key2 != null) return false;
-
-        return true;
+        return key2 != null ? key2.equals(key.key2) : key.key2 == null;
     }
 
     @Override
     public int hashCode() {
-        return 31 * (key1 != null ? key1.hashCode() : 0) + (key2!= null ? key2.hashCode() : 0);
+        return 31 * (key1 != null ? key1.hashCode() : 0) + (key2 != null ? key2.hashCode() : 0);
     }
 
     @Override
@@ -42,11 +40,9 @@ public class DoubleKey<K extends Comparable<K>> implements Comparable<DoubleKey<
 
     @Override
     public int compareTo(DoubleKey<K> key) {
-        if (key1.compareTo(key.key1) == -1) return -1;
+        if (key1.compareTo(key.key1) < 0) return -1;
         else if (key1.compareTo(key.key1) == 0) {
-            if (key2.compareTo(key.key2) == -1) return -1;
-            else if (key2.compareTo(key.key2) == 1) return 1;
-            else return 0;
+            return Integer.compare(key2.compareTo(key.key2), 0);
         }
         return 1;
     }
