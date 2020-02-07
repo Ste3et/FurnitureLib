@@ -3,11 +3,11 @@
 #furniture.place.all.<KITNAME> and a player with this permission can place all Furnitures from the Kit
 kit:
   normal:
-  - 'chair'
-  - 'table'
-  - 'largeTable'
+    - 'chair'
+    - 'table'
+    - 'largeTable'
   vip:
-  - 'chair'
-  - 'table'
-  - 'largeTable'
-  - 'barrels'
+    - 'chair'
+    - 'table'
+    - 'largeTable'
+    - 'barrels'

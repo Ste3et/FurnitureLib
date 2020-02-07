@@ -7,19 +7,22 @@ import org.bukkit.configuration.file.YamlConfiguration;
 
 public abstract class ModelBlock {
 
-	protected ModelVector vector;
-	
-	public ModelBlock(ModelVector vector) {
-		this.vector = vector;
-	}
-	
-	public ModelBlock(YamlConfiguration yamlConfiguration, String key) {}
-	
-	public abstract Material getMaterial();
-	public abstract void place(Location loc);
-	public abstract void place(Location loc, BlockFace face);
-	
-	public ModelVector getVector() {
-		return this.vector;
-	}
+    protected ModelVector vector;
+
+    public ModelBlock(ModelVector vector) {
+        this.vector = vector;
+    }
+
+    public ModelBlock(YamlConfiguration yamlConfiguration, String key) {
+    }
+
+    public abstract Material getMaterial();
+
+    public abstract void place(Location loc);
+
+    public abstract void place(Location loc, BlockFace face);
+
+    public ModelVector getVector() {
+        return this.vector;
+    }
 }
