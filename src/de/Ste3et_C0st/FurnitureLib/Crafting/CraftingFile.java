@@ -245,7 +245,7 @@ public class CraftingFile {
             loreText = im.getLore();
         loreText.add(HiddenStringUtils.encodeString(getSystemID()));
 
-        if (file.contains(header + ".custommodeldata") && Type.version.equalsIgnoreCase("1.14")) {
+        if (file.contains(header + ".custommodeldata") && (Type.version.equalsIgnoreCase("1.14") || Type.version.equalsIgnoreCase("1.15"))) {
             im.setCustomModelData(file.getInt(header + ".custommodeldata"));
         }
 
