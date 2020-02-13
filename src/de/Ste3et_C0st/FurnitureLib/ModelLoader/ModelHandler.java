@@ -55,9 +55,9 @@ public class ModelHandler extends Modelschematic {
 
     public List<Block> addBlocks(Location startLocation, BlockFace direction) {
         List<Block> blockList = new ArrayList<Block>();
-        this.getBlockData(startLocation, direction).forEach((key, value) -> {
-			Block b = key.getBlock();
-			value.place(b.getLocation(), direction);
+        this.getBlockData(startLocation, direction).entrySet().stream().sorted((e1, e2) -> Double.compare(e1.getKey().getY(), e2.getKey().getY()) ).forEach(entry -> {
+			Block b = entry.getKey().getBlock();
+			entry.getValue().place(b.getLocation(), direction);
 			blockList.add(b);
 		});
         return blockList;

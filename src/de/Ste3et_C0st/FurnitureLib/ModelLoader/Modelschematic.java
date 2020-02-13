@@ -4,36 +4,23 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.util.Vector;
-import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
 
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTCompressedStreamTools;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
-import de.Ste3et_C0st.FurnitureLib.Utilitis.BoundingBox;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
-import de.Ste3et_C0st.FurnitureLib.main.Type.CenterType;
 import de.Ste3et_C0st.FurnitureLib.main.Type.PlaceableSide;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
-import org.bukkit.block.BlockFace;
-import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.util.Vector;
-import org.yaml.snakeyaml.external.biz.base64Coder.Base64Coder;
-
-import java.io.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Objects;
 
 public abstract class Modelschematic{
 	
@@ -134,7 +121,7 @@ public abstract class Modelschematic{
 		config.getConfigurationSection(configString).getKeys(false).stream().forEach(key -> {
 			try {
 				String md5 = config.getString(configString + "." + key);
-				byte[] by = Base64Coder.decode(md5);
+				byte[] by = Base64.getDecoder().decode(md5);
 				ByteArrayInputStream bin = new ByteArrayInputStream(by);
 				NBTTagCompound entityData = NBTCompressedStreamTools.read(bin);
 				ModelVector vector = new ModelVector(entityData.getCompound("Location"));
