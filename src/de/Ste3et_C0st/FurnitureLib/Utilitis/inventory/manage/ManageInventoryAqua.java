@@ -18,6 +18,7 @@ import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.EventType;
 import de.Ste3et_C0st.FurnitureLib.main.Type.PublicMode;
+import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 
 public class ManageInventoryAqua extends InventoryHandler{
 	
@@ -97,7 +98,9 @@ public class ManageInventoryAqua extends InventoryHandler{
 		super.onClose(new CallbackGUIClose() {
 			@Override
 			public void onResult(InventoryHandler gui) {
-				
+				objectID.setEventTypeAccess(eventType);
+				objectID.setPublicMode(publicMode);
+				objectID.setSQLAction(SQLAction.UPDATE);
 			}
 		});
 	}

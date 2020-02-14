@@ -146,15 +146,16 @@ public class DeSerializer {
     }
 
     private HashSet<UUID> membersFetcher(NBTTagList nbtList) {
-        HashSet<UUID> uuidList = new HashSet<>();
+        HashSet<UUID> uuidList = new HashSet<UUID>();
         if (nbtList == null || nbtList.size() == 0) {
             return uuidList;
         }
         for (int i = 0; i < nbtList.size(); i++) {
-            String string = nbtList.getString(i);
+            String string = nbtList.getString(i).replaceAll("\"", "");
             try {
                 uuidList.add(UUID.fromString(string));
             } catch (Exception e) {
+            	e.printStackTrace();
             }
         }
         return uuidList;

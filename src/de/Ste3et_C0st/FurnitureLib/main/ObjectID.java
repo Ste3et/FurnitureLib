@@ -21,7 +21,7 @@ public class ObjectID {
     public int viewDistance = 100;
     public int viewDistanceSquared = this.viewDistance * this.viewDistance;
     private String ObjectID, serial, Project, plugin, worldName;
-    private HashSet<Location> locList = new HashSet<>();
+    private HashSet<Location> locList = new HashSet<Location>();
     private Location loc;
     private UUID uuid;
     private HashSet<UUID> uuidList = new HashSet<UUID>();
@@ -129,7 +129,7 @@ public class ObjectID {
     }
 
     public void setMemberList(HashSet<UUID> uuidList) {
-        this.uuidList = uuidList;
+        uuidList.stream().forEach(this.uuidList::add);
     }
 
     public PublicMode getPublicMode() {
