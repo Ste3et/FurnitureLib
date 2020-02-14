@@ -232,6 +232,11 @@ public class LocationUtil {
         b = b.setScale(2, BigDecimal.ROUND_HALF_UP);
         return b.doubleValue();
     }
+    
+    @Deprecated
+    public Location getRelativ(Location loc, BlockFace b, double z, double x) {
+    	return getRelative(loc, b, z, x);
+    }
 
     public Location getRelative(Location loc, BlockFace b, double z, double x) {
         Location l = loc.clone();

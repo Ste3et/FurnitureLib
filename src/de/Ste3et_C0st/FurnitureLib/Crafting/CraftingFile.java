@@ -245,8 +245,10 @@ public class CraftingFile {
             loreText = im.getLore();
         loreText.add(HiddenStringUtils.encodeString(getSystemID()));
 
-        if (file.contains(header + ".custommodeldata") && (Type.version.equalsIgnoreCase("1.14") || Type.version.equalsIgnoreCase("1.15"))) {
-            im.setCustomModelData(file.getInt(header + ".custommodeldata"));
+        if (file.contains(header + ".custommodeldata")) {
+        	try{
+        		im.setCustomModelData(file.getInt(header + ".custommodeldata"));
+        	}catch (Exception e) {/* Method = setCustomModelData didn't exist (ignore Exception) */}
         }
 
         if (file.contains(header + ".itemLore")) {
