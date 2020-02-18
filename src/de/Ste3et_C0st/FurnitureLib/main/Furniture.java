@@ -34,18 +34,18 @@ public abstract class Furniture extends FurnitureHelper implements Listener {
             //furniture.model.sit
             //furniture.model.<systemID>.sit
             if (p.hasPermission("furniture.model.sit") || p.hasPermission("furniture.model." + getProject().getName().toLowerCase() + ".sit")) {
-                for (fEntity stand : getfAsList()) {
-                    if (stand.getName().startsWith("#Mount:") || stand.getName().startsWith("#SITZ")) {
-                        FurnitureLib.debug("Furniture -> publicFunction[#Mount/#SITZ]");
-                        if (stand.getPassenger().isEmpty()) {
-                            FurnitureManager.getInstance().getArmorStandFromPassenger(p).stream()
-                                    .filter(s -> !s.getPassenger().isEmpty())
-                                    .forEach(s -> s.removePassenger(p.getEntityId()));
-                            stand.setPassenger(p);
-                            return true;
-                        }
-                    }
-                }
+            	fEntity entity = getfAsList().stream()
+            		.filter(stand -> stand.getName().startsWith("#Mount:") || stand.getName().startsWith("#SITZ"))
+            		.filter(stand -> !stand.getPassenger().contains(p.getEntityId()))
+            		.sorted((k1,k2) ->  Double.compare(k1.getLocation().distance(p.getLocation()), k2.getLocation().distance(p.getLocation()))).findFirst().orElse(null);
+            	
+            	if(Objects.nonNull(entity)) {
+            		  FurnitureManager.getInstance().getArmorStandFromPassenger(p).stream()
+                      .filter(s -> !s.getPassenger().isEmpty())
+                      .forEach(s -> s.removePassenger(p.getEntityId()));
+            		  entity.setPassenger(p);
+            		  return true;
+            	}
             }
         }
         return false;
