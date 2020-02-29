@@ -77,38 +77,35 @@ public class ChunkOnLoad implements Listener {
             final Location loc = b.getLocation();
             final Player p = e.getPlayer();
             loc.setYaw(FurnitureLib.getInstance().getLocationUtil().FaceToYaw(FurnitureLib.getInstance().getLocationUtil().yawToFace(p.getLocation().getYaw())));
-            Bukkit.getScheduler().scheduleSyncDelayedTask(FurnitureLib.getInstance(), new Runnable() {
-                @Override
-                public void run() {
-                    FurnitureItemEvent e = new FurnitureItemEvent(p, stack, pro, loc, face);
-                    FurnitureLib.debug("FurnitureLib -> Place Furniture Start (" + pro.getName() + ").");
-                    Bukkit.getPluginManager().callEvent(e);
-                    FurnitureLib.debug("FurnitureLib -> Call FurnitureItemEvent cancel (" + e.isCancelled() + ").");
-                    if (!e.isCancelled()) {
-                        if (e.canBuild()) {
-                            FurnitureLib.debug("FurnitureLib -> Can Place Model (" + pro.getName() + ") here");
-                            if (e.isTimeToPlace()) {
-                                if (e.sendAnnouncer()) {
-                                    if (Objects.nonNull(e.getProject().getModelschematic())) {
-                                        FurnitureLib.debug("FurnitureLib -> Model " + pro.getName() + " have Schematic place it.");
-                                        if (pro.getModelschematic().isPlaceable(e.getObjID().getStartLocation())) {
-                                            FurnitureLib.debug("FurnitureLib -> Model " + pro.getName() + " is Placeable");
-                                            spawn(e);
-                                        } else {
-                                            p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.NotEnoughSpace"));
-                                        }
-                                    } else {
-                                        FurnitureLib.debug("FurnitureLib -> Can't place model [no Modelschematic (" + pro.getName() + ")]");
-                                    }
-                                }
-                            }
-                        } else {
-                            FurnitureLib.debug("FurnitureLib -> Can't place model " + pro.getName() + " here canBuild(" + e.canBuild() + ")");
-                        }
-                    }
-                }
-            });
-            removePlayer(p);
+
+			FurnitureItemEvent itemEvent = new FurnitureItemEvent(p, stack, pro, loc, face);
+			FurnitureLib.debug("FurnitureLib -> Place Furniture Start (" + pro.getName() + ").");
+			Bukkit.getPluginManager().callEvent(itemEvent);
+			FurnitureLib.debug("FurnitureLib -> Call FurnitureItemEvent cancel (" + itemEvent.isCancelled() + ").");
+			if (!itemEvent.isCancelled()) {
+				if (itemEvent.canBuild()) {
+					FurnitureLib.debug("FurnitureLib -> Can Place Model (" + pro.getName() + ") here");
+					if (itemEvent.isTimeToPlace()) {
+						if (itemEvent.sendAnnouncer()) {
+							if (Objects.nonNull(itemEvent.getProject().getModelschematic())) {
+								FurnitureLib
+										.debug("FurnitureLib -> Model " + pro.getName() + " have Schematic place it.");
+								if (pro.getModelschematic().isPlaceable(itemEvent.getObjID().getStartLocation())) {
+									FurnitureLib.debug("FurnitureLib -> Model " + pro.getName() + " is Placeable");
+									spawn(itemEvent);
+								} else {
+									p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.NotEnoughSpace"));
+								}
+							} else {
+								FurnitureLib.debug("FurnitureLib -> Can't place model [no Modelschematic (" + pro.getName() + ")]");
+							}
+						}
+					}
+				} else {
+					FurnitureLib.debug("FurnitureLib -> Can't place model " + pro.getName() + " here canBuild(" + itemEvent.canBuild() + ")");
+				}
+			}
+			removePlayer(p);
         } else if (e.getAction().equals(Action.RIGHT_CLICK_AIR)) {
             final ItemStack stack = e.getItem();
             if (stack == null) return;
@@ -150,13 +147,11 @@ public class ChunkOnLoad implements Listener {
                 }
 
                 if (!FurnitureLib.getInstance().getFurnitureManager().getIgnoreList().contains(p.getUniqueId())) {
-                    Bukkit.getScheduler().runTask(FurnitureLib.getInstance(), () -> {
-                        ProjectClickEvent projectBreakEvent = new ProjectClickEvent(p, objID);
-                        Bukkit.getPluginManager().callEvent(projectBreakEvent);
-                        if (!projectBreakEvent.isCancelled()) {
-                            objID.callFunction("onClick", p);
-                        }
-                    });
+                	ProjectClickEvent projectBreakEvent = new ProjectClickEvent(p, objID);
+                    Bukkit.getPluginManager().callEvent(projectBreakEvent);
+                    if (!projectBreakEvent.isCancelled()) {
+                        objID.callFunction("onClick", p);
+                    }
                     return;
                 } else {
                     e.getPlayer().sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.FurnitureToggleEvent"));
@@ -209,13 +204,11 @@ public class ChunkOnLoad implements Listener {
                 if (!objID.getSQLAction().equals(SQLAction.REMOVE)) {
                     final ObjectID o = objID;
                     if (!FurnitureLib.getInstance().getFurnitureManager().getIgnoreList().contains(p.getUniqueId())) {
-                        Bukkit.getScheduler().runTask(FurnitureLib.getInstance(), () -> {
-                            ProjectBreakEvent projectBreakEvent = new ProjectBreakEvent(p, o);
-                            Bukkit.getPluginManager().callEvent(projectBreakEvent);
-                            if (!projectBreakEvent.isCancelled()) {
-                                o.callFunction("onBreak", p);
-                            }
-                        });
+                    	ProjectBreakEvent projectBreakEvent = new ProjectBreakEvent(p, o);
+                        Bukkit.getPluginManager().callEvent(projectBreakEvent);
+                        if (!projectBreakEvent.isCancelled()) {
+                            o.callFunction("onBreak", p);
+                        }
                         return;
                     } else {
                         event.getPlayer().sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.FurnitureToggleEvent"));
