@@ -16,8 +16,8 @@ public class onChunkChange implements Listener {
 
     @EventHandler
     public void onPlayerMove(PlayerMoveEvent e) {
-        if (e.getTo().getBlock().getLocation().equals(e.getFrom().getBlock().getLocation())) return;
         Player player = e.getPlayer();
+        
         if (player.getHealth() <= 0.0D) return;
         
         DoubleKey<Integer> oldChunk = new DoubleKey<Integer>(e.getFrom().getBlockX() >> 4, e.getFrom().getBlockY() >> 4);
