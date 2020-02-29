@@ -20,10 +20,13 @@ public class onChunkChange implements Listener {
         
         if (player.getHealth() <= 0.0D) return;
         
-        DoubleKey<Integer> oldChunk = new DoubleKey<Integer>(e.getFrom().getBlockX() >> 4, e.getFrom().getBlockY() >> 4);
-        DoubleKey<Integer> newChunk = new DoubleKey<Integer>(e.getTo().getBlockX() >> 4, e.getTo().getBlockY() >> 4);
+        DoubleKey<Integer> oldChunk = new DoubleKey<Integer>(e.getFrom().getBlockX() >> 4, e.getFrom().getBlockZ() >> 4);
+        DoubleKey<Integer> newChunk = new DoubleKey<Integer>(e.getTo().getBlockX() >> 4, e.getTo().getBlockZ() >> 4);
 
-        if (!oldChunk.equals(newChunk)) manager.updatePlayerView(player);
+        if (!oldChunk.equals(newChunk)) {
+        	player.sendMessage(player.getName());
+        	manager.updatePlayerView(player);
+        }
     }
 
     @EventHandler
