@@ -40,6 +40,7 @@ public class ObjectID {
             this.ObjectID = name + ":" + this.serial + ":" + plugin;
             if (Objects.nonNull(startLocation)) setStartLocation(startLocation);
             this.viewDistance = FurnitureLib.getInstance().getViewDistance();
+            this.viewDistanceSquared = this.viewDistance * this.viewDistance;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -198,6 +199,10 @@ public class ObjectID {
 
     public boolean isInRange(Player player) {
         return (getStartLocation().distanceSquared(player.getLocation()) < viewDistanceSquared);
+    }
+    
+    public boolean canSee(Player player) {
+    	return isInWorld(player) ? isInRange(player) : false;
     }
 
     public boolean isInWorld(Player player) {

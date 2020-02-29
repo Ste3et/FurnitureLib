@@ -61,6 +61,7 @@ public class ChunkOnLoad implements Listener {
             if (!e.hasItem()) return;
             if (e.useInteractedBlock().equals(Result.DENY)) return;
             if (e.useItemInHand().equals(Result.DENY)) return;
+            if (e.isCancelled()) return;
             final Block b = e.getClickedBlock();
             final ItemStack stack = e.getItem();
             if (stack == null) return;
@@ -124,6 +125,7 @@ public class ChunkOnLoad implements Listener {
         if (e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
             final Block b = e.getClickedBlock();
             if (b == null) return;
+            if (e.isCancelled()) return;
             if (!FurnitureLib.getInstance().getBlockManager().getList().contains(b.getLocation())) return;
             e.setCancelled(true);
             if (!e.getHand().equals(EquipmentSlot.HAND)) return;
@@ -170,6 +172,7 @@ public class ChunkOnLoad implements Listener {
         if (p.getGameMode() == GameMode.SPECTATOR) {
             return;
         }
+        if (event.isCancelled()) return;
         if (event.getAction().equals(Action.LEFT_CLICK_BLOCK)) {
             if (event.getClickedBlock() == null) {
                 return;
@@ -225,6 +228,7 @@ public class ChunkOnLoad implements Listener {
     @EventHandler
     public void onEntityRightClick(PlayerInteractEntityEvent e) {
         if (!e.getHand().equals(EquipmentSlot.HAND)) return;
+        if (e.isCancelled()) return;
         if (e.getRightClicked() != null && e.getPlayer() != null) {
             PlayerInventory inv = e.getPlayer().getInventory();
             if (getProjectByItem(inv.getItemInMainHand()) != null) {

@@ -104,11 +104,7 @@ public class FurnitureManager {
             return;
         }
         try {
-			for (ObjectID obj : objecte) {
-				if (Objects.nonNull(obj) && obj.isFinish()) {
-					obj.updatePlayerView(player);
-				}
-			}
+        	objecte.stream().filter(Objects::nonNull).filter(obj -> obj.canSee(player) || obj.getPlayerList().contains(player)).forEach(obj -> obj.updatePlayerView(player));
         } catch (Exception e) {
             e.printStackTrace();
         }

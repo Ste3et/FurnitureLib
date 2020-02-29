@@ -1,9 +1,9 @@
 package de.Ste3et_C0st.FurnitureLib.Events.internal;
 
+import de.Ste3et_C0st.FurnitureLib.Utilitis.DoubleKey;
 import de.Ste3et_C0st.FurnitureLib.main.ChunkData;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
-import org.bukkit.Chunk;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -19,16 +19,11 @@ public class onChunkChange implements Listener {
         if (e.getTo().getBlock().getLocation().equals(e.getFrom().getBlock().getLocation())) return;
         Player player = e.getPlayer();
         if (player.getHealth() <= 0.0D) return;
-        Chunk oldChunk = e.getFrom().getChunk();
-        Chunk newChunk = e.getTo().getChunk();
+        
+        DoubleKey<Integer> oldChunk = new DoubleKey<Integer>(e.getFrom().getBlockX() >> 4, e.getFrom().getBlockY() >> 4);
+        DoubleKey<Integer> newChunk = new DoubleKey<Integer>(e.getTo().getBlockX() >> 4, e.getTo().getBlockY() >> 4);
 
-        if (!oldChunk.equals(newChunk)) {
-            if (FurnitureLib.getInstance().isSync()) {
-                manager.updatePlayerView(player);
-            } else {
-                manager.updatePlayerView(player);
-            }
-        }
+        if (!oldChunk.equals(newChunk)) manager.updatePlayerView(player);
     }
 
     @EventHandler
