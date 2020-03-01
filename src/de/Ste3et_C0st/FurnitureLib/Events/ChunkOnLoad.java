@@ -86,12 +86,12 @@ public class ChunkOnLoad implements Listener {
 				if (itemEvent.canBuild()) {
 					FurnitureLib.debug("FurnitureLib -> Can Place Model (" + pro.getName() + ") here");
 					if (itemEvent.isTimeToPlace()) {
+						itemEvent.debugTime("FurnitureLib -> {ChunkOnLoad} isTime to Place");
 						if (itemEvent.sendAnnouncer()) {
 							if (Objects.nonNull(itemEvent.getProject().getModelschematic())) {
-								FurnitureLib
-										.debug("FurnitureLib -> Model " + pro.getName() + " have Schematic place it.");
+								itemEvent.debugTime("FurnitureLib -> Model " + pro.getName() + " have Schematic place it.");
 								if (pro.getModelschematic().isPlaceable(itemEvent.getObjID().getStartLocation())) {
-									FurnitureLib.debug("FurnitureLib -> Model " + pro.getName() + " is Placeable");
+									itemEvent.debugTime("FurnitureLib -> Model " + pro.getName() + " is Placeable");
 									spawn(itemEvent);
 								} else {
 									p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.NotEnoughSpace"));
@@ -239,10 +239,11 @@ public class ChunkOnLoad implements Listener {
         if (e.isCancelled()) {
             return;
         }
+        
         if (!e.getProject().hasPermissions(e.getPlayer())) {
             return;
         }
-        FurnitureLib.debug("FurnitureLib -> spawn Start");
+        e.debugTime("FurnitureLib -> spawn Start " + e.getObjID().getProject());
         ObjectID obj = e.getObjID();
         if (FurnitureLib.getInstance().getFurnitureManager().getIgnoreList().contains(e.getPlayer().getUniqueId())) {
             e.getPlayer().sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.FurnitureToggleEvent"));
@@ -256,6 +257,10 @@ public class ChunkOnLoad implements Listener {
         e.finish();
         e.removeItem();
         FurnitureManager.getInstance().addObjectID(obj);
+        
+        if(FurnitureLib.useDebugMode()) {
+        	FurnitureLib.debug("FurnitureLib -> Spawn Finish " + e.getObjID().getProject() + " it takes " + (System.currentTimeMillis() - e.getEventCallTime()) + "ms to spawn it");
+        }
     }
 
     private void removePlayer(final Player p) {

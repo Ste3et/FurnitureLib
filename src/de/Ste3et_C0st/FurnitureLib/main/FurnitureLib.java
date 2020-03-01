@@ -660,6 +660,10 @@ public class FurnitureLib extends JavaPlugin {
         ObjectID obj = new ObjectID(pro.getName(), pro.getPlugin().getName(), l);
         spawn(pro, obj);
     }
+    
+    public static boolean useDebugMode() {
+    	return enableDebug;
+    }
 
     public void spawn(Project pro, ObjectID obj) {
         if (pro == null)

@@ -3,6 +3,9 @@ package de.Ste3et_C0st.FurnitureLib.Events;
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
+
+import java.util.Objects;
+
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -22,6 +25,7 @@ public final class FurnitureItemEvent extends Event implements Cancellable {
     private Player p;
     private Location l;
     private BlockFace clickedFace;
+    private long timestamp;
     private boolean cancelled;
 
     public FurnitureItemEvent(Player p, ItemStack is, Project pro, Location l, BlockFace face) {
@@ -32,6 +36,7 @@ public final class FurnitureItemEvent extends Event implements Cancellable {
         this.clickedFace = face;
         this.obj = getStartLocation();
         this.obj.setUUID(p.getUniqueId());
+        this.timestamp = System.currentTimeMillis();
     }
 
     public static HandlerList getHandlerList() {
@@ -103,10 +108,12 @@ public final class FurnitureItemEvent extends Event implements Cancellable {
             p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.NotONThisSide"));
             return false;
         }
+        this.debugTime("FurnitureLib {FurnitureItemEvent} -> Start canBuild check");
         if (!FurnitureLib.getInstance().getPermManager().canBuild(p, obj.getStartLocation())) {
             FurnitureLib.debug("FurnitureLib -> ProtectionLib can't build here (" + getProject().getName() + ")");
             return false;
         }
+        this.debugTime("FurnitureLib {FurnitureItemEvent} -> ProtectionLib("+ FurnitureLib.getInstance().getPermManager().useProtectionLib() +") canBuild on Position = true ");
         if (getBlock() == null) {
             FurnitureLib.debug("FurnitureLib -> Didn't find block (" + getProject().getName() + ")");
             return false;
@@ -115,11 +122,13 @@ public final class FurnitureItemEvent extends Event implements Cancellable {
             FurnitureLib.debug("FurnitureLib -> Didn't find solid block (" + getProject().getName() + ")" + getBlock().getType().name());
             return false;
         }
+        this.debugTime("FurnitureLib {FurnitureItemEvent} -> placed on solid block = true ");
         if (p.isOp()) return true;
         if (!pro.hasPermissions(p)) {
             FurnitureLib.debug("FurnitureLib -> Player " + p.getName() + " didn't have permissions to place it");
             return false;
         }
+        this.debugTime("FurnitureLib {FurnitureItemEvent} -> Player hasPermissions = true ");
         return true;
     }
 
@@ -202,5 +211,16 @@ public final class FurnitureItemEvent extends Event implements Cancellable {
         this.obj.setFinish();
         FurnitureLateSpawnEvent lateSpawn = new FurnitureLateSpawnEvent(p, obj, pro, l);
         Bukkit.getPluginManager().callEvent(lateSpawn);
+    }
+    
+    public long getEventCallTime() {
+    	return Objects.nonNull(this.timestamp) ? this.timestamp : 0;
+    }
+    
+    public void debugTime(String str) {
+    	if(FurnitureLib.useDebugMode()) {
+    		long timeMS = System.currentTimeMillis() - getEventCallTime();
+    		FurnitureLib.debug(str + " [" + timeMS + "ms]");
+    	}
     }
 }

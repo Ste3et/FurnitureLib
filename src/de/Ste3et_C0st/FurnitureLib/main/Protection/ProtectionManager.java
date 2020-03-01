@@ -61,6 +61,9 @@ public class ProtectionManager {
         return fp.getWatchers().size();
     }
 
+    public boolean useProtectionLib() {
+    	return FP != null;
+    }
 
     public boolean canBuild(Player p, Location loc) {
         if (FP == null) {
