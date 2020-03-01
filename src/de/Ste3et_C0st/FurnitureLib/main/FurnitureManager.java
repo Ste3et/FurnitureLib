@@ -2,6 +2,7 @@ package de.Ste3et_C0st.FurnitureLib.main;
 
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.DoubleKey;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 import de.Ste3et_C0st.FurnitureLib.main.entity.*;
 import org.bukkit.Bukkit;
@@ -13,6 +14,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.util.NumberConversions;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -281,7 +283,9 @@ public class FurnitureManager {
     }
 
     public List<ObjectID> getInChunk(Chunk c) {
-        return this.objecte.stream().filter(obj -> isValid(obj) && obj.getChunk().equals(c)).collect(Collectors.toList());
+    	String worldName = c.getWorld().getName();
+    	DoubleKey<Integer> chunkKey = new DoubleKey<Integer>(c.getX(), c.getZ());
+        return this.objecte.stream().filter(obj -> isValid(obj) && obj.getWorldName().equalsIgnoreCase(worldName) && chunkKey.equals(obj.getChunkKey())).collect(Collectors.toList());
     }
 
     public List<ObjectID> getInWorld(World w) {
@@ -349,6 +353,7 @@ public class FurnitureManager {
     }
 
     public boolean furnitureAlreadyExistOnBlock(Block block) {
-        return getInChunk(block.getChunk()).stream().anyMatch(entry -> entry.getStartLocation().getBlock().equals(block));
+    	int x = block.getX(), y = block.getY(), z = block.getZ();
+    	return getInChunk(block.getChunk()).stream().anyMatch(entry -> entry.getBlockX() == x && entry.getBlockY() == y && entry.getBlockZ() == z);
     }
 }

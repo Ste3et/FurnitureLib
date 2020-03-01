@@ -2,6 +2,7 @@ package de.Ste3et_C0st.FurnitureLib.main;
 
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.ModelLoader.ModelHandler;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.DoubleKey;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.RandomStringGenerator;
 import de.Ste3et_C0st.FurnitureLib.main.Type.EventType;
 import de.Ste3et_C0st.FurnitureLib.main.Type.PublicMode;
@@ -22,6 +23,7 @@ public class ObjectID {
     public int viewDistanceSquared = this.viewDistance * this.viewDistance;
     private String ObjectID, serial, Project, plugin, worldName;
     private HashSet<Location> locList = new HashSet<Location>();
+    private DoubleKey<Integer> chunkKey = null;
     private Location loc;
     private UUID uuid;
     private HashSet<UUID> uuidList = new HashSet<UUID>();
@@ -91,6 +93,7 @@ public class ObjectID {
     public void setStartLocation(Location loc) {
         this.loc = loc;
         this.worldName = loc.getWorld().getName();
+        this.chunkKey = new DoubleKey<Integer>(loc.getBlockX() >> 4, loc.getBlockZ() >> 4);
     }
 
     public EventType getEventType() {
@@ -155,6 +158,23 @@ public class ObjectID {
 
     public Chunk getChunk() {
         return this.loc.getChunk();
+    }
+    
+    public DoubleKey<Integer> getChunkKey(){
+    	if(Objects.isNull(this.chunkKey)) this.chunkKey = new DoubleKey<Integer>(getStartLocation().getBlockX() >> 4, getStartLocation().getBlockZ() >> 4);
+    	return chunkKey;
+    }
+    
+    public int getBlockX() {
+    	return getStartLocation().getBlockX();
+    }
+    
+    public int getBlockY() {
+    	return getStartLocation().getBlockY();
+    }
+    
+    public int getBlockZ() {
+    	return getStartLocation().getBlockZ();
     }
 
     public HashSet<Player> getPlayerList() {
