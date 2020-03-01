@@ -37,11 +37,14 @@ public class ModelHandler extends Modelschematic {
     }
 
     public void spawn(ObjectID id) {
+    	FurnitureLib.debug("FurnitureLib {ModelHandler} -> Spawn [" + id.getProject() + "]");
         Location startLocation = id.getStartLocation().add(.5, 0, .5);
         BlockFace direction = FurnitureLib.getInstance().getLocationUtil().yawToFace(id.getStartLocation().getYaw()).getOppositeFace();
         id.addEntities(addEntity(startLocation, direction, id));
         id.addBlock(addBlocks(startLocation, direction));
-        id.sendAll();
+        FurnitureLib.debug("FurnitureLib {ModelHandler} -> Spawn Send Models [" + id.getProject() + "]");
+        id.send(startLocation.getWorld().getPlayers());
+        FurnitureLib.debug("FurnitureLib {ModelHandler} -> Spawn Finish [" + id.getProject() + "]");
     }
 
     public HashMap<Location, ModelBlock> getBlockData(Location startLocation, BlockFace direction) {
@@ -55,16 +58,19 @@ public class ModelHandler extends Modelschematic {
 
     public List<Block> addBlocks(Location startLocation, BlockFace direction) {
         List<Block> blockList = new ArrayList<Block>();
+        FurnitureLib.debug("FurnitureLib {ModelHandler} -> Calculate Blocks");
         this.getBlockData(startLocation, direction).entrySet().stream().sorted((e1, e2) -> Double.compare(e1.getKey().getY(), e2.getKey().getY()) ).forEach(entry -> {
 			Block b = entry.getKey().getBlock();
 			entry.getValue().place(b.getLocation(), direction);
 			blockList.add(b);
 		});
+        FurnitureLib.debug("FurnitureLib {ModelHandler} -> Calculate Blocks Finish");
         return blockList;
     }
 
     private List<fEntity> addEntity(Location startLocation, BlockFace direction, ObjectID id) {
         List<fEntity> entityList = new ArrayList<>();
+        FurnitureLib.debug("FurnitureLib {ModelHandler} -> Calculate Entities");
         getEntityMap().forEach((key, value) -> {
 			fEntity entity = value.clone();
 			ModelVector rotateVector = rotateVector(key, direction);
@@ -84,6 +90,7 @@ public class ModelHandler extends Modelschematic {
 				entity.setNameVisibility(false);
 			}
 		});
+        FurnitureLib.debug("FurnitureLib {ModelHandler} -> Calculate Entities Finish");
         return entityList;
     }
 

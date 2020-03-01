@@ -394,6 +394,10 @@ public class ObjectID {
     public void send(Player p) {
         updatePlayerView(p);
     }
+    
+    public void send(Collection<Player> player) {
+    	player.stream().forEach(this::send);
+    }
 
     public void sendAll() {
         for (Player p : Bukkit.getOnlinePlayers())
