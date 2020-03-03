@@ -2,19 +2,19 @@ package de.Ste3et_C0st.FurnitureLib.Command;
 
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
+import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
-import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
+import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
+
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.*;
-import java.util.function.ObjLongConsumer;
 import java.util.stream.Collectors;
 
 public class listCommand extends iCommand {
@@ -26,7 +26,6 @@ public class listCommand extends iCommand {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-    	long time = System.currentTimeMillis();
         List<ComponentBuilder> objList = new ArrayList<>();
         List<String> strList = new ArrayList<>();
         HashMap<String, String> proList = new HashMap<>();
@@ -238,18 +237,12 @@ public class listCommand extends iCommand {
     }
 
     private List<Project> getByPlugin(String plugin) {
-        List<Project> objList = new ArrayList<Project>();
-        for (Project obj : FurnitureLib.getInstance().getFurnitureManager().getProjects()) {
-            if (obj.getPlugin().getName().equalsIgnoreCase(plugin)) {
-                objList.add(obj);
-            }
-        }
-        return objList;
+        return FurnitureManager.getInstance().getProjects().stream().filter(project -> project.getPlugin().getName().equalsIgnoreCase(plugin)).collect(Collectors.toList());
     }
 
     private List<ObjectID> getByWorld(World w) {
         String name = w.getName();
-        return FurnitureLib.getInstance().getFurnitureManager().getObjectList().stream().filter(obj -> obj.getWorldName().equalsIgnoreCase(name)).collect(Collectors.toList());
+        return FurnitureManager.getInstance().getObjectList().stream().filter(obj -> obj.getWorldName().equalsIgnoreCase(name)).collect(Collectors.toList());
     }
 
     private List<ObjectID> getByType(Project pro) {
