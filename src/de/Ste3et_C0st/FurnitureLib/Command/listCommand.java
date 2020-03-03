@@ -14,103 +14,11 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.*;
+import java.util.function.ObjLongConsumer;
+import java.util.stream.Collectors;
 
 public class listCommand extends iCommand {
-
-
-
-    /*
-     *
-     * 			/furniture list    1        2        3         4
-     *			/furniture list <type> -w:World -r:radius -p:Owner page
-     *
-     *
-     *
-     */
-
-
-//	@SuppressWarnings("deprecation")
-//	public listCommand(CommandSender sender, Command cmd, String arg2,String[] args) {
-//		Player p = null;
-//		if(sender instanceof Player){p = (Player) sender;}else {return;}
-//		
-//		String type = args[1];
-//		World world = null;
-//		Integer radius = null;
-//		OfflinePlayer player = null;
-//		int page = 0;
-//
-//		for(String arg : args) {
-//			if(arg.equalsIgnoreCase(type)) continue;
-//			String a = arg.toLowerCase();
-//			if(a.startsWith("-w:")) {
-//				String wArg = a.replace("-w:", "");
-//				if(Bukkit.getServer().getWorld(wArg) != null) {world = Bukkit.getServer().getWorld(wArg);}
-//			}else if(a.startsWith("-r:")) {
-//				String rArg = a.replace("-r:", "");
-//				try {
-//					radius = Integer.parseInt(rArg);
-//					world = p.getWorld();
-//				}catch (Exception e) {
-//
-//				}
-//			}else if(a.startsWith("-p:")) {
-//				String pArg = a.replace("-p:", "");
-//				if(Bukkit.getOfflinePlayer(pArg) != null) {
-//					OfflinePlayer pl = Bukkit.getOfflinePlayer(pArg);
-//					if(pl.hasPlayedBefore()) {
-//						player = pl;
-//					}
-//				}
-//			}else{
-//				try {
-//					page = Integer.parseInt(arg);
-//				}catch (Exception e) {
-//
-//				}
-//			}
-//		}
-//		
-//		HashSet<ObjectID> idList = FurnitureLib.getInstance().getFurnitureManager().getObjectList();
-//		List<Project> projectList = FurnitureLib.getInstance().getFurnitureManager().getProjects();
-//		
-//		ArrayList<ObjectID> objList = new ArrayList<ObjectID>();
-//		
-//		for(ObjectID id : idList) {
-//			ObjectID obj = null;
-//			if(world != null) {
-//				if(id.getWorld().equals(world)) {
-//					obj = id;
-//				}else {
-//					obj = null;
-//				}
-//			}
-//			
-//			if(radius != null) {
-//				if(id.getStartLocation().distance(p.getLocation()) <= radius) {
-//					obj = id;
-//				}else {
-//					obj = null;
-//				}
-//			}
-//			
-//			if(player != null) {
-//				if(id.getUUID() != null) {
-//					if(id.getUUID().equals(player.getUniqueId())){
-//						obj = id;
-//					}else {
-//						obj = null;
-//					}
-//				}else {
-//					obj = null;
-//				}
-//			}
-//			if(obj != null) objList.add(id);
-//		}
-//		
-//	}
-
-
+	
     public listCommand(String subCommand, String... args) {
         super(subCommand);
         setTab("type/world/plugin/models");
@@ -118,6 +26,7 @@ public class listCommand extends iCommand {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
+    	long time = System.currentTimeMillis();
         List<ComponentBuilder> objList = new ArrayList<>();
         List<String> strList = new ArrayList<>();
         HashMap<String, String> proList = new HashMap<>();
@@ -133,7 +42,7 @@ public class listCommand extends iCommand {
             }
             proList.put(pro.getName(), name);
         }
-
+        
         SortedSet<String> keys = new TreeSet<String>(proList.keySet());
         SortedSet<String> values = new TreeSet<String>(proList.values());
 
@@ -152,7 +61,7 @@ public class listCommand extends iCommand {
             if (FurnitureLib.getInstance().getPermission().hasPerm(sender, "furniture.command.debug")) {
                 detail = false;
             }
-
+            
             for (String str : getProjects(keys, values, proList, give)) {
                 String s = "";
                 Project pro = FurnitureLib.getInstance().getFurnitureManager().getProject(str);
@@ -339,46 +248,17 @@ public class listCommand extends iCommand {
     }
 
     private List<ObjectID> getByWorld(World w) {
-        List<ObjectID> objList = new ArrayList<>();
-        for (ObjectID obj : FurnitureLib.getInstance().getFurnitureManager().getObjectList()) {
-            if (obj.getWorld().equals(w)) {
-                if (!obj.getSQLAction().equals(SQLAction.REMOVE)) {
-                    objList.add(obj);
-                }
-            }
-        }
-        return objList;
+        String name = w.getName();
+        return FurnitureLib.getInstance().getFurnitureManager().getObjectList().stream().filter(obj -> obj.getWorldName().equalsIgnoreCase(name)).collect(Collectors.toList());
     }
 
     private List<ObjectID> getByType(Project pro) {
-        List<ObjectID> objList = new ArrayList<>();
-        if (pro == null) return objList;
-        for (ObjectID obj : FurnitureLib.getInstance().getFurnitureManager().getObjectList()) {
-            if (obj == null) continue;
-            if (obj.getProjectOBJ() == null) continue;
-            if (obj.getProjectOBJ().equals(pro)) {
-                if (!obj.getSQLAction().equals(SQLAction.REMOVE)) {
-                    objList.add(obj);
-                }
-            }
-        }
-        return objList;
+        return pro.getObjects();
     }
 
     private List<ObjectID> getByModel(Project pro) {
-        List<ObjectID> objList = new ArrayList<>();
-        if (pro == null) return objList;
-        for (ObjectID obj : FurnitureLib.getInstance().getFurnitureManager().getObjectList()) {
-            if (obj == null) continue;
-            if (obj.getProjectOBJ() == null) continue;
-            if (obj.getProjectOBJ().equals(pro)) {
-                if (!obj.getSQLAction().equals(SQLAction.REMOVE)) {
-                    if (!obj.getProjectOBJ().isEditorProject()) continue;
-                    objList.add(obj);
-                }
-            }
-        }
-        return objList;
+    	if(!pro.isEditorProject()) return null;
+    	return pro.getObjects();
     }
 
 }

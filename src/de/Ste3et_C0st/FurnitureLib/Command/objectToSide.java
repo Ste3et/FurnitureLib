@@ -10,6 +10,7 @@ import java.util.List;
 public class objectToSide {
 
     public objectToSide(List<ComponentBuilder> objList, Player p, Integer page, String command) {
+    	long time = System.currentTimeMillis();
         if (page == 0) page = 1;
         int objects = 10;
         int min = page * objects - objects;

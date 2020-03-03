@@ -16,6 +16,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
 
@@ -282,6 +283,18 @@ public class Project {
             }
         }
         return -1;
+    }
+    
+    public String getDisplayName() {
+    	if(Objects.nonNull(getCraftingFile().getItemstack())) {
+    		if(getCraftingFile().getItemstack().hasItemMeta()) {
+    			ItemMeta meta = getCraftingFile().getItemstack().getItemMeta();
+    			if(meta.hasDisplayName()) {
+    				return meta.getDisplayName();
+    			}
+    		}
+    	}
+    	return getName();
     }
 
     public List<ObjectID> getObjects() {
