@@ -2,6 +2,7 @@ package de.Ste3et_C0st.FurnitureLib.Utilitis;
 
 import de.Ste3et_C0st.FurnitureLib.Crafting.CraftingFile;
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
+import de.Ste3et_C0st.FurnitureLib.main.Furniture;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.Type;
 import org.bukkit.Bukkit;
@@ -187,7 +188,13 @@ public class CraftingInv implements Listener {
                 conf.set(header + ".displayName", name);
                 conf.set(header + ".spawnMaterial", material.name());
                 conf.set(header + ".itemLore", lore);
-
+                if(FurnitureLib.isNewVersion()) {
+                	ItemMeta meta = stack.getItemMeta();
+                	meta.setLore(lore);
+                	stack.setItemMeta(meta);
+                	stack.setAmount(1);
+                	conf.set(header + ".spawnItemStack", stack);
+                }
             }
         }
     }
