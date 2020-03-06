@@ -5,7 +5,6 @@ import com.google.gson.JsonParser;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.HiddenStringUtils;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.MaterialConverter;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
-import de.Ste3et_C0st.FurnitureLib.main.Type;
 import de.Ste3et_C0st.FurnitureLib.main.Type.PlaceableSide;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -29,7 +28,7 @@ public class CraftingFile {
     private String name;
     private String header;
     private ShapedRecipe recipe;
-    private boolean isDisable;
+    private boolean isDisable, useItemStackObject = false;
     private PlaceableSide side = null;
 
     public CraftingFile(String name, InputStream file) {
@@ -102,6 +101,10 @@ public class CraftingFile {
 
     public String getFileHeader() {
         return this.header;
+    }
+    
+    public boolean useItemStackObject() {
+    	return useItemStackObject;
     }
 
     public void setFileConfiguration(FileConfiguration file) {
@@ -219,6 +222,27 @@ public class CraftingFile {
     }
 
     private ItemStack returnResult(String s) {
+    	if(file.contains(header + ".spawnItemStack")) {
+    		try {
+    			ItemStack stack = file.getItemStack(header + ".spawnItemStack");
+    			if(!stack.getType().equals(Material.AIR)) {
+    				ItemMeta meta = stack.getItemMeta();
+        			List<String> loreText = new ArrayList<String>();
+        			loreText.add(HiddenStringUtils.encodeString(getSystemID()));
+        			loreText.addAll(meta.getLore());
+        			meta.setLore(loreText);
+        			stack.setItemMeta(meta);
+        			stack.setAmount(1);
+        			useItemStackObject = true;
+        			return stack;
+    			}
+    		}catch (Exception e) {
+    			FurnitureLib.getInstance().getLogger().warning("Can't load " + header + ".spawnItemStack" + " from format, use spawnMaterial");
+    			e.printStackTrace();
+			}
+    	}
+    	
+    	
         Material mat = FurnitureLib.getInstance().getDefaultSpawnMaterial();
         if (file.contains(header + ".spawnMaterial")) {
             String str = file.getString(header + ".spawnMaterial");

@@ -94,7 +94,7 @@ public class DeSerializer {
         double Z = location.getDouble("Z");
         float Yaw = location.getFloat("Yaw");
         float Pitch = location.getFloat("Pitch");
-        String str = location.getString("World").replace("c2a34fc1-a039-4769-b336-3c555ab39e35", "creative");
+        String str = location.getString("World");
         World world = null;
         try {
             UUID uuid = UUID.fromString(str);

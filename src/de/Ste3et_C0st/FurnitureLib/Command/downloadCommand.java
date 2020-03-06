@@ -13,6 +13,7 @@ import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+import java.util.Objects;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -24,6 +25,7 @@ import com.comphenix.protocol.wrappers.EnumWrappers;
 
 import de.Ste3et_C0st.FurnitureLib.Command.command;
 import de.Ste3et_C0st.FurnitureLib.ModelLoader.ModelFileLoader;
+import de.Ste3et_C0st.FurnitureLib.NBT.CraftItemStack;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTBase;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTCompressedStreamTools;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
@@ -264,6 +266,17 @@ public class downloadCommand extends iCommand{
 		file.set(header + ".displayName", compound.getString("displayName"));
 		file.set(header + ".system-ID", systemID);
 		file.set(header + ".spawnMaterial", compound.getString("spawnMaterial"));
+		
+		if(compound.hasKey("spawnItemStack")){
+			try {
+				CraftItemStack craftItemStack =  new CraftItemStack();
+				file.set(header + ".spawnItemStack", craftItemStack.getItemStack(compound.getCompound("spawnItemStack")));
+			}catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		
+		
 		file.set(header + ".itemGlowEffect", compound.getBoolean("itemGlowEffect"));
 		List<String> loreText = new ArrayList<String>();
 		for(Object s : lore.c()){
