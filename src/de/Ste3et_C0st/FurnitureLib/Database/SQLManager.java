@@ -38,7 +38,6 @@ public class SQLManager {
             config.setDriverClassName("org.sqlite.JDBC");
             config.setPoolName("FurnitureLib");
             config.setConnectionTestQuery("SELECT 1");
-            config.setMaxLifetime(60000);
             config.setMaximumPoolSize(50);
             this.database = new SQLite(plugin, config);
         } else if (plugin.getConfig().getString("config.Database.type").equalsIgnoreCase("Mysql")) {
@@ -54,7 +53,6 @@ public class SQLManager {
             config.setUsername(user);
             config.setPassword(password);
             config.setPoolName("FurnitureLib");
-            config.setMaxLifetime(60000);
             config.setMaximumPoolSize(50);
             this.database = new MySQL(plugin, config);
         } else {

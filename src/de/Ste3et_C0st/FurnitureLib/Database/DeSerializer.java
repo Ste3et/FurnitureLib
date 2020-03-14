@@ -11,10 +11,14 @@ import de.Ste3et_C0st.FurnitureLib.main.Type.PublicMode;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
+
+import com.comphenix.protocol.concurrency.AbstractIntervalTree.Entry;
 
 import java.io.ByteArrayInputStream;
 import java.util.Base64;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.UUID;
@@ -80,12 +84,32 @@ public class DeSerializer {
 			}
 			
 			if(world == null || world.equals("null")) obj.setSQLAction(SQLAction.UPDATE);
-			//if(autoPurge){if(FurnitureLib.getInstance().checkPurge(obj, uuid)){purged++;}} <-- why is this here ?
 			return obj;
 		}catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
+	}
+	
+	private static HashMap<UUID, Long> offlineMap = new HashMap<UUID, Long>();
+	
+	public static void autoPurge(int purgeTime) {
+		FurnitureManager.getInstance().getObjectList().stream().filter(entry -> Objects.nonNull(entry.getUUID())).forEach(entry -> {
+			if(!offlineMap.containsKey(entry.getUUID())) {
+				OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(entry.getUUID());
+				offlineMap.put(entry.getUUID(), offlinePlayer.getLastPlayed());
+			}
+			long time = offlineMap.containsKey(entry.getUUID()) ? offlineMap.get(entry.getUUID()) : -1;
+			if(time > 0) {
+				if(FurnitureLib.getInstance().isAfterDate(time, purgeTime)) {
+					if(FurnitureLib.getInstance().isPurgeRemove()) {
+						FurnitureManager.getInstance().remove(entry);
+					}else {
+						entry.setSQLAction(SQLAction.REMOVE);
+					}
+				}
+			}
+		});
 	}
 
     public static Location locationFetcher(NBTTagCompound location) {

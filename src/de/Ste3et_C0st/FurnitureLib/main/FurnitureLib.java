@@ -410,7 +410,6 @@ public class FurnitureLib extends JavaPlugin {
             this.deSerializerNew = new DeSerializer();
             this.lightMgr = new LightManager(this);
             this.useSSL = getConfig().getBoolean("config.Database.useSSL");
-            this.purgeTimeMS = TimeUnit.DAYS.toMillis(purgeTime);
             this.pManager = new ProjectManager();
             this.permissionHandler = new PermissionHandler();
             this.Pmanager = new ProtectionManager(instance);
@@ -457,11 +456,17 @@ public class FurnitureLib extends JavaPlugin {
                 getServer().getPluginManager().registerEvents(new onPlayerTeleportEvent(), getInstance());
                 getServer().getPluginManager().registerEvents(new ChunkOnLoad(), getInstance());
                 getServer().getPluginManager().registerEvents(new onChunkChange(), getInstance());
+                
+                if(this.autoPurge) {
+                	DeSerializer.autoPurge(purgeTime);
+                }
+                
                 send("§2Furniture load finish :)");
                 if (getConfig().getBoolean("config.timer.Enable")) {
                     int time = getConfig().getInt("config.timer.time");
                     sqlManager.saveInterval(time);
                 }
+                
                 send("==========================================");
                 Bukkit.getOnlinePlayers().stream().filter(p -> p != null && p.isOp())
                         .forEach(p -> getUpdater().sendPlayer(p));
@@ -489,6 +494,7 @@ public class FurnitureLib extends JavaPlugin {
         this.useParticle = getConfig().getBoolean("config.useParticles");
         this.purgeTime = getConfig().getInt("config.Purge.time");
         this.autoPurge = getConfig().getBoolean("config.Purge.autoPurge");
+        this.purgeTimeMS = TimeUnit.DAYS.toMillis(purgeTime);
         this.removePurge = getConfig().getBoolean("config.Purge.removePurge");
         this.viewDistance = (Bukkit.getViewDistance() * 16) - 2;
         if (this.viewDistance >= getConfig().getInt("config.viewDistance")) {

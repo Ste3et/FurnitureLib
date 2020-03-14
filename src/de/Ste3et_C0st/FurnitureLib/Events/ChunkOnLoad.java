@@ -150,7 +150,13 @@ public class ChunkOnLoad implements Listener {
                 	ProjectClickEvent projectBreakEvent = new ProjectClickEvent(p, objID);
                     Bukkit.getPluginManager().callEvent(projectBreakEvent);
                     if (!projectBreakEvent.isCancelled()) {
-                        objID.callFunction("onClick", p);
+//                    	if(e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
+//                    		if(e.getClickedBlock().getType().name().contains("_BED")) {
+//                        		e.setCancelled(true);
+//                        		return;
+//                        	}
+//                    	}
+                    	objID.callFunction("onClick", p);
                     }
                     return;
                 } else {
