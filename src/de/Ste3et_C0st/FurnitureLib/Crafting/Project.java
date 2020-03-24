@@ -9,6 +9,7 @@ import de.Ste3et_C0st.FurnitureLib.main.Furniture;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
+import de.Ste3et_C0st.FurnitureLib.main.PermissionHandler;
 import de.Ste3et_C0st.FurnitureLib.main.Type.CenterType;
 import de.Ste3et_C0st.FurnitureLib.main.Type.PlaceableSide;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
@@ -17,6 +18,8 @@ import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.permissions.Permission;
+import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
 
@@ -70,6 +73,11 @@ public class Project {
         FurnitureLib.getInstance().getFurnitureManager().addProject(this);
         this.loadDefaults();
         FurnitureLib.getInstance().getLimitManager().loadDefault(this.project);
+        
+        PermissionHandler.registerPermission("furniture.craft." + name.toLowerCase());
+        PermissionHandler.registerPermission("furniture.place." + name.toLowerCase());
+        PermissionHandler.registerPermission("furniture.sit." + name.toLowerCase());
+        
     }
 
     public Project(String name, Plugin plugin, InputStream craftingFile, Class<? extends Furniture> clazz) {
@@ -200,25 +208,21 @@ public class Project {
         return this.modelschematic;
     }
 
-    public boolean hasPermissions(Player p) {
-        if (FurnitureLib.getInstance().getPermission().hasPerm(p, "furniture.player"))
-            return true;
-        if (FurnitureLib.getInstance().getPermission().hasPerm(p, "furniture.place." + getSystemID()))
-            return true;
-        if (FurnitureLib.getInstance().getPermission().hasPerm(p, "furniture.place.all"))
-            return true;
-        if (FurnitureLib.getInstance().getPermission().hasPerm(p, "furniture.place.all." + getPlugin().getName()))
-            return true;
+    public boolean hasPermissions(Player player) {
+    	String name = this.getName().toLowerCase();
+    	if(FurnitureLib.getInstance().getPermission().hasPerm(player, "furniture.place." + name)) return true;
+    	
         if (FurnitureLib.getInstance().getPermissionList() != null) {
             for (String s : FurnitureLib.getInstance().getPermissionList().keySet()) {
-                if (FurnitureLib.getInstance().getPermission().hasPerm(p, "furniture.place.all." + s)) {
+                if (FurnitureLib.getInstance().getPermission().hasPerm(player, "furniture.place.all." + s)) {
                     if (FurnitureLib.getInstance().getPermissionList().get(s).contains(this.getName())) {
                         return true;
                     }
                 }
             }
         }
-        p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.NoPermissions"));
+        
+        player.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.NoPermissions"));
         return false;
     }
 

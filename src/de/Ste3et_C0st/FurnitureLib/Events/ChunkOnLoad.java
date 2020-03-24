@@ -102,7 +102,7 @@ public class ChunkOnLoad implements Listener {
 						}
 					}
 				} else {
-					FurnitureLib.debug("FurnitureLib -> Can't place model " + pro.getName() + " here canBuild(" + itemEvent.canBuild() + ")");
+					FurnitureLib.debug("FurnitureLib -> Can't place model " + pro.getName() + " here canBuild(" + false + ")");
 				}
 			}
 			removePlayer(p);
@@ -246,9 +246,6 @@ public class ChunkOnLoad implements Listener {
             return;
         }
         
-        if (!e.getProject().hasPermissions(e.getPlayer())) {
-            return;
-        }
         e.debugTime("FurnitureLib -> spawn Start " + e.getObjID().getProject());
         ObjectID obj = e.getObjID();
         if (FurnitureLib.getInstance().getFurnitureManager().getIgnoreList().contains(e.getPlayer().getUniqueId())) {

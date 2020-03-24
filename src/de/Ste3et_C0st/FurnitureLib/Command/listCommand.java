@@ -16,14 +16,27 @@ import org.bukkit.entity.Player;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class listCommand extends iCommand {
 	
     public listCommand(String subCommand, String... args) {
         super(subCommand);
-        setTab("type/world/plugin/models");
+        setTab("type/world/plugin/models/distance");
     }
 
+    public void run(CommandSender sender, String[] args) {
+    	if(Player.class.isInstance(sender)) {
+    		Player player = Player.class.cast(sender);
+    		//"furniture list player:xy distance:10"
+    		List<String> argList = Arrays.asList(args);
+    		List<Project> projects = FurnitureLib.getInstance().getFurnitureManager().getProjects();
+    		
+    		
+    		
+    	}
+    }
+    
     @Override
     public void execute(CommandSender sender, String[] args) {
         List<ComponentBuilder> objList = new ArrayList<>();

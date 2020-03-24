@@ -31,9 +31,7 @@ public abstract class Furniture extends FurnitureHelper implements Listener {
 
     public boolean runPublicFunctions(Player p) {
         if (!p.isSneaking()) {
-            //furniture.model.sit
-            //furniture.model.<systemID>.sit
-            if (p.hasPermission("furniture.model.sit") || p.hasPermission("furniture.model." + getProject().getName().toLowerCase() + ".sit")) {
+            if (p.hasPermission("furniture.sit." + getProject().getName().toLowerCase())) {
             	fEntity entity = getfAsList().stream()
             		.filter(stand -> stand.getName().startsWith("#Mount:") || stand.getName().startsWith("#SITZ"))
             		.filter(stand -> !stand.getPassenger().contains(p.getEntityId()))

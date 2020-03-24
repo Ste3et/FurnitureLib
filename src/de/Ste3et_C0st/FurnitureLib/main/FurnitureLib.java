@@ -433,7 +433,7 @@ public class FurnitureLib extends JavaPlugin {
                 send("Furniture find ProtectionLib: §e" + Boolean.toString(b));
                 this.bmanager = new BlockManager();
                 this.craftingInv = new CraftingInv(this);
-                loadPermissionKit();
+                this.loadPermissionKit();
                 this.autoFileUpdater = getConfig().getBoolean("config.autoFileUpdater");
                 autoConverter.modelConverter(getServer().getConsoleSender());
                 loadPluginConfig();
@@ -658,13 +658,14 @@ public class FurnitureLib extends JavaPlugin {
         getLogger().info("==========================================");
     }
 
-    public void spawn(Project pro, Location l) {
+    public ObjectID spawn(Project pro, Location l) {
         Class<?> c = pro.getFunctionClazz();
         if (c == null) {
-            return;
+            return null;
         }
-        ObjectID obj = new ObjectID(pro.getName(), pro.getPlugin().getName(), l);
-        spawn(pro, obj);
+        ObjectID objectID = new ObjectID(pro.getName(), pro.getPlugin().getName(), l);
+        spawn(pro, objectID);
+        return objectID;
     }
     
     public static boolean useDebugMode() {

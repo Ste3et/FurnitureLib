@@ -1,14 +1,16 @@
 package de.Ste3et_C0st.FurnitureLib.main;
 
-import net.milkbowl.vault.permission.Permission;
 import org.bukkit.Bukkit;
+import org.bukkit.permissions.Permission;
+import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.command.CommandSender;
+import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
 public class PermissionHandler {
 
     public boolean VaultInstalled = false;
-    private Permission permission = null;
+    private net.milkbowl.vault.permission.Permission permission = null;
 
     public PermissionHandler() {
         if (Bukkit.getPluginManager().isPluginEnabled("Vault")) {
@@ -32,11 +34,23 @@ public class PermissionHandler {
     }
 
     private boolean setupPermissions() {
-        RegisteredServiceProvider<Permission> permissionProvider = Bukkit.getServer().getServicesManager().getRegistration(net.milkbowl.vault.permission.Permission.class);
+        RegisteredServiceProvider<net.milkbowl.vault.permission.Permission> permissionProvider = Bukkit.getServer().getServicesManager().getRegistration(net.milkbowl.vault.permission.Permission.class);
         if (permissionProvider != null) {
             permission = permissionProvider.getProvider();
         }
         return (permission != null);
     }
 
+    public static boolean registerPermission(String name) {
+		return registerPermission(name, PermissionDefault.TRUE);
+	}
+	
+	public static boolean registerPermission(String name, PermissionDefault defaultState) {
+		try {
+			Bukkit.getPluginManager().addPermission(new Permission(name, defaultState));
+			return true;
+		}catch (Exception e) {
+			return false;
+		}
+	}
 }
