@@ -69,6 +69,11 @@
 			<id>jitpack.io</id>
 			<url>https://jitpack.io</url>
 		</repository>
+		
+		<repository>
+	        <id>papermc</id>
+	        <url>https://papermc.io/repo/repository/maven-public/</url>
+	    </repository>
 	</repositories>
 
 	<dependencies>
@@ -133,6 +138,13 @@
 			<artifactId>annotations</artifactId>
 			<version>15.0</version>
 		</dependency>
+		
+		<dependency>
+	        <groupId>io.papermc</groupId>
+	        <artifactId>paperlib</artifactId>
+	        <version>1.0.2</version>
+	        <scope>provided</scope>
+	     </dependency>
 
 	</dependencies>
 	<description>The FurnitureLib is an API to create packet based entity creations for Spigot based Minecraft Servers.</description>

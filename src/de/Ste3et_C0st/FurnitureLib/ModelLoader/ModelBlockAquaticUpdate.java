@@ -105,6 +105,16 @@ public class ModelBlockAquaticUpdate extends ModelBlock {
                 directional.setFacing(FurnitureLib.getInstance().getLocationUtil().yawToFace(newYaw));
             }
 
+            /*
+             * PaperLib.getChunkAtAsync(loc).thenRun(new Runnable() {
+				@Override
+				public void run() {
+					loc.getBlock().setBlockData(data, false);
+				}
+			});
+             * 
+             */
+            
             loc.getBlock().setBlockData(data, false);
         }
     }

@@ -226,6 +226,8 @@ public class ObjectID {
     }
 
     public boolean isInWorld(Player player) {
+    	if(Objects.isNull(getWorld())) return false;
+    	if(Objects.isNull(player.getWorld())) return false;
         return getWorld().equals(player.getWorld());
     }
 
