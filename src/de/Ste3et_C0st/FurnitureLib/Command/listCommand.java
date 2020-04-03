@@ -24,17 +24,11 @@ public class listCommand extends iCommand {
         super(subCommand);
         setTab("type/world/plugin/models/distance");
     }
-
+    
     public void run(CommandSender sender, String[] args) {
-    	if(Player.class.isInstance(sender)) {
-    		Player player = Player.class.cast(sender);
-    		//"furniture list player:xy distance:10"
-    		List<String> argList = Arrays.asList(args);
-    		List<Project> projects = FurnitureLib.getInstance().getFurnitureManager().getProjects();
-    		
-    		
-    		
-    	}
+    	List<ComponentBuilder> objList = new ArrayList<ComponentBuilder>();
+        List<String> strList = new ArrayList<String>();
+        
     }
     
     @Override
@@ -61,6 +55,7 @@ public class listCommand extends iCommand {
 
         if (!(sender instanceof Player)) return;
         Player p = (Player) sender;
+        sender.sendMessage(args.length + "");
         if (args.length == 1) {
             if (!hasCommandPermission(sender)) return;
             boolean recipe = false, give = false, detail = true;
@@ -228,7 +223,13 @@ public class listCommand extends iCommand {
                 }
                 subcommand = " plugin";
             }
-            new objectToSide(objList, p, Integer.parseInt(args[2]), "/furniture list " + subcommand);
+            
+            try {
+            	Integer side = Integer.parseInt(args[2]);
+            	new objectToSide(objList, p, side, "/furniture list " + subcommand);
+            }catch (Exception e) {
+				e.printStackTrace();
+			}
         } else {
             command.sendHelp(p);
         }
