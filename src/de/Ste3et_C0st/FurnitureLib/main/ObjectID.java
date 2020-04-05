@@ -153,6 +153,7 @@ public class ObjectID {
     }
 
     public World getWorld() {
+    	if(Objects.isNull(this.loc)) return null;
         return this.loc.getWorld();
     }
 
