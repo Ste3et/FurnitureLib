@@ -22,6 +22,7 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
+import org.bukkit.event.world.WorldLoadEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
@@ -115,6 +116,16 @@ public class ChunkOnLoad implements Listener {
         }
 
 
+    }
+    
+    @EventHandler
+    public void onWorldLoad(WorldLoadEvent e) {
+    	Bukkit.getScheduler().runTaskLater(FurnitureLib.getInstance(), () -> {
+    		if(Objects.nonNull(e.getWorld())) {
+    			String str = e.getWorld().getName();
+    			FurnitureLib.getInstance().getSQLManager().getDatabase().loadWorld(SQLAction.NOTHING, str);
+    		}
+    	}, 20L);
     }
 
     @EventHandler
