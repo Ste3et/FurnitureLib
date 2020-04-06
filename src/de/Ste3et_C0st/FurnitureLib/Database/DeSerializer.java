@@ -14,8 +14,6 @@ import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 
-import com.comphenix.protocol.concurrency.AbstractIntervalTree.Entry;
-
 import java.io.ByteArrayInputStream;
 import java.util.Base64;
 import java.util.HashMap;
@@ -23,11 +21,15 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class DeSerializer {
 	
 	public AtomicInteger armorStands = new AtomicInteger(0);
 	public int purged = 0;
+	private static final Pattern URN_UUID_PATTERN = Pattern.compile("[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}");
+	private static HashMap<String, String> uuidMap = new HashMap<String, String>();
 	
 	@SuppressWarnings("unchecked")
 	public ObjectID Deserialize(String objId, String in, SQLAction action, String world) {
@@ -62,7 +64,7 @@ public class DeSerializer {
 					NBTTagCompound metadata = armorStands.getCompound((String) packet);
 					Location loc = locationFetcher(metadata.getCompound("Location"));
 					FurnitureManager.getInstance().createFromType(metadata.getString("EntityType"), loc, obj).loadMetadata(metadata);
-					this.armorStands.addAndGet(armorStands.c().size());
+					this.armorStands.incrementAndGet();
 				});
 			}else if(!FurnitureLib.isNewVersion() && compound.hasKey("ArmorStands")) {
 				NBTTagCompound armorStands = compound.getCompound("ArmorStands");
@@ -83,7 +85,22 @@ public class DeSerializer {
 				obj.setSQLAction(SQLAction.UPDATE);
 			}
 			
+			Matcher matcher = URN_UUID_PATTERN.matcher(world);
 			if(world == null || world.equals("null")) obj.setSQLAction(SQLAction.UPDATE);
+			if(matcher.matches()) {
+				if(uuidMap.containsKey(world)) {
+					obj.setWorldName(uuidMap.get(world));
+				}else {
+					World bukkitWorld = Bukkit.getWorld(UUID.fromString(world));
+					if(Objects.nonNull(bukkitWorld)) {
+						obj.setWorldName(bukkitWorld.getName());
+						uuidMap.put(world, bukkitWorld.getName());
+					}else {
+						return obj;
+					}
+				}
+				obj.setSQLAction(SQLAction.UPDATE);
+			}
 			return obj;
 		}catch (Exception e) {
 			e.printStackTrace();

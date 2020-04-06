@@ -51,6 +51,10 @@ public class ObjectID {
     public String getWorldName() {
         return this.worldName;
     }
+    
+    public void setWorldName(String worldName) {
+    	this.worldName = worldName;
+    }
 
     public String getID() {
         return this.ObjectID;

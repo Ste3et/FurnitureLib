@@ -101,24 +101,23 @@ public abstract class Database {
     public void loadAll(SQLAction action) {
     	for (World world : Bukkit.getWorlds()) {
     		if(Objects.nonNull(world)) {
-    			this.loadWorld(action, world.getName());
+    			this.loadWorld(action, world.getName(), world.getUID().toString());
     		}
     	}
     }
     
-    public HashSet<ObjectID> loadWorld(SQLAction action, String world) {
+    public HashSet<ObjectID> loadWorld(SQLAction action, String world, String uuid) {
         long time1 = System.currentTimeMillis();
         HashSet<ObjectID> idList = new HashSet<ObjectID>();
         SimpleDateFormat time = new SimpleDateFormat("mm:ss.SSS");
         //FurnitureLib.getInstance().getProjectManager().loadProjectFiles();
-        try (Connection con = getConnection(); ResultSet rs = con.createStatement().executeQuery("SELECT ObjID,Data FROM furnitureLibData WHERE world='"+world+"'")) {
+        try (Connection con = getConnection(); ResultSet rs = con.createStatement().executeQuery("SELECT ObjID,Data,world FROM furnitureLibData WHERE world='"+world+"' OR world='" + uuid + "'")) {
             if (rs.next() == true) {
                 long time2 = System.currentTimeMillis();
-                System.out.println("FurnitureLib load data for World {"+ world  +"} -> [" + time.format(time2 - time1) + "]");
                 do {
-                    String a = rs.getString(1), c = rs.getString(2);
+                    String a = rs.getString(1), c = rs.getString(2), d = rs.getString(3);
                     if (!(a.isEmpty() || c.isEmpty())) {
-                        ObjectID obj = FurnitureLib.getInstance().getDeSerializer().Deserialize(a, c, action, world);
+                        ObjectID obj = FurnitureLib.getInstance().getDeSerializer().Deserialize(a, c, action, d);
                         if (Objects.nonNull(obj)) {
                             idList.add(obj);
                         }
@@ -126,12 +125,15 @@ public abstract class Database {
 				} while (rs.next());
                 
                 FurnitureManager.getInstance().addObjectID(idList);
-                plugin.getLogger().info("FurnitureLib load " + idList.size() + " Objects from: " + getType().name() + " Database");
-                String timeStr = time.format(time2 - time1);
+                
                 int ArmorStands = FurnitureLib.getInstance().getDeSerializer().armorStands.get();
                 int purged = FurnitureLib.getInstance().getDeSerializer().purged;
-                plugin.getLogger().info("FurnitureLib has loaded " + ArmorStands + " in " + timeStr);
-                plugin.getLogger().info("FurnitureLib has purged " + purged + " Objects");
+                String timeStr = time.format(time2 - time1);
+                
+                plugin.getLogger().info("FurnitureLib load models from world -> " + world);
+                plugin.getLogger().info("Models: " + idList.size() + " with " + ArmorStands +" entities");
+                plugin.getLogger().info("Purged: " + purged + " models");
+                plugin.getLogger().info("It takes: " + timeStr + " from Database: " + this.getType().name());
                 /* Load Blocks */
                 idList.forEach(ObjectID::loadBlocks);
             }

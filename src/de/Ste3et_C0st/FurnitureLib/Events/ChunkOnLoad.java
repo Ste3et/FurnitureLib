@@ -122,8 +122,7 @@ public class ChunkOnLoad implements Listener {
     public void onWorldLoad(WorldLoadEvent e) {
     	Bukkit.getScheduler().runTaskLater(FurnitureLib.getInstance(), () -> {
     		if(Objects.nonNull(e.getWorld())) {
-    			String str = e.getWorld().getName();
-    			FurnitureLib.getInstance().getSQLManager().getDatabase().loadWorld(SQLAction.NOTHING, str);
+    			FurnitureLib.getInstance().getSQLManager().getDatabase().loadWorld(SQLAction.NOTHING, e.getWorld().getName(), e.getWorld().getUID().toString());
     		}
     	}, 20L);
     }

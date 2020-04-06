@@ -7,6 +7,8 @@ import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.CenterType;
 import de.Ste3et_C0st.FurnitureLib.main.Type.PlaceableSide;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
+import io.papermc.lib.PaperLib;
+
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
