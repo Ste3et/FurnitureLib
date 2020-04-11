@@ -10,11 +10,15 @@ import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 
 import org.bukkit.Bukkit;
+import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import com.comphenix.protocol.concurrency.AbstractIntervalTree.Entry;
+
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -22,250 +26,96 @@ public class listCommand extends iCommand {
 	
     public listCommand(String subCommand, String... args) {
         super(subCommand);
-        setTab("type/world/plugin/models/distance");
-    }
-    
-    public void run(CommandSender sender, String[] args) {
-    	List<ComponentBuilder> objList = new ArrayList<ComponentBuilder>();
-        List<String> strList = new ArrayList<String>();
-        
+        setTab("world:/player:/distance:", "world:/player:/distance:");
     }
     
     @Override
     public void execute(CommandSender sender, String[] args) {
-        List<ComponentBuilder> objList = new ArrayList<>();
-        List<String> strList = new ArrayList<>();
-        HashMap<String, String> proList = new HashMap<>();
-        for (Project pro : FurnitureLib.getInstance().getFurnitureManager().getProjects()) {
-            strList.add(pro.getName());
-            String name = "";
-            if (pro.getCraftingFile().getRecipe().getResult() != null) {
-                if (pro.getCraftingFile().getRecipe().getResult().hasItemMeta()) {
-                    if (pro.getCraftingFile().getRecipe().getResult().getItemMeta().hasDisplayName()) {
-                        name = ChatColor.stripColor(pro.getCraftingFile().getRecipe().getResult().getItemMeta().getDisplayName());
-                    }
-                }
-            }
-            proList.put(pro.getName(), name);
+        Stream<ObjectID> objectList = FurnitureManager.getInstance().getObjectList().stream();
+        AtomicInteger side = new AtomicInteger(0);
+        boolean filter = false;
+        String arguments = String.join(" ", args);
+        String filterTypes = "";
+        for(String argument : args) {
+        	argument = argument.toLowerCase();
+        	if(argument.startsWith("world:") && !filterTypes.contains("world")) {
+        		String world = argument.replace("world:", "");
+        		objectList = objectList.filter(entry -> entry.getWorldName().equalsIgnoreCase(world));
+        		filter = true;
+        		filterTypes +="§7world:§a" + world + "§8|";
+        		continue;
+        	}else if(argument.startsWith("player:") && !filterTypes.contains("player")) {
+        		OfflinePlayer player = Bukkit.getOfflinePlayer(argument.replace("player:", ""));
+        		if(Objects.nonNull(player)) {
+        			objectList = objectList.filter(entry -> entry.getUUID().equals(player.getUniqueId()));
+        			filter = true;
+        			filterTypes +="§7player:§a" + player.getName() + "§8|";
+        		}
+        		continue;
+        	}else if(argument.startsWith("distance:") && !filterTypes.contains("distance")) {
+        		if(Player.class.isInstance(sender)) {
+        			Player player = Player.class.cast(sender);
+        			AtomicInteger distance = new AtomicInteger(0);
+            		try {
+            			distance.set(Integer.parseInt(argument.replace("distance:", "")));
+            			World world = player.getWorld();
+                		objectList = objectList.filter(entry -> entry.getWorldName().equalsIgnoreCase(world.getName())).filter(entry -> entry.getStartLocation().distance(player.getLocation()) < distance.get());
+                		filter = true;
+                		filterTypes +="§7distance:§a" + distance.get() + "§8|";
+            		}catch (Exception e) {}
+        		}
+        		continue;
+        	}else {
+        		try {
+        			side.set(Integer.parseInt(argument));
+        			arguments = arguments.replace(argument, "");
+        		}catch (Exception e) {}
+        	}
         }
         
-        SortedSet<String> keys = new TreeSet<String>(proList.keySet());
-        SortedSet<String> values = new TreeSet<String>(proList.values());
-
-
-        if (!(sender instanceof Player)) return;
-        Player p = (Player) sender;
-        sender.sendMessage(args.length + "");
-        if (args.length == 1) {
-            if (!hasCommandPermission(sender)) return;
-            boolean recipe = false, give = false, detail = true;
-            if (FurnitureLib.getInstance().getPermission().hasPerm(sender, "furniture.command.recipe")) {
-                recipe = true;
-            }
-            if (FurnitureLib.getInstance().getPermission().hasPerm(sender, "furniture.command.give")) {
-                give = true;
-            }
-            if (FurnitureLib.getInstance().getPermission().hasPerm(sender, "furniture.command.debug")) {
-                detail = false;
-            }
-            
-            for (String str : getProjects(keys, values, proList, give)) {
-                String s = "";
-                Project pro = FurnitureLib.getInstance().getFurnitureManager().getProject(str);
-                String name = pro.getName();
-                if (detail) {
-                    List<ObjectID> objectList = getByType(pro);
-                    s = "§eObjects: §c" + objectList.size();
-                    s += "\n§eSystemID: §c" + pro.getName();
-                }
-
-                if (pro.getCraftingFile().getRecipe().getResult() != null) {
-                    if (pro.getCraftingFile().getRecipe().getResult().hasItemMeta()) {
-                        if (pro.getCraftingFile().getRecipe().getResult().getItemMeta().hasDisplayName()) {
-                            name = ChatColor.stripColor(pro.getCraftingFile().getRecipe().getResult().getItemMeta().getDisplayName());
-                        }
-                    }
-                }
-
-                if (give) {
-                    objList.add(new ComponentBuilder("§6- " + name).event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(s).create())).event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/furniture give " + pro.getName())));
-                } else if (recipe) {
-                    objList.add(new ComponentBuilder("§6- " + name).event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(s).create())).event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/furniture recipe " + pro.getName())));
-                } else {
-                    objList.add(new ComponentBuilder("§6- " + name).event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(s).create())));
-                }
-            }
-            new objectToSide(objList, p, 1, "/furniture list");
-        } else if (args.length == 2) {
-            String subcommand = "";
-            if (args[1].equalsIgnoreCase("Type")) {
-                if (!hasCommandPermission(sender, ".type")) return;
-                for (Project pro : FurnitureLib.getInstance().getFurnitureManager().getProjects()) {
-                    List<ObjectID> objectList = getByType(pro);
-                    objList.add(new ComponentBuilder("§6- " + pro.getName()).event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("§eObjecte: §c" + objectList.size()).create())));
-                }
-                subcommand = " type";
-            } else if (args[1].equalsIgnoreCase("World")) {
-                if (!hasCommandPermission(sender, ".world")) return;
-                for (World w : Bukkit.getWorlds()) {
-                    List<ObjectID> objectList = getByWorld(w);
-                    objList.add(new ComponentBuilder("§6- " + w.getName()).event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("§eObjecte: §c" + objectList.size()).create())));
-                }
-                subcommand = " world";
-            } else if (args[1].equalsIgnoreCase("Plugin")) {
-                if (!hasCommandPermission(sender, ".plugin")) return;
-                List<String> plugins = new ArrayList<String>();
-                for (Project pro : FurnitureLib.getInstance().getFurnitureManager().getProjects()) {
-                    String plugin = pro.getPlugin().getName();
-                    if (!plugins.contains(plugin)) {
-                        objList.add(new ComponentBuilder("§c" + plugin));
-                        for (Project project : getByPlugin(plugin)) {
-                            objList.add(new ComponentBuilder("§7- " + project.getName()));
-                        }
-                        plugins.add(plugin);
-                    }
-                }
-                subcommand = " plugin";
-            } else if (args[1].equalsIgnoreCase("models")) {
-                if (!hasCommandPermission(sender, ".models")) return;
-                for (Project pro : FurnitureLib.getInstance().getFurnitureManager().getProjects()) {
-                    if (pro.isEditorProject()) {
-                        List<ObjectID> objectList = getByModel(pro);
-                        objList.add(new ComponentBuilder("§6- " + pro.getName()).event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("§eObjecte: §c" + objectList.size()).create())));
-                    }
-                }
-                subcommand = " models";
-            } else if (FurnitureLib.getInstance().isInt(args[1])) {
-                if (!hasCommandPermission(sender)) return;
-                if (!(sender instanceof Player)) return;
-                boolean recipe = false, give = false, detail = true;
-                if (FurnitureLib.getInstance().getPermission().hasPerm(sender, "furniture.command.recipe")) {
-                    recipe = true;
-                }
-                if (FurnitureLib.getInstance().getPermission().hasPerm(sender, "furniture.command.give")) {
-                    give = true;
-                }
-                if (FurnitureLib.getInstance().getPermission().hasPerm(sender, "furniture.command.debug")) {
-                    detail = false;
-                }
-
-                for (String str : getProjects(keys, values, proList, give)) {
-                    String s = "";
-                    Project pro = FurnitureLib.getInstance().getFurnitureManager().getProject(str);
-                    String name = pro.getName();
-                    if (detail) {
-                        List<ObjectID> objectList = getByType(pro);
-                        s = "§eObjects: §c" + objectList.size();
-                        s += "\n§eSystemID: §c" + pro.getName();
-                    }
-
-                    if (pro.getCraftingFile().getRecipe().getResult() != null) {
-                        if (pro.getCraftingFile().getRecipe().getResult().hasItemMeta()) {
-                            if (pro.getCraftingFile().getRecipe().getResult().getItemMeta().hasDisplayName()) {
-                                name = ChatColor.stripColor(pro.getCraftingFile().getRecipe().getResult().getItemMeta().getDisplayName());
-                            }
-                        }
-                    }
-
-                    if (give) {
-                        objList.add(new ComponentBuilder("§6- " + name).event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(s).create())).event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/furniture give " + pro.getName())));
-                    } else if (recipe) {
-                        objList.add(new ComponentBuilder("§6- " + name).event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(s).create())).event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/furniture recipe " + pro.getName())));
-                    } else {
-                        objList.add(new ComponentBuilder("§6- " + name).event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(s).create())));
-                    }
-                }
-                new objectToSide(objList, p, Integer.parseInt(args[1]), "/furniture list");
-                return;
-            } else {
-                command.sendHelp(p);
-                return;
-            }
-            new objectToSide(objList, p, 1, "/furniture list " + subcommand);
-        } else if (args.length == 3) {
-            String subcommand = "";
-            if (args[1].equalsIgnoreCase("Type")) {
-                if (!hasCommandPermission(sender, ".type")) return;
-                for (Project pro : FurnitureLib.getInstance().getFurnitureManager().getProjects()) {
-                    List<ObjectID> objectList = getByType(pro);
-                    objList.add(new ComponentBuilder("§6- " + pro.getName()).event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("§eObjecte: §c" + objectList.size()).create())));
-                }
-                subcommand = " type";
-            } else if (args[1].equalsIgnoreCase("World")) {
-                if (!hasCommandPermission(sender, ".world")) return;
-                for (World w : Bukkit.getWorlds()) {
-                    List<ObjectID> objectList = getByWorld(w);
-                    objList.add(new ComponentBuilder("§6- " + w.getName()).event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("§eObjecte: §c" + objectList.size()).create())));
-                }
-                subcommand = " world";
-            } else if (args[1].equalsIgnoreCase("models")) {
-                if (!hasCommandPermission(sender, ".models")) return;
-                for (Project pro : FurnitureLib.getInstance().getFurnitureManager().getProjects()) {
-                    if (pro.isEditorProject()) {
-                        List<ObjectID> objectList = getByModel(pro);
-                        objList.add(new ComponentBuilder("§6- " + pro.getName()).event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("§eObjecte: §c" + objectList.size()).create())));
-                    }
-                }
-                subcommand = " models";
-            } else if (args[1].equalsIgnoreCase("Plugin")) {
-                if (!hasCommandPermission(sender, ".plugin")) return;
-                if (sender instanceof Player == false) return;
-                List<String> plugins = new ArrayList<String>();
-                for (Project pro : FurnitureLib.getInstance().getFurnitureManager().getProjects()) {
-                    String plugin = pro.getPlugin().getName();
-                    if (!plugins.contains(plugin)) {
-                        objList.add(new ComponentBuilder("§c" + plugin));
-                        for (Project project : getByPlugin(plugin)) {
-                            objList.add(new ComponentBuilder("§7- " + project.getName()));
-                        }
-                        plugins.add(plugin);
-                    }
-                }
-                subcommand = " plugin";
-            }
-            
-            try {
-            	Integer side = Integer.parseInt(args[2]);
-            	new objectToSide(objList, p, side, "/furniture list " + subcommand);
-            }catch (Exception e) {
-				e.printStackTrace();
-			}
-        } else {
-            command.sendHelp(p);
+        if(filter) {
+        	HashMap<String, AtomicInteger> projectCounter = new HashMap<String, AtomicInteger>();
+        	FurnitureManager.getInstance().getProjects().forEach(entry -> projectCounter.put(entry.getName(), new AtomicInteger(0)));
+        	objectList.forEach(entry -> {
+        		AtomicInteger integer = projectCounter.get(entry.getProject());
+        		if(Objects.nonNull(integer)){
+        			integer.incrementAndGet();
+        		}
+        	});
+        	long items = projectCounter.entrySet().stream().parallel().filter(entry -> entry.getValue().get() > 0).count();
+        	
+        	if(items > 0) {
+        		List<ComponentBuilder> componentList = new ArrayList<ComponentBuilder>();
+        		componentList.add(new ComponentBuilder("§7FilterTypes: [" + filterTypes.substring(0, filterTypes.length() - 1) + "§7]"));
+        		projectCounter.entrySet().stream().sorted((k1,k2) -> Integer.compare(k1.getValue().get(), k2.getValue().get())).filter(entry -> entry.getValue().get() > 0).forEach(entry -> {
+        			componentList.add(new ComponentBuilder("§7" + entry.getKey() + ": §e" + entry.getValue().get()));
+        		});
+        		new objectToSide(componentList, (Player) sender, side.get(), "/furniture list " + arguments, 16);
+        	}
+        }else {
+        	List<ComponentBuilder> componentList = new ArrayList<ComponentBuilder>();
+        	FurnitureManager.getInstance().getProjects().forEach(entry -> {
+        		ComponentBuilder builder = new ComponentBuilder(" §8- §7" + ChatColor.stripColor(entry.getDisplayName()));
+        		if(sender.hasPermission("furniture.command.debug")) {
+        			ComponentBuilder debugInfos = new ComponentBuilder("§7Placed Objects: §e" + entry.getObjects().size() + "\n");
+        			debugInfos.append("§7SystemID: §e" + entry.getName() + "\n");
+        			debugInfos.append("§7Size: §e" + entry.getLength() + " §7|§e " + entry.getHeight() + " §7|§e " + entry.getWidth() + "\n");
+        			debugInfos.append("§7Entities: §e" + entry.getModelschematic().getEntityMap().size() + "\n");
+        			debugInfos.append("§7Blockcount: §e" + entry.getModelschematic().getBlockMap().size() + "\n");
+        			debugInfos.append("§7Plugin: §e"  + entry.getPlugin().getName());
+        			builder.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, debugInfos.create()));
+        		}
+        		if(sender.hasPermission("furniture.command.give")) {
+        			builder.append(" §7[§2give§7]").event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, null)).event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/furniture give " + entry.getName()));
+        		}
+        		if(sender.hasPermission("furniture.command.recipe")) {
+        			builder.append(" §7[§erecipe§7]").event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, null)).event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, "/furniture recipe " + entry.getName()));
+        		}
+        		componentList.add(builder);
+        	});
+        	if(!componentList.isEmpty()) {
+        		new objectToSide(componentList, (Player) sender, side.get(), "/furniture list " + arguments, 15);
+        	}
         }
     }
-
-    private SortedSet<String> getProjects(SortedSet<String> key, SortedSet<String> values, HashMap<String, String> hash, boolean detail) {
-        SortedSet<String> proList = new TreeSet<>();
-        //return admin SystemID sort
-        if (!detail) {
-            for (String str : values) {
-                for (String k : hash.keySet()) {
-                    String v = hash.get(k);
-                    if (v.equalsIgnoreCase(str)) proList.add(k);
-                }
-            }
-            return key;
-        }
-        return key;
-    }
-
-    private List<Project> getByPlugin(String plugin) {
-        return FurnitureManager.getInstance().getProjects().stream().filter(project -> project.getPlugin().getName().equalsIgnoreCase(plugin)).collect(Collectors.toList());
-    }
-
-    private List<ObjectID> getByWorld(World w) {
-        String name = w.getName();
-        return FurnitureManager.getInstance().getObjectList().stream().filter(obj -> obj.getWorldName().equalsIgnoreCase(name)).collect(Collectors.toList());
-    }
-
-    private List<ObjectID> getByType(Project pro) {
-        return pro.getObjects();
-    }
-
-    private List<ObjectID> getByModel(Project pro) {
-    	if(!pro.isEditorProject()) return null;
-    	return pro.getObjects();
-    }
-
 }

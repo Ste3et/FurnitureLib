@@ -49,7 +49,27 @@ public class TabCompleterHandler implements TabCompleter {
                                     return strAL;
                                 } else if (str.equalsIgnoreCase("players")) {
                                     return null;
-                                } else if (iCommandParam instanceof removeCommand) {
+                                }else if (iCommandParam instanceof listCommand) {
+                                	List<String> strAL = Arrays.asList(str.split("/"));
+                                	String current = args[args.length - 1];
+                                	if(current.isEmpty()) {
+                                		return strAL;
+                                	}else {
+                                		if(current.equalsIgnoreCase("distance:")) {
+                                			return Arrays.asList("distance:1","distance:10","distance:100");
+                                		}else if(current.toLowerCase().startsWith("world:")){
+                                			List<String> tab = new ArrayList<String>();
+                                			String world = current.replace("world:", "");
+                                			Bukkit.getWorlds().stream().filter(entry -> entry.getName().toLowerCase().contains(world.toLowerCase())).forEach(entry -> tab.add("world:" + entry.getName()));
+                                			return tab;
+										}else if(current.toLowerCase().startsWith("player:")){
+											List<String> tab = new ArrayList<String>();
+                                			String player = current.replace("player:", "");
+                                			Bukkit.getOnlinePlayers().stream().filter(entry -> entry.getName().toLowerCase().contains(player.toLowerCase())).forEach(entry -> tab.add("player:" + entry.getName()));
+                                			return tab;
+										}
+                                	}
+                                }else if (iCommandParam instanceof removeCommand) {
                                     List<String> strAL = Arrays.asList(str.split("/"));
                                     String[] split = args[1].toLowerCase().split(":");
                                     boolean key = strAL.stream().anyMatch(a -> a.equalsIgnoreCase(split[0] + ":"));

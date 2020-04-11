@@ -9,13 +9,17 @@ import java.util.List;
 
 public class objectToSide {
 
-    public objectToSide(List<ComponentBuilder> objList, Player p, Integer page, String command) {
-    	long time = System.currentTimeMillis();
+	public objectToSide(List<ComponentBuilder> objList, Player p, Integer page, String command) {
+		this(objList, p, page, command, 10);
+	}
+	
+    public objectToSide(List<ComponentBuilder> objList, Player p, Integer page, String command, int objects) {
         if (page == 0) page = 1;
-        int objects = 10;
         int min = page * objects - objects;
         int max = page * objects;
-        int maxPage = getPage(objList.size()) / objects;
+        double d = objList.size();
+        double k = Math.ceil(d / objects);
+        int maxPage = (int) k;
 
         String a = "";
         String b = "";
@@ -79,13 +83,9 @@ public class objectToSide {
         if (nextCommand != null) {
             builder.append(nextColor + "»").event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, nextCommand));
         } else {
-            builder.append("§7«");
+            builder.append("§7»");
         }
         p.spigot().sendMessage(builder.append("§8]").create());
-    }
-
-    private int getPage(int i) {
-		return (((i + 9) / 10) * 10);
     }
 
 }
