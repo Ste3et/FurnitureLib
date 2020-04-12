@@ -90,7 +90,7 @@ public class listCommand extends iCommand {
         		projectCounter.entrySet().stream().sorted((k1,k2) -> Integer.compare(k1.getValue().get(), k2.getValue().get())).filter(entry -> entry.getValue().get() > 0).forEach(entry -> {
         			componentList.add(new ComponentBuilder("§7" + entry.getKey() + ": §e" + entry.getValue().get()));
         		});
-        		new objectToSide(componentList, (Player) sender, side.get(), "/furniture list " + arguments, 16);
+        		new objectToSide(componentList, (Player) sender, side.get(), "/furniture " + arguments, 16);
         	}
         }else {
         	List<ComponentBuilder> componentList = new ArrayList<ComponentBuilder>();
@@ -114,7 +114,7 @@ public class listCommand extends iCommand {
         		componentList.add(builder);
         	});
         	if(!componentList.isEmpty()) {
-        		new objectToSide(componentList, (Player) sender, side.get(), "/furniture list " + arguments, 15);
+        		new objectToSide(componentList, (Player) sender, side.get(), "/furniture " + arguments, 15);
         	}
         }
     }

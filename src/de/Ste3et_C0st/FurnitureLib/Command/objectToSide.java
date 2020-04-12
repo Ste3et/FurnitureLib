@@ -75,7 +75,7 @@ public class objectToSide {
         if (prevCommand != null) {
             builder.append(prevColor + "«").event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, prevCommand));
         } else {
-            builder.append("§7«");
+            builder.append("§7«").event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, null));
         }
 
         builder.append("§8/§a");
@@ -83,7 +83,7 @@ public class objectToSide {
         if (nextCommand != null) {
             builder.append(nextColor + "»").event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, nextCommand));
         } else {
-            builder.append("§7»");
+            builder.append("§7»").event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, null));
         }
         p.spigot().sendMessage(builder.append("§8]").create());
     }

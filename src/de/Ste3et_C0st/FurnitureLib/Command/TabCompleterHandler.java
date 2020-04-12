@@ -76,13 +76,18 @@ public class TabCompleterHandler implements TabCompleter {
                                     if (key) {
                                         String input = split.length > 1 ? split[1].toLowerCase() : "";
                                         List<String> tab = new ArrayList<String>();
-                                        if (split[0].equalsIgnoreCase("-pro")) {
+                                        if (split[0].equalsIgnoreCase("project")) {
                                             FurnitureManager.getInstance().getProjects().stream()
                                                     .filter(p -> p.getName().toLowerCase().contains(input))
-                                                    .forEach(p -> tab.add("-pro:" + p.getName()));
-                                        } else if (split[0].equalsIgnoreCase("-world")) {
+                                                    .forEach(p -> tab.add("project:" + p.getName()));
+                                        }else if (split[0].equalsIgnoreCase("world")) {
                                             Bukkit.getWorlds().stream().filter(w -> w.getName().toLowerCase().contains(input))
-                                                    .forEach(w -> tab.add("-world:" + w.getName()));
+                                                    .forEach(w -> tab.add("world:" + w.getName()));
+                                        } else if (split[0].equalsIgnoreCase("world")) {
+                                            Bukkit.getOnlinePlayers().stream().filter(w -> w.getName().toLowerCase().contains(input))
+                                               .forEach(w -> tab.add("player:" + w.getName()));
+                                        } else if(split[0].equalsIgnoreCase("distance")) {
+                                        	return Arrays.asList("distance:1","distance:10","distance:100");
                                         }
                                         return tab;
                                     }
