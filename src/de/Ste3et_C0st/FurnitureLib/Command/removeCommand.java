@@ -23,7 +23,8 @@ public class removeCommand extends iCommand {
 
     public removeCommand(String subCommand, String... args) {
         super(subCommand);
-        setTab("project:/world:/player:/distance:/obj:/lookat/all","project:/world:/player:/distance:/obj:/","project:/world:/player:/distance:/obj:/");
+        String tab = "project:/plugin:/world:/player:/distance:/obj:/lookat/all";
+        setTab(tab,tab,tab);
     }
 
     @SuppressWarnings("deprecation")
@@ -32,10 +33,24 @@ public class removeCommand extends iCommand {
 		Stream<ObjectID> objectList = FurnitureManager.getInstance().getObjectList().stream();
         String filterTypes = "";
         boolean shouldClose = false;
+        if(args.length < 2) {
+        	FurnitureLib.getInstance().getLangManager().getString("message.WrongArgument");
+        	objectList.close();
+        	return;
+        }
+        
         for(String argument : args) {
         	if(shouldClose) break;
         	argument = argument.toLowerCase();
-        	if(argument.startsWith("obj:") && !filterTypes.contains("object")) {
+        	if(argument.startsWith("plugin:") && !filterTypes.contains("plugin")) {
+        		if (!hasCommandPermission(sender, ".plugin")) {
+        			shouldClose = true;
+        			break;
+        		}
+        		String objectStr = argument.replace("plugin:", "");
+        		filterTypes ="§7object:§a" + objectStr + "§8|";
+        		objectList = objectList.filter(entry -> entry.getPlugin().equalsIgnoreCase(objectStr));
+        	}else if(argument.startsWith("obj:") && !filterTypes.contains("object")) {
         		if (!hasCommandPermission(sender, ".object")) {
         			shouldClose = true;
         			break;

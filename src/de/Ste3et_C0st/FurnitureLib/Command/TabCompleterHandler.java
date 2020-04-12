@@ -67,6 +67,8 @@ public class TabCompleterHandler implements TabCompleter {
                                 			String player = current.replace("player:", "");
                                 			Bukkit.getOnlinePlayers().stream().filter(entry -> entry.getName().toLowerCase().contains(player.toLowerCase())).forEach(entry -> tab.add("player:" + entry.getName()));
                                 			return tab;
+										}else {
+											return strAL.stream().filter(a -> a.toLowerCase().contains(current.toLowerCase())).collect(Collectors.toList());
 										}
                                 	}
                                 }else if (iCommandParam instanceof removeCommand) {

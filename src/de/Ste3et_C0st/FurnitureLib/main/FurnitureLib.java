@@ -279,7 +279,7 @@ public class FurnitureLib extends JavaPlugin {
     }
 
     public boolean canBuild(Player p, ObjectID id, EventType type) {
-        return Pmanager.canBuild(p, id, type);
+        return this.canBuild(p, id, type, true);
     }
 
     public boolean canSitting() {

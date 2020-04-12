@@ -10,6 +10,8 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Arrays;
 
+import org.bukkit.configuration.file.YamlConfiguration;
+
 public class ModelFileLoader {
 
     public static void loadModelFiles() {

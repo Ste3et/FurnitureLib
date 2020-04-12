@@ -28,31 +28,33 @@ public class CraftingFile {
     private String name;
     private String header;
     private ShapedRecipe recipe;
-    private boolean isDisable, useItemStackObject = false;
+    private boolean isDisable, useItemStackObject = false, enabledModel = false;
     private PlaceableSide side = null;
-
-    public CraftingFile(String name, InputStream file) {
+    
+    public CraftingFile(String name, InputStream file, FileConfiguration fileConfiguration) {
         this.name = name;
         if (Objects.isNull(this.name)) return;
-        if (FurnitureLib.isNewVersion()) {
-            this.filePath = new File("plugins/" + FurnitureLib.getInstance().getName() + "/models/" + name + ".dModel");
-        } else {
-            this.filePath = new File("plugins/" + FurnitureLib.getInstance().getName() + "/Crafting/" + name + ".yml");
-        }
-        this.file = YamlConfiguration.loadConfiguration(filePath);
+        this.filePath = new File(getPath(name));
+        this.file = fileConfiguration;
         if (file == null) {
             System.out.println("problems to load " + name);
             return;
         }
         try (Reader inReader = new InputStreamReader(file)) {
-            this.file.addDefaults(YamlConfiguration.loadConfiguration(inReader));
+        	YamlConfiguration defaultConfig = YamlConfiguration.loadConfiguration(inReader);
+            this.file.addDefaults(defaultConfig);
             this.file.options().copyDefaults(true);
             this.file.save(filePath);
         } catch (IOException e) {
             e.printStackTrace();
         }
         header = getHeader();
-
+        
+        this.enabledModel = this.file.getBoolean(header + ".enabled", true);
+        if(!this.enabledModel) {
+        	return;
+        }
+        
         if (this.file.contains(header + ".system-ID")) {
             systemID = this.file.getString(header + ".system-ID");
         } else {
@@ -75,6 +77,14 @@ public class CraftingFile {
         }
     }
 
+    public static String getPath(String modelName) {
+    	if (FurnitureLib.isNewVersion()) {
+            return "plugins/" + FurnitureLib.getInstance().getName() + "/models/" + modelName + ".dModel";
+        } else {
+        	return "plugins/" + FurnitureLib.getInstance().getName() + "/Crafting/" + modelName + ".yml";
+        }
+    }
+    
     public ShapedRecipe getRecipe() {
         return this.recipe;
     }
@@ -85,6 +95,10 @@ public class CraftingFile {
 
     public boolean isEnable() {
         return this.isDisable;
+    }
+    
+    public boolean isEnabledModel() {
+    	return this.enabledModel;
     }
 
     public String getFileName() {

@@ -16,6 +16,7 @@ import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.permissions.Permission;
@@ -23,6 +24,7 @@ import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
 
+import java.io.File;
 import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
@@ -57,7 +59,19 @@ public class Project {
     public Project(String name, Plugin plugin, InputStream craftingFile, PlaceableSide side, Class<? extends Furniture> clazz) {
         this.project = name;
         this.plugin = plugin;
-        this.file = new CraftingFile(name, craftingFile);
+        
+        File configFile = new File(CraftingFile.getPath(name));
+    	YamlConfiguration config = YamlConfiguration.loadConfiguration(configFile);
+		if(config.getBoolean(name + ".enabled", true) == false) {
+    		return;
+    	}
+        
+        this.file = new CraftingFile(name, craftingFile, config);
+        
+        if(!this.file.isEnabledModel()) {
+        	return;
+        }
+        
         this.functionList = this.file.loadFunction();
         this.clazz = clazz;
         try {
@@ -77,7 +91,6 @@ public class Project {
         PermissionHandler.registerPermission("furniture.craft." + name.toLowerCase());
         PermissionHandler.registerPermission("furniture.place." + name.toLowerCase());
         PermissionHandler.registerPermission("furniture.sit." + name.toLowerCase());
-        
     }
 
     public Project(String name, Plugin plugin, InputStream craftingFile, Class<? extends Furniture> clazz) {
@@ -119,7 +132,7 @@ public class Project {
     }
 
     public Project setPlaceableSide(PlaceableSide side) {
-        this.modelschematic.setPlaceableSide(side);
+    	if(Objects.nonNull(this.modelschematic)) this.modelschematic.setPlaceableSide(side);
         return this;
     }
 
@@ -303,7 +316,7 @@ public class Project {
 
     public List<ObjectID> getObjects() {
         return FurnitureManager.getInstance().getObjectList().stream()
-                .filter(obj -> !obj.getSQLAction().equals(SQLAction.REMOVE))
+                .filter(obj -> SQLAction.REMOVE != obj.getSQLAction())
                 .filter(obj -> obj.getProject().equalsIgnoreCase(getName())).collect(Collectors.toList());
     }
 
