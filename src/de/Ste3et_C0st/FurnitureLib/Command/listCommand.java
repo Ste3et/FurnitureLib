@@ -3,12 +3,12 @@ package de.Ste3et_C0st.FurnitureLib.Command;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
-import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
@@ -131,7 +131,6 @@ public class listCommand extends iCommand {
 									" §8- §e" + name + " §7Models: §e" + entry.getValue().get());
 							if (sender.hasPermission("furniture.command.remove.project")) {
 								builder.append(" §7[§cremove§7]")
-										.event((HoverEvent) null)
 										.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
 												new ComponentBuilder("§7Remove all §c" + name + " §7models from\n"
 														+ "§7These filters: " + filters + "\n"
@@ -165,33 +164,38 @@ public class listCommand extends iCommand {
 							builder.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, debugInfos.create()));
 						}
 						if (sender.hasPermission("furniture.command.give")) {
-							builder.append(" §7[§2give§7]").event((HoverEvent) null)
-									.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
+							ComponentBuilder give = new ComponentBuilder(" §7[§2give§7]");
+							give.append(" §7[§2give§7]").event(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
 											"/furniture give " + entry.getName()));
+							builder.append(give.create());
 						}
 						if (sender.hasPermission("furniture.command.recipe")) {
-							builder.append(" §7[§erecipe§7]").event((HoverEvent) null)
+							ComponentBuilder give = new ComponentBuilder(" §7[§erecipe§7]");
+							give.append(" §7[§erecipe§7]")
 									.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
 											"/furniture recipe " + entry.getName()));
+							builder.append(give.create());
 						}
 						if (sender.hasPermission("furniture.command.remove.project")) {
-							builder.append(" §7[§cremove§7]").event((HoverEvent) null)
-									.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
+							ComponentBuilder give = new ComponentBuilder(" §7[§cremove§7]");
+							give.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
 											new ComponentBuilder("§7Remove all §c" + entry.getName()
 													+ " §7models from\n" + "§7All worlds that §c§ncan't be make undo")
 															.create()))
 									.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
 											"/furniture remove project:" + entry.getName()));
+							builder.append(give.create());
 						}
 						if (sender.hasPermission("furniture.command.delete.project")) {
-							builder.append(" §7[§4✘§7]").event((HoverEvent) null)
-									.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
+							ComponentBuilder give = new ComponentBuilder(" §7[§4✘§7]");
+							give.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
 											new ComponentBuilder("§7Remove all §c" + entry.getName()
 													+ " §7models from\n" + "§7All worlds that §c§ncan't be make undo\n"
 													+ "§7And §cremove §7the model from your Server or §cdisable §7it.")
 															.create()))
 									.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
 											"/furniture delete " + entry.getName()));
+							builder.append(give.create());
 						}
 						componentList.add(builder);
 					});
