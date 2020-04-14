@@ -131,7 +131,7 @@ public class listCommand extends iCommand {
 									" §8- §e" + name + " §7Models: §e" + entry.getValue().get());
 							if (sender.hasPermission("furniture.command.remove.project")) {
 								builder.append(" §7[§cremove§7]")
-										.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, null))
+										.event((HoverEvent) null)
 										.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
 												new ComponentBuilder("§7Remove all §c" + name + " §7models from\n"
 														+ "§7These filters: " + filters + "\n"
@@ -165,17 +165,17 @@ public class listCommand extends iCommand {
 							builder.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, debugInfos.create()));
 						}
 						if (sender.hasPermission("furniture.command.give")) {
-							builder.append(" §7[§2give§7]").event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, null))
+							builder.append(" §7[§2give§7]").event((HoverEvent) null)
 									.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
 											"/furniture give " + entry.getName()));
 						}
 						if (sender.hasPermission("furniture.command.recipe")) {
-							builder.append(" §7[§erecipe§7]").event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, null))
+							builder.append(" §7[§erecipe§7]").event((HoverEvent) null)
 									.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
 											"/furniture recipe " + entry.getName()));
 						}
 						if (sender.hasPermission("furniture.command.remove.project")) {
-							builder.append(" §7[§cremove§7]").event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, null))
+							builder.append(" §7[§cremove§7]").event((HoverEvent) null)
 									.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
 											new ComponentBuilder("§7Remove all §c" + entry.getName()
 													+ " §7models from\n" + "§7All worlds that §c§ncan't be make undo")
@@ -184,7 +184,7 @@ public class listCommand extends iCommand {
 											"/furniture remove project:" + entry.getName()));
 						}
 						if (sender.hasPermission("furniture.command.delete.project")) {
-							builder.append(" §7[§4✘§7]").event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, null))
+							builder.append(" §7[§4✘§7]").event((HoverEvent) null)
 									.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
 											new ComponentBuilder("§7Remove all §c" + entry.getName()
 													+ " §7models from\n" + "§7All worlds that §c§ncan't be make undo\n"
