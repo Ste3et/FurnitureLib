@@ -293,6 +293,7 @@ public abstract class fEntity extends fSerializer {
         return this.b;
     }
 
+    @Deprecated
     public void delete() {
         FurnitureLib.getInstance().getFurnitureManager().remove(this);
     }

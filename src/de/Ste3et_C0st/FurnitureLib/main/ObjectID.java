@@ -30,7 +30,7 @@ public class ObjectID {
     private PublicMode publicMode = FurnitureLib.getInstance().getDefaultPublicType();
     private EventType memberType = FurnitureLib.getInstance().getDefaultEventType();
     private SQLAction sqlAction = SQLAction.SAVE;
-    private List<fEntity> packetList = new ArrayList<>();
+    private HashSet<fEntity> packetList = new HashSet<fEntity>();
     private HashSet<Player> players = new HashSet<>();
     private boolean finish = false, fixed = false, fromDatabase = false, Private = false;
 
@@ -214,11 +214,11 @@ public class ObjectID {
         uuidList.remove(uuid);
     }
 
-    public List<fEntity> getPacketList() {
+    public HashSet<fEntity> getPacketList() {
         return packetList;
     }
 
-    public void setPacketList(List<fEntity> packetList) {
+    public void setPacketList(HashSet<fEntity> packetList) {
         this.packetList = packetList;
     }
 
@@ -397,7 +397,7 @@ public class ObjectID {
         w.dropItemNaturally(loc, project.getCraftingFile().getRecipe().getResult());
     }
 
-    public void deleteEffect(List<fEntity> asList) {
+    public void deleteEffect(HashSet<fEntity> asList) {
         if (getProjectOBJ().isSilent()) {
             return;
         }

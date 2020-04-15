@@ -147,7 +147,6 @@ public class FurnitureManager {
         this.objecte.stream().filter(obj -> !obj.getSQLAction().equals(SQLAction.REMOVE)).forEach(this::send);
     }
 
-    @SuppressWarnings("unchecked")
     public void remove(ObjectID id) {
         if (this.objecte.isEmpty()) {
             return;
@@ -157,11 +156,15 @@ public class FurnitureManager {
             FurnitureLib.getInstance().getBlockManager().destroy(id.getBlockList(), false);
             id.getBlockList().clear();
         }
-        List<fEntity> packetList = (List<fEntity>) ((ArrayList<fEntity>) id.getPacketList()).clone();
-        packetList.stream().filter(entity -> entity.getObjID().equals(id)).forEach(entity -> {
-            entity.kill();
-            entity.delete();
-        });
+        
+        id.getPacketList().stream().forEach(fEntity::kill);
+        id.getPacketList().clear();
+        
+//        List<fEntity> packetList = (List<fEntity>) ((ArrayList<fEntity>) id.getPacketList()).clone();
+//        packetList.stream().filter(entity -> entity.getObjID().equals(id)).forEach(entity -> {
+//            entity.kill();
+//            entity.delete();
+//        });
 
         if (!id.getBlockList().isEmpty()) {
             FurnitureLib.getInstance().getBlockManager().destroy(id.getBlockList(), false);
@@ -210,10 +213,11 @@ public class FurnitureManager {
     }
 
     public fEntity getfArmorStandByID(Integer entityID) {
-        if (this.objecte.isEmpty()) {
+        if (this.objecte.isEmpty() || Objects.isNull(entityID)) {
             return null;
         }
         if (entityID == null) return null;
+        
         return objecte.stream().flatMap(obj -> obj.getPacketList().stream()).filter(e -> entityID.equals(e.getEntityID())).findFirst().orElse(null);
     }
 
@@ -260,7 +264,7 @@ public class FurnitureManager {
         return projects.stream().anyMatch(projects -> projects.getName().equalsIgnoreCase(s));
     }
 
-    public List<fEntity> getfArmorStandByObjectID(ObjectID id) {
+    public HashSet<fEntity> getfArmorStandByObjectID(ObjectID id) {
         if (this.objecte.isEmpty()) {
             return null;
         }

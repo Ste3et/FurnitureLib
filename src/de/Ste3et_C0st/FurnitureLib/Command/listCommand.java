@@ -165,14 +165,15 @@ public class listCommand extends iCommand {
 						}
 						if (sender.hasPermission("furniture.command.give")) {
 							ComponentBuilder give = new ComponentBuilder(" §7[§2give§7]");
-							give.append(" §7[§2give§7]").event(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
+							give.event((HoverEvent) null);
+							give.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
 											"/furniture give " + entry.getName()));
 							builder.append(give.create());
 						}
 						if (sender.hasPermission("furniture.command.recipe")) {
 							ComponentBuilder give = new ComponentBuilder(" §7[§erecipe§7]");
-							give.append(" §7[§erecipe§7]")
-									.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
+							give.event((HoverEvent) null);
+							give.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
 											"/furniture recipe " + entry.getName()));
 							builder.append(give.create());
 						}

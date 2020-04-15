@@ -12,6 +12,7 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -75,7 +76,7 @@ public abstract class FurnitureHelper {
         return this.plugin;
     }
 
-    public List<fEntity> getfAsList() {
+    public HashSet<fEntity> getfAsList() {
         return Objects.nonNull(this.getObjID()) ? this.getObjID().getPacketList() : null;
     }
 

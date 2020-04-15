@@ -10,6 +10,7 @@ import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -39,7 +40,7 @@ public class ColorUtil {
         }
         ItemStack is = p.getInventory().getItemInMainHand();
         AtomicInteger Amount = new AtomicInteger(is.getAmount());
-        List<fEntity> asp = manager.getfArmorStandByObjectID(obj);
+        HashSet<fEntity> asp = manager.getfArmorStandByObjectID(obj);
         int j = row;
 
         if (FurnitureLib.isNewVersion()) {

@@ -20,6 +20,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.util.List;
+import java.util.Objects;
 
 public class FurnitureEvents {
 
@@ -29,16 +30,11 @@ public class FurnitureEvents {
                     public void onPacketReceiving(PacketEvent event) {
                         if (event.getPacketType() == PacketType.Play.Client.USE_ENTITY) {
                             Integer PacketID = event.getPacket().getIntegers().read(0);
-                            if (manager.isArmorStand(PacketID)) {
+                            fEntity asPacket = manager.getfArmorStandByID(PacketID);
+                            if (Objects.nonNull(asPacket)) {
                                 event.setCancelled(true);
-                                fEntity asPacket = manager.getfArmorStandByID(PacketID);
-                                if (asPacket == null) {
-                                    return;
-                                }
-                                ObjectID objID = manager.getObjectIDByEntityID(PacketID);
-                                if (objID == null) {
-                                    return;
-                                }
+                                ObjectID objID = asPacket.getObjID();
+                                if (Objects.isNull(asPacket)) return;
                                 if (objID.getSQLAction().equals(SQLAction.REMOVE)) {
                                     return;
                                 }
