@@ -18,6 +18,7 @@ import org.bukkit.util.NumberConversions;
 
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.stream.Collectors;
 
 public class FurnitureManager {
@@ -34,7 +35,7 @@ public class FurnitureManager {
 
     public WrappedDataWatcher watcher = null;
     public HashMap<World, HashMap<EntityType, WrappedDataWatcher>> defaultWatchers = new HashMap<>();
-    private HashSet<ObjectID> objecte = new HashSet<>();
+    private List<ObjectID> objecte = new CopyOnWriteArrayList<ObjectID>();
     private List<Project> projects = new ArrayList<>();
     private List<UUID> ignoreList = new ArrayList<>();
     private HashSet<ChunkData> chunkList = new HashSet<>();
@@ -53,7 +54,7 @@ public class FurnitureManager {
         return manager;
     }
 
-    public HashSet<ObjectID> getObjectList() {
+    public List<ObjectID> getObjectList() {
         return this.objecte;
     }
 
@@ -283,7 +284,9 @@ public class FurnitureManager {
     }
 
     public List<ObjectID> getFromPlayer(UUID uuid) {
-        return this.objecte.stream().filter(obj -> isValid(obj) && obj.getUUID().equals(uuid)).collect(Collectors.toList());
+    	List<ObjectID> objectList = new ArrayList<ObjectID>();
+    	this.objecte.stream().filter(obj -> isValid(obj) && obj.getUUID().equals(uuid)).forEach(objectList::add);
+        return objectList;
     }
 
     public List<ObjectID> getInChunk(Chunk c) {

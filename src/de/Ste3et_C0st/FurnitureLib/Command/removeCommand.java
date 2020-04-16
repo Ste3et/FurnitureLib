@@ -30,7 +30,7 @@ public class removeCommand extends iCommand {
     @SuppressWarnings("deprecation")
 	public void execute(CommandSender sender, String[] args) {
     	if (!hasCommandPermission(sender)) return;
-		Stream<ObjectID> objectList = FurnitureManager.getInstance().getObjectList().stream();
+		Stream<ObjectID> objectList = FurnitureManager.getInstance().getObjectList().stream().filter(entry -> SQLAction.REMOVE != entry.getSQLAction());
         String filterTypes = "";
         boolean shouldClose = false;
         if(args.length < 2) {

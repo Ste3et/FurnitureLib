@@ -1,5 +1,7 @@
 package de.Ste3et_C0st.FurnitureLib.Database;
 
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Lists;
 import com.zaxxer.hikari.HikariConfig;
 
 import de.Ste3et_C0st.FurnitureLib.Utilitis.callbacks.CallbackObjectIDs;
@@ -13,9 +15,13 @@ import org.bukkit.scheduler.BukkitTask;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class SQLManager {
 
@@ -95,42 +101,45 @@ public class SQLManager {
         }
     }
 
-    @SuppressWarnings("unchecked")
     public void save() {
         plugin.getLogger().info("Furniture save started");
         if (!plugin.getFurnitureManager().getObjectList().isEmpty()) {
             List<ObjectID> objList = new ArrayList<>();
             int j = 0, i = 0, l = 0;
-            HashSet<ObjectID> idList = (HashSet<ObjectID>) plugin.getFurnitureManager().getObjectList().clone();
+            List<ObjectID> idList = new ArrayList<ObjectID>(plugin.getFurnitureManager().getObjectList());
+            HashSet<ObjectID> saveSet = new HashSet<ObjectID>();
+            
+            int stepSize = 100;
+
             for (ObjectID obj : idList) {
                 if (!objList.contains(obj)) {
-                    switch (obj.getSQLAction()) {
-                        case UPDATE:
-                            save(obj);
-                            j++;
-                            break;
-                        case SAVE:
-                            save(obj);
-                            i++;
-                            break;
-                        case REMOVE:
-                            remove(obj);
-                            l++;
-                            plugin.getFurnitureManager().deleteObjectID(obj);
-                            break;
-                        case NOTHING:
-                            break;
-                        case PURGE:
-                            break;
-                    }
-                    if (!obj.getSQLAction().equals(SQLAction.REMOVE)) {
-                        obj.setSQLAction(SQLAction.NOTHING);
-                    }
-                    objList.add(obj);
-                    obj.setSQLAction(SQLAction.NOTHING);
+                	SQLAction sqlAction = obj.getSQLAction();
+                	if(SQLAction.REMOVE == sqlAction) {
+                		remove(obj);
+                        l++;
+                        plugin.getFurnitureManager().deleteObjectID(obj);
+                	}else if(SQLAction.UPDATE == sqlAction) {
+                		saveSet.add(obj);
+                		j++;
+                	}else if(SQLAction.SAVE == sqlAction){
+                		saveSet.add(obj);
+                		i++;
+                	}else {
+                		continue;
+                	}
+                	objList.add(obj);
                 }
             }
-
+            
+            Collection<List<ObjectID>> collection = splitListBySize(objList, stepSize);
+            if(Objects.nonNull(collection)) {
+            	collection.stream().filter(Objects::nonNull).forEach(list -> {
+                	SQLStatement statement = new SQLStatement();
+                	statement.add(list);
+                	save(statement.getStatement());
+                });
+            }
+            
             plugin.getLogger().info(i + " furniture has been saved to the database.");
             plugin.getLogger().info(j + " furniture has been updated in the database.");
             plugin.getLogger().info(l + " furniture has been removed from the database.");
@@ -139,6 +148,14 @@ public class SQLManager {
         }
     }
 
+    
+    public static Collection<List<ObjectID>> splitListBySize(List<ObjectID> intList, int size) {
+        if (!intList.isEmpty() && size > 0) {
+            final AtomicInteger counter = new AtomicInteger(0);
+            return intList.stream().collect(Collectors.groupingBy(it -> counter.getAndIncrement() / size)).values();
+        }
+        return null;
+    }
 
     public void save(ObjectID obj) {
         if (Objects.nonNull(database)) {
@@ -147,6 +164,15 @@ public class SQLManager {
         }
         FurnitureLib.getInstance().getLogger().warning("No SQLite and MySQL instance found.");
     }
+    
+    public void save(String query) {
+        if (Objects.nonNull(database)) {
+            database.save(query);
+            return;
+        }
+        FurnitureLib.getInstance().getLogger().warning("No SQLite and MySQL instance found.");
+    }
+    
 
     public void remove(ObjectID obj) {
         if (Objects.nonNull(database)) {

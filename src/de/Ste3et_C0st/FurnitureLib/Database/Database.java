@@ -52,6 +52,16 @@ public abstract class Database {
             return null;
         }
     }
+    
+    public boolean save(String query) {
+    	 try (Connection con = getConnection(); Statement stmt = con.createStatement()) {
+             stmt.executeUpdate(query);
+             return true;
+         } catch (Exception e) {
+             e.printStackTrace();
+         }
+         return false;
+    }
 
     public boolean save(ObjectID id) {
         String binary = FurnitureLib.getInstance().getSerializer().SerializeObjectID(id);
@@ -111,7 +121,7 @@ public abstract class Database {
         HashSet<ObjectID> idList = new HashSet<ObjectID>();
         SimpleDateFormat time = new SimpleDateFormat("mm:ss.SSS");
         //FurnitureLib.getInstance().getProjectManager().loadProjectFiles();
-        try (Connection con = getConnection(); ResultSet rs = con.createStatement().executeQuery("SELECT ObjID,Data,world FROM furnitureLibData WHERE world='"+world+"' OR world='" + uuid + "'")) {
+        try (Connection con = getConnection(); ResultSet rs = con.createStatement().executeQuery("SELECT ObjID,Data,world FROM furnitureLibData WHERE world='"+ world +"' OR world='" + uuid + "'")) {
             if (rs.next() == true) {
                 long time2 = System.currentTimeMillis();
                 do {
