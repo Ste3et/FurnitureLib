@@ -282,6 +282,10 @@ public class ObjectID {
         }
     }
 
+    public fEntity getByID(int entityID) {
+    	return getPacketList().stream().filter(entry -> entityID == entry.getEntityID()).findFirst().orElse(null);
+    }
+    
     public void sendAllInView() {
         if (isPrivate())
             return;

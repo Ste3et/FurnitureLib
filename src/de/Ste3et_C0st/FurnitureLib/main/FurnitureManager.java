@@ -218,8 +218,8 @@ public class FurnitureManager {
             return null;
         }
         if (entityID == null) return null;
-        
-        return objecte.stream().flatMap(obj -> obj.getPacketList().stream()).filter(e -> entityID.equals(e.getEntityID())).findFirst().orElse(null);
+        ObjectID objectID = getObjectIDByEntityID(entityID);
+        return Objects.isNull(objectID) ? null : objectID.getByID(entityID);
     }
 
     public List<fEntity> getArmorStandFromPassenger(Player p) {
