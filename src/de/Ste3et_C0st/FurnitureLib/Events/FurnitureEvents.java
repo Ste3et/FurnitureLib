@@ -5,7 +5,6 @@ import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.ListenerPriority;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketEvent;
-import com.comphenix.protocol.injector.GamePhase;
 import com.comphenix.protocol.wrappers.EnumWrappers.EntityUseAction;
 import de.Ste3et_C0st.FurnitureLib.SchematicLoader.Events.ProjectBreakEvent;
 import de.Ste3et_C0st.FurnitureLib.SchematicLoader.Events.ProjectClickEvent;

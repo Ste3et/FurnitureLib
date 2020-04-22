@@ -236,8 +236,8 @@ public class FurnitureManager {
             return null;
         }
         if (entityID == null) return null;
-        fEntity e = getfArmorStandByID(entityID);
-        return e != null ? e.getObjID() : null;
+        ObjectID objId = this.objecte.stream().filter(this::isValid).filter(entry -> entry.containsEntity(entityID)).findFirst().orElse(null);
+        return objId;
     }
 
     public ObjectID getObjectIDByString(String objID) {

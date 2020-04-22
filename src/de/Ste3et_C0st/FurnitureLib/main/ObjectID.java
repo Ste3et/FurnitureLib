@@ -221,6 +221,14 @@ public class ObjectID {
     public void setPacketList(HashSet<fEntity> packetList) {
         this.packetList = packetList;
     }
+    
+    public boolean containsEntity(int entityID) {
+    	return Objects.nonNull(getEntity(entityID));
+    }
+    
+    public fEntity getEntity(int entityID) {
+    	return this.packetList.stream().filter(entry -> entry.getEntityID() == entityID).findFirst().orElse(null);
+    }
 
     public boolean isInRange(Player player) {
         return (getStartLocation().distanceSquared(player.getLocation()) < viewDistanceSquared);
