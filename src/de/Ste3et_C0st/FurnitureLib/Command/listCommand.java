@@ -21,6 +21,8 @@ import java.util.stream.Stream;
 
 public class listCommand extends iCommand {
 
+	private int itemsEachSide = 10;
+	
 	public listCommand(String subCommand, String... args) {
 		super(subCommand);
 		setTab("world:/player:/distance:/plugin:", "world:/player:/distance:/plugin:");
@@ -142,7 +144,7 @@ public class listCommand extends iCommand {
 							}
 							componentList.add(builder);
 						});
-				new objectToSide(componentList, (Player) sender, side.get(), "/furniture " + arguments, 16);
+				new objectToSide(componentList, (Player) sender, side.get(), "/furniture " + arguments, itemsEachSide + 1);
 			}
 		} else {
 			List<ComponentBuilder> componentList = new ArrayList<ComponentBuilder>();
@@ -166,18 +168,16 @@ public class listCommand extends iCommand {
 						}
 						if (sender.hasPermission("furniture.command.give")) {
 							ComponentBuilder give = new ComponentBuilder(" §7[§2give§7]");
-							give.event((HoverEvent) null);
 							give.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
 											"/furniture give " + entry.getName()));
-							builder.append(give.create());
+							builder.reset().append(give.create());
 						}
 						
 						if (sender.hasPermission("furniture.command.recipe") && sender.hasPermission("furniture.command.recipe." + entry.getName().toLowerCase())) {
 							ComponentBuilder give = new ComponentBuilder(" §7[§erecipe§7]");
-							give.event((HoverEvent) null);
 							give.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
 											"/furniture recipe " + entry.getName()));
-							builder.append(give.create());
+							builder.reset().append(give.create());
 						}
 						
 						if (sender.hasPermission("furniture.command.remove.project")) {
@@ -204,7 +204,7 @@ public class listCommand extends iCommand {
 						componentList.add(builder);
 					});
 			if (!componentList.isEmpty()) {
-				new objectToSide(componentList, (Player) sender, side.get(), "/furniture " + arguments, 15);
+				new objectToSide(componentList, (Player) sender, side.get(), "/furniture " + arguments, itemsEachSide);
 			}
 		}
 	}
