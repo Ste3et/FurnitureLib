@@ -5,9 +5,8 @@ import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.ComponentBuilder.FormatRetention;
 import net.md_5.bungee.api.chat.HoverEvent;
-import net.md_5.bungee.api.chat.TextComponent;
-
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.OfflinePlayer;
@@ -21,7 +20,7 @@ import java.util.stream.Stream;
 
 public class listCommand extends iCommand {
 
-	private int itemsEachSide = 10;
+	private int itemsEachSide = 15;
 	
 	public listCommand(String subCommand, String... args) {
 		super(subCommand);
@@ -33,7 +32,8 @@ public class listCommand extends iCommand {
 	public void execute(CommandSender sender, String[] args) {
 		if (!hasCommandPermission(sender))
 			return;
-		Stream<ObjectID> objectList = FurnitureManager.getInstance().getObjectList().stream().filter(Objects::nonNull).filter(entry -> SQLAction.REMOVE != entry.getSQLAction());
+		List<ObjectID> objectList = new ArrayList<ObjectID>(FurnitureManager.getInstance().getObjectList());
+		Stream<ObjectID> objectStream = objectList.stream().filter(Objects::nonNull).filter(entry -> SQLAction.REMOVE != entry.getSQLAction());
 		AtomicInteger side = new AtomicInteger(0);
 		boolean filter = false, shouldClose = false;
 		String arguments = String.join(" ", args);
@@ -49,7 +49,7 @@ public class listCommand extends iCommand {
 					break;
 				}
 				String plugin = argument.replace("plugin:", "");
-				objectList = objectList.filter(entry -> entry.getPlugin().equalsIgnoreCase(plugin));
+				objectStream = objectStream.filter(entry -> entry.getPlugin().equalsIgnoreCase(plugin));
 				filter = true;
 				filterTypes += "§7plugin:§a" + plugin + "§8|";
 			} else if (argument.startsWith("world:") && !filterTypes.contains("world")) {
@@ -58,7 +58,7 @@ public class listCommand extends iCommand {
 					break;
 				}
 				String world = argument.replace("world:", "");
-				objectList = objectList.filter(entry -> entry.getWorldName().equalsIgnoreCase(world));
+				objectStream = objectStream.filter(entry -> entry.getWorldName().equalsIgnoreCase(world));
 				filter = true;
 				filterTypes += "§7world:§a" + world + "§8|";
 				continue;
@@ -69,7 +69,7 @@ public class listCommand extends iCommand {
 				}
 				OfflinePlayer player = Bukkit.getOfflinePlayer(argument.replace("player:", ""));
 				if (Objects.nonNull(player)) {
-					objectList = objectList.filter(entry -> entry.getUUID().equals(player.getUniqueId()));
+					objectStream = objectStream.filter(entry -> entry.getUUID().equals(player.getUniqueId()));
 					filter = true;
 					filterTypes += "§7player:§a" + player.getName() + "§8|";
 				}
@@ -85,7 +85,7 @@ public class listCommand extends iCommand {
 					try {
 						distance.set(Integer.parseInt(argument.replace("distance:", "")));
 						World world = player.getWorld();
-						objectList = objectList.filter(entry -> entry.getWorldName().equalsIgnoreCase(world.getName()))
+						objectStream = objectStream.filter(entry -> entry.getWorldName().equalsIgnoreCase(world.getName()))
 								.filter(entry -> entry.getStartLocation().distance(player.getLocation()) < distance
 										.get());
 						filter = true;
@@ -107,7 +107,7 @@ public class listCommand extends iCommand {
 			}
 		}
 		if (shouldClose) {
-			objectList.close();
+			objectStream.close();
 			return;
 		} else if (filter) {
 			HashMap<String, AtomicInteger> projectCounter = new HashMap<String, AtomicInteger>();
@@ -170,14 +170,14 @@ public class listCommand extends iCommand {
 							ComponentBuilder give = new ComponentBuilder(" §7[§2give§7]");
 							give.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
 											"/furniture give " + entry.getName()));
-							builder.reset().append(give.create());
+							builder.append(give.create(), FormatRetention.FORMATTING);
 						}
 						
 						if (sender.hasPermission("furniture.command.recipe") && sender.hasPermission("furniture.command.recipe." + entry.getName().toLowerCase())) {
 							ComponentBuilder give = new ComponentBuilder(" §7[§erecipe§7]");
 							give.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
 											"/furniture recipe " + entry.getName()));
-							builder.reset().append(give.create());
+							builder.append(give.create(), FormatRetention.FORMATTING);
 						}
 						
 						if (sender.hasPermission("furniture.command.remove.project")) {

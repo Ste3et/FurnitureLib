@@ -30,12 +30,13 @@ public class removeCommand extends iCommand {
     @SuppressWarnings("deprecation")
 	public void execute(CommandSender sender, String[] args) {
     	if (!hasCommandPermission(sender)) return;
-		Stream<ObjectID> objectList = FurnitureManager.getInstance().getObjectList().stream().filter(entry -> SQLAction.REMOVE != entry.getSQLAction());
+    	List<ObjectID> objectList = new ArrayList<ObjectID>(FurnitureManager.getInstance().getObjectList());
+		Stream<ObjectID> objectStream = objectList.stream().filter(entry -> SQLAction.REMOVE != entry.getSQLAction());
         String filterTypes = "";
         boolean shouldClose = false;
         if(args.length < 2) {
         	FurnitureLib.getInstance().getLangManager().getString("message.WrongArgument");
-        	objectList.close();
+        	objectStream.close();
         	return;
         }
         
@@ -49,7 +50,7 @@ public class removeCommand extends iCommand {
         		}
         		String objectStr = argument.replace("plugin:", "");
         		filterTypes ="§7object:§a" + objectStr + "§8|";
-        		objectList = objectList.filter(entry -> entry.getPlugin().equalsIgnoreCase(objectStr));
+        		objectStream = objectStream.filter(entry -> entry.getPlugin().equalsIgnoreCase(objectStr));
         	}else if(argument.startsWith("obj:") && !filterTypes.contains("object")) {
         		if (!hasCommandPermission(sender, ".object")) {
         			shouldClose = true;
@@ -57,7 +58,7 @@ public class removeCommand extends iCommand {
         		}
         		String objectStr = argument.replace("obj:", "");
         		filterTypes ="§7object:§a" + objectStr + "§8|";
-        		objectList = objectList.filter(entry -> entry.getSerial().equalsIgnoreCase(objectStr));
+        		objectStream = objectStream.filter(entry -> entry.getSerial().equalsIgnoreCase(objectStr));
         		break;
         	}else if(argument.equalsIgnoreCase("all")) {
         		if (!hasCommandPermission(sender, ".all")) {
@@ -75,8 +76,8 @@ public class removeCommand extends iCommand {
                 ObjectID obj = getFromSight(p.getLocation());
                 if (Objects.nonNull(obj)) {
                 	filterTypes = "§alookat";
-                	objectList.close();
-                	objectList = Collections.singletonList(obj).stream();
+                	objectStream.close();
+                	objectStream = Collections.singletonList(obj).stream();
                 	break;
                 }else {
                 	filterTypes = "§clookat";
@@ -90,14 +91,14 @@ public class removeCommand extends iCommand {
         		}
         		String project = argument.replace("project:", "");
         		filterTypes += "§7project:§a" + project + "§8|";
-        		objectList = objectList.filter(entry -> entry.getProject().equalsIgnoreCase(project));
+        		objectStream = objectStream.filter(entry -> entry.getProject().equalsIgnoreCase(project));
         	}else if(argument.startsWith("world:") && !filterTypes.contains("world")) {
         		if (!hasCommandPermission(sender, ".world")) {
         			shouldClose = true;
         			break;
         		}
         		String world = argument.replace("world:", "");
-        		objectList = objectList.filter(entry -> entry.getWorldName().equalsIgnoreCase(world));
+        		objectStream = objectStream.filter(entry -> entry.getWorldName().equalsIgnoreCase(world));
         		filterTypes +="§7world:" + world + "§8|";
         	}else if(argument.startsWith("player:") && !filterTypes.contains("player")) {
         		if (!hasCommandPermission(sender, ".player")) {
@@ -107,7 +108,7 @@ public class removeCommand extends iCommand {
 				OfflinePlayer player = Bukkit.getOfflinePlayer(argument.replace("player:", ""));
         		if(Objects.nonNull(player)) {
         			filterTypes +="§7player:§a" + player.getName() + "§8|";
-        			objectList = objectList.filter(entry -> entry.getUUID().equals(player.getUniqueId()));
+        			objectStream = objectStream.filter(entry -> entry.getUUID().equals(player.getUniqueId()));
         		}else {
         			filterTypes +="§7player:§c" + argument.replace("player:", "") + "§8|";
         			shouldClose = true;
@@ -124,7 +125,7 @@ public class removeCommand extends iCommand {
             		try {
             			distance.set(Integer.parseInt(argument.replace("distance:", "")));
             			World world = player.getWorld();
-                		objectList = objectList.filter(entry -> entry.getWorldName().equalsIgnoreCase(world.getName())).filter(entry -> entry.getStartLocation().distance(player.getLocation()) < distance.get());
+            			objectStream = objectStream.filter(entry -> entry.getWorldName().equalsIgnoreCase(world.getName())).filter(entry -> entry.getStartLocation().distance(player.getLocation()) < distance.get());
                 		filterTypes +="§7distance:§a" + argument.replace("distance:", "") + "§8|";
             		}catch (Exception e) {
             			filterTypes +="§7distance:§c" + argument.replace("distance:", "") + "§8|";
@@ -136,20 +137,23 @@ public class removeCommand extends iCommand {
         }
         
         if(shouldClose || filterTypes.isEmpty()) {
-        	objectList.close();
+        	objectStream.close();
         	return;
         }else {
         	AtomicInteger count = new AtomicInteger(0);
-    		objectList.forEach(entry -> {
-    			entry.setSQLAction(SQLAction.REMOVE);
-    			entry.remove(false);
-    			count.incrementAndGet();
+        	objectStream.forEach(entry -> {
+    			if(SQLAction.REMOVE != entry.getSQLAction()) {
+    				entry.setSQLAction(SQLAction.REMOVE);
+        			entry.remove(false);
+        			count.incrementAndGet();
+    			}
     		});
     		if(count.get() > 0) {
     			sender.sendMessage("§7Remove §2" + count.get() + " §7furniture models");
     			sender.sendMessage("§7With applied filters -> {" + StringUtils.removeEnd(filterTypes, "|") + "§7}");
     		}else {
-    			sender.sendMessage("wrong !");
+    			sender.sendMessage("§7There are no furniture models are found.");
+    			sender.sendMessage("§7With applied filters -> {" + StringUtils.removeEnd(filterTypes, "|") + "§7}");
     		}
         }
 	}

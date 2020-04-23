@@ -6,6 +6,7 @@ import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.entity.Player;
 
 import java.util.List;
+import java.util.Objects;
 
 public class objectToSide {
 
@@ -72,18 +73,18 @@ public class objectToSide {
         }
 
         ComponentBuilder builder = new ComponentBuilder("§7§m+--------------------------------------------+§8[§e");
-        if (prevCommand != null) {
+        if (Objects.nonNull(prevCommand)) {
             builder.append(prevColor + "«").event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, prevCommand));
         } else {
-            builder.append("§7«").event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, null));
+            builder.reset().append("§7«");
         }
 
         builder.append("§8/§a");
 
-        if (nextCommand != null) {
+        if (Objects.nonNull(nextCommand)) {
             builder.append(nextColor + "»").event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, nextCommand));
         } else {
-            builder.append("§7»").event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, null));
+            builder.reset().append("§7»");
         }
         p.spigot().sendMessage(builder.append("§8]").create());
     }
