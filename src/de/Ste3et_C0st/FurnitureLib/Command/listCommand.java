@@ -151,7 +151,7 @@ public class listCommand extends iCommand {
 						ComponentBuilder builder = new ComponentBuilder(" §8- §7" + ChatColor.stripColor(entry.getDisplayName()));
 						
 						if (sender.hasPermission("furniture.command.debug")) {
-							ComponentBuilder debugInfos = new ComponentBuilder("§7Placed Objects: §e" + entry.getObjects().size() + "\n");
+							ComponentBuilder debugInfos = new ComponentBuilder("§7Placed Objects: §e" + entry.getObjectSize() + "\n");
 								debugInfos.append("§7SystemID: §e" + entry.getName() + "\n");
 								debugInfos.append("§7Size: §e" + entry.getLength() + " §7|§e " + entry.getHeight() + " §7|§e " + entry.getWidth() + "\n");
 								debugInfos.append("§7Entities: §e" + entry.getModelschematic().getEntityMap().size() + "\n");

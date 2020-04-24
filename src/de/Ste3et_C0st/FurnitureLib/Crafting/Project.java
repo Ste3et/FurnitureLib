@@ -319,6 +319,12 @@ public class Project {
                 .filter(obj -> SQLAction.REMOVE != obj.getSQLAction())
                 .filter(obj -> obj.getProject().equalsIgnoreCase(getName())).collect(Collectors.toList());
     }
+    
+    public long getObjectSize() {
+        return FurnitureManager.getInstance().getObjectList().stream()
+                .filter(obj -> SQLAction.REMOVE != obj.getSQLAction())
+                .filter(obj -> obj.getProject().equalsIgnoreCase(getName())).count();
+    }
 
     public Project applyFunction() {
         getObjects().forEach(this::applyFunction);

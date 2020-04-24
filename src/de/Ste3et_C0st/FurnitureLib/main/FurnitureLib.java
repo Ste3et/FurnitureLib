@@ -500,6 +500,9 @@ public class FurnitureLib extends JavaPlugin {
         if (this.viewDistance >= getConfig().getInt("config.viewDistance")) {
             this.viewDistance = getConfig().getInt("config.viewDistance");
         }
+        
+        ObjectID.viewDistance = this.viewDistance;
+        ObjectID.viewDistance = this.viewDistance * this.viewDistance; 
 
         this.glowing = getConfig().getBoolean("config.glowing");
         this.spamBreak = getConfig().getBoolean("config.spamBlock.Break.Enable");

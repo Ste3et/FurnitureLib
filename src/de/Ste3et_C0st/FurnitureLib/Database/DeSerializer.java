@@ -21,18 +21,14 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class DeSerializer {
 	
 	public AtomicInteger armorStands = new AtomicInteger(0);
 	public int purged = 0;
-	private static final Pattern URN_UUID_PATTERN = Pattern.compile("[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}");
-	private static HashMap<String, String> uuidMap = new HashMap<String, String>();
 	
 	@SuppressWarnings("unchecked")
-	public ObjectID Deserialize(String objId, String in, SQLAction action, String world) {
+	public ObjectID Deserialize(String objId, String in, SQLAction action, World world) {
 		ObjectID obj = new ObjectID(null, null, null);
 		obj.setID(objId);
 		byte[] by = Base64.getDecoder().decode(in);
@@ -43,7 +39,7 @@ public class DeSerializer {
 			PublicMode pMode = PublicMode.valueOf(compound.getString("PublicMode")); 
 			UUID uuid = uuidFetcher(compound.getString("Owner-UUID"));
 			HashSet<UUID> members = membersFetcher(compound.getList("Members"));
-			Location startLocation = locationFetcher(compound.getCompound("Location"));
+			Location startLocation = locationFetcher(compound.getCompound("Location"), world);
 			if(Objects.isNull(startLocation)){
 				obj.setSQLAction(SQLAction.REMOVE);
 				FurnitureLib.getInstance().getFurnitureManager().addObjectID(obj);
@@ -62,7 +58,7 @@ public class DeSerializer {
 				NBTTagCompound armorStands = compound.hasKey("entitys") ? compound.getCompound("entitys") : compound.getCompound("entities");
 				armorStands.c().stream().filter(Objects::nonNull).forEach(packet -> {
 					NBTTagCompound metadata = armorStands.getCompound((String) packet);
-					Location loc = locationFetcher(metadata.getCompound("Location"));
+					Location loc = locationFetcher(metadata.getCompound("Location"), world);
 					FurnitureManager.getInstance().createFromType(metadata.getString("EntityType"), loc, obj).loadMetadata(metadata);
 					this.armorStands.incrementAndGet();
 				});
@@ -70,7 +66,7 @@ public class DeSerializer {
 				NBTTagCompound armorStands = compound.getCompound("ArmorStands");
 				armorStands.c().stream().filter(Objects::nonNull).forEach(packet -> {
 					NBTTagCompound metadata = armorStands.getCompound((String) packet);
-					Location loc = locationFetcher(metadata.getCompound("Location"));
+					Location loc = locationFetcher(metadata.getCompound("Location"), world);
 					FurnitureManager.getInstance().createFromType("armor_stand", loc, obj).loadMetadata(metadata);
 					this.armorStands.addAndGet(armorStands.c().size());
 				});
@@ -78,27 +74,10 @@ public class DeSerializer {
 				NBTTagCompound armorStands = Converter.convertPacketItemStack(compound.getCompound("ArmorStands"));
 				armorStands.c().stream().filter(Objects::nonNull).forEach(packet -> {
 					NBTTagCompound metadata = armorStands.getCompound((String) packet);
-					Location loc = locationFetcher(metadata.getCompound("Location"));
+					Location loc = locationFetcher(metadata.getCompound("Location"), world);
 					FurnitureManager.getInstance().createFromType("armor_stand", loc, obj).loadMetadata(metadata);
 					this.armorStands.addAndGet(armorStands.c().size());
 				});
-				obj.setSQLAction(SQLAction.UPDATE);
-			}
-			
-			Matcher matcher = URN_UUID_PATTERN.matcher(world);
-			if(world == null || world.equals("null")) obj.setSQLAction(SQLAction.UPDATE);
-			if(matcher.matches()) {
-				if(uuidMap.containsKey(world)) {
-					obj.setWorldName(uuidMap.get(world));
-				}else {
-					World bukkitWorld = Bukkit.getWorld(UUID.fromString(world));
-					if(Objects.nonNull(bukkitWorld)) {
-						obj.setWorldName(bukkitWorld.getName());
-						uuidMap.put(world, bukkitWorld.getName());
-					}else {
-						return obj;
-					}
-				}
 				obj.setSQLAction(SQLAction.UPDATE);
 			}
 			return obj;
@@ -129,21 +108,13 @@ public class DeSerializer {
 		});
 	}
 
-    public static Location locationFetcher(NBTTagCompound location) {
+    public static Location locationFetcher(NBTTagCompound location, World world) {
         double X = location.getDouble("X");
         double Y = location.getDouble("Y");
         double Z = location.getDouble("Z");
         float Yaw = location.getFloat("Yaw");
         float Pitch = location.getFloat("Pitch");
-        String str = location.getString("World");
-        World world = null;
-        try {
-            UUID uuid = UUID.fromString(str);
-            world = Bukkit.getWorld(uuid);
-        } catch (IllegalArgumentException exception) {
-            world = Bukkit.getWorld(str);
-        }
-        if (world == null) {
+        if (Objects.isNull(world)) {
             FurnitureLib.getInstance().getLogger().info("The world: " + location.getString("World") + " does not exist.");
             return null;
         }
@@ -162,28 +133,6 @@ public class DeSerializer {
         } catch (Exception e) {
             return null;
         }
-    }
-
-    public boolean isWorldLoaded(String s) {
-        boolean loaded = false;
-        for (World w : Bukkit.getServer().getWorlds()) {
-            if (w.getName().equals(s)) {
-                loaded = true;
-                break;
-            }
-        }
-        return loaded;
-    }
-
-    public boolean isWorldLoaded(UUID uuid) {
-        boolean loaded = false;
-        for (World w : Bukkit.getServer().getWorlds()) {
-            if (w.getUID().equals(uuid)) {
-                loaded = true;
-                break;
-            }
-        }
-        return loaded;
     }
 
     private HashSet<UUID> membersFetcher(NBTTagList nbtList) {

@@ -20,13 +20,16 @@ import java.sql.Statement;
 import java.text.SimpleDateFormat;
 import java.util.HashSet;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public abstract class Database {
     public FurnitureLib plugin;
     private HikariConfig config;
     private HikariDataSource dataSource;
     private Converter converter;
-
+    private static final Pattern URN_UUID_PATTERN = Pattern.compile("[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[1-5][0-9a-fA-F]{3}-[89abAB][0-9a-fA-F]{3}-[0-9a-fA-F]{12}");
+    
     public Database(FurnitureLib instance, HikariConfig config) {
         this.plugin = instance;
         this.config = config;
@@ -84,16 +87,16 @@ public abstract class Database {
         return false;
     }
 
-    public void loadAsynchron(ChunkData chunkdata, CallbackObjectIDs callBack) {
+    public void loadAsynchron(ChunkData chunkdata, CallbackObjectIDs callBack, World world) {
         Bukkit.getScheduler().runTaskAsynchronously(FurnitureLib.getInstance(), () -> {
             String query = "SELECT ObjID,Data,world FROM furnitureLibData WHERE x=" + chunkdata.getX() + " AND z=" + chunkdata.getZ() + " AND world='" + chunkdata.getWorld() + "'";
             try (Connection con = getConnection(); ResultSet rs = con.createStatement().executeQuery(query)) {
                 HashSet<ObjectID> idList = new HashSet<ObjectID>();
                 if (rs.next()) {
                     do {
-                        String a = rs.getString(1), c = rs.getString(2), d = rs.getString(3);
+                        String a = rs.getString(1), c = rs.getString(2);
                         if (Objects.nonNull(a) && Objects.nonNull(c)) {
-                            ObjectID obj = FurnitureLib.getInstance().getDeSerializer().Deserialize(a, c, SQLAction.NOTHING, d);
+                            ObjectID obj = FurnitureLib.getInstance().getDeSerializer().Deserialize(a, c, SQLAction.NOTHING, world);
                             if (Objects.nonNull(obj)) {
                                 idList.add(obj);
                             }
@@ -121,36 +124,48 @@ public abstract class Database {
         HashSet<ObjectID> idList = new HashSet<ObjectID>();
         SimpleDateFormat time = new SimpleDateFormat("mm:ss.SSS");
         //FurnitureLib.getInstance().getProjectManager().loadProjectFiles();
-        try (Connection con = getConnection(); ResultSet rs = con.createStatement().executeQuery("SELECT ObjID,Data,world FROM furnitureLibData WHERE world='"+ world +"' OR world='" + uuid + "'")) {
-            if (rs.next() == true) {
-                long time2 = System.currentTimeMillis();
-                do {
-                    String a = rs.getString(1), c = rs.getString(2), d = rs.getString(3);
-                    if (!(a.isEmpty() || c.isEmpty())) {
-                        ObjectID obj = FurnitureLib.getInstance().getDeSerializer().Deserialize(a, c, action, d);
-                        if (Objects.nonNull(obj)) {
-                            idList.add(obj);
+        World bukkitWorld = Bukkit.getWorld(world);
+        if(Objects.nonNull(bukkitWorld)) {
+        	try (Connection con = getConnection(); ResultSet rs = con.createStatement().executeQuery("SELECT ObjID,Data,world FROM furnitureLibData WHERE world='"+ world +"' OR world='" + uuid + "'")) {
+                if (rs.next() == true) {
+                    do {
+                        String a = rs.getString(1), c = rs.getString(2), d = rs.getString(3);
+                        if (!(a.isEmpty() || c.isEmpty())) {
+                            ObjectID obj = FurnitureLib.getInstance().getDeSerializer().Deserialize(a, c, action, bukkitWorld);
+                            if (Objects.nonNull(obj)) {
+                                obj.setWorldName(world);
+                                Matcher matcher = URN_UUID_PATTERN.matcher(d);
+                                if(matcher.matches()) {
+                                	obj.setSQLAction(SQLAction.UPDATE);
+                                }
+                                
+                                idList.add(obj);
+                            }
                         }
-                    }
-				} while (rs.next());
-                
-                FurnitureManager.getInstance().addObjectID(idList);
-                
-                int ArmorStands = FurnitureLib.getInstance().getDeSerializer().armorStands.get();
-                int purged = FurnitureLib.getInstance().getDeSerializer().purged;
-                String timeStr = time.format(time2 - time1);
-                
-                plugin.getLogger().info("FurnitureLib load models from world -> " + world);
-                plugin.getLogger().info("Models: " + idList.size() + " with " + ArmorStands +" entities");
-                plugin.getLogger().info("Purged: " + purged + " models");
-                plugin.getLogger().info("It takes: " + timeStr + " from Database: " + this.getType().name());
-                /* Load Blocks */
-                idList.forEach(ObjectID::loadBlocks);
+    				} while (rs.next());
+                    
+                    FurnitureManager.getInstance().addObjectID(idList);
+                    /* Load Blocks */
+                    idList.forEach(ObjectID::registerBlocks);
+                    
+                    int ArmorStands = FurnitureLib.getInstance().getDeSerializer().armorStands.get();
+                    int purged = FurnitureLib.getInstance().getDeSerializer().purged;
+                    long time2 = System.currentTimeMillis();
+                    long timedef = time2 - time1;
+                    //double avg = Math.ceil(timedef / idList.size());
+                    String timeStr = time.format(timedef);
+                    
+                    plugin.getLogger().info("FurnitureLib load models from world -> " + world);
+                    plugin.getLogger().info("Models: " + idList.size() + " with " + ArmorStands +" entities");
+                    //plugin.getLogger().info("With avg speed of " + avg + " Model/ms");
+                    plugin.getLogger().info("Purged: " + purged + " models");
+                    plugin.getLogger().info("It takes: " + timeStr + " from Database: " + this.getType().name());
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                FurnitureManager.getInstance().getProjects().forEach(Project::applyFunction);
             }
-        } catch (Exception e) {
-            e.printStackTrace();
-        } finally {
-            FurnitureManager.getInstance().getProjects().forEach(Project::applyFunction);
         }
         return idList;
     }

@@ -7,6 +7,7 @@ import java.util.HashSet;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
+import org.bukkit.World;
 
 import de.Ste3et_C0st.FurnitureLib.Utilitis.callbacks.CallbackObjectIDs;
 
@@ -26,7 +27,7 @@ public class ChunkData {
         this.world = world;
     }
 
-    public ChunkData load() {
+    public ChunkData load(World world) {
         if (!loaded) {
             FurnitureLib.getInstance().getSQLManager().loadAsynchron(this, new CallbackObjectIDs() {
                 @Override
@@ -53,7 +54,7 @@ public class ChunkData {
                         });
                     }
                 }
-            });
+            }, world);
             this.loaded = true;
         }
         return this;

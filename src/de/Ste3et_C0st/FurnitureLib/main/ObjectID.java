@@ -19,8 +19,8 @@ import java.util.*;
 public class ObjectID {
 
     public Object functionObject = null;
-    public int viewDistance = 100;
-    public int viewDistanceSquared = this.viewDistance * this.viewDistance;
+    public static int viewDistance = 100;
+    public static int viewDistanceSquared = viewDistance * viewDistance;
     private String ObjectID, serial, Project, plugin, worldName;
     private HashSet<Location> locList = new HashSet<Location>();
     private DoubleKey<Integer> chunkKey = null;
@@ -41,8 +41,6 @@ public class ObjectID {
             this.serial = RandomStringGenerator.generateRandomString(10, RandomStringGenerator.Mode.ALPHANUMERIC);
             this.ObjectID = name + ":" + this.serial + ":" + plugin;
             if (Objects.nonNull(startLocation)) setStartLocation(startLocation);
-            this.viewDistance = FurnitureLib.getInstance().getViewDistance();
-            this.viewDistanceSquared = this.viewDistance * this.viewDistance;
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -360,6 +358,11 @@ public class ObjectID {
             }
         }
     }
+    
+    public void addBlockLocations(List<Location> bl) {
+    	if(bl.isEmpty()) return;
+    	this.locList.addAll(bl);
+    }
 
     public void addBlock(Location loc) {
         FurnitureLib.getInstance().getBlockManager().addBlock(loc);
@@ -373,6 +376,17 @@ public class ObjectID {
             if (Objects.nonNull(modelschematic)) {
                 BlockFace direction = FurnitureLib.getInstance().getLocationUtil().yawToFace(this.getStartLocation().getYaw()).getOppositeFace();
                 this.addBlock(modelschematic.addBlocks(this.getStartLocation(), direction));
+            }
+        }
+    }
+    
+    public void registerBlocks() {
+    	if (getBlockList().isEmpty()) {
+            if (Objects.isNull(getProjectOBJ())) return;
+            ModelHandler modelschematic = getProjectOBJ().getModelschematic();
+            if (Objects.nonNull(modelschematic)) {
+                BlockFace direction = FurnitureLib.getInstance().getLocationUtil().yawToFace(this.getStartLocation().getYaw()).getOppositeFace();
+                this.addBlockLocations(modelschematic.getBlockLocations(this.getStartLocation(), direction));
             }
         }
     }

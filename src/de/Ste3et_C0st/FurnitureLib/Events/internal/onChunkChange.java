@@ -4,6 +4,8 @@ import de.Ste3et_C0st.FurnitureLib.Utilitis.DoubleKey;
 import de.Ste3et_C0st.FurnitureLib.main.ChunkData;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
+
+import org.bukkit.World;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -29,10 +31,11 @@ public class onChunkChange implements Listener {
     @EventHandler
     public void onChunkLoad(ChunkLoadEvent e) {
         if (!FurnitureLib.getInstance().isSync()) {
+        	World world = e.getWorld();
             ChunkData data = manager.getChunkDataList().stream().findFirst().filter(c -> c.equals(e.getChunk())).orElse(new ChunkData(e.getChunk()));
             if (!manager.getChunkDataList().contains(data)) {
                 manager.getChunkDataList().add(data);
-                if (!data.isLoaded()) data.load();
+                if (!data.isLoaded()) data.load(world);
             }
         }
     }

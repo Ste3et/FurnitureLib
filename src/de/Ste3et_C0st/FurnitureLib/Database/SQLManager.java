@@ -10,6 +10,7 @@ import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.scheduler.BukkitTask;
 
@@ -197,8 +198,8 @@ public class SQLManager {
         database.getConverter().startConvert(sender);
     }
 
-    public void loadAsynchron(ChunkData data, CallbackObjectIDs callBack) {
-        database.loadAsynchron(data, callBack);
+    public void loadAsynchron(ChunkData data, CallbackObjectIDs callBack, World world) {
+        database.loadAsynchron(data, callBack, world);
     }
     
     public Database getDatabase() {

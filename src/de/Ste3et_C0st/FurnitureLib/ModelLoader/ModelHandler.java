@@ -69,6 +69,16 @@ public class ModelHandler extends Modelschematic {
         FurnitureLib.debug("FurnitureLib {ModelHandler} -> Calculate Blocks Finish");
         return blockList;
     }
+    
+    public List<Location> getBlockLocations(Location startLocation, BlockFace direction) {
+    	 List<Location> blockList = new ArrayList<Location>();
+    	 FurnitureLib.debug("FurnitureLib {ModelHandler} -> Calculate Blocks");
+    	 this.getBlockData(startLocation, direction).entrySet().stream().sorted((e1, e2) -> Double.compare(e1.getKey().getY(), e2.getKey().getY()) ).forEach(entry -> {
+ 			blockList.add(entry.getKey());
+ 		});
+    	 FurnitureLib.debug("FurnitureLib {ModelHandler} -> Calculate Blocks Finish");
+    	 return blockList;
+    }
 
     private List<fEntity> addEntity(Location startLocation, BlockFace direction, ObjectID id) {
         List<fEntity> entityList = new ArrayList<>();
