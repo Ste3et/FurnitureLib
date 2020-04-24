@@ -10,7 +10,6 @@ import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockFromToEvent;
 import org.bukkit.event.block.BlockPhysicsEvent;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -63,12 +62,21 @@ public class BlockManager implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST)
     public void onPhysics(BlockPhysicsEvent e) {
-        Block b = e.getBlock();
-        e.setCancelled(locList.contains(b.getLocation()));
+        if(!e.isCancelled()) {
+        	boolean contains = locList.contains(e.getBlock().getLocation());
+            if(contains) {
+            	e.setCancelled(true);
+            }
+        }
     }
 
     @EventHandler
     public void onWaterFlow(BlockFromToEvent e) {
-        e.setCancelled(locList.contains(e.getBlock().getLocation()));
+    	if(!e.isCancelled()) {
+    		boolean contains = locList.contains(e.getBlock().getLocation());
+    		if(contains) {
+    			e.setCancelled(true);
+    		}
+    	}
     }
 }
