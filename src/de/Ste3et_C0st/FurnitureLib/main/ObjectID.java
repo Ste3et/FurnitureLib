@@ -46,6 +46,10 @@ public class ObjectID {
         }
     }
 
+    public ObjectID(String name) {
+    	this.setID(name);
+    }
+    
     public String getWorldName() {
         return this.worldName;
     }

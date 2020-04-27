@@ -8,6 +8,7 @@ import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
 import org.bukkit.Location;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
@@ -112,7 +113,9 @@ public class ProjectLoader extends Furniture {
                             }
                         }
                     });
-
+            if(Objects.nonNull(this.inv)) {
+            	this.inv.getViewers().stream().forEach(HumanEntity::closeInventory);
+            }
             this.destroy(player);
         }
     }

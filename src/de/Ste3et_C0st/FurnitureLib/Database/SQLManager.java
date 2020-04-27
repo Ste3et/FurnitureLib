@@ -108,7 +108,7 @@ public class SQLManager {
             List<ObjectID> objList = new ArrayList<>();
             int j = 0, i = 0, l = 0;
             List<ObjectID> idList = new ArrayList<ObjectID>(plugin.getFurnitureManager().getObjectList());
-            HashSet<ObjectID> saveSet = new HashSet<ObjectID>();
+            List<ObjectID> saveList = new ArrayList<ObjectID>();
             
             int stepSize = 100;
 
@@ -120,10 +120,10 @@ public class SQLManager {
                         l++;
                         plugin.getFurnitureManager().deleteObjectID(obj);
                 	}else if(SQLAction.UPDATE == sqlAction) {
-                		saveSet.add(obj);
+                		saveList.add(obj);
                 		j++;
                 	}else if(SQLAction.SAVE == sqlAction){
-                		saveSet.add(obj);
+                		saveList.add(obj);
                 		i++;
                 	}else {
                 		continue;
@@ -132,7 +132,7 @@ public class SQLManager {
                 }
             }
             
-            Collection<List<ObjectID>> collection = splitListBySize(objList, stepSize);
+            Collection<List<ObjectID>> collection = splitListBySize(saveList, stepSize);
             if(Objects.nonNull(collection)) {
             	collection.stream().filter(Objects::nonNull).forEach(list -> {
                 	SQLStatement statement = new SQLStatement();

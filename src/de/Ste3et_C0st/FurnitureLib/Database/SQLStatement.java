@@ -10,7 +10,7 @@ import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 
 public class SQLStatement {
 
-	private StringBuilder sqlStatement = new StringBuilder("REPLACE INTO furnitureLibData (ObjID, Data, world, `x`, `z`, `uuid`) VALUES ");
+	private StringBuilder sqlStatement = new StringBuilder("REPLACE INTO " + Database.TABLE_NAME + " (ObjID, Data, world, `x`, `z`, `uuid`) VALUES ");
 	private int counter = 0;
 	
 	public SQLStatement(ObjectID ... obj) {

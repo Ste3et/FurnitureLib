@@ -10,6 +10,7 @@ import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
@@ -22,6 +23,7 @@ import java.io.ByteArrayOutputStream;
 import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
+import java.util.Objects;
 
 public class ProjectInventory implements Listener {
 
@@ -78,6 +80,12 @@ public class ProjectInventory implements Listener {
         return inv;
     }
 
+    public List<HumanEntity> getViewers(){
+    	List<HumanEntity> humans = new ArrayList<HumanEntity>();
+    	if(Objects.nonNull(this.inv)) humans.addAll(this.inv.getViewers());
+    	return humans;
+    }
+    
     public void load() {
         config c = new config(FurnitureLib.getInstance());
         FileConfiguration file = c.getConfig(this.id.getSerial(), "/plugin/DiceEditor/metadata/");

@@ -20,17 +20,14 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.UUID;
-import java.util.concurrent.atomic.AtomicInteger;
 
 public class DeSerializer {
 	
-	public AtomicInteger armorStands = new AtomicInteger(0);
 	public int purged = 0;
 	
 	@SuppressWarnings("unchecked")
-	public ObjectID Deserialize(String objId, String in, SQLAction action, World world) {
-		ObjectID obj = new ObjectID(null, null, null);
-		obj.setID(objId);
+	public static ObjectID Deserialize(String objId, String in, SQLAction action, World world) {
+		ObjectID obj = new ObjectID(objId);
 		byte[] by = Base64.getDecoder().decode(in);
 		try(ByteArrayInputStream bin = new ByteArrayInputStream(by)) {
 			NBTTagCompound compound = NBTCompressedStreamTools.read(bin);
@@ -60,7 +57,6 @@ public class DeSerializer {
 					NBTTagCompound metadata = armorStands.getCompound((String) packet);
 					Location loc = locationFetcher(metadata.getCompound("Location"), world);
 					FurnitureManager.getInstance().createFromType(metadata.getString("EntityType"), loc, obj).loadMetadata(metadata);
-					this.armorStands.incrementAndGet();
 				});
 			}else if(!FurnitureLib.isNewVersion() && compound.hasKey("ArmorStands")) {
 				NBTTagCompound armorStands = compound.getCompound("ArmorStands");
@@ -68,7 +64,6 @@ public class DeSerializer {
 					NBTTagCompound metadata = armorStands.getCompound((String) packet);
 					Location loc = locationFetcher(metadata.getCompound("Location"), world);
 					FurnitureManager.getInstance().createFromType("armor_stand", loc, obj).loadMetadata(metadata);
-					this.armorStands.addAndGet(armorStands.c().size());
 				});
 			}else {
 				NBTTagCompound armorStands = Converter.convertPacketItemStack(compound.getCompound("ArmorStands"));
@@ -76,7 +71,6 @@ public class DeSerializer {
 					NBTTagCompound metadata = armorStands.getCompound((String) packet);
 					Location loc = locationFetcher(metadata.getCompound("Location"), world);
 					FurnitureManager.getInstance().createFromType("armor_stand", loc, obj).loadMetadata(metadata);
-					this.armorStands.addAndGet(armorStands.c().size());
 				});
 				obj.setSQLAction(SQLAction.UPDATE);
 			}
@@ -135,7 +129,7 @@ public class DeSerializer {
         }
     }
 
-    private HashSet<UUID> membersFetcher(NBTTagList nbtList) {
+    private static HashSet<UUID> membersFetcher(NBTTagList nbtList) {
         HashSet<UUID> uuidList = new HashSet<UUID>();
         if (nbtList == null || nbtList.size() == 0) {
             return uuidList;
