@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Collectors;
 
 public class ModelHandler extends Modelschematic {
 
@@ -53,7 +54,10 @@ public class ModelHandler extends Modelschematic {
         HashMap<Location, ModelBlock> locationList = new HashMap<>();
         getBlockMap().forEach((key, value) -> {
 			ModelVector rotateVector = rotateVector(key, direction);
-			locationList.put(startLocation.clone().add(rotateVector.toVector()), value);
+			Location location = startLocation.clone().add(rotateVector.toVector());
+			location.setYaw(0);
+			location.setPitch(0);
+			locationList.put(location, value);
 		});
         return locationList;
     }
@@ -66,7 +70,7 @@ public class ModelHandler extends Modelschematic {
 			entry.getValue().place(b.getLocation(), direction);
 			blockList.add(b);
 		});
-        FurnitureLib.debug("FurnitureLib {ModelHandler} -> Calculate Blocks Finish");
+        
         return blockList;
     }
     

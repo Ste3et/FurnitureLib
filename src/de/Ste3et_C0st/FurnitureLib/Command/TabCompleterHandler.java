@@ -51,7 +51,7 @@ public class TabCompleterHandler implements TabCompleter {
                                     return null;
                                 }else if (iCommandParam instanceof listCommand) {
                                 	List<String> strAL = Arrays.asList(str.split("/"));
-                                	String current = args[args.length - 1];
+                                	String current = args[args.length - 1].toLowerCase();
                                 	if(current.isEmpty()) {
                                 		return strAL;
                                 	}else {
@@ -72,28 +72,41 @@ public class TabCompleterHandler implements TabCompleter {
 										}
                                 	}
                                 }else if (iCommandParam instanceof removeCommand) {
-                                    List<String> strAL = Arrays.asList(str.split("/"));
-                                    String[] split = args[1].toLowerCase().split(":");
-                                    boolean key = strAL.stream().anyMatch(a -> a.equalsIgnoreCase(split[0] + ":"));
-                                    if (key) {
-                                        String input = split.length > 1 ? split[1].toLowerCase() : "";
-                                        List<String> tab = new ArrayList<String>();
-                                        if (split[0].equalsIgnoreCase("project")) {
+                                	List<String> strAL = Arrays.asList(str.split("/"));
+                                	String current = args[args.length - 1].toLowerCase();
+                                	if(current.isEmpty()) {
+                                		return strAL;
+                                	}else {
+                                		if (current.startsWith("project:")) {
+                                			String string = current.replace("project:", "");
+                                			if(string.isEmpty()) {
+                                				FurnitureManager.getInstance().getProjects().forEach(entry -> strAL.add("project:" + entry.getName()));
+                                				return strAL;
+                                			}
+                                			
                                             FurnitureManager.getInstance().getProjects().stream()
-                                                    .filter(p -> p.getName().toLowerCase().contains(input))
-                                                    .forEach(p -> tab.add("project:" + p.getName()));
-                                        }else if (split[0].equalsIgnoreCase("world")) {
-                                            Bukkit.getWorlds().stream().filter(w -> w.getName().toLowerCase().contains(input))
-                                                    .forEach(w -> tab.add("world:" + w.getName()));
-                                        } else if (split[0].equalsIgnoreCase("world")) {
-                                            Bukkit.getOnlinePlayers().stream().filter(w -> w.getName().toLowerCase().contains(input))
-                                               .forEach(w -> tab.add("player:" + w.getName()));
-                                        } else if(split[0].equalsIgnoreCase("distance")) {
-                                        	return Arrays.asList("distance:1","distance:10","distance:100");
-                                        }
-                                        return tab;
-                                    }
-                                    return strAL.stream().filter(a -> a.toLowerCase().contains(args[1].toLowerCase())).collect(Collectors.toList());
+                                                    .filter(p -> p.getName().toLowerCase().contains(string))
+                                                    .forEach(p -> strAL.add("project:" + p.getName()));
+                                            if(strAL.isEmpty()) {
+                                            	FurnitureManager.getInstance().getProjects().forEach(entry -> strAL.add("project:" + entry.getName()));
+                                            }
+                                            return strAL;
+                                        }else if(current.startsWith("distance:")) {
+                                			return Arrays.asList("distance:1","distance:10","distance:100");
+                                		}else if(current.toLowerCase().startsWith("world:")){
+                                			List<String> tab = new ArrayList<String>();
+                                			String world = current.replace("world:", "");
+                                			Bukkit.getWorlds().stream().filter(entry -> entry.getName().toLowerCase().contains(world.toLowerCase())).forEach(entry -> tab.add("world:" + entry.getName()));
+                                			return tab;
+										}else if(current.toLowerCase().startsWith("player:")){
+											List<String> tab = new ArrayList<String>();
+                                			String player = current.replace("player:", "");
+                                			Bukkit.getOnlinePlayers().stream().filter(entry -> entry.getName().toLowerCase().contains(player.toLowerCase())).forEach(entry -> tab.add("player:" + entry.getName()));
+                                			return tab;
+										}else {
+											return strAL.stream().filter(a -> a.toLowerCase().contains(current.toLowerCase())).collect(Collectors.toList());
+										}
+                                	}
                                 } else {
                                     List<String> strAL = new ArrayList<String>();
                                     if (str.contains("/")) {

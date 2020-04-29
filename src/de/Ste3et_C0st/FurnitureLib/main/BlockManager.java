@@ -13,6 +13,8 @@ import org.bukkit.event.block.BlockPhysicsEvent;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Objects;
+import java.util.function.Predicate;
 
 public class BlockManager implements Listener {
 
@@ -78,5 +80,18 @@ public class BlockManager implements Listener {
     			e.setCancelled(true);
     		}
     	}
+    }
+    
+    public boolean contains(Location location) {
+    	return Objects.nonNull(location);
+    }
+    
+    public Location getPresetLocation(Location location) {
+    	Predicate<Location> predicate = entry -> 
+    		entry.getWorld().getName().equals(location.getWorld().getName()) && 
+    			location.getBlockX() == entry.getBlockX() && 
+    			location.getBlockY() == entry.getBlockY() && 
+    			location.getBlockZ() == entry.getBlockZ();
+    	return this.locList.stream().filter(predicate).findFirst().orElse(null);
     }
 }

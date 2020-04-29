@@ -143,9 +143,9 @@ public abstract class Database {
                         }
     				} while (rs.next());
                     
+                    idList.forEach(ObjectID::registerBlocks);
                     FurnitureManager.getInstance().getObjectList().addAll(idList);
                     
-                    idList.forEach(ObjectID::registerBlocks);
                     double difference = timer.difference();
                     double size = idList.size();
                     

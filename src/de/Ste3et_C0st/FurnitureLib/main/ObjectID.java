@@ -15,6 +15,8 @@ import org.bukkit.entity.Player;
 
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class ObjectID {
 
@@ -390,7 +392,9 @@ public class ObjectID {
             ModelHandler modelschematic = getProjectOBJ().getModelschematic();
             if (Objects.nonNull(modelschematic)) {
                 BlockFace direction = FurnitureLib.getInstance().getLocationUtil().yawToFace(this.getStartLocation().getYaw()).getOppositeFace();
-                this.addBlockLocations(modelschematic.getBlockLocations(this.getStartLocation(), direction));
+                List<Location> locList = modelschematic.getBlockLocations(this.getStartLocation(), direction);
+                FurnitureLib.getInstance().getBlockManager().getList().addAll(locList);
+                this.addBlockLocations(locList);
             }
         }
     }
@@ -446,6 +450,19 @@ public class ObjectID {
 
     public HashSet<Location> getBlockList() {
         return this.locList;
+    }
+    
+    public boolean containsBlock(Location location) {
+    	return Objects.nonNull(location);
+    }
+    
+    public Location getPresetLocation(Location location) {
+    	Predicate<Location> predicate = entry -> 
+    		entry.getWorld().getName().equals(location.getWorld().getName()) && 
+    			location.getBlockX() == entry.getBlockX() && 
+    			location.getBlockY() == entry.getBlockY() && 
+    			location.getBlockZ() == entry.getBlockZ();
+    	return this.locList.stream().filter(predicate).findFirst().orElse(null);
     }
 
     public void send(Player p) {

@@ -69,7 +69,7 @@ public class ChunkOnLoad implements Listener {
             final Project pro = getProjectByItem(stack);
             if (pro == null) return;
             e.setCancelled(true);
-            if (FurnitureLib.getInstance().getBlockManager().getList().contains(b.getLocation())) return;
+            if (FurnitureLib.getInstance().getBlockManager().contains(b.getLocation())) return;
             if (eventList.contains(e.getPlayer())) return;
             if (b.isLiquid()) return;
             if (!e.getHand().equals(EquipmentSlot.HAND)) return;
@@ -127,50 +127,41 @@ public class ChunkOnLoad implements Listener {
     	}, 20L);
     }
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.NORMAL)
     public void onRightClickBlock(final PlayerInteractEvent e) {
-        if (e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
+        if (Action.RIGHT_CLICK_BLOCK == e.getAction()) {
             final Block b = e.getClickedBlock();
             if (b == null) return;
-            if (e.isCancelled()) return;
-            if (!FurnitureLib.getInstance().getBlockManager().getList().contains(b.getLocation())) return;
-            e.setCancelled(true);
-            if (!e.getHand().equals(EquipmentSlot.HAND)) return;
+            if (!FurnitureLib.getInstance().getBlockManager().contains(b.getLocation())) return;
+            if(EquipmentSlot.HAND != e.getHand()) return;
             final Location loc = b.getLocation();
             final Player p = e.getPlayer();
             loc.setYaw(FurnitureLib.getInstance().getLocationUtil().FaceToYaw(FurnitureLib.getInstance().getLocationUtil().yawToFace(p.getLocation().getYaw())));
             Location blockLocation = b.getLocation();
             boolean bool = !b.getType().equals(Material.FLOWER_POT);
-            final ObjectID objID = FurnitureManager.getInstance().getObjectList().stream().filter(obj -> obj.getBlockList().contains(blockLocation)).findFirst().orElse(null);
-            if (objID == null) {
-                return;
-            }
-            if (objID.isPrivate()) {
-                return;
-            }
-            e.setCancelled(bool);
-            if (bool && !objID.getSQLAction().equals(SQLAction.REMOVE)) {
+            final ObjectID objID = FurnitureManager.getInstance().getObjectList().stream().filter(obj -> obj.containsBlock(blockLocation)).findFirst().orElse(null);
+            if (Objects.isNull(objID)) return;
+            if (objID.isPrivate()) return;
+            if (bool && SQLAction.REMOVE != objID.getSQLAction()) {
                 if ((p.getGameMode() == GameMode.CREATIVE) && !FurnitureLib.getInstance().creativeInteract()) {
                     if (!FurnitureLib.getInstance().getPermission().hasPerm(p, "furniture.bypass.creative.interact")) {
+                    	e.setCancelled(true);
                         return;
                     }
                 }
-
+                
                 if (!FurnitureLib.getInstance().getFurnitureManager().getIgnoreList().contains(p.getUniqueId())) {
-                	ProjectClickEvent projectBreakEvent = new ProjectClickEvent(p, objID);
-                    Bukkit.getPluginManager().callEvent(projectBreakEvent);
-                    if (!projectBreakEvent.isCancelled()) {
-//                    	if(e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
-//                    		if(e.getClickedBlock().getType().name().contains("_BED")) {
-//                        		e.setCancelled(true);
-//                        		return;
-//                        	}
-//                    	}
+                	ProjectClickEvent projectClickEvent = new ProjectClickEvent(p, objID);
+                    Bukkit.getPluginManager().callEvent(projectClickEvent);
+                    if (!projectClickEvent.isCancelled()) {
                     	objID.callFunction("onClick", p);
                     }
+                    e.setCancelled(true);
                     return;
                 } else {
                     e.getPlayer().sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.FurnitureToggleEvent"));
+                    e.setCancelled(true);
+                    return;
                 }
             }
         }
@@ -200,10 +191,10 @@ public class ChunkOnLoad implements Listener {
             if (FurnitureLib.getInstance().getBlockManager().getList() == null) {
                 return;
             }
-            if (FurnitureLib.getInstance().getBlockManager().getList().contains(event.getClickedBlock().getLocation())) {
+            if (FurnitureLib.getInstance().getBlockManager().contains(event.getClickedBlock().getLocation())) {
                 ObjectID objID = null;
                 for (ObjectID obj : FurnitureLib.getInstance().getFurnitureManager().getObjectList()) {
-                    if (obj.getBlockList().contains(event.getClickedBlock().getLocation())) {
+                    if (obj.containsBlock(event.getClickedBlock().getLocation())) {
                         objID = obj;
                         break;
                     }

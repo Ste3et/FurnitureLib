@@ -5,9 +5,6 @@ import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
-import net.md_5.bungee.api.chat.TextComponent;
-import net.md_5.bungee.api.chat.TranslatableComponent;
-
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -19,7 +16,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Stream;
+import java.util.function.Predicate;
 
 public class removeCommand extends iCommand {
 
@@ -33,117 +30,88 @@ public class removeCommand extends iCommand {
 	public void execute(CommandSender sender, String[] args) {
     	if (!hasCommandPermission(sender)) return;
     	List<ObjectID> objectList = new ArrayList<ObjectID>(FurnitureManager.getInstance().getObjectList());
-		Stream<ObjectID> objectStream = objectList.stream().filter(entry -> SQLAction.REMOVE != entry.getSQLAction());
         String filterTypes = "";
-        boolean shouldClose = false;
+        boolean remove = true;
         if(args.length < 2) {
         	FurnitureLib.getInstance().getLangManager().getString("message.WrongArgument");
-        	objectStream.close();
         	return;
         }
         
+        Predicate<ObjectID> filterPredicate = Objects::nonNull;
+		filterPredicate = filterPredicate.and(entry -> SQLAction.REMOVE != entry.getSQLAction());
+        
         for(String argument : args) {
-        	if(shouldClose) break;
         	argument = argument.toLowerCase();
         	if(argument.startsWith("plugin:") && !filterTypes.contains("plugin")) {
-        		if (!hasCommandPermission(sender, ".plugin")) {
-        			shouldClose = true;
-        			break;
-        		}
+        		if (!hasCommandPermission(sender, ".plugin")) return;
         		String objectStr = argument.replace("plugin:", "");
         		filterTypes ="§7object:§a" + objectStr + "§8|";
-        		objectStream = objectStream.filter(entry -> entry.getPlugin().equalsIgnoreCase(objectStr));
+        		filterPredicate = filterPredicate.and(entry -> entry.getPlugin().equalsIgnoreCase(objectStr));
         	}else if(argument.startsWith("obj:") && !filterTypes.contains("object")) {
-        		if (!hasCommandPermission(sender, ".object")) {
-        			shouldClose = true;
-        			break;
-        		}
+        		if (!hasCommandPermission(sender, ".object")) return;
         		String objectStr = argument.replace("obj:", "");
         		filterTypes ="§7object:§a" + objectStr + "§8|";
-        		objectStream = objectStream.filter(entry -> entry.getSerial().equalsIgnoreCase(objectStr));
+        		filterPredicate = filterPredicate.and(entry -> entry.getSerial().equalsIgnoreCase(objectStr));
         		break;
         	}else if(argument.equalsIgnoreCase("all")) {
-        		if (!hasCommandPermission(sender, ".all")) {
-        			shouldClose = true;
-        			break;
-        		}
+        		if (!hasCommandPermission(sender, ".all")) return;
         		filterTypes = "§aall";
+        		filterPredicate = Objects::nonNull;
         		break;
         	}else if(argument.equalsIgnoreCase("lookat")) {
-        		if (!hasCommandPermission(sender, ".lookat")) {
-        			shouldClose = true;
-        			break;
-        		}
+        		if (!hasCommandPermission(sender, ".lookat")) return;
         		Player p = (Player) sender;
                 ObjectID obj = getFromSight(p.getLocation());
                 if (Objects.nonNull(obj)) {
                 	filterTypes = "§alookat";
-                	objectStream.close();
-                	objectStream = Collections.singletonList(obj).stream();
+                	filterPredicate = filterPredicate.and(entry -> entry.equals(obj));
                 	break;
                 }else {
                 	filterTypes = "§clookat";
-                	shouldClose = true;
+                	remove = false;
                 	break;
                 }
         	}else if(argument.startsWith("project:") && !filterTypes.contains("project")){
-        		if (!hasCommandPermission(sender, ".project")) {
-        			shouldClose = true;
-        			break;
-        		}
+        		if (!hasCommandPermission(sender, ".project")) return;
         		String project = argument.replace("project:", "");
         		filterTypes += "§7project:§a" + project + "§8|";
-        		objectStream = objectStream.filter(entry -> entry.getProject().equalsIgnoreCase(project));
+        		filterPredicate = filterPredicate.and(entry -> entry.getProject().equalsIgnoreCase(project));
         	}else if(argument.startsWith("world:") && !filterTypes.contains("world")) {
-        		if (!hasCommandPermission(sender, ".world")) {
-        			shouldClose = true;
-        			break;
-        		}
+        		if (!hasCommandPermission(sender, ".world")) return;
         		String world = argument.replace("world:", "");
-        		objectStream = objectStream.filter(entry -> entry.getWorldName().equalsIgnoreCase(world));
+        		filterPredicate = filterPredicate.and(entry -> entry.getWorldName().equalsIgnoreCase(world));
         		filterTypes +="§7world:" + world + "§8|";
         	}else if(argument.startsWith("player:") && !filterTypes.contains("player")) {
-        		if (!hasCommandPermission(sender, ".player")) {
-        			shouldClose = true;
-        			break;
-        		}
+        		if (!hasCommandPermission(sender, ".player")) return;
 				OfflinePlayer player = Bukkit.getOfflinePlayer(argument.replace("player:", ""));
         		if(Objects.nonNull(player)) {
         			filterTypes +="§7player:§a" + player.getName() + "§8|";
-        			objectStream = objectStream.filter(entry -> entry.getUUID().equals(player.getUniqueId()));
+        			filterPredicate = filterPredicate.and(entry -> entry.getUUID().equals(player.getUniqueId()));
         		}else {
         			filterTypes +="§7player:§c" + argument.replace("player:", "") + "§8|";
-        			shouldClose = true;
+        			remove = false;
         			break;
         		}
         	}else if(argument.startsWith("distance:") && !filterTypes.contains("distance")) {
-        		if (!hasCommandPermission(sender, ".distance")) {
-        			shouldClose = true;
-        			break;
-        		}
+        		if (!hasCommandPermission(sender, ".distance")) return;
         		if(Player.class.isInstance(sender)) {
         			Player player = Player.class.cast(sender);
         			AtomicInteger distance = new AtomicInteger(0);
             		try {
             			distance.set(Integer.parseInt(argument.replace("distance:", "")));
             			World world = player.getWorld();
-            			objectStream = objectStream.filter(entry -> entry.getWorldName().equalsIgnoreCase(world.getName())).filter(entry -> entry.getStartLocation().distance(player.getLocation()) < distance.get());
-                		filterTypes +="§7distance:§a" + argument.replace("distance:", "") + "§8|";
+            			filterPredicate = filterPredicate.and(entry -> entry.getWorldName().equalsIgnoreCase(world.getName())).and(entry -> entry.getStartLocation().distance(player.getLocation()) < distance.get());
+            			filterTypes +="§7distance:§a" + argument.replace("distance:", "") + "§8|";
             		}catch (Exception e) {
             			filterTypes +="§7distance:§c" + argument.replace("distance:", "") + "§8|";
             		}
-        		}else {
-        			shouldClose = true;
         		}
         	}
         }
         
-        if(shouldClose || filterTypes.isEmpty()) {
-        	objectStream.close();
-        	return;
-        }else {
+        if(!filterTypes.isEmpty() && remove) {
         	AtomicInteger count = new AtomicInteger(0);
-        	objectStream.forEach(entry -> {
+        	objectList.stream().filter(filterPredicate).forEach(entry -> {
     			if(SQLAction.REMOVE != entry.getSQLAction()) {
     				entry.setSQLAction(SQLAction.REMOVE);
         			entry.remove(false);
@@ -157,6 +125,9 @@ public class removeCommand extends iCommand {
     			sender.sendMessage("§7There are no furniture models are found.");
     			sender.sendMessage("§7With applied filters -> {" + StringUtils.removeEnd(filterTypes, "|") + "§7}");
     		}
+        }else if(!remove){
+        	sender.sendMessage("§7There are no furniture models are found.");
+			sender.sendMessage("§7With applied filters -> {" + StringUtils.removeEnd(filterTypes, "|") + "§7}");
         }
 	}
 
