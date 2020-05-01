@@ -83,7 +83,7 @@ public class BlockManager implements Listener {
     }
     
     public boolean contains(Location location) {
-    	return Objects.nonNull(location);
+    	return Objects.nonNull(getPresetLocation(location));
     }
     
     public Location getPresetLocation(Location location) {

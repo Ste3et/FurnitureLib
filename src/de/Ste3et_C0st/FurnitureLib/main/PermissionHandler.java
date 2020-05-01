@@ -1,10 +1,12 @@
 package de.Ste3et_C0st.FurnitureLib.main;
 
+import java.util.HashMap;
+import java.util.Objects;
+
 import org.bukkit.Bukkit;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.command.CommandSender;
-import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.RegisteredServiceProvider;
 
 public class PermissionHandler {
@@ -42,15 +44,22 @@ public class PermissionHandler {
     }
 
     public static boolean registerPermission(String name) {
-		return registerPermission(name, PermissionDefault.TRUE);
-	}
-	
-	public static boolean registerPermission(String name, PermissionDefault defaultState) {
-		try {
-			Bukkit.getPluginManager().addPermission(new Permission(name, defaultState));
+    	try {
+			Bukkit.getPluginManager().addPermission(new Permission(name));
 			return true;
 		}catch (Exception e) {
 			return false;
 		}
 	}
+    
+    public static boolean registerPermission(String parentPermission, String name) {
+    	try {
+    		Permission permission = new Permission(name);
+			permission.addParent(parentPermission, true);
+			Bukkit.getPluginManager().addPermission(permission);
+			return true;
+		}catch (Exception e) {
+			return false;
+		}
+    }
 }

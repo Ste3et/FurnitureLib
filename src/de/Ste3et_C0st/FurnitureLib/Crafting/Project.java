@@ -88,9 +88,9 @@ public class Project {
         this.loadDefaults();
         FurnitureLib.getInstance().getLimitManager().loadDefault(this.project);
         
-        PermissionHandler.registerPermission("furniture.craft." + name.toLowerCase());
-        PermissionHandler.registerPermission("furniture.place." + name.toLowerCase());
-        PermissionHandler.registerPermission("furniture.sit." + name.toLowerCase());
+        PermissionHandler.registerPermission("furniture.craft.*","furniture.craft." + name.toLowerCase());
+        PermissionHandler.registerPermission("furniture.place.*","furniture.place." + name.toLowerCase());
+        PermissionHandler.registerPermission("furniture.sit.*","furniture.sit." + name.toLowerCase());
     }
 
     public Project(String name, Plugin plugin, InputStream craftingFile, Class<? extends Furniture> clazz) {
@@ -224,7 +224,6 @@ public class Project {
     public boolean hasPermissions(Player player) {
     	String name = this.getName().toLowerCase();
     	if(FurnitureLib.getInstance().getPermission().hasPerm(player, "furniture.place." + name)) return true;
-    	
         if (FurnitureLib.getInstance().getPermissionList() != null) {
             for (String s : FurnitureLib.getInstance().getPermissionList().keySet()) {
                 if (FurnitureLib.getInstance().getPermission().hasPerm(player, "furniture.place.all." + s)) {
@@ -234,7 +233,6 @@ public class Project {
                 }
             }
         }
-        
         player.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.NoPermissions"));
         return false;
     }

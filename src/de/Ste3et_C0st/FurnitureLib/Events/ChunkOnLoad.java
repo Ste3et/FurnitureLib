@@ -57,7 +57,7 @@ public class ChunkOnLoad implements Listener {
 
     @EventHandler(priority = EventPriority.HIGH)
     public void onSpawn(final PlayerInteractEvent e) {
-        if (e.getAction().equals(Action.RIGHT_CLICK_BLOCK)) {
+        if (Action.RIGHT_CLICK_BLOCK == e.getAction()) {
             if (!e.hasBlock()) return;
             if (!e.hasItem()) return;
             if (e.useInteractedBlock().equals(Result.DENY)) return;
@@ -72,7 +72,7 @@ public class ChunkOnLoad implements Listener {
             if (FurnitureLib.getInstance().getBlockManager().contains(b.getLocation())) return;
             if (eventList.contains(e.getPlayer())) return;
             if (b.isLiquid()) return;
-            if (!e.getHand().equals(EquipmentSlot.HAND)) return;
+            if (EquipmentSlot.HAND != e.getHand()) return;
             eventList.add(e.getPlayer());
             final BlockFace face = e.getBlockFace();
             final Location loc = b.getLocation();
@@ -107,7 +107,7 @@ public class ChunkOnLoad implements Listener {
 				}
 			}
 			removePlayer(p);
-        } else if (e.getAction().equals(Action.RIGHT_CLICK_AIR)) {
+        } else if (Action.RIGHT_CLICK_AIR == e.getAction()) {
             final ItemStack stack = e.getItem();
             if (stack == null) return;
             final Project pro = getProjectByItem(stack);
@@ -171,11 +171,9 @@ public class ChunkOnLoad implements Listener {
     public void onClick(final PlayerInteractEvent event) {
         final Player p = event.getPlayer();
         if (p == null) return;
-        if (p.getGameMode() == GameMode.SPECTATOR) {
-            return;
-        }
+        if (GameMode.SPECTATOR == p.getGameMode())  return;
         if (event.isCancelled()) return;
-        if (event.getAction().equals(Action.LEFT_CLICK_BLOCK)) {
+        if (Action.LEFT_CLICK_BLOCK == event.getAction()) {
             if (event.getClickedBlock() == null) {
                 return;
             }
@@ -207,7 +205,7 @@ public class ChunkOnLoad implements Listener {
                     return;
                 }
                 event.setCancelled(true);
-                if (!event.getHand().equals(EquipmentSlot.HAND)) return;
+                if (EquipmentSlot.HAND != event.getHand()) return;
                 if (!objID.getSQLAction().equals(SQLAction.REMOVE)) {
                     final ObjectID o = objID;
                     if (!FurnitureLib.getInstance().getFurnitureManager().getIgnoreList().contains(p.getUniqueId())) {
@@ -227,7 +225,7 @@ public class ChunkOnLoad implements Listener {
 
     @EventHandler
     public void onEntityRightClick(PlayerInteractEntityEvent e) {
-        if (!e.getHand().equals(EquipmentSlot.HAND)) return;
+        if (EquipmentSlot.HAND != e.getHand()) return;
         if (e.isCancelled()) return;
         if (e.getRightClicked() != null && e.getPlayer() != null) {
             PlayerInventory inv = e.getPlayer().getInventory();

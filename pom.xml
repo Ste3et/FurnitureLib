@@ -111,10 +111,10 @@
 		</dependency>
 
 		<dependency>
-			<groupId>com.gitlab.Ste3et_C0st</groupId>
-			<artifactId>protectionlib</artifactId>
-			<version>v0.9.7</version>
-			<scope>provided</scope>
+		    <groupId>com.github.Ste3et</groupId>
+		    <artifactId>ProtectionLib</artifactId>
+		    <version>v0.9.8</version>
+		    <scope>provided</scope>
 		</dependency>
 
 		<dependency>

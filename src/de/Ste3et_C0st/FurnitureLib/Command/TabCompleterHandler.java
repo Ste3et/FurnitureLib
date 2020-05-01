@@ -78,19 +78,10 @@ public class TabCompleterHandler implements TabCompleter {
                                 		return strAL;
                                 	}else {
                                 		if (current.startsWith("project:")) {
-                                			String string = current.replace("project:", "");
-                                			if(string.isEmpty()) {
-                                				FurnitureManager.getInstance().getProjects().forEach(entry -> strAL.add("project:" + entry.getName()));
-                                				return strAL;
-                                			}
-                                			
-                                            FurnitureManager.getInstance().getProjects().stream()
-                                                    .filter(p -> p.getName().toLowerCase().contains(string))
-                                                    .forEach(p -> strAL.add("project:" + p.getName()));
-                                            if(strAL.isEmpty()) {
-                                            	FurnitureManager.getInstance().getProjects().forEach(entry -> strAL.add("project:" + entry.getName()));
-                                            }
-                                            return strAL;
+                                			List<String> tab = new ArrayList<String>();
+                                			String world = current.toLowerCase().replace("project:", "");
+                                			FurnitureManager.getInstance().getProjects().stream().filter(entry -> entry.getName().toLowerCase().contains(world)).forEach(entry -> tab.add("project:" + entry.getName()));
+                                			return tab;
                                         }else if(current.startsWith("distance:")) {
                                 			return Arrays.asList("distance:1","distance:10","distance:100");
                                 		}else if(current.toLowerCase().startsWith("world:")){

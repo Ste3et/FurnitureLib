@@ -16,7 +16,6 @@ import org.bukkit.entity.Player;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.function.Predicate;
-import java.util.stream.Collectors;
 
 public class ObjectID {
 
@@ -453,7 +452,7 @@ public class ObjectID {
     }
     
     public boolean containsBlock(Location location) {
-    	return Objects.nonNull(location);
+    	return Objects.nonNull(getPresetLocation(location));
     }
     
     public Location getPresetLocation(Location location) {
