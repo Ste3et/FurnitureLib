@@ -40,7 +40,7 @@ public class deleteCommand extends iCommand {
 				sender.sendMessage("§cPlease confirm the delete from §a" + i + "§c Models");
 				ComponentBuilder builder = new ComponentBuilder("§cPlease type")
 						.append("§a§n/furniture delete "+ systemID +" confirm").event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/furniture delete " + systemID + " confirm"))
-						.append("§r §cto remove it").event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, null));
+						.append("§r §cto remove it").reset();
 				sender.spigot().sendMessage(builder.create());
 				sender.sendMessage("§cYou have 20 seconds left");
 				FurnitureLib.getInstance().deleteMap.put(project, System.currentTimeMillis());

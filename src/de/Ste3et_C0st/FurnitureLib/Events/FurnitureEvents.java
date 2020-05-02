@@ -30,6 +30,7 @@ public class FurnitureEvents {
                     public void onPacketReceiving(PacketEvent event) {
                         if (event.getPacketType() == PacketType.Play.Client.USE_ENTITY) {
                             Integer PacketID = event.getPacket().getIntegers().read(0);
+                            if(Objects.isNull(PacketID)) return;
                             fEntity asPacket = manager.getfArmorStandByID(PacketID);
                             if (Objects.nonNull(asPacket)) {
                                 event.setCancelled(true);
