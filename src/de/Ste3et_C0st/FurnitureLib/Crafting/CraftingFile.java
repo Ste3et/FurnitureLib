@@ -90,7 +90,7 @@ public class CraftingFile {
     }
 
     public ItemStack getItemstack() {
-        return getRecipe().getResult();
+        return Objects.nonNull(getRecipe()) ? getRecipe().getResult() : null;
     }
 
     public boolean isEnable() {
