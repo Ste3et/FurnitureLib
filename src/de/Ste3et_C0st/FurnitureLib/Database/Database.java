@@ -2,7 +2,6 @@ package de.Ste3et_C0st.FurnitureLib.Database;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.ExecuteTimer;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.callbacks.CallbackObjectIDs;
 import de.Ste3et_C0st.FurnitureLib.main.ChunkData;
@@ -65,6 +64,14 @@ public abstract class Database {
          return false;
     }
 
+    public void loadAll(SQLAction action) {
+    	for (World world : Bukkit.getWorlds()) {
+    		if(Objects.nonNull(world)) {
+    			this.loadWorld(action, world);
+    		}
+    	}
+    }
+    
     public boolean save(ObjectID id) {
         String binary = FurnitureLib.getInstance().getSerializer().SerializeObjectID(id);
         int x = id.getStartLocation().getBlockX() >> 4;
@@ -85,39 +92,49 @@ public abstract class Database {
         }
         return false;
     }
-
-    public void loadAsynchron(ChunkData chunkdata, CallbackObjectIDs callBack, World world) {
-        Bukkit.getScheduler().runTaskAsynchronously(FurnitureLib.getInstance(), () -> {
-            String query = "SELECT ObjID,Data,world FROM " + TABLE_NAME + " WHERE x=" + chunkdata.getX() + " AND z=" + chunkdata.getZ() + " AND world='" + chunkdata.getWorld() + "'";
-            try (Connection con = getConnection(); Statement statement = con.createStatement()) {
-            	statement.setFetchSize(100);
-            	ResultSet rs = statement.executeQuery(query);
-                HashSet<ObjectID> idList = new HashSet<ObjectID>();
-                if (rs.next()) {
-                    do {
-                        String a = rs.getString(1), c = rs.getString(2);
-                        if (Objects.nonNull(a) && Objects.nonNull(c)) {
-                            ObjectID obj = DeSerializer.Deserialize(a, c, SQLAction.NOTHING, world);
-                            if (Objects.nonNull(obj)) {
-                                idList.add(obj);
+    
+    public HashSet<ObjectID> loadQuery(SQLAction action, World bukkitWorld, String query){
+    	HashSet<ObjectID> idList = new HashSet<ObjectID>();
+    	if(Objects.isNull(query)) return idList;
+        String worldName = bukkitWorld.getName();
+        AtomicInteger atomic = new AtomicInteger(0);
+        if(Objects.nonNull(bukkitWorld)) {
+        	try (Connection con = getConnection(); ResultSet rs = con.createStatement().executeQuery(query)) {
+        		if(Objects.nonNull(rs)) {
+        			if (rs.next() == true) {
+            			do {
+            				String objectSerial = rs.getString(1), base64Storage = rs.getString(2);
+                            if (!(objectSerial.isEmpty() || base64Storage.isEmpty())) {
+                                ObjectID obj = DeSerializer.Deserialize(objectSerial, base64Storage, action, bukkitWorld);
+                                if (Objects.nonNull(obj)) {
+                                	obj.setWorldName(worldName);
+                                    idList.add(obj);
+                                    atomic.addAndGet(obj.getPacketList().size());
+                                }
                             }
-                        }
-                    } while (rs.next());
-                    FurnitureLib.debug("FurnitureLib load " + idList.size() + " Models for chunk " + " x:" + chunkdata.getX() + " z:" + chunkdata.getZ());
-                }
-                callBack.onResult(idList);
-            } catch (Exception e) {
+            			} while (rs.next());
+            		}
+        		}
+        	}catch (Exception e) {
                 e.printStackTrace();
-            }
+        	}
+        }
+        idList.forEach(entry -> {
+        	entry.registerBlocks();
+        	entry.getProjectOBJ().applyFunction(entry);
         });
+        
+        FurnitureManager.getInstance().getObjectList().addAll(idList);
+		return idList;
     }
 
-    public void loadAll(SQLAction action) {
-    	for (World world : Bukkit.getWorlds()) {
-    		if(Objects.nonNull(world)) {
-    			this.loadWorld(action, world);
-    		}
-    	}
+    public void loadAsynchron(ChunkData chunkdata, CallbackObjectIDs callBack, World bukkitWorld) {
+    	UUID worldUUID = bukkitWorld.getUID();
+        String worldName = bukkitWorld.getName();
+        Bukkit.getScheduler().runTaskAsynchronously(FurnitureLib.getInstance(), () -> {
+            String query = "SELECT ObjID,Data,world FROM " + TABLE_NAME + " WHERE x=" + chunkdata.getX() + " AND z=" + chunkdata.getZ() + " AND world='"+ worldName +"' OR world='" + worldUUID.toString() + "'";
+            callBack.onResult(loadQuery(SQLAction.NOTHING, bukkitWorld, query));
+        });
     }
     
     public HashSet<ObjectID> loadWorld(SQLAction action, World bukkitWorld) {
@@ -127,43 +144,19 @@ public abstract class Database {
         String worldName = bukkitWorld.getName();
         AtomicInteger atomic = new AtomicInteger(0);
         if(Objects.nonNull(bukkitWorld)) {
-        	String query = "SELECT ObjID,Data FROM " + TABLE_NAME + " WHERE world='"+ worldName +"' OR world='" + worldUUID.toString() + "'";
-        	try (Connection con = getConnection(); ResultSet rs = con.createStatement().executeQuery(query)) {
-                if (rs.next() == true) {
-                	plugin.getLogger().info(timer.getDifference());
-                    do {
-                        String a = rs.getString(1), c = rs.getString(2);
-                        if (!(a.isEmpty() || c.isEmpty())) {
-                            ObjectID obj = DeSerializer.Deserialize(a, c, action, bukkitWorld);
-                            if (Objects.nonNull(obj)) {
-                                obj.setWorldName(worldName);
-                                idList.add(obj);
-                                atomic.addAndGet(obj.getPacketList().size());
-                            }
-                        }
-    				} while (rs.next());
-                    
-                    idList.forEach(ObjectID::registerBlocks);
-                    FurnitureManager.getInstance().getObjectList().addAll(idList);
-                    
-                    double difference = timer.difference();
-                    double size = idList.size();
-                    
-                    plugin.getLogger().info("FurnitureLib load models from world -> " + worldName);
-                    plugin.getLogger().info("Models: " + idList.size() + " with " + atomic.get() +" entities");
-                    
-                    if(size > 0) {
-                    	double avgSpeed = Math.round((difference / size) * 100d) / 100d;
-                        plugin.getLogger().info("With avg speed of " + avgSpeed + " FurnitureModel/ms");
-                    }
-                    
-                    plugin.getLogger().info("It takes: " + timer.getDifference() + " from Database: " + this.getType().name());
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-            } finally {
-                FurnitureManager.getInstance().getProjects().forEach(Project::applyFunction);
+        	idList.addAll(loadQuery(action, bukkitWorld, "SELECT ObjID,Data FROM " + TABLE_NAME + " WHERE world='"+ worldName +"' OR world='" + worldUUID.toString() + "'"));
+        	double difference = timer.difference();
+            double size = idList.size();
+            
+            plugin.getLogger().info("FurnitureLib load models from world -> " + worldName);
+            plugin.getLogger().info("Models: " + idList.size() + " with " + atomic.get() +" entities");
+            
+            if(size > 0) {
+            	double avgSpeed = Math.round((difference / size) * 100d) / 100d;
+                plugin.getLogger().info("With avg speed of " + avgSpeed + " FurnitureModel/ms");
             }
+            
+            plugin.getLogger().info("It takes: " + timer.getDifference() + " from Database: " + this.getType().name());
         }
         return idList;
     }

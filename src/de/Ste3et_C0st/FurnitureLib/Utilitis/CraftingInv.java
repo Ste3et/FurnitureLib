@@ -50,7 +50,7 @@ public class CraftingInv implements Listener {
         final ItemStack is = recipe.getResult();
         is.setAmount(1);
 
-        ItemStack stack = new ItemStack(Material.GRAY_STAINED_GLASS_PANE);
+        ItemStack stack = FurnitureLib.isNewVersion() ? new ItemStack(Material.valueOf("GRAY_STAINED_GLASS_PANE")) : new ItemStack(Material.valueOf("STAINED_GLASS_PANE"), 1, (short) 15);
         ItemMeta meta = stack.getItemMeta();
         meta.setDisplayName("§c");
         stack.setItemMeta(meta);

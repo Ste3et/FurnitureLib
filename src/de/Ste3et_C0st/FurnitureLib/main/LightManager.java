@@ -19,7 +19,7 @@ public class LightManager {
         }
     }
 
-    public void addLight(final Location location, final Integer size) {
+    public synchronized void addLight(final Location location, final Integer size) {
         if (this.plugin == null) {
             return;
         }
@@ -35,7 +35,7 @@ public class LightManager {
         });
     }
 
-    public void removeLight(Location location) {
+    public synchronized void removeLight(Location location) {
         if (this.plugin == null) {
             return;
         }
