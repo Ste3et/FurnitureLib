@@ -21,6 +21,8 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import javax.sound.midi.SysexMessage;
+
 public abstract class Database {
     public FurnitureLib plugin;
     private HikariConfig config;
@@ -67,6 +69,7 @@ public abstract class Database {
     public void loadAll(SQLAction action) {
     	for (World world : Bukkit.getWorlds()) {
     		if(Objects.nonNull(world)) {
+    			System.out.print("try to load furniture in world: " + world.getName());
     			this.loadWorld(action, world);
     		}
     	}
