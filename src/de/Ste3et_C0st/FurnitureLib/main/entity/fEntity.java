@@ -21,7 +21,7 @@ import org.bukkit.inventory.ItemStack;
 import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
-public abstract class fEntity extends fSerializer {
+public abstract class fEntity extends fSerializer implements Cloneable {
 
     /*
      * Field a = EntityID

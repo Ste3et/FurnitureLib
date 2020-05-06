@@ -17,7 +17,7 @@ import org.bukkit.util.EulerAngle;
 
 import java.util.HashMap;
 
-public class fArmorStand extends fEntity {
+public class fArmorStand extends fEntity{
 
     public static EntityType type = EntityType.ARMOR_STAND;
     private int armorstandID;

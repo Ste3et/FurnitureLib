@@ -2,6 +2,9 @@ package de.Ste3et_C0st.FurnitureLib.Command;
 
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
+
+import java.util.Objects;
+
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -90,6 +93,12 @@ public class giveCommand extends iCommand {
                     return;
                 }
                 Player p2 = Bukkit.getPlayer(args[2]);
+                if(Objects.isNull(p2)) {
+                	String s = FurnitureLib.getInstance().getLangManager().getString("message.PlayerNotOnline");
+                    s = s.replace("#PLAYER#", args[2]);
+                    sender.sendMessage(s);
+                    return;
+                }
                 if (p2.isOnline()) {
                     if (FurnitureLib.getInstance().isInt(args[3])) {
                         int i = Integer.parseInt(args[3]);

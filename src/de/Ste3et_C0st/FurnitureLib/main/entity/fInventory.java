@@ -8,6 +8,7 @@ import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 public class fInventory implements Cloneable {
 
