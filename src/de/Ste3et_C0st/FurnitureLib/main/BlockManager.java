@@ -8,11 +8,10 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockFromToEvent;
-import org.bukkit.event.block.BlockPhysicsEvent;
-
 import de.Ste3et_C0st.FurnitureLib.Events.PaperEvents;
+import de.Ste3et_C0st.FurnitureLib.Events.PhysikEvent;
 
-import java.util.Collections;
+import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -21,29 +20,26 @@ import java.util.function.Predicate;
 public class BlockManager implements Listener {
 
     public HashSet<Location> locList = new HashSet<>();
-    private List<Material> activatePhysic = Collections.singletonList(Material.TORCH);
-    private Listener listener = null;
+    private List<Listener> listener = new ArrayList<Listener>();
     
     public void addBlock(Block block) {
-        if (block == null || block.getType() == null || block.getType().equals(Material.AIR)) return;
+        if (block == null || block.getType() == null || block.getType().isSolid()) return;
         locList.add(block.getLocation());
-        if (Objects.isNull(listener) && activatePhysic.contains(block.getType())) {
+        if (listener.isEmpty()) {
         	try {
         		Class<?> clazz = Class.forName("com.destroystokyo.paper.event.block.BlockDestroyEvent");
         		if(Objects.isNull(clazz)) {
-        			this.listener = this;
+        			listener.add(new PhysikEvent());
         		}else {
-        			this.listener = new PaperEvents();
+        			listener.add(new PaperEvents());
         		}
         	}catch (ClassNotFoundException e) {
-        		this.listener = this;
+        		listener.add(new PhysikEvent());
 			}catch (Exception ex) {
 				ex.printStackTrace();
-			}finally {
-				if(Objects.nonNull(this.listener)) {
-					Bukkit.getPluginManager().registerEvents(this.listener, FurnitureLib.getInstance());
-				}
 			}
+        	listener.add(this);
+        	this.listener.forEach(handler -> Bukkit.getPluginManager().registerEvents(handler, FurnitureLib.getInstance()));
         }
     }
 
@@ -75,23 +71,13 @@ public class BlockManager implements Listener {
         return locList;
     }
 
-    @EventHandler(priority = EventPriority.HIGHEST)
-    public void onPhysics(BlockPhysicsEvent e) {
-        if(!e.isCancelled()) {
-        	boolean contains = locList.contains(e.getBlock().getLocation());
-            if(contains) {
-            	e.setCancelled(true);
-            }
-        }
-    }
+    
 
-    @EventHandler
+    @EventHandler(priority = EventPriority.LOW)
     public void onWaterFlow(BlockFromToEvent e) {
     	if(!e.isCancelled()) {
-    		boolean contains = locList.contains(e.getBlock().getLocation());
-    		if(contains) {
-    			e.setCancelled(true);
-    		}
+    		if(locList.contains(e.getBlock().getLocation())) e.setCancelled(true);
+    		if(locList.contains(e.getToBlock().getLocation())) e.setCancelled(true);
     	}
     }
     

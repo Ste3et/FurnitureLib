@@ -8,6 +8,8 @@ import de.Ste3et_C0st.FurnitureLib.main.Type.EventType;
 import de.Ste3et_C0st.FurnitureLib.main.Type.PlaceableSide;
 import de.Ste3et_C0st.FurnitureLib.main.Type.PublicMode;
 import de.Ste3et_C0st.ProtectionLib.main.ProtectionLib;
+import de.Ste3et_C0st.ProtectionLib.main.protectionObj;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -16,7 +18,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 
+import com.google.gson.JsonObject;
+
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.UUID;
 
 public class ProtectionManager {
@@ -79,6 +85,21 @@ public class ProtectionManager {
         }
         ProtectionLib fp = (ProtectionLib) this.FP;
         return fp.isOwner(loc, p);
+    }
+    
+    public List<JsonObject> getProtectionClazz() {
+    	if (FP == null) {
+            return null;
+        }
+    	List<JsonObject> json = new ArrayList<JsonObject>();
+    	ProtectionLib fp = (ProtectionLib) this.FP;
+    	for(protectionObj protection : fp.getWatchers()) {
+    		JsonObject object = new JsonObject();
+    		object.addProperty("plugin", protection.getPlugin().getDescription().getName());
+    		object.addProperty("clazz", protection.getClass().getSimpleName());
+    		json.add(object);
+    	}
+    	return json;
     }
 
     public boolean canBuild(Player p, ObjectID id, EventType type) {

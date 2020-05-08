@@ -74,6 +74,7 @@ public class DumpHandler {
 		packetInfos.addProperty("furnitureObjects", FurnitureManager.getInstance().getObjectList().size());
 		packetInfos.addProperty("armorStands", armorStands.get() + "");
 		packetInfos.addProperty("viewDistanceFurniture", FurnitureLib.getInstance().getViewDistance());
+		packetInfos.addProperty("viewDistanceServer", Bukkit.getServer().getViewDistance());
 		packetInfos.addProperty("syncLoading", FurnitureLib.getInstance().isSync());
 		packetInfos.addProperty("purgeTime", FurnitureLib.getInstance().getPurgeTime());
 		packetInfos.addProperty("autoPure", FurnitureLib.getInstance().isAutoPurge());
@@ -83,6 +84,7 @@ public class DumpHandler {
 		packetInfos.addProperty("eventType", FurnitureLib.getInstance().getDefaultEventType().name());
 		packetInfos.addProperty("language", FurnitureLib.getInstance().getDefaultPublicType().name());
 		packetInfos.addProperty("databaseType", FurnitureLib.getInstance().getSQLManager().getDatabase().getType().name());
+		packetInfos.addProperty("protectionLib-hook", FurnitureLib.getInstance().getPermManager().useProtectionLib());
 		
 		JsonObject packetInformations = new JsonObject();
 		try {
@@ -132,7 +134,13 @@ public class DumpHandler {
 		coreObject.add("server", spigotObject);
 		coreObject.add("furnitureLib", packetInfos);
 		coreObject.add("packets", packetInformations);
+		
+		if(FurnitureLib.getInstance().getPermManager().useProtectionLib()) {
+			coreObject.add("protectionLib", new Gson().toJsonTree(FurnitureLib.getInstance().getPermManager().getProtectionClazz()));
+		}
+		
 		coreObject.add("plugins", new Gson().toJsonTree(pluginList));
+		
 		//coreObject.add("models", new Gson().toJsonTree(models));
 		
 		this.sendToHost(coreObject, sender);

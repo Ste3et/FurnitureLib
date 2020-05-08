@@ -388,8 +388,10 @@ public class FurnitureLib extends JavaPlugin {
             return;
         }
 
-        if (!isEnable("ProtocolLib", true)) {
-            send("§cProtocolLib not found");
+        if (!getPluginManager().isPluginEnabled("ProtocolLib")) {
+        	send("§cFurnitureLib §7can't be enabled please §cinstall §7the right §e§nProtocollib version");
+            send("§5Download it here: §l§9http://ci.dmulloy2.net/job/ProtocolLib%20Gradle/lastStableBuild/");
+            send("§c§4FurnitureLib will be disabled");
             getPluginManager().disablePlugin(this);
         } else {
             instance = this;
@@ -420,6 +422,10 @@ public class FurnitureLib extends JavaPlugin {
                 send("§5Info: §eFor Spigot 1.14.x you need §6ProtocolLib 4.5.0 Build #8 §eor above");
                 send("§5Download it here: §l§9http://ci.dmulloy2.net/job/ProtocolLib%20Gradle/lastStableBuild/");
                 send("§5Otherwise you will receive: §cNoClassDefFoundError: org/apache/commons/lang3/Validate");
+            }else if (getBukkitVersion().startsWith("v1_15_2") && !s.equals("4.5.1")) {
+            	send("§5Info: §eFor Spigot 1.15.2 you need §6ProtocolLib 4.5.1 §eor above");
+                send("§5Download it here: §l§9https://www.spigotmc.org/resources/protocollib.1997/");
+                send("§5Otherwise you will receive: §cNo field with type java.util.Map exists in class EnumProtocol.");
             }
             boolean protocollib = isRightProtocollib(s);
             if (protocollib) {
@@ -638,21 +644,25 @@ public class FurnitureLib extends JavaPlugin {
     public void onDisable() {
         getLogger().info("==========================================");
         getLogger().info("Furniture shutdown started");
-        if (!getConfig().getBoolean("config.timer.Enable")) {
-            this.sqlManager = new SQLManager(this);
-            this.sqlManager.initialize();
+        if(Objects.nonNull(sqlManager)) {
+        	if (!getConfig().getBoolean("config.timer.Enable")) {
+                this.sqlManager = new SQLManager(this);
+                this.sqlManager.initialize();
+            }
+            sqlManager.save();
+            sqlManager.stop();
         }
-        sqlManager.save();
-        sqlManager.stop();
         instance = null;
-        if (!getFurnitureManager().getObjectList().isEmpty()) {
-            for (ObjectID obj : getFurnitureManager().getObjectList()) {
-                for (fEntity as : obj.getPacketList()) {
-                    as.kill();
+        if(Objects.nonNull(getFurnitureManager())) {
+        	if (!getFurnitureManager().getObjectList().isEmpty()) {
+                for (ObjectID obj : getFurnitureManager().getObjectList()) {
+                    for (fEntity as : obj.getPacketList()) {
+                        as.kill();
+                    }
                 }
             }
+        	this.saveIgnore();
         }
-        this.saveIgnore();
         getLogger().info("==========================================");
     }
 
