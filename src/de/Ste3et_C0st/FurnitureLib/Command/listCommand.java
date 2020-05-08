@@ -1,5 +1,6 @@
 package de.Ste3et_C0st.FurnitureLib.Command;
 
+import de.Ste3et_C0st.FurnitureLib.Utilitis.StringTranslator;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
@@ -51,21 +52,32 @@ public class listCommand extends iCommand {
 			if (argument.startsWith("plugin:") && !filterTypes.contains("plugin")) {
 				if (!hasCommandPermission(sender, ".plugin")) return;
 				String plugin = argument.replace("plugin:", "");
-				filterPredicate = filterPredicate.and(entry -> entry.getPlugin().equalsIgnoreCase(plugin));
+				if(plugin.startsWith("!")) {
+					filterPredicate = filterPredicate.and(entry -> !entry.getPlugin().equalsIgnoreCase(plugin.replaceFirst("!", "")));
+				}else {
+					filterPredicate = filterPredicate.and(entry -> entry.getPlugin().equalsIgnoreCase(plugin));
+				}
 				filterTypes += "§7plugin:§a" + plugin + "§8|";
 			} else if (argument.startsWith("world:") && !filterTypes.contains("world")) {
 				if (!hasCommandPermission(sender, ".world")) return;
 				String world = argument.replace("world:", "");
-				filterPredicate = filterPredicate.and(entry -> entry.getWorldName().equalsIgnoreCase(world));
+				if(world.startsWith("!")) {
+					filterPredicate = filterPredicate.and(entry -> !entry.getWorldName().equalsIgnoreCase(world.replaceFirst("!", "")));
+				}else {
+					filterPredicate = filterPredicate.and(entry -> entry.getWorldName().equalsIgnoreCase(world));
+				}
 				filterTypes += "§7world:§a" + world + "§8|";
 				continue;
 			} else if (argument.startsWith("player:") && !filterTypes.contains("player")) {
 				if (!hasCommandPermission(sender, ".player")) return;
 				
-				OfflinePlayer player = Bukkit.getOfflinePlayer(argument.replace("player:", ""));
+				OfflinePlayer player = Bukkit.getOfflinePlayer(argument.replace("player:", "").replaceFirst("!", ""));
 				if (Objects.nonNull(player)) {
-					sender.sendMessage(player.getName());
-					filterPredicate = filterPredicate.and(entry -> entry.getUUID().equals(player.getUniqueId()));
+					if(argument.startsWith("player:!")) {
+						filterPredicate = filterPredicate.and(entry -> !entry.getUUID().equals(player.getUniqueId()));
+					}else {
+						filterPredicate = filterPredicate.and(entry -> entry.getUUID().equals(player.getUniqueId()));
+					}
 					filterTypes += "§7player:§a" + player.getName() + "§8|";
 				}else {
 					filterTypes += "§7player:§c" + player.getName() + "§8|";
@@ -125,12 +137,13 @@ public class listCommand extends iCommand {
 							ComponentBuilder builder = new ComponentBuilder(
 									" §8- §e" + name + " §7Models: §e" + entry.getValue().get());
 							if (sender.hasPermission("furniture.command.remove.project")) {
-								builder.append(" §7[§cremove§7]")
-										.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-												new ComponentBuilder("§7Remove all §c" + name + " §7models from\n"
-														+ "§7These filters: " + filters + "\n"
-														+ "§7that §c§ncan't be make undo").create()))
-										.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
+								builder.append(getLHandler().getString("command.list.remove.button"))
+								.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
+										new ComponentBuilder(
+												getLHandler().getString("command.list.remove.hover", 
+														new StringTranslator("#PROJECT#", entry.getKey()),
+														new StringTranslator("#FILTERS#", filters))).create())
+									  ).event(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
 												"/furniture remove " + ChatColor.stripColor(filters.replace("|", " "))
 														+ " project:" + name));
 							}
@@ -139,8 +152,7 @@ public class listCommand extends iCommand {
 				double count = projectCounter.values().stream().filter(entry -> entry.get() > 0).count();
 				maxPages = Math.ceil(count / ((double) itemsEachSide));
 			}else {
-				sender.sendMessage("§7There are no furniture models are found.");
-    			sender.sendMessage("§7With applied filters -> {" + StringUtils.removeEnd(filterTypes, "|") + "§7}");
+				sender.sendMessage(getLHandler().getString("command.list.nothing", new StringTranslator("#FILTERS#", StringUtils.removeEnd(filterTypes, "|"))));
     			return;
 			}
 		} else {
@@ -148,51 +160,50 @@ public class listCommand extends iCommand {
 					.skip(itemsEachSide * side.get())
 					.limit(itemsEachSide)
 					.forEach(entry -> {
-						ComponentBuilder builder = new ComponentBuilder(" §8- §7" + ChatColor.stripColor(entry.getDisplayName()));
+						ComponentBuilder builder = new ComponentBuilder(getLHandler().getString("command.list.main.message", new StringTranslator("#PROJECT#", ChatColor.stripColor(entry.getDisplayName()))));
 						
 						if (sender.hasPermission("furniture.command.debug")) {
-							ComponentBuilder debugInfos = new ComponentBuilder("§7Placed Objects: §e" + entry.getObjectSize() + "\n");
-								debugInfos.append("§7SystemID: §e" + entry.getName() + "\n");
-								debugInfos.append("§7Size: §e" + entry.getLength() + " §7|§e " + entry.getHeight() + " §7|§e " + entry.getWidth() + "\n");
-								debugInfos.append("§7Entities: §e" + entry.getModelschematic().getEntityMap().size() + "\n");
-								debugInfos.append("§7Blockcount: §e" + entry.getModelschematic().getBlockMap().size() + "\n");
-								debugInfos.append("§7Plugin: §e" + entry.getPlugin().getName());
-							builder.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, debugInfos.create()));
+							ComponentBuilder devInfos = new ComponentBuilder(
+									getLHandler().getString("command.list.main.debug_hover",
+											new StringTranslator("#AMOUNT#", entry.getObjectSize() + ""),
+											new StringTranslator("#PROJECT#", entry.getName()),
+											new StringTranslator("#SIZE#", entry.getLength() + " §7|§e " + entry.getHeight() + " §7|§e " + entry.getWidth()),
+											new StringTranslator("#ENTITIES#", entry.getModelschematic().getEntityMap().size() + ""),
+											new StringTranslator("#BLOCK_COUNT#", entry.getModelschematic().getBlockMap().size() + ""),
+											new StringTranslator("#PLUGIN#", entry.getPlugin().getName()),
+											new StringTranslator("#DESTROYABLE#", entry.isDestroyable() + "")
+									));
+							builder.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, devInfos.create()));
 						}
 						
 						if (sender.hasPermission("furniture.command.give")) {
-							ComponentBuilder give = new ComponentBuilder(" §7[§2give§7]");
+							ComponentBuilder give = new ComponentBuilder(getLHandler().getString("command.list.give.button"));
 							give.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND,"/furniture give " + entry.getName()));
 							builder.append(give.create(), FormatRetention.FORMATTING);
 						}
 						
 						if (sender.hasPermission("furniture.command.recipe") && sender.hasPermission("furniture.command.recipe." + entry.getName().toLowerCase())) {
-							ComponentBuilder give = new ComponentBuilder(" §7[§erecipe§7]");
-							give.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
+							ComponentBuilder recipe = new ComponentBuilder(getLHandler().getString("command.list.recipe.button"));
+							recipe.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
 											"/furniture recipe " + entry.getName()));
-							builder.append(give.create(), FormatRetention.FORMATTING);
+							builder.append(recipe.create(), FormatRetention.FORMATTING);
 						}
 						
 						if (sender.hasPermission("furniture.command.remove.project")) {
-							ComponentBuilder give = new ComponentBuilder(" §7[§cremove§7]");
-							give.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-											new ComponentBuilder("§7Remove all §c" + entry.getName()
-													+ " §7models from\n" + "§7All worlds that §c§ncan't be make undo")
-															.create()))
+							ComponentBuilder remove = new ComponentBuilder(getLHandler().getString("command.list.remove.button"));
+							remove.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
+											new ComponentBuilder(getLHandler().getString("command.list.remove.hover", new StringTranslator("#PROJECT#", entry.getName()))).create()))
 									.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
 											"/furniture remove project:" + entry.getName()));
-							builder.append(give.create());
+							builder.append(remove.create());
 						}
 						if (sender.hasPermission("furniture.command.delete.project")) {
-							ComponentBuilder give = new ComponentBuilder(" §7[§4✘§7]");
-							give.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-											new ComponentBuilder("§7Remove all §c" + entry.getName()
-													+ " §7models from\n" + "§7All worlds that §c§ncan't be make undo\n"
-													+ "§7And §cremove §7the model from your Server or §cdisable §7it.")
-															.create()))
+							ComponentBuilder delete = new ComponentBuilder(getLHandler().getString("command.list.delete.button"));
+							delete.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
+											new ComponentBuilder(getLHandler().getString("command.list.delete.hover", new StringTranslator("#PROJECT#", entry.getName()))).create()))
 									.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
 											"/furniture delete " + entry.getName()));
-							builder.append(give.create());
+							builder.append(delete.create());
 						}
 						componentList.add(builder);
 					});

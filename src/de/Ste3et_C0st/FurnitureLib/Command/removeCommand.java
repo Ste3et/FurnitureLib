@@ -1,5 +1,6 @@
 package de.Ste3et_C0st.FurnitureLib.Command;
 
+import de.Ste3et_C0st.FurnitureLib.Utilitis.StringTranslator;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
@@ -119,15 +120,14 @@ public class removeCommand extends iCommand {
     			}
     		});
     		if(count.get() > 0) {
-    			sender.sendMessage("§7Remove §2" + count.get() + " §7furniture models");
-    			sender.sendMessage("§7With applied filters -> {" + StringUtils.removeEnd(filterTypes, "|") + "§7}");
+    			sender.sendMessage(getLHandler().getString("command.remove.result", 
+    					new StringTranslator("#FILTERS#", StringUtils.removeEnd(filterTypes, "|")),
+    					new StringTranslator("#SIZE#", count.get() + "")));
     		}else {
-    			sender.sendMessage("§7There are no furniture models are found.");
-    			sender.sendMessage("§7With applied filters -> {" + StringUtils.removeEnd(filterTypes, "|") + "§7}");
+    			sender.sendMessage(getLHandler().getString("command.remove.result", new StringTranslator("#FILTERS#", StringUtils.removeEnd(filterTypes, "|"))));
     		}
         }else if(!remove){
-        	sender.sendMessage("§7There are no furniture models are found.");
-			sender.sendMessage("§7With applied filters -> {" + StringUtils.removeEnd(filterTypes, "|") + "§7}");
+        	sender.sendMessage(getLHandler().getString("command.remove.result", new StringTranslator("#FILTERS#", StringUtils.removeEnd(filterTypes, "|"))));
         }
 	}
 

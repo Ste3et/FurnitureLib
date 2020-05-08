@@ -24,6 +24,7 @@ import org.bukkit.entity.Player;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 
 import de.Ste3et_C0st.FurnitureLib.Command.command;
+import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.ModelLoader.ModelFileLoader;
 import de.Ste3et_C0st.FurnitureLib.NBT.CraftItemStack;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTBase;
@@ -160,19 +161,19 @@ public class downloadCommand extends iCommand{
 			NBTTagCompound compound = NBTCompressedStreamTools.read(bin);
 			if(compound.hasKey("lore")) {
 				if(FurnitureLib.isNewVersion()) {
-					convert(compound, project);
+					convert(compound, project, sender);
 				}else{
-					addOld(compound, project);
+					addOld(compound, project, sender);
 				}
 			}else {
-				save(compound, project);
+				save(compound, project, sender);
 			}
 		}catch(Exception e){
 			e.printStackTrace();
 		}
 	}
 	
-	private void addOld(NBTTagCompound compound, String project){
+	private void addOld(NBTTagCompound compound, String project, CommandSender sender){
 		try{
 			YamlConfiguration file = new YamlConfiguration();
 			NBTTagCompound crafting = compound.getCompound("crafting");
@@ -237,7 +238,12 @@ public class downloadCommand extends iCommand{
 			
 			file.save(new File("plugins/"+FurnitureLib.getInstance().getName()+"/Crafting/" + project + ".yml"));
 			Bukkit.getScheduler().runTask(FurnitureLib.getInstance(), () ->{
-				ModelFileLoader.loadModelFile(new File("plugins/"+FurnitureLib.getInstance().getName()+"/Crafting/" + project + ".yml"));
+				Project projObj = ModelFileLoader.loadModelFile(new File("plugins/"+FurnitureLib.getInstance().getName()+"/Crafting/" + project + ".yml"));
+				if(Objects.nonNull(projObj) && projObj.haveModelSchematic()) {
+					if(!projObj.getModelschematic().isDestroyAble()) {
+						sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("command.download.noHitbox"));
+					}
+				}
 			});
 		}catch(Exception e){
 			e.printStackTrace();
@@ -245,7 +251,7 @@ public class downloadCommand extends iCommand{
 	}
 
 	
-	private void save(NBTTagCompound compound, String project) throws IOException{
+	private void save(NBTTagCompound compound, String project, CommandSender sender) throws IOException{
 		YamlConfiguration file = new YamlConfiguration();
 		Reader inReader = new InputStreamReader(FurnitureLib.getInstance().getResource("default.dModel"));
 		file.addDefaults(YamlConfiguration.loadConfiguration(inReader));
@@ -344,11 +350,16 @@ public class downloadCommand extends iCommand{
 		}
 		file.save(new File("plugins/"+FurnitureLib.getInstance().getName()+"/models/" + project + ".dModel"));
 		Bukkit.getScheduler().runTask(FurnitureLib.getInstance(), () ->{
-			ModelFileLoader.loadModelFile(new File("plugins/"+FurnitureLib.getInstance().getName()+"/models/" + project + ".dModel"));
+			Project projObj = ModelFileLoader.loadModelFile(new File("plugins/"+FurnitureLib.getInstance().getName()+"/models/" + project + ".dModel"));
+			if(Objects.nonNull(projObj) && projObj.haveModelSchematic()) {
+				if(!projObj.getModelschematic().isDestroyAble()) {
+					sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("command.download.noHitbox"));
+				}
+			}
 		});
 	}
 	
-	private void convert(NBTTagCompound compound, String project) throws IOException{
+	private void convert(NBTTagCompound compound, String project, CommandSender sender) throws IOException{
 		YamlConfiguration file = new YamlConfiguration();
 		Reader inReader = new InputStreamReader(FurnitureLib.getInstance().getResource("default.dModel"));
 		file.addDefaults(YamlConfiguration.loadConfiguration(inReader));
@@ -359,13 +370,13 @@ public class downloadCommand extends iCommand{
 				+ "                                      #\n"
 				+ "------------------------------------  #\n");
 		file.options().copyHeader(true);
-		String header = project.replace(".", "");
+		String header = project.replace(".", "").replace(":", "");
 		NBTTagCompound crafting = compound.getCompound("crafting");
 		NBTTagCompound index = crafting.getCompound("index");
 		NBTTagCompound lore = crafting.getCompound("lore");
-		String systemID = project;
+		String systemID = header;
 		if(compound.hasKey("systemID")) systemID = compound.getString("systemID");
-		if(!systemID.equalsIgnoreCase(project)) systemID = project;
+		if(!systemID.equalsIgnoreCase(header)) systemID = header;
 		file.set(header + ".displayName", compound.getString("name"));
 		file.set(header + ".system-ID", systemID);
 		
@@ -390,7 +401,7 @@ public class downloadCommand extends iCommand{
 		file.set(header + ".crafting.recipe", crafting.getString("recipe"));
 		for(Object s : index.c()){
 			Material mat = MaterialConverter.getMaterialFromOld(index.getString((String) s));
-			file.set(project + ".crafting.index." + ((String) s), mat.name());
+			file.set(header + ".crafting.index." + ((String) s), mat.name());
 		}
 		
 		if(compound.hasKey("ArmorStands")){
@@ -414,7 +425,7 @@ public class downloadCommand extends iCommand{
 					metadata.set("Inventory", updatedInventory);
 					byte[] out = NBTCompressedStreamTools.toByte(metadata);
 					String str = Base64.getEncoder().encodeToString(out);
-					file.set(project+".projectData.entities."+ ((String) s), str);
+					file.set(header+".projectData.entities."+ ((String) s), str);
 				} catch (Exception e) {
 					e.printStackTrace();
 				}
@@ -426,7 +437,7 @@ public class downloadCommand extends iCommand{
 			side = PlaceableSide.valueOf(compound.getString("PlaceAbleSide"));
 		}
 		
-		file.set(project+".placeAbleSide", side.toString());
+		file.set(header+".placeAbleSide", side.toString());
 		
 		if(compound.hasKey("Blocks")){
 			NBTTagCompound blocks = compound.getCompound("Blocks");
@@ -444,7 +455,13 @@ public class downloadCommand extends iCommand{
 				}
 			}
 		}
-		file.save(new File("plugins/"+FurnitureLib.getInstance().getName()+"/models/" + project + ".dModel"));
-		ModelFileLoader.loadModelFile(new File("plugins/"+FurnitureLib.getInstance().getName()+"/models/" + project + ".dModel"));
+		String filePath = "plugins/"+FurnitureLib.getInstance().getName()+"/models/" + header + ".dModel";
+		file.save(new File(filePath));
+		Project projObj = ModelFileLoader.loadModelFile(new File(filePath));
+		if(Objects.nonNull(projObj) && projObj.haveModelSchematic()) {
+			if(!projObj.getModelschematic().isDestroyAble()) {
+				sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("command.download.noHitbox"));
+			}
+		}
 	}
 }

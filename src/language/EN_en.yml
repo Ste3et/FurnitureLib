@@ -69,6 +69,9 @@ command:
             - '&e&ndicecraft.de/furniture'
         suggest: '/furniture download [id]'
         wrongUsage: '&cPlease use /furniture download [id]'
+        noHitbox:
+            - '&cThe model ho have downloaded hase no valid hitbox !'
+            - '&cYou can place it but can`t remove it without /furniture remove !'
     give:
         help_name: "&7/furniture &egive &a[systemID] &b(player) &b(amount)"
         help_hover: 
@@ -83,8 +86,41 @@ command:
             - "&7 - &eplugin"
             - "&7 - &etype"
             - "&7 - &eworld"
+            - "&7 - &edistance"
         suggest: "/furniture list"
         wrongUsage: "Please use /furniture list (option)"
+        nothing:
+            - "&7There are no furniture models are found."
+            - "&7With applied filters -> {#FILTERS# &7}"
+        delete:
+            button: " &7[&4✘&7]"
+            hover:
+               - "&7Remove all &c#PROJECT# &7models from"
+               - "&7All worlds that &c&ncan`t be make undo"
+               - "&7And &cremove &7the model from your Server or &cdisable &7it."
+        remove:
+            button: " &7[&cremove&7]"
+            hover:
+               - "&7Remove all &c#PROJECT# &7models from"
+               - "&7All worlds that &c&ncan`t be make undo"
+            filtered_hover:
+               - "&7Remove all &c#PROJECT# &7models from"
+               - "&7These filters: #FILTERS#"
+               - "&7that &c&ncan't be make undo"
+        recipe:
+            button: " &7[&erecipe&7]"
+        give:
+            button: " &7[&2give&7]"
+        main:
+            message: " &8- &7#PROJECT#"
+            debug_hover:
+                - "&7Placed Objects: &e#AMOUNT#"
+                - "&7Project: &e#PROJECT#"
+                - "&7Size: &e#SIZE#"
+                - "&7Entities: &e#ENTITIES#"
+                - "&7Blockcount: &e#BLOCK_COUNT#"
+                - "&7Plugin: &e#PLUGIN#"
+                - "&7Destroyable: &e#DESTROYABLE#"
     manage:
         help_name: "&7/furniture &emanage"
         help_hover:
@@ -121,6 +157,12 @@ command:
             - " - &eall&7: clear the Server"
         suggest: "/furniture remove"
         wrongUsage: "Please use /furniture remove [type]"
+        result:
+            - "&7Remove &2#SIZE# &7furniture models"
+            - "&7With applied filters -> {#FILTERS# &7}"
+        nothing:
+            - "&7There are no furniture models are found."
+            - "&7With applied filters -> {#FILTERS# &7}"
     save:
         help_name: "&7/furniture &esave"
         help_hover: "&7Save all furniture changes manually"

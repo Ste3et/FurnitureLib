@@ -11,7 +11,6 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-
 import java.util.Objects;
 
 public class ProjectLoader extends Furniture {

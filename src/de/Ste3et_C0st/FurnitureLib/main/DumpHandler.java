@@ -12,7 +12,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
 
 import org.bukkit.Bukkit;
+import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import com.google.gson.Gson;
@@ -26,7 +28,23 @@ import net.md_5.bungee.api.chat.ComponentBuilder;
 
 public class DumpHandler {
 
+	private static long latestDump = 0;
+	private final static long time = 1000 * 60;
+	
 	public DumpHandler(CommandSender sender) {
+		if(BlockCommandSender.class.isInstance(sender)) {
+			sender.sendMessage("You can't create dump from command blocks !");
+			return;
+		}
+		if(latestDump > 0) {
+			long dif = System.currentTimeMillis() - latestDump;
+			if(dif < time) {
+				sender.sendMessage("§cYou can't upload the furniture dump yet");
+				sender.sendMessage("§cPlease wait §e" + ((time - dif) / 1000) + " §csecounds.");
+				return;
+			}
+		}
+		
 		JsonObject coreObject = new JsonObject();
 		
 		/*
@@ -99,10 +117,23 @@ public class DumpHandler {
 			}
 		};
 		
+//		List<JsonObject> models = new ArrayList<JsonObject>();
+//		for(Project project : FurnitureManager.getInstance().getProjects()) {
+//			JsonObject modelInformation = new JsonObject();
+//			modelInformation.addProperty("projectName", project.getName());
+//			modelInformation.addProperty("size", "[Length:" + project.getLength() +",Height:" + project.getHeight() +",Width:" +project.getWidth() + "]");
+//			if(Objects.nonNull(project.getModelschematic())) {
+//				modelInformation.addProperty("armorstands", project.getModelschematic().getEntityMap().size());
+//				modelInformation.addProperty("blocks", project.getModelschematic().getBlockMap().size());
+//			}
+//			models.add(modelInformation);
+// 		}
+		
 		coreObject.add("server", spigotObject);
 		coreObject.add("furnitureLib", packetInfos);
 		coreObject.add("packets", packetInformations);
 		coreObject.add("plugins", new Gson().toJsonTree(pluginList));
+		//coreObject.add("models", new Gson().toJsonTree(models));
 		
 		this.sendToHost(coreObject, sender);
 	}
@@ -127,13 +158,18 @@ public class DumpHandler {
 					 response.append(responseLine.trim());
 				}
 				if(Objects.nonNull(response)) {
+					latestDump = System.currentTimeMillis();
 					if(response.toString().equalsIgnoreCase("#insertException#")) {
 						sender.sendMessage("§cThe dump can't be handeld");
 					}else {
 						sender.sendMessage("§7FurnitureLib dump file upload §2§lSuccess");
-						ComponentBuilder builder = new ComponentBuilder("§7You can find it here: ");
-						builder.append("§ehere").event(new ClickEvent(Action.OPEN_URL, "https://dicecraft.de/furniture/dump.php?id=" + response.toString().replace("#SERIAL:", "")));
-						sender.spigot().sendMessage(builder.create());
+						if(Player.class.isInstance(sender)) {
+							ComponentBuilder builder = new ComponentBuilder("§7You can find it here: ");
+							builder.append("§ehere").event(new ClickEvent(Action.OPEN_URL, response.toString().replace("#URL:", "")));
+							sender.spigot().sendMessage(builder.create());
+						}else {
+							sender.sendMessage("§7You can find it here: §e" + response.toString().replace("#URL:", ""));
+						}
 					}
 				}
 			}

@@ -21,16 +21,18 @@ public class ModelFileLoader {
         }
     }
 
-    public static void loadModelFile(File file) {
+    public static Project loadModelFile(File file) {
         try (InputStream stream = new FileInputStream(file)) {
             String name = file.getName().replace(".dModel", "").replace(".yml", "");
             FurnitureLib.debug("ModelFileLoader: Start loading -> " + name);
             Project pro = new Project(name, FurnitureLib.getInstance(), stream, PlaceableSide.TOP, ProjectLoader.class);
             pro.applyFunction();
             pro.setEditorProject(true);
+            return pro;
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return null;
     }
 
 

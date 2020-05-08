@@ -11,6 +11,8 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.util.Vector;
@@ -20,6 +22,7 @@ import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
 import de.Ste3et_C0st.FurnitureLib.main.Type.PlaceableSide;
+import de.Ste3et_C0st.FurnitureLib.main.entity.fArmorStand;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
 
 public abstract class Modelschematic{
@@ -178,5 +181,13 @@ public abstract class Modelschematic{
         }
 
         return returnVector;
+    }
+    
+    public boolean isDestroyAble() {
+    	AtomicBoolean returnBoolean = new AtomicBoolean(getBlockMap().isEmpty() ? false : true);
+    	if(false == returnBoolean.get()) {
+    		returnBoolean.set(getEntityMap().values().stream().filter(fArmorStand.class::isInstance).filter(entry -> fArmorStand.class.cast(entry).isMarker()).findFirst().isPresent());
+    	}
+    	return returnBoolean.get();
     }
 }

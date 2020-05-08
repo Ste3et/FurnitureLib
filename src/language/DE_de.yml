@@ -87,6 +87,38 @@ command:
             - "&7 - &eworld"
         suggest: "/furniture list"
         wrongUsage: "Please use /furniture list (option)"
+        nothing:
+            - "&7Es wurden keine Furniture Modelle gefunden !"
+            - "&7Mit den Filtern -> {#FILTERS# &7}"
+        delete:
+            button: " &7[&4✘&7]"
+            hover:
+               - "&7Entfernt alle &c#PROJECT# &7Modelle aus"
+               - "&7allen Welten dieß kann nicht rückgängig gemacht werden."
+               - "&7Und &centfernt &7die model Datei !"
+        remove:
+            button: " &7[&cremove&7]"
+            hover:
+               - "&7Entfernt alle &c#PROJECT# &7Modelle aus"
+               - "&7allen Welten dieß kann nicht rückgängig gemacht werden."
+            filtered_hover:
+               - "&7Entfernt alle &c#PROJECT# &7Modelle von"
+               - "&7Diesen Filtern: #FILTERS#"
+               - "&7das &ckann nicht rückgängig gemacht werden."
+        recipe:
+            button: " &7[&erecipe&7]"
+        give:
+            button: " &7[&2give&7]"
+        main:
+            message: " &8- &7#PROJECT#"
+            debug_hover:
+                - "&7Platziert: &e#AMOUNT#"
+                - "&7Modell: &e#PROJECT#"
+                - "&7Abmessungen: &e#SIZE#"
+                - "&7Entities: &e#ENTITIES#"
+                - "&7Block anzhal: &e#BLOCK_COUNT#"
+                - "&7Plugin: &e#PLUGIN#"
+                - "&7Zerstörbar: &e#DESTROYABLE#"
     manage:
         help_name: "&7/furniture &emanage"
         help_hover:
@@ -122,6 +154,12 @@ command:
             - " - &eall&7: clear the Server"
         suggest: "/furniture remove"
         wrongUsage: "Please use /furniture remove [type]"
+        result:
+            - "&2#SIZE# &7Furniture Modelle wurden entfernt."
+            - "&7Mit den Filtern -> {#FILTERS# &7}"
+        nothing:
+            - "&7Es wurden keine Furniture Modelle gefunden !"
+            - "&7Mit den Filtern -> {#FILTERS# &7}"
     save:
         help_name: "&7/furniture &esave"
         help_hover: "&7Speichert alle Informationen manuell"

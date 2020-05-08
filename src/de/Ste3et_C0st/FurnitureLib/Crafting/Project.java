@@ -19,8 +19,6 @@ import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.permissions.Permission;
-import org.bukkit.permissions.PermissionDefault;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
 
@@ -159,6 +157,10 @@ public class Project {
 
     public boolean isSilent() {
         return this.silent;
+    }
+    
+    public boolean haveModelSchematic() {
+    	return Objects.nonNull(modelschematic);
     }
 
     public void setSilent(boolean b) {
@@ -338,4 +340,8 @@ public class Project {
         }
         return this;
     }
+
+	public boolean isDestroyable() {
+		return this.haveModelSchematic() ? this.getModelschematic().isDestroyAble() : true;
+	}
 }

@@ -1,7 +1,11 @@
 package de.Ste3et_C0st.FurnitureLib.Database;
 
+import com.comphenix.protocol.wrappers.nbt.NbtCompound;
+import com.comphenix.protocol.wrappers.nbt.NbtFactory;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+
+import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.ExecuteTimer;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.callbacks.CallbackObjectIDs;
 import de.Ste3et_C0st.FurnitureLib.main.ChunkData;
@@ -10,8 +14,15 @@ import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.DataBaseType;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
+import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
+import de.Ste3et_C0st.FurnitureLib.main.entity.fInventory;
+
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
+import org.bukkit.inventory.ItemStack;
+
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -154,6 +165,26 @@ public abstract class Database {
         	idList.addAll(loadQuery(action, bukkitWorld, "SELECT ObjID,Data FROM " + TABLE_NAME + " WHERE world='"+ worldName +"' OR world='" + worldUUID.toString() + "'"));
         	double difference = timer.difference();
             double size = idList.size();
+            
+//            for(Project project : FurnitureManager.getInstance().getProjects()) {
+//            	if(project.haveModelSchematic()) {
+//            		for(ObjectID object : idList) {
+//            			for(fEntity entity : object.getPacketList()){
+//            				fInventory inv = entity.getInventory();
+//            				Location location = entity.getLocation();
+//            				for(ItemStack stack : inv.getIS()) {
+//            					if(Objects.nonNull(stack)) {
+//            						if(stack.hasItemMeta() && Material.AIR != stack.getType()) {
+//            							NbtCompound tag = (NbtCompound) NbtFactory.fromItemTag(stack);
+//            							System.out.println(tag.toString());
+//            							System.out.println("/tppos " + location.getBlockX() + " " + location.getBlockY() + " " + location.getBlockZ());
+//            						}
+//            					}
+//            				}
+//            			}
+//            		}
+//            	}
+//            }
             
             plugin.getLogger().info("FurnitureLib load models from world -> " + worldName);
             plugin.getLogger().info("Models: " + idList.size() + " with " + atomic.get() +" entities");
