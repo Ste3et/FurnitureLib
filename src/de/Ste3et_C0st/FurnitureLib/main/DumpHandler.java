@@ -83,7 +83,7 @@ public class DumpHandler {
 		packetInfos.addProperty("limitConfig", FurnitureLib.getInstance().getLimitManager().getType().name());
 		packetInfos.addProperty("regionMemberAccess", FurnitureLib.getInstance().haveRegionMemberAccess());
 		packetInfos.addProperty("eventType", FurnitureLib.getInstance().getDefaultEventType().name());
-		packetInfos.addProperty("language", FurnitureLib.getInstance().getDefaultPublicType().name());
+		packetInfos.addProperty("publicType", FurnitureLib.getInstance().getDefaultPublicType().name());
 		packetInfos.addProperty("databaseType", FurnitureLib.getInstance().getSQLManager().getDatabase().getType().name());
 		packetInfos.addProperty("protectionLib-hook", FurnitureLib.getInstance().getPermManager().useProtectionLib());
 		

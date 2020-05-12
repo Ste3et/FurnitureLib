@@ -106,7 +106,7 @@ public class LimitationManager {
                 return false;
             }
         } else if (LimitationType.WORLD == this.type) {
-            int maxWorld = limitOBJ.total ? limitOBJ.totalAmount : pro.getAmountWorld(obj.getWorld());
+            int maxWorld = (Objects.nonNull(limitOBJ) && limitOBJ.total) ? limitOBJ.totalAmount : pro.getAmountWorld(obj.getWorld());
             int world = this.global ? FurnitureManager.getInstance().getInWorld(obj.getWorld()).size() : returnProjectWorld(obj.getWorld(), pro);
             FurnitureLib.debug("LimitationManager -> {World} " + world + "/" + maxWorld);
             if (maxWorld < 0) return true;
