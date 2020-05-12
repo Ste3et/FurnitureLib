@@ -16,7 +16,6 @@ permissions:
     children:
       furniture.command.help: true
       furniture.command.recipe: true
-      furniture.crafting.*: true
       furniture.craft.*: true
       furniture.place.*: true
       furniture.sit.*: true

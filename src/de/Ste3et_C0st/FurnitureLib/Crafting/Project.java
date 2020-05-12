@@ -38,7 +38,7 @@ public class Project {
     private Integer chunkLimit = -1;
     private config limitationConfig;
     private FileConfiguration limitationFile;
-    private HashMap<World, Integer> limitationWorld = new HashMap<>();
+    private HashMap<World, Integer> limitationWorld = new HashMap<World, Integer>();
     private List<JsonObject> functionList;
     private CenterType type = CenterType.RIGHT;
     private boolean EditorProject = false, silent = false;

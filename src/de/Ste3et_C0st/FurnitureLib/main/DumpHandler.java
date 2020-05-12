@@ -79,7 +79,8 @@ public class DumpHandler {
 		packetInfos.addProperty("purgeTime", FurnitureLib.getInstance().getPurgeTime());
 		packetInfos.addProperty("autoPure", FurnitureLib.getInstance().isAutoPurge());
 		packetInfos.addProperty("useGamemode", FurnitureLib.getInstance().useGamemode());
-		packetInfos.addProperty("language", FurnitureLib.getInstance().getConfig().getString("config.Language"));
+		packetInfos.addProperty("language", FurnitureLib.getInstance().getLangManager().getLanguage());
+		packetInfos.addProperty("limitConfig", FurnitureLib.getInstance().getLimitManager().getType().name());
 		packetInfos.addProperty("regionMemberAccess", FurnitureLib.getInstance().haveRegionMemberAccess());
 		packetInfos.addProperty("eventType", FurnitureLib.getInstance().getDefaultEventType().name());
 		packetInfos.addProperty("language", FurnitureLib.getInstance().getDefaultPublicType().name());

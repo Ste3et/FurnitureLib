@@ -239,4 +239,8 @@ public class LanguageManager {
             e.printStackTrace();
         }
     }
+    
+    public String getLanguage() {
+    	return this.lang;
+    }
 }

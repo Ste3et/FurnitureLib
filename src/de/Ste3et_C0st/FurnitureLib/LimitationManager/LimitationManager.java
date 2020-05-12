@@ -18,7 +18,7 @@ import java.util.Objects;
 public class LimitationManager {
 
     public List<LimitationObject> objectList = new ArrayList<LimitationObject>();
-    public LimitationType type;
+    public LimitationType type = null;
     FurnitureLib lib;
     private boolean global = false;
 
@@ -67,6 +67,10 @@ public class LimitationManager {
             if (limitOBJ.total && limitOBJ.totalAmount == -1) return true;
         }
 
+        if(Objects.isNull(type) || Objects.isNull(pro)) {
+        	return true;
+        }
+        
         if (LimitationType.PLAYER == this.type) {
             int player = returnIntProject(p, pro);
             int playerTotal = returnIntProjectTotal(p);
@@ -191,5 +195,9 @@ public class LimitationManager {
             }
         }
         return null;
+    }
+    
+    public LimitationType getType() {
+    	return this.type;
     }
 }
