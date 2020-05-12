@@ -9,7 +9,7 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockFromToEvent;
 import de.Ste3et_C0st.FurnitureLib.Events.PaperEvents;
-import de.Ste3et_C0st.FurnitureLib.Events.PhysikEvent;
+import de.Ste3et_C0st.FurnitureLib.Events.physicsEvent;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -29,12 +29,12 @@ public class BlockManager implements Listener {
         	try {
         		Class<?> clazz = Class.forName("com.destroystokyo.paper.event.block.BlockDestroyEvent");
         		if(Objects.isNull(clazz)) {
-        			listener.add(new PhysikEvent());
+        			listener.add(new physicsEvent());
         		}else {
         			listener.add(new PaperEvents());
         		}
         	}catch (ClassNotFoundException e) {
-        		listener.add(new PhysikEvent());
+        		listener.add(new physicsEvent());
 			}catch (Exception ex) {
 				ex.printStackTrace();
 			}

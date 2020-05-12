@@ -59,6 +59,7 @@ public class LimitationManager {
         if (p.isOp()) return true;
         if (FurnitureLib.getInstance().getPermission().hasPerm(p, "furniture.admin")) return true;
         if (FurnitureLib.getInstance().getPermission().hasPerm(p, "furniture.bypass.limit")) return true;
+        if(Objects.isNull(obj.getWorld())) return false;
         Project pro = obj.getProjectOBJ();
         LimitationObject limitOBJ = getLimitOBJ(p, pro);
 
@@ -66,7 +67,7 @@ public class LimitationManager {
             if (limitOBJ.total && limitOBJ.totalAmount == -1) return true;
         }
 
-        if (this.type.equals(LimitationType.PLAYER)) {
+        if (LimitationType.PLAYER == this.type) {
             int player = returnIntProject(p, pro);
             int playerTotal = returnIntProjectTotal(p);
             int limitGlobal = this.lib.getLimitGlobal();
@@ -100,7 +101,7 @@ public class LimitationManager {
                 p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.LimitReachedMaximum"));
                 return false;
             }
-        } else if (this.type.equals(LimitationType.WORLD)) {
+        } else if (LimitationType.WORLD == this.type) {
             int maxWorld = limitOBJ.total ? limitOBJ.totalAmount : pro.getAmountWorld(obj.getWorld());
             int world = this.global ? FurnitureManager.getInstance().getInWorld(obj.getWorld()).size() : returnProjectWorld(obj.getWorld(), pro);
             FurnitureLib.debug("LimitationManager -> {World} " + world + "/" + maxWorld);
@@ -114,7 +115,7 @@ public class LimitationManager {
                 p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.LimitReachedWorld"));
                 return false;
             }
-        } else if (this.type.equals(LimitationType.CHUNK)) {
+        } else if (LimitationType.CHUNK == this.type) {
             int maxChunk = (Objects.nonNull(limitOBJ) && limitOBJ.total) ? limitOBJ.totalAmount : pro.getAmountChunk();
             int chunk = this.global ? FurnitureManager.getInstance().getInChunk(obj.getChunk()).size() : returnIntProjectChunk(obj.getChunk(), pro);
             FurnitureLib.debug("LimitationManager -> {Chunk} " + chunk + "/" + maxChunk);
@@ -131,61 +132,9 @@ public class LimitationManager {
         }
         return true;
     }
-//	
-//	public void sendAnnouncer(Player p, ObjectID obj){
-//		if(p.isOp()) return;
-//		if(FurnitureLib.getInstance().getPermission().hasPerm(p,"furniture.admin")) return;
-//		if(FurnitureLib.getInstance().getPermission().hasPerm(p,"furniture.bypass.limit")) return;
-//		
-//		Project pro = obj.getProjectOBJ();
-//		LimitationObject limitOBJ = getLimitOBJ(p, pro);
-//		
-//		int world = returnProjectWorld(obj.getWorld(), pro);
-//		int chunk = returnIntProjectChunk(obj.getChunk(), pro);
-//		int player = returnIntProject(p, pro);
-//		int playerTotal = returnIntProjectTotal(p);
-//		
-//		int maxWorld = pro.getAmountWorld(obj.getWorld());
-//		int maxChunk = pro.getAmountChunk();
-//		int maxPlayer = -1;
-//		
-//		if(limitOBJ!=null) maxPlayer = limitOBJ.getAmountFromType(pro.getName());
-//		
-//		if(world>=maxWorld){
-//			if(maxWorld!=-1){p.sendMessage(lib.getLangManager().getString("LimitReachedWorld"));return;}
-//		}
-//		
-//		if(chunk>=maxChunk){
-//			if(maxChunk!=-1){p.sendMessage(lib.getLangManager().getString("LimitReachedChunk"));return;}
-//		}
-//		
-//		if(maxPlayer != -1){
-//			if(player < maxPlayer){
-//				if(limitOBJ!=null){
-//					if(limitOBJ.total){
-//						if(limitOBJ.totalAmount == -1) return;
-//						if(playerTotal < limitOBJ.totalAmount){
-//							String s = lib.getLangManager().getString("LimitAnnouncerMaximum");
-//							s = s.replace("#TYPE#", pro.getName()).replace("#CURRENT#", player+1+"").replace("#MAX#", maxPlayer+"").replace("#AMOUNT#", (limitOBJ.totalAmount - (playerTotal + 1)) + "");
-//							p.sendMessage(s);
-//							return;
-//						}else{
-//							p.sendMessage(lib.getLangManager().getString("LimitReachedMaximum"));
-//							return;
-//						}
-//					}
-//				}
-//				String s = lib.getLangManager().getString("LimitAnnouncer");
-//				s = s.replace("#TYPE#", pro.getName()).replace("#CURRENT#", player+1+"").replace("#MAX#", maxPlayer+"");
-//				p.sendMessage(s);
-//				return;
-//			}
-//			p.sendMessage(lib.getLangManager().getString("LimitReached"));
-//		}
-//	}
 
     public void loadDefault() {
-        if (this.type.equals(LimitationType.PLAYER)) {
+        if (LimitationType.PLAYER == this.type) {
             config c = new config(lib);
             FileConfiguration file = c.getConfig(this.type.name().toLowerCase(), "/limitation/");
             LimitationObject defaultSection = new LimitationObject(type, "default");
@@ -206,7 +155,7 @@ public class LimitationManager {
     }
 
     public void loadDefault(String project) {
-        if (this.type.equals(LimitationType.PLAYER)) {
+        if (LimitationType.PLAYER == this.type) {
             objectList.forEach(obj -> {
                 obj.addDefault(project);
                 obj.loadProjects(project);
@@ -216,7 +165,7 @@ public class LimitationManager {
 
     public LimitationObject getLimitOBJ(Player p, Project project) {
         LimitationObject lobj = null;
-        if (this.type.equals(LimitationType.PLAYER)) {
+        if (LimitationType.PLAYER == this.type) {
             int i = -1;
             for (LimitationObject obj : this.objectList) {
                 if (obj.def) {
