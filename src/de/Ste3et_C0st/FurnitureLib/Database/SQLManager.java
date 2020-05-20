@@ -29,7 +29,8 @@ public class SQLManager {
     FurnitureLib plugin;
     BukkitTask sqlSaveInterval;
     private Database database;
-
+    private static int versionInt = FurnitureLib.getVersionInt();
+    
     public SQLManager(FurnitureLib plugin) {
         this.plugin = plugin;
         initialize();
@@ -120,10 +121,18 @@ public class SQLManager {
                         l++;
                         plugin.getFurnitureManager().deleteObjectID(obj);
                 	}else if(SQLAction.UPDATE == sqlAction) {
-                		saveList.add(obj);
+                		if(versionInt > 11) {
+                			saveList.add(obj);
+                		}else {
+                			save(obj);
+                		}
                 		j++;
                 	}else if(SQLAction.SAVE == sqlAction){
-                		saveList.add(obj);
+                		if(versionInt > 11) {
+                			saveList.add(obj);
+                		}else {
+                			save(obj);
+                		}
                 		i++;
                 	}else {
                 		continue;
@@ -132,13 +141,15 @@ public class SQLManager {
                 }
             }
             
-            Collection<List<ObjectID>> collection = splitListBySize(saveList, stepSize);
-            if(Objects.nonNull(collection)) {
-            	collection.stream().filter(Objects::nonNull).forEach(list -> {
-                	SQLStatement statement = new SQLStatement();
-                	statement.add(list);
-                	save(statement.getStatement());
-                });
+            if(!saveList.isEmpty()) {
+            	Collection<List<ObjectID>> collection = splitListBySize(saveList, stepSize);
+                if(Objects.nonNull(collection)) {
+                	collection.stream().filter(Objects::nonNull).forEach(list -> {
+                    	SQLStatement statement = new SQLStatement();
+                    	statement.add(list);
+                    	save(statement.getStatement());
+                    });
+                }
             }
             
             plugin.getLogger().info(i + " furniture has been saved to the database.");

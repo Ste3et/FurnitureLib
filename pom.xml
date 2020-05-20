@@ -36,21 +36,30 @@
 			</plugin>
 
 			<plugin>
-				<artifactId>maven-assembly-plugin</artifactId>
-				<configuration>
-					<archive>
-						<manifest>
-							<mainClass>
-								de.Ste3et_C0st.FurnitureLib.main.FurnitureLib
-							</mainClass>
-						</manifest>
-					</archive>
-					<descriptorRefs>
-						<descriptorRef>jar-with-dependencies</descriptorRef>
-					</descriptorRefs>
-					<appendAssemblyId>false</appendAssemblyId>
-				</configuration>
-			</plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-shade-plugin</artifactId>
+                <version>3.2.0</version>
+                <configuration>
+                    <relocations>
+                    	<relocation>
+                    		<pattern>org.slf4j</pattern>
+                    		<shadedPattern>de.Ste3et_C0st.FurnitureLib.Database.org.slf4j</shadedPattern>
+                    	</relocation>
+                    	<relocation>
+                    		<pattern>com.zaxxer.hikari</pattern>
+                    		<shadedPattern>de.Ste3et_C0st.FurnitureLib.Database.com.zaxxer.hikari</shadedPattern>
+                    	</relocation>
+                    </relocations>
+                </configuration>
+                <executions>
+                    <execution>
+                        <phase>package</phase>
+                        <goals>
+                            <goal>shade</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
 		</plugins>
 	</build>
 
@@ -100,14 +109,16 @@
 
 		<dependency>
 			<groupId>org.slf4j</groupId>
-			<artifactId>slf4j-jdk14</artifactId>
-			<version>1.7.10</version>
+            <artifactId>slf4j-jdk14</artifactId>
+            <version>1.7.25</version>
+            <scope>runtime</scope>
 		</dependency>
 
 		<dependency>
 			<groupId>com.zaxxer</groupId>
 			<artifactId>HikariCP</artifactId>
 			<version>3.4.5</version>
+			<scope>compile</scope>
 		</dependency>
 
 		<dependency>

@@ -37,7 +37,7 @@ public class SQLStatement {
 			int x = object.getStartLocation().getBlockX() >> 4;
 	        int z = object.getStartLocation().getBlockZ() >> 4;
 			StringBuilder singleStatement = new StringBuilder(
-					"(" + "'" + object.getID() + "'," + "'" + binary + "'," + "'" + object.getWorldName() + "'," +  + x + "," + + z + "," + "'" + object.getUUID().toString() + "')"
+					"(" + "'" + object.getID() + "'," + "'" + binary + "'," + "'" + object.getWorldName() + "'," + x + "," + z + "," + "'" + object.getUUID().toString() + "')"
 			);
 			if (!iterator.hasNext()) {
 				singleStatement.append(";");
@@ -48,6 +48,7 @@ public class SQLStatement {
 			counter++;
 			object.setSQLAction(SQLAction.NOTHING);
 		}
+		System.out.println(toString());
 	}
 	
 	public int getCounter() {
