@@ -5,19 +5,23 @@ import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
+
+import net.md_5.bungee.api.ChatColor;
+import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.chat.ComponentBuilder.FormatRetention;
 import net.md_5.bungee.api.chat.HoverEvent;
+import net.md_5.bungee.api.chat.TextComponent;
 
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Location;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import com.comphenix.protocol.ProtocolLib;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -109,7 +113,7 @@ public class listCommand extends iCommand {
 			}
 		}
 		
-		List<ComponentBuilder> componentList = new ArrayList<ComponentBuilder>();
+		List<BaseComponent[]> componentList = new ArrayList<BaseComponent[]>();
 		double maxPages = 0;
 		if (!filterTypes.isEmpty()) {
 			HashMap<String, AtomicInteger> projectCounter = new HashMap<String, AtomicInteger>();
@@ -126,7 +130,7 @@ public class listCommand extends iCommand {
 			});
 			if (items.get()) {
 				String filters = filterTypes.substring(0, filterTypes.length() - 1);
-				componentList.add(new ComponentBuilder("§7FilterTypes: [" + filters + "§7]"));
+				componentList.add(new ComponentBuilder("§7FilterTypes: [" + filters + "§7]").create());
 				projectCounter.entrySet().stream()
 						.sorted((k1, k2) -> Integer.compare(k1.getValue().get(), k2.getValue().get()))
 						.filter(entry -> entry.getValue().get() > 0)
@@ -147,7 +151,7 @@ public class listCommand extends iCommand {
 												"/furniture remove " + ChatColor.stripColor(filters.replace("|", " "))
 														+ " project:" + name));
 							}
-							componentList.add(builder);
+							componentList.add(builder.create());
 						});
 				double count = projectCounter.values().stream().filter(entry -> entry.get() > 0).count();
 				maxPages = Math.ceil(count / ((double) itemsEachSide));
@@ -160,7 +164,7 @@ public class listCommand extends iCommand {
 					.skip(itemsEachSide * side.get())
 					.limit(itemsEachSide)
 					.forEach(entry -> {
-						ComponentBuilder builder = new ComponentBuilder(getLHandler().getString("command.list.main.message", new StringTranslator("#PROJECT#", ChatColor.stripColor(entry.getDisplayName()))));
+						TextComponent builder = new TextComponent(getLHandler().getString("command.list.main.message", new StringTranslator("#PROJECT#", ChatColor.stripColor(entry.getDisplayName()))));
 						
 						if (sender.hasPermission("furniture.command.debug")) {
 							ComponentBuilder devInfos = new ComponentBuilder(
@@ -173,39 +177,41 @@ public class listCommand extends iCommand {
 											new StringTranslator("#PLUGIN#", entry.getPlugin().getName()),
 											new StringTranslator("#DESTROYABLE#", entry.isDestroyable() + "")
 									));
-							builder.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, devInfos.create()));
+							builder.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, devInfos.create()));
 						}
 						
 						if (sender.hasPermission("furniture.command.give")) {
-							ComponentBuilder give = new ComponentBuilder(getLHandler().getString("command.list.give.button"));
-							give.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND,"/furniture give " + entry.getName()));
-							builder.append(give.create(), FormatRetention.FORMATTING);
+							TextComponent give = new TextComponent(getLHandler().getString("command.list.give.button"));
+							give.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,"/furniture give " + entry.getName()));
+							give.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("").create()));
+							builder.addExtra(give);
 						}
 						
 						if (sender.hasPermission("furniture.command.recipe") && sender.hasPermission("furniture.command.recipe." + entry.getName().toLowerCase())) {
-							ComponentBuilder recipe = new ComponentBuilder(getLHandler().getString("command.list.recipe.button"));
-							recipe.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
+							TextComponent recipe = new TextComponent(getLHandler().getString("command.list.recipe.button"));
+							recipe.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
 											"/furniture recipe " + entry.getName()));
-							builder.append(recipe.create(), FormatRetention.FORMATTING);
+							recipe.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder("").create()));
+							builder.addExtra(recipe);
 						}
 						
 						if (sender.hasPermission("furniture.command.remove.project")) {
-							ComponentBuilder remove = new ComponentBuilder(getLHandler().getString("command.list.remove.button"));
-							remove.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-											new ComponentBuilder(getLHandler().getString("command.list.remove.hover", new StringTranslator("#PROJECT#", entry.getName()))).create()))
-									.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
+							TextComponent remove = new TextComponent(getLHandler().getString("command.list.remove.button"));
+							remove.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
+											new ComponentBuilder(getLHandler().getString("command.list.remove.hover", new StringTranslator("#PROJECT#", entry.getName()))).create()));
+							remove.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
 											"/furniture remove project:" + entry.getName()));
-							builder.append(remove.create());
+							builder.addExtra(remove);
 						}
 						if (sender.hasPermission("furniture.command.delete.project")) {
-							ComponentBuilder delete = new ComponentBuilder(getLHandler().getString("command.list.delete.button"));
-							delete.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-											new ComponentBuilder(getLHandler().getString("command.list.delete.hover", new StringTranslator("#PROJECT#", entry.getName()))).create()))
-									.event(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
+							TextComponent delete = new TextComponent(getLHandler().getString("command.list.delete.button"));
+							delete.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
+											new ComponentBuilder(getLHandler().getString("command.list.delete.hover", new StringTranslator("#PROJECT#", entry.getName()))).create()));
+							delete.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
 											"/furniture delete " + entry.getName()));
-							builder.append(delete.create());
+							builder.addExtra(delete);
 						}
-						componentList.add(builder);
+						componentList.add(new BaseComponent[] {builder});
 					});
 			double counts = FurnitureManager.getInstance().getProjects().size();
 			double items = itemsEachSide;

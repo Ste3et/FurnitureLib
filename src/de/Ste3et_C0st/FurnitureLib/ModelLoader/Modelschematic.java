@@ -49,6 +49,7 @@ public abstract class Modelschematic{
 //			int height = (int) box.getHeight() + 1;
 //			int length = Math.abs(box.getMax().getBlockZ() - box.getMin().getBlockZ()) + 1;
 //			setSize(length, height, width, CenterType.RIGHT);
+			
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -131,6 +132,8 @@ public abstract class Modelschematic{
 				fEntity entity = readNBTtag(entityData);
 				if(Objects.nonNull(vector) && Objects.nonNull(entity)) {
 					this.entityMap.put(vector, entity);
+					//this.min = vector.getMinPoint(this.min);
+					//this.max = vector.getMinPoint(this.max);
 				}
 			}catch (Exception e) {
 				e.printStackTrace();

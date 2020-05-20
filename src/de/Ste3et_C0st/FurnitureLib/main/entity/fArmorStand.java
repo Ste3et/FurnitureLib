@@ -4,6 +4,7 @@ import com.comphenix.protocol.wrappers.Vector3F;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.Registry;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.BoundingBox;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.Relative;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
@@ -254,4 +255,9 @@ public class fArmorStand extends fEntity{
         double Z = eularAngle.getDouble("Z");
         return new EulerAngle(X, Y, Z);
     }
+
+//	@Override
+//	public BoundingBox getBoundingBox() {
+//		return this.isSmall() ? new BoundingBox(x1, y1, z1) : BoundingBox.;
+//	}
 }

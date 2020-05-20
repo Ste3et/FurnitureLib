@@ -23,7 +23,7 @@ public class BlockManager implements Listener {
     private List<Listener> listener = new ArrayList<Listener>();
     
     public void addBlock(Block block) {
-        if (block == null || block.getType() == null || block.getType().isSolid()) return;
+        if (block == null || block.getType() == null) return;
         locList.add(block.getLocation());
         if (listener.isEmpty()) {
         	try {

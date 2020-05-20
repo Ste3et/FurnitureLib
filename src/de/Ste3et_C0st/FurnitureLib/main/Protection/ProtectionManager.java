@@ -142,11 +142,11 @@ public class ProtectionManager {
         if (getSize() == 0) return false;
         boolean memberOfRegion = canBuild(p, id.getStartLocation());
         boolean ownerOfRegion = isOwner(p, id.getStartLocation());
-
+        
         if (memberOfRegion && !ownerOfRegion) {
 			return p.getUniqueId().equals(id.getUUID());
 		}
-
+        
         if (ownerOfRegion) {
             if (!p.getUniqueId().equals(id.getUUID())) {
                 return true;

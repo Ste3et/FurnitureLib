@@ -94,4 +94,18 @@ public class ModelVector implements Cloneable {
     protected ModelVector clone() throws CloneNotSupportedException {
         return new ModelVector(getX(), getY(), getZ(), getYaw(), getPitch());
     }
+    
+    public Vector getMinPoint(Vector vector) {
+    	double x = Math.min(vector.getX(), this.getX() + .5);
+    	double y = Math.min(vector.getY(), this.getY() + 1.975);
+    	double z = Math.min(vector.getZ(), this.getZ() + .5);
+    	return new Vector(x, y, z);
+    }
+    
+    public Vector getMaxPoint(Vector vector) {
+    	double x = Math.max(vector.getX(), this.getX() + .5);
+    	double y = Math.max(vector.getY(), this.getY() + 1.975);
+    	double z = Math.max(vector.getZ(), this.getZ() + .5);
+    	return new Vector(x, y, z);
+    }
 }

@@ -1,6 +1,7 @@
 package de.Ste3et_C0st.FurnitureLib.Command;
 
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
+import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import org.bukkit.entity.Player;
@@ -89,7 +90,7 @@ public class objectToSide {
         p.spigot().sendMessage(builder.append("§8]").create());
     }
     
-    public objectToSide(List<ComponentBuilder> objList, Player p, Integer currentPage, String command, int objects, int maxPage) {
+    public objectToSide(List<BaseComponent[]> objList, Player p, Integer currentPage, String command, int objects, int maxPage) {
         String a = "";
         String b = "";
         if(maxPage == 0) maxPage = 1;
@@ -112,8 +113,8 @@ public class objectToSide {
 
         p.sendMessage("§7§m+--------------------------------------------+§8[§e" + b + "§8/§a" + a + "§8]");
 
-        for (ComponentBuilder obj : objList) {
-        	p.spigot().sendMessage(((ComponentBuilder) obj).create());
+        for (BaseComponent[] obj : objList) {
+        	p.spigot().sendMessage(obj);
         }
 
         String prevCommand = null;
