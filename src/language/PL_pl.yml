@@ -87,7 +87,7 @@ message:
             - "&7 - &eworld"
         suggest: "/furniture list"
         wrongUsage: "Please use /furniture list (option)"
-                nothing:
+        nothing:
             - "&7There are no furniture models are found."
             - "&7With applied filters -> {#FILTERS# &7}"
         delete:

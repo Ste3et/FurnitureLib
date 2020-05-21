@@ -75,6 +75,24 @@ command:
     help_name: '&7/furniture &egive &a[系统ID] &b(玩家名) &b(数量)'
     help_hover:
     - '&7将&e模型物品&7发送给一名&e玩家'
+    nothing:
+    - "&7There are no furniture models are found."
+    - "&7With applied filters -> {#FILTERS# &7}"
+    delete:
+        button: " &7[&4✘&7]"
+        hover:
+        - "&7Remove all &c#PROJECT# &7models from"
+        - "&7All worlds that &c&ncan`t be make undo"
+        - "&7And &cremove &7the model from your Server or &cdisable &7it."
+    remove:
+        button: " &7[&cremove&7]"
+        hover:
+        - "&7Remove all &c#PROJECT# &7models from"
+        - "&7All worlds that &c&ncan`t be make undo"
+    filtered_hover:
+        - "&7Remove all &c#PROJECT# &7models from"
+        - "&7These filters: #FILTERS#"
+        - "&7that &c&ncan't be make undo"
     suggest: /furniture give [系统ID]
     wrongUsage: '&c请使用 /furniture give [系统ID]'
   list:
@@ -123,6 +141,12 @@ command:
     - ' - &eall&7: 清空服务器所有家具'
     suggest: /furniture remove
     wrongUsage: 请使用 /furniture remove [家具类型]
+    result:
+        - "&7Remove &2#SIZE# &7furniture models"
+        - "&7With applied filters -> {#FILTERS# &7}"
+    nothing:
+        - "&7There are no furniture models are found."
+        - "&7With applied filters -> {#FILTERS# &7}"
   save:
     help_name: '&7/furniture &esave'
     help_hover: '&7保存所有手动更改的家具'
