@@ -4,6 +4,8 @@ import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
+
+import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.List;
@@ -11,11 +13,11 @@ import java.util.Objects;
 
 public class objectToSide {
 
-	public objectToSide(List<ComponentBuilder> objList, Player p, Integer page, String command) {
-		this(objList, p, page, command, 10);
+	public objectToSide(List<ComponentBuilder> objList, CommandSender sender, Integer page, String command) {
+		this(objList, sender, page, command, 10);
 	}
 	
-    public objectToSide(List<ComponentBuilder> objList, Player p, Integer page, String command, int objects) {
+    public objectToSide(List<ComponentBuilder> objList, CommandSender sender, Integer page, String command, int objects) {
         if (page == 0) page = 1;
         int min = page * objects - objects;
         int max = page * objects;
@@ -37,20 +39,20 @@ public class objectToSide {
         }
 
         if (page > maxPage) {
-            p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.SideNotFound"));
-            p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.SideNavigation").replaceAll("#MAX#", maxPage + ""));
+        	sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.SideNotFound"));
+        	sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.SideNavigation").replaceAll("#MAX#", maxPage + ""));
             return;
         }
 
-        p.sendMessage("§7§m+--------------------------------------------+§8[§e" + b + "§8/§a" + a + "§8]");
+        sender.sendMessage("§7§m+--------------------------------------------+§8[§e" + b + "§8/§a" + a + "§8]");
 
         int j = 0;
         for (Object obj : objList) {
             if (j >= min && j < max) {
                 if (obj instanceof String) {
-                    p.sendMessage((String) obj);
+                	sender.sendMessage((String) obj);
                 } else if (obj instanceof ComponentBuilder) {
-                    p.spigot().sendMessage(((ComponentBuilder) obj).create());
+                	sender.spigot().sendMessage(((ComponentBuilder) obj).create());
                 }
             }
             j++;
@@ -87,10 +89,10 @@ public class objectToSide {
         } else {
             builder.reset().append("§7»");
         }
-        p.spigot().sendMessage(builder.append("§8]").create());
+        sender.spigot().sendMessage(builder.append("§8]").create());
     }
     
-    public objectToSide(List<BaseComponent[]> objList, Player p, Integer currentPage, String command, int objects, int maxPage) {
+    public objectToSide(List<BaseComponent[]> objList, CommandSender sender, Integer currentPage, String command, int objects, int maxPage) {
         String a = "";
         String b = "";
         if(maxPage == 0) maxPage = 1;
@@ -106,15 +108,15 @@ public class objectToSide {
         }
 
         if (currentPage > maxPage) {
-            p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.SideNotFound"));
-            p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.SideNavigation").replaceAll("#MAX#", maxPage + ""));
+        	sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.SideNotFound"));
+        	sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.SideNavigation").replaceAll("#MAX#", maxPage + ""));
             return;
         }
 
-        p.sendMessage("§7§m+--------------------------------------------+§8[§e" + b + "§8/§a" + a + "§8]");
+        sender.sendMessage("§7§m+--------------------------------------------+§8[§e" + b + "§8/§a" + a + "§8]");
 
         for (BaseComponent[] obj : objList) {
-        	p.spigot().sendMessage(obj);
+        	sender.spigot().sendMessage(obj);
         }
 
         String prevCommand = null;
@@ -148,7 +150,7 @@ public class objectToSide {
         } else {
             builder.reset().append("§7»");
         }
-        p.spigot().sendMessage(builder.append("§8]").create());
+        sender.spigot().sendMessage(builder.append("§8]").create());
     }
 
 }
