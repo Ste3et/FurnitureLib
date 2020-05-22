@@ -71,6 +71,12 @@ command:
     - '&e下载一个家具模型'
     suggest: /furniture download [id]
     wrongUsage: '&c请使用 /furniture download [id]'
+  dump:
+    help_name: "&7/furniture &edump"
+    help_hover: 
+        - "&7Upload some important informations to help bug finding"
+    suggest: "/furniture dump"
+    wrongUsage: "&cPlease use /furniture dump"
   give:
     help_name: '&7/furniture &egive &a[系统ID] &b(玩家名) &b(数量)'
     help_hover:

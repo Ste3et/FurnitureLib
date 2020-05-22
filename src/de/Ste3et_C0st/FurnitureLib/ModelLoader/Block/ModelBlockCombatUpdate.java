@@ -1,5 +1,6 @@
-package de.Ste3et_C0st.FurnitureLib.ModelLoader;
+package de.Ste3et_C0st.FurnitureLib.ModelLoader.Block;
 
+import de.Ste3et_C0st.FurnitureLib.ModelLoader.ModelVector;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.LocationUtil;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import org.bukkit.Location;
@@ -56,6 +57,7 @@ public class ModelBlockCombatUpdate extends ModelBlock {
         if (this.blockbyte != 0) {
             setBlockByte(block, this.blockbyte);
         }
+        this.applyBlockState(loc);
     }
 
     @Override
@@ -71,6 +73,7 @@ public class ModelBlockCombatUpdate extends ModelBlock {
             float newYaw = originalYaw + yawDirection;
             BlockFace newFace = FurnitureLib.getInstance().getLocationUtil().yawToFace(newYaw);
 
+            this.applyBlockState(loc);
             if (block.getType().name().contains("SIGN")) {
                 LocationUtil util = FurnitureLib.getInstance().getLocationUtil();
                 state.setRawData(util.getFacebyte(util.yawToFace(newYaw - 90)));
@@ -102,6 +105,8 @@ public class ModelBlockCombatUpdate extends ModelBlock {
                 directional.setFacingDirection(newFace);
                 state.setData((MaterialData) directional);
             }
+            
+            
         }
     }
 

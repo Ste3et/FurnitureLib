@@ -11,12 +11,17 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 
+import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.util.Vector;
 
+import de.Ste3et_C0st.FurnitureLib.ModelLoader.Block.ModelBlock;
+import de.Ste3et_C0st.FurnitureLib.ModelLoader.Block.ModelBlockAquaticUpdate;
+import de.Ste3et_C0st.FurnitureLib.ModelLoader.Block.ModelBlockCombatUpdate;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTCompressedStreamTools;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
@@ -93,7 +98,7 @@ public abstract class Modelschematic{
 			FurnitureLib.debug(this.name + " load: " + (aquatic ? ModelBlockAquaticUpdate.CONFIGKEY : ModelBlockCombatUpdate.CONFIGKEY) + " isConfigurationSection = true");
 			config.getConfigurationSection(loadParser).getKeys(false).stream().forEach(key -> {
 				ModelBlock block = aquatic ? new ModelBlockAquaticUpdate(config, loadParser + "." + key) : new ModelBlockCombatUpdate(config, loadParser + "." + key);
-				if(Objects.nonNull(block)) {
+				if(Objects.nonNull(block) && Material.AIR != block.getMaterial()) {
 					this.blockDataMap.put(block.getVector(), block);
 					this.setMax(block.getVector());
 				}
@@ -122,23 +127,35 @@ public abstract class Modelschematic{
 	private void loadEntities(String configString, YamlConfiguration config) {
 		//I know "entitys" is a typo but it can't fix easly here;
 		FurnitureLib.debug(this.name + " load: " + configString + " isConfigurationSection = true");
-		config.getConfigurationSection(configString).getKeys(false).stream().forEach(key -> {
-			try {
-				String md5 = config.getString(configString + "." + key);
-				byte[] by = Base64.getDecoder().decode(md5);
-				ByteArrayInputStream bin = new ByteArrayInputStream(by);
-				NBTTagCompound entityData = NBTCompressedStreamTools.read(bin);
-				ModelVector vector = new ModelVector(entityData.getCompound("Location"));
-				fEntity entity = readNBTtag(entityData);
-				if(Objects.nonNull(vector) && Objects.nonNull(entity)) {
-					this.entityMap.put(vector, entity);
-					//this.min = vector.getMinPoint(this.min);
-					//this.max = vector.getMinPoint(this.max);
+		
+		config.getConfigurationSection(configString).getKeys(false).stream()
+		.map(key -> decodeBase64toByte(config.getString(configString + "." + key, ""), key))
+		.forEach(key -> {
+			if(key.isPresent()) {
+				try(ByteArrayInputStream bin = new ByteArrayInputStream(key.get())) {
+					NBTTagCompound entityData = NBTCompressedStreamTools.read(bin);
+					ModelVector vector = new ModelVector(entityData.getCompound("Location"));
+					fEntity entity = readNBTtag(entityData);
+					if(Objects.nonNull(vector) && Objects.nonNull(entity)) {
+						this.entityMap.put(vector, entity);
+						//this.min = vector.getMinPoint(this.min);
+						//this.max = vector.getMinPoint(this.max);
+					}
+				}catch (Exception e) {
+					e.printStackTrace();
 				}
-			}catch (Exception e) {
-				e.printStackTrace();
 			}
 		});
+	}
+	
+	private Optional<byte[]> decodeBase64toByte(String md5, String key) {
+		try {
+			return Optional.of(Base64.getDecoder().decode(md5));
+		}catch (IllegalArgumentException e) {
+			System.err.println(this.name + " is a corrupted dModel file entity {" + key + "}");
+			System.err.println("FurnitureLib try to skip these entity: " + e.getMessage());
+			return Optional.empty();
+		}
 	}
 
     protected List<Vector> getBlocksInArea(Vector start, Vector end) {

@@ -1,5 +1,6 @@
 package de.Ste3et_C0st.FurnitureLib.ModelLoader;
 
+import de.Ste3et_C0st.FurnitureLib.ModelLoader.Block.ModelBlock;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.BoundingBox;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.LocationUtil;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
@@ -151,7 +152,7 @@ public class ModelHandler extends Modelschematic {
             ModelVector min = rotateVector(new ModelVector(this.min), direction.getOppositeFace());
             ModelVector max = rotateVector(new ModelVector(this.max), direction.getOppositeFace());
             BoundingBox box = BoundingBox.of(min.toVector(), max.toVector());
-            box.shift(startLocation);
+            box.shift(startLocation.clone().add(0,0,0));
             List<Vector> vectorList = getBlocksInArea(box.getMin(), box.getMax());
             World world = startLocation.getWorld();
             vectorList.forEach(vector -> {

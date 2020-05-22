@@ -1,5 +1,8 @@
-package de.Ste3et_C0st.FurnitureLib.ModelLoader;
+package de.Ste3et_C0st.FurnitureLib.ModelLoader.Block;
 
+import de.Ste3et_C0st.FurnitureLib.ModelLoader.ModelVector;
+import de.Ste3et_C0st.FurnitureLib.ModelLoader.Block.state.ModelBlockSkullState;
+import de.Ste3et_C0st.FurnitureLib.ModelLoader.Block.state.ModelBlockState;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.Type;
 import org.bukkit.Bukkit;
@@ -7,6 +10,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.block.BlockState;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Directional;
 import org.bukkit.block.data.type.Slab;
@@ -14,13 +18,18 @@ import org.bukkit.block.data.type.Stairs;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.jetbrains.annotations.NotNull;
 
+import com.comphenix.protocol.wrappers.WrappedGameProfile;
+import com.comphenix.protocol.wrappers.WrappedSignedProperty;
+
 import java.util.Objects;
+import java.util.UUID;
 
 public class ModelBlockAquaticUpdate extends ModelBlock {
 
     public static final String CONFIGKEY = "projectData.blockList";
     private BlockData blockData;
-
+    
+    
     public ModelBlockAquaticUpdate(@NotNull ModelVector vector, @NotNull String str) {
         super(vector);
         this.blockData = Bukkit.createBlockData(str);
@@ -62,6 +71,22 @@ public class ModelBlockAquaticUpdate extends ModelBlock {
                 e.printStackTrace();
             }
             this.vector = vector;
+            
+            if(Objects.nonNull(this.blockData)) {
+            	if(Material.PLAYER_HEAD == this.blockData.getMaterial()) {
+            		if(yamlConfiguration.contains(key + ".gameProfile")) {
+            			String gameProfileName = yamlConfiguration.getString(key + ".gameProfile.name", null);
+        				UUID uuid = UUID.fromString(yamlConfiguration.getString(key + ".gameProfile.uuid"));
+            			WrappedGameProfile wrappedGameProfile = new WrappedGameProfile(uuid, gameProfileName);
+            			if(yamlConfiguration.contains(key + ".gameProfile.textures")) {
+            				String value = yamlConfiguration.getString(key + ".gameProfile.textures.value");
+            				String signature = yamlConfiguration.getString(key + ".gameProfile.signature.value", null);
+            				wrappedGameProfile.getProperties().put("textures", new WrappedSignedProperty("textures", value, signature));
+            			}
+            			this.blockState = new ModelBlockSkullState(wrappedGameProfile);
+            		}
+            	}
+            }
         }
     }
 
@@ -87,6 +112,7 @@ public class ModelBlockAquaticUpdate extends ModelBlock {
     @Override
     public void place(Location loc) {
         loc.getBlock().setBlockData(this.blockData, false);
+        this.applyBlockState(loc);
     }
 
     @Override
@@ -116,6 +142,7 @@ public class ModelBlockAquaticUpdate extends ModelBlock {
              */
             
             loc.getBlock().setBlockData(data, false);
+            this.applyBlockState(loc);
         }
     }
 

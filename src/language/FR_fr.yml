@@ -69,6 +69,12 @@ message:
             - "&7a Model from the &esystem"
         suggest: "/furniture delete systemID"
         wrongUsage: "&cPlease use /furniture delete [systemID]"
+    dump:
+        help_name: "&7/furniture &edump"
+        help_hover: 
+            - "&7Upload some important informations to help bug finding"
+        suggest: "/furniture dump"
+        wrongUsage: "&cPlease use /furniture dump"
     download:
         help_name: '&7/furniture &edownload &a[id]'
         help_hover:

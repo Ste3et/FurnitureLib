@@ -3,7 +3,6 @@ package de.Ste3et_C0st.FurnitureLib.Command;
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.PrintStream;
@@ -14,7 +13,6 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 import java.util.Objects;
-
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
@@ -116,6 +114,8 @@ public class downloadCommand extends iCommand{
 					while ((line = reader.readLine()) != null) {
 						if(line.equalsIgnoreCase("#NOTEXIST") || line.equalsIgnoreCase("Invalid Page")){
 							sender.sendMessage("§cProject Not Found");
+							sender.sendMessage("§7§m+------------------------------------------------+");
+							return;
 						}else{
 							if(!line.isEmpty()) {
 								switch (i) {
@@ -232,6 +232,12 @@ public class downloadCommand extends iCommand{
 						file.set(fileHeader+".ProjectModels.Block." + str + ".Z-Offset", block.getDouble("Z-Offset"));
 						file.set(fileHeader+".ProjectModels.Block." + str + ".Type", block.getString("Type"));
 						file.set(fileHeader+".ProjectModels.Block." + str + ".Data", block.getInt("Data"));
+						if(block.hasKey("gameProfile")) {
+							NBTTagCompound profile = block.getCompound("gameProfile");
+							file.set(fileHeader+".ProjectModels.Block." + str + ".gameProfile.uuid", profile.getString("uuid"));
+							file.set(fileHeader+".ProjectModels.Block." + str + ".gameProfile.textures.value", profile.getString("texture_value"));
+							file.set(fileHeader+".ProjectModels.Block." + str + ".gameProfile.textures.signature", profile.getString("texture_signature"));
+						}
 					}
 				}
 			}
@@ -335,6 +341,12 @@ public class downloadCommand extends iCommand{
 						file.set(header+".projectData.blockList." + str + ".xOffset", block.getDouble("xOffset"));
 						file.set(header+".projectData.blockList." + str + ".yOffset", block.getDouble("yOffset"));
 						file.set(header+".projectData.blockList." + str + ".zOffset", block.getDouble("zOffset"));
+						if(block.hasKey("gameProfile")) {
+							NBTTagCompound profile = block.getCompound("gameProfile");
+							file.set(header+".projectData.blockList." + str + ".gameProfile.uuid", profile.getString("uuid"));
+							file.set(header+".projectData.blockList." + str + ".gameProfile.textures.value", profile.getString("texture_value"));
+							file.set(header+".projectData.blockList." + str + ".gameProfile.textures.signature", profile.getString("texture_signature"));
+						}
 					}
 				}
 			}
@@ -452,6 +464,12 @@ public class downloadCommand extends iCommand{
 					String blockData = "minecraft:" + materialBlock.name().toLowerCase();
 					if(block.hasKey("Rotation")) blockData += "[facing=" + block.getString("Rotation") + "]";
 					file.set(header+".projectData.blockList." + str + ".blockData", blockData);
+					if(block.hasKey("gameProfile")) {
+						NBTTagCompound profile = block.getCompound("gameProfile");
+						file.set(header+".projectData.blockList." + str + ".gameProfile.uuid", profile.getString("uuid"));
+						file.set(header+".projectData.blockList." + str + ".gameProfile.textures.value", profile.getString("texture_value"));
+						file.set(header+".projectData.blockList." + str + ".gameProfile.textures.signature", profile.getString("texture_signature"));
+					}
 				}
 			}
 		}

@@ -78,6 +78,12 @@ command:
             - "&7Give a &emodel Item &7to a &ePlayer"
         suggest: "/furniture give [systemID]"
         wrongUsage: "&cPlease use /furniture give [systemID]"
+    dump:
+        help_name: "&7/furniture &edump"
+        help_hover: 
+            - "&7Upload some important informations to help bug finding"
+        suggest: "/furniture dump"
+        wrongUsage: "&cPlease use /furniture dump"
     list:
         help_name: "&7/furniture &elist (option) (side)"
         help_hover:

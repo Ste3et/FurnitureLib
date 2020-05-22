@@ -1,7 +1,7 @@
 package de.Ste3et_C0st.FurnitureLib.main.Protection;
 
 import de.Ste3et_C0st.FurnitureLib.Events.FurnitureRegionClear;
-import de.Ste3et_C0st.FurnitureLib.ModelLoader.ModelBlockAquaticUpdate;
+import de.Ste3et_C0st.FurnitureLib.ModelLoader.Block.ModelBlockAquaticUpdate;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.EventType;

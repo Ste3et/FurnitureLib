@@ -157,6 +157,7 @@ public class CraftingFile {
             }
             getPlaceAbleSide();
         } catch (Exception e) {
+        	System.err.println(this.header + " is a corrupted model File !");
             e.printStackTrace();
         }
     }
@@ -179,6 +180,7 @@ public class CraftingFile {
             getPlaceAbleSide();
             loadFunction();
         } catch (Exception e) {
+        	System.err.println(this.header + " is a corrupted model File !");
             e.printStackTrace();
         }
     }
@@ -275,7 +277,7 @@ public class CraftingFile {
             e.printStackTrace();
         }
 
-        String name = file.getString(header + (FurnitureLib.isNewVersion() ? ".displayName" : ".name"));
+        String name = file.getString(header + (FurnitureLib.isNewVersion() ? ".displayName" : ".name"), header);
         im.setDisplayName(ChatColor.translateAlternateColorCodes('&', name));
 
         List<String> loreText = new ArrayList<String>();

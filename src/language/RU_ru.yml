@@ -80,6 +80,12 @@ message:
             - '&e&ndicecraft.de/furniture'
         suggest: '/furniture download [id]'
         wrongUsage: '&cPlease use /furniture download [id]'
+    dump:
+        help_name: "&7/furniture &edump"
+        help_hover: 
+            - "&7Upload some important informations to help bug finding"
+        suggest: "/furniture dump"
+        wrongUsage: "&cPlease use /furniture dump"
     give:
         help_name: "&7/furniture &egive &a[systemID] &b(player) &b(amount)"
         help_hover: 
