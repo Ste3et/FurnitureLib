@@ -4,6 +4,7 @@ import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.md_5.bungee.api.chat.TextComponent;
 
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -52,7 +53,11 @@ public class objectToSide {
                 if (obj instanceof String) {
                 	sender.sendMessage((String) obj);
                 } else if (obj instanceof ComponentBuilder) {
-                	sender.spigot().sendMessage(((ComponentBuilder) obj).create());
+                	if(sender instanceof Player) {
+                		sender.spigot().sendMessage(((ComponentBuilder) obj).create());
+                	}else {
+                		sender.sendMessage(TextComponent.toLegacyText(((ComponentBuilder) obj).create()));
+                	}
                 }
             }
             j++;
@@ -89,7 +94,12 @@ public class objectToSide {
         } else {
             builder.reset().append("§7»");
         }
-        sender.spigot().sendMessage(builder.append("§8]").create());
+        
+        if (sender instanceof Player) {
+            sender.spigot().sendMessage(builder.append("§8]").create());
+        } else {
+            sender.sendMessage(TextComponent.toLegacyText(builder.create()));
+        }
     }
     
     public objectToSide(List<BaseComponent[]> objList, CommandSender sender, Integer currentPage, String command, int objects, int maxPage) {
@@ -116,7 +126,12 @@ public class objectToSide {
         sender.sendMessage("§7§m+--------------------------------------------+§8[§e" + b + "§8/§a" + a + "§8]");
 
         for (BaseComponent[] obj : objList) {
-        	sender.spigot().sendMessage(obj);
+        	if (sender instanceof Player) {
+        		sender.spigot().sendMessage(obj);
+        	}else {
+                sender.sendMessage(TextComponent.toLegacyText(obj));
+            }
+        	
         }
 
         String prevCommand = null;
@@ -150,7 +165,12 @@ public class objectToSide {
         } else {
             builder.reset().append("§7»");
         }
-        sender.spigot().sendMessage(builder.append("§8]").create());
+       
+        if (sender instanceof Player) {
+            sender.spigot().sendMessage(builder.append("§8]").create());
+        } else {
+            sender.sendMessage(TextComponent.toLegacyText(builder.create()));
+        }
     }
 
 }

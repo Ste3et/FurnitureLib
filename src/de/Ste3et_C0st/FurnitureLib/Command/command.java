@@ -10,6 +10,7 @@ import net.md_5.bungee.api.chat.ClickEvent;
 import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.HoverEvent.Action;
+import net.md_5.bungee.api.chat.TextComponent;
 
 import org.bukkit.Bukkit;
 import org.bukkit.OfflinePlayer;
@@ -148,32 +149,43 @@ public class command implements CommandExecutor, Listener{
 						return true;
 					}
 				}else {
-					sendHelp((Player) sender);
+					sendHelp(sender);
 			}
 			return true;
 			}
 		return false;
 	}
 	
-	public static void sendHelp(Player p){
-		if(p==null) return;
-		p.spigot().sendMessage(
-				new ComponentBuilder(LanguageManager.getInstance().getString("command.help.header"))
-					.event(new HoverEvent(Action.SHOW_TEXT, 
+	public static void sendHelp(CommandSender sender){
+		if(sender==null) return;
+		
+		BaseComponent[] components = new ComponentBuilder(LanguageManager.getInstance().getString("command.help.header"))
+				.event(new HoverEvent(Action.SHOW_TEXT, 
 						   new ComponentBuilder(LanguageManager.getInstance().getString("command.help.hover",
 								   	new StringTranslator("#VERSION#", FurnitureLib.getInstance().getDescription().getVersion()),
 								   	new StringTranslator("#AUTHOR#", "Ste3et_C0st")))
 						   .create()
 					)
-				).create()
-		);
+				).create();
 		
-		commands.stream().forEach(str -> {
-			if(str.hasCommandPermission(p) && !str.isHide()){
-				p.spigot().sendMessage(jsonText(str.getLanguageID()));
-			}
-		});
-		p.sendMessage(LanguageManager.getInstance().getString("command.help.footer"));
+		
+		if(sender instanceof Player) {
+			sender.spigot().sendMessage(components);
+			commands.stream().forEach(str -> {
+				if(str.hasCommandPermission(sender) && !str.isHide()){
+					sender.spigot().sendMessage(jsonText(str.getLanguageID()));
+				}
+			});
+		}else {
+			sender.sendMessage(TextComponent.toPlainText(components));
+			commands.stream().forEach(str -> {
+				if(str.hasCommandPermission(sender) && !str.isHide()){
+					sender.sendMessage(TextComponent.toPlainText(jsonText(str.getLanguageID())));
+				}
+			});
+		}
+		
+		sender.sendMessage(LanguageManager.getInstance().getString("command.help.footer"));
 	}
 	
 	public static BaseComponent[] jsonText(String key) {

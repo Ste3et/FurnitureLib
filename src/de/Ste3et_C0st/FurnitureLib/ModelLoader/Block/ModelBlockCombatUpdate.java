@@ -1,6 +1,7 @@
 package de.Ste3et_C0st.FurnitureLib.ModelLoader.Block;
 
 import de.Ste3et_C0st.FurnitureLib.ModelLoader.ModelVector;
+import de.Ste3et_C0st.FurnitureLib.ModelLoader.Block.state.ModelBlockSkullState;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.LocationUtil;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import org.bukkit.Location;
@@ -12,8 +13,12 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.material.Directional;
 import org.bukkit.material.MaterialData;
 
+import com.comphenix.protocol.wrappers.WrappedGameProfile;
+import com.comphenix.protocol.wrappers.WrappedSignedProperty;
+
 import java.lang.reflect.Method;
 import java.util.Objects;
+import java.util.UUID;
 
 public class ModelBlockCombatUpdate extends ModelBlock {
 
@@ -40,6 +45,20 @@ public class ModelBlockCombatUpdate extends ModelBlock {
             this.blockFace = BlockFace.valueOf(yamlConfiguration.getString(key + ".Rotation").toUpperCase());
         }
 
+        if(blockMaterial.name().contains("SKULL") && blockbyte == 1) {
+    		if(yamlConfiguration.contains(key + ".gameProfile")) {
+    			String gameProfileName = yamlConfiguration.getString(key + ".gameProfile.name", null);
+				UUID uuid = UUID.fromString(yamlConfiguration.getString(key + ".gameProfile.uuid"));
+    			WrappedGameProfile wrappedGameProfile = new WrappedGameProfile(uuid, gameProfileName);
+    			if(yamlConfiguration.contains(key + ".gameProfile.textures")) {
+    				String value = yamlConfiguration.getString(key + ".gameProfile.textures.value");
+    				String signature = yamlConfiguration.getString(key + ".gameProfile.signature.value", null);
+    				wrappedGameProfile.getProperties().put("textures", new WrappedSignedProperty("textures", value, signature));
+    			}
+    			this.blockState = new ModelBlockSkullState(wrappedGameProfile);
+    		}
+    	}
+        
         this.vector = vector;
         this.blockMaterial = blockMaterial;
         this.blockbyte = blockbyte;

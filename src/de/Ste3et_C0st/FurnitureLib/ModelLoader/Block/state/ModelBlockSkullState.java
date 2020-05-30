@@ -3,6 +3,7 @@ package de.Ste3et_C0st.FurnitureLib.ModelLoader.Block.state;
 import java.lang.reflect.Field;
 import java.util.Objects;
 
+import org.bukkit.SkullType;
 import org.bukkit.block.BlockState;
 import org.bukkit.block.Skull;
 
@@ -38,8 +39,10 @@ public class ModelBlockSkullState extends ModelBlockState{
 						Field field = craftSkullClazz.getDeclaredField("profile");
 						field.setAccessible(true);
 						if(Objects.nonNull(gameProfile)) {
+							skull.setSkullType(SkullType.PLAYER);
 							field.set(craftSkull, gameProfile.getHandle());
-							super.updateState(BlockState.class.cast(craftSkull));
+							skull = Skull.class.cast(craftSkull);
+							super.updateState(skull);
 						}
 					}
 				}catch (Exception e) {
