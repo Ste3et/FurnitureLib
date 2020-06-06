@@ -44,6 +44,7 @@ public class FurnitureLib extends JavaPlugin {
     private static List<FurniturePlugin> furniturePlugins = new ArrayList<>();
     private static int versionInt = 0;
     private static boolean enableDebug = false;
+    private static int debugLevel = 0;
     /**
      * Check if the plugin is 1.13 or higher
      *
@@ -106,8 +107,11 @@ public class FurnitureLib extends JavaPlugin {
     }
 
     public static void debug(String str) {
-        if (enableDebug)
-            System.out.println(str);
+        debug(str, 0);
+    }
+    
+    public static void debug(String str, int level) {
+        if (enableDebug || level < debugLevel) System.out.println(str);
     }
 
     public static int getVersionInt() {

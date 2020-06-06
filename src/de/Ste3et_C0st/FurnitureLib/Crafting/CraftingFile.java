@@ -1,5 +1,6 @@
 package de.Ste3et_C0st.FurnitureLib.Crafting;
 
+import com.google.common.collect.UnmodifiableIterator;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.HiddenStringUtils;
@@ -364,7 +365,13 @@ public class CraftingFile {
     }
 
     public void removeCrafting(ItemStack stack) {
+    	if(Objects.isNull(stack)) return;
         Iterator<Recipe> it = Bukkit.getServer().recipeIterator();
+        if(UnmodifiableIterator.class.isInstance(it)) {
+        	FurnitureLib.debug("FurnitureLib: Cannot Remove recipe of: " + this.header + " reason:", -1);
+        	FurnitureLib.debug(" Recipe List of Spigot is Unmodifiable the recipe will be disable and remove after server restart !", -1); 
+        	return;
+        }
         Recipe recipe;
         while (it.hasNext()) {
             recipe = it.next();
