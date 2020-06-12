@@ -39,12 +39,16 @@ public class toggleCommand extends iCommand {
                     FurnitureLib.getInstance().getFurnitureManager().getIgnoreList().add(player.getUniqueId());
                     FurnitureLib.getInstance().getFurnitureManager().removeFurniture(player);
                     sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.FurnitureToggleCMDOff"));
-                    player.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.FurnitureToggleCMDOff"));
+                    if(!sender.getName().equalsIgnoreCase(args[1])) {
+                    	player.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.FurnitureToggleCMDOff"));
+                    }
                 } else {
                     FurnitureLib.getInstance().getFurnitureManager().getIgnoreList().remove(player.getUniqueId());
                     FurnitureLib.getInstance().getFurnitureManager().updatePlayerView(player);
                     sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.FurnitureToggleCMDOn"));
-                    player.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.FurnitureToggleCMDOn"));
+                    if(!sender.getName().equalsIgnoreCase(args[1])) {
+                    	player.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.FurnitureToggleCMDOn"));
+                    }
                 }
             }
         } else {
