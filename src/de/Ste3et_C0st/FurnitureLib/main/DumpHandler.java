@@ -20,6 +20,7 @@ import org.bukkit.plugin.Plugin;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
+import de.Ste3et_C0st.FurnitureLib.Utilitis.Wrapper.ChatComponentWrapper;
 import de.Ste3et_C0st.FurnitureLib.main.Type.ProtocolFields;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -175,7 +176,7 @@ public class DumpHandler {
 						if(Player.class.isInstance(sender)) {
 							ComponentBuilder builder = new ComponentBuilder("§7You can find it here: ");
 							builder.append("§ehere").event(new ClickEvent(Action.OPEN_URL, response.toString().replace("#URL:", "")));
-							sender.spigot().sendMessage(builder.create());
+							ChatComponentWrapper.sendChatComponent(Player.class.cast(sender), builder.create());
 						}else {
 							sender.sendMessage("§7You can find it here: §e" + response.toString().replace("#URL:", ""));
 						}

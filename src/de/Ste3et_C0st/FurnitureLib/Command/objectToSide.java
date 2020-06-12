@@ -1,5 +1,6 @@
 package de.Ste3et_C0st.FurnitureLib.Command;
 
+import de.Ste3et_C0st.FurnitureLib.Utilitis.Wrapper.ChatComponentWrapper;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -54,7 +55,7 @@ public class objectToSide {
                 	sender.sendMessage((String) obj);
                 } else if (obj instanceof ComponentBuilder) {
                 	if(sender instanceof Player) {
-                		sender.spigot().sendMessage(((ComponentBuilder) obj).create());
+                		ChatComponentWrapper.sendChatComponent(Player.class.cast(sender), ((ComponentBuilder) obj).create());
                 	}else {
                 		sender.sendMessage(TextComponent.toLegacyText(((ComponentBuilder) obj).create()));
                 	}
@@ -96,7 +97,7 @@ public class objectToSide {
         }
         
         if (sender instanceof Player) {
-            sender.spigot().sendMessage(builder.append("§8]").create());
+            ChatComponentWrapper.sendChatComponent(Player.class.cast(sender), builder.append("§8]").create());
         } else {
             sender.sendMessage(TextComponent.toLegacyText(builder.create()));
         }
@@ -127,7 +128,7 @@ public class objectToSide {
 
         for (BaseComponent[] obj : objList) {
         	if (sender instanceof Player) {
-        		sender.spigot().sendMessage(obj);
+        		ChatComponentWrapper.sendChatComponent(Player.class.cast(sender), obj);
         	}else {
                 sender.sendMessage(TextComponent.toLegacyText(obj));
             }
@@ -167,7 +168,7 @@ public class objectToSide {
         }
        
         if (sender instanceof Player) {
-            sender.spigot().sendMessage(builder.append("§8]").create());
+            ChatComponentWrapper.sendChatComponent(Player.class.cast(sender), builder.append("§8]").create());
         } else {
             sender.sendMessage(TextComponent.toLegacyText(builder.create()));
         }

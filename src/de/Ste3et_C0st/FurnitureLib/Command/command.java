@@ -25,6 +25,7 @@ import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.SchematicLoader.Events.ProjectClickEvent;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.LanguageManager;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.StringTranslator;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.Wrapper.ChatComponentWrapper;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
@@ -170,10 +171,10 @@ public class command implements CommandExecutor, Listener{
 		
 		
 		if(sender instanceof Player) {
-			sender.spigot().sendMessage(components);
+			ChatComponentWrapper.sendChatComponent(Player.class.cast(sender), components);
 			commands.stream().forEach(str -> {
 				if(str.hasCommandPermission(sender) && !str.isHide()){
-					sender.spigot().sendMessage(jsonText(str.getLanguageID()));
+					ChatComponentWrapper.sendChatComponent(Player.class.cast(sender), jsonText(str.getLanguageID()));
 				}
 			});
 		}else {
@@ -205,7 +206,7 @@ public class command implements CommandExecutor, Listener{
 		if(!b) return false;
 		commands.stream().filter(str -> !str.getHelpClass().isEmpty() && str.getHelpClass().equalsIgnoreCase(helpClass)).forEach(str -> {
 			if(str.hasCommandPermission(p, str.getPermissions())) {
-				p.spigot().sendMessage(jsonText(str.getLanguageID().replaceAll("commands.", "")));
+				ChatComponentWrapper.sendChatComponent(p, jsonText(str.getLanguageID().replaceAll("commands.", "")));
 			}
 		});
 		return true;

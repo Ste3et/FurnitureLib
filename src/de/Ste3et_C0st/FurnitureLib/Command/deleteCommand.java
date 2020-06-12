@@ -1,6 +1,7 @@
 package de.Ste3et_C0st.FurnitureLib.Command;
 
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.Wrapper.ChatComponentWrapper;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
@@ -41,7 +42,7 @@ public class deleteCommand extends iCommand {
 				ComponentBuilder builder = new ComponentBuilder("§cPlease type")
 						.append("§a§n/furniture delete "+ systemID +" confirm").event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, "/furniture delete " + systemID + " confirm"))
 						.append("§r §cto remove it").reset();
-				sender.spigot().sendMessage(builder.create());
+				ChatComponentWrapper.sendChatComponent(Player.class.cast(sender), builder.create());
 				sender.sendMessage("§cYou have 20 seconds left");
 				FurnitureLib.getInstance().deleteMap.put(project, System.currentTimeMillis());
 //                } else {

@@ -174,7 +174,7 @@ public class Type {
             if (s.startsWith("1.14")) {
                 return Spigot114;
             }
-            if (s.startsWith("1.15")) {
+            if (s.startsWith("1.15") || s.startsWith("1.16")) {
                 return Spigot115;
             }
             return Spigot110;

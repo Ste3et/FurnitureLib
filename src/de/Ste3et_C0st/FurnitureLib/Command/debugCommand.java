@@ -4,6 +4,7 @@ import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.NBT.MathHelper;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.ExecuteTimer;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.RandomStringGenerator;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.Wrapper.ChatComponentWrapper;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
@@ -83,7 +84,7 @@ public class debugCommand extends iCommand {
                                             obj.setSQLAction(SQLAction.SAVE);
                                             obj.setUUID(uuid);
                                             manager.addObjectID(obj);
-                                            player.spigot().sendMessage(ChatMessageType.ACTION_BAR, new ComponentBuilder("§2" + aInt.get() + "§7/§e" + 100000).create());
+                                            ChatComponentWrapper.sendChatComponent(player,ChatMessageType.ACTION_BAR, new ComponentBuilder("§2" + aInt.get() + "§7/§e" + 100000).create());
                                         }
                                     } else {
                                     	aInt2.set(stepSize);
