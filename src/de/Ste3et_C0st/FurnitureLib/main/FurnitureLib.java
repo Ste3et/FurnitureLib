@@ -504,8 +504,8 @@ public class FurnitureLib extends JavaPlugin {
         this.removePurge = getConfig().getBoolean("config.Purge.removePurge");
         this.viewDistance = (Bukkit.getViewDistance());
         this.ignoredWorlds = getConfig().getStringList("config.ignoredWorlds");
-        if (getConfig().getInt("config.chunkViewRange") < this.viewDistance) {
-            this.viewDistance = getConfig().getInt("config.chunkViewRange", 10);
+        if (getConfig().getInt("config.viewRange") < this.viewDistance) {
+            this.viewDistance = getConfig().getInt("config.viewRange", 10);
         }
         
         ObjectID.setRange(this.viewDistance);
