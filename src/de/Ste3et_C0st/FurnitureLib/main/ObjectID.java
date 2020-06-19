@@ -8,6 +8,9 @@ import de.Ste3et_C0st.FurnitureLib.main.Type.EventType;
 import de.Ste3et_C0st.FurnitureLib.main.Type.PublicMode;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
+import net.md_5.bungee.api.ChatMessageType;
+import net.md_5.bungee.api.chat.TextComponent;
+
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
@@ -20,8 +23,7 @@ import java.util.function.Predicate;
 public class ObjectID {
 
     public Object functionObject = null;
-    public static int viewDistance = 100;
-    public static int viewDistanceSquared = viewDistance * viewDistance;
+    private static int viewRange = 10;
     private String ObjectID, serial, Project, plugin, worldName;
     private HashSet<Location> locList = new HashSet<Location>();
     private DoubleKey<Integer> chunkKey = null;
@@ -234,7 +236,23 @@ public class ObjectID {
     }
 
     public boolean isInRange(Player player) {
-        return (getStartLocation().distanceSquared(player.getLocation()) < viewDistanceSquared);
+    	Location location = player.getLocation();
+        return distanceSquared(location) <= viewRange;
+    }
+    
+    private int distanceSquared(Location location) {
+    	int x = location.getBlockX() >> 4;
+        int z = location.getBlockZ() >> 4;
+    	return distanceSquared(x, z);
+    }
+    
+    private int distanceSquared(int chunkX, int chunkZ) {
+    	DoubleKey<Integer> chunkKey = getChunkKey();
+    	return square(chunkKey.getKey1() - chunkX) + square(chunkKey.getKey2() - chunkZ);
+    }
+    
+    private static int square(int num) {
+        return num * num;
     }
     
     public boolean canSee(Player player) {
@@ -318,7 +336,11 @@ public class ObjectID {
             }
         });
     }
-
+    
+    public static void setRange(int chunkRange) {
+    	viewRange = chunkRange;
+    }
+    
     public Object getFunctionObject() {
         return this.functionObject;
     }

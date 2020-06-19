@@ -7,7 +7,7 @@
 #       - FR_fr: france | By Niasios
 # useParticles: you can enable/disable the particles when it is not enough space
 # DisableSitting: you can enable/disable the sit function of my plugin
-# viewDistance: This is the distance how long the player becomes the ArmorStands rendered you can make it smaller to reduce the CLIENT Lags.
+# viewRange: This is the Chunk Range how long the player becomes the ArmorStands rendered you can make it smaller to reduce the CLIENT Lags.
 # LimitType: This is the limitation type
 #       - PLAYER: You can specify player kits and give your player the permissions furniture.limit.<kit>
 #       - WORLD: You can specify the limit from models for each world
@@ -39,7 +39,7 @@ config:
   Language: "EN_en"
   useParticles: true
   DisableSitting: false
-  viewDistance: 100
+  viewRange: 10
   limit:
     limitConfig: "PLAYER"
     #You can give your player the permissions furniture.globallimit.# | furniture.globallimit.125 -> let the player can place 125 furnitures objects it override the limitconfig

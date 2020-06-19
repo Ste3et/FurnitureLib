@@ -502,14 +502,13 @@ public class FurnitureLib extends JavaPlugin {
         this.autoPurge = getConfig().getBoolean("config.Purge.autoPurge");
         this.purgeTimeMS = TimeUnit.DAYS.toMillis(purgeTime);
         this.removePurge = getConfig().getBoolean("config.Purge.removePurge");
-        this.viewDistance = (Bukkit.getViewDistance() * 16) - 2;
+        this.viewDistance = (Bukkit.getViewDistance());
         this.ignoredWorlds = getConfig().getStringList("config.ignoredWorlds");
-        if (this.viewDistance >= getConfig().getInt("config.viewDistance")) {
-            this.viewDistance = getConfig().getInt("config.viewDistance");
+        if (getConfig().getInt("config.chunkViewRange") < this.viewDistance) {
+            this.viewDistance = getConfig().getInt("config.chunkViewRange", 10);
         }
         
-        ObjectID.viewDistance = this.viewDistance;
-        ObjectID.viewDistance = this.viewDistance * this.viewDistance; 
+        ObjectID.setRange(this.viewDistance);
 
         this.glowing = getConfig().getBoolean("config.glowing");
         this.spamBreak = getConfig().getBoolean("config.spamBlock.Break.Enable");

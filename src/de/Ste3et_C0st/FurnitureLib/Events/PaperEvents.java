@@ -18,5 +18,5 @@ public class PaperEvents implements Listener {
 			if(FurnitureLib.getInstance().getBlockManager().contains(loc)) e.setCancelled(true);
 		}
 	}
-	
+
 }
