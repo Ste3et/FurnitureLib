@@ -25,60 +25,69 @@ public class DeSerializer {
 	
 	public int purged = 0;
 	
-	@SuppressWarnings("unchecked")
 	public static ObjectID Deserialize(String objId, String in, SQLAction action, World world) {
-		ObjectID obj = new ObjectID(objId);
-		byte[] by = Base64.getDecoder().decode(in);
-		try(ByteArrayInputStream bin = new ByteArrayInputStream(by)) {
+		byte[] binary = Base64.getDecoder().decode(in);
+		return Deserialize(objId, binary, action, world);
+	}
+	
+	public static ObjectID Deserialize(String objId, byte[] binary, SQLAction action, World world) {
+		try(ByteArrayInputStream bin = new ByteArrayInputStream(binary)) {
 			NBTTagCompound compound = NBTCompressedStreamTools.read(bin);
 			if(Objects.isNull(compound)) {return null;}
-			EventType evType = EventType.valueOf(compound.getString("EventType"));
-			PublicMode pMode = PublicMode.valueOf(compound.getString("PublicMode")); 
-			UUID uuid = uuidFetcher(compound.getString("Owner-UUID"));
-			HashSet<UUID> members = membersFetcher(compound.getList("Members"));
-			Location startLocation = locationFetcher(compound.getCompound("Location"), world);
-			if(Objects.isNull(startLocation)){
-				obj.setSQLAction(SQLAction.REMOVE);
-				FurnitureLib.getInstance().getFurnitureManager().addObjectID(obj);
-				return null;
-			}
-			obj.setStartLocation(startLocation);
-			obj.setEventTypeAccess(evType);
-			obj.setPublicMode(pMode);
-			obj.setMemberList(members);
-			obj.setUUID(uuid);
-			obj.setFinish();
-			obj.setSQLAction((action != null && action.equals(SQLAction.SAVE)) ? SQLAction.SAVE : SQLAction.NOTHING);
-			obj.setFromDatabase(true);
-			
-			if(compound.hasKey("entities") || compound.hasKey("entitys")) {
-				NBTTagCompound armorStands = compound.hasKey("entitys") ? compound.getCompound("entitys") : compound.getCompound("entities");
-				armorStands.c().stream().filter(Objects::nonNull).forEach(packet -> {
-					NBTTagCompound metadata = armorStands.getCompound((String) packet);
-					Location loc = locationFetcher(metadata.getCompound("Location"), world);
-					FurnitureManager.getInstance().createFromType(metadata.getString("EntityType"), loc, obj).loadMetadata(metadata);
-				});
-			}else if(!FurnitureLib.isNewVersion() && compound.hasKey("ArmorStands")) {
-				NBTTagCompound armorStands = compound.getCompound("ArmorStands");
-				armorStands.c().stream().filter(Objects::nonNull).forEach(packet -> {
-					NBTTagCompound metadata = armorStands.getCompound((String) packet);
-					Location loc = locationFetcher(metadata.getCompound("Location"), world);
-					FurnitureManager.getInstance().createFromType("armor_stand", loc, obj).loadMetadata(metadata);
-				});
-			}else {
-				NBTTagCompound armorStands = Converter.convertPacketItemStack(compound.getCompound("ArmorStands"));
-				armorStands.c().stream().filter(Objects::nonNull).forEach(packet -> {
-					NBTTagCompound metadata = armorStands.getCompound((String) packet);
-					Location loc = locationFetcher(metadata.getCompound("Location"), world);
-					FurnitureManager.getInstance().createFromType("armor_stand", loc, obj).loadMetadata(metadata);
-				});
-				obj.setSQLAction(SQLAction.UPDATE);
-			}
-			return obj;
+			return Deserialize(objId, compound, action, world);
 		}catch (Exception e) {
 			e.printStackTrace();
 			return null;
 		}
+	}
+	
+	@SuppressWarnings("unchecked")
+	public static ObjectID Deserialize(String objId, NBTTagCompound compound, SQLAction action, World world) {
+		ObjectID obj = new ObjectID(objId);
+		if(Objects.isNull(compound)) {return null;}
+		EventType evType = EventType.valueOf(compound.getString("EventType"));
+		PublicMode pMode = PublicMode.valueOf(compound.getString("PublicMode")); 
+		UUID uuid = uuidFetcher(compound.getString("Owner-UUID"));
+		HashSet<UUID> members = membersFetcher(compound.getList("Members"));
+		Location startLocation = locationFetcher(compound.getCompound("Location"), world);
+		if(Objects.isNull(startLocation)){
+			obj.setSQLAction(SQLAction.REMOVE);
+			FurnitureLib.getInstance().getFurnitureManager().addObjectID(obj);
+			return null;
+		}
+		obj.setStartLocation(startLocation);
+		obj.setEventTypeAccess(evType);
+		obj.setPublicMode(pMode);
+		obj.setMemberList(members);
+		obj.setUUID(uuid);
+		obj.setFinish();
+		obj.setSQLAction((action != null && action.equals(SQLAction.SAVE)) ? SQLAction.SAVE : SQLAction.NOTHING);
+		obj.setFromDatabase(true);
+		
+		if(compound.hasKey("entities") || compound.hasKey("entitys")) {
+			NBTTagCompound armorStands = compound.hasKey("entitys") ? compound.getCompound("entitys") : compound.getCompound("entities");
+			armorStands.c().stream().filter(Objects::nonNull).forEach(packet -> {
+				NBTTagCompound metadata = armorStands.getCompound((String) packet);
+				Location loc = locationFetcher(metadata.getCompound("Location"), world);
+				FurnitureManager.getInstance().createFromType(metadata.getString("EntityType"), loc, obj).loadMetadata(metadata);
+			});
+		}else if(!FurnitureLib.isNewVersion() && compound.hasKey("ArmorStands")) {
+			NBTTagCompound armorStands = compound.getCompound("ArmorStands");
+			armorStands.c().stream().filter(Objects::nonNull).forEach(packet -> {
+				NBTTagCompound metadata = armorStands.getCompound((String) packet);
+				Location loc = locationFetcher(metadata.getCompound("Location"), world);
+				FurnitureManager.getInstance().createFromType("armor_stand", loc, obj).loadMetadata(metadata);
+			});
+		}else {
+			NBTTagCompound armorStands = Converter.convertPacketItemStack(compound.getCompound("ArmorStands"));
+			armorStands.c().stream().filter(Objects::nonNull).forEach(packet -> {
+				NBTTagCompound metadata = armorStands.getCompound((String) packet);
+				Location loc = locationFetcher(metadata.getCompound("Location"), world);
+				FurnitureManager.getInstance().createFromType("armor_stand", loc, obj).loadMetadata(metadata);
+			});
+			obj.setSQLAction(SQLAction.UPDATE);
+		}
+		return obj;
 	}
 	
 	private static HashMap<UUID, Long> offlineMap = new HashMap<UUID, Long>();

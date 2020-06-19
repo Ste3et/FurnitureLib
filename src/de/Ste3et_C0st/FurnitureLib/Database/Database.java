@@ -1,11 +1,8 @@
 package de.Ste3et_C0st.FurnitureLib.Database;
 
-import com.comphenix.protocol.wrappers.nbt.NbtCompound;
-import com.comphenix.protocol.wrappers.nbt.NbtFactory;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
-import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.ExecuteTimer;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.callbacks.CallbackObjectIDs;
 import de.Ste3et_C0st.FurnitureLib.main.ChunkData;
@@ -14,16 +11,11 @@ import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.DataBaseType;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
-import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
-import de.Ste3et_C0st.FurnitureLib.main.entity.fInventory;
-
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
-import org.bukkit.Material;
 import org.bukkit.World;
-import org.bukkit.inventory.ItemStack;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
@@ -31,8 +23,6 @@ import java.util.HashSet;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
-
-import javax.sound.midi.SysexMessage;
 
 public abstract class Database {
     public FurnitureLib plugin;
@@ -87,19 +77,18 @@ public abstract class Database {
     }
     
     public boolean save(ObjectID id) {
-        String binary = FurnitureLib.getInstance().getSerializer().SerializeObjectID(id);
+    	String base64NBT = Serializer.SerializeObjectID(id);
         int x = id.getStartLocation().getBlockX() >> 4;
         int z = id.getStartLocation().getBlockZ() >> 4;
-        String sql = "REPLACE INTO " + TABLE_NAME + " (ObjID, Data, world, `x`, `z`, `uuid`) " +
-                "VALUES (" +
-                "'" + id.getID() + "'," +
-                "'" + binary + "'," +
-                "'" + id.getWorldName() + "'," +
-                +x + "," +
-                +z + "," +
-                "'" + id.getUUID().toString() + "');";
-        try (Connection con = getConnection(); Statement stmt = con.createStatement()) {
-            stmt.executeUpdate(sql);
+        String query = "REPLACE INTO " + TABLE_NAME + " (ObjID, Data, world, `x`, `z`, `uuid`) VALUES (?, ?, ?, ?, ?, ?);";
+        try (Connection con = getConnection(); PreparedStatement stmt = con.prepareStatement(query)) {
+        	stmt.setString(1, id.getID());
+        	stmt.setString(2, base64NBT);
+        	stmt.setString(3, id.getWorldName());
+        	stmt.setInt(4, x);
+        	stmt.setInt(5, z);
+        	stmt.setString(6, id.getUUID().toString());
+        	stmt.executeUpdate();
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -117,9 +106,10 @@ public abstract class Database {
         		if(Objects.nonNull(rs)) {
         			if (rs.next() == true) {
             			do {
-            				String objectSerial = rs.getString(1), base64Storage = rs.getString(2);
-                            if (!(objectSerial.isEmpty() || base64Storage.isEmpty())) {
-                                ObjectID obj = DeSerializer.Deserialize(objectSerial, base64Storage, action, bukkitWorld);
+            				String objectSerial = rs.getString(1);
+            				String data = rs.getString(2);
+                            if (!(objectSerial.isEmpty())) {
+                                ObjectID obj = DeSerializer.Deserialize(objectSerial, data, action, bukkitWorld);
                                 if (Objects.nonNull(obj)) {
                                 	obj.setWorldName(worldName);
                                     idList.add(obj);
@@ -156,46 +146,30 @@ public abstract class Database {
     }
     
     public HashSet<ObjectID> loadWorld(SQLAction action, World bukkitWorld) {
-        HashSet<ObjectID> idList = new HashSet<ObjectID>();
-        ExecuteTimer timer = new ExecuteTimer();
-        UUID worldUUID = bukkitWorld.getUID();
-        String worldName = bukkitWorld.getName();
-        AtomicInteger atomic = new AtomicInteger(0);
-        if(Objects.nonNull(bukkitWorld)) {
-        	idList.addAll(loadQuery(action, bukkitWorld, "SELECT ObjID,Data FROM " + TABLE_NAME + " WHERE world='"+ worldName +"' OR world='" + worldUUID.toString() + "'"));
-        	double difference = timer.difference();
-            double size = idList.size();
-            
-//            for(Project project : FurnitureManager.getInstance().getProjects()) {
-//            	if(project.haveModelSchematic()) {
-//            		for(ObjectID object : idList) {
-//            			for(fEntity entity : object.getPacketList()){
-//            				fInventory inv = entity.getInventory();
-//            				Location location = entity.getLocation();
-//            				for(ItemStack stack : inv.getIS()) {
-//            					if(Objects.nonNull(stack)) {
-//            						if(stack.hasItemMeta() && Material.AIR != stack.getType()) {
-//            							NbtCompound tag = (NbtCompound) NbtFactory.fromItemTag(stack);
-//            							System.out.println(tag.toString());
-//            							System.out.println("/tppos " + location.getBlockX() + " " + location.getBlockY() + " " + location.getBlockZ());
-//            						}
-//            					}
-//            				}
-//            			}
-//            		}
-//            	}
-//            }
-            
-            plugin.getLogger().info("FurnitureLib load models from world -> " + worldName);
-            plugin.getLogger().info("Models: " + idList.size() + " with " + atomic.get() +" entities");
-            
-            if(size > 0) {
-            	double avgSpeed = Math.round((difference / size) * 100d) / 100d;
-                plugin.getLogger().info("With avg speed of " + avgSpeed + " FurnitureModel/ms");
-            }
-            
-            plugin.getLogger().info("It takes: " + timer.getDifference() + " from Database: " + this.getType().name());
-        }
+    	HashSet<ObjectID> idList = new HashSet<ObjectID>();
+    	String worldName = bukkitWorld.getName();
+    	if(!FurnitureLib.getInstance().isWorldIgnored(worldName)) {
+    		 ExecuteTimer timer = new ExecuteTimer();
+    	        UUID worldUUID = bukkitWorld.getUID();
+    	        AtomicInteger atomic = new AtomicInteger(0);
+    	        if(Objects.nonNull(bukkitWorld)) {
+    	        	plugin.getLogger().info("FurnitureLib load models from world -> " + worldName);
+    	        	idList.addAll(loadQuery(action, bukkitWorld, "SELECT ObjID,Data FROM " + TABLE_NAME + " WHERE world='"+ worldName +"' OR world='" + worldUUID.toString() + "'"));
+    	        	double difference = timer.difference();
+    	            double size = idList.size();
+    	            
+    	            if(size > 0) {
+    	            	plugin.getLogger().info("Models: " + idList.size() + " with " + atomic.get() +" entities");
+    	            	double avgSpeed = Math.round((difference / size) * 100d) / 100d;
+    	                plugin.getLogger().info("With avg speed of " + avgSpeed + " FurnitureModel/ms");
+    	            }else {
+    	            	plugin.getLogger().info("No Models are found in world: " + worldName);
+    	            	return idList;
+    	            }
+    	            
+    	            plugin.getLogger().info("It takes: " + timer.getDifference() + " from Database: " + this.getType().name());
+    	        }
+    	}
         return idList;
     }
 

@@ -87,6 +87,7 @@ public class FurnitureLib extends JavaPlugin {
     private Material defMaterial = Material.valueOf(isNewVersion() ? "COW_SPAWN_EGG" : "MONSTER_EGG");
     private boolean sync = true;
     private static final int BSTATS_ID = 454;
+    private List<String> ignoredWorlds = new ArrayList<String>();
 
     public static String getBukkitVersion() {
         return Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3];
@@ -502,6 +503,7 @@ public class FurnitureLib extends JavaPlugin {
         this.purgeTimeMS = TimeUnit.DAYS.toMillis(purgeTime);
         this.removePurge = getConfig().getBoolean("config.Purge.removePurge");
         this.viewDistance = (Bukkit.getViewDistance() * 16) - 2;
+        this.ignoredWorlds = getConfig().getStringList("config.ignoredWorlds");
         if (this.viewDistance >= getConfig().getInt("config.viewDistance")) {
             this.viewDistance = getConfig().getInt("config.viewDistance");
         }
@@ -708,5 +710,13 @@ public class FurnitureLib extends JavaPlugin {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+    
+    public List<String> getIgnoredWorldList(){
+    	return this.ignoredWorlds;
+    }
+    
+    public boolean isWorldIgnored(String worldName) {
+    	return this.ignoredWorlds.contains(worldName.toLowerCase());
     }
 }

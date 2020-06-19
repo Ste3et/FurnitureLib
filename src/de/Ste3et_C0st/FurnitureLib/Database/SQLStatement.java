@@ -48,7 +48,6 @@ public class SQLStatement {
 			counter++;
 			object.setSQLAction(SQLAction.NOTHING);
 		}
-		System.out.println(toString());
 	}
 	
 	public int getCounter() {

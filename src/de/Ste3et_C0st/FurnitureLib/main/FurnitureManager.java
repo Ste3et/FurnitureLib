@@ -331,8 +331,7 @@ public class FurnitureManager {
         Class<? extends fEntity> packetClass = packetClasses.getOrDefault(str.toLowerCase(), null);
         if (Objects.nonNull(packetClass)) {
             try {
-                fEntity e = packetClass.getConstructor(Location.class, ObjectID.class).newInstance(loc, obj);
-                return e;
+                return packetClass.getConstructor(Location.class, ObjectID.class).newInstance(loc, obj);
             } catch (Exception e) {
                 e.printStackTrace();
                 return null;

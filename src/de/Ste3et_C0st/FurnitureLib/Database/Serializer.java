@@ -25,9 +25,13 @@ public class Serializer {
         }
         return out.toByteArray();
     }
-
-    public String SerializeObjectID(ObjectID obj) {
-        NBTTagCompound compound = new NBTTagCompound();
+    
+    public static byte[] SerializeObjectToArray(ObjectID obj) {
+        return armorStandtoBytes(serializeToNBT(obj));
+    }
+    
+    public static NBTTagCompound serializeToNBT(ObjectID obj) {
+    	NBTTagCompound compound = new NBTTagCompound();
         compound.setString("EventType", obj.getEventType().toString());
         compound.setString("PublicMode", obj.getPublicMode().toString());
         compound.setString("Owner-UUID", getOwnerUUID(obj));
@@ -39,10 +43,14 @@ public class Serializer {
             armorStands.set(packet.getEntityID() + "", packet.getMetaData());
         });
         compound.set("entities", armorStands);
-        return Base64.getEncoder().encodeToString(armorStandtoBytes(compound));
+        return compound;
     }
 
-    private String getOwnerUUID(ObjectID obj) {
+    public static String SerializeObjectID(ObjectID obj) {
+        return Base64.getEncoder().encodeToString(SerializeObjectToArray(obj));
+    }
+
+    private static String getOwnerUUID(ObjectID obj) {
         String s = "NULL";
         if (obj.getUUID() != null) {
             try {
@@ -54,7 +62,7 @@ public class Serializer {
         return s;
     }
 
-    private NBTTagList getMemberList(ObjectID obj) {
+    private static NBTTagList getMemberList(ObjectID obj) {
         NBTTagList memberList = new NBTTagList();
         for (UUID uuid : obj.getMemberList()) {
             NBTTagString string = new NBTTagString(uuid.toString());
@@ -63,7 +71,7 @@ public class Serializer {
         return memberList;
     }
 
-    private NBTTagCompound getFromLocation(Location loc) {
+    private static NBTTagCompound getFromLocation(Location loc) {
         NBTTagCompound location = new NBTTagCompound();
         location.setDouble("X", loc.getX());
         location.setDouble("Y", loc.getY());

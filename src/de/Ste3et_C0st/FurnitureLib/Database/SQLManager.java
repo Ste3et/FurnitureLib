@@ -1,7 +1,5 @@
 package de.Ste3et_C0st.FurnitureLib.Database;
 
-import com.google.common.collect.Iterables;
-import com.google.common.collect.Lists;
 import com.zaxxer.hikari.HikariConfig;
 
 import de.Ste3et_C0st.FurnitureLib.Utilitis.callbacks.CallbackObjectIDs;
@@ -17,12 +15,10 @@ import org.bukkit.scheduler.BukkitTask;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 public class SQLManager {
 
