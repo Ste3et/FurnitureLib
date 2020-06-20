@@ -131,7 +131,7 @@
 		<dependency>
 		    <groupId>com.github.Ste3et</groupId>
 		    <artifactId>ProtectionLib</artifactId>
-		    <version>v0.9.8</version>
+		    <version>e84c3f1d65</version>
 		    <scope>provided</scope>
 		</dependency>
 

@@ -138,8 +138,9 @@ public class ProtectionManager {
 
     private boolean canBuild(Player p, ObjectID id) {
         if (p.getUniqueId().equals(id.getUUID())) return true;
-        if (FP == null) return false;
-        if (getSize() == 0) return false;
+        if (FP == null) return true;
+        if (getSize() == 0) return true;
+        if(!isProtectedRegion(id)) return true;
         boolean memberOfRegion = canBuild(p, id.getStartLocation());
         boolean ownerOfRegion = isOwner(p, id.getStartLocation());
         
@@ -160,6 +161,12 @@ public class ProtectionManager {
             return true;
         }
         return false;
+    }
+    
+    private boolean isProtectedRegion(ObjectID objectID) {
+    	if (FP == null) return false;
+    	ProtectionLib protectionLib = (ProtectionLib) this.FP;
+    	return protectionLib.isProtectedRegion(objectID.getStartLocation());
     }
 
     private boolean isEventType(ObjectID objID, EventType type) {
