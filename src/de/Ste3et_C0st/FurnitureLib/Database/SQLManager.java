@@ -2,6 +2,7 @@ package de.Ste3et_C0st.FurnitureLib.Database;
 
 import com.zaxxer.hikari.HikariConfig;
 
+import de.Ste3et_C0st.FurnitureLib.Utilitis.ExecuteTimer;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.callbacks.CallbackBoolean;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.callbacks.CallbackObjectIDs;
 import de.Ste3et_C0st.FurnitureLib.main.ChunkData;
@@ -14,6 +15,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.io.File;
+import java.lang.reflect.Executable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -34,6 +36,7 @@ public class SQLManager {
     }
 
     private void initialize() {
+    	ExecuteTimer timer = new ExecuteTimer();
         if (plugin.getConfig() == null) return;
         if (plugin.getConfig().getString("config.Database.type") == null) return;
         if (plugin.getConfig().getString("config.Database.type").equalsIgnoreCase("SQLite")) {
@@ -65,6 +68,7 @@ public class SQLManager {
             Bukkit.getPluginManager().disablePlugin(plugin);
             return;
         }
+        System.out.println("FurnitureLib Started " + this.database.getType().name() + " database. Took " + timer.getMilliString());
     }
 
     public void loadALL() {

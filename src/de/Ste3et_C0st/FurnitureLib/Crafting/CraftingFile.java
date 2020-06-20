@@ -368,8 +368,7 @@ public class CraftingFile {
     	if(Objects.isNull(stack)) return;
         Iterator<Recipe> it = Bukkit.getServer().recipeIterator();
         if(UnmodifiableIterator.class.isInstance(it)) {
-        	FurnitureLib.debug("FurnitureLib: Cannot Remove recipe of: " + this.header + " reason:", -1);
-        	FurnitureLib.debug(" Recipe List of Spigot is Unmodifiable the recipe will be disable and remove after server restart !", -1); 
+        	removeCraftingUnmodifiable(stack);
         	return;
         }
         Recipe recipe;
@@ -379,5 +378,27 @@ public class CraftingFile {
                 it.remove();
             }
         }
+    }
+    
+    public void removeCraftingUnmodifiable(ItemStack stack) {
+    	List<Recipe> backup = new ArrayList<Recipe>();
+    	Recipe resultRecipe = null;
+    	//Get Recipe Iterator
+	    Iterator<Recipe> a = Bukkit.getServer().recipeIterator();
+
+	    while(a.hasNext()){
+	        Recipe recipe = a.next();
+	        ItemStack result = recipe.getResult();
+	        if(!result.isSimilar(stack)) {
+	        	backup.add(recipe);
+	        }else {
+	        	resultRecipe = recipe;
+	        }
+	    }	
+    	  
+	    if(Objects.nonNull(resultRecipe)) {
+	    	Bukkit.getServer().clearRecipes();
+	    	for (Recipe r : backup) Bukkit.getServer().addRecipe(r);
+	    }
     }
 }

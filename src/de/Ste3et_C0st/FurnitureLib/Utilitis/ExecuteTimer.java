@@ -22,4 +22,8 @@ public class ExecuteTimer {
 		SimpleDateFormat time = new SimpleDateFormat("mm:ss.SSS");
 		return time.format(difference());
 	}
+	
+	public String getMilliString() {
+		return difference() + "ms";
+	}
 }
