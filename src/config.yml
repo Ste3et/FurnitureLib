@@ -39,6 +39,7 @@ config:
   Language: "EN_en"
   useParticles: true
   DisableSitting: false
+  ignoredWorlds: []
   viewRange: 10
   limit:
     limitConfig: "PLAYER"

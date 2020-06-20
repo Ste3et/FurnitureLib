@@ -1,9 +1,12 @@
 package de.Ste3et_C0st.FurnitureLib.Events;
 
+import de.Ste3et_C0st.FurnitureLib.Command.listCommand;
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.SchematicLoader.Events.ProjectBreakEvent;
 import de.Ste3et_C0st.FurnitureLib.SchematicLoader.Events.ProjectClickEvent;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.HiddenStringUtils;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.StringTranslator;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.callbacks.CallbackBoolean;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
@@ -12,6 +15,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
@@ -23,12 +27,15 @@ import org.bukkit.event.block.Action;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.world.WorldLoadEvent;
+import org.bukkit.event.world.WorldUnloadEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 public class ChunkOnLoad implements Listener {
 
@@ -67,19 +74,28 @@ public class ChunkOnLoad implements Listener {
             final ItemStack stack = e.getItem();
             if (stack == null) return;
             final Project pro = getProjectByItem(stack);
-            if (pro == null) return;
+            if (Objects.isNull(pro)) return;
             e.setCancelled(true);
             if (FurnitureLib.getInstance().getBlockManager().contains(b.getLocation())) return;
             if (eventList.contains(e.getPlayer())) return;
             if (b.isLiquid()) return;
             if (EquipmentSlot.HAND != e.getHand()) return;
-            eventList.add(e.getPlayer());
+            
+            final Player player = e.getPlayer();
+            
+            if(FurnitureLib.getInstance().isWorldIgnored(e.getPlayer().getWorld().getName())) {
+            	player.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.IgnoredWorld", new StringTranslator("%WORLD%", e.getPlayer().getWorld().getName())));
+            	return;
+            }
+            
+            eventList.add(player);
+            
             final BlockFace face = e.getBlockFace();
             final Location loc = b.getLocation();
-            final Player p = e.getPlayer();
-            loc.setYaw(FurnitureLib.getInstance().getLocationUtil().FaceToYaw(FurnitureLib.getInstance().getLocationUtil().yawToFace(p.getLocation().getYaw())));
+            
+            loc.setYaw(FurnitureLib.getInstance().getLocationUtil().FaceToYaw(FurnitureLib.getInstance().getLocationUtil().yawToFace(player.getLocation().getYaw())));
 
-			FurnitureItemEvent itemEvent = new FurnitureItemEvent(p, stack, pro, loc, face);
+			FurnitureItemEvent itemEvent = new FurnitureItemEvent(player, stack, pro, loc, face);
 			FurnitureLib.debug("FurnitureLib -> Place Furniture Start (" + pro.getName() + ").");
 			Bukkit.getPluginManager().callEvent(itemEvent);
 			FurnitureLib.debug("FurnitureLib -> Call FurnitureItemEvent cancel (" + itemEvent.isCancelled() + ").");
@@ -95,7 +111,7 @@ public class ChunkOnLoad implements Listener {
 									itemEvent.debugTime("FurnitureLib -> Model " + pro.getName() + " is Placeable");
 									spawn(itemEvent);
 								} else {
-									p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.NotEnoughSpace"));
+									player.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.NotEnoughSpace"));
 								}
 							} else {
 								FurnitureLib.debug("FurnitureLib -> Can't place model [no Modelschematic (" + pro.getName() + ")]");
@@ -106,7 +122,7 @@ public class ChunkOnLoad implements Listener {
 					FurnitureLib.debug("FurnitureLib -> Can't place model " + pro.getName() + " here canBuild(" + false + ")");
 				}
 			}
-			removePlayer(p);
+			removePlayer(player);
         } else if (Action.RIGHT_CLICK_AIR == e.getAction()) {
             final ItemStack stack = e.getItem();
             if (stack == null) return;
@@ -119,12 +135,28 @@ public class ChunkOnLoad implements Listener {
     }
     
     @EventHandler
-    public void onWorldLoad(WorldLoadEvent e) {
+    public void onWorldLoad(WorldLoadEvent event) {
     	Bukkit.getScheduler().runTaskLater(FurnitureLib.getInstance(), () -> {
-    		if(Objects.nonNull(e.getWorld())) {
-    			FurnitureLib.getInstance().getSQLManager().getDatabase().loadWorld(SQLAction.NOTHING, e.getWorld());
+    		if(Objects.nonNull(event.getWorld())) {
+    			FurnitureLib.getInstance().getSQLManager().getDatabase().loadWorld(SQLAction.NOTHING, event.getWorld());
     		}
     	}, 20L);
+    }
+    
+    @EventHandler
+    public void onWorldUnload(WorldUnloadEvent event) {
+    	if(!event.isCancelled()) {
+    		final World world = event.getWorld();
+        	List<ObjectID> objects = FurnitureManager.getInstance().getObjectList().stream().filter(entry -> entry.getWorld().equals(world)).collect(Collectors.toList());
+        	FurnitureLib.getInstance().getSQLManager().save(new CallbackBoolean() {
+				@Override
+				public void onResult(boolean paramBoolean) {
+					if(paramBoolean) {
+						FurnitureManager.getInstance().getObjectList().removeAll(objects);
+					}
+				}
+			});
+    	}
     }
 
     @EventHandler(priority = EventPriority.NORMAL)

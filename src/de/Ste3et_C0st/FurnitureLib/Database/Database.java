@@ -34,7 +34,7 @@ public abstract class Database {
     public Database(FurnitureLib instance, HikariConfig config) {
         this.plugin = instance;
         this.config = config;
-        this.dataSource = new HikariDataSource(config);
+        this.dataSource = new HikariDataSource(config); //load 1
         this.converter = new Converter(this);
     }
 

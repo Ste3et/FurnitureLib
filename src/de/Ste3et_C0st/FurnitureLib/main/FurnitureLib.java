@@ -447,7 +447,6 @@ public class FurnitureLib extends JavaPlugin {
                 //ModelFileLoading #1
                 this.pManager.loadProjectFiles();
                 this.sqlManager = new SQLManager(instance);
-                this.sqlManager.initialize();
                 this.inventoryManager = new InventoryManager();
                 autoConverter.databaseConverter(getServer().getConsoleSender());
                 new FurnitureEvents(instance, manager);
@@ -652,7 +651,6 @@ public class FurnitureLib extends JavaPlugin {
         if(Objects.nonNull(sqlManager)) {
         	if (!getConfig().getBoolean("config.timer.Enable")) {
                 this.sqlManager = new SQLManager(this);
-                this.sqlManager.initialize();
             }
             sqlManager.save();
             sqlManager.stop();

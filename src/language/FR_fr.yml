@@ -44,6 +44,7 @@ message:
   LimitReachedMaximum: "&cLe mobilier maximal est atteint."
   BlockOfInstability: "&cEssayez d''installer les meubles sur un autre endroit"
   reload: '&7FurnitureLib has been &2&lreloaded'
+  IgnoredWorld: "&7You can't place furniture models at &2%WORLD%"
   command:
     help:
         header: 

@@ -10,6 +10,7 @@ import java.sql.Statement;
 
 
 public class MySQL extends Database {
+	
     public String Objects = "CREATE TABLE IF NOT EXISTS furnitureLibData (" +
             "`ObjID` varchar(255) NOT NULL," +
             "`Data` TEXT NOT NULL," +

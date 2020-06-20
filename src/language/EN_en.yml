@@ -37,6 +37,7 @@ message:
   BlockOfInstability: '&cPlease try to place the furniture on another location'
   reload: '&7FurnitureLib has been &2&lreloaded'
   NoPermissions: '&cYou do not have permissions to do this.'
+  IgnoredWorld: "&7You can't place furniture models at &2%WORLD%"
 command:
     help:
         header: 

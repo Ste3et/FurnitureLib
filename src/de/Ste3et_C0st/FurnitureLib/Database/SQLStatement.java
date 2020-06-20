@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 
-import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 
@@ -33,7 +32,7 @@ public class SQLStatement {
 		Iterator<ObjectID> iterator = obj.iterator();
 		while (iterator.hasNext()) {
 			ObjectID object = iterator.next();
-			String binary = FurnitureLib.getInstance().getSerializer().SerializeObjectID(object);
+			String binary = Serializer.SerializeObjectID(object);
 			int x = object.getStartLocation().getBlockX() >> 4;
 	        int z = object.getStartLocation().getBlockZ() >> 4;
 			StringBuilder singleStatement = new StringBuilder(

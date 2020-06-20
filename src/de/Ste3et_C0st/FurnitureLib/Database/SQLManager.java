@@ -2,6 +2,7 @@ package de.Ste3et_C0st.FurnitureLib.Database;
 
 import com.zaxxer.hikari.HikariConfig;
 
+import de.Ste3et_C0st.FurnitureLib.Utilitis.callbacks.CallbackBoolean;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.callbacks.CallbackObjectIDs;
 import de.Ste3et_C0st.FurnitureLib.main.ChunkData;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
@@ -32,7 +33,7 @@ public class SQLManager {
         initialize();
     }
 
-    public void initialize() {
+    private void initialize() {
         if (plugin.getConfig() == null) return;
         if (plugin.getConfig().getString("config.Database.type") == null) return;
         if (plugin.getConfig().getString("config.Database.type").equalsIgnoreCase("SQLite")) {
@@ -153,6 +154,67 @@ public class SQLManager {
             plugin.getLogger().info(l + " furniture has been removed from the database.");
         } else {
             plugin.getLogger().info("the list of objects is empty.");
+        }
+    }
+    
+    public void save(CallbackBoolean callBackBoolean) {
+        plugin.getLogger().info("Furniture save started");
+        if (!plugin.getFurnitureManager().getObjectList().isEmpty()) {
+            List<ObjectID> objList = new ArrayList<>();
+            int j = 0, i = 0, l = 0;
+            List<ObjectID> idList = new ArrayList<ObjectID>(plugin.getFurnitureManager().getObjectList());
+            List<ObjectID> saveList = new ArrayList<ObjectID>();
+            
+            int stepSize = 100;
+
+            for (ObjectID obj : idList) {
+                if (!objList.contains(obj)) {
+                	SQLAction sqlAction = obj.getSQLAction();
+                	if(SQLAction.REMOVE == sqlAction) {
+                		remove(obj);
+                        l++;
+                        plugin.getFurnitureManager().deleteObjectID(obj);
+                	}else if(SQLAction.UPDATE == sqlAction) {
+                		if(versionInt > 11) {
+                			saveList.add(obj);
+                		}else {
+                			save(obj);
+                		}
+                		j++;
+                	}else if(SQLAction.SAVE == sqlAction){
+                		if(versionInt > 11) {
+                			saveList.add(obj);
+                		}else {
+                			save(obj);
+                		}
+                		i++;
+                	}else {
+                		continue;
+                	}
+                	objList.add(obj);
+                }
+            }
+            
+            if(!saveList.isEmpty()) {
+            	Collection<List<ObjectID>> collection = splitListBySize(saveList, stepSize);
+                if(Objects.nonNull(collection)) {
+                	collection.stream().filter(Objects::nonNull).forEach(list -> {
+                    	SQLStatement statement = new SQLStatement();
+                    	statement.add(list);
+                    	save(statement.getStatement());
+                    });
+                }
+            }
+            
+            plugin.getLogger().info(i + " furniture has been saved to the database.");
+            plugin.getLogger().info(j + " furniture has been updated in the database.");
+            plugin.getLogger().info(l + " furniture has been removed from the database.");
+        } else {
+            plugin.getLogger().info("the list of objects is empty.");
+        }
+        
+        if(Objects.nonNull(callBackBoolean)) {
+        	callBackBoolean.onResult(true);
         }
     }
 
