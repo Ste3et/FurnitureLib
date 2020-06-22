@@ -67,6 +67,7 @@ config:
     host: "localhost"
     useSSL: false
     importCheck: false
+    allowPublicKeyRetrieval: false
   Purge:
     time: 30
     autoPurge: false

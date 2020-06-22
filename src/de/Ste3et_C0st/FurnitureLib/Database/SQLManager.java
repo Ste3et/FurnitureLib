@@ -55,9 +55,10 @@ public class SQLManager {
             String password = plugin.getConfig().getString("config.Database.password");
             String port = plugin.getConfig().getString("config.Database.port", "3306");
             String host = plugin.getConfig().getString("config.Database.host");
+            boolean allowPublicKeyRetrieval = plugin.getConfig().getBoolean("config.Database.allowPublicKeyRetrieval", false);
             boolean useSSL = plugin.getConfig().getBoolean("config.Database.useSSL", true);
             HikariConfig config = new HikariConfig();
-            config.setJdbcUrl("jdbc:mysql://" + host + ":" + port + "/" + database + "?useSSL=" + useSSL);
+            config.setJdbcUrl("jdbc:mysql://" + host + ":" + port + "/" + database + "?useSSL=" + useSSL + "&allowPublicKeyRetrieval=" + allowPublicKeyRetrieval);
             config.setUsername(user);
             config.setPassword(password);
             config.setPoolName("FurnitureLib");
@@ -257,7 +258,7 @@ public class SQLManager {
     }
 
     public void saveInterval(int time) {
-        sqlSaveInterval = Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, () -> FurnitureLib.getInstance().getFurnitureManager().saveAsynchron(Bukkit.getConsoleSender()), 0, 20 * time);
+        sqlSaveInterval = Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, () -> FurnitureLib.getInstance().getFurnitureManager().saveAsynchron(Bukkit.getConsoleSender()), 20 * time, 20 * time);
     }
 
     public void stop() {

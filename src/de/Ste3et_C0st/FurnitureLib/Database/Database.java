@@ -70,7 +70,6 @@ public abstract class Database {
     public void loadAll(SQLAction action) {
     	for (World world : Bukkit.getWorlds()) {
     		if(Objects.nonNull(world)) {
-    			System.out.print("try to load furniture in world: " + world.getName());
     			this.loadWorld(action, world);
     		}
     	}
@@ -153,21 +152,21 @@ public abstract class Database {
     	        UUID worldUUID = bukkitWorld.getUID();
     	        AtomicInteger atomic = new AtomicInteger(0);
     	        if(Objects.nonNull(bukkitWorld)) {
-    	        	plugin.getLogger().info("FurnitureLib load models from world -> " + worldName);
+    	        	System.out.println("FurnitureLib try to load models for world (" + worldName + ")");
     	        	idList.addAll(loadQuery(action, bukkitWorld, "SELECT ObjID,Data FROM " + TABLE_NAME + " WHERE world='"+ worldName +"' OR world='" + worldUUID.toString() + "'"));
     	        	double difference = timer.difference();
     	            double size = idList.size();
     	            
     	            if(size > 0) {
-    	            	plugin.getLogger().info("Models: " + idList.size() + " with " + atomic.get() +" entities");
+    	            	System.out.println("FurnitureLib load " + idList.size() + " models with " + atomic.get() +" entities");
     	            	double avgSpeed = Math.round((difference / size) * 100d) / 100d;
-    	                plugin.getLogger().info("With avg speed of " + avgSpeed + " FurnitureModel/ms");
+    	            	System.out.println("With avg speed of " + avgSpeed + " FurnitureModel/ms");
     	            }else {
-    	            	plugin.getLogger().info("No Models are found in world: " + worldName);
+    	            	System.out.println("No Models are found in world: " + worldName);
     	            	return idList;
     	            }
     	            
-    	            plugin.getLogger().info("It takes: " + timer.getDifference() + " from Database: " + this.getType().name());
+    	            System.out.println("It takes: " + timer.getDifference());
     	        }
     	}
         return idList;
