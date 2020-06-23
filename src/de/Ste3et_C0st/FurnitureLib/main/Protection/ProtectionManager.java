@@ -140,7 +140,16 @@ public class ProtectionManager {
         if (p.getUniqueId().equals(id.getUUID())) return true;
         if (FP == null) return true;
         if (getSize() == 0) return true;
-        if(!isProtectedRegion(id)) return true;
+        UUID playerUUID = p.getUniqueId();
+        if(!isProtectedRegion(id)) {
+        	if(id.getUUID().equals(playerUUID)) return true;
+        	if(id.getMemberList().contains(playerUUID)) {
+        		if(EventType.BREAK == id.getEventType() || EventType.BREAK_INTERACT == id.getEventType()) {
+        			return true;
+        		}
+        	}
+        	return false;
+        }
         boolean memberOfRegion = canBuild(p, id.getStartLocation());
         boolean ownerOfRegion = isOwner(p, id.getStartLocation());
         

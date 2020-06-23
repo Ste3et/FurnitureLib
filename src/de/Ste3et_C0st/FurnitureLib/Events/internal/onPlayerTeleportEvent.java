@@ -12,6 +12,6 @@ public class onPlayerTeleportEvent extends EventLibrary implements Listener {
     public void onPlayerTeleport(PlayerTeleportEvent event) {
         final Player player = event.getPlayer();
         if (FurnitureLib.getInstance() == null) return;
-        Bukkit.getScheduler().runTaskLater(FurnitureLib.getInstance(), () -> getFurnitureMgr().updatePlayerView(player), 5);
+        Bukkit.getScheduler().runTaskLater(FurnitureLib.getInstance(), () -> getFurnitureMgr().updatePlayerView(player), 1);
     }
 }

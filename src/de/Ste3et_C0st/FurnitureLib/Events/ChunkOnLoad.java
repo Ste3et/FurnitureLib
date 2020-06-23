@@ -1,6 +1,5 @@
 package de.Ste3et_C0st.FurnitureLib.Events;
 
-import de.Ste3et_C0st.FurnitureLib.Command.listCommand;
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.SchematicLoader.Events.ProjectBreakEvent;
 import de.Ste3et_C0st.FurnitureLib.SchematicLoader.Events.ProjectClickEvent;
