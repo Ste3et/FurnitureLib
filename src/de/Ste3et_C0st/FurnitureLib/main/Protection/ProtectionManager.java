@@ -113,9 +113,30 @@ public class ProtectionManager {
         PublicMode publicMode = id.getPublicMode();
         UUID userID = p.getUniqueId();
         UUID ownerID = id.getUUID();
+        EventType eventType = id.getEventType();
         if (ownerID == null) {
             return true;
         }
+        
+        if(!isProtectedRegion(id)) {
+        	if(id.getUUID().equals(userID)) return true;
+        	if(EventType.INTERACT == type) {
+        		if(EventType.INTERACT == eventType || EventType.BREAK_INTERACT == eventType) {
+        			return true;
+        		}
+        	}else if(EventType.BREAK == type) {
+        		if(id.getMemberList().contains(userID)) {
+            		if(EventType.BREAK == id.getEventType() || EventType.BREAK_INTERACT == id.getEventType()) {
+            			return true;
+            		}
+            	}
+        	}
+        	if(sendMessage) {
+        		 p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.NoPermissions"));
+        	}
+        	return false;
+        }
+        
         boolean b = canBuild(p, id);
         if (b) return true;
         if (publicMode.equals(PublicMode.PRIVATE)) {
@@ -140,16 +161,6 @@ public class ProtectionManager {
         if (p.getUniqueId().equals(id.getUUID())) return true;
         if (FP == null) return true;
         if (getSize() == 0) return true;
-        UUID playerUUID = p.getUniqueId();
-        if(!isProtectedRegion(id)) {
-        	if(id.getUUID().equals(playerUUID)) return true;
-        	if(id.getMemberList().contains(playerUUID)) {
-        		if(EventType.BREAK == id.getEventType() || EventType.BREAK_INTERACT == id.getEventType()) {
-        			return true;
-        		}
-        	}
-        	return false;
-        }
         boolean memberOfRegion = canBuild(p, id.getStartLocation());
         boolean ownerOfRegion = isOwner(p, id.getStartLocation());
         
