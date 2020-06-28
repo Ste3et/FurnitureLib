@@ -76,8 +76,9 @@ public class HiddenStringUtils {
     }
 
     private static String colorsToString(String colors) {
+    	System.out.println("colorsToString");
         if (colors == null) return null;
-
+        System.out.println("colorsToString1");
         colors = colors.toLowerCase().replace("" + ChatColor.COLOR_CHAR, "");
 
         if (colors.length() % 2 != 0) {
@@ -90,7 +91,7 @@ public class HiddenStringUtils {
         for (int i = 0; i < chars.length; i += 2) {
             bytes[i / 2] = hexToByte(chars[i], chars[i + 1]);
         }
-
+        
         return new String(bytes, StandardCharsets.UTF_8);
     }
 

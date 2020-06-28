@@ -30,6 +30,8 @@ import org.bukkit.event.world.WorldUnloadEvent;
 import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.util.HashSet;
 import java.util.List;
@@ -48,7 +50,15 @@ public class ChunkOnLoad implements Listener {
         if (is == null) return null;
         ItemStack stack = is.clone();
         if (stack.hasItemMeta()) {
-            if (stack.getItemMeta().hasLore()) {
+        	if(FurnitureLib.getVersionInt() > 15) {
+        		System.out.println("test1");
+        		ItemMeta meta = stack.getItemMeta();
+        		org.bukkit.NamespacedKey key = new org.bukkit.NamespacedKey(FurnitureLib.getInstance(), "model");
+        		String projectString = meta.getPersistentDataContainer().getOrDefault(key, PersistentDataType.STRING, null);
+        		System.out.println("PersistentDataType: " + projectString);
+        		if (projectString != null)
+                    return FurnitureManager.getInstance().getProjects().stream().filter(pro -> pro.getSystemID().equalsIgnoreCase(projectString)).findFirst().orElse(null);
+        	}else if (stack.getItemMeta().hasLore()) {
                 String projectString = HiddenStringUtils.extractHiddenString(stack.getItemMeta().getLore().get(0));
                 if (projectString != null)
                     return FurnitureManager.getInstance().getProjects().stream().filter(pro -> pro.getSystemID().equalsIgnoreCase(projectString)).findFirst().orElse(null);
@@ -79,7 +89,6 @@ public class ChunkOnLoad implements Listener {
             if (eventList.contains(e.getPlayer())) return;
             if (b.isLiquid()) return;
             if (EquipmentSlot.HAND != e.getHand()) return;
-            
             final Player player = e.getPlayer();
             
             if(FurnitureLib.getInstance().isWorldIgnored(e.getPlayer().getWorld().getName())) {
@@ -88,7 +97,6 @@ public class ChunkOnLoad implements Listener {
             }
             
             eventList.add(player);
-            
             final BlockFace face = e.getBlockFace();
             final Location loc = b.getLocation();
             

@@ -14,7 +14,7 @@ public class fInventory implements Cloneable {
 
     private ItemStack[] items = new ItemStack[6];
     private int entityId = 0;
-
+    
     public fInventory(int entityId) {
         this.entityId = entityId;
     }

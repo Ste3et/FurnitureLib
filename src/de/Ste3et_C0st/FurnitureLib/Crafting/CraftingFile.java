@@ -3,6 +3,7 @@ package de.Ste3et_C0st.FurnitureLib.Crafting;
 import com.google.common.collect.UnmodifiableIterator;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+
 import de.Ste3et_C0st.FurnitureLib.Utilitis.HiddenStringUtils;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.MaterialConverter;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
@@ -18,6 +19,7 @@ import org.bukkit.inventory.Recipe;
 import org.bukkit.inventory.ShapedRecipe;
 import org.bukkit.inventory.meta.Damageable;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.persistence.PersistentDataType;
 
 import java.io.*;
 import java.util.*;
@@ -248,6 +250,12 @@ public class CraftingFile {
         			loreText.add(HiddenStringUtils.encodeString(getSystemID()));
         			loreText.addAll(meta.getLore());
         			meta.setLore(loreText);
+        			
+        			if(FurnitureLib.getVersionInt() > 15) {
+        				meta.getPersistentDataContainer().set(new org.bukkit.NamespacedKey(FurnitureLib.getInstance(), "model"), PersistentDataType.STRING, getSystemID());
+        				System.out.println("add spezial ");
+        			}
+        			
         			stack.setItemMeta(meta);
         			stack.setAmount(1);
         			useItemStackObject = true;
@@ -319,7 +327,12 @@ public class CraftingFile {
         }
 
         im.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE, ItemFlag.HIDE_ATTRIBUTES);
-
+        
+        if(FurnitureLib.getVersionInt() > 15) {
+        	im.getPersistentDataContainer().set(new org.bukkit.NamespacedKey(FurnitureLib.getInstance(), "model"), PersistentDataType.STRING, getSystemID());
+			System.out.println("add spezial ");
+		}
+        
         is.setItemMeta(im);
         return is;
     }
