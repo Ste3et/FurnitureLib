@@ -4,6 +4,7 @@ import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.ModelLoader.ModelHandler;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.DoubleKey;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.RandomStringGenerator;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.cache.DiceOfflinePlayer;
 import de.Ste3et_C0st.FurnitureLib.main.Type.EventType;
 import de.Ste3et_C0st.FurnitureLib.main.Type.PublicMode;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
@@ -460,8 +461,8 @@ public class ObjectID {
     public String getPlayerName() {
         String name = "§cUNKNOWN";
         if (uuid != null) {
-            OfflinePlayer p = Bukkit.getOfflinePlayer(uuid);
-            name = p.getName();
+            Optional<DiceOfflinePlayer> player = FurnitureLib.getInstance().getPlayerCache().getPlayer(getUUID());
+            if(player.isPresent()) name = player.get().getName();
         }
         return name;
     }

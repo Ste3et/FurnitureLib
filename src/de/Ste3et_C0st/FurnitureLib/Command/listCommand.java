@@ -1,6 +1,7 @@
 package de.Ste3et_C0st.FurnitureLib.Command;
 
 import de.Ste3et_C0st.FurnitureLib.Utilitis.StringTranslator;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.cache.DiceOfflinePlayer;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
@@ -14,9 +15,7 @@ import net.md_5.bungee.api.chat.HoverEvent;
 import net.md_5.bungee.api.chat.TextComponent;
 
 import org.apache.commons.lang.StringUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -72,17 +71,17 @@ public class listCommand extends iCommand {
 				continue;
 			} else if (argument.startsWith("player:") && !filterTypes.contains("player")) {
 				if (!hasCommandPermission(sender, ".player")) return;
-				
-				OfflinePlayer player = Bukkit.getOfflinePlayer(argument.replace("player:", "").replaceFirst("!", ""));
-				if (Objects.nonNull(player)) {
+				String playerName = argument.replace("player:", "").replaceFirst("!", "");
+				Optional<DiceOfflinePlayer> offlinePlayer = FurnitureLib.getInstance().getPlayerCache().getPlayer(playerName);
+				if (offlinePlayer.isPresent()) {
 					if(argument.startsWith("player:!")) {
-						filterPredicate = filterPredicate.and(entry -> !entry.getUUID().equals(player.getUniqueId()));
+						filterPredicate = filterPredicate.and(entry -> !entry.getUUID().equals(offlinePlayer.get().getUuid()));
 					}else {
-						filterPredicate = filterPredicate.and(entry -> entry.getUUID().equals(player.getUniqueId()));
+						filterPredicate = filterPredicate.and(entry -> entry.getUUID().equals(offlinePlayer.get().getUuid()));
 					}
-					filterTypes += "§7player:§a" + player.getName() + "§8|";
+					filterTypes += "§7player:§a" + offlinePlayer.get().getName() + "§8|";
 				}else {
-					filterTypes += "§7player:§c" + player.getName() + "§8|";
+					filterTypes += "§7player:§c" + offlinePlayer.get().getName() + "§8|";
 				}
 				continue;
 			} else if (argument.startsWith("distance:") && !filterTypes.contains("distance")) {

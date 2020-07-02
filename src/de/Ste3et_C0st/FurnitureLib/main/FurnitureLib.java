@@ -12,6 +12,9 @@ import de.Ste3et_C0st.FurnitureLib.Events.internal.*;
 import de.Ste3et_C0st.FurnitureLib.LimitationManager.LimitationManager;
 import de.Ste3et_C0st.FurnitureLib.SchematicLoader.ProjectManager;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.*;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.Wrapper.WrapperPlayServerEntityEquipmentNew;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.cache.DiceOfflinePlayer;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.cache.OfflinePlayerCache;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.inventory.InventoryManager;
 import de.Ste3et_C0st.FurnitureLib.main.Protection.ProtectionManager;
 import de.Ste3et_C0st.FurnitureLib.main.Type.*;
@@ -88,7 +91,8 @@ public class FurnitureLib extends JavaPlugin {
     private boolean sync = true;
     private static final int BSTATS_ID = 454;
     private List<String> ignoredWorlds = new ArrayList<String>();
-
+    private OfflinePlayerCache cache;
+    
     public static String getBukkitVersion() {
         return Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3];
     }
@@ -416,7 +420,7 @@ public class FurnitureLib extends JavaPlugin {
             this.permissionHandler = new PermissionHandler();
             this.Pmanager = new ProtectionManager(instance);
             this.sync = getConfig().getBoolean("config.sync", true);
-
+            this.cache = new OfflinePlayerCache();
             send("==========================================");
             send("FurnitureLibrary Version: §e" + this.getDescription().getVersion());
             send("Furniture Author: §6" + this.getDescription().getAuthors().get(0));
@@ -547,6 +551,8 @@ public class FurnitureLib extends JavaPlugin {
         debug("Config->PlaceMode.Access:" + type.name);
         debug("Config->PlaceMode.Mode:" + mode.name);
         debug("Config->update:" + update);
+        
+        WrapperPlayServerEntityEquipmentNew.addList();
 
     }
 
@@ -613,18 +619,19 @@ public class FurnitureLib extends JavaPlugin {
     }
 
     public boolean checkPurge(ObjectID obj, UUID uuid, int purgeTime) {
-        OfflinePlayer player = Bukkit.getOfflinePlayer(uuid);
-        if (!player.hasPlayedBefore())
-            return false;
-        long time = player.getLastPlayed();
-        if (!isAfterDate(time, purgeTime))
-            return false;
-        if (removePurge) {
-            getFurnitureManager().remove(obj);
-            return false;
-        }
-        obj.setSQLAction(SQLAction.REMOVE);
-        return true;
+    	Optional<DiceOfflinePlayer> optional = getPlayerCache().getPlayer(uuid);
+    	if(optional.isPresent()) {
+    		long lastSeen = optional.get().getLastSeen();
+    		if (!isAfterDate(lastSeen, purgeTime))
+    		    return false;
+    		if (removePurge) {
+    		   getFurnitureManager().remove(obj);
+    		   return false;
+    		}
+    		obj.setSQLAction(SQLAction.REMOVE);
+    		return true;
+    	}
+        return false;
     }
 
     public void registerPluginFurnitures(Plugin plugin) {
@@ -715,5 +722,9 @@ public class FurnitureLib extends JavaPlugin {
     
     public boolean isWorldIgnored(String worldName) {
     	return this.ignoredWorlds.contains(worldName.toLowerCase());
+    }
+    
+    public OfflinePlayerCache getPlayerCache() {
+    	return this.cache;
     }
 }

@@ -1,8 +1,10 @@
 package de.Ste3et_C0st.FurnitureLib.Database;
 
+import de.Ste3et_C0st.FurnitureLib.Events.FurnitureMoveEvent;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTCompressedStreamTools;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagList;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.cache.DiceOfflinePlayer;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
@@ -19,6 +21,7 @@ import java.util.Base64;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 
 public class DeSerializer {
@@ -90,21 +93,18 @@ public class DeSerializer {
 		return obj;
 	}
 	
-	private static HashMap<UUID, Long> offlineMap = new HashMap<UUID, Long>();
-	
 	public static void autoPurge(int purgeTime) {
 		FurnitureManager.getInstance().getObjectList().stream().filter(entry -> Objects.nonNull(entry.getUUID())).forEach(entry -> {
-			if(!offlineMap.containsKey(entry.getUUID())) {
-				OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(entry.getUUID());
-				offlineMap.put(entry.getUUID(), offlinePlayer.getLastPlayed());
-			}
-			long time = offlineMap.containsKey(entry.getUUID()) ? offlineMap.get(entry.getUUID()) : -1;
-			if(time > 0) {
-				if(FurnitureLib.getInstance().isAfterDate(time, purgeTime)) {
-					if(FurnitureLib.getInstance().isPurgeRemove()) {
-						FurnitureManager.getInstance().remove(entry);
-					}else {
-						entry.setSQLAction(SQLAction.REMOVE);
+			Optional<DiceOfflinePlayer> player = FurnitureLib.getInstance().getPlayerCache().getPlayer(entry.getUUID());
+			if(player.isPresent()) {
+				long lastSeen = player.get().getLastSeen();
+				if(lastSeen > 0) {
+					if(FurnitureLib.getInstance().isAfterDate(lastSeen, purgeTime)) {
+						if(FurnitureLib.getInstance().isPurgeRemove()) {
+							FurnitureManager.getInstance().remove(entry);
+						}else {
+							entry.setSQLAction(SQLAction.REMOVE);
+						}
 					}
 				}
 			}

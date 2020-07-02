@@ -72,10 +72,10 @@ public class CraftItemStack {
     public ItemStack getItemStack113(NBTTagCompound nbt) {
         try {
             byte[] data = NBTCompressedStreamTools.toByte(nbt);
+            Class<?> clazz_nms_CraftItemStack = Class.forName("org.bukkit.craftbukkit." + FurnitureLib.getBukkitVersion() + ".inventory.CraftItemStack");
+            Class<?> clazz_nms_ItemStack = Class.forName("net.minecraft.server." + FurnitureLib.getBukkitVersion() + ".ItemStack");
             Class<?> clazz_nms_NBTTagCompound = Class.forName("net.minecraft.server." + FurnitureLib.getBukkitVersion() + ".NBTTagCompound");
             Class<?> clazz_nms_NBTCompressedStreamTools = Class.forName("net.minecraft.server." + FurnitureLib.getBukkitVersion() + ".NBTCompressedStreamTools");
-            Class<?> clazz_nms_ItemStack = Class.forName("net.minecraft.server." + FurnitureLib.getBukkitVersion() + ".ItemStack");
-            Class<?> clazz_nms_CraftItemStack = Class.forName("org.bukkit.craftbukkit." + FurnitureLib.getBukkitVersion() + ".inventory.CraftItemStack");
             Object nbtTag = clazz_nms_NBTCompressedStreamTools.getMethod("a", InputStream.class).invoke(null, new ByteArrayInputStream(data));
             Object nms_item = clazz_nms_ItemStack.getMethod("a", clazz_nms_NBTTagCompound).invoke(null, nbtTag);
 			return (ItemStack) clazz_nms_CraftItemStack.getMethod("asBukkitCopy", clazz_nms_ItemStack).invoke(null, nms_item);

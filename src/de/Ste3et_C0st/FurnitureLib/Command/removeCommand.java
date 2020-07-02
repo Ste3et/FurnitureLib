@@ -1,20 +1,20 @@
 package de.Ste3et_C0st.FurnitureLib.Command;
 
 import de.Ste3et_C0st.FurnitureLib.Utilitis.StringTranslator;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.cache.DiceOfflinePlayer;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
 import org.apache.commons.lang.StringUtils;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 import org.bukkit.block.BlockFace;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
 import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.function.Predicate;
@@ -27,8 +27,7 @@ public class removeCommand extends iCommand {
         setTab(tab,tab,tab);
     }
 
-    @SuppressWarnings("deprecation")
-	public void execute(CommandSender sender, String[] args) {
+    public void execute(CommandSender sender, String[] args) {
     	if (!hasCommandPermission(sender)) return;
     	List<ObjectID> objectList = new ArrayList<ObjectID>(FurnitureManager.getInstance().getObjectList());
         String filterTypes = "";
@@ -84,10 +83,11 @@ public class removeCommand extends iCommand {
         		filterTypes +="§7world:" + world + "§8|";
         	}else if(argument.startsWith("player:") && !filterTypes.contains("player")) {
         		if (!hasCommandPermission(sender, ".player")) return;
-				OfflinePlayer player = Bukkit.getOfflinePlayer(argument.replace("player:", ""));
-        		if(Objects.nonNull(player)) {
-        			filterTypes +="§7player:§a" + player.getName() + "§8|";
-        			filterPredicate = filterPredicate.and(entry -> entry.getUUID().equals(player.getUniqueId()));
+        		String username = argument.replace("player:", "");
+        		Optional<DiceOfflinePlayer> offlinePlayer = FurnitureLib.getInstance().getPlayerCache().getPlayer(username);
+        		if(offlinePlayer.isPresent()) {
+        			filterTypes +="§7player:§a" + username + "§8|";
+        			filterPredicate = filterPredicate.and(entry -> entry.getUUID().equals(offlinePlayer.get().getUuid()));
         		}else {
         			filterTypes +="§7player:§c" + argument.replace("player:", "") + "§8|";
         			remove = false;

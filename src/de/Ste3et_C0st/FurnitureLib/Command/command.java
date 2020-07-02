@@ -3,6 +3,7 @@ package de.Ste3et_C0st.FurnitureLib.Command;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import net.md_5.bungee.api.ChatColor;
 import net.md_5.bungee.api.chat.BaseComponent;
@@ -13,7 +14,6 @@ import net.md_5.bungee.api.chat.HoverEvent.Action;
 import net.md_5.bungee.api.chat.TextComponent;
 
 import org.bukkit.Bukkit;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
@@ -26,6 +26,7 @@ import de.Ste3et_C0st.FurnitureLib.SchematicLoader.Events.ProjectClickEvent;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.LanguageManager;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.StringTranslator;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.Wrapper.ChatComponentWrapper;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.cache.DiceOfflinePlayer;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
@@ -90,14 +91,16 @@ public class command implements CommandExecutor, Listener{
 			p.sendMessage("§6Project-Model: §e" + project.isEditorProject());
 			p.sendMessage("§6Placeable Side: §e" + project.getPlaceableSide().name());
 			if(e.getID().getUUID()!=null){
-				OfflinePlayer player = Bukkit.getOfflinePlayer(e.getID().getUUID());
-				if(player.hasPlayedBefore()&&!player.isOnline()){
-					long mili1 = System.currentTimeMillis();
-					long mili2 = player.getLastPlayed();
-					long mili3 = mili1-mili2;
-					SimpleDateFormat time = new SimpleDateFormat("D:HH:mm:ss.SSS");
-			    	String timeStr = time.format(mili3);
-			    	p.sendMessage("§6Player Offline: " + timeStr);
+				Optional<DiceOfflinePlayer> offlinePlayer = FurnitureLib.getInstance().getPlayerCache().getPlayer(e.getID().getUUID());
+				if(offlinePlayer.isPresent()) {
+					if(!offlinePlayer.get().isOnline()) {
+						long mili1 = System.currentTimeMillis();
+						long mili2 = offlinePlayer.get().getLastSeen();
+						long mili3 = mili1-mili2;
+						SimpleDateFormat time = new SimpleDateFormat("D:HH:mm:ss.SSS");
+				    	String timeStr = time.format(mili3);
+				    	p.sendMessage("§6Player Offline: " + timeStr);
+					}
 				}
 			}
 			

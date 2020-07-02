@@ -3,9 +3,11 @@ package de.Ste3et_C0st.FurnitureLib.Utilitis.inventory.manage;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.bukkit.Bukkit;
+import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.entity.Player;
@@ -13,9 +15,11 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.SkullMeta;
 
 import de.Ste3et_C0st.FurnitureLib.Utilitis.ItemStackBuilder;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.cache.DiceOfflinePlayer;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.callbacks.CallbackGUI;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.inventory.InventoryHandler;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.inventory.InventoryManager.InventoryMode;
+import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 
@@ -42,14 +46,20 @@ public class PlayerManageInventoryCombat extends InventoryHandler{
 					if(Objects.isNull(stack)) return;
 					if(stack.getType().equals(Material.valueOf("SKULL_ITEM"))) {
 						SkullMeta skull = (SkullMeta) stack.getItemMeta();
-						OfflinePlayer skullOwner = Bukkit.getOfflinePlayer(skull.getOwner());
-						if(Objects.isNull(skullOwner)) return;
 						if(inventoryMode == InventoryMode.SETOWNER) {
+							OfflinePlayer skullOwner = Bukkit.getOfflinePlayer(skull.getOwner());
 							objectID.setUUID(skullOwner.getUniqueId());
 						}else if(inventoryMode == InventoryMode.ADDFRIEND) {
+							OfflinePlayer skullOwner = Bukkit.getOfflinePlayer(skull.getOwner());
 							objectID.addMember(skullOwner.getUniqueId());
 						}else if(inventoryMode == InventoryMode.REMOVEFRIEND) {
-							objectID.remMember(skullOwner.getUniqueId());
+							if(skull.hasDisplayName()) {
+								String playerName = ChatColor.stripColor(skull.getDisplayName());
+								Optional<DiceOfflinePlayer> offlinePlayer = FurnitureLib.getInstance().getPlayerCache().getPlayer(playerName);
+								if(offlinePlayer.isPresent()) {
+									objectID.remMember(offlinePlayer.get().getUuid());
+								}
+							}
 						}
 						objectID.setSQLAction(SQLAction.UPDATE);
 						update();
@@ -101,11 +111,11 @@ public class PlayerManageInventoryCombat extends InventoryHandler{
 			});
 		}else if(inventoryMode == InventoryMode.REMOVEFRIEND) {
 			getObjectID().getMemberList().stream().forEach(member -> {
-				OfflinePlayer offlinePlayer = Bukkit.getOfflinePlayer(member);
-				if(Objects.nonNull(offlinePlayer)) {
+				Optional<DiceOfflinePlayer> offlinePlayer = FurnitureLib.getInstance().getPlayerCache().getPlayer(member);
+				if(offlinePlayer.isPresent()) {
 					ItemStack itemStack = new ItemStack(Material.valueOf("SKULL_ITEM"), 1, (short) 3);
 					SkullMeta skull = (SkullMeta) itemStack.getItemMeta();
-					skull.setOwner(offlinePlayer.getName());
+					skull.setDisplayName(offlinePlayer.get().getName());
 					itemStack.setItemMeta(skull);
 					addItemStack(slot.getAndIncrement(), itemStack);
 				}
