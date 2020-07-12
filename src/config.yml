@@ -48,7 +48,9 @@ config:
   glowing: true
   CheckUpdate: true
   rotateOnSit: true
-  autoFileUpdater: true
+  fileConverter:
+    auto_mode: true
+    database_table: FurnitureLib_Objects
   Creative:
     RemoveItems: false
     Interact: true

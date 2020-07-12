@@ -133,7 +133,7 @@ public class autoConverter {
         return;
     }
 
-    public static void databaseConverter(CommandSender sender) {
+    public static void databaseConverter(CommandSender sender, String table) {
         if (!FurnitureLib.getInstance().isAutoFileUpdater()) {
             if (FurnitureLib.getInstance().isSync()) {
                 FurnitureLib.getInstance().getSQLManager().loadALL();
@@ -150,7 +150,7 @@ public class autoConverter {
             }
             return;
         }
-        FurnitureLib.getInstance().getSQLManager().convert(sender);
+        FurnitureLib.getInstance().getSQLManager().convert(sender, table);
     }
 
     public static String getHeader(String fileName, YamlConfiguration config) {

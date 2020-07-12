@@ -455,7 +455,7 @@ public class FurnitureLib extends JavaPlugin {
                 this.bmanager = new BlockManager();
                 this.craftingInv = new CraftingInv(this);
                 this.loadPermissionKit();
-                this.autoFileUpdater = getConfig().getBoolean("config.autoFileUpdater");
+                this.autoFileUpdater = getConfig().getBoolean("config.fileConverter.auto_mode", false);
                 autoConverter.modelConverter(getServer().getConsoleSender());
                 loadPluginConfig();
                 if (getConfig().getBoolean("config.UseMetrics")) new Metrics(this, BSTATS_ID);
@@ -463,7 +463,7 @@ public class FurnitureLib extends JavaPlugin {
                 this.pManager.loadProjectFiles();
                 this.sqlManager = new SQLManager(instance);
                 this.inventoryManager = new InventoryManager();
-                autoConverter.databaseConverter(getServer().getConsoleSender());
+                autoConverter.databaseConverter(getServer().getConsoleSender(), getConfig().getString("config.fileConverter.database_table", ""));
                 new FurnitureEvents(instance, manager);
                 getServer().getPluginManager().registerEvents(new onCrafting(), getInstance());
                 getServer().getPluginManager().registerEvents(new onBlockDispense(), getInstance());

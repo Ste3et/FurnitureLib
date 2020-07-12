@@ -268,8 +268,8 @@ public class SQLManager {
         }
     }
 
-    public void convert(CommandSender sender) {
-        database.getConverter().startConvert(sender);
+    public void convert(CommandSender sender, String table) {
+        database.getConverter().startConvert(sender, table);
     }
 
     public void loadAsynchron(ChunkData data, CallbackObjectIDs callBack, World world) {

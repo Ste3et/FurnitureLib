@@ -11,8 +11,10 @@ import org.bukkit.command.CommandSender;
 import java.io.ByteArrayInputStream;
 import java.sql.Connection;
 import java.sql.ResultSet;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.EnumSet;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -20,7 +22,8 @@ public class Converter {
 
     private Database database;
     private int stepSize = 250, offset = 0, dataFiles = 0, step = 1, stepComplete = 0;
-
+    private List<String> objID = new ArrayList<String>();
+    
     public Converter(Database database) {
         this.database = database;
     }
@@ -45,9 +48,10 @@ public class Converter {
         return compound;
     }
 
-    private boolean checkIfTableExist() {
+    private boolean checkIfTableExist(String str) {
+    	if(str.isEmpty()) return false;
         boolean b = false;
-        try (Connection con = database.getConnection(); ResultSet rs = database.getConnection().getMetaData().getTables(null, null, "FurnitureLib_Objects", null)) {
+        try (Connection con = database.getConnection(); ResultSet rs = database.getConnection().getMetaData().getTables(null, null, str, null)) {
             b = rs.next();
         } catch (Exception e) {
             e.printStackTrace();
@@ -55,10 +59,11 @@ public class Converter {
         return b;
     }
 
-    public void startConvert(CommandSender sender) {
-        String sql = "SELECT COUNT(*) FROM `FurnitureLib_Objects`";
-        if (this.checkIfTableExist()) {
-            System.out.println("FurnitureLib: Found table to convert (FurnitureLib_Objects)");
+    public void startConvert(CommandSender sender, String tableName) {
+        String sql = "SELECT COUNT(*) FROM `"+ tableName +"`";
+        System.out.println("Try to convert database Table: " + tableName);
+        if (this.checkIfTableExist(tableName)) {
+            System.out.println("FurnitureLib: Found table to convert (" + tableName +")");
             try (Connection con = database.getConnection(); ResultSet rs = con.createStatement().executeQuery(sql)) {
                 if (rs.next()) {
                     do {
@@ -68,7 +73,7 @@ public class Converter {
                                 stepComplete = (int) Math.ceil(((double) dataFiles) / ((double) stepSize));
                                 sender.sendMessage("Convert of " + dataFiles + " from " + database.getType().name());
                                 sender.sendMessage("It takes a while " + stepComplete + " Steps");
-                                convert(sender);
+                                convert(sender, tableName);
                             }
                         }
                     } while (rs.next());
@@ -78,18 +83,16 @@ public class Converter {
             }
         } else {
             System.out.println("FurnitureLib: Found no table to convert");
-
-            FurnitureLib.getInstance().getConfig().set("config.autoFileUpdater", false);
+            FurnitureLib.getInstance().getConfig().set("config.fileConverter.auto_mode", false);
             FurnitureLib.getInstance().saveConfig();
             FurnitureLib.getInstance().autoFileUpdater = false;
-
             FurnitureLib.getInstance().getSQLManager().loadALL();
         }
     }
 
-    private void convert(CommandSender sender) {
+    private void convert(CommandSender sender, String tableName) {
         Bukkit.getScheduler().runTaskAsynchronously(FurnitureLib.getInstance(), () -> {
-            try (Connection con = database.getConnection(); ResultSet rs = con.createStatement().executeQuery("SELECT * FROM FurnitureLib_Objects LIMIT " + stepSize + " OFFSET " + offset)) {
+            try (Connection con = database.getConnection(); ResultSet rs = con.createStatement().executeQuery("SELECT * FROM " + tableName + " LIMIT " + stepSize + " OFFSET " + offset)) {
                 sender.sendMessage("§7Convert Models Step §e" + step + "/" + stepComplete + " start !");
                 if (rs.next()) {
                     do {
@@ -97,44 +100,53 @@ public class Converter {
                         if (Objects.nonNull(rs)) {
                             String a = rs.getString(1), c = rs.getString(2);
                             if (!(a.isEmpty() || c.isEmpty())) {
-                                ByteArrayInputStream bin = new ByteArrayInputStream(Base64.getDecoder().decode(c));
-                                NBTTagCompound compound = NBTCompressedStreamTools.read(bin);
-                                bin.close();
+                            	if(!objID.contains(a)) {
+                            		ByteArrayInputStream bin = new ByteArrayInputStream(Base64.getDecoder().decode(c));
+                                    NBTTagCompound compound = NBTCompressedStreamTools.read(bin);
+                                    bin.close();
 
-                                NBTTagCompound location = compound.getCompound("Location");
-                                String world = location.getString("World");
-                                int chunkX = location.getInt("X") >> 4;
-                                int chunkZ = location.getInt("Z") >> 4;
+                                    NBTTagCompound location = compound.getCompound("Location");
+                                    String world = location.getString("World");
+                                    int chunkX = location.getInt("X") >> 4;
+                                    int chunkZ = location.getInt("Z") >> 4;
 
-                                UUID uuidObj = DeSerializer.uuidFetcher(compound.getString("Owner-UUID"));
-                                String uuid = "";
-                                if (uuidObj != null) uuid = uuidObj.toString();
+                                    UUID uuidObj = DeSerializer.uuidFetcher(compound.getString("Owner-UUID"));
+                                    String uuid = "";
+                                    if (uuidObj != null) uuid = uuidObj.toString();
 
-                                if (!FurnitureLib.isNewVersion()) {
-                                    String sql = "REPLACE INTO furnitureLibData (ObjID, Data, world, `x`, `z`, `uuid`) " +
-                                            "VALUES (" +
-                                            "'" + a + "'," +
-                                            "'" + c + "'," +
-                                            "'" + world + "'," +
-                                            +chunkX + "," +
-                                            +chunkZ + "," +
-                                            "'" + uuid + "');";
-                                    con.createStatement().executeUpdate(sql);
-                                } else {
-                                    NBTTagCompound armorStands = compound.getCompound("ArmorStands");
-                                    compound.set("entities", convertPacketItemStack(armorStands));
-                                    compound.remove("ArmorStands");
-                                    String g = Base64.getEncoder().encodeToString(Serializer.armorStandtoBytes(compound));
-                                    String sql = "REPLACE INTO furnitureLibData (ObjID, Data, world, `x`, `z`, `uuid`) " +
-                                            "VALUES (" +
-                                            "'" + a + "'," +
-                                            "'" + g + "'," +
-                                            "'" + world + "'," +
-                                            +chunkX + "," +
-                                            +chunkZ + "," +
-                                            "'" + uuid + "');";
-                                    con.createStatement().executeUpdate(sql);
-                                }
+                                    if (!FurnitureLib.isNewVersion()) {
+                                        String sql = "REPLACE INTO furnitureLibData (ObjID, Data, world, `x`, `z`, `uuid`) " +
+                                                "VALUES (" +
+                                                "'" + a + "'," +
+                                                "'" + c + "'," +
+                                                "'" + world + "'," +
+                                                +chunkX + "," +
+                                                +chunkZ + "," +
+                                                "'" + uuid + "');";
+                                        con.createStatement().executeUpdate(sql);
+                                    } else {
+                                    	if(compound.hasKey("entities")) {
+                                    		NBTTagCompound armorStands = compound.getCompound("entities");
+                                    		compound.set("entities", convertPacketItemStack(armorStands));
+                                    	}else if(compound.hasKey("ArmorStands")) {
+                                    		NBTTagCompound armorStands = compound.getCompound("ArmorStands");
+                                            compound.set("entities", convertPacketItemStack(armorStands));
+                                            compound.remove("ArmorStands");
+                                    	}
+                                        
+                                        String g = Base64.getEncoder().encodeToString(Serializer.armorStandtoBytes(compound));
+                                        String sql = "REPLACE INTO furnitureLibData (ObjID, Data, world, `x`, `z`, `uuid`) " +
+                                                "VALUES (" +
+                                                "'" + a + "'," +
+                                                "'" + g + "'," +
+                                                "'" + world + "'," +
+                                                +chunkX + "," +
+                                                +chunkZ + "," +
+                                                "'" + uuid + "');";
+                                        con.createStatement().executeUpdate(sql);
+                                    }
+                                    objID.add(a);
+                            	}
                             }
                         }
                     } while (rs.next());
@@ -142,12 +154,12 @@ public class Converter {
                 sender.sendMessage("§7Convert Models Step §e" + step + "/" + stepComplete + " Finish !");
                 this.step++;
                 rs.close();
-                if (offset != dataFiles) {
-                    this.convert(sender);
+                if (offset < dataFiles) {
+                    this.convert(sender, tableName);
                 } else {
                     sender.sendMessage("§2Database Convert Finished :D");
-                    con.createStatement().execute("ALTER TABLE `FurnitureLib_Objects` RENAME TO `FurnitureLib_ObjectsOLD`;");
-                    con.close();
+//                    con.createStatement().execute("ALTER TABLE `FurnitureLib_Objects` RENAME TO `FurnitureLib_ObjectsOLD`;");
+//                    con.close();
                     FurnitureLib.getInstance().getSQLManager().loadALL();
                     FurnitureLib.getInstance().send("==========================================");
                 }
