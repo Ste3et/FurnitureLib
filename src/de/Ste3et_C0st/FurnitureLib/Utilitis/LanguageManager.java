@@ -12,6 +12,8 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class LanguageManager {
 
@@ -186,7 +188,20 @@ public class LanguageManager {
         if (hash.isEmpty()) return "§cHash is empty";
         if (!hash.containsKey(a)) return "§fkey not found: §5" + a;
         String b = hash.get(a);
-        return ChatColor.translateAlternateColorCodes('&', b);
+        return FurnitureLib.getVersionInt() > 15 ? ChatColor.translateAlternateColorCodes('&', applyHexColors(b)) :  ChatColor.translateAlternateColorCodes('&', b);
+    }
+    
+    private final Pattern hexPattern = Pattern.compile("<#([A-Fa-f0-9]){6}>");
+    public String applyHexColors(String message){
+        Matcher matcher = hexPattern.matcher(message);
+        while (matcher.find()) {
+            final net.md_5.bungee.api.ChatColor hexColor = net.md_5.bungee.api.ChatColor.of(matcher.group().substring(1, matcher.group().length() - 1));
+            final String before = message.substring(0, matcher.start());
+            final String after = message.substring(matcher.end());
+            message = before + hexColor + after;
+            matcher = hexPattern.matcher(message);
+        }
+        return ChatColor.translateAlternateColorCodes('&', message);
     }
 
     public String getString(String key, StringTranslator... stringTranslators) {

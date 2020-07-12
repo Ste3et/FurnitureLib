@@ -51,11 +51,9 @@ public class ChunkOnLoad implements Listener {
         ItemStack stack = is.clone();
         if (stack.hasItemMeta()) {
         	if(FurnitureLib.getVersionInt() > 15) {
-        		System.out.println("test1");
         		ItemMeta meta = stack.getItemMeta();
         		org.bukkit.NamespacedKey key = new org.bukkit.NamespacedKey(FurnitureLib.getInstance(), "model");
         		String projectString = meta.getPersistentDataContainer().getOrDefault(key, PersistentDataType.STRING, null);
-        		System.out.println("PersistentDataType: " + projectString);
         		if (projectString != null)
                     return FurnitureManager.getInstance().getProjects().stream().filter(pro -> pro.getSystemID().equalsIgnoreCase(projectString)).findFirst().orElse(null);
         	}else if (stack.getItemMeta().hasLore()) {

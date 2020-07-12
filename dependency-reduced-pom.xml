@@ -4,7 +4,7 @@
   <groupId>de.Ste3et_C0st.furniture</groupId>
   <artifactId>FurnitureLib</artifactId>
   <name>FurnitureLib</name>
-  <version>2.2.8.1</version>
+  <version>2.2.9</version>
   <description>The FurnitureLib is an API to create packet based entity creations for Spigot based Minecraft Servers.</description>
   <url>https://dicecraft.de/furniture/</url>
   <issueManagement>
@@ -81,7 +81,7 @@
     <dependency>
       <groupId>org.spigotmc</groupId>
       <artifactId>spigot-api</artifactId>
-      <version>1.14-R0.1-SNAPSHOT</version>
+      <version>1.16.1-R0.1-SNAPSHOT</version>
       <scope>provided</scope>
       <exclusions>
         <exclusion>
@@ -109,7 +109,7 @@
     <dependency>
       <groupId>com.destroystokyo.paper</groupId>
       <artifactId>paper-api</artifactId>
-      <version>1.15.2-R0.1-SNAPSHOT</version>
+      <version>1.16.1-R0.1-SNAPSHOT</version>
       <scope>provided</scope>
       <exclusions>
         <exclusion>

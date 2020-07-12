@@ -386,7 +386,7 @@ public class FurnitureLib extends JavaPlugin {
     }
 
     private boolean isRightProtocollib(String s) {
-        return s.startsWith("4");
+        return  s.startsWith("4");
     }
 
     @Override
@@ -427,6 +427,7 @@ public class FurnitureLib extends JavaPlugin {
             send("Furniture Website: §e" + this.getDescription().getWebsite());
             send("FurnitureLib load for Minecraft: 1." + getVersionInt());
             String s = getPluginManager().getPlugin("ProtocolLib").getDescription().getVersion();
+            boolean protocollib = isRightProtocollib(s);
             if (getBukkitVersion().startsWith("v1_14")) {
                 send("§5Info: §eFor Spigot 1.14.x you need §6ProtocolLib 4.5.0 Build #8 §eor above");
                 send("§5Download it here: §l§9http://ci.dmulloy2.net/job/ProtocolLib%20Gradle/lastStableBuild/");
@@ -435,8 +436,18 @@ public class FurnitureLib extends JavaPlugin {
             	send("§5Info: §eFor Spigot 1.15.2 you need §6ProtocolLib 4.5.1 §eor above");
                 send("§5Download it here: §l§9https://www.spigotmc.org/resources/protocollib.1997/");
                 send("§5Otherwise you will receive: §cNo field with type java.util.Map exists in class EnumProtocol.");
+            }else if(getVersionInt() > 15) {
+            	try {
+            		Class.forName("com.comphenix.protocol.wrappers.Pair");
+            	}catch(ClassNotFoundException ex) {
+            		send("§5Info: §eFor Spigot 1.16.x you need §6ProtocolLib 4.6.0 Build #472 §eor above");
+            		send("§5Download it here: §l§9http://ci.dmulloy2.net/job/ProtocolLib%20Gradle/lastStableBuild/");
+            		send("§7FurnitureLib will stop working!");
+            		getPluginManager().disablePlugin(this);
+            		return;
+            	}
             }
-            boolean protocollib = isRightProtocollib(s);
+            
             if (protocollib) {
                 send("Furniture start load");
                 boolean b = isEnable("ProtectionLib", false);
@@ -551,9 +562,6 @@ public class FurnitureLib extends JavaPlugin {
         debug("Config->PlaceMode.Access:" + type.name);
         debug("Config->PlaceMode.Mode:" + mode.name);
         debug("Config->update:" + update);
-        
-        WrapperPlayServerEntityEquipmentNew.addList();
-
     }
 
     public void reloadPluginConfig() {

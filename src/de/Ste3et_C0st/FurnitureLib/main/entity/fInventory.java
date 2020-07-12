@@ -3,10 +3,16 @@ package de.Ste3et_C0st.FurnitureLib.main.entity;
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.EnumWrappers.ItemSlot;
+
+import de.Ste3et_C0st.FurnitureLib.Events.FurnitureMoveEvent;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.Wrapper.WrapperPlayServerEntityEquipmentNew;
+import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
+
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
@@ -123,8 +129,16 @@ public class fInventory implements Cloneable {
             e.printStackTrace();
         }
     }
+    
+    public List<PacketContainer> createPackets(){
+    	if(FurnitureLib.getVersionInt() > 15) {
+    		return createPacketsNew();
+    	}
+    	return createPacketsOld();
+    }
 
-    public List<PacketContainer> createPackets() {
+    //under 1.16
+    public List<PacketContainer> createPacketsOld() {
         List<PacketContainer> packetList = new ArrayList<PacketContainer>();
         for (int i = 0; i < 6; i++) {
             ItemStack stack = this.getSlot(i);
@@ -135,6 +149,18 @@ public class fInventory implements Cloneable {
             packetList.add(packet);
         }
         return packetList;
+    }
+    
+    //overOrEquals 1.16
+    public List<PacketContainer> createPacketsNew(){
+    	WrapperPlayServerEntityEquipmentNew equipment = new WrapperPlayServerEntityEquipmentNew();
+    	equipment.writeEntityID(getEntityID());
+    	for(int i = 0; i < 6; i++) {
+    		ItemStack stack = this.getSlot(i);
+    		EquipmentSlot slot = EquipmentSlot.values()[i];
+    		equipment.setItem(slot.getItemSlot(), stack);
+    	}
+    	return Arrays.asList(equipment.getHandle());
     }
 
     public boolean isEmpty() {
@@ -156,21 +182,27 @@ public class fInventory implements Cloneable {
     }
 
     public enum EquipmentSlot {
-        MAINHAND(0),
-        OFFHAND(1),
-        FEET(2),
-        LEGS(3),
-        CHEST(4),
-        HEAD(5);
+        MAINHAND(0, ItemSlot.MAINHAND),
+        OFFHAND(1, ItemSlot.OFFHAND),
+        FEET(2, ItemSlot.FEET),
+        LEGS(3, ItemSlot.LEGS),
+        CHEST(4, ItemSlot.CHEST),
+        HEAD(5, ItemSlot.HEAD);
 
         private int slot;
-
-        EquipmentSlot(int i) {
+        private ItemSlot itemSlot;
+        
+        EquipmentSlot(int i, ItemSlot slot) {
             this.slot = i;
+            this.itemSlot = slot;
         }
 
         public int getSlot() {
             return this.slot;
+        }
+        
+        public ItemSlot getItemSlot() {
+        	return this.itemSlot;
         }
     }
 }

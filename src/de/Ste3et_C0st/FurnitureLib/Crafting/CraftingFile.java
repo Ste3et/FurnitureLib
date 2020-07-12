@@ -253,7 +253,6 @@ public class CraftingFile {
         			
         			if(FurnitureLib.getVersionInt() > 15) {
         				meta.getPersistentDataContainer().set(new org.bukkit.NamespacedKey(FurnitureLib.getInstance(), "model"), PersistentDataType.STRING, getSystemID());
-        				System.out.println("add spezial ");
         			}
         			
         			stack.setItemMeta(meta);
@@ -330,7 +329,6 @@ public class CraftingFile {
         
         if(FurnitureLib.getVersionInt() > 15) {
         	im.getPersistentDataContainer().set(new org.bukkit.NamespacedKey(FurnitureLib.getInstance(), "model"), PersistentDataType.STRING, getSystemID());
-			System.out.println("add spezial ");
 		}
         
         is.setItemMeta(im);

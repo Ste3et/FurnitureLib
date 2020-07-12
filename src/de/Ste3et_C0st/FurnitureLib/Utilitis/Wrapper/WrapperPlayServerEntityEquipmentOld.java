@@ -6,7 +6,7 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.EnumWrappers.ItemSlot;
 
-public class WrapperPlayServerEntityEquipmentOld extends AbstractPacket {
+public class WrapperPlayServerEntityEquipmentOld extends AbstractPacket implements IEntityEquipment{
 
 	public static final PacketType TYPE = PacketType.Play.Server.ENTITY_EQUIPMENT;
 	
@@ -24,5 +24,11 @@ public class WrapperPlayServerEntityEquipmentOld extends AbstractPacket {
 	
 	public void writeItemStack(ItemStack stack) {
 		this.handle.getItemModifier().write(0, stack);
+	}
+
+	@Override
+	public void setItem(ItemSlot slot, ItemStack stack) {
+		writeItemStack(stack);
+		writeItemSlot(slot);
 	}
 }
