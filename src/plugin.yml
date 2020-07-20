@@ -3,7 +3,7 @@ version: ${project.version}
 description: ${project.description}
 author: Ste3et_C0st
 website: ${project.url}
-softdepend: [ProtocolLib,ProtectionLib,LightAPI,Multiverse,Multiverse-Core,MultiWorld, Vault]
+softdepend: [ProtocolLib,ProtectionLib,LightAPI,Multiverse,Multiverse-Core,MultiWorld,Vault,Hyperverse]
 main: de.Ste3et_C0st.FurnitureLib.main.FurnitureLib
 api-version: 1.13
 commands:
