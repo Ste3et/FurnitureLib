@@ -35,7 +35,8 @@ public class LimitationManager {
     private Integer returnIntProject(Player p, Project pro) {
         if (Objects.isNull(pro)) return 0;
         if(Objects.isNull(p)) return 0;
-        return (int) FurnitureManager.getInstance().getFromPlayer(p.getUniqueId()).stream().filter(obj -> obj.getProjectOBJ().equals(pro)).count();
+        if(!p.isOnline()) return 0;
+        return (int) FurnitureManager.getInstance().getFromPlayer(p.getUniqueId()).stream().filter(obj -> Objects.nonNull(pro) && obj.getProjectOBJ().equals(pro)).count();
     }
 
     private Integer returnIntProjectTotal(Player p) {
