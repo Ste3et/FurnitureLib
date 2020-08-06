@@ -45,7 +45,7 @@ public class ModelBlockAquaticUpdate extends ModelBlock {
             String materialStr = yamlConfiguration.getString(key + ".material", "");
             ModelVector vector = new ModelVector(x, y, z);
 
-            if (Type.version.equalsIgnoreCase("1.14") || Type.version.equalsIgnoreCase("1.15")) {
+            if (FurnitureLib.getVersionInt() > 13) {
                 if (materialStr.startsWith("WALL_SIGN")) {
                     materialStr = materialStr.replace("WALL_SIGN", "OAK_WALL_SIGN");
                     yamlConfiguration.set(key + ".material", materialStr);
