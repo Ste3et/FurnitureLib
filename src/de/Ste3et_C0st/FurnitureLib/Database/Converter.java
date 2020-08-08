@@ -158,6 +158,8 @@ public class Converter {
                     this.convert(sender, tableName);
                 } else {
                     sender.sendMessage("§2Database Convert Finished :D");
+                    FurnitureLib.getInstance().getConfig().set("config.fileConverter.auto_mode", false);
+                    FurnitureLib.getInstance().saveConfig();
 //                    con.createStatement().execute("ALTER TABLE `FurnitureLib_Objects` RENAME TO `FurnitureLib_ObjectsOLD`;");
 //                    con.close();
                     FurnitureLib.getInstance().getSQLManager().loadALL();

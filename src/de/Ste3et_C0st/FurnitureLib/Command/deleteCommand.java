@@ -79,7 +79,8 @@ public class deleteCommand extends iCommand {
 							if(!project.isEditorProject()) {
 								File file1 = new File("plugins/FurnitureLib/Crafting", str + ".yml");
 								File file2 = new File("plugins/FurnitureLib/plugin/DiceEditor", str + ".yml");
-								if (file1 != null && file1.exists()) {
+								File file3 = new File("plugins/FurnitureLib/models", str + ".dModel");
+								if (file1.exists()) {
 									YamlConfiguration config = YamlConfiguration.loadConfiguration(file1);
 									config.set(str + ".enabled", false);
 									try {
@@ -87,28 +88,50 @@ public class deleteCommand extends iCommand {
 									} catch (IOException e) {
 										e.printStackTrace();
 									}
-								}
-								
-								if (file2 != null && file2.exists()) {
+									FurnitureLib.getInstance().getFurnitureManager().getProjects().remove(project);
+									sender.sendMessage("§2The Furniture Model §a" + systemID + " §2has been disabled");
+								}else if (file2.exists()) {
 									YamlConfiguration config = YamlConfiguration.loadConfiguration(file2);
 									config.set(str + ".enabled", false);
 									try {
-										config.save(file1);
+										config.save(file2);
 									} catch (IOException e) {
 										e.printStackTrace();
 									}
+									FurnitureLib.getInstance().getFurnitureManager().getProjects().remove(project);
+									sender.sendMessage("§2The Furniture Model §a" + systemID + " §2has been disabled");
+								}else if (file3.exists()) {
+									YamlConfiguration config = YamlConfiguration.loadConfiguration(file3);
+									config.set(str + ".enabled", false);
+									try {
+										config.save(file3);
+									} catch (IOException e) {
+										e.printStackTrace();
+									}
+									FurnitureLib.getInstance().getFurnitureManager().getProjects().remove(project);
+									sender.sendMessage("§2The Furniture Model §a" + systemID + " §2has been disabled");
+								}else {
+									sender.sendMessage("§cThe Furniture Model §a" + systemID + " §ccould not deleted");
 								}
-								FurnitureLib.getInstance().getFurnitureManager().getProjects().remove(project);
-								sender.sendMessage("§2The Furniture Model §a" + systemID + " §2has been removed");
 							}else {
 								File file1 = new File("plugins/FurnitureLib/Crafting", str + ".yml");
 								File file2 = new File("plugins/FurnitureLib/plugin/DiceEditor", str + ".yml");
-								if (file1 != null && file1.exists())
+								File file3 = new File("plugins/FurnitureLib/models/", str + ".dModel");
+								if(file1.exists()) {
 									file1.delete();
-								if (file2 != null && file2.exists())
+									FurnitureLib.getInstance().getFurnitureManager().getProjects().remove(project);
+									sender.sendMessage("§2The Furniture Model §a" + systemID + " §2has been removed");
+								}else if(file2.exists()) {
 									file2.delete();
-								FurnitureLib.getInstance().getFurnitureManager().getProjects().remove(project);
-								sender.sendMessage("§2The Furniture Model §a" + systemID + " §2has been removed");
+									FurnitureLib.getInstance().getFurnitureManager().getProjects().remove(project);
+									sender.sendMessage("§2The Furniture Model §a" + systemID + " §2has been removed");
+								}else if(file3.exists()) {
+									file3.delete();
+									FurnitureLib.getInstance().getFurnitureManager().getProjects().remove(project);
+									sender.sendMessage("§2The Furniture Model §a" + systemID + " §2has been removed");
+								}else {
+									sender.sendMessage("§cThe Furniture Model §a" + systemID + " §ccould not deleted");
+								}
 							}
 						} else {
 							sender.sendMessage("§cYou were too slow, please type §a§n/furniture delete System-ID");
