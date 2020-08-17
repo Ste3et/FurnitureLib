@@ -83,6 +83,11 @@
 	        <id>papermc</id>
 	        <url>https://papermc.io/repo/repository/maven-public/</url>
 	    </repository>
+	    
+	    <repository>
+            <id>sonatype</id>
+            <url>https://oss.sonatype.org/content/groups/public/</url>
+        </repository>
 	</repositories>
 
 	<dependencies>
@@ -136,12 +141,10 @@
 		</dependency>
 
 		<dependency>
-			<groupId>ru.beykerykt.lightapi</groupId>
-			<artifactId>LightAPI</artifactId>
-			<version>3.2.7</version>
-			<scope>system</scope>
-			<systemPath>${project.basedir}/lib/LightAPI.jar</systemPath>
-		</dependency>
+            <groupId>io.github.qveshn</groupId>
+            <artifactId>LightAPI-fork</artifactId>
+            <version>3.4.5-SNAPSHOT</version>
+        </dependency>
 
 		<dependency>
 			<groupId>com.comphenix.protocol</groupId>
