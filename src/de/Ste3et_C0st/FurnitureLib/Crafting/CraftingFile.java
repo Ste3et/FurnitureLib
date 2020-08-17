@@ -248,7 +248,9 @@ public class CraftingFile {
     				ItemMeta meta = stack.getItemMeta();
         			List<String> loreText = new ArrayList<String>();
         			loreText.add(HiddenStringUtils.encodeString(getSystemID()));
-        			loreText.addAll(meta.getLore());
+        			if(meta.hasLore()) {
+        				loreText.addAll(meta.getLore());
+        			}
         			meta.setLore(loreText);
         			
         			if(FurnitureLib.getVersionInt() > 15) {

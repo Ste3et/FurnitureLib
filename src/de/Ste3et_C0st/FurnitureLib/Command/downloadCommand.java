@@ -312,12 +312,15 @@ public class downloadCommand extends iCommand{
 		}
 		
 		if(compound.hasKey("entitys")){
+			System.out.println("has entitys");
 			NBTTagCompound armorStands = compound.getCompound("entitys");
 			for(Object s : armorStands.c()){
 				String str = armorStands.getString((String) s);
 				file.set(header+".projectData.entities."+ ((String) s), str);
 			}
 		}
+		
+		System.err.println(compound.toString());
 		
 		PlaceableSide side = PlaceableSide.TOP;
 		if(compound.hasKey("placeAbleSide")){
