@@ -160,6 +160,10 @@ public class command implements CommandExecutor, Listener{
 		return false;
 	}
 	
+	public static void sendHelp(Player player){
+		sendHelp(player);
+	}
+	
 	public static void sendHelp(CommandSender sender){
 		if(sender==null) return;
 		
