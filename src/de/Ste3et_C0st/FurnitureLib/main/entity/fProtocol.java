@@ -13,29 +13,27 @@ import org.bukkit.entity.EntityType;
 
 public class fProtocol {
 
-    private ProtocolManager manager;
-    private WrappedDataWatcher watcher;
-    private PacketContainer container;
+    private final static ProtocolManager manager = ProtocolLibrary.getProtocolManager();
+    private final static ProtocolFields fields = FurnitureLib.getInstance().getField();
+    private final PacketContainer container = new PacketContainer(PacketType.Play.Server.SPAWN_ENTITY_LIVING);
+    private final WrappedDataWatcher watcher = new WrappedDataWatcher();
+    
     private EntityType type;
     private ObjectID id;
-    private ProtocolFields fields;
+    
 
     public fProtocol(EntityType type, ObjectID id) {
-        this.manager = ProtocolLibrary.getProtocolManager();
         this.id = id;
         this.type = type;
-        this.container = new PacketContainer(PacketType.Play.Server.SPAWN_ENTITY_LIVING);
         this.container.getModifier().writeDefaults();
-        this.watcher = new WrappedDataWatcher();
-        this.fields = FurnitureLib.getInstance().getField();
     }
 
     public EntityType getEntityType() {
         return this.type;
     }
 
-    public ProtocolManager getManager() {
-        return this.manager;
+    protected ProtocolManager getManager() {
+        return manager;
     }
 
     public WrappedDataWatcher getWatcher() {
@@ -54,8 +52,8 @@ public class fProtocol {
         this.id = id;
     }
 
-    public ProtocolFields getField() {
-        return this.fields;
+    protected ProtocolFields getField() {
+        return fields;
     }
 
     public Project getProject() {

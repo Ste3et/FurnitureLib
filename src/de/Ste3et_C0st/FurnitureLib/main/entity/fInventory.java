@@ -1,28 +1,59 @@
 package de.Ste3et_C0st.FurnitureLib.main.entity;
 
-import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.EnumWrappers.ItemSlot;
 
-import de.Ste3et_C0st.FurnitureLib.Events.FurnitureMoveEvent;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.Wrapper.IEntityEquipment;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.Wrapper.WrapperPlayServerEntityEquipmentNew;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.Wrapper.WrapperPlayServerEntityEquipmentOld;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
-import java.util.Objects;
+import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class fInventory implements Cloneable {
 
     private ItemStack[] items = new ItemStack[6];
     private int entityId = 0;
     
+    private static Function<fInventory, List<IEntityEquipment>> entityEquipmentFunction;
+    
+    static {
+    	if(FurnitureLib.getVersionInt() > 15) {
+        	entityEquipmentFunction = fInventory -> {
+        		List<IEntityEquipment> packetList = new ArrayList<IEntityEquipment>();
+        		WrapperPlayServerEntityEquipmentNew equipmentInterface = new WrapperPlayServerEntityEquipmentNew().writeEntityID(fInventory.entityId);
+            	for(int i = 0; i < 6; i++) {
+            		ItemStack stack = fInventory.getSlot(i);
+            		EquipmentSlot slot = EquipmentSlot.values()[i];
+            		equipmentInterface.setItem(slot.getItemSlot(), stack);
+            	}
+            	packetList.add(equipmentInterface);
+            	return packetList;
+        	};
+        }else {
+        	entityEquipmentFunction = fInventory -> {
+        		List<IEntityEquipment> packetList = new ArrayList<IEntityEquipment>();
+        		for (int i = 0; i < 6; i++) {
+        			WrapperPlayServerEntityEquipmentOld equipmentInterface = new WrapperPlayServerEntityEquipmentOld().writeEntityID(fInventory.entityId);
+                    ItemStack stack = fInventory.getSlot(i);
+            		EquipmentSlot slot = EquipmentSlot.values()[i];
+            		equipmentInterface.setItem(slot.getItemSlot(), stack);
+            		packetList.add(equipmentInterface);
+        		}
+        		return packetList;
+        	};
+        }
+    }
+    
     public fInventory(int entityId) {
         this.entityId = entityId;
+        
     }
 
     public ItemStack getItemInMainHand() {
@@ -131,36 +162,7 @@ public class fInventory implements Cloneable {
     }
     
     public List<PacketContainer> createPackets(){
-    	if(FurnitureLib.getVersionInt() > 15) {
-    		return createPacketsNew();
-    	}
-    	return createPacketsOld();
-    }
-
-    //under 1.16
-    public List<PacketContainer> createPacketsOld() {
-        List<PacketContainer> packetList = new ArrayList<PacketContainer>();
-        for (int i = 0; i < 6; i++) {
-            ItemStack stack = this.getSlot(i);
-            PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_EQUIPMENT);
-            packet.getIntegers().write(0, entityId);
-            packet.getItemSlots().write(0, ItemSlot.values()[i]);
-            packet.getItemModifier().write(0, stack);
-            packetList.add(packet);
-        }
-        return packetList;
-    }
-    
-    //overOrEquals 1.16
-    public List<PacketContainer> createPacketsNew(){
-    	WrapperPlayServerEntityEquipmentNew equipment = new WrapperPlayServerEntityEquipmentNew();
-    	equipment.writeEntityID(getEntityID());
-    	for(int i = 0; i < 6; i++) {
-    		ItemStack stack = this.getSlot(i);
-    		EquipmentSlot slot = EquipmentSlot.values()[i];
-    		equipment.setItem(slot.getItemSlot(), stack);
-    	}
-    	return Arrays.asList(equipment.getHandle());
+    	return entityEquipmentFunction.apply(this).stream().map(IEntityEquipment::getHandle).collect(Collectors.toList());
     }
 
     public boolean isEmpty() {

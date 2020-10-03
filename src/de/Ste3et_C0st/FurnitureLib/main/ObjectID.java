@@ -2,6 +2,7 @@ package de.Ste3et_C0st.FurnitureLib.main;
 
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.ModelLoader.ModelHandler;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.DefaultKey;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.DoubleKey;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.RandomStringGenerator;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.cache.DiceOfflinePlayer;
@@ -28,8 +29,8 @@ public class ObjectID {
     private Location loc;
     private UUID uuid;
     private HashSet<UUID> uuidList = new HashSet<UUID>();
-    private PublicMode publicMode = FurnitureLib.getInstance().getDefaultPublicType();
-    private EventType memberType = FurnitureLib.getInstance().getDefaultEventType();
+    private DefaultKey<PublicMode> publicMode = new DefaultKey<Type.PublicMode>(FurnitureLib.getInstance().getDefaultPublicType());
+    private DefaultKey<EventType> memberType = new DefaultKey<Type.EventType>(FurnitureLib.getInstance().getDefaultEventType());
     private SQLAction sqlAction = SQLAction.SAVE;
     private HashSet<fEntity> packetList = new HashSet<fEntity>();
     private HashSet<Player> players = new HashSet<>();
@@ -83,7 +84,7 @@ public class ObjectID {
     }
 
     public Project getProjectOBJ() {
-        return FurnitureManager.getInstance().getProject(getProject());
+        return FurnitureManager.getInstance().getProject(this.Project);
     }
 
     public String getPlugin() {
@@ -107,7 +108,7 @@ public class ObjectID {
     }
 
     public EventType getEventType() {
-        return this.memberType;
+        return this.memberType.getOrDefault();
     }
 
     public SQLAction getSQLAction() {
@@ -135,7 +136,7 @@ public class ObjectID {
     }
 
     public void setEventTypeAccess(EventType type) {
-        this.memberType = type;
+        this.memberType.setValue(type);
     }
 
     public HashSet<UUID> getMemberList() {
@@ -147,11 +148,19 @@ public class ObjectID {
     }
 
     public PublicMode getPublicMode() {
-        return this.publicMode;
+        return this.publicMode.getOrDefault();
     }
 
     public void setPublicMode(PublicMode publicMode) {
-        this.publicMode = publicMode;
+        this.publicMode.setValue(publicMode);
+    }
+    
+    public boolean hasPublicMode() {
+    	return !this.publicMode.isDefault();
+    }
+    
+    public boolean hasEventType() {
+    	return !this.memberType.isDefault();
     }
 
     public UUID getUUID() {

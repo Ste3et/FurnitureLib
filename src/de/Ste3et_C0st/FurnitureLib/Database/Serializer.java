@@ -32,34 +32,26 @@ public class Serializer {
     
     public static NBTTagCompound serializeToNBT(ObjectID obj) {
     	NBTTagCompound compound = new NBTTagCompound();
-        compound.setString("EventType", obj.getEventType().toString());
-        compound.setString("PublicMode", obj.getPublicMode().toString());
-        compound.setString("Owner-UUID", getOwnerUUID(obj));
-        compound.set("Members", getMemberList(obj));
+    	
+        if(obj.hasEventType()) compound.setString("EventType", obj.getEventType().toString());
+        if(obj.hasPublicMode()) compound.setString("PublicMode", obj.getPublicMode().toString());
+        if(Objects.nonNull(obj.getUUID())) compound.setString("Owner-UUID", obj.getUUID().toString());
+        if(obj.getMemberList().size() > 0) compound.set("Members", getMemberList(obj));
+        
         compound.set("Location", getFromLocation(obj.getStartLocation()));
-        compound.setInt("ArmorStands", obj.getPacketList().size());
+        
         NBTTagCompound armorStands = new NBTTagCompound();
         obj.getPacketList().stream().filter(Objects::nonNull).forEach(packet -> {
             armorStands.set(packet.getEntityID() + "", packet.getMetaData());
         });
+        
         compound.set("entities", armorStands);
+        
         return compound;
     }
 
     public static String SerializeObjectID(ObjectID obj) {
         return Base64.getEncoder().encodeToString(SerializeObjectToArray(obj));
-    }
-
-    private static String getOwnerUUID(ObjectID obj) {
-        String s = "NULL";
-        if (obj.getUUID() != null) {
-            try {
-                s = obj.getUUID().toString();
-            } catch (Exception e) {
-            }
-
-        }
-        return s;
     }
 
     private static NBTTagList getMemberList(ObjectID obj) {
@@ -78,7 +70,6 @@ public class Serializer {
         location.setDouble("Z", loc.getZ());
         location.setFloat("Yaw", loc.getYaw());
         location.setFloat("Pitch", loc.getPitch());
-        location.setString("World", loc.getWorld().getUID().toString());
         return location;
     }
 }

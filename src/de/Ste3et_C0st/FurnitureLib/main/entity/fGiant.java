@@ -77,13 +77,8 @@ public class fGiant extends fEntity {
     }
 
     public NBTTagCompound getMetaData() {
-    	super.getDefNBT();
+    	super.getMetaData();
         return getNBTField();
-    }
-
-    @Override
-    public void loadMetadata(NBTTagCompound metadata) {
-        loadDefMetadata(metadata);
     }
 
     @Override

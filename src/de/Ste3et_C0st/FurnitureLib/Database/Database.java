@@ -99,21 +99,18 @@ public abstract class Database {
     	HashSet<ObjectID> idList = new HashSet<ObjectID>();
     	if(Objects.isNull(query)) return idList;
         String worldName = bukkitWorld.getName();
-        AtomicInteger atomic = new AtomicInteger(0);
         if(Objects.nonNull(bukkitWorld)) {
         	try (Connection con = getConnection(); ResultSet rs = con.createStatement().executeQuery(query)) {
-        		rs.setFetchSize(200);
         		if(Objects.nonNull(rs)) {
         			if (rs.next() == true) {
             			do {
-            				String objectSerial = rs.getString(1);
-            				String data = rs.getString(2);
+            				String objectSerial = rs.getString("ObjID");
+            				String data = rs.getString("Data");
                             if (!(objectSerial.isEmpty())) {
                                 ObjectID obj = DeSerializer.Deserialize(objectSerial, data, action, bukkitWorld);
                                 if (Objects.nonNull(obj)) {
                                 	obj.setWorldName(worldName);
                                     idList.add(obj);
-                                    atomic.addAndGet(obj.getPacketList().size());
                                 }
                             }
             			} while (rs.next());
@@ -123,13 +120,10 @@ public abstract class Database {
                 e.printStackTrace();
         	}
         }
+        
         idList.stream().filter(Objects::nonNull).forEach(entry -> {
-        	if(Objects.nonNull(entry.getProjectOBJ())) {
-        		entry.registerBlocks();
-            	entry.getProjectOBJ().applyFunction(entry);
-        	}else {
-        		System.out.println("Project: [" + entry.getProject() + "] not found.");
-        	}
+        	entry.registerBlocks();
+        	entry.getProjectOBJ().applyFunction(entry);
         });
         
         FurnitureManager.getInstance().getObjectList().addAll(idList);
@@ -157,6 +151,8 @@ public abstract class Database {
     	        	idList.addAll(loadQuery(action, bukkitWorld, "SELECT ObjID,Data FROM " + TABLE_NAME + " WHERE world='"+ worldName +"' OR world='" + worldUUID.toString() + "'"));
     	        	double difference = timer.difference();
     	            double size = idList.size();
+    	            
+    	            idList.stream().forEach(entry -> atomic.addAndGet(entry.getPacketList().size()));
     	            
     	            if(size > 0) {
     	            	System.out.println("FurnitureLib load " + idList.size() + " models with " + atomic.get() +" entities");

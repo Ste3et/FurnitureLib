@@ -49,14 +49,14 @@ public class fPig extends fEntity {
     }
 
     public NBTTagCompound getMetaData() {
-    	super.getDefNBT();
+    	super.getMetaData();
         setMetadata("Saddle", this.hasSaddle());
         return getNBTField();
     }
 
     @Override
     public void loadMetadata(NBTTagCompound metadata) {
-        loadDefMetadata(metadata);
+    	super.loadMetadata(metadata);
         boolean s = (metadata.getInt("Saddle") == 1);
         this.setSaddle(s);
     }

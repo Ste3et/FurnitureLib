@@ -1,6 +1,7 @@
 package de.Ste3et_C0st.FurnitureLib.main.entity;
 
 import com.comphenix.protocol.wrappers.EnumWrappers;
+import com.comphenix.protocol.wrappers.EnumWrappers.ItemSlot;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.Registry;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
 import de.Ste3et_C0st.FurnitureLib.NBT.CraftItemStack;
@@ -13,6 +14,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
 import java.io.ByteArrayOutputStream;
 import java.util.Base64;
+import java.util.Objects;
 
 public abstract class fSerializer extends fProtocol {
 
@@ -78,8 +80,6 @@ public abstract class fSerializer extends fProtocol {
         metadata.set(field, value);
     }
 
-    public abstract NBTTagCompound getMetaData();
-
     //public void getDefNBT(fEntity entity) {};
 
     private NBTTagCompound getFromLocation(Location loc) {
@@ -89,17 +89,19 @@ public abstract class fSerializer extends fProtocol {
         location.setDouble("Z", loc.getZ());
         location.setFloat("Yaw", loc.getYaw());
         location.setFloat("Pitch", loc.getPitch());
-        location.setString("World", loc.getWorld().getUID().toString());
+        //location.setString("World", loc.getWorld().getUID().toString());
         return location;
     }
 
     private NBTTagCompound getFromInventory(fInventory fInventory) {
         NBTTagCompound inventory = new NBTTagCompound();
-        for (Object o : EnumWrappers.ItemSlot.values()) {
-            ItemStack is = fInventory.getSlot(o.toString());
-            if (is == null || is.getType().equals(Material.AIR)) continue;
+        for (ItemSlot itemSlot : EnumWrappers.ItemSlot.values()) {
+        	String name = itemSlot.toString();
+            ItemStack is = fInventory.getSlot(name);
+            if (Objects.isNull(is)) continue;
+            if (Material.AIR == is.getType()) continue;
             try {
-                inventory.set(o.toString() + "", new CraftItemStack().getNBTTag(is));
+                inventory.set(name, new CraftItemStack().getNBTTag(is));
             } catch (Exception e) {
                 e.printStackTrace();
             }

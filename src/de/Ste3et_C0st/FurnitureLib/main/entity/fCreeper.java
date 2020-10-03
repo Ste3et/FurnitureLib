@@ -61,7 +61,7 @@ public class fCreeper extends fEntity {
 
     @Override
     public NBTTagCompound getMetaData() {
-        super.getDefNBT();
+        super.getMetaData();
         setMetadata("Ignite", this.isIgnited());
         setMetadata("Charged", this.isCharged());
         return getNBTField();
@@ -69,7 +69,7 @@ public class fCreeper extends fEntity {
 
     @Override
     public void loadMetadata(NBTTagCompound metadata) {
-        loadDefMetadata(metadata);
+    	super.loadMetadata(metadata);
         boolean i = (metadata.getInt("Ignite") == 1), f = (metadata.getInt("Charged") == 1);
         this.setIgnited(i).setCharged(f);
     }

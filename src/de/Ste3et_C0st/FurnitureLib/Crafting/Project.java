@@ -28,13 +28,14 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class Project {
     private String project;
     private CraftingFile file;
     private Plugin plugin;
-    private Class<? extends Furniture> clazz;
+    private Function<ObjectID, Furniture> furnitureObject;
 
     private Integer chunkLimit = -1;
     private config limitationConfig;
@@ -77,7 +78,16 @@ public class Project {
         
         //System.out.println("Loadfunction (WIP) -> " + timer.getMilliString());
         this.functionList = this.file.loadFunction();
-        this.clazz = clazz;
+        
+        this.furnitureObject = objectID -> {
+        	try {
+        		return clazz.getConstructor(objectID.getClass()).newInstance(objectID);
+        	}catch(Exception ex) {
+        		ex.printStackTrace();
+        	}
+        	return null;
+        };
+        
         try {
             if (Objects.nonNull(this.file)) {
             	//System.out.println("Use Modelhandler filepath " + timer.getMilliString());
@@ -156,9 +166,9 @@ public class Project {
         return this;
     }
 
-    public Class<? extends Furniture> getFunctionClazz() {
-        return this.clazz;
-    }
+//    public Class<? extends Furniture> getFunctionClazz() {
+//        return this.clazz;
+//    }
 
     public List<JsonObject> getFunctions() {
         return this.functionList;
@@ -341,9 +351,9 @@ public class Project {
     }
 
     public Project applyFunction(ObjectID obj) {
-        if (Objects.isNull(getFunctionClazz())) return this;
+        if (Objects.isNull(this.furnitureObject)) return this;
         try {
-            obj.setFunctionObject(getFunctionClazz().getConstructor(ObjectID.class).newInstance(obj));
+            obj.setFunctionObject(furnitureObject.apply(obj));
         } catch (Exception e) {
             e.printStackTrace();
         }

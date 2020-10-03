@@ -301,9 +301,7 @@ public class FurnitureManager {
 
     public fEntity spawnEntity(String str, Location loc, ObjectID obj) {
         fEntity entity = readEntity(str, loc, obj);
-        if (Objects.nonNull(entity)) {
-            obj.addArmorStand(entity);
-        }
+        if (Objects.nonNull(entity)) obj.addArmorStand(entity);
         return entity;
     }
 

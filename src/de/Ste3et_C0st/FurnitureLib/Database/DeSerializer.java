@@ -26,7 +26,7 @@ public class DeSerializer {
 	public int purged = 0;
 	
 	public static ObjectID Deserialize(String objId, String md5, SQLAction action, World world) {
-		byte[] binary = Base64.decodeFast(md5);
+		byte[] binary = Base64.decode(md5);
 		return Deserialize(objId, binary, action, world);
 	}
 	
@@ -44,10 +44,6 @@ public class DeSerializer {
 	public static ObjectID Deserialize(String objId, NBTTagCompound compound, SQLAction action, World world) {
 		if(Objects.isNull(compound)) {return null;}
 		ObjectID obj = new ObjectID(objId);
-		EventType evType = EventType.valueOf(compound.getString("EventType"));
-		PublicMode pMode = PublicMode.valueOf(compound.getString("PublicMode")); 
-		UUID uuid = uuidFetcher(compound.getString("Owner-UUID"));
-		HashSet<UUID> members = membersFetcher(compound.getList("Members"));
 		Location startLocation = locationFetcher(compound.getCompound("Location"), world);
 		if(Objects.isNull(startLocation)){
 			obj.setSQLAction(SQLAction.REMOVE);
@@ -55,13 +51,31 @@ public class DeSerializer {
 			return null;
 		}
 		obj.setStartLocation(startLocation);
-		obj.setEventTypeAccess(evType);
-		obj.setPublicMode(pMode);
-		obj.setMemberList(members);
-		obj.setUUID(uuid);
+		
+		if(compound.hasKeyOfType("EventType", 8)) {
+			EventType evType = EventType.valueOf(compound.getString("EventType"));
+			obj.setEventTypeAccess(evType);
+		}
+		
+		if(compound.hasKeyOfType("PublicMode", 8)) {
+			PublicMode pMode = PublicMode.valueOf(compound.getString("PublicMode"));
+			obj.setPublicMode(pMode);
+		}
+		
+		if(compound.hasKeyOfType("Members", 9)) {
+			HashSet<UUID> members = membersFetcher(compound.getList("Members"));
+			obj.setMemberList(members);
+		}
+		
+		if(compound.hasKeyOfType("Owner-UUID", 8)) {
+			UUID uuid = uuidFetcher(compound.getString("Owner-UUID"));
+			obj.setUUID(uuid);
+		}
+		
 		obj.setFinish();
 		obj.setSQLAction((action != null && action.equals(SQLAction.SAVE)) ? SQLAction.SAVE : SQLAction.NOTHING);
 		obj.setFromDatabase(true);
+		
 		
 		if(compound.hasKey("entities") || compound.hasKey("entitys")) {
 			NBTTagCompound armorStands = compound.hasKey("entitys") ? compound.getCompound("entitys") : compound.getCompound("entities");
@@ -86,6 +100,7 @@ public class DeSerializer {
 			});
 			obj.setSQLAction(SQLAction.UPDATE);
 		}
+		
 		return obj;
 	}
 	
@@ -108,19 +123,12 @@ public class DeSerializer {
 	}
 
     public static Location locationFetcher(NBTTagCompound location, World world) {
-        if (Objects.isNull(world)) {
-            FurnitureLib.getInstance().getLogger().info("The world: " + location.getString("World") + " does not exist.");
-            return null;
-        }
         double X = location.getDouble("X");
         double Y = location.getDouble("Y");
         double Z = location.getDouble("Z");
         float Yaw = location.getFloat("Yaw");
         float Pitch = location.getFloat("Pitch");
-        Location loc = new Location(world, X, Y, Z);
-        loc.setYaw(Yaw);
-        loc.setPitch(Pitch);
-        return loc;
+        return new Location(world, X, Y, Z, Yaw, Pitch);
     }
 
     public static UUID uuidFetcher(String s) {

@@ -14,8 +14,9 @@ public class WrapperPlayServerEntityEquipmentOld extends AbstractPacket implemen
 		super(new PacketContainer(TYPE), TYPE);
 	}
 	
-	public void writeEntityID(int entityID) {
+	public WrapperPlayServerEntityEquipmentOld writeEntityID(int entityID) {
 		this.handle.getIntegers().write(0, entityID);
+		return this;
 	}
 	
 	public void writeItemSlot(ItemSlot slot) {

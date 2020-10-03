@@ -3,6 +3,7 @@ package de.Ste3et_C0st.FurnitureLib.main.entity;
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.EnumWrappers;
+import com.comphenix.protocol.wrappers.EnumWrappers.ItemSlot;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.Registry;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
@@ -33,7 +34,6 @@ public abstract class fEntity extends fSerializer implements Cloneable {
      * Field j,k = Yaw/Pitch
      */
 
-    public World world;
     private final int entityID = EntityID.nextEntityId();
     private final UUID entityUUID = UUID.randomUUID();
     private int entityTypeID;
@@ -105,7 +105,7 @@ public abstract class fEntity extends fSerializer implements Cloneable {
     public void setLocation(Location loc) {
         if (Objects.nonNull(loc)) {
             this.location = loc;
-            this.world = location.getWorld();
+            //this.world = location.getWorld();
             this.positionX = loc.getX();
             this.positionY = loc.getY();
             this.positionZ = loc.getZ();
@@ -236,7 +236,6 @@ public abstract class fEntity extends fSerializer implements Cloneable {
         }
     }
 
-    ///tp -534 69 13328
     public void setPassenger(Integer EntityID) {
         setPassenger(Arrays.asList(EntityID));
     }
@@ -304,9 +303,9 @@ public abstract class fEntity extends fSerializer implements Cloneable {
         getObjID().getWorld().playEffect(getLocation(), Effect.STEP_SOUND, getHelmet().getType());
     }
 
-    public World getWorld() {
-        return this.world;
-    }
+//    public World getWorld() {
+//        return this.world;
+//    }
 
     public fEntity setNameVisibility(Boolean nameVisibility) {
         getWatcher().setObject(new WrappedDataWatcherObject(3, Registry.get(Boolean.class)), nameVisibility);
@@ -544,16 +543,18 @@ public abstract class fEntity extends fSerializer implements Cloneable {
 //	    }
     }
 
-    public void loadDefMetadata(NBTTagCompound metadata) {
-        NBTTagCompound inventory = metadata.getCompound("Inventory");
-        for (Object object : EnumWrappers.ItemSlot.values()) {
-            if (!inventory.getString(object.toString()).equalsIgnoreCase("NONE")) {
-                ItemStack is = new CraftItemStack().getItemStack(inventory.getCompound(object.toString() + ""));
-                if (is != null) {
-                    this.getInventory().setSlot(object.toString(), is);
+    @SuppressWarnings("unchecked")
+	public void loadMetadata(NBTTagCompound metadata) {
+    	if(metadata.hasKeyOfType("Inventory", 10)) {
+    		NBTTagCompound inventory = metadata.getCompound("Inventory");
+    		inventory.c().stream().forEach(entry -> {
+    			String name = (String) entry;
+    			if (!inventory.getString(name).equalsIgnoreCase("NONE")) {
+                    ItemStack is = new CraftItemStack().getItemStack(inventory.getCompound(name));
+                    this.getInventory().setSlot(name, is);
                 }
-            }
-        }
+    		});
+    	}
         this.setNameVisibility((metadata.getInt("NameVisible") == 1));
         this.setName(metadata.getString("Name"));
         this.setFire((metadata.getInt("Fire") == 1));
@@ -562,7 +563,7 @@ public abstract class fEntity extends fSerializer implements Cloneable {
     }
     
     
-    public void getDefNBT() {
+    public NBTTagCompound getMetaData() {
     	setMetadata("EntityType", this.getEntityType().toString());
         if(!this.customName.isDefault()) setMetadata("Name", this.getName());
         if(!this.fire.isDefault()) setMetadata("Fire", this.isFire());
@@ -570,10 +571,11 @@ public abstract class fEntity extends fSerializer implements Cloneable {
         if(!this.nameVisible.isDefault()) setMetadata("NameVisible", this.isCustomNameVisible());
         if(!this.glowing.isDefault()) setMetadata("Glowing", this.isGlowing());
         setMetadata(this.getLocation());
-        setMetadata(this.getInventory());
+        if(!getInventory().isEmpty()) setMetadata(this.getInventory());
+       
+        return this.getNBTField();
     }
-
-    public abstract void loadMetadata(NBTTagCompound metadata);
+    
     public abstract fEntity clone();
 //    public abstract BoundingBox getBoundingBox();
 }

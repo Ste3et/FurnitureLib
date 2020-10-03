@@ -234,7 +234,7 @@ public class fArmorStand extends fEntity{
     }
 
     public NBTTagCompound getMetaData() {
-    	super.getDefNBT();
+    	super.getMetaData();
     	if(!this.arms.isDefault()) setMetadata("Arms", this.hasArms());
     	if(!this.basePlate.isDefault()) setMetadata("BasePlate", this.hasBasePlate());
     	if(!this.gravity.isDefault()) setMetadata("Gravity", this.hasGravity());
@@ -251,29 +251,28 @@ public class fArmorStand extends fEntity{
              eulerAngle.set(entry.getKey().toString(), partAngle);
     	});
     	
-    	set("EulerAngle", eulerAngle);
+    	if(!eulerAngle.isEmpty()) set("EulerAngle", eulerAngle);
     	
         return getNBTField();
     }
 
-    @Override
+    @SuppressWarnings("unchecked")
+	@Override
     public void loadMetadata(NBTTagCompound metadata) {
-        loadDefMetadata(metadata);
-        NBTTagCompound euler = metadata.getCompound("EulerAngle");
-        for (BodyPart part : BodyPart.values()) {
-            this.setPose(eulerAngleFetcher(euler.getCompound(part.toString())), part);
+        super.loadMetadata(metadata);
+        
+        if(metadata.hasKeyOfType("EulerAngle", 10)) {
+        	NBTTagCompound euler = metadata.getCompound("EulerAngle");
+        	euler.c().stream().forEach(entry -> {
+        		String name = (String) entry;
+        		BodyPart part = BodyPart.valueOf(name.toUpperCase());
+        		this.setPose(eulerAngleFetcher(euler.getCompound(name)), part);
+        	});
         }
-        
-        //System.out.println("HitBox: " + (metadata.getInt("Marker") == 1));
-        
-        // true -> (hitbox on) -> kein eintrag -> 0
-        // false -> (hitbox off) -> eintrag -> 1
-        
-        //1 or 0 (true/false) - if true, ArmorStand's size is set to 0, has a tiny hitbox, and disables interactions with it. May not exist.
         
         this.setBasePlate((metadata.getInt("BasePlate") == 1))
         	.setSmall((metadata.getInt("Small") == 1))
-        	.setMarker((metadata.getInt("Marker") == 0)) // so ok beim laden von file ficken
+        	.setMarker((metadata.getInt("Marker") == 0))
         	.setArms(metadata.getInt("Arms") == 1)
         	.setGravity(metadata.getInt("Gravity") == 1);
     }

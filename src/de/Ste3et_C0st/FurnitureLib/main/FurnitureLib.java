@@ -685,11 +685,8 @@ public class FurnitureLib extends JavaPlugin {
     }
 
     public ObjectID spawn(Project pro, Location l) {
-        Class<?> c = pro.getFunctionClazz();
-        if (c == null) {
-            return null;
-        }
         ObjectID objectID = new ObjectID(pro.getName(), pro.getPlugin().getName(), l);
+        pro.applyFunction(objectID);
         spawn(pro, objectID);
         return objectID;
     }
@@ -705,20 +702,10 @@ public class FurnitureLib extends JavaPlugin {
             return;
         if (obj == null)
             return;
-        Class<?> c = pro.getFunctionClazz();
-        if (Objects.isNull(c)) {
-            return;
-        }
         try {
             obj.getProjectOBJ().getModelschematic().spawn(obj);
-            Object o = c.getConstructor(ObjectID.class).newInstance(obj);
-            if (obj.getFunctionObject() == null) {
-                obj.setFunctionObject(o);
-                //Method m = o.getClass().getMethod("spawn", Location.class);
-            }
+            pro.applyFunction(obj);
             obj.setFinish();
-        } catch (InvocationTargetException e) {
-            e.getCause().printStackTrace();
         } catch (Exception e) {
             e.printStackTrace();
         }
