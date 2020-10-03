@@ -150,7 +150,8 @@
             <groupId>io.github.qveshn</groupId>
             <artifactId>LightAPI-fork</artifactId>
             <version>3.4.5-SNAPSHOT</version>
-        </dependency>
+            <scope>provided</scope>
+		</dependency>
 
 		<dependency>
 			<groupId>com.comphenix.protocol</groupId>

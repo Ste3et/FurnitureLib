@@ -191,6 +191,12 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
+      <groupId>io.github.qveshn</groupId>
+      <artifactId>LightAPI-fork</artifactId>
+      <version>3.4.5-SNAPSHOT</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
       <groupId>io.papermc</groupId>
       <artifactId>paperlib</artifactId>
       <version>1.0.2</version>
