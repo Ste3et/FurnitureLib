@@ -1,6 +1,5 @@
 package de.Ste3et_C0st.FurnitureLib.Events.internal;
 
-import de.Ste3et_C0st.FurnitureLib.Utilitis.DoubleKey;
 import de.Ste3et_C0st.FurnitureLib.main.ChunkData;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
@@ -22,10 +21,9 @@ public class onChunkChange implements Listener {
         
         if (player.getHealth() <= 0.0D) return;
         
-        DoubleKey<Integer> oldChunk = new DoubleKey<Integer>(e.getFrom().getBlockX() >> 4, e.getFrom().getBlockZ() >> 4);
-        DoubleKey<Integer> newChunk = new DoubleKey<Integer>(e.getTo().getBlockX() >> 4, e.getTo().getBlockZ() >> 4);
-
-        if (!oldChunk.equals(newChunk)) manager.updatePlayerView(player);
+        int xFrom = e.getFrom().getBlockX() >> 4, xTo = e.getTo().getBlockX() >> 4;
+        int zFrom = e.getFrom().getBlockZ() >> 4, zTo = e.getTo().getBlockZ() >> 4;
+        if ((xFrom != zFrom) || (xTo != zTo)) manager.updatePlayerView(player);
     }
 
     @EventHandler

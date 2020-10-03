@@ -7,7 +7,6 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
-import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -18,6 +17,8 @@ import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.util.Vector;
+
+import com.migcomponents.migbase64.Base64;
 
 import de.Ste3et_C0st.FurnitureLib.ModelLoader.Block.ModelBlock;
 import de.Ste3et_C0st.FurnitureLib.ModelLoader.Block.ModelBlockAquaticUpdate;
@@ -37,16 +38,22 @@ public abstract class Modelschematic{
 	protected Vector min = new Vector(), max = new Vector();
 	protected PlaceableSide placeableSide = PlaceableSide.TOP;
 	protected String name;
+	//protected ExecuteTimer timer = new ExecuteTimer();
 	
 	public Modelschematic(InputStream stream){
+		//System.out.println("#Modelschematic -> use stream mode " + timer.getMilliString());
 		try{
 			InputStreamReader reader = new InputStreamReader(stream);
 			YamlConfiguration config = YamlConfiguration.loadConfiguration(reader);
 			String yamlHeader = getHeader(config);
 			this.name = yamlHeader;
 			FurnitureLib.debug(this.name + " header found.");
+			//System.out.println("#Modelschematic -> load entities start " + timer.getMilliString());
 			this.loadEntitiesTypo(yamlHeader, config);
+//			System.out.println("#Modelschematic -> load entities finish " + timer.getMilliString());
+//			System.out.println("#Modelschematic -> load blocks start " + timer.getMilliString());
 			this.loadBlockData(yamlHeader, config);
+//			System.out.println("#Modelschematic -> load blocks finish " + timer.getMilliString());
 			this.placeableSide = PlaceableSide.valueOf(config.getString(yamlHeader + ".placeAbleSide", "TOP").toUpperCase());
 			
 //			BoundingBox box = getBoundingBox();
@@ -133,9 +140,13 @@ public abstract class Modelschematic{
 		.forEach(key -> {
 			if(key.isPresent()) {
 				try(ByteArrayInputStream bin = new ByteArrayInputStream(key.get())) {
+					//System.out.println("After byte[] " + timer.getMilliString());
 					NBTTagCompound entityData = NBTCompressedStreamTools.read(bin);
+					//System.out.println("Load NBT " + timer.getMilliString());
 					ModelVector vector = new ModelVector(entityData.getCompound("Location"));
+					//System.out.println("Calculate ModelVector " + timer.getMilliString());
 					fEntity entity = readNBTtag(entityData);
+					//System.out.println("Read NBT " + timer.getMilliString());
 					if(Objects.nonNull(vector) && Objects.nonNull(entity)) {
 						this.entityMap.put(vector, entity);
 						//this.min = vector.getMinPoint(this.min);
@@ -150,7 +161,7 @@ public abstract class Modelschematic{
 	
 	private Optional<byte[]> decodeBase64toByte(String md5, String key) {
 		try {
-			return Optional.of(Base64.getDecoder().decode(md5));
+			return Optional.of(Base64.decodeFast(md5));
 		}catch (IllegalArgumentException e) {
 			System.err.println(this.name + " is a corrupted dModel file entity {" + key + "}");
 			System.err.println("FurnitureLib try to skip these entity: " + e.getMessage());

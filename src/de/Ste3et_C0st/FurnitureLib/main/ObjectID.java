@@ -33,6 +33,7 @@ public class ObjectID {
     private SQLAction sqlAction = SQLAction.SAVE;
     private HashSet<fEntity> packetList = new HashSet<fEntity>();
     private HashSet<Player> players = new HashSet<>();
+    private int chunkX, chunkZ;
     private boolean finish = false, fixed = false, fromDatabase = false, Private = false;
 
     public ObjectID(String name, String plugin, Location startLocation) {
@@ -100,7 +101,9 @@ public class ObjectID {
     public void setStartLocation(Location loc) {
         this.loc = loc;
         this.worldName = loc.getWorld().getName();
-        this.chunkKey = new DoubleKey<Integer>(loc.getBlockX() >> 4, loc.getBlockZ() >> 4);
+        this.chunkX = loc.getBlockX() >> 4;
+        this.chunkZ = loc.getBlockZ() >> 4;
+        this.chunkKey = new DoubleKey<Integer>(chunkX, chunkZ);
     }
 
     public EventType getEventType() {
@@ -140,7 +143,7 @@ public class ObjectID {
     }
 
     public void setMemberList(HashSet<UUID> uuidList) {
-        uuidList.stream().forEach(this.uuidList::add);
+    	this.uuidList.addAll(uuidList);
     }
 
     public PublicMode getPublicMode() {
@@ -245,8 +248,7 @@ public class ObjectID {
     }
     
     private int distanceSquared(int chunkX, int chunkZ) {
-    	DoubleKey<Integer> chunkKey = getChunkKey();
-    	return square(chunkKey.getKey1() - chunkX) + square(chunkKey.getKey2() - chunkZ);
+    	return square(this.chunkX - chunkX) + square(this.chunkZ - chunkZ);
     }
     
     private static int square(int num) {

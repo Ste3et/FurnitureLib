@@ -4,7 +4,7 @@ import com.comphenix.protocol.wrappers.Vector3F;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.Registry;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
-import de.Ste3et_C0st.FurnitureLib.Utilitis.BoundingBox;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.DefaultKey;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.Relative;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
@@ -22,13 +22,21 @@ public class fArmorStand extends fEntity{
 
     public static EntityType type = EntityType.ARMOR_STAND;
     private int armorstandID;
-    private boolean arms = false, small = false, marker = true, baseplate = true;
-    private HashMap<BodyPart, EulerAngle> angle = new HashMap<Type.BodyPart, EulerAngle>();
+    
+    private DefaultKey<Boolean> arms = new DefaultKey<Boolean>(false), small = new DefaultKey<Boolean>(false), marker = new DefaultKey<Boolean>(false), basePlate = new DefaultKey<Boolean>(true);
+    
+    private HashMap<BodyPart, DefaultKey<EulerAngle>> angle = new HashMap<Type.BodyPart, DefaultKey<EulerAngle>>();
     private ArmorStand entity = null;
 
     @SuppressWarnings("deprecation")
     public fArmorStand(Location loc, ObjectID obj) {
         super(loc, type, FurnitureLib.isNewVersion() ? 1 : type.getTypeId(), obj);
+        angle.put(BodyPart.BODY, new DefaultKey<EulerAngle>(BodyPart.BODY.getDefAngle()));
+        angle.put(BodyPart.HEAD, new DefaultKey<EulerAngle>(BodyPart.HEAD.getDefAngle()));
+        angle.put(BodyPart.LEFT_ARM, new DefaultKey<EulerAngle>(BodyPart.LEFT_ARM.getDefAngle()));
+        angle.put(BodyPart.RIGHT_ARM, new DefaultKey<EulerAngle>(BodyPart.RIGHT_ARM.getDefAngle()));
+        angle.put(BodyPart.LEFT_LEG, new DefaultKey<EulerAngle>(BodyPart.LEFT_LEG.getDefAngle()));
+        angle.put(BodyPart.RIGHT_LEG, new DefaultKey<EulerAngle>(BodyPart.RIGHT_LEG.getDefAngle()));
     }
 
     public EulerAngle getBodyPose() {
@@ -90,30 +98,30 @@ public class fArmorStand extends fEntity{
     }
 
     public boolean hasArms() {
-        return this.arms;
+        return this.arms.getOrDefault();
     }
 
     public boolean hasBasePlate() {
-        return this.baseplate;
+        return this.basePlate.getOrDefault();
     }
 
     public boolean isMarker() {
-        return this.marker;
+        return this.marker.getOrDefault();
     }
 
-    public fArmorStand setMarker(boolean b) {
-        setBitMask(!b, Type.field.getBitMask(), 4);
-        this.marker = b;
+    public fArmorStand setMarker(Boolean marker) {
+        setBitMask(!marker, Type.field.getBitMask(), 4);
+        this.marker.setValue(!marker);
         return this;
     }
 
     public boolean isSmall() {
-        return this.small;
+        return this.small.getOrDefault();
     }
 
-    public fArmorStand setSmall(boolean b) {
-        setBitMask(b, Type.field.getBitMask(), 0);
-        this.small = b;
+    public fArmorStand setSmall(Boolean small) {
+        setBitMask(small, Type.field.getBitMask(), 0);
+        this.small.setValue(small);
         return this;
     }
 
@@ -139,7 +147,7 @@ public class fArmorStand extends fEntity{
         if (!angle.containsKey(part)) {
             return part.getDefAngle();
         }
-        return angle.get(part);
+        return angle.get(part).getOrDefault();
     }
 
     public fArmorStand setPose(EulerAngle angle, BodyPart part) {
@@ -149,21 +157,22 @@ public class fArmorStand extends fEntity{
         if (part == null) {
             return this;
         }
-        this.angle.put(part, angle);
+        DefaultKey<EulerAngle> defaultAngle = this.angle.get(part);
+        defaultAngle.setValue(angle);
         angle = FurnitureLib.getInstance().getLocationUtil().Radtodegress(angle);
         getWatcher().setObject(new WrappedDataWatcherObject(part.getField(), Registry.getVectorSerializer()), new Vector3F((float) angle.getX(), (float) angle.getY(), (float) angle.getZ()));
         return this;
     }
 
-    public fArmorStand setArms(boolean b) {
-        setBitMask(b, Type.field.getBitMask(), 2);
-        this.arms = b;
+    public fArmorStand setArms(Boolean arms) {
+        setBitMask(arms, Type.field.getBitMask(), 2);
+        this.arms.setValue(arms);
         return this;
     }
 
-    public fArmorStand setBasePlate(boolean b) {
-        setBitMask(!b, Type.field.getBitMask(), 3);
-        this.baseplate = b;
+    public fArmorStand setBasePlate(Boolean basePlate) {
+        setBitMask(!basePlate, Type.field.getBitMask(), 3);
+        this.basePlate.setValue(basePlate);
         return this;
     }
 
@@ -225,13 +234,25 @@ public class fArmorStand extends fEntity{
     }
 
     public NBTTagCompound getMetaData() {
-        getDefNBT(this);
-        setMetadata("Arms", this.hasArms());
-        setMetadata("BasePlate", this.hasBasePlate());
-        setMetadata("Gravity", this.hasGravity());
-        setMetadata("Marker", this.isMarker());
-        setMetadata("Small", this.isSmall());
-        set("EulerAngle", getEulerAngle(this));
+    	super.getDefNBT();
+    	if(!this.arms.isDefault()) setMetadata("Arms", this.hasArms());
+    	if(!this.basePlate.isDefault()) setMetadata("BasePlate", this.hasBasePlate());
+    	if(!this.gravity.isDefault()) setMetadata("Gravity", this.hasGravity());
+    	if(!this.marker.isDefault()) setMetadata("Marker", this.marker.getOrDefault());
+    	if(!this.small.isDefault()) setMetadata("Small", this.isSmall());
+    	
+    	NBTTagCompound eulerAngle = new NBTTagCompound();
+    	this.angle.entrySet().stream().filter(entry -> !entry.getValue().isDefault()).forEach(entry -> {
+    		 EulerAngle angle = entry.getValue().getValue();
+             NBTTagCompound partAngle = new NBTTagCompound();
+             partAngle.setDouble("X", angle.getX());
+             partAngle.setDouble("Y", angle.getY());
+             partAngle.setDouble("Z", angle.getZ());
+             eulerAngle.set(entry.getKey().toString(), partAngle);
+    	});
+    	
+    	set("EulerAngle", eulerAngle);
+    	
         return getNBTField();
     }
 
@@ -242,11 +263,19 @@ public class fArmorStand extends fEntity{
         for (BodyPart part : BodyPart.values()) {
             this.setPose(eulerAngleFetcher(euler.getCompound(part.toString())), part);
         }
-        boolean b = (metadata.getInt("BasePlate") == 1), s = (metadata.getInt("Small") == 1), a = (metadata.getInt("Arms") == 1), m = (metadata.getInt("Marker") == 1), grav = false;
-        if (metadata.hasKey("Gravity")) {
-            grav = metadata.getInt("Gravity") == 1;
-        }
-        this.setBasePlate(b).setSmall(s).setMarker(m).setArms(a).setGravity(grav);
+        
+        //System.out.println("HitBox: " + (metadata.getInt("Marker") == 1));
+        
+        // true -> (hitbox on) -> kein eintrag -> 0
+        // false -> (hitbox off) -> eintrag -> 1
+        
+        //1 or 0 (true/false) - if true, ArmorStand's size is set to 0, has a tiny hitbox, and disables interactions with it. May not exist.
+        
+        this.setBasePlate((metadata.getInt("BasePlate") == 1))
+        	.setSmall((metadata.getInt("Small") == 1))
+        	.setMarker((metadata.getInt("Marker") == 0)) // so ok beim laden von file ficken
+        	.setArms(metadata.getInt("Arms") == 1)
+        	.setGravity(metadata.getInt("Gravity") == 1);
     }
 
     private EulerAngle eulerAngleFetcher(NBTTagCompound eularAngle) {
@@ -255,7 +284,8 @@ public class fArmorStand extends fEntity{
         double Z = eularAngle.getDouble("Z");
         return new EulerAngle(X, Y, Z);
     }
-
+    
+    //	
 //	@Override
 //	public BoundingBox getBoundingBox() {
 //		return this.isSmall() ? new BoundingBox(x1, y1, z1) : BoundingBox.;

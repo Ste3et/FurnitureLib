@@ -5,6 +5,7 @@ import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.DoubleKey;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 import de.Ste3et_C0st.FurnitureLib.main.entity.*;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
@@ -17,24 +18,25 @@ import org.bukkit.entity.Player;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
 public class FurnitureManager {
 
-    private static HashMap<String, Class<? extends fEntity>> packetClasses = new HashMap<>();
+	private static HashMap<String, BiFunction<Location, ObjectID, fEntity>> packetClasses = new HashMap<>();
     private static FurnitureManager manager;
-
+    
     static {
-        packetClasses.put("armor_stand", fArmorStand.class);
-        packetClasses.put("pig", fPig.class);
-        packetClasses.put("creeper", fCreeper.class);
-        packetClasses.put("giant", fGiant.class);
+        packetClasses.put("armor_stand", fArmorStand::new);
+        packetClasses.put("pig", fPig::new);
+        packetClasses.put("creeper", fCreeper::new);
+        packetClasses.put("giant", fGiant::new);
     }
 
     public WrappedDataWatcher watcher = null;
     public HashMap<World, HashMap<EntityType, WrappedDataWatcher>> defaultWatchers = new HashMap<>();
     private List<ObjectID> objecte = new CopyOnWriteArrayList<ObjectID>();
-    private List<Project> projects = new ArrayList<>();
+    private HashMap<String, Project> projects = new HashMap<>();
     private List<UUID> ignoreList = new ArrayList<>();
     private HashSet<ChunkData> chunkList = new HashSet<>();
 
@@ -43,9 +45,7 @@ public class FurnitureManager {
     }
 
     public static List<fArmorStand> cloneList(List<fArmorStand> list) {
-        List<fArmorStand> clone = new ArrayList<>(list.size());
-		clone.addAll(list);
-        return clone;
+        return new ArrayList<fArmorStand>(list);
     }
 
     public static FurnitureManager getInstance() {
@@ -65,18 +65,11 @@ public class FurnitureManager {
     }
 
     public void addProject(Project project) {
-        if (isExist(project.getName())) {
-            projects.remove(getProject(project.getName()));
-            projects.add(project);
-            return;
-        }
-        if (!projects.contains(project)) {
-            projects.add(project);
-        }
+    	projects.put(project.getName().toLowerCase(), project);
     }
 
     public List<Project> getProjects() {
-        return this.projects;
+        return new ArrayList<Project>(this.projects.values());
     }
 
     public ObjectID getObjBySerial(String serial) {
@@ -259,26 +252,22 @@ public class FurnitureManager {
         });
     }
 
-    private boolean isExist(String s) {
-        return projects.stream().anyMatch(projects -> projects.getName().equalsIgnoreCase(s));
-    }
+//    private boolean isExist(String s) {
+//        return projects.containsKey(s.toLowerCase());
+//    }
 
     public HashSet<fEntity> getfArmorStandByObjectID(ObjectID id) {
-        if (this.objecte.isEmpty()) {
-            return null;
-        }
         return id.getPacketList();
     }
 
     public void deleteObjectID(ObjectID id) {
-        if (this.objecte.isEmpty() || id == null) {
-            return;
-        }
+        if (this.objecte.isEmpty()) return;
+        if (Objects.isNull(id)) return;
         this.objecte.remove(id);
     }
 
     public Project getProject(String s) {
-        return projects.stream().filter(projects -> projects.getName().equalsIgnoreCase(s)).findFirst().orElse(null);
+        return projects.getOrDefault(s.toLowerCase(), null);
     }
 
     public List<ObjectID> getFromPlayer(UUID uuid) {
@@ -299,16 +288,7 @@ public class FurnitureManager {
 
     public boolean isValid(ObjectID obj) {
         if (obj == null) return false;
-        return !obj.getSQLAction().equals(SQLAction.REMOVE);
-    }
-
-    public Class<? extends fEntity> getPacketClass(String str, Class<? extends fEntity> clas) {
-        try {
-            if (clas.getField("type").get(null).toString().equalsIgnoreCase(str)) return clas;
-        } catch (Exception e) {
-            return null;
-        }
-        return null;
+        return SQLAction.REMOVE != obj.getSQLAction();
     }
 
     public fEntity spawnEntity(EntityType type, Location loc, ObjectID obj) {
@@ -328,16 +308,8 @@ public class FurnitureManager {
     }
 
     public fEntity readEntity(String str, Location loc, ObjectID obj) {
-        Class<? extends fEntity> packetClass = packetClasses.getOrDefault(str.toLowerCase(), null);
-        if (Objects.nonNull(packetClass)) {
-            try {
-                return packetClass.getConstructor(Location.class, ObjectID.class).newInstance(loc, obj);
-            } catch (Exception e) {
-                e.printStackTrace();
-                return null;
-            }
-        }
-        return null;
+        BiFunction<Location, ObjectID, fEntity> packetClass = packetClasses.get(str.toLowerCase());
+        return Objects.nonNull(packetClass) ? packetClass.apply(loc, obj) : null;
     }
 
     public boolean addObjectID(ObjectID obj) {

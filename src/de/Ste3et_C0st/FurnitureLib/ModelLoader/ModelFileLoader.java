@@ -2,6 +2,7 @@ package de.Ste3et_C0st.FurnitureLib.ModelLoader;
 
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.SchematicLoader.ProjectLoader;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.Progressbar;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.Type.PlaceableSide;
 
@@ -10,14 +11,12 @@ import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Arrays;
 
-import org.bukkit.configuration.file.YamlConfiguration;
-
 public class ModelFileLoader {
-
+	
     public static void loadModelFiles() {
         File folder = new File(FurnitureLib.isNewVersion() ? "plugins/FurnitureLib/models/" : "plugins/FurnitureLib/Crafting/");
         if (folder.exists()) {
-            Arrays.asList(folder.listFiles()).forEach(ModelFileLoader::loadModelFile);
+            Arrays.asList(folder.listFiles()).forEach(entry -> loadModelFile(entry));
         }
     }
 

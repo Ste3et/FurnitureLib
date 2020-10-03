@@ -1,6 +1,5 @@
 package de.Ste3et_C0st.FurnitureLib.Database;
 
-import de.Ste3et_C0st.FurnitureLib.Events.FurnitureMoveEvent;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTCompressedStreamTools;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagList;
@@ -11,14 +10,12 @@ import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.EventType;
 import de.Ste3et_C0st.FurnitureLib.main.Type.PublicMode;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
-import org.bukkit.OfflinePlayer;
 import org.bukkit.World;
 
+import com.migcomponents.migbase64.Base64;
+
 import java.io.ByteArrayInputStream;
-import java.util.Base64;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Optional;
@@ -28,16 +25,15 @@ public class DeSerializer {
 	
 	public int purged = 0;
 	
-	public static ObjectID Deserialize(String objId, String in, SQLAction action, World world) {
-		byte[] binary = Base64.getDecoder().decode(in);
+	public static ObjectID Deserialize(String objId, String md5, SQLAction action, World world) {
+		byte[] binary = Base64.decodeFast(md5);
 		return Deserialize(objId, binary, action, world);
 	}
 	
 	public static ObjectID Deserialize(String objId, byte[] binary, SQLAction action, World world) {
 		try(ByteArrayInputStream bin = new ByteArrayInputStream(binary)) {
 			NBTTagCompound compound = NBTCompressedStreamTools.read(bin);
-			if(Objects.isNull(compound)) {return null;}
-			return Deserialize(objId, compound, action, world);
+			return Objects.isNull(compound) ? null : Deserialize(objId, compound, action, world);
 		}catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -46,8 +42,8 @@ public class DeSerializer {
 	
 	@SuppressWarnings("unchecked")
 	public static ObjectID Deserialize(String objId, NBTTagCompound compound, SQLAction action, World world) {
-		ObjectID obj = new ObjectID(objId);
 		if(Objects.isNull(compound)) {return null;}
+		ObjectID obj = new ObjectID(objId);
 		EventType evType = EventType.valueOf(compound.getString("EventType"));
 		PublicMode pMode = PublicMode.valueOf(compound.getString("PublicMode")); 
 		UUID uuid = uuidFetcher(compound.getString("Owner-UUID"));
@@ -69,21 +65,21 @@ public class DeSerializer {
 		
 		if(compound.hasKey("entities") || compound.hasKey("entitys")) {
 			NBTTagCompound armorStands = compound.hasKey("entitys") ? compound.getCompound("entitys") : compound.getCompound("entities");
-			armorStands.c().stream().filter(Objects::nonNull).forEach(packet -> {
+			armorStands.c().stream().forEach(packet -> {
 				NBTTagCompound metadata = armorStands.getCompound((String) packet);
 				Location loc = locationFetcher(metadata.getCompound("Location"), world);
 				FurnitureManager.getInstance().createFromType(metadata.getString("EntityType"), loc, obj).loadMetadata(metadata);
 			});
 		}else if(!FurnitureLib.isNewVersion() && compound.hasKey("ArmorStands")) {
 			NBTTagCompound armorStands = compound.getCompound("ArmorStands");
-			armorStands.c().stream().filter(Objects::nonNull).forEach(packet -> {
+			armorStands.c().stream().forEach(packet -> {
 				NBTTagCompound metadata = armorStands.getCompound((String) packet);
 				Location loc = locationFetcher(metadata.getCompound("Location"), world);
 				FurnitureManager.getInstance().createFromType("armor_stand", loc, obj).loadMetadata(metadata);
 			});
 		}else {
 			NBTTagCompound armorStands = Converter.convertPacketItemStack(compound.getCompound("ArmorStands"));
-			armorStands.c().stream().filter(Objects::nonNull).forEach(packet -> {
+			armorStands.c().stream().forEach(packet -> {
 				NBTTagCompound metadata = armorStands.getCompound((String) packet);
 				Location loc = locationFetcher(metadata.getCompound("Location"), world);
 				FurnitureManager.getInstance().createFromType("armor_stand", loc, obj).loadMetadata(metadata);
@@ -112,15 +108,15 @@ public class DeSerializer {
 	}
 
     public static Location locationFetcher(NBTTagCompound location, World world) {
+        if (Objects.isNull(world)) {
+            FurnitureLib.getInstance().getLogger().info("The world: " + location.getString("World") + " does not exist.");
+            return null;
+        }
         double X = location.getDouble("X");
         double Y = location.getDouble("Y");
         double Z = location.getDouble("Z");
         float Yaw = location.getFloat("Yaw");
         float Pitch = location.getFloat("Pitch");
-        if (Objects.isNull(world)) {
-            FurnitureLib.getInstance().getLogger().info("The world: " + location.getString("World") + " does not exist.");
-            return null;
-        }
         Location loc = new Location(world, X, Y, Z);
         loc.setYaw(Yaw);
         loc.setPitch(Pitch);

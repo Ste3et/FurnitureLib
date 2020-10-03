@@ -102,6 +102,7 @@ public abstract class Database {
         AtomicInteger atomic = new AtomicInteger(0);
         if(Objects.nonNull(bukkitWorld)) {
         	try (Connection con = getConnection(); ResultSet rs = con.createStatement().executeQuery(query)) {
+        		rs.setFetchSize(200);
         		if(Objects.nonNull(rs)) {
         			if (rs.next() == true) {
             			do {

@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 import de.Ste3et_C0st.FurnitureLib.ModelLoader.ModelHandler;
 import de.Ste3et_C0st.FurnitureLib.SchematicLoader.ProjectLoader;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.BoundingBox;
+//import de.Ste3et_C0st.FurnitureLib.Utilitis.ExecuteTimer;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.config;
 import de.Ste3et_C0st.FurnitureLib.main.Furniture;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
@@ -55,37 +56,45 @@ public class Project {
      * @return Project return this Object
      */
     public Project(String name, Plugin plugin, InputStream craftingFile, PlaceableSide side, Class<? extends Furniture> clazz) {
-        this.project = name;
+        //ExecuteTimer timer = new ExecuteTimer();
+    	this.project = name;
         this.plugin = plugin;
         
         File configFile = new File(CraftingFile.getPath(name));
     	YamlConfiguration config = YamlConfiguration.loadConfiguration(configFile);
+    	//System.out.println("Project start -> " + timer.getMilliString());
 		if(config.getBoolean(name + ".enabled", true) == false) {
     		return;
     	}
-        
+		
+		//System.out.println("CraftingFile start -> " + timer.getMilliString());
         this.file = new CraftingFile(name, craftingFile, config);
+        //System.out.println("CraftingFile finish -> " + timer.getMilliString());
         
         if(!this.file.isEnabledModel()) {
         	return;
         }
         
+        //System.out.println("Loadfunction (WIP) -> " + timer.getMilliString());
         this.functionList = this.file.loadFunction();
         this.clazz = clazz;
         try {
             if (Objects.nonNull(this.file)) {
+            	//System.out.println("Use Modelhandler filepath " + timer.getMilliString());
                 this.modelschematic = new ModelHandler(this.file.getFilePath());
             } else {
+            	//System.out.println("Use Modelhandler project " + timer.getMilliString());
                 this.modelschematic = new ModelHandler(this.project);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
-
+        //System.out.println("Porject Modelhandler loading finish " + timer.getMilliString());
         FurnitureLib.getInstance().getFurnitureManager().addProject(this);
+        // System.out.println("Porject has been added " + timer.getMilliString());
         this.loadDefaults();
         FurnitureLib.getInstance().getLimitManager().loadDefault(this.project);
-        
+        //System.out.println("Porject is finish " + timer.getMilliString());
         PermissionHandler.registerPermission("furniture.craft.*","furniture.craft." + name.toLowerCase());
         PermissionHandler.registerPermission("furniture.place.*","furniture.place." + name.toLowerCase());
         PermissionHandler.registerPermission("furniture.sit.*","furniture.sit." + name.toLowerCase());

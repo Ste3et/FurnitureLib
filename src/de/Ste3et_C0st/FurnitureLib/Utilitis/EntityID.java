@@ -1,20 +1,33 @@
 package de.Ste3et_C0st.FurnitureLib.Utilitis;
 
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
-import de.Ste3et_C0st.FurnitureLib.main.Type;
 import org.bukkit.Bukkit;
 
 import java.lang.reflect.Field;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class EntityID {
 
+	private static Class<?> entityClass;
+	private static Field entityCountField;
+	public static String version;
+	
+	static {
+		String name = Bukkit.getServer().getClass().getPackage().getName();
+		version = name.substring(name.lastIndexOf('.') + 1) + ".";
+		try {
+			entityClass = Class.forName("net.minecraft.server." + getVersion() + "Entity");
+			entityCountField = entityClass.getDeclaredField("entityCount");
+			entityCountField.setAccessible(true);
+		}catch(Exception ex) {
+			ex.printStackTrace();
+		}
+	}
+	
     public static int nextEntityIdOld() {
         try {
-            Class<?> entityClass = Class.forName("net.minecraft.server." + getVersion() + "Entity");
-            Field f = entityClass.getDeclaredField("entityCount");
-            f.setAccessible(true);
-            int id = f.getInt(null);
-            f.set(null, id + 1);
+            int id = entityCountField.getInt(null);
+            entityCountField.set(null, id + 1);
             return id;
         } catch (Exception e) {
             FurnitureLib.debug(e.getMessage());
@@ -24,11 +37,7 @@ public class EntityID {
 
     public static int nextEntityIdNew() {
         try {
-            Class<?> entityClass = Class.forName("net.minecraft.server." + getVersion() + "Entity");
-            Field f = entityClass.getDeclaredField("entityCount");
-            f.setAccessible(true);
-            Object obj = f.get(null);
-			return (int) obj.getClass().getMethod("incrementAndGet").invoke(obj);
+			return AtomicInteger.class.cast(entityCountField.get(null)).incrementAndGet();
         } catch (Exception e) {
             FurnitureLib.debug(e.getMessage());
             return 0;
@@ -55,7 +64,6 @@ public class EntityID {
     }
 
     public static String getVersion() {
-        String name = Bukkit.getServer().getClass().getPackage().getName();
-		return name.substring(name.lastIndexOf('.') + 1) + ".";
+		return version;
     }
 }

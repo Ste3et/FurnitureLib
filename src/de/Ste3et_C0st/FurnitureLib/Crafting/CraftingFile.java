@@ -169,7 +169,7 @@ public class CraftingFile {
     public void loadCrafting(String s) {
         try {
             this.isDisable = file.getBoolean(header + ".crafting.disable", false);
-            org.bukkit.NamespacedKey key = new org.bukkit.NamespacedKey(FurnitureLib.getInstance(), this.name); // <-- Key
+            org.bukkit.NamespacedKey key = new org.bukkit.NamespacedKey(FurnitureLib.getInstance(), this.name.toLowerCase()); // <-- Key
             this.recipe = new ShapedRecipe(key, returnResult(s)).shape(returnFragment(s)[0], returnFragment(s)[1], returnFragment(s)[2]);
             returnMaterial(s).entrySet().stream().filter(c -> !Objects.isNull(c))
                     .filter(c -> !c.getValue().equals(Material.AIR)).forEach(c -> {
@@ -232,7 +232,7 @@ public class CraftingFile {
         im.setDisplayName(s);
         is.setItemMeta(im);
 
-        org.bukkit.NamespacedKey key = new org.bukkit.NamespacedKey(FurnitureLib.getInstance(), this.name);
+        org.bukkit.NamespacedKey key = new org.bukkit.NamespacedKey(FurnitureLib.getInstance(), this.name.toLowerCase());
         ShapedRecipe recipe = new ShapedRecipe(key, is).shape(this.getRecipe().getShape());
         this.recipe.getIngredientMap().forEach((key1, value) -> recipe.setIngredient(key1, value.getData()));
         this.recipe = recipe;

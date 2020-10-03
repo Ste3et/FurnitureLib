@@ -7,13 +7,10 @@ import de.Ste3et_C0st.FurnitureLib.NBT.CraftItemStack;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTCompressedStreamTools;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
-import de.Ste3et_C0st.FurnitureLib.main.Type.BodyPart;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.util.EulerAngle;
-
 import java.io.ByteArrayOutputStream;
 import java.util.Base64;
 
@@ -73,10 +70,6 @@ public abstract class fSerializer extends fProtocol {
         set("Location", getFromLocation(value));
     }
 
-    public void setMetadata(fArmorStand value) {
-        set("EulerAngle", getEulerAngle(value));
-    }
-
     public void setMetadata(fInventory inventory) {
         set("Inventory", getFromInventory(inventory));
     }
@@ -87,16 +80,7 @@ public abstract class fSerializer extends fProtocol {
 
     public abstract NBTTagCompound getMetaData();
 
-    public void getDefNBT(fEntity entity) {
-        setMetadata("EntityType", entity.getEntityType().toString());
-        setMetadata("Name", entity.getName());
-        setMetadata("Fire", entity.isFire());
-        setMetadata("Invisible", entity.isInvisible());
-        setMetadata("NameVisible", entity.isCustomNameVisible());
-        setMetadata("Glowing", entity.isGlowing());
-        setMetadata(entity.getLocation());
-        setMetadata(entity.getInventory());
-    }
+    //public void getDefNBT(fEntity entity) {};
 
     private NBTTagCompound getFromLocation(Location loc) {
         NBTTagCompound location = new NBTTagCompound();
@@ -109,27 +93,11 @@ public abstract class fSerializer extends fProtocol {
         return location;
     }
 
-    public NBTTagCompound getEulerAngle(fArmorStand packet) {
-        NBTTagCompound eulerAngle = new NBTTagCompound();
-        for (BodyPart part : BodyPart.values()) {
-            EulerAngle angle = packet.getPose(part);
-            NBTTagCompound partAngle = new NBTTagCompound();
-            partAngle.setDouble("X", angle.getX());
-            partAngle.setDouble("Y", angle.getY());
-            partAngle.setDouble("Z", angle.getZ());
-            eulerAngle.set(part.toString(), partAngle);
-        }
-        return eulerAngle;
-    }
-
     private NBTTagCompound getFromInventory(fInventory fInventory) {
         NBTTagCompound inventory = new NBTTagCompound();
         for (Object o : EnumWrappers.ItemSlot.values()) {
             ItemStack is = fInventory.getSlot(o.toString());
-            if (is == null || is.getType().equals(Material.AIR)) {
-                inventory.setString(o.toString() + "", "NONE");
-                continue;
-            }
+            if (is == null || is.getType().equals(Material.AIR)) continue;
             try {
                 inventory.set(o.toString() + "", new CraftItemStack().getNBTTag(is));
             } catch (Exception e) {

@@ -8,8 +8,6 @@ import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.CenterType;
 import de.Ste3et_C0st.FurnitureLib.main.Type.PlaceableSide;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
-import io.papermc.lib.PaperLib;
-
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -24,7 +22,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.stream.Collectors;
 
 public class ModelHandler extends Modelschematic {
 
@@ -92,6 +89,9 @@ public class ModelHandler extends Modelschematic {
 			fEntity entity = value.clone();
 			ModelVector rotateVector = rotateVector(key, direction);
 			Location entityLocation = startLocation.clone().add(rotateVector.toVector());
+			
+			
+			
 			entityLocation.setYaw(rotateVector.getYaw());
 			entityLocation.setPitch(rotateVector.getPitch());
 			entity.setLocation(entityLocation);
@@ -110,6 +110,13 @@ public class ModelHandler extends Modelschematic {
         FurnitureLib.debug("FurnitureLib {ModelHandler} -> Calculate Entities Finish");
         return entityList;
     }
+    
+//    private ItemStack fixItemStack(ItemStack stack) {
+//    	
+//    	
+//    	
+//    	return stack;
+//    }
 
     public BoundingBox getBoundingBox() {
         return BoundingBox.of(super.min, super.max);

@@ -8,7 +8,7 @@ import com.comphenix.protocol.wrappers.WrappedDataWatcher.Registry;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
 import de.Ste3et_C0st.FurnitureLib.NBT.CraftItemStack;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
-import de.Ste3et_C0st.FurnitureLib.Utilitis.BoundingBox;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.DefaultKey;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.EntityID;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
@@ -34,25 +34,26 @@ public abstract class fEntity extends fSerializer implements Cloneable {
      */
 
     public World world;
-    private int a;
-    private UUID b = UUID.randomUUID();
-    private int c;
-    private double d, e, f;
-    private byte j, k;
-    private fInventory i;
-    private Location l;
-    private String customName = "";
-    private boolean fire = false, nameVisible = false, isPlayed = false, glowing = false, invisible = false, gravity = false;
+    private final int entityID = EntityID.nextEntityId();
+    private final UUID entityUUID = UUID.randomUUID();
+    private int entityTypeID;
+    private double positionX, positionY, positionZ;
+    private byte yaw, pitch;
+    private fInventory entityInventory = new fInventory(this.entityID);
+    private Location location;
+    private DefaultKey<String> customName = new DefaultKey<String>("");
+    
+    protected DefaultKey<Boolean> fire = new DefaultKey<Boolean>(false), nameVisible = new DefaultKey<Boolean>(false), isPlayed = new DefaultKey<Boolean>(false);
+    protected DefaultKey<Boolean> glowing = new DefaultKey<Boolean>(false), invisible = new DefaultKey<Boolean>(false), gravity = new DefaultKey<Boolean>(false);
+    
     private List<Integer> passengerIDs = new ArrayList<>();
 
     public fEntity(Location loc, EntityType type, int entityID, ObjectID id) {
         super(type, id);
-        this.a = EntityID.nextEntityId();
-        this.c = entityID;
-        this.i = new fInventory(this.a);
+        this.entityTypeID = entityID;
         getHandle().getModifier().writeDefaults();
-        getHandle().getIntegers().write(0, a).write(1, c);
-        getHandle().getUUIDs().write(0, b);
+        getHandle().getIntegers().write(0, this.entityID).write(1, entityTypeID);
+        getHandle().getUUIDs().write(0, this.entityUUID);
         setLocation(loc);
     }
 
@@ -63,30 +64,30 @@ public abstract class fEntity extends fSerializer implements Cloneable {
     public abstract void setEntity(Entity e);
 
     public boolean isParticlePlayed() {
-        return this.isPlayed;
+        return this.isPlayed.getOrDefault();
     }
 
     public int getEntityID() {
-        return this.a;
+        return this.entityID;
     }
 
     public boolean isFire() {
-        return this.fire;
+        return this.fire.getOrDefault();
     }
 
-    public fEntity setFire(boolean b) {
-        setBitMask(b, 0, 0);
-        if (!b) {
+    public fEntity setFire(Boolean fire) {
+        setBitMask(fire, 0, 0);
+        if (!fire) {
             FurnitureLib.getInstance().getLightManager().removeLight(getLocation());
         } else {
             FurnitureLib.getInstance().getLightManager().addLight(getLocation(), 15);
         }
-        this.fire = b;
+        this.fire.setValue(fire);
         return this;
     }
 
     public boolean hasGravity() {
-        return this.gravity;
+        return this.gravity.getOrDefault();
     }
     
     public fEntity setNameVasibility(boolean b) {
@@ -94,37 +95,37 @@ public abstract class fEntity extends fSerializer implements Cloneable {
 	}
 
     public boolean isCustomNameVisible() {
-        return this.nameVisible;
+        return this.nameVisible.getOrDefault();
     }
 
     public Location getLocation() {
-        return this.l;
+        return this.location;
     }
 
     public void setLocation(Location loc) {
         if (Objects.nonNull(loc)) {
-            this.l = loc;
-            this.world = l.getWorld();
-            this.d = loc.getX();
-            this.e = loc.getY();
-            this.f = loc.getZ();
-            this.j = ((byte) (int) (loc.getYaw() * 256.0F / 360.0F));
-            this.k = ((byte) (int) (loc.getPitch() * 256.0F / 360.0F));
-            getHandle().getDoubles().write(0, d).write(1, e).write(2, f);
-            getHandle().getBytes().write(0, j).write(1, k);
+            this.location = loc;
+            this.world = location.getWorld();
+            this.positionX = loc.getX();
+            this.positionY = loc.getY();
+            this.positionZ = loc.getZ();
+            this.yaw = ((byte) (int) (loc.getYaw() * 256.0F / 360.0F));
+            this.pitch = ((byte) (int) (loc.getPitch() * 256.0F / 360.0F));
+            getHandle().getDoubles().write(0, this.positionX).write(1, this.positionY).write(2, this.positionZ);
+            getHandle().getBytes().write(0, this.yaw).write(1, this.pitch);
         }
     }
 
     public fInventory getEquipment() {
-        return this.i;
+        return this.entityInventory;
     }
 
     public fInventory getInventory() {
-        return this.i;
+        return this.entityInventory;
     }
 
     public fEntity setInventory(fInventory inv) {
-        this.i = inv;
+        this.entityInventory = inv;
         return this;
     }
 
@@ -164,8 +165,8 @@ public abstract class fEntity extends fSerializer implements Cloneable {
         return this;
     }
 
-    public fEntity setGravity(boolean b) {
-        this.gravity = b;
+    public fEntity setGravity(Boolean gravity) {
+        this.gravity.setValue(gravity);
         return this;
     }
 
@@ -188,7 +189,7 @@ public abstract class fEntity extends fSerializer implements Cloneable {
     }
 
     public String getCustomName() {
-        return this.customName;
+        return this.customName.getOrDefault();
     }
 
     public fEntity setCustomName(String str) {
@@ -208,7 +209,7 @@ public abstract class fEntity extends fSerializer implements Cloneable {
             getWatcher().setObject(new WrappedDataWatcherObject(2, Registry.get(String.class)), str);
         }
 
-        this.customName = str;
+        this.customName.setValue(str);
         return this;
     }
 
@@ -266,23 +267,23 @@ public abstract class fEntity extends fSerializer implements Cloneable {
     }
 
     public boolean isInvisible() {
-        return this.invisible;
+        return this.invisible.getOrDefault();
     }
 
-    public fEntity setInvisible(boolean b) {
-        setBitMask(b, 0, 5);
-        this.invisible = b;
+    public fEntity setInvisible(Boolean invisible) {
+        setBitMask(invisible, 0, 5);
+        this.invisible.setValue(invisible);
         return this;
     }
 
-    public boolean isGlowing() {
-        return this.glowing;
+    public Boolean isGlowing() {
+        return this.glowing.getOrDefault();
     }
 
-    public fEntity setGlowing(boolean b) {
-        if (!FurnitureLib.getInstance().isGlowing()) b = false;
-        setBitMask(b, 0, 6);
-        this.glowing = b;
+    public fEntity setGlowing(Boolean glowing) {
+        if (!FurnitureLib.getInstance().isGlowing()) glowing = false;
+        setBitMask(glowing, 0, 6);
+        this.glowing.setValue(glowing);
         return this;
     }
 
@@ -291,7 +292,7 @@ public abstract class fEntity extends fSerializer implements Cloneable {
     }
 
     public UUID getUUID() {
-        return this.b;
+        return this.entityUUID;
     }
 
     @Deprecated
@@ -307,9 +308,9 @@ public abstract class fEntity extends fSerializer implements Cloneable {
         return this.world;
     }
 
-    public fEntity setNameVisibility(boolean b) {
-        getWatcher().setObject(new WrappedDataWatcherObject(3, Registry.get(Boolean.class)), b);
-        this.nameVisible = b;
+    public fEntity setNameVisibility(Boolean nameVisibility) {
+        getWatcher().setObject(new WrappedDataWatcherObject(3, Registry.get(Boolean.class)), nameVisibility);
+        this.nameVisible.setValue(nameVisibility);
         return this;
     }
 
@@ -327,8 +328,8 @@ public abstract class fEntity extends fSerializer implements Cloneable {
         setLocation(loc);
         PacketContainer c = new PacketContainer(PacketType.Play.Server.ENTITY_TELEPORT);
         c.getIntegers().write(0, getEntityID());
-        c.getDoubles().write(0, this.d).write(1, this.e).write(2, this.f);
-        c.getBytes().write(0, this.j).write(1, this.k);
+        c.getDoubles().write(0, this.positionX).write(1, this.positionY).write(2, this.positionZ);
+        c.getBytes().write(0, this.yaw).write(1, this.pitch);
         for (Player p : getObjID().getPlayerList()) {
             try {
                 getManager().sendServerPacket(p, c);
@@ -345,7 +346,7 @@ public abstract class fEntity extends fSerializer implements Cloneable {
         setLocation(loc);
         PacketContainer c = new PacketContainer(PacketType.Play.Server.ENTITY_LOOK);
         c.getIntegers().write(0, getEntityID());
-        c.getBytes().write(0, this.j).write(1, this.k);
+        c.getBytes().write(0, this.yaw).write(1, this.pitch);
         for (Player p : getObjID().getPlayerList()) {
             try {
                 getManager().sendServerPacket(p, c);
@@ -485,7 +486,7 @@ public abstract class fEntity extends fSerializer implements Cloneable {
     }
 
     public void sendInventoryPacket(final Player player) {
-        List<PacketContainer> packets = this.i.createPackets();
+        List<PacketContainer> packets = this.entityInventory.createPackets();
         if (packets.isEmpty())
             return;
         try {
@@ -544,10 +545,6 @@ public abstract class fEntity extends fSerializer implements Cloneable {
     }
 
     public void loadDefMetadata(NBTTagCompound metadata) {
-        String name = metadata.getString("Name");
-        boolean n = (metadata.getInt("NameVisible") == 1);
-        boolean f = (metadata.getInt("Fire") == 1), i = (metadata.getInt("Invisible") == 1);
-        boolean g = (metadata.getInt("Glowing") == 1);
         NBTTagCompound inventory = metadata.getCompound("Inventory");
         for (Object object : EnumWrappers.ItemSlot.values()) {
             if (!inventory.getString(object.toString()).equalsIgnoreCase("NONE")) {
@@ -557,11 +554,23 @@ public abstract class fEntity extends fSerializer implements Cloneable {
                 }
             }
         }
-        this.setNameVisibility(n);
-        this.setName(name);
-        this.setFire(f);
-        this.setGlowing(g);
-        this.setInvisible(i);
+        this.setNameVisibility((metadata.getInt("NameVisible") == 1));
+        this.setName(metadata.getString("Name"));
+        this.setFire((metadata.getInt("Fire") == 1));
+        this.setGlowing((metadata.getInt("Glowing") == 1));
+        this.setInvisible((metadata.getInt("Invisible") == 1));
+    }
+    
+    
+    public void getDefNBT() {
+    	setMetadata("EntityType", this.getEntityType().toString());
+        if(!this.customName.isDefault()) setMetadata("Name", this.getName());
+        if(!this.fire.isDefault()) setMetadata("Fire", this.isFire());
+        if(!this.invisible.isDefault()) setMetadata("Invisible", this.isInvisible());
+        if(!this.nameVisible.isDefault()) setMetadata("NameVisible", this.isCustomNameVisible());
+        if(!this.glowing.isDefault()) setMetadata("Glowing", this.isGlowing());
+        setMetadata(this.getLocation());
+        setMetadata(this.getInventory());
     }
 
     public abstract void loadMetadata(NBTTagCompound metadata);
