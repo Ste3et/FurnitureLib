@@ -50,14 +50,22 @@ public class ChunkOnLoad implements Listener {
         if (is == null) return null;
         ItemStack stack = is.clone();
         if (stack.hasItemMeta()) {
-        	if(FurnitureLib.getVersionInt() > 15) {
+        	if(FurnitureLib.getVersionInt() > 13) {
         		ItemMeta meta = stack.getItemMeta();
+        		if (meta.hasLore()) {
+        			if(HiddenStringUtils.hasHiddenString(stack.getItemMeta().getLore().get(0))) {
+        				String projectString = HiddenStringUtils.extractHiddenString(stack.getItemMeta().getLore().get(0));
+                        if (projectString != null)
+                            return FurnitureManager.getInstance().getProjects().stream().filter(pro -> pro.getSystemID().equalsIgnoreCase(projectString)).findFirst().orElse(null);
+            		}
+        		}
         		org.bukkit.NamespacedKey key = new org.bukkit.NamespacedKey(FurnitureLib.getInstance(), "model");
         		String projectString = meta.getPersistentDataContainer().getOrDefault(key, PersistentDataType.STRING, null);
         		if (projectString != null)
                     return FurnitureManager.getInstance().getProjects().stream().filter(pro -> pro.getSystemID().equalsIgnoreCase(projectString)).findFirst().orElse(null);
         	}else if (stack.getItemMeta().hasLore()) {
                 String projectString = HiddenStringUtils.extractHiddenString(stack.getItemMeta().getLore().get(0));
+                System.out.println(stack.getItemMeta().getLore());
                 if (projectString != null)
                     return FurnitureManager.getInstance().getProjects().stream().filter(pro -> pro.getSystemID().equalsIgnoreCase(projectString)).findFirst().orElse(null);
             }
@@ -109,18 +117,16 @@ public class ChunkOnLoad implements Listener {
 					FurnitureLib.debug("FurnitureLib -> Can Place Model (" + pro.getName() + ") here");
 					if (itemEvent.isTimeToPlace()) {
 						itemEvent.debugTime("FurnitureLib -> {ChunkOnLoad} isTime to Place");
-						if (itemEvent.sendAnnouncer()) {
-							if (Objects.nonNull(itemEvent.getProject().getModelschematic())) {
-								itemEvent.debugTime("FurnitureLib -> Model " + pro.getName() + " have Schematic place it.");
-								if (pro.getModelschematic().isPlaceable(itemEvent.getObjID().getStartLocation())) {
-									itemEvent.debugTime("FurnitureLib -> Model " + pro.getName() + " is Placeable");
-									spawn(itemEvent);
-								} else {
-									player.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.NotEnoughSpace"));
-								}
+						if (Objects.nonNull(itemEvent.getProject().getModelschematic())) {
+							itemEvent.debugTime("FurnitureLib -> Model " + pro.getName() + " have Schematic place it.");
+							if (pro.getModelschematic().isPlaceable(itemEvent.getObjID().getStartLocation())) {
+								itemEvent.debugTime("FurnitureLib -> Model " + pro.getName() + " is Placeable");
+								spawn(itemEvent);
 							} else {
-								FurnitureLib.debug("FurnitureLib -> Can't place model [no Modelschematic (" + pro.getName() + ")]");
+								player.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.NotEnoughSpace"));
 							}
+						} else {
+							FurnitureLib.debug("FurnitureLib -> Can't place model [no Modelschematic (" + pro.getName() + ")]");
 						}
 					}
 				} else {
@@ -292,14 +298,17 @@ public class ChunkOnLoad implements Listener {
             e.getPlayer().sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.FurnitureOnThisPlace"));
             return;
         }
-        FurnitureLib.getInstance().spawn(obj.getProjectOBJ(), obj);
-        e.finish();
-        e.removeItem();
-        FurnitureManager.getInstance().addObjectID(obj);
         
-        if(FurnitureLib.useDebugMode()) {
-        	FurnitureLib.debug("FurnitureLib -> Spawn Finish " + e.getObjID().getProject() + " it takes " + (System.currentTimeMillis() - e.getEventCallTime()) + "ms to spawn it");
-        }
+        if (e.sendAnnouncer()) {
+        	FurnitureLib.getInstance().spawn(obj.getProjectOBJ(), obj);
+            e.finish();
+            e.removeItem();
+            FurnitureManager.getInstance().addObjectID(obj);
+            
+            if(FurnitureLib.useDebugMode()) {
+            	FurnitureLib.debug("FurnitureLib -> Spawn Finish " + e.getObjID().getProject() + " it takes " + (System.currentTimeMillis() - e.getEventCallTime()) + "ms to spawn it");
+            }
+		}
     }
 
     private void removePlayer(final Player p) {

@@ -247,16 +247,18 @@ public class CraftingFile {
     			if(!stack.getType().equals(Material.AIR)) {
     				ItemMeta meta = stack.getItemMeta();
         			List<String> loreText = new ArrayList<String>();
-        			loreText.add(HiddenStringUtils.encodeString(getSystemID()));
+        			
         			if(meta.hasLore()) {
         				loreText.addAll(meta.getLore());
         			}
-        			meta.setLore(loreText);
         			
-        			if(FurnitureLib.getVersionInt() > 15) {
+        			if(FurnitureLib.getVersionInt() > 13) {
         				meta.getPersistentDataContainer().set(new org.bukkit.NamespacedKey(FurnitureLib.getInstance(), "model"), PersistentDataType.STRING, getSystemID());
+        			}else {
+        				loreText.add(HiddenStringUtils.encodeString(getSystemID()));
         			}
         			
+        			if(!loreText.isEmpty()) meta.setLore(loreText);
         			stack.setItemMeta(meta);
         			stack.setAmount(1);
         			useItemStackObject = true;
@@ -291,16 +293,20 @@ public class CraftingFile {
         im.setDisplayName(ChatColor.translateAlternateColorCodes('&', name));
 
         List<String> loreText = new ArrayList<String>();
-        if (im.getLore() != null)
-            loreText = im.getLore();
-        loreText.add(HiddenStringUtils.encodeString(getSystemID()));
-
+        if (im.hasLore()) loreText = im.getLore();
+        
         if (file.contains(header + ".custommodeldata")) {
         	try{
         		im.setCustomModelData(file.getInt(header + ".custommodeldata"));
         	}catch (Exception e) {/* Method = setCustomModelData didn't exist (ignore Exception) */}
         }
 
+        if(FurnitureLib.getVersionInt() > 13) {
+        	im.getPersistentDataContainer().set(new org.bukkit.NamespacedKey(FurnitureLib.getInstance(), "model"), PersistentDataType.STRING, getSystemID());
+		}else {
+			loreText.add(HiddenStringUtils.encodeString(getSystemID()));
+		}
+        
         if (file.contains(header + ".itemLore")) {
             if (file.isList(header + ".itemLore")) {
                 List<String> lore = file.getStringList(header + ".itemLore");
@@ -314,7 +320,7 @@ public class CraftingFile {
             }
         }
         is.setAmount(1);
-        im.setLore(loreText);
+        if(!loreText.isEmpty()) im.setLore(loreText);
 
         try {
             if (file.contains(header + ".durability")) {
@@ -328,11 +334,6 @@ public class CraftingFile {
         }
 
         im.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE, ItemFlag.HIDE_ATTRIBUTES);
-        
-        if(FurnitureLib.getVersionInt() > 15) {
-        	im.getPersistentDataContainer().set(new org.bukkit.NamespacedKey(FurnitureLib.getInstance(), "model"), PersistentDataType.STRING, getSystemID());
-		}
-        
         is.setItemMeta(im);
         return is;
     }
