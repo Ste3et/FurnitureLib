@@ -65,7 +65,6 @@ public class ChunkOnLoad implements Listener {
                     return FurnitureManager.getInstance().getProjects().stream().filter(pro -> pro.getSystemID().equalsIgnoreCase(projectString)).findFirst().orElse(null);
         	}else if (stack.getItemMeta().hasLore()) {
                 String projectString = HiddenStringUtils.extractHiddenString(stack.getItemMeta().getLore().get(0));
-                System.out.println(stack.getItemMeta().getLore());
                 if (projectString != null)
                     return FurnitureManager.getInstance().getProjects().stream().filter(pro -> pro.getSystemID().equalsIgnoreCase(projectString)).findFirst().orElse(null);
             }
