@@ -4,6 +4,7 @@ import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -12,6 +13,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
@@ -20,6 +22,7 @@ import org.bukkit.util.Vector;
 
 import com.migcomponents.migbase64.Base64;
 
+import de.Ste3et_C0st.FurnitureLib.Database.Serializer;
 import de.Ste3et_C0st.FurnitureLib.ModelLoader.Block.ModelBlock;
 import de.Ste3et_C0st.FurnitureLib.ModelLoader.Block.ModelBlockAquaticUpdate;
 import de.Ste3et_C0st.FurnitureLib.ModelLoader.Block.ModelBlockCombatUpdate;
@@ -220,5 +223,39 @@ public abstract class Modelschematic{
     		returnBoolean.set(getEntityMap().values().stream().filter(fArmorStand.class::isInstance).filter(entry -> fArmorStand.class.cast(entry).isMarker()).findFirst().isPresent());
     	}
     	return returnBoolean.get();
+    }
+    
+    public void save(File file) {
+    	YamlConfiguration configuration = YamlConfiguration.loadConfiguration(file);
+    	saveEntities(configuration);
+    	try {
+			configuration.save(file);
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
+    }
+    
+    private void saveEntities(YamlConfiguration configuration) {
+    	AtomicInteger integer = new AtomicInteger(0);
+    	if(FurnitureLib.isNewVersion()) {
+    		this.entityMap.entrySet().stream().forEach(entry -> {
+        		NBTTagCompound metadata = entry.getValue().getMetaData();
+        		metadata.set("Location", entry.getKey().toNBTTagCompound());
+        		
+        		byte[] bytes = Serializer.armorStandtoBytes(metadata);
+        		String base64 = Base64.encodeToString(bytes, false);
+        		//configuration.set(this.name + ".projectData.entities.debug." + integer.get(), metadata.toString());
+        		configuration.set(this.name + ".projectData.entities." + integer.getAndIncrement(), base64);
+        	});
+    	}else {
+    		this.entityMap.entrySet().stream().forEach(entry -> {
+        		NBTTagCompound metadata = entry.getValue().getMetaData();
+        		metadata.set("Location", entry.getKey().toNBTTagCompound());
+        		byte[] bytes = Serializer.armorStandtoBytes(metadata);
+        		String base64 = Base64.encodeToString(bytes, false);
+        		//configuration.set(this.name + ".projectData.entities.debug." + integer.get(), metadata.toString());
+        		configuration.set(this.name + ".ProjectModels.ArmorStands." + integer.getAndIncrement(), base64);
+        	});
+    	}
     }
 }

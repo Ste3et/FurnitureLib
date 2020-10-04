@@ -82,7 +82,7 @@ public class LimitationManager {
                     if (p.hasPermission("furniture.globallimit." + i)) {
                         if (playerTotal < i) {
                             String s = lib.getLangManager().getString("message.LimitAnnouncer");
-                            s = s.replace("#TYPE#", pro.getName()).replace("#CURRENT#", player + 1 + "").replace("#MAX#", i + "");
+                            s = s.replace("#TYPE#", pro.getDisplayName()).replace("#SYSTEMID#", pro.getName()).replace("#CURRENT#", player + 1 + "").replace("#MAX#", i + "");
                             p.sendMessage(s);
                             return true;
                         } else {

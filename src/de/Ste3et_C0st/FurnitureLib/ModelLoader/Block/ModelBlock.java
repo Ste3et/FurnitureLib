@@ -17,20 +17,20 @@ public abstract class ModelBlock {
 
     protected ModelVector vector;
     protected ModelBlockState blockState = null;
-
+    
     public ModelBlock(ModelVector vector) {
         this.vector = vector;
     }
 
     public ModelBlock(YamlConfiguration yamlConfiguration, String key) {
+    	
     }
 
     public abstract Material getMaterial();
 
     public abstract void place(Location loc);
-
     public abstract void place(Location loc, BlockFace face);
-
+    
     public ModelVector getVector() {
         return this.vector;
     }
@@ -47,4 +47,6 @@ public abstract class ModelBlock {
         	}
         }
     }
+    
+   
 }

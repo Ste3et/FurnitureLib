@@ -2,15 +2,12 @@ package de.Ste3et_C0st.FurnitureLib.ModelLoader.Block;
 
 import de.Ste3et_C0st.FurnitureLib.ModelLoader.ModelVector;
 import de.Ste3et_C0st.FurnitureLib.ModelLoader.Block.state.ModelBlockSkullState;
-import de.Ste3et_C0st.FurnitureLib.ModelLoader.Block.state.ModelBlockState;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
-import de.Ste3et_C0st.FurnitureLib.main.Type;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
-import org.bukkit.block.BlockState;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.block.data.Directional;
 import org.bukkit.block.data.type.Slab;
@@ -145,7 +142,7 @@ public class ModelBlockAquaticUpdate extends ModelBlock {
             this.applyBlockState(loc);
         }
     }
-
+    
     public boolean isPlaceable() {
         return false;
     }

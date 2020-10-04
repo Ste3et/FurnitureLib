@@ -48,66 +48,88 @@ public class debugCommand extends iCommand {
             		}catch (Exception e) {
 						e.printStackTrace();
 					}
+                }else if(args[1].equalsIgnoreCase("regen")) {
+                	sender.sendMessage("Furniture ModelFile regen mode Started");
+            		sender.sendMessage("Please look at the console for instructions");
+            		try {
+            			String key = RandomStringGenerator.generateRandomString(25, RandomStringGenerator.Mode.ALPHANUMERIC);
+            			debugMap.put(key, new ExecuteTimer());
+            			CommandSender console = Bukkit.getConsoleSender();
+                		console.sendMessage("FurnitureLib: " + sender.getName() + " start the database debug");
+                		console.sendMessage("Please enter these command to confirm it: '/furniture debug regen " + key + "' ho have 10 secounds");
+            		}catch (Exception e) {
+						e.printStackTrace();
+					}
                 }
             }
         } else if(args.length == 3) {
-        	if(sender.hasPermission("furniture.databasedebug")) {
             	if (args[1].equalsIgnoreCase("database")) {
-            		String key = args[2];
-            		if(debugMap.containsKey(key)) {
-            			long dif = debugMap.get(key).difference();
-            			if(dif < (10 * 1000)) {
-            				Integer models = 100000;
-                            AtomicInteger aInt = new AtomicInteger(models);
-                            Integer stepSize = 10000;
-                            AtomicInteger aInt2 = new AtomicInteger(stepSize);
-                            ExecuteTimer timer = new ExecuteTimer();
-                            int i = FurnitureManager.getInstance().getProjects().size() - 1;
-                            sender.sendMessage("§7Database Manipulation start");
-                            Player player = (Player) sender;
-                            World w = player.getWorld();
-                            int currentX = player.getLocation().getBlockX();
-                            int currentZ = player.getLocation().getBlockZ();
-                            UUID uuid = player.getUniqueId();
-                            Project pro = FurnitureManager.getInstance().getProject("Chair");
-                            FurnitureManager manager = FurnitureManager.getInstance();
-                            new BukkitRunnable() {
-                                @Override
-                                public void run() {
-                                    if (aInt2.get() > 0) {
-                                        while (aInt2.getAndDecrement() > 0) {
-                                            double x = MathHelper.a(new Random(), currentX -1000d, currentX + 1000d);
-                                            double y = MathHelper.a(new Random(), 0, 256);
-                                            double z = MathHelper.a(new Random(), currentZ - 1000d, currentZ + 1000d);
-                                            ObjectID obj = new ObjectID(pro.getName(), pro.getPlugin().getName(), new Location(w, x, y, z));
-                                            FurnitureLib.getInstance().spawn(obj.getProjectOBJ(), obj);
-                                            obj.setSQLAction(SQLAction.SAVE);
-                                            obj.setUUID(uuid);
-                                            manager.addObjectID(obj);
-                                            ChatComponentWrapper.sendChatComponent(player,ChatMessageType.ACTION_BAR, new ComponentBuilder("§2" + aInt.get() + "§7/§e" + 100000).create());
-                                        }
-                                    } else {
-                                    	aInt2.set(stepSize);
-                                        aInt.set(aInt.get() - stepSize);
-                                        if (aInt.get() <= 0) {
-                                        	cancel();
-                                            sender.sendMessage("§7Database Manipulation §2finish §7" + timer.getDifference());
-                                            sender.sendMessage("§7The Client receive: §e" + models + " §7ObjectIDs");
-                                            sender.sendMessage("§7These are: §e" + (models * pro.getModelschematic().getEntityMap().size()) + " ArmorStands");
-                                        }
-                                    }
-                                }
-                            }.runTaskTimerAsynchronously(FurnitureLib.getInstance(), 0, 2);
-            			}else {
-            				sender.sendMessage("You are to slow to start the database debug !");
-            				sender.sendMessage("Please try again !");
-            			}
-            			debugMap.remove(key);
-            		}else {
-            			sender.sendMessage("There are no Security tokens generated for Database Manipulation !");
+            		if(sender.hasPermission("furniture.debug.database")) {
+	            		String key = args[2];
+	            		if(debugMap.containsKey(key)) {
+	            			long dif = debugMap.get(key).difference();
+	            			if(dif < (10 * 1000)) {
+	            				Integer models = 100000;
+	                            AtomicInteger aInt = new AtomicInteger(models);
+	                            Integer stepSize = 10000;
+	                            AtomicInteger aInt2 = new AtomicInteger(stepSize);
+	                            ExecuteTimer timer = new ExecuteTimer();
+	                            int i = FurnitureManager.getInstance().getProjects().size() - 1;
+	                            sender.sendMessage("§7Database Manipulation start");
+	                            Player player = (Player) sender;
+	                            World w = player.getWorld();
+	                            int currentX = player.getLocation().getBlockX();
+	                            int currentZ = player.getLocation().getBlockZ();
+	                            UUID uuid = player.getUniqueId();
+	                            Project pro = FurnitureManager.getInstance().getProject("Chair");
+	                            FurnitureManager manager = FurnitureManager.getInstance();
+	                            new BukkitRunnable() {
+	                                @Override
+	                                public void run() {
+	                                    if (aInt2.get() > 0) {
+	                                        while (aInt2.getAndDecrement() > 0) {
+	                                            double x = MathHelper.a(new Random(), currentX -1000d, currentX + 1000d);
+	                                            double y = MathHelper.a(new Random(), 0, 256);
+	                                            double z = MathHelper.a(new Random(), currentZ - 1000d, currentZ + 1000d);
+	                                            ObjectID obj = new ObjectID(pro.getName(), pro.getPlugin().getName(), new Location(w, x, y, z));
+	                                            FurnitureLib.getInstance().spawn(obj.getProjectOBJ(), obj);
+	                                            obj.setSQLAction(SQLAction.SAVE);
+	                                            obj.setUUID(uuid);
+	                                            manager.addObjectID(obj);
+	                                            ChatComponentWrapper.sendChatComponent(player,ChatMessageType.ACTION_BAR, new ComponentBuilder("§2" + aInt.get() + "§7/§e" + 100000).create());
+	                                        }
+	                                    } else {
+	                                    	aInt2.set(stepSize);
+	                                        aInt.set(aInt.get() - stepSize);
+	                                        if (aInt.get() <= 0) {
+	                                        	cancel();
+	                                            sender.sendMessage("§7Database Manipulation §2finish §7" + timer.getDifference());
+	                                            sender.sendMessage("§7The Client receive: §e" + models + " §7ObjectIDs");
+	                                            sender.sendMessage("§7These are: §e" + (models * pro.getModelschematic().getEntityMap().size()) + " ArmorStands");
+	                                        }
+	                                    }
+	                                }
+	                            }.runTaskTimerAsynchronously(FurnitureLib.getInstance(), 0, 2);
+	            			}else {
+	            				sender.sendMessage("You are to slow to start the database debug !");
+	            				sender.sendMessage("Please try again !");
+	            			}
+	            			debugMap.remove(key);
+	            		}else {
+	            			sender.sendMessage("There are no Security tokens generated for Database Manipulation !");
+	            		}
+            		}
+            	}else if(args[1].equalsIgnoreCase("regen")) {
+            		if(sender.hasPermission("furniture.debug.regen")) {
+            			String key = args[2];
+	            		if(debugMap.containsKey(key)) {
+	            			long dif = debugMap.get(key).difference();
+	            			if(dif < (10 * 1000)) {
+	            				FurnitureManager.getInstance().getProjects().forEach(entry -> entry.updateFile(sender));
+	            			}
+	            		}
             		}
             	}
-        	}
         } else {
             if (args.length != 1) {
                 sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.WrongArgument"));

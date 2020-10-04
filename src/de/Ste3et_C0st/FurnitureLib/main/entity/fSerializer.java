@@ -84,12 +84,14 @@ public abstract class fSerializer extends fProtocol {
 
     private NBTTagCompound getFromLocation(Location loc) {
         NBTTagCompound location = new NBTTagCompound();
-        location.setDouble("X", loc.getX());
-        location.setDouble("Y", loc.getY());
-        location.setDouble("Z", loc.getZ());
-        location.setFloat("Yaw", loc.getYaw());
-        location.setFloat("Pitch", loc.getPitch());
-        //location.setString("World", loc.getWorld().getUID().toString());
+        if(Objects.nonNull(loc)) {
+        	location.setDouble("X", loc.getX());
+            location.setDouble("Y", loc.getY());
+            location.setDouble("Z", loc.getZ());
+            location.setFloat("Yaw", loc.getYaw());
+            location.setFloat("Pitch", loc.getPitch());
+            //location.setString("World", loc.getWorld().getUID().toString());
+        }
         return location;
     }
 

@@ -45,6 +45,16 @@ public class ModelVector implements Cloneable {
         this.yaw = nbtTagCompound.getFloat("Yaw");
         this.pitch = nbtTagCompound.getFloat("Pitch");
     }
+    
+    public NBTTagCompound toNBTTagCompound() {
+    	NBTTagCompound tagCompound = new NBTTagCompound();
+    	tagCompound.setDouble("X-Offset", this.x);
+    	tagCompound.setDouble("Y-Offset", this.y);
+    	tagCompound.setDouble("Z-Offset", this.z);
+    	tagCompound.setFloat("Yaw", this.yaw);
+    	tagCompound.setFloat("Pitch", this.pitch);
+    	return tagCompound;
+    }
 
     public ModelVector add(Vector vector) {
         return this.add(vector.getX(), vector.getY(), vector.getZ());

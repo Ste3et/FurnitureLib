@@ -16,6 +16,7 @@ import de.Ste3et_C0st.FurnitureLib.main.Type.PlaceableSide;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -23,6 +24,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
 
+import java.awt.SystemTray;
 import java.io.File;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -35,8 +37,7 @@ public class Project {
     private String project;
     private CraftingFile file;
     private Plugin plugin;
-    private Function<ObjectID, Furniture> furnitureObject;
-
+    
     private Integer chunkLimit = -1;
     private config limitationConfig;
     private FileConfiguration limitationFile;
@@ -45,6 +46,7 @@ public class Project {
     private CenterType type = CenterType.RIGHT;
     private boolean EditorProject = false, silent = false;
     private ModelHandler modelschematic = null;
+    private Function<ObjectID, Furniture> furnitureObject = ProjectLoader::new;
 
     /**
      * Create a new Project instance load the modelFile and calculate the boundingbox.
@@ -362,5 +364,21 @@ public class Project {
 
 	public boolean isDestroyable() {
 		return this.haveModelSchematic() ? this.getModelschematic().isDestroyAble() : true;
+	}
+	
+	public boolean updateFile(CommandSender sender) {
+		File file = getCraftingFile().filePath;
+		if(haveModelSchematic()) {
+			String prev = fileSize(file);
+			this.getModelschematic().save(file);
+			String after = fileSize(file);
+			sender.sendMessage("ModelFile: §d" + getName() + " §fupdated before: §c" + prev + " §fafter: §a" + after);
+			return true;
+		}
+		return false;
+	}
+	
+	private String fileSize(File file) {
+		return (Math.round((double) file.length() / 1024 * 10d) / 10d) + " kb";
 	}
 }

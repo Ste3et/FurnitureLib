@@ -122,8 +122,12 @@ public abstract class Database {
         }
         
         idList.stream().filter(Objects::nonNull).forEach(entry -> {
-        	entry.registerBlocks();
-        	entry.getProjectOBJ().applyFunction(entry);
+        	if (Objects.nonNull(entry.getProjectOBJ())) {
+        		entry.registerBlocks();
+            	entry.getProjectOBJ().applyFunction(entry);
+        	}else {
+        		System.out.println("Project: [" + entry.getProject() + "] not found.");
+        	}
         });
         
         FurnitureManager.getInstance().getObjectList().addAll(idList);
