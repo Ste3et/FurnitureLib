@@ -6,6 +6,7 @@ import de.Ste3et_C0st.FurnitureLib.SchematicLoader.Events.ProjectClickEvent;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.HiddenStringUtils;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.StringTranslator;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.callbacks.CallbackBoolean;
+import de.Ste3et_C0st.FurnitureLib.main.Furniture;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
@@ -177,26 +178,29 @@ public class ChunkOnLoad implements Listener {
             if (!FurnitureLib.getInstance().getBlockManager().contains(b.getLocation())) return;
             if(EquipmentSlot.HAND != e.getHand()) return;
             final Location loc = b.getLocation();
-            final Player p = e.getPlayer();
-            loc.setYaw(FurnitureLib.getInstance().getLocationUtil().FaceToYaw(FurnitureLib.getInstance().getLocationUtil().yawToFace(p.getLocation().getYaw())));
+            final Player player = e.getPlayer();
+            loc.setYaw(FurnitureLib.getInstance().getLocationUtil().FaceToYaw(FurnitureLib.getInstance().getLocationUtil().yawToFace(player.getLocation().getYaw())));
             Location blockLocation = b.getLocation();
             boolean bool = !b.getType().equals(Material.FLOWER_POT);
             final ObjectID objID = FurnitureManager.getInstance().getObjectList().stream().filter(obj -> obj.containsBlock(blockLocation)).findFirst().orElse(null);
             if (Objects.isNull(objID)) return;
             if (objID.isPrivate()) return;
             if (bool && SQLAction.REMOVE != objID.getSQLAction()) {
-                if ((p.getGameMode() == GameMode.CREATIVE) && !FurnitureLib.getInstance().creativeInteract()) {
-                    if (!FurnitureLib.getInstance().getPermission().hasPerm(p, "furniture.bypass.creative.interact")) {
+                if ((player.getGameMode() == GameMode.CREATIVE) && !FurnitureLib.getInstance().creativeInteract()) {
+                    if (!FurnitureLib.getInstance().getPermission().hasPerm(player, "furniture.bypass.creative.interact")) {
                     	e.setCancelled(true);
                         return;
                     }
                 }
                 
-                if (!FurnitureLib.getInstance().getFurnitureManager().getIgnoreList().contains(p.getUniqueId())) {
-                	ProjectClickEvent projectClickEvent = new ProjectClickEvent(p, objID);
+                if (!FurnitureLib.getInstance().getFurnitureManager().getIgnoreList().contains(player.getUniqueId())) {
+                	ProjectClickEvent projectClickEvent = new ProjectClickEvent(player, objID);
                     Bukkit.getPluginManager().callEvent(projectClickEvent);
                     if (!projectClickEvent.isCancelled()) {
-                    	objID.callFunction("onClick", p);
+                    	Furniture furniture = objID.getFurnitureObject();
+                    	if(Objects.nonNull(furniture)) {
+                    		furniture.onClick(player);
+                    	}
                     }
                     e.setCancelled(true);
                     return;
@@ -211,9 +215,9 @@ public class ChunkOnLoad implements Listener {
 
     @EventHandler
     public void onClick(final PlayerInteractEvent event) {
-        final Player p = event.getPlayer();
-        if (p == null) return;
-        if (GameMode.SPECTATOR == p.getGameMode())  return;
+        final Player player = event.getPlayer();
+        if (player == null) return;
+        if (GameMode.SPECTATOR == player.getGameMode())  return;
         if (event.isCancelled()) return;
         if (Action.LEFT_CLICK_BLOCK == event.getAction()) {
             if (event.getClickedBlock() == null) {
@@ -250,11 +254,14 @@ public class ChunkOnLoad implements Listener {
                 if (EquipmentSlot.HAND != event.getHand()) return;
                 if (!objID.getSQLAction().equals(SQLAction.REMOVE)) {
                     final ObjectID o = objID;
-                    if (!FurnitureLib.getInstance().getFurnitureManager().getIgnoreList().contains(p.getUniqueId())) {
-                    	ProjectBreakEvent projectBreakEvent = new ProjectBreakEvent(p, o);
+                    if (!FurnitureLib.getInstance().getFurnitureManager().getIgnoreList().contains(player.getUniqueId())) {
+                    	ProjectBreakEvent projectBreakEvent = new ProjectBreakEvent(player, o);
                         Bukkit.getPluginManager().callEvent(projectBreakEvent);
                         if (!projectBreakEvent.isCancelled()) {
-                            o.callFunction("onBreak", p);
+                        	Furniture furniture = objID.getFurnitureObject();
+                        	if(Objects.nonNull(furniture)) {
+                        		furniture.onBreak(player);
+                        	}
                         }
                         return;
                     } else {

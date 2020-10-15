@@ -8,6 +8,7 @@ import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.EnumWrappers.EntityUseAction;
 import de.Ste3et_C0st.FurnitureLib.SchematicLoader.Events.ProjectBreakEvent;
 import de.Ste3et_C0st.FurnitureLib.SchematicLoader.Events.ProjectClickEvent;
+import de.Ste3et_C0st.FurnitureLib.main.Furniture;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
@@ -16,7 +17,6 @@ import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
-import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.util.List;
@@ -42,26 +42,27 @@ public class FurnitureEvents {
                                 if (objID.isPrivate()) {
                                     return;
                                 }
-                                Location loc = asPacket.getLocation();
-                                Player p = event.getPlayer();
+                                
+                                Player player = event.getPlayer();
                                 EntityUseAction action = event.getPacket().getEntityUseActions().read(0);
-                                if (loc == null) {
-                                    return;
-                                }
-                                if (p == null) {
+                                
+                                if (Objects.isNull(player)) {
                                     return;
                                 }
                                 switch (action) {
                                     case ATTACK:
-                                        if (p.getGameMode().equals(GameMode.SPECTATOR)) {
+                                        if (GameMode.SPECTATOR == player.getGameMode()) {
                                             return;
                                         }
-                                        if (!FurnitureLib.getInstance().getFurnitureManager().getIgnoreList().contains(p.getUniqueId())) {
+                                        if (!FurnitureLib.getInstance().getFurnitureManager().getIgnoreList().contains(player.getUniqueId())) {
                                             Bukkit.getScheduler().runTask(FurnitureLib.getInstance(), () -> {
-                                                ProjectBreakEvent projectBreakEvent = new ProjectBreakEvent(p, objID);
+                                                ProjectBreakEvent projectBreakEvent = new ProjectBreakEvent(player, objID);
                                                 Bukkit.getPluginManager().callEvent(projectBreakEvent);
                                                 if (!projectBreakEvent.isCancelled()) {
-                                                    objID.callFunction("onBreak", p);
+                                                	Furniture furnitureOject = objID.getFurnitureObject();
+                                                	if(Objects.nonNull(furnitureOject)) {
+                                                		furnitureOject.onBreak(player);
+                                                	}
                                                 }
                                             });
                                         } else {
@@ -69,15 +70,18 @@ public class FurnitureEvents {
                                         }
                                         break;
                                     case INTERACT_AT:
-                                        if (p.getGameMode().equals(GameMode.SPECTATOR)) {
+                                        if (GameMode.SPECTATOR == player.getGameMode()) {
                                             return;
                                         }
-                                        if (!FurnitureLib.getInstance().getFurnitureManager().getIgnoreList().contains(p.getUniqueId())) {
+                                        if (!FurnitureLib.getInstance().getFurnitureManager().getIgnoreList().contains(player.getUniqueId())) {
                                             Bukkit.getScheduler().runTask(FurnitureLib.getInstance(), () -> {
-                                                ProjectClickEvent projectBreakEvent = new ProjectClickEvent(p, objID);
+                                                ProjectClickEvent projectBreakEvent = new ProjectClickEvent(player, objID);
                                                 Bukkit.getPluginManager().callEvent(projectBreakEvent);
                                                 if (!projectBreakEvent.isCancelled()) {
-                                                    objID.callFunction("onClick", p);
+                                                	Furniture furnitureOject = objID.getFurnitureObject();
+                                                	if(Objects.nonNull(furnitureOject)) {
+                                                		furnitureOject.onClick(player);
+                                                	}
                                                 }
                                             });
                                         } else {

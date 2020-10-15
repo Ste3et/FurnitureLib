@@ -2,8 +2,6 @@ package de.Ste3et_C0st.FurnitureLib.main.entity;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
-import com.comphenix.protocol.wrappers.EnumWrappers;
-import com.comphenix.protocol.wrappers.EnumWrappers.ItemSlot;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.Registry;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
@@ -20,7 +18,6 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
-import java.lang.reflect.InvocationTargetException;
 import java.util.*;
 
 public abstract class fEntity extends fSerializer implements Cloneable {
@@ -254,7 +251,7 @@ public abstract class fEntity extends fSerializer implements Cloneable {
         getObjID().getPlayerList().forEach(player -> {
             try {
                 getManager().sendServerPacket(player, container);
-            } catch (InvocationTargetException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         });
@@ -456,7 +453,7 @@ public abstract class fEntity extends fSerializer implements Cloneable {
             getObjID().getPlayerList().forEach(player -> {
                 try {
                     getManager().sendServerPacket(player, container);
-                } catch (InvocationTargetException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
                 }
             });
@@ -477,7 +474,7 @@ public abstract class fEntity extends fSerializer implements Cloneable {
         getObjID().getPlayerList().forEach(player -> {
             try {
                 getManager().sendServerPacket(player, container);
-            } catch (InvocationTargetException e) {
+            } catch (Exception e) {
                 e.printStackTrace();
             }
         });

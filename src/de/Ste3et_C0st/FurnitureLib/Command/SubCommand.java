@@ -12,7 +12,8 @@ public class SubCommand {
     private String Suggest_Command = "";
     private String command = "";
     private Class<?> cl;
-
+    
+    
     public SubCommand(String subcommand, Class<?> cl, String HoverText, String Suggest_Command, String command) {
         this.setHoverText(HoverText);
         this.setSubcommand(subcommand);

@@ -15,13 +15,12 @@ import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 
-import java.lang.reflect.Method;
 import java.util.*;
 import java.util.function.Predicate;
 
 public class ObjectID {
 
-    public Object functionObject = null;
+    private Furniture functionObject = null;
     private static int viewRange = 10;
     private String ObjectID, serial, Project, plugin, worldName;
     private HashSet<Location> locList = new HashSet<Location>();
@@ -350,25 +349,14 @@ public class ObjectID {
     	viewRange = chunkRange;
     }
     
-    public Object getFunctionObject() {
-        return this.functionObject;
+    public void setFurnitureObject(Furniture furniture) {
+    	this.functionObject = furniture;
     }
-
-    public void setFunctionObject(Object obj) {
-        this.functionObject = obj;
+    
+    public Furniture getFurnitureObject() {
+    	return this.functionObject;
     }
-
-    public void callFunction(String function, Player player) {
-        if (getFunctionObject() == null)
-            return;
-        try {
-            Method m = getFunctionObject().getClass().getDeclaredMethod(function, Player.class);
-            m.invoke(getFunctionObject(), player);
-        } catch (Exception ex) {
-            ex.printStackTrace();
-        }
-    }
-
+    
     public void removePacket(Player p) {
         if (isPrivate()) {
             return;
@@ -450,7 +438,7 @@ public class ObjectID {
             deleteEffect(packetList);
         removeAll();
         FurnitureManager.getInstance().remove(this);
-        this.setFunctionObject(null);
+        this.setFurnitureObject(null);
     }
 
     public void dropItem(Player p, Location loc, Project project) {
@@ -540,6 +528,13 @@ public class ObjectID {
     @Override
     public String toString() {
         return this.getID();
+    }
+    
+    @Deprecated
+    public void setFunctionObject(Object obj) {
+        if(Furniture.class.isInstance(obj)) {
+        	this.functionObject = Furniture.class.cast(obj);
+        }
     }
 
 }

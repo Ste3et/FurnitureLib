@@ -24,7 +24,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
 
-import java.awt.SystemTray;
 import java.io.File;
 import java.io.InputStream;
 import java.util.HashMap;
@@ -355,7 +354,7 @@ public class Project {
     public Project applyFunction(ObjectID obj) {
         if (Objects.isNull(this.furnitureObject)) return this;
         try {
-            obj.setFunctionObject(furnitureObject.apply(obj));
+        	obj.setFurnitureObject(furnitureObject.apply(obj));
         } catch (Exception e) {
             e.printStackTrace();
         }
