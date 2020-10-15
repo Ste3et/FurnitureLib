@@ -18,6 +18,8 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
+import com.google.common.util.concurrent.AtomicDouble;
+
 import java.util.HashMap;
 import java.util.Random;
 import java.util.UUID;
@@ -125,7 +127,23 @@ public class debugCommand extends iCommand {
 	            		if(debugMap.containsKey(key)) {
 	            			long dif = debugMap.get(key).difference();
 	            			if(dif < (10 * 1000)) {
-	            				FurnitureManager.getInstance().getProjects().forEach(entry -> entry.updateFile(sender));
+	            				AtomicDouble aDouble = new AtomicDouble(0);
+	            				AtomicInteger integer = new AtomicInteger(0);
+	            				sender.sendMessage("§fRegen §dProject Files §7please wait...");
+	            				FurnitureManager.getInstance().getProjects().forEach(entry -> {
+	            					aDouble.addAndGet(entry.updateFile());
+	            				});
+	            				
+	            				sender.sendMessage("§d" + FurnitureManager.getInstance().getProjects().size() + " §7Projects have migrated this save: §d" + aDouble + "§fkb filespace");
+	            				sender.sendMessage("§fRegen §aModels §7Database please wait...");
+	            				
+	            				FurnitureManager.getInstance().getObjectList().stream().filter(entry -> SQLAction.NOTHING == entry.getSQLAction()).forEach(entry -> {
+	            					entry.setSQLAction(SQLAction.UPDATE);
+	            					integer.incrementAndGet();
+	            				});
+	            				
+	            				sender.sendMessage("§d" + integer.get() + " §7Models have migrated.");
+	            				sender.sendMessage("§7Please use §9/furniture save §7these can take a short time.");
 	            			}
 	            		}
             		}

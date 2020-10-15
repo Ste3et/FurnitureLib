@@ -2,6 +2,7 @@ package de.Ste3et_C0st.FurnitureLib.main;
 
 import de.Ste3et_C0st.FurnitureLib.Command.TabCompleterHandler;
 import de.Ste3et_C0st.FurnitureLib.Command.command;
+import de.Ste3et_C0st.FurnitureLib.Command.disabledCommand;
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.Database.DeSerializer;
 import de.Ste3et_C0st.FurnitureLib.Database.SQLManager;
@@ -90,6 +91,17 @@ public class FurnitureLib extends JavaPlugin {
     private static final int BSTATS_ID = 454;
     private List<String> ignoredWorlds = new ArrayList<String>();
     private OfflinePlayerCache cache;
+    private boolean enabledPlugin = false;
+    
+    
+    static {
+    	 String bukkitVersion = getBukkitVersion();
+         if (bukkitVersion.contains("_")) {
+             String versionString = bukkitVersion.split("_")[1];
+             versionInt = Integer.parseInt(versionString);
+             newVersion = versionInt > 12;
+         }
+    }
     
     public static String getBukkitVersion() {
         return Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3];
@@ -118,26 +130,11 @@ public class FurnitureLib extends JavaPlugin {
     }
 
     public static int getVersionInt() {
-    	
-        if (versionInt == 0) {
-            String bukkitVersion = getBukkitVersion();
-            int version = 0;
-            if (bukkitVersion.contains("_")) {
-                String versionString = bukkitVersion.split("_")[1];
-                version = Integer.parseInt(versionString);
-            }
-            versionInt = version;
-        }
         return versionInt;
     }
 
     public static boolean isNewVersion() {
-        if (Objects.isNull(newVersion)) {
-            newVersion = getVersionInt() > 12;
-            return newVersion;
-        } else {
-            return newVersion;
-        }
+    	return newVersion;
     }
 
     public LanguageManager getLangManager() {
@@ -384,121 +381,133 @@ public class FurnitureLib extends JavaPlugin {
     }
 
     private boolean isRightProtocollib(String s) {
-        return  s.startsWith("4");
+        return s.startsWith("4");
     }
 
     @Override
     public void onEnable() {
+    	instance = this;
         if (getVersionInt() < 9 || getVersionInt() > 16) {
-            send("§cFurnitureLib only works on Spigot 1.9 - 1.15");
-            getPluginManager().disablePlugin(this);
+            this.disableFurnitureLib(Arrays.asList("§cFurnitureLib only works on Spigot 1.9 - 1.15"));
             return;
         }
 
         if (!getPluginManager().isPluginEnabled("ProtocolLib")) {
-        	send("§cFurnitureLib §7can't be enabled please §cinstall §7the right §e§nProtocollib version");
-            send("§5Download it here: §l§9http://ci.dmulloy2.net/job/ProtocolLib%20Gradle/lastStableBuild/");
-            send("§c§4FurnitureLib will be disabled");
-            getPluginManager().disablePlugin(this);
-        } else {
-            instance = this;
-            getConfig().addDefaults(YamlConfiguration.loadConfiguration(loadStream("config.yml")));
-            getConfig().options().copyDefaults(true);
-            getConfig().options().copyHeader(true);
-            saveConfig();
-            field = ProtocolFields.getField(getServer().getBukkitVersion());
-            this.lUtil = new LocationUtil();
-            this.manager = new FurnitureManager();
-            this.colorManager = new ColorUtil();
-            this.serializeNew = new Serializer();
-            this.deSerializerNew = new DeSerializer();
-            this.lightMgr = new LightManager(this);
-            this.useSSL = getConfig().getBoolean("config.Database.useSSL");
-            this.pManager = new ProjectManager();
-            this.permissionHandler = new PermissionHandler();
-            this.Pmanager = new ProtectionManager(instance);
-            this.sync = getConfig().getBoolean("config.sync", true);
-            this.cache = new OfflinePlayerCache();
-            send("==========================================");
-            send("FurnitureLibrary Version: §e" + this.getDescription().getVersion());
-            send("Furniture Author: §6" + this.getDescription().getAuthors().get(0));
-            send("Furniture Website: §e" + this.getDescription().getWebsite());
-            send("FurnitureLib load for Minecraft: 1." + getVersionInt());
-            String s = getPluginManager().getPlugin("ProtocolLib").getDescription().getVersion();
-            boolean protocollib = isRightProtocollib(s);
-            if (getBukkitVersion().startsWith("v1_14")) {
-                send("§5Info: §eFor Spigot 1.14.x you need §6ProtocolLib 4.5.0 Build #8 §eor above");
-                send("§5Download it here: §l§9http://ci.dmulloy2.net/job/ProtocolLib%20Gradle/lastStableBuild/");
-                send("§5Otherwise you will receive: §cNoClassDefFoundError: org/apache/commons/lang3/Validate");
-            }else if (getBukkitVersion().startsWith("v1_15_2") && !s.equals("4.5.1")) {
-            	send("§5Info: §eFor Spigot 1.15.2 you need §6ProtocolLib 4.5.1 §eor above");
-                send("§5Download it here: §l§9https://www.spigotmc.org/resources/protocollib.1997/");
-                send("§5Otherwise you will receive: §cNo field with type java.util.Map exists in class EnumProtocol.");
-            }else if(getVersionInt() > 15) {
-            	try {
-            		Class.forName("com.comphenix.protocol.wrappers.Pair");
-            	}catch(ClassNotFoundException ex) {
-            		send("§5Info: §eFor Spigot 1.16.x you need §6ProtocolLib 4.6.0 Build #472 §eor above");
-            		send("§5Download it here: §l§9http://ci.dmulloy2.net/job/ProtocolLib%20Gradle/lastStableBuild/");
-            		send("§7FurnitureLib will stop working!");
-            		getPluginManager().disablePlugin(this);
-            		return;
-            	}
-            }
-            
-            if (protocollib) {
-                send("Furniture start load");
-                boolean b = isEnable("ProtectionLib", false);
-                send("Furniture find ProtectionLib: §e" + Boolean.toString(b));
-                this.bmanager = new BlockManager();
-                this.craftingInv = new CraftingInv(this);
-                this.loadPermissionKit();
-                this.autoFileUpdater = getConfig().getBoolean("config.fileConverter.auto_mode", false);
-                autoConverter.modelConverter(getServer().getConsoleSender());
-                loadPluginConfig();
-                if (getConfig().getBoolean("config.UseMetrics")) new Metrics(this, BSTATS_ID);
-                //ModelFileLoading #1
-                this.pManager.loadProjectFiles();
-                this.sqlManager = new SQLManager(instance);
-                this.inventoryManager = new InventoryManager();
-                autoConverter.databaseConverter(getServer().getConsoleSender(), getConfig().getString("config.fileConverter.database_table", ""));
-                new FurnitureEvents(instance, manager);
-                getServer().getPluginManager().registerEvents(new onCrafting(), getInstance());
-                getServer().getPluginManager().registerEvents(new onBlockDispense(), getInstance());
-                getServer().getPluginManager().registerEvents(new onEntityExplode(), getInstance());
-                getServer().getPluginManager().registerEvents(new onPlayerChangeWorld(), getInstance());
-                getServer().getPluginManager().registerEvents(new onPlayerDeath(), getInstance());
-                getServer().getPluginManager().registerEvents(new onPlayerJoin(), getInstance());
-                getServer().getPluginManager().registerEvents(new onPlayerQuit(), getInstance());
-                getServer().getPluginManager().registerEvents(new onPlayerRespawn(), getInstance());
-                getServer().getPluginManager().registerEvents(new onPlayerTeleportEvent(), getInstance());
-                getServer().getPluginManager().registerEvents(new ChunkOnLoad(), getInstance());
-                getServer().getPluginManager().registerEvents(new onChunkChange(), getInstance());
-                
-                if(this.autoPurge) {
-                	DeSerializer.autoPurge(purgeTime);
-                }
-                
-                send("§2Furniture load finish :)");
-                if (getConfig().getBoolean("config.timer.Enable")) {
-                    int time = getConfig().getInt("config.timer.time");
-                    sqlManager.saveInterval(time);
-                }
-                
-                send("==========================================");
-                Bukkit.getOnlinePlayers().stream().filter(p -> p != null && p.isOp())
-                        .forEach(p -> getUpdater().sendPlayer(p));
-                PluginCommand c = getCommand("furniture");
-                c.setExecutor(new command(this));
-                c.setTabCompleter(new TabCompleterHandler());
-            } else {
-                send("Furniture Lib doesn't find the correct ProtocolLib");
-                send("Please Install Protocollib §c4.x");
-                send("You can it download at: §6§lhttps://www.spigotmc.org/resources/protocollib.1997/");
-                send("==========================================");
-                getPluginManager().disablePlugin(this);
-            }
-        }
+            this.disableFurnitureLib(Arrays.asList(
+            		"§cFurnitureLib §7can't be enabled",
+            		"§7Please §cinstall §7the right §e§nProtocollib version",
+            		"§5Download it here: §l§9http://ci.dmulloy2.net/job/ProtocolLib%20Gradle/lastStableBuild/",
+            		"§c§4FurnitureLib is disabled"
+            		));
+            return;
+        } 
+        
+        String s = getPluginManager().getPlugin("ProtocolLib").getDescription().getVersion();
+        boolean protocollib = isRightProtocollib(s);
+		if (getBukkitVersion().startsWith("v1_14")) {
+			send("§5Info: §eFor Spigot 1.14.x you need §6ProtocolLib 4.5.0 Build #8 §eor above");
+			send("§5Download it here: §l§9http://ci.dmulloy2.net/job/ProtocolLib%20Gradle/lastStableBuild/");
+			send("§5Otherwise you will receive: §cNoClassDefFoundError: org/apache/commons/lang3/Validate");
+		} else if (getBukkitVersion().startsWith("v1_15_2") && !s.equals("4.5.1")) {
+			send("§5Info: §eFor Spigot 1.15.2 you need §6ProtocolLib 4.5.1 §eor above");
+			send("§5Download it here: §l§9https://www.spigotmc.org/resources/protocollib.1997/");
+			send("§5Otherwise you will receive: §cNo field with type java.util.Map exists in class EnumProtocol.");
+		} else if (getVersionInt() > 15) {
+			try {
+				Class.forName("com.comphenix.protocol.wrappers.Pair");
+			} catch (ClassNotFoundException ex) {
+				this.disableFurnitureLib(Arrays.asList(
+						"§5Info: §eFor Spigot 1.16.x you need §6ProtocolLib 4.6.0 Build #472 §eor above",
+						"§5Download it here: §l§9http://ci.dmulloy2.net/job/ProtocolLib%20Gradle/lastStableBuild/",
+						"§7FurnitureLib will stop working!"));
+				return;
+			}
+		}
+        
+		if(!protocollib) {
+			List<String> instructions = Arrays.asList("Furniture Lib doesn't find the correct ProtocolLib",
+					"Please Install Protocollib §c4.x",
+					"You can it download at: §6§lhttps://www.spigotmc.org/resources/protocollib.1997/");
+			this.disableFurnitureLib(instructions);
+			send("==========================================");
+			return;
+		}
+        
+		getConfig().addDefaults(YamlConfiguration.loadConfiguration(loadStream("config.yml")));
+		getConfig().options().copyDefaults(true);
+		getConfig().options().copyHeader(true);
+		saveConfig();
+		field = ProtocolFields.getField(getServer().getBukkitVersion());
+		this.lUtil = new LocationUtil();
+		this.manager = new FurnitureManager();
+		this.colorManager = new ColorUtil();
+		this.serializeNew = new Serializer();
+		this.deSerializerNew = new DeSerializer();
+		this.lightMgr = new LightManager(this);
+		this.useSSL = getConfig().getBoolean("config.Database.useSSL");
+		this.pManager = new ProjectManager();
+		this.permissionHandler = new PermissionHandler();
+		this.Pmanager = new ProtectionManager(instance);
+		this.sync = getConfig().getBoolean("config.sync", true);
+		this.cache = new OfflinePlayerCache();
+		send("==========================================");
+		send("FurnitureLibrary Version: §e" + this.getDescription().getVersion());
+		send("Furniture Author: §6" + this.getDescription().getAuthors().get(0));
+		send("Furniture Website: §e" + this.getDescription().getWebsite());
+		send("FurnitureLib load for Minecraft: 1." + getVersionInt());
+
+		send("Furniture start load");
+		boolean b = isEnable("ProtectionLib", false);
+		send("Furniture find ProtectionLib: §e" + Boolean.toString(b));
+		this.bmanager = new BlockManager();
+		this.craftingInv = new CraftingInv(this);
+		this.loadPermissionKit();
+		this.autoFileUpdater = getConfig().getBoolean("config.fileConverter.auto_mode", false);
+		autoConverter.modelConverter(getServer().getConsoleSender());
+		loadPluginConfig();
+		if (getConfig().getBoolean("config.UseMetrics"))
+			new Metrics(this, BSTATS_ID);
+		
+		this.pManager.loadProjectFiles();
+		this.sqlManager = new SQLManager(instance);
+		this.inventoryManager = new InventoryManager();
+		autoConverter.databaseConverter(getServer().getConsoleSender(),
+				getConfig().getString("config.fileConverter.database_table", ""));
+		new FurnitureEvents(instance, manager);
+		getServer().getPluginManager().registerEvents(new onCrafting(), getInstance());
+		getServer().getPluginManager().registerEvents(new onBlockDispense(), getInstance());
+		getServer().getPluginManager().registerEvents(new onEntityExplode(), getInstance());
+		getServer().getPluginManager().registerEvents(new onPlayerChangeWorld(), getInstance());
+		getServer().getPluginManager().registerEvents(new onPlayerDeath(), getInstance());
+		getServer().getPluginManager().registerEvents(new onPlayerJoin(), getInstance());
+		getServer().getPluginManager().registerEvents(new onPlayerQuit(), getInstance());
+		getServer().getPluginManager().registerEvents(new onPlayerRespawn(), getInstance());
+		getServer().getPluginManager().registerEvents(new onPlayerTeleportEvent(), getInstance());
+		getServer().getPluginManager().registerEvents(new ChunkOnLoad(), getInstance());
+		getServer().getPluginManager().registerEvents(new onChunkChange(), getInstance());
+
+		if (this.autoPurge) {
+			DeSerializer.autoPurge(purgeTime);
+		}
+
+		send("§2Furniture load finish :)");
+		if (getConfig().getBoolean("config.timer.Enable")) {
+			int time = getConfig().getInt("config.timer.time");
+			sqlManager.saveInterval(time);
+		}
+
+		send("==========================================");
+		Bukkit.getOnlinePlayers().stream().filter(p -> p != null && p.isOp()).forEach(p -> getUpdater().sendPlayer(p));
+		PluginCommand c = getCommand("furniture");
+		c.setExecutor(new command(this));
+		c.setTabCompleter(new TabCompleterHandler());
+		this.enabledPlugin = true;
+    }
+    
+    private void disableFurnitureLib(List<String> instructions) {
+    	System.out.println(instructions);
+    	PluginCommand c = getCommand("furniture");
+		c.setExecutor(new disabledCommand(this, instructions));
     }
 
     private void loadPluginConfig() {
@@ -641,6 +650,7 @@ public class FurnitureLib extends JavaPlugin {
     }
 
     public void registerPluginFurnitures(Plugin plugin) {
+    	if(!enabledPlugin) return;
         manager.getObjectList().stream().filter(obj -> obj != null && obj.getPlugin() != null).forEach(obj -> {
             if (!obj.getSQLAction().equals(SQLAction.REMOVE)) {
                 if (obj.getPlugin().equalsIgnoreCase(plugin.getName())) {
@@ -653,7 +663,7 @@ public class FurnitureLib extends JavaPlugin {
     private boolean isEnable(String plugin, boolean shutdown) {
         boolean b = getServer().getPluginManager().isPluginEnabled(plugin);
         if (!b && shutdown)
-            getServer().getPluginManager().disablePlugin(this);
+        	this.disableFurnitureLib(Arrays.asList("ProtocolLib is missing please install ProtocolLib","You can it download at: §6§lhttps://www.spigotmc.org/resources/protocollib.1997/"));
         return b;
     }
 

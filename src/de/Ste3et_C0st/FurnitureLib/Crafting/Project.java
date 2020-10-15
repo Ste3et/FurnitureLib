@@ -365,19 +365,18 @@ public class Project {
 		return this.haveModelSchematic() ? this.getModelschematic().isDestroyAble() : true;
 	}
 	
-	public boolean updateFile(CommandSender sender) {
+	public double updateFile() {
 		File file = getCraftingFile().filePath;
 		if(haveModelSchematic()) {
-			String prev = fileSize(file);
+			double prev = fileSize(file);
 			this.getModelschematic().save(file);
-			String after = fileSize(file);
-			sender.sendMessage("ModelFile: §d" + getName() + " §fupdated before: §c" + prev + " §fafter: §a" + after);
-			return true;
+			double after = fileSize(file);
+			return prev - after;
 		}
-		return false;
+		return 0d;
 	}
 	
-	private String fileSize(File file) {
-		return (Math.round((double) file.length() / 1024 * 10d) / 10d) + " kb";
+	private double fileSize(File file) {
+		return (Math.round((double) file.length() / 1024 * 10d) / 10d);
 	}
 }
