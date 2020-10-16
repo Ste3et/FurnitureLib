@@ -72,7 +72,7 @@ public abstract class fEntity extends fSerializer implements Cloneable {
         return this.fire.getOrDefault();
     }
 
-    public fEntity setFire(Boolean fire) {
+    public fEntity setFire(boolean fire) {
         setBitMask(fire, 0, 0);
         if (!fire) {
             FurnitureLib.getInstance().getLightManager().removeLight(getLocation());

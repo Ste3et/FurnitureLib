@@ -191,6 +191,5 @@ public abstract class FurnitureHelper {
     }
 
     public abstract void onClick(Player player);
-
     public abstract void onBreak(Player player);
 }

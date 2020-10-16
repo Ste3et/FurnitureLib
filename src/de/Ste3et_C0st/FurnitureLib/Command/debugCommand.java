@@ -46,7 +46,7 @@ public class debugCommand extends iCommand {
             			debugMap.put(key, new ExecuteTimer());
             			CommandSender console = Bukkit.getConsoleSender();
                 		console.sendMessage("FurnitureLib: " + sender.getName() + " start the database debug");
-                		console.sendMessage("Please enter these command to confirm it: '/furniture debug database " + key + "' ho have 10 secounds");
+                		console.sendMessage("Please enter these command to confirm it: '/furniture debug database " + key + "' ho have 60 secounds");
             		}catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -58,7 +58,7 @@ public class debugCommand extends iCommand {
             			debugMap.put(key, new ExecuteTimer());
             			CommandSender console = Bukkit.getConsoleSender();
                 		console.sendMessage("FurnitureLib: " + sender.getName() + " start the database debug");
-                		console.sendMessage("Please enter these command to confirm it: '/furniture debug regen " + key + "' ho have 10 secounds");
+                		console.sendMessage("Please enter these command to confirm it: '/furniture debug regen " + key + "' ho have 60 secounds");
             		}catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -70,7 +70,7 @@ public class debugCommand extends iCommand {
 	            		String key = args[2];
 	            		if(debugMap.containsKey(key)) {
 	            			long dif = debugMap.get(key).difference();
-	            			if(dif < (10 * 1000)) {
+	            			if(dif < (60 * 1000)) {
 	            				Integer models = 100000;
 	                            AtomicInteger aInt = new AtomicInteger(models);
 	                            Integer stepSize = 10000;
@@ -126,23 +126,23 @@ public class debugCommand extends iCommand {
             			String key = args[2];
 	            		if(debugMap.containsKey(key)) {
 	            			long dif = debugMap.get(key).difference();
-	            			if(dif < (10 * 1000)) {
+	            			if(dif < (60 * 1000)) {
 	            				AtomicDouble aDouble = new AtomicDouble(0);
 	            				AtomicInteger integer = new AtomicInteger(0);
-	            				sender.sendMessage("§fRegen §dProject Files §7please wait...");
+	            				sender.sendMessage("§fRegen §dProject Files §fplease wait...");
 	            				FurnitureManager.getInstance().getProjects().forEach(entry -> {
 	            					aDouble.addAndGet(entry.updateFile());
 	            				});
-	            				
-	            				sender.sendMessage("§d" + FurnitureManager.getInstance().getProjects().size() + " §7Projects have migrated this save: §d" + aDouble + "§fkb filespace");
-	            				sender.sendMessage("§fRegen §aModels §7Database please wait...");
+	            				double size = Math.round(aDouble.get() * 10d) / 10d;
+	            				sender.sendMessage("§d" + FurnitureManager.getInstance().getProjects().size() + " §fProjects have migrated this save: §d" + size + " §fkb filespace");
+	            				sender.sendMessage("§fRegen §aModels §fDatabase please wait...");
 	            				
 	            				FurnitureManager.getInstance().getObjectList().stream().filter(entry -> SQLAction.NOTHING == entry.getSQLAction()).forEach(entry -> {
 	            					entry.setSQLAction(SQLAction.UPDATE);
 	            					integer.incrementAndGet();
 	            				});
 	            				
-	            				sender.sendMessage("§d" + integer.get() + " §7Models have migrated.");
+	            				sender.sendMessage("§d" + integer.get() + " §fModels have migrated.");
 	            				sender.sendMessage("§7Please use §9/furniture save §7these can take a short time.");
 	            			}
 	            		}

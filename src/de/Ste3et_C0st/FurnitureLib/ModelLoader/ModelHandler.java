@@ -12,6 +12,7 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.util.Vector;
 
 import java.io.File;
@@ -31,6 +32,10 @@ public class ModelHandler extends Modelschematic {
 
     public ModelHandler(InputStream stream) {
         super(stream);
+    }
+    
+    public ModelHandler(YamlConfiguration configuration) {
+        super(configuration);
     }
 
     public ModelHandler(String name) {

@@ -44,31 +44,17 @@ public abstract class Modelschematic{
 	//protected ExecuteTimer timer = new ExecuteTimer();
 	
 	public Modelschematic(InputStream stream){
-		//System.out.println("#Modelschematic -> use stream mode " + timer.getMilliString());
-		try{
-			InputStreamReader reader = new InputStreamReader(stream);
-			YamlConfiguration config = YamlConfiguration.loadConfiguration(reader);
-			String yamlHeader = getHeader(config);
-			this.name = yamlHeader;
-			FurnitureLib.debug(this.name + " header found.");
-			//System.out.println("#Modelschematic -> load entities start " + timer.getMilliString());
-			this.loadEntitiesTypo(yamlHeader, config);
-//			System.out.println("#Modelschematic -> load entities finish " + timer.getMilliString());
-//			System.out.println("#Modelschematic -> load blocks start " + timer.getMilliString());
-			this.loadBlockData(yamlHeader, config);
-//			System.out.println("#Modelschematic -> load blocks finish " + timer.getMilliString());
-			this.placeableSide = PlaceableSide.valueOf(config.getString(yamlHeader + ".placeAbleSide", "TOP").toUpperCase());
-			
-//			BoundingBox box = getBoundingBox();
-//			int width = (Math.abs(box.getMax().getBlockX() - box.getMin().getBlockX())) + 1;
-//			int height = (int) box.getHeight() + 1;
-//			int length = Math.abs(box.getMax().getBlockZ() - box.getMin().getBlockZ()) + 1;
-//			setSize(length, height, width, CenterType.RIGHT);
-			
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+		this(YamlConfiguration.loadConfiguration(new InputStreamReader(stream)));
     }
+	
+	public Modelschematic(YamlConfiguration configuration) {
+		String yamlHeader = getHeader(configuration);
+		this.name = yamlHeader;
+		FurnitureLib.debug(this.name + " header found.");
+		this.loadEntitiesTypo(yamlHeader, configuration);
+		this.loadBlockData(yamlHeader, configuration);
+		this.placeableSide = PlaceableSide.valueOf(configuration.getString(yamlHeader + ".placeAbleSide", "TOP").toUpperCase());
+	}
 
     public Modelschematic(File file) throws FileNotFoundException {
         this(new FileInputStream(file));
@@ -241,10 +227,8 @@ public abstract class Modelschematic{
     		this.entityMap.entrySet().stream().forEach(entry -> {
         		NBTTagCompound metadata = entry.getValue().getMetaData();
         		metadata.set("Location", entry.getKey().toNBTTagCompound());
-        		
         		byte[] bytes = Serializer.armorStandtoBytes(metadata);
         		String base64 = Base64.encodeToString(bytes, false);
-        		//configuration.set(this.name + ".projectData.entities.debug." + integer.get(), metadata.toString());
         		configuration.set(this.name + ".projectData.entities." + integer.getAndIncrement(), base64);
         	});
     	}else {
@@ -253,7 +237,6 @@ public abstract class Modelschematic{
         		metadata.set("Location", entry.getKey().toNBTTagCompound());
         		byte[] bytes = Serializer.armorStandtoBytes(metadata);
         		String base64 = Base64.encodeToString(bytes, false);
-        		//configuration.set(this.name + ".projectData.entities.debug." + integer.get(), metadata.toString());
         		configuration.set(this.name + ".ProjectModels.ArmorStands." + integer.getAndIncrement(), base64);
         	});
     	}

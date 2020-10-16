@@ -34,7 +34,7 @@ public class CraftingFile {
     private boolean isDisable, useItemStackObject = false, enabledModel = false;
     private PlaceableSide side = null;
     
-    public CraftingFile(String name, InputStream file, FileConfiguration fileConfiguration) {
+    public CraftingFile(String name, FileConfiguration fileConfiguration) {
         this.name = name;
         if (Objects.isNull(this.name)) return;
         this.filePath = new File(getPath(name));
@@ -43,14 +43,7 @@ public class CraftingFile {
             System.out.println("problems to load " + name);
             return;
         }
-        try (Reader inReader = new InputStreamReader(file)) {
-        	YamlConfiguration defaultConfig = YamlConfiguration.loadConfiguration(inReader);
-            this.file.addDefaults(defaultConfig);
-            this.file.options().copyDefaults(true);
-            this.file.save(filePath);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        
         header = getHeader();
         
         this.enabledModel = this.file.getBoolean(header + ".enabled", true);
@@ -69,8 +62,7 @@ public class CraftingFile {
                 e.printStackTrace();
             }
         }
-
-        this.file = YamlConfiguration.loadConfiguration(filePath);
+        
         try {
             if (Objects.nonNull(Class.forName("org.bukkit.NamespacedKey"))) {
                 loadCrafting(name);
@@ -414,5 +406,18 @@ public class CraftingFile {
 	    	Bukkit.getServer().clearRecipes();
 	    	for (Recipe r : backup) Bukkit.getServer().addRecipe(r);
 	    }
+    }
+    
+    public static YamlConfiguration loadDefaultConfig(InputStream craftingFile, YamlConfiguration configuartion, String path) {
+    	try (Reader inReader = new InputStreamReader(craftingFile)) {
+         	YamlConfiguration defaultConfig = YamlConfiguration.loadConfiguration(inReader);
+             configuartion.addDefaults(defaultConfig);
+             configuartion.options().copyDefaults(true);
+             configuartion.save(path);
+             return YamlConfiguration.loadConfiguration(new File(path));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+		return configuartion;
     }
 }

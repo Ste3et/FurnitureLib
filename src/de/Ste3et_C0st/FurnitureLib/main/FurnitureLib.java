@@ -47,11 +47,6 @@ public class FurnitureLib extends JavaPlugin {
     private static int versionInt = 0;
     private static boolean enableDebug = false;
     private static int debugLevel = 0;
-    /**
-     * Check if the plugin is 1.13 or higher
-     *
-     * @return
-     */
 
     private static Boolean newVersion = null;
     public boolean autoFileUpdater = true;
@@ -396,9 +391,10 @@ public class FurnitureLib extends JavaPlugin {
             this.disableFurnitureLib(Arrays.asList(
             		"§cFurnitureLib §7can't be enabled",
             		"§7Please §cinstall §7the right §e§nProtocollib version",
-            		"§5Download it here: §l§9http://ci.dmulloy2.net/job/ProtocolLib%20Gradle/lastStableBuild/",
-            		"§c§4FurnitureLib is disabled"
+            		"§5Download it here: §l§9https://www.spigotmc.org/resources/protocollib.1997/",
+            		"§c§4FurnitureLib is temporarily disabled"
             		));
+            send("==========================================");
             return;
         } 
         
@@ -705,8 +701,6 @@ public class FurnitureLib extends JavaPlugin {
 
     public void spawn(Project pro, ObjectID obj) {
         if (pro == null)
-            return;
-        if (pro.getClass() == null)
             return;
         if (obj == null)
             return;

@@ -4,7 +4,6 @@ import com.google.gson.JsonObject;
 import de.Ste3et_C0st.FurnitureLib.ModelLoader.ModelHandler;
 import de.Ste3et_C0st.FurnitureLib.SchematicLoader.ProjectLoader;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.BoundingBox;
-//import de.Ste3et_C0st.FurnitureLib.Utilitis.ExecuteTimer;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.config;
 import de.Ste3et_C0st.FurnitureLib.main.Furniture;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
@@ -16,7 +15,6 @@ import de.Ste3et_C0st.FurnitureLib.main.Type.PlaceableSide;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
-import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -46,7 +44,8 @@ public class Project {
     private boolean EditorProject = false, silent = false;
     private ModelHandler modelschematic = null;
     private Function<ObjectID, Furniture> furnitureObject = ProjectLoader::new;
-
+    private YamlConfiguration configuartion = null;
+    
     /**
      * Create a new Project instance load the modelFile and calculate the boundingbox.
      *
@@ -58,26 +57,22 @@ public class Project {
      * @return Project return this Object
      */
     public Project(String name, Plugin plugin, InputStream craftingFile, PlaceableSide side, Class<? extends Furniture> clazz) {
-        //ExecuteTimer timer = new ExecuteTimer();
     	this.project = name;
         this.plugin = plugin;
         
         File configFile = new File(CraftingFile.getPath(name));
-    	YamlConfiguration config = YamlConfiguration.loadConfiguration(configFile);
-    	//System.out.println("Project start -> " + timer.getMilliString());
-		if(config.getBoolean(name + ".enabled", true) == false) {
+    	this.configuartion = CraftingFile.loadDefaultConfig(craftingFile, YamlConfiguration.loadConfiguration(configFile), CraftingFile.getPath(name));
+    	
+		if(this.configuartion.getBoolean(name + ".enabled", true) == false) {
     		return;
     	}
 		
-		//System.out.println("CraftingFile start -> " + timer.getMilliString());
-        this.file = new CraftingFile(name, craftingFile, config);
-        //System.out.println("CraftingFile finish -> " + timer.getMilliString());
+        this.file = new CraftingFile(name, this.configuartion);
         
         if(!this.file.isEnabledModel()) {
         	return;
         }
         
-        //System.out.println("Loadfunction (WIP) -> " + timer.getMilliString());
         this.functionList = this.file.loadFunction();
         
         this.furnitureObject = objectID -> {
@@ -89,23 +84,10 @@ public class Project {
         	return null;
         };
         
-        try {
-            if (Objects.nonNull(this.file)) {
-            	//System.out.println("Use Modelhandler filepath " + timer.getMilliString());
-                this.modelschematic = new ModelHandler(this.file.getFilePath());
-            } else {
-            	//System.out.println("Use Modelhandler project " + timer.getMilliString());
-                this.modelschematic = new ModelHandler(this.project);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        //System.out.println("Porject Modelhandler loading finish " + timer.getMilliString());
+        this.modelschematic = new ModelHandler(this.getConfig());
         FurnitureLib.getInstance().getFurnitureManager().addProject(this);
-        // System.out.println("Porject has been added " + timer.getMilliString());
         this.loadDefaults();
         FurnitureLib.getInstance().getLimitManager().loadDefault(this.project);
-        //System.out.println("Porject is finish " + timer.getMilliString());
         PermissionHandler.registerPermission("furniture.craft.*","furniture.craft." + name.toLowerCase());
         PermissionHandler.registerPermission("furniture.place.*","furniture.place." + name.toLowerCase());
         PermissionHandler.registerPermission("furniture.sit.*","furniture.sit." + name.toLowerCase());
@@ -134,6 +116,10 @@ public class Project {
 
     public CraftingFile getCraftingFile() {
         return file;
+    }
+    
+    public YamlConfiguration getConfig() {
+    	return this.configuartion;
     }
 
     public Project setCraftingFile(CraftingFile file) {
@@ -166,10 +152,6 @@ public class Project {
         this.EditorProject = b;
         return this;
     }
-
-//    public Class<? extends Furniture> getFunctionClazz() {
-//        return this.clazz;
-//    }
 
     public List<JsonObject> getFunctions() {
         return this.functionList;
@@ -341,13 +323,11 @@ public class Project {
     }
     
     public long getObjectSize() {
-        return FurnitureManager.getInstance().getObjectList().stream()
-                .filter(obj -> SQLAction.REMOVE != obj.getSQLAction())
-                .filter(obj -> obj.getProject().equalsIgnoreCase(getName())).count();
+        return this.getObjects().size();
     }
 
     public Project applyFunction() {
-        getObjects().forEach(this::applyFunction);
+    	this.getObjects().forEach(this::applyFunction);
         return this;
     }
 
