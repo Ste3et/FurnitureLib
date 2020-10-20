@@ -176,7 +176,6 @@ public abstract class Database {
     public void delete(ObjectID objID) {
     	String query = "DELETE FROM " + TABLE_NAME + " WHERE ObjID = '" + objID.getID() + "'";
         try (Connection con = getConnection(); Statement stmt = con.createStatement()) {
-        	System.out.println("remove statement -> " + query);
             stmt.execute(query);
         } catch (Exception e) {
             e.printStackTrace();

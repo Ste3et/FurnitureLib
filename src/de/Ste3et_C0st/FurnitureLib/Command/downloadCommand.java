@@ -312,7 +312,6 @@ public class downloadCommand extends iCommand{
 		}
 		
 		if(compound.hasKey("entitys")){
-			System.out.println("has entitys");
 			NBTTagCompound armorStands = compound.getCompound("entitys");
 			for(Object s : armorStands.c()){
 				String str = armorStands.getString((String) s);

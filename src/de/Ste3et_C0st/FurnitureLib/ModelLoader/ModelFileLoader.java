@@ -2,7 +2,6 @@ package de.Ste3et_C0st.FurnitureLib.ModelLoader;
 
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.SchematicLoader.ProjectLoader;
-import de.Ste3et_C0st.FurnitureLib.Utilitis.Progressbar;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.Type.PlaceableSide;
 

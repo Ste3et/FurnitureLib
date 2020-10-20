@@ -53,10 +53,10 @@ public class Project {
      * @param plugin The Plugin who register the Project
      * @param craftingFile Recipe File for the crafting recipe and the spawn item
      * @param side The placeable side of the Furniture
-     * @param clazz The Function class for the Project
+     * @param functionObject The Function Interface
      * @return Project return this Object
      */
-    public Project(String name, Plugin plugin, InputStream craftingFile, PlaceableSide side, Class<? extends Furniture> clazz) {
+    public Project(String name, Plugin plugin, InputStream craftingFile, PlaceableSide side, Function<ObjectID, Furniture> functionObject) {
     	this.project = name;
         this.plugin = plugin;
         
@@ -74,16 +74,7 @@ public class Project {
         }
         
         this.functionList = this.file.loadFunction();
-        
-        this.furnitureObject = objectID -> {
-        	try {
-        		return clazz.getConstructor(objectID.getClass()).newInstance(objectID);
-        	}catch(Exception ex) {
-        		ex.printStackTrace();
-        	}
-        	return null;
-        };
-        
+        this.furnitureObject = functionObject;
         this.modelschematic = new ModelHandler(this.getConfig());
         FurnitureLib.getInstance().getFurnitureManager().addProject(this);
         this.loadDefaults();
@@ -92,13 +83,17 @@ public class Project {
         PermissionHandler.registerPermission("furniture.place.*","furniture.place." + name.toLowerCase());
         PermissionHandler.registerPermission("furniture.sit.*","furniture.sit." + name.toLowerCase());
     }
+    
+    public Project(String name, Plugin plugin, InputStream craftingFile, PlaceableSide side, Class<? extends Furniture> clazz) {
+    	this(name, plugin, craftingFile, side, getFunctionInterface(clazz));
+    }
 
     public Project(String name, Plugin plugin, InputStream craftingFile, Class<? extends Furniture> clazz) {
-        this(name, plugin, craftingFile, PlaceableSide.TOP, Objects.isNull(clazz) ? ProjectLoader.class : clazz);
+        this(name, plugin, craftingFile, PlaceableSide.TOP, Objects.isNull(clazz) ? ProjectLoader::new : getFunctionInterface(clazz));
     }
 
     public Project(String name, Plugin plugin, InputStream craftingFile) {
-        this(name, plugin, craftingFile, PlaceableSide.TOP, ProjectLoader.class);
+        this(name, plugin, craftingFile, PlaceableSide.TOP, ProjectLoader::new);
     }
 
     public String getName() {
@@ -358,5 +353,16 @@ public class Project {
 	
 	private double fileSize(File file) {
 		return (Math.round((double) file.length() / 1024 * 10d) / 10d);
+	}
+	
+	public static Function<ObjectID, Furniture> getFunctionInterface(Class<? extends Furniture> clazz) {
+   	 return objectID -> {
+       	try {
+       		return clazz.getConstructor(objectID.getClass()).newInstance(objectID);
+       	}catch(Exception ex) {
+       		ex.printStackTrace();
+       	}
+       	return null;
+       };
 	}
 }

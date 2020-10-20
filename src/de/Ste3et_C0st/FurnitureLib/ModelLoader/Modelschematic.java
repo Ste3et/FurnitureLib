@@ -129,13 +129,9 @@ public abstract class Modelschematic{
 		.forEach(key -> {
 			if(key.isPresent()) {
 				try(ByteArrayInputStream bin = new ByteArrayInputStream(key.get())) {
-					//System.out.println("After byte[] " + timer.getMilliString());
 					NBTTagCompound entityData = NBTCompressedStreamTools.read(bin);
-					//System.out.println("Load NBT " + timer.getMilliString());
 					ModelVector vector = new ModelVector(entityData.getCompound("Location"));
-					//System.out.println("Calculate ModelVector " + timer.getMilliString());
 					fEntity entity = readNBTtag(entityData);
-					//System.out.println("Read NBT " + timer.getMilliString());
 					if(Objects.nonNull(vector) && Objects.nonNull(entity)) {
 						this.entityMap.put(vector, entity);
 						//this.min = vector.getMinPoint(this.min);
