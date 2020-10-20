@@ -79,7 +79,7 @@ public abstract class fEntity extends fSerializer implements Cloneable {
         } else {
             FurnitureLib.getInstance().getLightManager().addLight(getLocation(), 15);
         }
-        this.fire.setValue(fire);
+        this.fire.setValue(Boolean.valueOf(fire));
         return this;
     }
 
@@ -162,8 +162,8 @@ public abstract class fEntity extends fSerializer implements Cloneable {
         return this;
     }
 
-    public fEntity setGravity(Boolean gravity) {
-        this.gravity.setValue(gravity);
+    public fEntity setGravity(boolean gravity) {
+        this.gravity.setValue(Boolean.valueOf(gravity));
         return this;
     }
 
@@ -266,9 +266,9 @@ public abstract class fEntity extends fSerializer implements Cloneable {
         return this.invisible.getOrDefault();
     }
 
-    public fEntity setInvisible(Boolean invisible) {
+    public fEntity setInvisible(boolean invisible) {
         setBitMask(invisible, 0, 5);
-        this.invisible.setValue(invisible);
+        this.invisible.setValue(Boolean.valueOf(invisible));
         return this;
     }
 
@@ -276,10 +276,10 @@ public abstract class fEntity extends fSerializer implements Cloneable {
         return this.glowing.getOrDefault();
     }
 
-    public fEntity setGlowing(Boolean glowing) {
+    public fEntity setGlowing(boolean glowing) {
         if (!FurnitureLib.getInstance().isGlowing()) glowing = false;
         setBitMask(glowing, 0, 6);
-        this.glowing.setValue(glowing);
+        this.glowing.setValue(Boolean.valueOf(glowing));
         return this;
     }
 
@@ -304,9 +304,9 @@ public abstract class fEntity extends fSerializer implements Cloneable {
 //        return this.world;
 //    }
 
-    public fEntity setNameVisibility(Boolean nameVisibility) {
+    public fEntity setNameVisibility(boolean nameVisibility) {
         getWatcher().setObject(new WrappedDataWatcherObject(3, Registry.get(Boolean.class)), nameVisibility);
-        this.nameVisible.setValue(nameVisibility);
+        this.nameVisible.setValue(Boolean.valueOf(nameVisibility));
         return this;
     }
 

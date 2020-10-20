@@ -84,6 +84,10 @@ public class Project {
         PermissionHandler.registerPermission("furniture.sit.*","furniture.sit." + name.toLowerCase());
     }
     
+    public Project(String name, Plugin plugin, InputStream craftingFile, Function<ObjectID, Furniture> functionObject) {
+    	this(name, plugin, craftingFile, PlaceableSide.TOP, functionObject);
+    }
+    
     public Project(String name, Plugin plugin, InputStream craftingFile, PlaceableSide side, Class<? extends Furniture> clazz) {
     	this(name, plugin, craftingFile, side, getFunctionInterface(clazz));
     }

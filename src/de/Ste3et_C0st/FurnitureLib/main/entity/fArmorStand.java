@@ -109,9 +109,9 @@ public class fArmorStand extends fEntity{
         return this.marker.getOrDefault();
     }
 
-    public fArmorStand setMarker(Boolean marker) {
+    public fArmorStand setMarker(boolean marker) {
         setBitMask(!marker, Type.field.getBitMask(), 4);
-        this.marker.setValue(!marker);
+        this.marker.setValue(Boolean.valueOf(!marker));
         return this;
     }
 
@@ -119,9 +119,9 @@ public class fArmorStand extends fEntity{
         return this.small.getOrDefault();
     }
 
-    public fArmorStand setSmall(Boolean small) {
+    public fArmorStand setSmall(boolean small) {
         setBitMask(small, Type.field.getBitMask(), 0);
-        this.small.setValue(small);
+        this.small.setValue(Boolean.valueOf(small));
         return this;
     }
 
@@ -164,15 +164,15 @@ public class fArmorStand extends fEntity{
         return this;
     }
 
-    public fArmorStand setArms(Boolean arms) {
+    public fArmorStand setArms(boolean arms) {
         setBitMask(arms, Type.field.getBitMask(), 2);
-        this.arms.setValue(arms);
+        this.arms.setValue(Boolean.valueOf(arms));
         return this;
     }
 
-    public fArmorStand setBasePlate(Boolean basePlate) {
+    public fArmorStand setBasePlate(boolean basePlate) {
         setBitMask(!basePlate, Type.field.getBitMask(), 3);
-        this.basePlate.setValue(basePlate);
+        this.basePlate.setValue(Boolean.valueOf(basePlate));
         return this;
     }
 
