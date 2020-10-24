@@ -23,7 +23,7 @@ public class onChunkChange implements Listener {
         
         int xFrom = e.getFrom().getBlockX() >> 4, xTo = e.getTo().getBlockX() >> 4;
         int zFrom = e.getFrom().getBlockZ() >> 4, zTo = e.getTo().getBlockZ() >> 4;
-        if ((xFrom != zFrom) || (xTo != zTo)) manager.updatePlayerView(player);
+        if ((xFrom != xTo) || (zFrom != zTo)) manager.updatePlayerView(player);
     }
 
     @EventHandler

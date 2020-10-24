@@ -31,11 +31,9 @@ public class FurnitureEvents {
                         if (event.getPacketType() == PacketType.Play.Client.USE_ENTITY) {
                             Integer PacketID = event.getPacket().getIntegers().read(0);
                             if(Objects.isNull(PacketID)) return;
-                            fEntity asPacket = manager.getfArmorStandByID(PacketID);
-                            if (Objects.nonNull(asPacket)) {
+                            ObjectID objID  = manager.getfArmorStandByID(PacketID);
+                            if (Objects.nonNull(objID)) {
                                 event.setCancelled(true);
-                                ObjectID objID = asPacket.getObjID();
-                                if (Objects.isNull(asPacket)) return;
                                 if (objID.getSQLAction().equals(SQLAction.REMOVE)) {
                                     return;
                                 }
