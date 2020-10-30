@@ -1,6 +1,6 @@
 package de.Ste3et_C0st.FurnitureLib.main;
 
-import java.util.HashMap;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -19,29 +19,18 @@ import org.bukkit.util.Vector;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
 
-public class WorldManager {
+public class ObjectIdManager {
 
 	//World List<ObjectID>
-	private final static HashMap<String, HashSet<ObjectID>> objectList = new HashMap<String, HashSet<ObjectID>>();
+	private final static HashSet<ObjectID> objectList = new HashSet<ObjectID>();
 	private final static Predicate<ObjectID> predicate = objectID -> SQLAction.REMOVE != objectID.getSQLAction();
 	
-	public void loadWorld(World world) {
-		HashSet<ObjectID> objectSet = FurnitureLib.getInstance().getSQLManager().getDatabase().loadWorld(SQLAction.NOTHING, world);
-		if(!objectSet.isEmpty()) {
-			objectList.put(world.getName(), objectSet);
-		}
+	public HashSet<ObjectID> loadWorld(World world) {
+		return FurnitureLib.getInstance().getSQLManager().getDatabase().loadWorld(SQLAction.NOTHING, world);
 	}
 	
-	public HashSet<ObjectID> getObjectSet(World world){
-		return getObjectSet(world.getName());
-	}
-	
-	public HashSet<ObjectID> getObjectSet(String worldName){
-		HashSet<ObjectID> hashSet = objectList.getOrDefault(worldName, new HashSet<ObjectID>());
-		if(!objectList.containsKey(worldName)) {
-			objectList.put(worldName, hashSet);
-		}
-		return hashSet;
+	public HashSet<ObjectID> getObjectSet(){
+		return objectList;
 	}
 	
 	public ObjectID getObjectID(Location location) {
@@ -79,11 +68,11 @@ public class WorldManager {
 	}
 	
 	public Stream<ObjectID> getObjectStreamFromWorld(World world){
-		return getObjectSet(world).stream().filter(predicate);
+		return getObjectStreamFromWorld(world.getName());
 	}
 	
 	public Stream<ObjectID> getObjectStreamFromWorld(String worldName){
-		return getObjectSet(worldName).stream().filter(predicate);
+		return getObjectSet().stream().filter(predicate).filter(entry -> entry.getWorldName().equalsIgnoreCase(worldName));
 	}
 	
 	public List<ObjectID> getInWorld(World world) {
@@ -96,15 +85,12 @@ public class WorldManager {
 
 	public void updatePlayerView(Player player) {
 		if(player.isOnline()) {
-			World world = player.getWorld();
-			getObjectStreamFromWorld(world.getName()).filter(entry -> entry.canSee(player)).forEach(entry -> entry.updatePlayerView(player));
-			this.removePlayerView(player);
+			synchronized (getAllExistObjectIDs()) {
+				getAllExistObjectIDs().filter(entry -> entry.getPlayerList().contains(player) || entry.canSee(player)).forEach(entry -> entry.updatePlayerView(player));
+			}
 		}
 	}
 	
-	public void removePlayerView(Player player) {
-		getAllExistObjectIDs().filter(entry -> entry.getPlayerList().contains(player) && !entry.canSee(player)).forEach(entry -> entry.updatePlayerView(player));
-	}
 	
 	public HashSet<ObjectID> getFromPlayer(UUID uuid) {
 		return new HashSet<ObjectID>(getAllExistObjectIDs().filter(entry -> entry.getUUID().equals(uuid)).collect(Collectors.toList()));
@@ -133,11 +119,11 @@ public class WorldManager {
 	}
 	
 	public Stream<ObjectID> getAllExistObjectIDs(){
-		return objectList.values().stream().flatMap(entry -> entry.stream()).filter(predicate);
+		return objectList.stream().filter(predicate);
 	}
 	
 	public Stream<ObjectID> getAllObjectIDs(){
-		return objectList.values().stream().flatMap(entry -> entry.stream()).filter(Objects::nonNull);
+		return objectList.stream().filter(Objects::nonNull);
 	}
 	
 	public List<ObjectID> getObjectList(){
@@ -159,7 +145,11 @@ public class WorldManager {
 	}
 	
 	public void deleteObjectID(ObjectID id) {
-		getObjectSet(id.getWorldName()).remove(id);
+		objectList.remove(id);
+	}
+	
+	public void deleteObjectID(Collection<ObjectID> objCollection) {
+		objectList.removeAll(objCollection);
 	}
 	
 	public void remove(fEntity armorStandPacket) {
@@ -185,7 +175,7 @@ public class WorldManager {
 	}
 	
 	public boolean addObjectID(ObjectID obj) {
-        return getObjectSet(obj.getWorldName()).add(obj);
+        return objectList.add(obj);
     }
 	
 	public void addObjectID(Iterable<ObjectID> objI) {
@@ -202,10 +192,4 @@ public class WorldManager {
 	public void sendAll() {
         this.getAllExistObjectIDs().forEach(this::send);
     }
-	
-
-    public static HashMap<String, HashSet<ObjectID>> getObjectWorldHashMap(){
-    	return objectList;
-    }
-    
 }

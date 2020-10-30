@@ -21,6 +21,7 @@ import org.bukkit.scheduler.BukkitRunnable;
 import com.google.common.util.concurrent.AtomicDouble;
 
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -85,6 +86,7 @@ public class debugCommand extends iCommand {
 	                            UUID uuid = player.getUniqueId();
 	                            Project pro = FurnitureManager.getInstance().getProject("Chair");
 	                            FurnitureManager manager = FurnitureManager.getInstance();
+	                            HashSet<ObjectID> objectIdSet = new HashSet<ObjectID>();
 	                            new BukkitRunnable() {
 	                                @Override
 	                                public void run() {
@@ -97,7 +99,7 @@ public class debugCommand extends iCommand {
 	                                            FurnitureLib.getInstance().spawn(obj.getProjectOBJ(), obj);
 	                                            obj.setSQLAction(SQLAction.SAVE);
 	                                            obj.setUUID(uuid);
-	                                            manager.addObjectID(obj);
+	                                            objectIdSet.add(obj);
 	                                            ChatComponentWrapper.sendChatComponent(player,ChatMessageType.ACTION_BAR, new ComponentBuilder("§2" + aInt.get() + "§7/§e" + 100000).create());
 	                                        }
 	                                    } else {
@@ -105,6 +107,7 @@ public class debugCommand extends iCommand {
 	                                        aInt.set(aInt.get() - stepSize);
 	                                        if (aInt.get() <= 0) {
 	                                        	cancel();
+	                                        	manager.addObjectID(objectIdSet);
 	                                            sender.sendMessage("§7Database Manipulation §2finish §7" + timer.getDifference());
 	                                            sender.sendMessage("§7The Client receive: §e" + models + " §7ObjectIDs");
 	                                            sender.sendMessage("§7These are: §e" + (models * pro.getModelschematic().getEntityMap().size()) + " ArmorStands");

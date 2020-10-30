@@ -9,7 +9,6 @@ import de.Ste3et_C0st.FurnitureLib.main.ChunkData;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
-import de.Ste3et_C0st.FurnitureLib.main.WorldManager;
 import de.Ste3et_C0st.FurnitureLib.main.Type.DataBaseType;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 import org.bukkit.Bukkit;
@@ -71,9 +70,10 @@ public abstract class Database {
     public void loadAll(SQLAction action) {
     	for (World world : Bukkit.getWorlds()) {
     		if(Objects.nonNull(world)) {
-    			WorldManager.getObjectWorldHashMap().put(world.getName(), this.loadWorld(action, world));
+    			FurnitureManager.getInstance().addObjectID(this.loadWorld(action, world));
     		}
     	}
+    	FurnitureManager.getInstance().sendAll();
     }
     
     public boolean save(ObjectID id) {

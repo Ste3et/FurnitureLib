@@ -16,7 +16,7 @@ import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.function.BiFunction;
 
-public class FurnitureManager extends WorldManager{
+public class FurnitureManager extends ObjectIdManager{
 
 	private static HashMap<String, BiFunction<Location, ObjectID, fEntity>> packetClasses = new HashMap<>();
     private static FurnitureManager manager;

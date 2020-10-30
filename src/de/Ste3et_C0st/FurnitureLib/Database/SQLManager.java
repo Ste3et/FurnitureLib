@@ -108,10 +108,10 @@ public class SQLManager {
         plugin.getLogger().info("Furniture save started");
         if (!plugin.getFurnitureManager().getObjectList().isEmpty()) {
             List<ObjectID> objList = new ArrayList<>();
-            int j = 0, i = 0, l = 0;
+            int j = 0, i = 0;
             List<ObjectID> idList = new ArrayList<ObjectID>(plugin.getFurnitureManager().getObjectList());
             List<ObjectID> saveList = new ArrayList<ObjectID>();
-            
+            List<ObjectID> removeList = new ArrayList<ObjectID>();
             int stepSize = 100;
 
             for (ObjectID obj : idList) {
@@ -119,8 +119,8 @@ public class SQLManager {
                 	SQLAction sqlAction = obj.getSQLAction();
                 	if(SQLAction.REMOVE == sqlAction) {
                 		remove(obj);
-                        l++;
-                        plugin.getFurnitureManager().deleteObjectID(obj);
+                        removeList.add(obj);
+                        //plugin.getFurnitureManager().deleteObjectID(obj);
                 	}else if(SQLAction.UPDATE == sqlAction) {
                 		if(versionInt > 11) {
                 			saveList.add(obj);
@@ -153,9 +153,11 @@ public class SQLManager {
                 }
             }
             
+            plugin.getFurnitureManager().deleteObjectID(removeList);
+            
             plugin.getLogger().info(i + " furniture has been saved to the database.");
             plugin.getLogger().info(j + " furniture has been updated in the database.");
-            plugin.getLogger().info(l + " furniture has been removed from the database.");
+            plugin.getLogger().info(removeList.size() + " furniture has been removed from the database.");
         } else {
             plugin.getLogger().info("the list of objects is empty.");
         }
