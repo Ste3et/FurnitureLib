@@ -70,7 +70,7 @@ public abstract class Database {
     public void loadAll(SQLAction action) {
     	for (World world : Bukkit.getWorlds()) {
     		if(Objects.nonNull(world)) {
-    			FurnitureManager.getInstance().addObjectID(this.loadWorld(action, world));
+    			this.loadWorld(action, world);
     		}
     	}
     	FurnitureManager.getInstance().sendAll();
@@ -131,7 +131,7 @@ public abstract class Database {
         	}
         });
         
-        FurnitureManager.getInstance().getObjectList().addAll(idList);
+        FurnitureManager.getInstance().addObjectID(idList);;
 		return idList;
     }
 
@@ -169,6 +169,7 @@ public abstract class Database {
     	            }
     	            
     	            System.out.println("It takes: " + timer.getDifference());
+    	            //FurnitureManager.getInstance().addObjectID(idList);
     	        }
     	}
         return idList;
