@@ -19,7 +19,7 @@ public class onPlayerJoin extends EventLibrary implements Listener {
         final Player player = event.getPlayer();
         Bukkit.getScheduler().runTaskLater(FurnitureLib.getInstance(), () -> {
         	if(player.isOnline()) {
-        		getFurnitureMgr().updatePlayerView(player);
+        		getFurnitureMgr().sendAllInView(player);
         		Optional<DiceOfflinePlayer> offlinePlayer = FurnitureLib.getInstance().getPlayerCache().getPlayer(player.getUniqueId());
         		if(offlinePlayer.isPresent()) {
         			offlinePlayer.get().update(player);

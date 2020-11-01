@@ -49,7 +49,7 @@ public class FurnitureLib extends JavaPlugin {
     private static int debugLevel = 0;
 
     private static Boolean newVersion = null;
-    public boolean autoFileUpdater = true;
+    public boolean autoFileUpdater = true, enabled = true;
     public HashMap<Project, Long> deleteMap = new HashMap<>();
     public HashMap<UUID, Long> timeStampPlace = new HashMap<>();
     public HashMap<UUID, Long> timeStampBreak = new HashMap<>();
@@ -402,7 +402,7 @@ public class FurnitureLib extends JavaPlugin {
         boolean protocollib = isRightProtocollib(s);
 		if (getBukkitVersion().startsWith("v1_14")) {
 			send("§5Info: §eFor Spigot 1.14.x you need §6ProtocolLib 4.5.0 Build #8 §eor above");
-			send("§5Download it here: §l§9http://ci.dmulloy2.net/job/ProtocolLib%20Gradle/lastStableBuild/");
+			send("§5Download it here: §l§9https://ci.dmulloy2.net/job/ProtocolLib/lastSuccessfulBuild/");
 			send("§5Otherwise you will receive: §cNoClassDefFoundError: org/apache/commons/lang3/Validate");
 		} else if (getBukkitVersion().startsWith("v1_15_2") && !s.equals("4.5.1")) {
 			send("§5Info: §eFor Spigot 1.15.2 you need §6ProtocolLib 4.5.1 §eor above");
@@ -414,7 +414,7 @@ public class FurnitureLib extends JavaPlugin {
 			} catch (ClassNotFoundException ex) {
 				this.disableFurnitureLib(Arrays.asList(
 						"§5Info: §eFor Spigot 1.16.x you need §6ProtocolLib 4.6.0 Build #472 §eor above",
-						"§5Download it here: §l§9http://ci.dmulloy2.net/job/ProtocolLib%20Gradle/lastStableBuild/",
+						"§5Download it here: §l§9https://ci.dmulloy2.net/job/ProtocolLib/lastSuccessfulBuild/",
 						"§7FurnitureLib will stop working!"));
 				return;
 			}
@@ -428,7 +428,7 @@ public class FurnitureLib extends JavaPlugin {
 			send("==========================================");
 			return;
 		}
-        
+		this.enabledPlugin = true;
 		getConfig().addDefaults(YamlConfiguration.loadConfiguration(loadStream("config.yml")));
 		getConfig().options().copyDefaults(true);
 		getConfig().options().copyHeader(true);
@@ -497,13 +497,15 @@ public class FurnitureLib extends JavaPlugin {
 		PluginCommand c = getCommand("furniture");
 		c.setExecutor(new command(this));
 		c.setTabCompleter(new TabCompleterHandler());
-		this.enabledPlugin = true;
+		
     }
     
     private void disableFurnitureLib(List<String> instructions) {
     	System.out.println(instructions);
+    	this.enabled = false;
     	PluginCommand c = getCommand("furniture");
 		c.setExecutor(new disabledCommand(this, instructions));
+		Bukkit.getPluginManager().registerEvents(new onFurnitureLibDisabled(instructions), this);
     }
 
     private void loadPluginConfig() {
@@ -565,6 +567,10 @@ public class FurnitureLib extends JavaPlugin {
         debug("Config->PlaceMode.Access:" + type.name);
         debug("Config->PlaceMode.Mode:" + mode.name);
         debug("Config->update:" + update);
+    }
+    
+    public boolean isEnabledPlugin() {
+    	return this.enabledPlugin;
     }
 
     public void reloadPluginConfig() {

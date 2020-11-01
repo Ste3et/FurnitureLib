@@ -245,8 +245,11 @@ public class ObjectID {
     }
 
     public boolean isInRange(Player player) {
-    	Location location = player.getLocation();
-        return distanceSquared(location) <= viewRange;
+        return isInRange(player.getLocation());
+    }
+    
+    public boolean isInRange(Location location) {
+    	return distanceSquared(location) <= viewRange;
     }
     
     private int distanceSquared(Location location) {
@@ -270,7 +273,7 @@ public class ObjectID {
     public boolean isInWorld(Player player) {
     	if(Objects.isNull(getWorld())) return false;
     	if(Objects.isNull(player.getWorld())) return false;
-        return getWorld().equals(player.getWorld());
+        return getWorldName().equalsIgnoreCase(player.getWorld().getName());
     }
 
     public void addEntity(fEntity packet) {
@@ -308,15 +311,23 @@ public class ObjectID {
                 if (players.contains(player)) {
                     return;
                 }
-                this.packetList.forEach(stand -> stand.send(player));
-                players.add(player);
+                this.sendArmorStands(player);
             } else {
                 if (!players.contains(player))
                     return;
-                this.packetList.forEach(stand -> stand.kill(player, false));
-                players.remove(player);
+                removeArmorStands(player);
             }
         }
+    }
+    
+    public void sendArmorStands(Player player) {
+    	this.packetList.forEach(stand -> stand.send(player));
+        players.add(player);
+    }
+    
+    public void removeArmorStands(Player player) {
+    	this.packetList.forEach(stand -> stand.kill(player, false));
+        players.remove(player);
     }
 
     public fEntity getByID(int entityID) {

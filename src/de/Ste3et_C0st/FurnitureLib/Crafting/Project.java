@@ -57,31 +57,35 @@ public class Project {
      * @return Project return this Object
      */
     public Project(String name, Plugin plugin, InputStream craftingFile, PlaceableSide side, Function<ObjectID, Furniture> functionObject) {
-    	this.project = name;
-        this.plugin = plugin;
-        
-        File configFile = new File(CraftingFile.getPath(name));
-    	this.configuartion = CraftingFile.loadDefaultConfig(craftingFile, YamlConfiguration.loadConfiguration(configFile), CraftingFile.getPath(name));
-    	
-		if(this.configuartion.getBoolean(name + ".enabled", true) == false) {
-    		return;
+    	if(FurnitureLib.getInstance().isEnabledPlugin()) {
+    		this.project = name;
+            this.plugin = plugin;
+            
+            File configFile = new File(CraftingFile.getPath(name));
+        	this.configuartion = CraftingFile.loadDefaultConfig(craftingFile, YamlConfiguration.loadConfiguration(configFile), CraftingFile.getPath(name));
+        	
+    		if(this.configuartion.getBoolean(name + ".enabled", true) == false) {
+        		return;
+        	}
+    		
+            this.file = new CraftingFile(name, this.configuartion);
+            
+            if(!this.file.isEnabledModel()) {
+            	return;
+            }
+            
+            this.functionList = this.file.loadFunction();
+            this.furnitureObject = functionObject;
+            this.modelschematic = new ModelHandler(this.getConfig());
+            FurnitureLib.getInstance().getFurnitureManager().addProject(this);
+            this.loadDefaults();
+            FurnitureLib.getInstance().getLimitManager().loadDefault(this.project);
+            PermissionHandler.registerPermission("furniture.craft.*","furniture.craft." + name.toLowerCase());
+            PermissionHandler.registerPermission("furniture.place.*","furniture.place." + name.toLowerCase());
+            PermissionHandler.registerPermission("furniture.sit.*","furniture.sit." + name.toLowerCase());
+    	}else {
+    		System.out.println("FurnitureLib is not enabled check your console!");
     	}
-		
-        this.file = new CraftingFile(name, this.configuartion);
-        
-        if(!this.file.isEnabledModel()) {
-        	return;
-        }
-        
-        this.functionList = this.file.loadFunction();
-        this.furnitureObject = functionObject;
-        this.modelschematic = new ModelHandler(this.getConfig());
-        FurnitureLib.getInstance().getFurnitureManager().addProject(this);
-        this.loadDefaults();
-        FurnitureLib.getInstance().getLimitManager().loadDefault(this.project);
-        PermissionHandler.registerPermission("furniture.craft.*","furniture.craft." + name.toLowerCase());
-        PermissionHandler.registerPermission("furniture.place.*","furniture.place." + name.toLowerCase());
-        PermissionHandler.registerPermission("furniture.sit.*","furniture.sit." + name.toLowerCase());
     }
     
     public Project(String name, Plugin plugin, InputStream craftingFile, Function<ObjectID, Furniture> functionObject) {
