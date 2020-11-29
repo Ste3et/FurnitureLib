@@ -78,4 +78,10 @@ public class fCreeper extends fEntity {
     public fEntity clone() {
         return null;
     }
+
+	@Override
+	public void copyMetadata(fEntity entity) {
+		// TODO Auto-generated method stub
+		
+	}
 }

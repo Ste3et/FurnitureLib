@@ -23,7 +23,7 @@ public class fArmorStand extends fEntity{
     public static EntityType type = EntityType.ARMOR_STAND;
     private int armorstandID;
     
-    private DefaultKey<Boolean> arms = new DefaultKey<Boolean>(false), small = new DefaultKey<Boolean>(false), marker = new DefaultKey<Boolean>(false), basePlate = new DefaultKey<Boolean>(true);
+    private DefaultKey<Boolean> arms = new DefaultKey<Boolean>(false), small = new DefaultKey<Boolean>(false), marker = new DefaultKey<Boolean>(true), basePlate = new DefaultKey<Boolean>(true);
     
     private HashMap<BodyPart, DefaultKey<EulerAngle>> angle = new HashMap<Type.BodyPart, DefaultKey<EulerAngle>>();
     private ArmorStand entity = null;
@@ -111,7 +111,7 @@ public class fArmorStand extends fEntity{
 
     public fArmorStand setMarker(boolean marker) {
         setBitMask(!marker, Type.field.getBitMask(), 4);
-        this.marker.setValue(Boolean.valueOf(!marker));
+        this.marker.setValue(Boolean.valueOf(marker));
         return this;
     }
 
@@ -238,7 +238,7 @@ public class fArmorStand extends fEntity{
     	if(!this.arms.isDefault()) setMetadata("Arms", this.hasArms());
     	if(!this.basePlate.isDefault()) setMetadata("BasePlate", this.hasBasePlate());
     	if(!this.gravity.isDefault()) setMetadata("Gravity", this.hasGravity());
-    	if(!this.marker.isDefault()) setMetadata("Marker", this.marker.getOrDefault());
+    	if(this.marker.isDefault()) setMetadata("Marker", this.marker.getOrDefault());
     	if(!this.small.isDefault()) setMetadata("Small", this.isSmall());
     	
     	NBTTagCompound eulerAngle = new NBTTagCompound();
@@ -269,10 +269,9 @@ public class fArmorStand extends fEntity{
         		this.setPose(eulerAngleFetcher(euler.getCompound(name)), part);
         	});
         }
-        
         this.setBasePlate((metadata.getInt("BasePlate") == 1))
         	.setSmall((metadata.getInt("Small") == 1))
-        	.setMarker((metadata.getInt("Marker") == 0))
+        	.setMarker((metadata.getInt("Marker") == 1))
         	.setArms(metadata.getInt("Arms") == 1)
         	.setGravity(metadata.getInt("Gravity") == 1);
     }
@@ -283,6 +282,14 @@ public class fArmorStand extends fEntity{
         double Z = eularAngle.getDouble("Z");
         return new EulerAngle(X, Y, Z);
     }
+
+	@Override
+	public void copyMetadata(fEntity entity) {
+		fArmorStand stand = this.getClass().cast(entity);
+		setMarker(stand.isMarker());
+    	setBasePlate(stand.hasBasePlate());
+    	setArms(stand.hasArms());
+	}
     
     //	
 //	@Override

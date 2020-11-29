@@ -2,6 +2,7 @@ package de.Ste3et_C0st.FurnitureLib.Command;
 
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.NBT.MathHelper;
+import de.Ste3et_C0st.FurnitureLib.SchematicLoader.functions.projectFunction;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.ExecuteTimer;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.RandomStringGenerator;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.Wrapper.ChatComponentWrapper;
@@ -22,6 +23,7 @@ import com.google.common.util.concurrent.AtomicDouble;
 
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -60,6 +62,18 @@ public class debugCommand extends iCommand {
             			CommandSender console = Bukkit.getConsoleSender();
                 		console.sendMessage("FurnitureLib: " + sender.getName() + " start the database debug");
                 		console.sendMessage("Please enter these command to confirm it: '/furniture debug regen " + key + "' ho have 60 secounds");
+            		}catch (Exception e) {
+						e.printStackTrace();
+					}
+                }else if(args[1].equalsIgnoreCase("fixmodel")) {
+                	sender.sendMessage("Furniture ModelFile fixmodel mode Started");
+            		sender.sendMessage("Please look at the console for instructions");
+            		try {
+            			String key = RandomStringGenerator.generateRandomString(25, RandomStringGenerator.Mode.ALPHANUMERIC);
+            			debugMap.put(key, new ExecuteTimer());
+            			CommandSender console = Bukkit.getConsoleSender();
+                		console.sendMessage("FurnitureLib: " + sender.getName() + " start the fixmodel mode");
+                		console.sendMessage("Please enter these command to confirm it: '/furniture debug fixmodel " + key + "' ho have 60 secounds");
             		}catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -149,6 +163,28 @@ public class debugCommand extends iCommand {
 	            				sender.sendMessage("§7Please use §9/furniture save §7these can take a short time.");
 	            			}
 	            		}
+            		}
+            	}else if(args[1].equalsIgnoreCase("fixmodel")) {
+            		String key = args[2];
+            		if(debugMap.containsKey(key)) {
+            			long dif = debugMap.get(key).difference();
+            			if(dif < (60 * 1000)) {
+            				if(sender.hasPermission("furniture.debug.fixmodel")) {
+                    			ExecuteTimer timer = new ExecuteTimer();
+                    			sender.sendMessage("try to fix §d" + FurnitureManager.getInstance().getAllExistObjectIDs().count() + " §fModels");
+                    			Bukkit.getScheduler().runTaskAsynchronously(FurnitureLib.getInstance(), () -> {
+                    				FurnitureManager.getInstance().getAllExistObjectIDs().filter(Objects::nonNull).forEach(entry -> {
+                        				Project project = FurnitureManager.getInstance().getProject(entry.getProject());
+                        				if(Objects.nonNull(project)) {
+                        					project.fixMetadata(entry);
+                            				entry.setSQLAction(SQLAction.UPDATE);
+                        				}
+                        			});
+                        			sender.sendMessage("finish after " + timer.getMilliString());
+                        			sender.sendMessage("please use /furniture save");
+                    			});
+                    		}
+            			}
             		}
             	}
         } else {

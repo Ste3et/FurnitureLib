@@ -23,7 +23,7 @@ public class ModelFileLoader {
         try (InputStream stream = new FileInputStream(file)) {
             String name = file.getName().replace(".dModel", "").replace(".yml", "");
             FurnitureLib.debug("ModelFileLoader: Start loading -> " + name);
-            Project pro = new Project(name, FurnitureLib.getInstance(), stream, PlaceableSide.TOP, ProjectLoader.class);
+            Project pro = new Project(name, FurnitureLib.getInstance(), stream, PlaceableSide.TOP, ProjectLoader::new);
             pro.applyFunction();
             pro.setEditorProject(true);
             return pro;

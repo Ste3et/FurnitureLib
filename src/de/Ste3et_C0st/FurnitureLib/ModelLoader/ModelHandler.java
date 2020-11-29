@@ -45,7 +45,7 @@ public class ModelHandler extends Modelschematic {
     public void spawn(ObjectID id) {
     	FurnitureLib.debug("FurnitureLib {ModelHandler} -> Spawn [" + id.getProject() + "]");
         Location startLocation = id.getStartLocation().add(.5, 0, .5);
-        BlockFace direction = FurnitureLib.getInstance().getLocationUtil().yawToFace(id.getStartLocation().getYaw()).getOppositeFace();
+        BlockFace direction = LocationUtil.yawToFace(id.getStartLocation().getYaw()).getOppositeFace();
         id.addEntities(addEntity(startLocation, direction, id));
         id.addBlock(addBlocks(startLocation, direction));
         FurnitureLib.debug("FurnitureLib {ModelHandler} -> Spawn Send Models [" + id.getProject() + "]");
@@ -63,6 +63,31 @@ public class ModelHandler extends Modelschematic {
 			locationList.put(location, value);
 		});
         return locationList;
+    }
+    
+    public HashMap<Location, fEntity> getEntityMap(Location startLocation, BlockFace direction){
+    	 HashMap<Location, fEntity> locationList = new HashMap<>();
+    	 FurnitureLib.debug("FurnitureLib {ModelHandler} -> Calculate Entities");
+    	 getEntityMap().forEach((key, value) -> {
+ 			fEntity entity = value.clone();
+ 			ModelVector rotateVector = rotateVector(key, direction);
+ 			Location entityLocation = startLocation.clone().add(rotateVector.toVector());
+ 			entityLocation.setYaw(rotateVector.getYaw());
+ 			entityLocation.setPitch(rotateVector.getPitch());
+ 			entity.setLocation(entityLocation);
+ 			locationList.put(entityLocation, entity);
+ 			String customName = entity.getCustomName();
+ 			if (customName.equalsIgnoreCase("#ITEM#")
+ 					|| customName.equalsIgnoreCase("#BLOCK#")
+ 					|| customName.equalsIgnoreCase("#SITZ#")
+ 					|| customName.startsWith("#Light")
+ 					|| customName.startsWith("/")
+ 					|| customName.toUpperCase().startsWith("#DYE_")) {
+ 				entity.setNameVisibility(false);
+ 			}
+ 		 });
+    	 FurnitureLib.debug("FurnitureLib {ModelHandler} -> Calculate Entities Finish");
+    	 return locationList;
     }
 
     public List<Block> addBlocks(Location startLocation, BlockFace direction) {
@@ -88,31 +113,12 @@ public class ModelHandler extends Modelschematic {
     }
 
     private List<fEntity> addEntity(Location startLocation, BlockFace direction, ObjectID id) {
-        List<fEntity> entityList = new ArrayList<>();
-        FurnitureLib.debug("FurnitureLib {ModelHandler} -> Calculate Entities");
-        getEntityMap().forEach((key, value) -> {
-			fEntity entity = value.clone();
-			ModelVector rotateVector = rotateVector(key, direction);
-			Location entityLocation = startLocation.clone().add(rotateVector.toVector());
-			
-			
-			
-			entityLocation.setYaw(rotateVector.getYaw());
-			entityLocation.setPitch(rotateVector.getPitch());
-			entity.setLocation(entityLocation);
-			entity.setObjectID(id);
-			entityList.add(entity);
-			String customName = entity.getCustomName();
-			if (customName.equalsIgnoreCase("#ITEM#")
-					|| customName.equalsIgnoreCase("#BLOCK#")
-					|| customName.equalsIgnoreCase("#SITZ#")
-					|| customName.startsWith("#Light")
-					|| customName.startsWith("/")
-					|| customName.toUpperCase().startsWith("#DYE_")) {
-				entity.setNameVisibility(false);
-			}
-		});
-        FurnitureLib.debug("FurnitureLib {ModelHandler} -> Calculate Entities Finish");
+    	HashMap<Location, fEntity> entityMap = new HashMap<>(this.getEntityMap(startLocation, direction));
+    	List<fEntity> entityList = new ArrayList<fEntity>();
+    	entityMap.values().forEach(entry -> {
+    		entry.setObjectID(id);
+    		entityList.add(entry);
+    	});
         return entityList;
     }
     
@@ -154,7 +160,7 @@ public class ModelHandler extends Modelschematic {
     }
 
     public boolean isPlaceable(Location loc) {
-        BlockFace direction = FurnitureLib.getInstance().getLocationUtil().yawToFace(loc.getYaw());
+        BlockFace direction = LocationUtil.yawToFace(loc.getYaw());
         return isPlaceable(loc, direction);
     }
 

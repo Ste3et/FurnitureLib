@@ -574,5 +574,7 @@ public abstract class fEntity extends fSerializer implements Cloneable {
     }
     
     public abstract fEntity clone();
+    
+    public abstract void copyMetadata(fEntity entity);
 //    public abstract BoundingBox getBoundingBox();
 }

@@ -15,9 +15,9 @@ import java.util.Random;
 
 public class LocationUtil {
 
-    public final BlockFace[] axis = {BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST};
-    public final BlockFace[] radial = {BlockFace.NORTH, BlockFace.NORTH_EAST, BlockFace.EAST, BlockFace.SOUTH_EAST, BlockFace.SOUTH, BlockFace.SOUTH_WEST, BlockFace.WEST, BlockFace.NORTH_WEST};
-    public List<BlockFace> axisList = Arrays.asList(BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST);
+    public static final BlockFace[] axis = {BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST};
+    public static final BlockFace[] radial = {BlockFace.NORTH, BlockFace.NORTH_EAST, BlockFace.EAST, BlockFace.SOUTH_EAST, BlockFace.SOUTH, BlockFace.SOUTH_WEST, BlockFace.WEST, BlockFace.NORTH_WEST};
+    public static List<BlockFace> axisList = Arrays.asList(BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST);
 
     /* Check if the Furniture have enough space */
     public static void particleBlock(Block b) {
@@ -62,15 +62,15 @@ public class LocationUtil {
         return (short) (15 - s);
     }
 
-    public BlockFace yawToFaceRadial(float yaw) {
+    public static BlockFace yawToFaceRadial(float yaw) {
         return radial[Math.round(yaw / 45f) & 0x7];
     }
 
-    public BlockFace yawToFace(float yaw) {
+    public static BlockFace yawToFace(float yaw) {
         return axis[Math.round(yaw / 90f) & 0x3];
     }
 
-    public BlockFace yawToFace(float yaw, float pitch) {
+    public static BlockFace yawToFace(float yaw, float pitch) {
         if (pitch < -80) {
             return BlockFace.UP;
         } else if (pitch > 80) {

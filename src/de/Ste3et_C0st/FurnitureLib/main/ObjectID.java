@@ -4,6 +4,7 @@ import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.ModelLoader.ModelHandler;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.DefaultKey;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.DoubleKey;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.LocationUtil;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.RandomStringGenerator;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.cache.DiceOfflinePlayer;
 import de.Ste3et_C0st.FurnitureLib.main.Type.EventType;
@@ -14,8 +15,14 @@ import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
+import org.bukkit.util.Vector;
 
-import java.util.*;
+import java.util.Collection;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.UUID;
 import java.util.function.Predicate;
 
 public class ObjectID {
@@ -33,6 +40,7 @@ public class ObjectID {
     private SQLAction sqlAction = SQLAction.SAVE;
     private HashSet<fEntity> packetList = new HashSet<fEntity>();
     private HashSet<Player> players = new HashSet<>();
+    private BlockFace placedFace = BlockFace.NORTH;
     private int chunkX, chunkZ;
     private boolean finish = false, fixed = false, fromDatabase = false, Private = false;
 
@@ -97,6 +105,10 @@ public class ObjectID {
     public Location getStartLocation() {
         return this.loc;
     }
+    
+    public BlockFace getBlockFace() {
+    	return this.placedFace;
+    }
 
     public void setStartLocation(Location loc) {
         this.loc = loc;
@@ -104,6 +116,7 @@ public class ObjectID {
         this.chunkX = loc.getBlockX() >> 4;
         this.chunkZ = loc.getBlockZ() >> 4;
         this.chunkKey = new DoubleKey<Integer>(chunkX, chunkZ);
+        this.placedFace = LocationUtil.yawToFace(loc.getYaw());
     }
 
     public EventType getEventType() {
@@ -409,7 +422,7 @@ public class ObjectID {
             if (Objects.isNull(getProjectOBJ())) return;
             ModelHandler modelschematic = getProjectOBJ().getModelschematic();
             if (Objects.nonNull(modelschematic)) {
-                BlockFace direction = FurnitureLib.getInstance().getLocationUtil().yawToFace(this.getStartLocation().getYaw()).getOppositeFace();
+                BlockFace direction = LocationUtil.yawToFace(this.getStartLocation().getYaw()).getOppositeFace();
                 this.addBlock(modelschematic.addBlocks(this.getStartLocation(), direction));
             }
         }
@@ -420,7 +433,7 @@ public class ObjectID {
             if (Objects.isNull(getProjectOBJ())) return;
             ModelHandler modelschematic = getProjectOBJ().getModelschematic();
             if (Objects.nonNull(modelschematic)) {
-                BlockFace direction = FurnitureLib.getInstance().getLocationUtil().yawToFace(this.getStartLocation().getYaw()).getOppositeFace();
+                BlockFace direction = LocationUtil.yawToFace(this.getStartLocation().getYaw()).getOppositeFace();
                 List<Location> locList = modelschematic.getBlockLocations(this.getStartLocation(), direction);
                 FurnitureLib.getInstance().getBlockManager().getList().addAll(locList);
                 this.addBlockLocations(locList);
@@ -546,6 +559,10 @@ public class ObjectID {
         if(Furniture.class.isInstance(obj)) {
         	this.functionObject = Furniture.class.cast(obj);
         }
+    }
+    
+    public Optional<fEntity> getEntityByVector(Vector vector){
+    	return this.packetList.stream().filter(entry -> entry.getLocation().toVector().equals(vector)).findFirst();
     }
 
 }

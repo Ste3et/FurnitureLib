@@ -13,6 +13,8 @@ import de.Ste3et_C0st.FurnitureLib.main.PermissionHandler;
 import de.Ste3et_C0st.FurnitureLib.main.Type.CenterType;
 import de.Ste3et_C0st.FurnitureLib.main.Type.PlaceableSide;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
+import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
+
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -27,6 +29,7 @@ import java.io.InputStream;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -67,6 +70,9 @@ public class Project {
     		if(this.configuartion.getBoolean(name + ".enabled", true) == false) {
         		return;
         	}
+    		
+    		String systemID = this.configuartion.getString(name + ".system-ID", "");
+    		this.project = project.equalsIgnoreCase(systemID) ? project : systemID;
     		
             this.file = new CraftingFile(name, this.configuartion);
             
@@ -372,5 +378,16 @@ public class Project {
        	}
        	return null;
        };
+	}
+	
+	public void fixMetadata(ObjectID objectID) {
+		if(Objects.nonNull(this.getModelschematic())) {
+			this.getModelschematic().getEntityMap(objectID.getStartLocation(), objectID.getBlockFace()).entrySet().stream().filter(Objects::nonNull).forEach(entry -> {
+				Optional<fEntity> source = objectID.getEntityByVector(entry.getKey().toVector());
+				if(Objects.nonNull(source) && source.isPresent()) {
+					source.get().copyMetadata(entry.getValue());
+				}
+			});
+		}
 	}
 }
