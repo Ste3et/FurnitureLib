@@ -22,6 +22,7 @@ public class ChatComponentWrapper {
 	
 	public static void sendChatComponent(Player player, ChatMessageType type, BaseComponent... components) {
 		if(Objects.isNull(type)) type = ChatMessageType.CHAT;
+		if(Objects.isNull(components)) return;
 		
 		try {
 			if(packetMethod) {
