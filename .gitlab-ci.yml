@@ -7,7 +7,7 @@ stages:
 FurnitureLib:
   stage: build
   script:
-     - mvn clean package
+     - mvn clean package -Dfurniture.tag="-dev-$CI_COMMIT_SHORT_SHA"
   artifacts:
      paths:
      - target/FurnitureLib.jar

@@ -6,7 +6,12 @@
 
 	<groupId>de.Ste3et_C0st.furniture</groupId>
 	<artifactId>FurnitureLib</artifactId>
-	<version>2.3.7</version>
+	
+	<properties>
+		<furniture.tag></furniture.tag>
+	</properties>
+	
+	<version>2.3.7${furniture.tag}</version>
 	<packaging>jar</packaging>
 
 	<name>FurnitureLib</name>
