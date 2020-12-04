@@ -71,14 +71,15 @@ public class Project {
         		return;
         	}
     		
-    		String systemID = this.configuartion.getString(name + ".system-ID", "");
-    		this.project = project.equalsIgnoreCase(systemID) ? project : systemID;
+    		this.file = new CraftingFile(name, this.configuartion);
     		
-            this.file = new CraftingFile(name, this.configuartion);
-            
             if(!this.file.isEnabledModel()) {
             	return;
             }
+            
+            String configHeader = this.file.getFileHeader();
+    		String systemID = this.configuartion.getString(configHeader + ".system-ID", "");
+    		this.project = project.equalsIgnoreCase(systemID) ? project : systemID;
             
             this.functionList = this.file.loadFunction();
             this.furnitureObject = functionObject;
