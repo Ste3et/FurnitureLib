@@ -132,7 +132,5 @@
       <systemPath>${project.basedir}/lib/ProtocolLib.jar</systemPath>
     </dependency>
   </dependencies>
-  <properties>
-    <furniture.tag>-e0902727</furniture.tag>
-  </properties>
+  <properties />
 </project>

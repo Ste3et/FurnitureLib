@@ -127,12 +127,13 @@ public class objectToSide {
         sender.sendMessage("§7§m+--------------------------------------------+§8[§e" + b + "§8/§a" + a + "§8]");
 
         for (BaseComponent[] obj : objList) {
-        	if (sender instanceof Player) {
-        		ChatComponentWrapper.sendChatComponent(Player.class.cast(sender), obj);
-        	}else {
-                sender.sendMessage(TextComponent.toLegacyText(obj));
-            }
-        	
+        	if(Objects.nonNull(obj)) {
+        		if (sender instanceof Player) {
+            		ChatComponentWrapper.sendChatComponent(Player.class.cast(sender), obj);
+            	}else {
+                    sender.sendMessage(TextComponent.toLegacyText(obj));
+                }
+        	}
         }
 
         String prevCommand = null;

@@ -1,5 +1,7 @@
 package de.Ste3et_C0st.FurnitureLib.Utilitis.Wrapper;
 
+import java.util.Objects;
+
 import org.bukkit.entity.Player;
 
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
@@ -19,6 +21,8 @@ public class ChatComponentWrapper {
 	}
 	
 	public static void sendChatComponent(Player player, ChatMessageType type, BaseComponent... components) {
+		if(Objects.isNull(type)) type = ChatMessageType.CHAT;
+		
 		try {
 			if(packetMethod) {
 				sendMessageOverPacket(player, ChatType.valueOf(type.name()), components);
