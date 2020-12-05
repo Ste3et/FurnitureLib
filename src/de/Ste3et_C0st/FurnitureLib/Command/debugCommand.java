@@ -49,7 +49,7 @@ public class debugCommand extends iCommand {
             			debugMap.put(key, new ExecuteTimer());
             			CommandSender console = Bukkit.getConsoleSender();
                 		console.sendMessage("FurnitureLib: " + sender.getName() + " start the database debug");
-                		console.sendMessage("Please enter these command to confirm it: '/furniture debug database " + key + "' ho have 60 secounds");
+                		console.sendMessage("Please enter this command to confirm it: '/furniture debug database " + key + "' you have 60 secounds");
             		}catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -61,7 +61,7 @@ public class debugCommand extends iCommand {
             			debugMap.put(key, new ExecuteTimer());
             			CommandSender console = Bukkit.getConsoleSender();
                 		console.sendMessage("FurnitureLib: " + sender.getName() + " start the database debug");
-                		console.sendMessage("Please enter these command to confirm it: '/furniture debug regen " + key + "' ho have 60 secounds");
+                		console.sendMessage("Please enter this command to confirm it: '/furniture debug regen " + key + "' you have 60 secounds");
             		}catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -73,7 +73,7 @@ public class debugCommand extends iCommand {
             			debugMap.put(key, new ExecuteTimer());
             			CommandSender console = Bukkit.getConsoleSender();
                 		console.sendMessage("FurnitureLib: " + sender.getName() + " start the fixmodel mode");
-                		console.sendMessage("Please enter these command to confirm it: '/furniture debug fixmodel " + key + "' ho have 60 secounds");
+                		console.sendMessage("Please enter this command to confirm it: '/furniture debug fixmodel " + key + "' you have 60 secounds");
             		}catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -160,7 +160,7 @@ public class debugCommand extends iCommand {
 	            				});
 	            				
 	            				sender.sendMessage("§d" + integer.get() + " §fModels have migrated.");
-	            				sender.sendMessage("§7Please use §9/furniture save §7these can take a short time.");
+	            				sender.sendMessage("§7Please use §9/furniture save §7this can take a short time.");
 	            			}
 	            		}
             		}

@@ -16,6 +16,7 @@ public class Updater {
     Long updateTime;
     UpdatePriority priority1 = UpdatePriority.NO_UPDATE;
     CurrentPriority priority2 = CurrentPriority.NORMAL;
+    
     public Updater() {
         updateTime = getTime();
         currentVersion = FurnitureLib.getInstance().getDescription().getVersion();
