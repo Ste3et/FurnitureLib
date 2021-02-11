@@ -52,7 +52,7 @@ public abstract class fEntity extends fSerializer implements Cloneable {
         getHandle().getModifier().writeDefaults();
         getHandle().getIntegers().write(0, this.entityID).write(1, entityTypeID);
         getHandle().getUUIDs().write(0, this.entityUUID);
-        this.mountPacketContainer.getIntegers().write(0, getEntityID());
+        this.mountPacketContainer.getIntegers().write(0, this.entityID);
         setLocation(loc);
     }
 
@@ -228,6 +228,7 @@ public abstract class fEntity extends fSerializer implements Cloneable {
             try {
                 for (Player p : getObjID().getPlayerList()) {
                     getManager().sendServerPacket(p, container);
+                    getManager().sendServerPacket(p, this.mountPacketContainer);
                 }
             } catch (Exception ex) {
                 ex.printStackTrace();
@@ -244,9 +245,9 @@ public abstract class fEntity extends fSerializer implements Cloneable {
             return;
         }
         if (entityIDs == null) {return;}
-        
-        entityIDs.stream().filter(passenger -> !this.passengerIDs.contains(passenger)).forEach(this.passengerIDs::add);
-        this.mountPacketContainer.getIntegerArrays().write(0, this.passengerIDs.stream().mapToInt(Integer::intValue).toArray());
+        this.passengerIDs.addAll(entityIDs);
+        int[] passengerID = this.passengerIDs.stream().mapToInt(Integer::intValue).toArray();
+        this.mountPacketContainer.getIntegerArrays().write(0, passengerID);
     }
 
     public Server getServer() {
@@ -349,7 +350,6 @@ public abstract class fEntity extends fSerializer implements Cloneable {
             getManager().sendServerPacket(player, getHandle());
             this.sendInventoryPacket(player);
             this.sendMetadata(player);
-            if (Objects.nonNull(getPassenger()))  getManager().sendServerPacket(player, mountPacketContainer);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -403,8 +403,8 @@ public abstract class fEntity extends fSerializer implements Cloneable {
         try {
             getManager().sendServerPacket(p, update);
             this.sendInventoryPacket(p);
-            if (getPassenger() != null) {
-                getManager().sendServerPacket(p, mountPacketContainer);
+            if(getPassenger().isEmpty() == false) {
+            	getManager().sendServerPacket(p, mountPacketContainer);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -416,7 +416,6 @@ public abstract class fEntity extends fSerializer implements Cloneable {
         PacketContainer destroy = new PacketContainer(PacketType.Play.Server.ENTITY_DESTROY);
         destroy.getIntegerArrays().write(0, new int[]{getEntityID()});
         try {
-            this.eject();
             getManager().sendServerPacket(p, destroy);
         } catch (Exception e) {
             e.printStackTrace();
@@ -427,6 +426,7 @@ public abstract class fEntity extends fSerializer implements Cloneable {
         getObjID().getPlayerList().forEach(p -> {
             kill(p, false);
         });
+        this.eject();
     }
 
     public fEntity setParticleColor(int i) {
@@ -464,6 +464,7 @@ public abstract class fEntity extends fSerializer implements Cloneable {
         container.getIntegerArrays().write(0, i);
         getObjID().getPlayerList().forEach(player -> {
             try {
+            	
                 getManager().sendServerPacket(player, container);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -482,16 +483,20 @@ public abstract class fEntity extends fSerializer implements Cloneable {
                     return;
                 }
                 getManager().sendServerPacket(player, packet);
-                Bukkit.getScheduler().runTaskLater(FurnitureLib.getInstance(),
-                        new Runnable() {
-                            @Override
-                            public void run() {
-                                try {
-                                    getManager().sendServerPacket(player, packet);
-                                } catch (Exception e) {
-                                }
-                            }
-                        }, 2);
+//                Bukkit.getScheduler().runTaskLater(FurnitureLib.getInstance(),
+//                        new Runnable() {
+//                            @Override
+//                            public void run() {
+//                                try {
+//                                    getManager().sendServerPacket(player, packet);
+//                                } catch (Exception e) {
+//                                }
+//                            }
+//                        }, 2);
+                
+            }
+            if(getPassenger().isEmpty() == false) {
+           	   getManager().sendServerPacket(player, this.mountPacketContainer);
             }
         } catch (Exception e) {
             e.printStackTrace();
