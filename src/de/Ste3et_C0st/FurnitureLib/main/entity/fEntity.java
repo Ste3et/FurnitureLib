@@ -33,6 +33,7 @@ public abstract class fEntity extends fSerializer implements Cloneable {
 
     private final int entityID = EntityID.nextEntityId();
     private final UUID entityUUID = UUID.randomUUID();
+    private final PacketContainer mountPacketContainer = new PacketContainer(PacketType.Play.Server.MOUNT);
     private int entityTypeID;
     private double positionX, positionY, positionZ;
     private byte yaw, pitch;
@@ -51,6 +52,7 @@ public abstract class fEntity extends fSerializer implements Cloneable {
         getHandle().getModifier().writeDefaults();
         getHandle().getIntegers().write(0, this.entityID).write(1, entityTypeID);
         getHandle().getUUIDs().write(0, this.entityUUID);
+        this.mountPacketContainer.getIntegers().write(0, getEntityID());
         setLocation(loc);
     }
 
@@ -241,21 +243,10 @@ public abstract class fEntity extends fSerializer implements Cloneable {
         if (!FurnitureLib.getInstance().canSitting()) {
             return;
         }
-        if (entityIDs == null) {
-            return;
-        }
-        int[] passengerID = entityIDs.stream().mapToInt(Integer::intValue).toArray();
-        PacketContainer container = new PacketContainer(PacketType.Play.Server.MOUNT);
-        container.getIntegers().write(0, getEntityID());
-        container.getIntegerArrays().write(0, passengerID);
-        getObjID().getPlayerList().forEach(player -> {
-            try {
-                getManager().sendServerPacket(player, container);
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
+        if (entityIDs == null) {return;}
+        
         entityIDs.stream().filter(passenger -> !this.passengerIDs.contains(passenger)).forEach(this.passengerIDs::add);
+        this.mountPacketContainer.getIntegerArrays().write(0, this.passengerIDs.stream().mapToInt(Integer::intValue).toArray());
     }
 
     public Server getServer() {
@@ -356,9 +347,9 @@ public abstract class fEntity extends fSerializer implements Cloneable {
         //getHandle().getDataWatcherModifier().write(0, getWatcher());
         try {
             getManager().sendServerPacket(player, getHandle());
-            sendInventoryPacket(player);
-            if (Objects.nonNull(getPassenger())) setPassenger(getPassenger());
-            sendMetadata(player);
+            this.sendInventoryPacket(player);
+            this.sendMetadata(player);
+            if (Objects.nonNull(getPassenger()))  getManager().sendServerPacket(player, mountPacketContainer);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -413,7 +404,7 @@ public abstract class fEntity extends fSerializer implements Cloneable {
             getManager().sendServerPacket(p, update);
             this.sendInventoryPacket(p);
             if (getPassenger() != null) {
-                setPassenger(getPassenger());
+                getManager().sendServerPacket(p, mountPacketContainer);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -425,7 +416,7 @@ public abstract class fEntity extends fSerializer implements Cloneable {
         PacketContainer destroy = new PacketContainer(PacketType.Play.Server.ENTITY_DESTROY);
         destroy.getIntegerArrays().write(0, new int[]{getEntityID()});
         try {
-            eject();
+            this.eject();
             getManager().sendServerPacket(p, destroy);
         } catch (Exception e) {
             e.printStackTrace();
