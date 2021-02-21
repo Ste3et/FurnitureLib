@@ -123,7 +123,6 @@ public abstract class Modelschematic{
 	private void loadEntities(String configString, YamlConfiguration config) {
 		//I know "entitys" is a typo but it can't fix easly here;
 		FurnitureLib.debug(this.name + " load: " + configString + " isConfigurationSection = true");
-		
 		config.getConfigurationSection(configString).getKeys(false).stream()
 		.map(key -> decodeBase64toByte(config.getString(configString + "." + key, ""), key))
 		.forEach(key -> {
@@ -142,6 +141,7 @@ public abstract class Modelschematic{
 				}
 			}
 		});
+		FurnitureLib.debug(this.name + " load: " + configString + " has loadet: " + this.entityMap.size() + " Entities");
 	}
 	
 	private Optional<byte[]> decodeBase64toByte(String md5, String key) {

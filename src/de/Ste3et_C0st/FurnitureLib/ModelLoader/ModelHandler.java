@@ -20,6 +20,7 @@ import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -65,8 +66,8 @@ public class ModelHandler extends Modelschematic {
         return locationList;
     }
     
-    public HashMap<Location, fEntity> getEntityMap(Location startLocation, BlockFace direction){
-    	 HashMap<Location, fEntity> locationList = new HashMap<>();
+    public HashSet<fEntity> getEntityMap(Location startLocation, BlockFace direction){
+    	HashSet<fEntity> locationList = new HashSet<>();
     	 FurnitureLib.debug("FurnitureLib {ModelHandler} -> Calculate Entities");
     	 getEntityMap().forEach((key, value) -> {
  			fEntity entity = value.clone();
@@ -75,7 +76,7 @@ public class ModelHandler extends Modelschematic {
  			entityLocation.setYaw(rotateVector.getYaw());
  			entityLocation.setPitch(rotateVector.getPitch());
  			entity.setLocation(entityLocation);
- 			locationList.put(entityLocation, entity);
+ 			locationList.add(entity);
  			String customName = entity.getCustomName();
  			if (customName.equalsIgnoreCase("#ITEM#")
  					|| customName.equalsIgnoreCase("#BLOCK#")
@@ -113,9 +114,9 @@ public class ModelHandler extends Modelschematic {
     }
 
     private List<fEntity> addEntity(Location startLocation, BlockFace direction, ObjectID id) {
-    	HashMap<Location, fEntity> entityMap = new HashMap<>(this.getEntityMap(startLocation, direction));
+    	HashSet<fEntity> entityMap = new HashSet<>(this.getEntityMap(startLocation, direction));
     	List<fEntity> entityList = new ArrayList<fEntity>();
-    	entityMap.values().forEach(entry -> {
+    	entityMap.stream().forEach(entry -> {
     		entry.setObjectID(id);
     		entityList.add(entry);
     	});

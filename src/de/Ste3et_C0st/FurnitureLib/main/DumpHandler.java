@@ -21,6 +21,7 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
 import de.Ste3et_C0st.FurnitureLib.Utilitis.Wrapper.ChatComponentWrapper;
+import de.Ste3et_C0st.FurnitureLib.main.LightAPI.iLightAPI;
 import de.Ste3et_C0st.FurnitureLib.main.Type.ProtocolFields;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -87,6 +88,17 @@ public class DumpHandler {
 		packetInfos.addProperty("publicType", FurnitureLib.getInstance().getDefaultPublicType().name());
 		packetInfos.addProperty("databaseType", FurnitureLib.getInstance().getSQLManager().getDatabase().getType().name());
 		packetInfos.addProperty("protectionLib-hook", FurnitureLib.getInstance().getPermManager().useProtectionLib());
+		
+		LightManager manager = FurnitureLib.getInstance().getLightManager();
+		if(Objects.nonNull(manager)) {
+			iLightAPI lightAPI = manager.getLightAPI();
+			if(Objects.nonNull(lightAPI)) {
+				packetInfos.addProperty("lightAPI-hook", true);
+				packetInfos.addProperty("lightAPI-Interface", lightAPI.getClass().getSimpleName());
+			}else {
+				packetInfos.addProperty("lightAPI-hook", false);
+			}
+		}
 		
 		JsonObject packetInformations = new JsonObject();
 		try {

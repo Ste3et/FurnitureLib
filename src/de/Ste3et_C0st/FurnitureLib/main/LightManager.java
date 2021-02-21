@@ -39,12 +39,10 @@ public class LightManager {
         if (Objects.isNull(location)) {
             return;
         }
-        if (Objects.isNull(null)) {
+        if (Objects.isNull(size)) {
             return;
         }
-        Bukkit.getScheduler().scheduleSyncDelayedTask(FurnitureLib.getInstance(), () -> {
-            this.lightApi.createLight(location, size);
-        });
+        this.lightApi.createLight(location, size);
     }
 
     public synchronized void removeLight(Location location) {
@@ -53,12 +51,14 @@ public class LightManager {
         }
         try {
             if (Objects.isNull(location)) return; 
-            Bukkit.getScheduler().scheduleSyncDelayedTask(FurnitureLib.getInstance(), () -> {
-                this.lightApi.deleteLight(location);
-            });
+            this.lightApi.deleteLight(location);
         } catch (Exception e) {
             e.printStackTrace();
         }
 
+    }
+    
+    public iLightAPI getLightAPI() {
+    	return this.lightApi;
     }
 }

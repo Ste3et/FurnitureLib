@@ -1,6 +1,9 @@
 package de.Ste3et_C0st.FurnitureLib.ModelLoader;
 
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
+
+import java.util.UUID;
+
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.util.Vector;
@@ -9,7 +12,8 @@ public class ModelVector implements Cloneable {
 
     private final float yaw, pitch;
     private double x, y, z;
-
+    private final UUID uuid = UUID.randomUUID();
+    
     public ModelVector() {
         this(0, 0, 0, 0, 0);
     }

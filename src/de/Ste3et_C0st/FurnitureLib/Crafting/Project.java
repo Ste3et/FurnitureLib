@@ -383,10 +383,10 @@ public class Project {
 	
 	public void fixMetadata(ObjectID objectID) {
 		if(Objects.nonNull(this.getModelschematic())) {
-			this.getModelschematic().getEntityMap(objectID.getStartLocation(), objectID.getBlockFace()).entrySet().stream().filter(Objects::nonNull).forEach(entry -> {
-				Optional<fEntity> source = objectID.getEntityByVector(entry.getKey().toVector());
+			this.getModelschematic().getEntityMap(objectID.getStartLocation(), objectID.getBlockFace()).stream().filter(Objects::nonNull).forEach(entry -> {
+				Optional<fEntity> source = objectID.getEntityByVector(entry.getLocation().toVector());
 				if(Objects.nonNull(source) && source.isPresent()) {
-					source.get().copyMetadata(entry.getValue());
+					source.get().copyMetadata(entry);
 				}
 			});
 		}
