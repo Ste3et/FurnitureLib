@@ -104,7 +104,6 @@ public abstract class fEntity extends fSerializer implements Cloneable {
     public void setLocation(Location loc) {
         if (Objects.nonNull(loc)) {
             this.location = loc;
-            //this.world = location.getWorld();
             this.positionX = loc.getX();
             this.positionY = loc.getY();
             this.positionZ = loc.getZ();
@@ -542,7 +541,7 @@ public abstract class fEntity extends fSerializer implements Cloneable {
     		NBTTagCompound inventory = metadata.getCompound("Inventory");
     		inventory.c().stream().forEach(entry -> {
     			String name = (String) entry;
-    			if (!inventory.getString(name).equalsIgnoreCase("NONE")) {
+    			if (inventory.getString(name).equalsIgnoreCase("NONE") == false) {
                     ItemStack is = new CraftItemStack().getItemStack(inventory.getCompound(name));
                     this.getInventory().setSlot(name, is);
                 }

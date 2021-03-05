@@ -83,7 +83,7 @@ public class Project {
             
             this.functionList = this.file.loadFunction();
             this.furnitureObject = functionObject;
-            this.modelschematic = new ModelHandler(this.getConfig());
+            this.modelschematic = new ModelHandler(this.getConfig(), this.getCraftingFile().getFileHeader());
             FurnitureLib.getInstance().getFurnitureManager().addProject(this);
             this.loadDefaults();
             FurnitureLib.getInstance().getLimitManager().loadDefault(this.project);

@@ -27,16 +27,16 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ModelHandler extends Modelschematic {
 
-	public ModelHandler(File file) throws FileNotFoundException {
-        super(file);
+	public ModelHandler(File file, String fileHeader) throws FileNotFoundException {
+        super(file, fileHeader);
     }
 
-    public ModelHandler(InputStream stream) {
-        super(stream);
+    public ModelHandler(InputStream stream, String fileHeader) {
+        super(stream, fileHeader);
     }
     
-    public ModelHandler(YamlConfiguration configuration) {
-        super(configuration);
+    public ModelHandler(YamlConfiguration configuration, String fileHeader) {
+        super(configuration, fileHeader);
     }
 
     public ModelHandler(String name) {

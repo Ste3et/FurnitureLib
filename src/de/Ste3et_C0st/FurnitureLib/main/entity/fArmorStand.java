@@ -5,17 +5,18 @@ import com.comphenix.protocol.wrappers.WrappedDataWatcher.Registry;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.DefaultKey;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.EntitySize;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.Relative;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type;
 import de.Ste3et_C0st.FurnitureLib.main.Type.BodyPart;
+
 import org.bukkit.Location;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.util.EulerAngle;
-
 import java.util.HashMap;
 
 public class fArmorStand extends fEntity{
@@ -27,7 +28,8 @@ public class fArmorStand extends fEntity{
     
     private HashMap<BodyPart, DefaultKey<EulerAngle>> angle = new HashMap<Type.BodyPart, DefaultKey<EulerAngle>>();
     private ArmorStand entity = null;
-
+    private final DefaultKey<EntitySize> entitySize = new DefaultKey<EntitySize>(new EntitySize(0.5, 1.975));
+    
     @SuppressWarnings("deprecation")
     public fArmorStand(Location loc, ObjectID obj) {
         super(loc, type, FurnitureLib.isNewVersion() ? 1 : type.getTypeId(), obj);
@@ -122,6 +124,11 @@ public class fArmorStand extends fEntity{
     public fArmorStand setSmall(boolean small) {
         setBitMask(small, Type.field.getBitMask(), 0);
         this.small.setValue(Boolean.valueOf(small));
+        if(small) {
+        	this.entitySize.setValue(new EntitySize(0.25, 0.9875));
+        }else {
+        	this.entitySize.setValue(this.entitySize.getDefault());
+        }
         return this;
     }
 
@@ -289,6 +296,10 @@ public class fArmorStand extends fEntity{
 		setMarker(stand.isMarker());
     	setBasePlate(stand.hasBasePlate());
     	setArms(stand.hasArms());
+	}
+	
+	public EntitySize getEntitySize() {
+		return this.entitySize.getOrDefault();
 	}
     
     //	

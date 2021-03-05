@@ -40,15 +40,8 @@ permissions:
       furniture.command.remove.lookat: true
       furniture.command.give: true
       furniture.command.give.other: true
-      furniture.limit.bypass: true
       furniture.command.manage.other: true
       furniture.command.purge: true
-      furniture.bypass.breakSpam: true
-      furniture.bypass.placeSpam: true
-      furniture.command.help: true
-      furniture.crafting.*: true
-      furniture.place.*: true
-      furniture.toggle: true
       furniture.command.manage: true
       furniture.command.toggle.other: true
       furniture.command.download: true
@@ -56,7 +49,11 @@ permissions:
       furniture.command.create: true
       furniture.command.edit: true
       furniture.command.upload: true
-      furniture.update: true
       furniture.command.import: true
+      furniture.limit.bypass: true
+      furniture.bypass.breakSpam: true
+      furniture.bypass.placeSpam: true
+      furniture.toggle: true
+      furniture.update: true
       ProtectionLib.admin: true
       furniture.player: true

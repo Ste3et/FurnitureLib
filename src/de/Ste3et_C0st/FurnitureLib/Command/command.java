@@ -137,7 +137,9 @@ public class command implements CommandExecutor, Listener{
 	@Override
 	public boolean onCommand(CommandSender sender, Command cmd, String arg2, String[] args) {
 			if(cmd.getName().equalsIgnoreCase("furniture")){
+				/* Deprecated
 				if(!sender.hasPermission("furniture.command.help")) return true;
+				*/
 				if(args.length > 0) {
 					iCommand comm = commands.stream()
 							.filter(command -> command.getSubCommand().equalsIgnoreCase(args[0]) || command.getAliasList().contains(args[0].toLowerCase()))

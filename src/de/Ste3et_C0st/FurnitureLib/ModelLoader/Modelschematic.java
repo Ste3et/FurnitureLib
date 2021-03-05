@@ -43,21 +43,20 @@ public abstract class Modelschematic{
 	protected String name;
 	//protected ExecuteTimer timer = new ExecuteTimer();
 	
-	public Modelschematic(InputStream stream){
-		this(YamlConfiguration.loadConfiguration(new InputStreamReader(stream)));
+	public Modelschematic(InputStream stream, String fileHeader){
+		this(YamlConfiguration.loadConfiguration(new InputStreamReader(stream)), fileHeader);
     }
 	
-	public Modelschematic(YamlConfiguration configuration) {
-		String yamlHeader = getHeader(configuration);
-		this.name = yamlHeader;
+	public Modelschematic(YamlConfiguration configuration, String fileHeader) {
+		this.name = fileHeader;
 		FurnitureLib.debug(this.name + " header found.");
-		this.loadEntitiesTypo(yamlHeader, configuration);
-		this.loadBlockData(yamlHeader, configuration);
-		this.placeableSide = PlaceableSide.valueOf(configuration.getString(yamlHeader + ".placeAbleSide", "TOP").toUpperCase());
+		this.loadEntitiesTypo(fileHeader, configuration);
+		this.loadBlockData(fileHeader, configuration);
+		this.placeableSide = PlaceableSide.valueOf(configuration.getString(fileHeader + ".placeAbleSide", "TOP").toUpperCase());
 	}
 
-    public Modelschematic(File file) throws FileNotFoundException {
-        this(new FileInputStream(file));
+    public Modelschematic(File file, String fileHeader) throws FileNotFoundException {
+        this(new FileInputStream(file), fileHeader);
     }
 
     public Modelschematic(String name) {
@@ -124,17 +123,16 @@ public abstract class Modelschematic{
 		//I know "entitys" is a typo but it can't fix easly here;
 		FurnitureLib.debug(this.name + " load: " + configString + " isConfigurationSection = true");
 		config.getConfigurationSection(configString).getKeys(false).stream()
-		.map(key -> decodeBase64toByte(config.getString(configString + "." + key, ""), key))
 		.forEach(key -> {
-			if(key.isPresent()) {
-				try(ByteArrayInputStream bin = new ByteArrayInputStream(key.get())) {
+			Optional<byte[]> optinalKey = decodeBase64toByte(config.getString(configString + "." + key, ""), key);
+			if(optinalKey.isPresent()) {
+				try(ByteArrayInputStream bin = new ByteArrayInputStream(optinalKey.get())) {
 					NBTTagCompound entityData = NBTCompressedStreamTools.read(bin);
 					ModelVector vector = new ModelVector(entityData.getCompound("Location"));
 					fEntity entity = readNBTtag(entityData);
 					if(Objects.nonNull(vector) && Objects.nonNull(entity)) {
 						this.entityMap.put(vector, entity);
-						//this.min = vector.getMinPoint(this.min);
-						//this.max = vector.getMinPoint(this.max);
+						//this.setMax(vector);
 					}
 				}catch (Exception e) {
 					e.printStackTrace();

@@ -23,6 +23,7 @@ import org.bukkit.persistence.PersistentDataType;
 
 import java.io.*;
 import java.util.*;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class CraftingFile {
     public String systemID = "";
@@ -141,10 +142,9 @@ public class CraftingFile {
     public void loadCrafting119111(String s) {
         try {
             this.isDisable = file.getBoolean(header + ".crafting.disable");
-            this.recipe = new ShapedRecipe(returnResult(s)).shape(returnFragment(s)[0], returnFragment(s)[1],
-                    returnFragment(s)[2]);
-            returnMaterial(s).entrySet().stream().filter(c -> !Objects.isNull(c))
-                    .filter(c -> !c.getValue().equals(Material.AIR)).forEach(c -> {
+            String[] fragements = returnFragment();
+            this.recipe = new ShapedRecipe(returnResult(s)).shape(fragements[0], fragements[1], fragements[2]);
+            returnMaterial(s, fragements).entrySet().stream().filter(c -> c.getValue() != Material.AIR).forEach(c -> {
                 this.recipe.setIngredient(c.getKey(), c.getValue());
             });
             if (!isDisable) {
@@ -162,13 +162,15 @@ public class CraftingFile {
         try {
             this.isDisable = file.getBoolean(header + ".crafting.disable", false);
             org.bukkit.NamespacedKey key = new org.bukkit.NamespacedKey(FurnitureLib.getInstance(), this.name.toLowerCase()); // <-- Key
-            this.recipe = new ShapedRecipe(key, returnResult(s)).shape(returnFragment(s)[0], returnFragment(s)[1], returnFragment(s)[2]);
-            returnMaterial(s).entrySet().stream().filter(c -> !Objects.isNull(c))
-                    .filter(c -> !c.getValue().equals(Material.AIR)).forEach(c -> {
+            String[] fragements = returnFragment();
+            AtomicInteger materialCount = new AtomicInteger(0);
+            this.recipe = new ShapedRecipe(key, returnResult(s)).shape(fragements[0], fragements[1], fragements[2]);
+            returnMaterial(s,fragements).entrySet().stream().filter(c -> c.getValue() != Material.AIR).forEach(c -> {
                 this.recipe.setIngredient(c.getKey(), c.getValue());
+                materialCount.addAndGet(1);
             });
             if (!isDisable && !isKeyisKeyRegistered(key)) {
-                if (!this.recipe.getIngredientMap().isEmpty() && this.recipe.getIngredientMap().values().stream().filter(Objects::nonNull).filter(is -> is.getType().equals(Material.AIR)).count() < 8) {
+                if (materialCount.get() > 0) {
                     Bukkit.getServer().addRecipe(this.recipe);
                 }
             }
@@ -196,17 +198,8 @@ public class CraftingFile {
     }
 
     private boolean isKeyisKeyRegistered(org.bukkit.NamespacedKey key) {
-        Iterator<Recipe> recipes = Bukkit.getServer().recipeIterator();
-        while (recipes.hasNext()) {
-            Recipe recipe = recipes.next();
-            if (recipe instanceof ShapedRecipe) {
-                ShapedRecipe r = (ShapedRecipe) recipe;
-                if (r.getKey().equals(key)) {
-                    return true;
-                }
-            }
-        }
-        return false;
+    	Recipe recipe =  Bukkit.getServer().getRecipe(key);
+        return Objects.nonNull(recipe);
     }
 
     public PlaceableSide getPlaceAbleSide() {
@@ -330,15 +323,14 @@ public class CraftingFile {
         return is;
     }
 
-    private String[] returnFragment(String s) {
+    private String[] returnFragment() {
         return this.file.getString(header + ".crafting.recipe", "").split(",");
     }
 
-    private HashMap<Character, Material> returnMaterial(String s) {
-        List<String> stringList = returnCharacters(s);
+    private HashMap<Character, Material> returnMaterial(String s, String[] recipe) {
+        List<Character> stringList = returnCharacters(recipe);
         HashMap<Character, Material> materialHash = new HashMap<Character, Material>();
         stringList.forEach(letter -> {
-            Character chars = letter.charAt(0);
             String part = this.file.getString(header + ".crafting.index." + letter, "AIR");
             Material material;
             if (!FurnitureLib.isNewVersion()) {
@@ -352,18 +344,19 @@ public class CraftingFile {
                 material = Material.getMaterial(part);
             }
 
-            materialHash.put(chars, material);
+            materialHash.put(letter, material);
         });
 
         return materialHash;
     }
 
-    private List<String> returnCharacters(String s) {
-        List<String> stringList = new ArrayList<>();
-        for (String str : returnFragment(s)) {
+    private List<Character> returnCharacters(String[] recipe) {
+        List<Character> stringList = new ArrayList<>();
+        for (String str : returnFragment()) {
             for (String o : str.split("(?!^)")) {
-                if (!stringList.contains(o)) {
-                    stringList.add(o);
+            	Character character = o.charAt(0);
+                if (!stringList.contains(character)) {
+                    stringList.add(character);
                 }
             }
         }
@@ -409,12 +402,16 @@ public class CraftingFile {
     }
     
     public static YamlConfiguration loadDefaultConfig(InputStream craftingFile, YamlConfiguration configuartion, String path) {
+    	File yamlPath = new File(path);
     	try (Reader inReader = new InputStreamReader(craftingFile)) {
-         	YamlConfiguration defaultConfig = YamlConfiguration.loadConfiguration(inReader);
-             configuartion.addDefaults(defaultConfig);
-             configuartion.options().copyDefaults(true);
-             configuartion.save(path);
-             return YamlConfiguration.loadConfiguration(new File(path));
+    		if(Objects.isNull(configuartion)) configuartion = new YamlConfiguration();
+    		configuartion.addDefaults(YamlConfiguration.loadConfiguration(inReader));
+    		configuartion.options().copyDefaults(true);
+    		if(yamlPath.exists() == false) {
+    			configuartion.save(yamlPath);
+    			configuartion = YamlConfiguration.loadConfiguration(yamlPath);
+    		}
+            return configuartion;
         } catch (IOException e) {
             e.printStackTrace();
         }
