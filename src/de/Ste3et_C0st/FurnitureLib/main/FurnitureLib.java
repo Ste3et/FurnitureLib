@@ -473,12 +473,13 @@ public class FurnitureLib extends JavaPlugin {
 		getServer().getPluginManager().registerEvents(new onCrafting(), getInstance());
 		getServer().getPluginManager().registerEvents(new onBlockDispense(), getInstance());
 		getServer().getPluginManager().registerEvents(new onEntityExplode(), getInstance());
-		getServer().getPluginManager().registerEvents(new onPlayerChangeWorld(), getInstance());
+		
+		//getServer().getPluginManager().registerEvents(new onPlayerChangeWorld(), getInstance());
 		getServer().getPluginManager().registerEvents(new onPlayerDeath(), getInstance());
-		getServer().getPluginManager().registerEvents(new onPlayerJoin(), getInstance());
+		//getServer().getPluginManager().registerEvents(new onPlayerJoin(), getInstance());
 		getServer().getPluginManager().registerEvents(new onPlayerQuit(), getInstance());
-		getServer().getPluginManager().registerEvents(new onPlayerRespawn(), getInstance());
-		getServer().getPluginManager().registerEvents(new onPlayerTeleportEvent(), getInstance());
+		//getServer().getPluginManager().registerEvents(new onPlayerRespawn(), getInstance());
+		//getServer().getPluginManager().registerEvents(new onPlayerTeleportEvent(), getInstance());
 		getServer().getPluginManager().registerEvents(new ChunkOnLoad(), getInstance());
 		getServer().getPluginManager().registerEvents(new onChunkChange(), getInstance());
 

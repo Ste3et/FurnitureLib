@@ -112,5 +112,19 @@ public class FurnitureEvents {
                         }
                     }
                 });
+        
+        ProtocolLibrary.getProtocolManager().addPacketListener(
+        		new PacketAdapter(instance, ListenerPriority.HIGHEST, PacketType.Play.Server.MAP_CHUNK) {
+        			public void onPacketSending(PacketEvent event) {
+        				int chunkX = event.getPacket().getIntegers().read(0);
+        				int chunkZ = event.getPacket().getIntegers().read(1);
+        				final Player player = event.getPlayer();
+        				Bukkit.getScheduler().runTask(instance, () -> {
+        					FurnitureManager.getInstance().updatePlayerView(player, chunkX, chunkZ);
+        				});
+        			}
+        		}
+        );
+        		
     }
 }

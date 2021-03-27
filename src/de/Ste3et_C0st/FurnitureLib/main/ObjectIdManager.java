@@ -86,11 +86,15 @@ public class ObjectIdManager {
 		return getObjectStreamFromWorld(worldName).collect(Collectors.toList());
 	}
 
-	public void updatePlayerView(Player player) {
-		if(player.isOnline()) {
-			getAllExistObjectIDs().filter(entry -> entry.getPlayerList().contains(player) || entry.canSee(player)).forEach(entry -> entry.updatePlayerView(player));
-			//this.updateModels(player);
-		}
+//	public void updatePlayerView(Player player) {
+//		if(player.isOnline()) {
+//			//getAllExistObjectIDs().filter(entry -> entry.getPlayerList().contains(player) || entry.canSee(player)).forEach(entry -> entry.updatePlayerView(player));
+//			getAllExistObjectIDs().filter(entry -> entry.getPlayerList().contains(player)).forEach(entry -> entry.updatePlayerView(player));
+//		}
+//	}
+	
+	public void updatePlayerView(Player player, int chunkX, int chunkZ) {
+		getAllExistObjectIDs().filter(entry -> entry.isInChunk(chunkX, chunkZ)).forEach(entry -> entry.updatePlayerView(player));
 	}
 	
 	public void sendAllInView(Player player) {

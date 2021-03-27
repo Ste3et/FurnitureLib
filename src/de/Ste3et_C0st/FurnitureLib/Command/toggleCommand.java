@@ -22,8 +22,10 @@ public class toggleCommand extends iCommand {
                         FurnitureLib.getInstance().getFurnitureManager().removeFurniture((Player) sender);
                         sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.FurnitureToggleCMDOff"));
                     } else {
-                        FurnitureLib.getInstance().getFurnitureManager().getIgnoreList().remove(((Player) sender).getUniqueId());
-                        FurnitureLib.getInstance().getFurnitureManager().updatePlayerView((Player) sender);
+                    	Player player = (Player) sender;
+                    	int chunkX = player.getLocation().getBlockX() >> 4, chunkZ = player.getLocation().getBlockZ() >> 4;
+                    	FurnitureLib.getInstance().getFurnitureManager().getIgnoreList().remove(player.getUniqueId());
+                        FurnitureLib.getInstance().getFurnitureManager().updatePlayerView(player, chunkX, chunkZ);
                         sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.FurnitureToggleCMDOn"));
                     }
                 }
@@ -43,8 +45,9 @@ public class toggleCommand extends iCommand {
                     	player.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.FurnitureToggleCMDOff"));
                     }
                 } else {
+                	int chunkX = player.getLocation().getBlockX() >> 4, chunkZ = player.getLocation().getBlockZ() >> 4;
                     FurnitureLib.getInstance().getFurnitureManager().getIgnoreList().remove(player.getUniqueId());
-                    FurnitureLib.getInstance().getFurnitureManager().updatePlayerView(player);
+                    FurnitureLib.getInstance().getFurnitureManager().updatePlayerView(player, chunkX, chunkZ);
                     sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.FurnitureToggleCMDOn"));
                     if(!sender.getName().equalsIgnoreCase(args[1])) {
                     	player.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.FurnitureToggleCMDOn"));

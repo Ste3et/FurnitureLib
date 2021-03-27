@@ -39,7 +39,9 @@ public class ObjectID {
     private DefaultKey<EventType> memberType = new DefaultKey<Type.EventType>(FurnitureLib.getInstance().getDefaultEventType());
     private SQLAction sqlAction = SQLAction.SAVE;
     private HashSet<fEntity> packetList = new HashSet<fEntity>();
-    private HashSet<Player> players = new HashSet<>();
+   
+    //private HashSet<Player> players = new HashSet<>();
+    
     private BlockFace placedFace = BlockFace.NORTH;
     private int chunkX, chunkZ;
     private boolean finish = false, fixed = false, fromDatabase = false, Private = false;
@@ -210,7 +212,9 @@ public class ObjectID {
     }
 
     public HashSet<Player> getPlayerList() {
-        return this.players;
+    	HashSet<Player> playerSet = new HashSet<Player>();
+    	Bukkit.getOnlinePlayers().stream().filter(entry -> isInWorld(entry)).filter(entry -> isInRange(entry)).forEach(playerSet::add);
+        return playerSet;
     }
 
     public boolean isMember(UUID uuid) {
@@ -314,59 +318,71 @@ public class ObjectID {
         if (getSQLAction().equals(SQLAction.REMOVE)) {
             return;
         }
+        
+        if(isInWorld(player) == false) {
+        	return;
+        }
+        
+//        if(isInRange(player) == false) {
+//        	return;
+//        }
+        
+        this.sendArmorStands(player);
+        
         // player.sendMessage(getID());
         // if(!isFinish()) return;
-        if (!isInWorld(player)) {
-			players.remove(player);
-            return;
-        } else {
-            if (isInRange(player)) {
-                if (players.contains(player)) {
-                    return;
-                }
-                this.sendArmorStands(player);
-            } else {
-                if (!players.contains(player))
-                    return;
-                removeArmorStands(player);
-            }
-        }
+//        if (!isInWorld(player)) {
+//			players.remove(player);
+//            return;
+//        } else {
+//            if (isInRange(player)) {
+//                if (players.contains(player)) {
+//                    return;
+//                }
+//                this.sendArmorStands(player);
+//            } else {
+//                if (!players.contains(player))
+//                    return;
+//                removeArmorStands(player);
+//            }
+//        }
     }
     
     public void sendArmorStands(Player player) {
     	this.packetList.forEach(stand -> stand.send(player));
-        players.add(player);
+        //players.add(player);
     }
     
     public void removeArmorStands(Player player) {
     	this.packetList.forEach(stand -> stand.kill(player, false));
-        players.remove(player);
+        //players.remove(player);
     }
 
     public fEntity getByID(int entityID) {
     	return getPacketList().stream().filter(entry -> entityID == entry.getEntityID()).findFirst().orElse(null);
     }
     
+    
     public void sendAllInView() {
-        if (isPrivate())
-            return;
-        if (getPacketList().isEmpty())
-            return;
-        if (getSQLAction().equals(SQLAction.REMOVE))
-            return;
-        getWorld().getPlayers().forEach(player -> {
-            if (isInRange(player)) {
-                if (!players.contains(player)) {
-                    players.add(player);
-                    this.packetList.forEach(stand -> stand.send(player));
-                }
-            } else {
-                if (players.contains(player)) {
-                    players.remove(player);
-                    this.packetList.forEach(stand -> stand.kill(player, false));
-                }
-            }
-        });
+//        if (isPrivate())
+//            return;
+//        if (getPacketList().isEmpty())
+//            return;
+//        if (getSQLAction().equals(SQLAction.REMOVE))
+//            return;
+//        getWorld().getPlayers().forEach(player -> {
+//            if (isInRange(player)) {
+//                if (!players.contains(player)) {
+//                    players.add(player);
+//                    this.packetList.forEach(stand -> stand.send(player));
+//                }
+//            } else {
+//                if (players.contains(player)) {
+//                    players.remove(player);
+//                    this.packetList.forEach(stand -> stand.kill(player, false));
+//                }
+//            }
+//        });
     }
     
     public static void setRange(int chunkRange) {
@@ -392,7 +408,7 @@ public class ObjectID {
             return;
         }
         this.packetList.forEach(stand -> stand.kill(p, false));
-        players.remove(p);
+        //players.remove(p);
     }
 
     public void addBlock(List<Block> bl) {
@@ -544,9 +560,8 @@ public class ObjectID {
         if (getSQLAction().equals(SQLAction.REMOVE)) {
             return;
         }
-        for (Player p : getPlayerList())
-            getPacketList().forEach(entity -> entity.kill(p, false));
-        this.players.clear();
+        for (Player p : getPlayerList()) getPacketList().forEach(entity -> entity.kill(p, false));
+        //this.players.clear();
     }
 
     @Override
@@ -564,5 +579,9 @@ public class ObjectID {
     public Optional<fEntity> getEntityByVector(Vector vector){
     	return this.packetList.stream().filter(entry -> entry.getLocation().toVector().equals(vector)).findFirst();
     }
+
+	public boolean isInChunk(int chunkX, int chunkZ) {
+		return this.chunkX == chunkX && this.chunkZ == chunkZ;
+	}
 
 }

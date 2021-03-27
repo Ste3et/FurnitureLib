@@ -21,7 +21,6 @@ import org.bukkit.entity.Player;
 
 import com.comphenix.protocol.wrappers.EnumWrappers;
 
-import de.Ste3et_C0st.FurnitureLib.Command.command;
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.ModelLoader.ModelFileLoader;
 import de.Ste3et_C0st.FurnitureLib.NBT.CraftItemStack;

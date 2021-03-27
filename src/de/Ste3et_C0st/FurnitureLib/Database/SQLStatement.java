@@ -3,6 +3,8 @@ package de.Ste3et_C0st.FurnitureLib.Database;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
@@ -35,8 +37,10 @@ public class SQLStatement {
 			String binary = Serializer.SerializeObjectID(object);
 			int x = object.getStartLocation().getBlockX() >> 4;
 	        int z = object.getStartLocation().getBlockZ() >> 4;
+	        UUID uuid = object.getUUID();
+	        String owner = Objects.nonNull(uuid) ? uuid.toString() : "";
 			StringBuilder singleStatement = new StringBuilder(
-					"(" + "'" + object.getID() + "'," + "'" + binary + "'," + "'" + object.getWorldName() + "'," + x + "," + z + "," + "'" + object.getUUID().toString() + "')"
+					"(" + "'" + object.getID() + "'," + "'" + binary + "'," + "'" + object.getWorldName() + "'," + x + "," + z + "," + "'" + owner + "')"
 			);
 			if (!iterator.hasNext()) {
 				singleStatement.append(";");

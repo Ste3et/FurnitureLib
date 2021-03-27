@@ -15,16 +15,16 @@ public class onChunkChange implements Listener {
 
     private FurnitureManager manager = FurnitureManager.getInstance();
 
-    @EventHandler
-    public void onPlayerMove(PlayerMoveEvent e) {
-        Player player = e.getPlayer();
-        
-        if (player.getHealth() <= 0.0D) return;
-        
-        int xFrom = e.getFrom().getBlockX() >> 4, xTo = e.getTo().getBlockX() >> 4;
-        int zFrom = e.getFrom().getBlockZ() >> 4, zTo = e.getTo().getBlockZ() >> 4;
-        if ((xFrom != xTo) || (zFrom != zTo)) manager.updatePlayerView(player);
-    }
+//    @EventHandler
+//    public void onPlayerMove(PlayerMoveEvent e) {
+//        Player player = e.getPlayer();
+//        
+//        if (player.getHealth() <= 0.0D) return;
+//        
+////        int xFrom = e.getFrom().getBlockX() >> 4, xTo = e.getTo().getBlockX() >> 4;
+////        int zFrom = e.getFrom().getBlockZ() >> 4, zTo = e.getTo().getBlockZ() >> 4;
+////        if ((xFrom != xTo) || (zFrom != zTo)) manager.updatePlayerView(player);
+//    }
 
     @EventHandler
     public void onChunkLoad(ChunkLoadEvent e) {

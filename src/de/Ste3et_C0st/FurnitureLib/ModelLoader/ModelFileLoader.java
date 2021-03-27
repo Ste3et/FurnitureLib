@@ -9,6 +9,9 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.Arrays;
+import java.util.concurrent.Callable;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CompletionException;
 
 public class ModelFileLoader {
 	
@@ -20,7 +23,7 @@ public class ModelFileLoader {
     }
 
     public static Project loadModelFile(File file) {
-        try (InputStream stream = new FileInputStream(file)) {
+    	try (InputStream stream = new FileInputStream(file)) {
             String name = file.getName().replace(".dModel", "").replace(".yml", "");
             FurnitureLib.debug("ModelFileLoader: Start loading -> " + name);
             Project pro = new Project(name, FurnitureLib.getInstance(), stream, PlaceableSide.TOP, ProjectLoader::new);
@@ -30,7 +33,33 @@ public class ModelFileLoader {
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return null;
+		return null;
+    }
+    
+    private static <T> CompletableFuture<T> makeFuture(final Callable<T> supplier) {
+        return CompletableFuture.supplyAsync(() -> {
+            try {
+                return supplier.call();
+            } catch (final Exception e) {
+                if (e instanceof RuntimeException) {
+                    throw (RuntimeException) e;
+                }
+                throw new CompletionException(e);
+            }
+        });
+    }
+
+    private static CompletableFuture<Void> makeFuture(final Runnable runnable) {
+        return CompletableFuture.runAsync(() -> {
+            try {
+                runnable.run();
+            } catch (final Exception e) {
+                if (e instanceof RuntimeException) {
+                    throw (RuntimeException) e;
+                }
+                throw new CompletionException(e);
+            }
+        });
     }
 
 

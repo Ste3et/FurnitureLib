@@ -171,7 +171,11 @@ public class CraftingFile {
             });
             if (!isDisable && !isKeyisKeyRegistered(key)) {
                 if (materialCount.get() > 0) {
-                    Bukkit.getServer().addRecipe(this.recipe);
+                    Bukkit.getScheduler().runTask(FurnitureLib.getInstance(), () -> {
+                    	if(Bukkit.getRecipe(key) == null) {
+                    		Bukkit.getServer().addRecipe(this.recipe);
+                    	}
+                    });
                 }
             }
             getPlaceAbleSide();
