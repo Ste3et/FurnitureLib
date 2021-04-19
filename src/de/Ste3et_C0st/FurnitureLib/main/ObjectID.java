@@ -451,10 +451,10 @@ public class ObjectID {
             if (Objects.nonNull(modelschematic)) {
                 BlockFace direction = LocationUtil.yawToFace(this.getStartLocation().getYaw()).getOppositeFace();
                 List<Location> locList = modelschematic.getBlockLocations(this.getStartLocation(), direction);
-                FurnitureLib.getInstance().getBlockManager().getList().addAll(locList);
                 this.addBlockLocations(locList);
             }
         }
+    	FurnitureLib.getInstance().getBlockManager().getList().addAll(locList);
     }
 
     public void remove(Player p) {

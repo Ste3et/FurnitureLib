@@ -1,6 +1,8 @@
 package de.Ste3et_C0st.FurnitureLib.SchematicLoader;
 
 import de.Ste3et_C0st.FurnitureLib.ModelLoader.ModelHandler;
+import de.Ste3et_C0st.FurnitureLib.ModelLoader.Block.ModelBlock;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.LocationUtil;
 import de.Ste3et_C0st.FurnitureLib.main.Furniture;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
@@ -11,6 +13,8 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+
+import java.util.HashMap;
 import java.util.Objects;
 
 public class ProjectLoader extends Furniture {
@@ -28,8 +32,10 @@ public class ProjectLoader extends Furniture {
             ModelHandler schematic = getProject().getModelschematic();
             if (Objects.nonNull(schematic)) {
                 if (id.isFromDatabase()) {
-                    BlockFace direction = FurnitureLib.getInstance().getLocationUtil().yawToFace(id.getStartLocation().getYaw()).getOppositeFace();
-                    schematic.getBlockData(id.getStartLocation(), direction).keySet().forEach(getObjID()::addBlock);
+                    BlockFace direction = LocationUtil.yawToFace(id.getStartLocation().getYaw()).getOppositeFace();
+                    HashMap<Location, ModelBlock> locationMap = schematic.getBlockData(id.getStartLocation(), direction);
+                    getObjID().getBlockList().addAll(locationMap.keySet());
+                    FurnitureLib.getInstance().getBlockManager().getList().addAll(locationMap.keySet());
                 }
             }
             this.registerInventory();

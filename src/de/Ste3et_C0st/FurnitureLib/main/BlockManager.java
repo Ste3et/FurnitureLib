@@ -3,14 +3,11 @@ package de.Ste3et_C0st.FurnitureLib.main;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockFromToEvent;
-import org.bukkit.util.Vector;
-
 import de.Ste3et_C0st.FurnitureLib.Events.PaperEvents;
 import de.Ste3et_C0st.FurnitureLib.Events.physicsEvent;
 
@@ -28,7 +25,14 @@ public class BlockManager implements Listener {
     public void addBlock(Block block) {
         if (block == null || block.getType() == null) return;
         locList.add(block.getLocation());
-        if (listener.isEmpty()) {
+    }
+    
+    public BlockManager() {
+    	this.registerBlockEvents();
+    }
+    
+    public void registerBlockEvents() {
+    	if (listener.isEmpty()) {
         	try {
         		Class<?> clazz = Class.forName("com.destroystokyo.paper.event.block.BlockDestroyEvent");
         		if(Objects.isNull(clazz)) {
@@ -89,8 +93,10 @@ public class BlockManager implements Listener {
     }
     
     public Location getPresetLocation(Location location) {
-    	String worldName = location.getWorld().getName();
-    	Vector vector = location.toVector();
-    	return this.locList.stream().filter(entry -> entry.getWorld().getName().equalsIgnoreCase(worldName)).filter(entry -> entry.toVector().equals(vector)).findFirst().orElse(null);
+    	Predicate<Location> predicate = entry -> entry.getWorld().getName().equals(location.getWorld().getName()) && 
+    	location.getBlockX() == entry.getBlockX() && 
+    	location.getBlockY() == entry.getBlockY() && 
+    	location.getBlockZ() == entry.getBlockZ();
+    	return this.locList.stream().filter(predicate).findFirst().orElse(null);
     }
 }

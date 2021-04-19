@@ -464,11 +464,15 @@ public class FurnitureLib extends JavaPlugin {
 		if (getConfig().getBoolean("config.UseMetrics"))
 			new Metrics(this, BSTATS_ID);
 		
-		this.pManager.loadProjectFiles();
 		this.sqlManager = new SQLManager(instance);
+		
 		this.inventoryManager = new InventoryManager();
 		autoConverter.databaseConverter(getServer().getConsoleSender(),
 				getConfig().getString("config.fileConverter.database_table", ""));
+		this.pManager.loadProjectFiles();
+		
+		this.getFurnitureManager().getObjectList().stream().forEach(ObjectID::registerBlocks);
+		
 		new FurnitureEvents(instance, manager);
 		getServer().getPluginManager().registerEvents(new onCrafting(), getInstance());
 		getServer().getPluginManager().registerEvents(new onBlockDispense(), getInstance());

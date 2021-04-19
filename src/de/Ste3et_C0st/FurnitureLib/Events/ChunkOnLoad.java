@@ -175,10 +175,10 @@ public class ChunkOnLoad implements Listener {
         if (Action.RIGHT_CLICK_BLOCK == e.getAction()) {
             final Block b = e.getClickedBlock();
             if (b == null) return;
+            final Player player = e.getPlayer();
             if (!FurnitureLib.getInstance().getBlockManager().contains(b.getLocation())) return;
             if(EquipmentSlot.HAND != e.getHand()) return;
             final Location loc = b.getLocation();
-            final Player player = e.getPlayer();
             loc.setYaw(FurnitureLib.getInstance().getLocationUtil().FaceToYaw(FurnitureLib.getInstance().getLocationUtil().yawToFace(player.getLocation().getYaw())));
             Location blockLocation = b.getLocation();
             boolean bool = !b.getType().equals(Material.FLOWER_POT);
