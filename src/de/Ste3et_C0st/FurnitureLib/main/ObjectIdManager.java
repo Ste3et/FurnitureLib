@@ -1,7 +1,6 @@
 package de.Ste3et_C0st.FurnitureLib.main;
 
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -86,12 +85,11 @@ public class ObjectIdManager {
 		return getObjectStreamFromWorld(worldName).collect(Collectors.toList());
 	}
 
-//	public void updatePlayerView(Player player) {
-//		if(player.isOnline()) {
-//			//getAllExistObjectIDs().filter(entry -> entry.getPlayerList().contains(player) || entry.canSee(player)).forEach(entry -> entry.updatePlayerView(player));
-//			getAllExistObjectIDs().filter(entry -> entry.getPlayerList().contains(player)).forEach(entry -> entry.updatePlayerView(player));
-//		}
-//	}
+	public void updatePlayerViewWithRange(Player player) {
+		if(player.isOnline()) {
+			getAllExistObjectIDs().forEach(entry -> entry.updatePlayerViewWithRange(player));
+		}
+	}
 	
 	public void updatePlayerView(Player player, int chunkX, int chunkZ) {
 		getAllExistObjectIDs().filter(entry -> entry.isInChunk(chunkX, chunkZ)).forEach(entry -> entry.updatePlayerView(player));
@@ -209,55 +207,6 @@ public class ObjectIdManager {
 	public void sendAll() {
         this.getAllExistObjectIDs().forEach(this::send);
     }
-	
-//	public void updateModels(Player player) {
-//		if(Objects.nonNull(player)) {
-//			UUID uuid = player.getUniqueId();
-//			if (FurnitureManager.getInstance().getIgnoreList().contains(uuid)) return;
-//			if(player.isOnline()) {
-//				Set<ObjectID> objSet = getAllInRangeByPlayer(player);
-//				Set<ObjectID> workingSet = this.playerSet.getOrDefault(uuid, new HashSet<>());
-//				Set<ObjectID> removedSend = new HashSet<>();
-//				
-//				Location loaction = player.getLocation();
-//				workingSet.stream().filter(entry -> entry.isInRange(loaction) == false).forEach(entry -> {
-//					entry.removeArmorStands(player);
-//					removedSend.add(entry);
-//				});
-//				
-//				workingSet.removeAll(removedSend);
-//				
-//				objSet.stream().filter(entry -> workingSet.contains(entry) == false).forEach(entry -> {
-//					entry.sendArmorStands(player);
-//					workingSet.add(entry);
-//				});
-//				
-//				this.playerSet.put(uuid, workingSet);
-//			}else {
-//				this.playerSet.remove(uuid);
-//			}
-//		}
-//	}
-//	
-//	public void updateModels(Player player, ObjectID objectID) {
-//		if(Objects.nonNull(player) && Objects.nonNull(objectID)) {
-//			UUID uuid = player.getUniqueId();
-//			if(player.isOnline()) {
-//				Set<ObjectID> workingSet = this.playerSet.getOrDefault(uuid, new HashSet<>());
-//				if(objectID.canSee(player)) {
-//					objectID.sendArmorStands(player);
-//					
-//					workingSet.add(objectID);
-//					this.playerSet.put(uuid, workingSet);
-//				}else if(workingSet.contains(objectID)) {
-//					objectID.removeArmorStands(player);
-//					
-//					workingSet.remove(objectID);
-//					this.playerSet.put(uuid, workingSet);
-//				}
-//			}
-//		}
-//	}
 	
 	public Set<ObjectID> getAllInRangeByPlayer(Player player) {
 		return getAllInRangeByLoc(player.getLocation());

@@ -9,6 +9,7 @@ import de.Ste3et_C0st.FurnitureLib.NBT.CraftItemStack;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.DefaultKey;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.EntityID;
+import de.Ste3et_C0st.FurnitureLib.main.FurnitureConfig;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type;
@@ -34,6 +35,8 @@ public abstract class fEntity extends fSerializer implements Cloneable {
     private final int entityID = EntityID.nextEntityId();
     private final UUID entityUUID = UUID.randomUUID();
     private final PacketContainer mountPacketContainer = new PacketContainer(PacketType.Play.Server.MOUNT);
+    private final PacketContainer destroy = new PacketContainer(PacketType.Play.Server.ENTITY_DESTROY);
+    
     private int entityTypeID;
     private double positionX, positionY, positionZ;
     private byte yaw, pitch;
@@ -217,7 +220,7 @@ public abstract class fEntity extends fSerializer implements Cloneable {
 
     public void setPassenger(Entity e) {
         setPassenger(Collections.singletonList(e.getEntityId()));
-        if (!FurnitureLib.getInstance().isRotateOnSitEnable()) {
+        if (!FurnitureConfig.getFurnitureConfig().isRotateOnSitEnable()) {
             return;
         }
         if (e.getType().equals(EntityType.PLAYER)) {
@@ -240,7 +243,7 @@ public abstract class fEntity extends fSerializer implements Cloneable {
     }
 
     public void setPassenger(final List<Integer> entityIDs) {
-        if (!FurnitureLib.getInstance().canSitting()) {
+        if (!FurnitureConfig.getFurnitureConfig().canSitting()) {
             return;
         }
         if (entityIDs == null) {return;}
@@ -268,7 +271,7 @@ public abstract class fEntity extends fSerializer implements Cloneable {
     }
 
     public fEntity setGlowing(boolean glowing) {
-        if (!FurnitureLib.getInstance().isGlowing()) glowing = false;
+        if (!FurnitureConfig.getFurnitureConfig().isGlowing()) glowing = false;
         setBitMask(glowing, 0, 6);
         this.glowing.setValue(Boolean.valueOf(glowing));
         return this;
@@ -411,9 +414,7 @@ public abstract class fEntity extends fSerializer implements Cloneable {
     }
 
     public void kill(Player p, boolean b) {
-        if (!getObjID().getPlayerList().contains(p)) return;
-        PacketContainer destroy = new PacketContainer(PacketType.Play.Server.ENTITY_DESTROY);
-        destroy.getIntegerArrays().write(0, new int[]{getEntityID()});
+        this.destroy.getIntegerArrays().write(0, new int[]{getEntityID()});
         try {
             getManager().sendServerPacket(p, destroy);
         } catch (Exception e) {

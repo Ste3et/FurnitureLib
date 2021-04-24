@@ -8,8 +8,9 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockFromToEvent;
-import de.Ste3et_C0st.FurnitureLib.Events.PaperEvents;
-import de.Ste3et_C0st.FurnitureLib.Events.physicsEvent;
+
+import de.Ste3et_C0st.FurnitureLib.Listener.PaperEvents;
+import de.Ste3et_C0st.FurnitureLib.Listener.physicsEvent;
 
 import java.util.ArrayList;
 import java.util.HashSet;

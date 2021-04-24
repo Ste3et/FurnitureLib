@@ -3,6 +3,7 @@ package de.Ste3et_C0st.FurnitureLib.Utilitis;
 import de.Ste3et_C0st.FurnitureLib.Crafting.CraftingFile;
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.main.Furniture;
+import de.Ste3et_C0st.FurnitureLib.main.FurnitureConfig;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.Type;
 import org.bukkit.Bukkit;
@@ -148,7 +149,7 @@ public class CraftingInv implements Listener {
                     file.setFileConfiguration(conf);
                     file.loadCrafting(file.getFileName());
                 }
-                e.getPlayer().sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.CraftingEdit"));
+                e.getPlayer().sendMessage(LanguageManager.getInstance().getString("message.CraftingEdit"));
             }
             e.getInventory().clear();
             playerList.remove(e.getPlayer());

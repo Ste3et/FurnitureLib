@@ -218,8 +218,8 @@ public class listCommand extends iCommand {
 		if (!componentList.isEmpty()) {
 			new objectToSide(componentList, sender, side.get(), "/furniture " + arguments, itemsEachSide, (int) maxPages);
 		}else {
-			sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.SideNotFound"));
-			sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.SideNavigation").replaceAll("#MAX#", maxPages + ""));
+			sender.sendMessage(getLHandler().getString("message.SideNotFound"));
+			sender.sendMessage(getLHandler().getString("message.SideNavigation").replaceAll("#MAX#", maxPages + ""));
             return;
 		}
 	}

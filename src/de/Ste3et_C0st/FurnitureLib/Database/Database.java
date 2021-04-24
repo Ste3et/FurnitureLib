@@ -6,6 +6,7 @@ import com.zaxxer.hikari.HikariDataSource;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.ExecuteTimer;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.callbacks.CallbackObjectIDs;
 import de.Ste3et_C0st.FurnitureLib.main.ChunkData;
+import de.Ste3et_C0st.FurnitureLib.main.FurnitureConfig;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
@@ -147,7 +148,7 @@ public abstract class Database {
     public HashSet<ObjectID> loadWorld(SQLAction action, World bukkitWorld) {
     	HashSet<ObjectID> idList = new HashSet<ObjectID>();
     	String worldName = bukkitWorld.getName();
-    	if(!FurnitureLib.getInstance().isWorldIgnored(worldName)) {
+    	if(!FurnitureConfig.getFurnitureConfig().isWorldIgnored(worldName)) {
     		 ExecuteTimer timer = new ExecuteTimer();
     	        UUID worldUUID = bukkitWorld.getUID();
     	        AtomicInteger atomic = new AtomicInteger(0);

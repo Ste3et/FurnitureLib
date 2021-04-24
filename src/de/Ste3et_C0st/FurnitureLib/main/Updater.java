@@ -39,7 +39,7 @@ public class Updater {
     }
 
     private boolean isUpdateAvailable() {
-        if (FurnitureLib.getInstance().isUpdate()) {
+        if (FurnitureConfig.getFurnitureConfig().isUpdate()) {
 			return !currentVersion.equalsIgnoreCase(newVersion);
         } else {
             return false;
@@ -67,7 +67,7 @@ public class Updater {
     }
 
     private String getLatestVersionOnSpigot() {
-        if (FurnitureLib.getInstance().isUpdate()) {
+        if (FurnitureConfig.getFurnitureConfig().isUpdate()) {
             try {
                 URL website = new URL("https://api.spiget.org/v2/resources/9368/versions/latest");
                 URLConnection connection = website.openConnection();

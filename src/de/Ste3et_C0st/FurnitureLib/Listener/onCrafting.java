@@ -1,4 +1,4 @@
-package de.Ste3et_C0st.FurnitureLib.Events.internal;
+package de.Ste3et_C0st.FurnitureLib.Listener;
 
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;

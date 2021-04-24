@@ -1,12 +1,16 @@
-package de.Ste3et_C0st.FurnitureLib.Events;
+package de.Ste3et_C0st.FurnitureLib.Listener;
 
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
+import de.Ste3et_C0st.FurnitureLib.Events.FurnitureItemEvent;
 import de.Ste3et_C0st.FurnitureLib.SchematicLoader.Events.ProjectBreakEvent;
 import de.Ste3et_C0st.FurnitureLib.SchematicLoader.Events.ProjectClickEvent;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.HiddenStringUtils;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.LanguageManager;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.LocationUtil;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.StringTranslator;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.callbacks.CallbackBoolean;
 import de.Ste3et_C0st.FurnitureLib.main.Furniture;
+import de.Ste3et_C0st.FurnitureLib.main.FurnitureConfig;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
@@ -97,8 +101,8 @@ public class ChunkOnLoad implements Listener {
             if (EquipmentSlot.HAND != e.getHand()) return;
             final Player player = e.getPlayer();
             
-            if(FurnitureLib.getInstance().isWorldIgnored(e.getPlayer().getWorld().getName())) {
-            	player.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.IgnoredWorld", new StringTranslator("%WORLD%", e.getPlayer().getWorld().getName())));
+            if(FurnitureConfig.getFurnitureConfig().isWorldIgnored(e.getPlayer().getWorld().getName())) {
+            	player.sendMessage(LanguageManager.getInstance().getString("message.IgnoredWorld", new StringTranslator("%WORLD%", e.getPlayer().getWorld().getName())));
             	return;
             }
             
@@ -106,7 +110,7 @@ public class ChunkOnLoad implements Listener {
             final BlockFace face = e.getBlockFace();
             final Location loc = b.getLocation();
             
-            loc.setYaw(FurnitureLib.getInstance().getLocationUtil().FaceToYaw(FurnitureLib.getInstance().getLocationUtil().yawToFace(player.getLocation().getYaw())));
+            loc.setYaw(FurnitureLib.getInstance().getLocationUtil().FaceToYaw(LocationUtil.yawToFace(player.getLocation().getYaw())));
 
 			FurnitureItemEvent itemEvent = new FurnitureItemEvent(player, stack, pro, loc, face);
 			FurnitureLib.debug("FurnitureLib -> Place Furniture Start (" + pro.getName() + ").");
@@ -123,7 +127,7 @@ public class ChunkOnLoad implements Listener {
 								itemEvent.debugTime("FurnitureLib -> Model " + pro.getName() + " is Placeable");
 								spawn(itemEvent);
 							} else {
-								player.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.NotEnoughSpace"));
+								player.sendMessage(LanguageManager.getInstance().getString("message.NotEnoughSpace"));
 							}
 						} else {
 							FurnitureLib.debug("FurnitureLib -> Can't place model [no Modelschematic (" + pro.getName() + ")]");
@@ -179,14 +183,14 @@ public class ChunkOnLoad implements Listener {
             if (!FurnitureLib.getInstance().getBlockManager().contains(b.getLocation())) return;
             if(EquipmentSlot.HAND != e.getHand()) return;
             final Location loc = b.getLocation();
-            loc.setYaw(FurnitureLib.getInstance().getLocationUtil().FaceToYaw(FurnitureLib.getInstance().getLocationUtil().yawToFace(player.getLocation().getYaw())));
+            loc.setYaw(FurnitureLib.getInstance().getLocationUtil().FaceToYaw(LocationUtil.yawToFace(player.getLocation().getYaw())));
             Location blockLocation = b.getLocation();
             boolean bool = !b.getType().equals(Material.FLOWER_POT);
             final ObjectID objID = FurnitureManager.getInstance().getObjectList().stream().filter(obj -> obj.containsBlock(blockLocation)).findFirst().orElse(null);
             if (Objects.isNull(objID)) return;
             if (objID.isPrivate()) return;
             if (bool && SQLAction.REMOVE != objID.getSQLAction()) {
-                if ((player.getGameMode() == GameMode.CREATIVE) && !FurnitureLib.getInstance().creativeInteract()) {
+                if ((player.getGameMode() == GameMode.CREATIVE) && !FurnitureConfig.getFurnitureConfig().creativeInteract()) {
                     if (!FurnitureLib.getInstance().getPermission().hasPerm(player, "furniture.bypass.creative.interact")) {
                     	e.setCancelled(true);
                         return;
@@ -205,7 +209,7 @@ public class ChunkOnLoad implements Listener {
                     e.setCancelled(true);
                     return;
                 } else {
-                    e.getPlayer().sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.FurnitureToggleEvent"));
+                    e.getPlayer().sendMessage(LanguageManager.getInstance().getString("message.FurnitureToggleEvent"));
                     e.setCancelled(true);
                     return;
                 }
@@ -265,7 +269,7 @@ public class ChunkOnLoad implements Listener {
                         }
                         return;
                     } else {
-                        event.getPlayer().sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.FurnitureToggleEvent"));
+                        event.getPlayer().sendMessage(LanguageManager.getInstance().getString("message.FurnitureToggleEvent"));
                     }
                 }
             }
@@ -297,11 +301,11 @@ public class ChunkOnLoad implements Listener {
         e.debugTime("FurnitureLib -> spawn Start " + e.getObjID().getProject());
         ObjectID obj = e.getObjID();
         if (FurnitureLib.getInstance().getFurnitureManager().getIgnoreList().contains(e.getPlayer().getUniqueId())) {
-            e.getPlayer().sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.FurnitureToggleEvent"));
+            e.getPlayer().sendMessage(LanguageManager.getInstance().getString("message.FurnitureToggleEvent"));
             return;
         }
         if (FurnitureManager.getInstance().furnitureAlreadyExistOnBlock(obj.getStartLocation().getBlock())) {
-            e.getPlayer().sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.FurnitureOnThisPlace"));
+            e.getPlayer().sendMessage(LanguageManager.getInstance().getString("message.FurnitureOnThisPlace"));
             return;
         }
         

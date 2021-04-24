@@ -1,6 +1,8 @@
 package de.Ste3et_C0st.FurnitureLib.Events;
 
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.LanguageManager;
+import de.Ste3et_C0st.FurnitureLib.main.FurnitureConfig;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 
@@ -105,7 +107,7 @@ public final class FurnitureItemEvent extends Event implements Cancellable {
         if (p == null || obj == null || getProject() == null) return true;
         BlockFace face = isOnTheRightSide();
         if (face == null) {
-            p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.NotONThisSide"));
+            p.sendMessage(LanguageManager.getInstance().getString("message.NotONThisSide"));
             return false;
         }
         this.debugTime("FurnitureLib {FurnitureItemEvent} -> Start canBuild check");
@@ -133,20 +135,20 @@ public final class FurnitureItemEvent extends Event implements Cancellable {
     }
 
     public boolean sendAnnouncer() {
-        return FurnitureLib.getInstance().getLimitManager().canPlace(p, obj);
+        return FurnitureConfig.getFurnitureConfig().getLimitManager().canPlace(p, obj);
     }
 
     public boolean isTimeToPlace() {
-        if (FurnitureLib.getInstance().isSpamPlace()) {
+        if (FurnitureConfig.getFurnitureConfig().isSpamPlace()) {
             if (!FurnitureLib.getInstance().getPermission().hasPerm(getPlayer(), "furniture.admin") && !FurnitureLib.getInstance().getPermission().hasPerm(getPlayer(), "furniture.bypass.placeSpam")) {
                 long current = System.currentTimeMillis();
                 if (FurnitureLib.getInstance().getTimePlace().containsKey(getPlayer().getUniqueId())) {
                     long since = FurnitureLib.getInstance().getTimePlace().get(getPlayer().getUniqueId());
                     long newCurrent = current - since;
-                    long dif = FurnitureLib.getInstance().getPlaceTime();
+                    long dif = FurnitureConfig.getFurnitureConfig().getPlaceTime();
                     if (newCurrent < dif) {
-                        String str = FurnitureLib.getInstance().getTimeDif(since, dif, FurnitureLib.getInstance().getTimePattern());
-                        String msg = FurnitureLib.getInstance().getLangManager().getString("message.FurnitureToFastPlace");
+                        String str = FurnitureLib.getInstance().getTimeDif(since, dif, FurnitureConfig.getFurnitureConfig().getTimePattern());
+                        String msg = LanguageManager.getInstance().getString("message.FurnitureToFastPlace");
                         msg = msg.replace("#TIME#", str);
                         getPlayer().sendMessage(msg);
                         return false;
@@ -196,7 +198,7 @@ public final class FurnitureItemEvent extends Event implements Cancellable {
     }
 
     public void removeItem() {
-        Boolean useGameMode = FurnitureLib.getInstance().useGamemode();
+        Boolean useGameMode = FurnitureConfig.getFurnitureConfig().useGamemode();
         if (useGameMode && p.getGameMode().equals(GameMode.CREATIVE)) {
             return;
         }

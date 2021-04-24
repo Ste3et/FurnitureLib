@@ -19,11 +19,11 @@ public class recipeCommand extends iCommand {
         if (args.length > 1) {
             pro = getProject(args[1]);
             if (pro == null) {
-                sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.ProjectNotFound").replaceAll("#PROJECT#", args[1]));
+                sender.sendMessage(getLHandler().getString("message.ProjectNotFound").replaceAll("#PROJECT#", args[1]));
                 return;
             }
         } else {
-            sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.WrongArgument"));
+            sender.sendMessage(getLHandler().getString("message.WrongArgument"));
             return;
         }
 
@@ -35,7 +35,7 @@ public class recipeCommand extends iCommand {
                 FurnitureLib.getInstance().getCraftingInv().openCrafting((Player) sender, pro, false);
                 return;
             } else {
-                sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.WrongArgument"));
+                sender.sendMessage(getLHandler().getString("message.WrongArgument"));
                 return;
             }
         } else if (args.length == 3) {
@@ -44,7 +44,7 @@ public class recipeCommand extends iCommand {
                     FurnitureLib.getInstance().getCraftingInv().openCrafting(Bukkit.getPlayer(args[2]), pro, false);
                     return;
                 } else {
-                    String s = FurnitureLib.getInstance().getLangManager().getString("message.PlayerNotOnline");
+                    String s = getLHandler().getString("message.PlayerNotOnline");
                     s = s.replace("#PLAYER#", args[2]);
                     sender.sendMessage(s);
                     return;
@@ -54,7 +54,7 @@ public class recipeCommand extends iCommand {
                     if (!hasCommandPermission(sender, ".edit")) return;
                     pro = getProject(args[1]);
                     if (pro == null) {
-                        sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.ProjectNotFound").replaceAll("#PROJECT#", args[1]));
+                        sender.sendMessage(getLHandler().getString("message.ProjectNotFound").replaceAll("#PROJECT#", args[1]));
                         return;
                     }
                     FurnitureLib.getInstance().getCraftingInv().openCrafting((Player) sender, pro, true);
@@ -63,20 +63,20 @@ public class recipeCommand extends iCommand {
                     if (!hasCommandPermission(sender, ".remove")) return;
                     pro = getProject(args[1]);
                     if (pro == null) {
-                        sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.ProjectNotFound").replaceAll("#PROJECT#", args[1]));
+                        sender.sendMessage(getLHandler().getString("message.ProjectNotFound").replaceAll("#PROJECT#", args[1]));
                         return;
                     }
                     pro.getCraftingFile().removeCrafting(pro.getCraftingFile().getItemstack());
                     //pro.getCraftingFile().setCraftingDisabled(true);
-                    sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.CraftingRemove"));
+                    sender.sendMessage(getLHandler().getString("message.CraftingRemove"));
                     return;
                 } else {
-                    sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.WrongArgument"));
+                    sender.sendMessage(getLHandler().getString("message.WrongArgument"));
                     return;
                 }
             }
         } else {
-            sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.WrongArgument"));
+            sender.sendMessage(getLHandler().getString("message.WrongArgument"));
             return;
         }
     }

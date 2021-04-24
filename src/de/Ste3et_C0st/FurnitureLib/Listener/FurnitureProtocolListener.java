@@ -1,4 +1,4 @@
-package de.Ste3et_C0st.FurnitureLib.Events;
+package de.Ste3et_C0st.FurnitureLib.Listener;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
@@ -8,6 +8,7 @@ import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.wrappers.EnumWrappers.EntityUseAction;
 import de.Ste3et_C0st.FurnitureLib.SchematicLoader.Events.ProjectBreakEvent;
 import de.Ste3et_C0st.FurnitureLib.SchematicLoader.Events.ProjectClickEvent;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.LanguageManager;
 import de.Ste3et_C0st.FurnitureLib.main.Furniture;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
@@ -22,9 +23,9 @@ import org.bukkit.entity.Player;
 import java.util.List;
 import java.util.Objects;
 
-public class FurnitureEvents {
+public class FurnitureProtocolListener {
 
-    public FurnitureEvents(FurnitureLib instance, final FurnitureManager manager) {
+    public FurnitureProtocolListener(FurnitureLib instance, final FurnitureManager manager) {
         ProtocolLibrary.getProtocolManager().addPacketListener(
                 new PacketAdapter(instance, ListenerPriority.NORMAL, PacketType.Play.Client.USE_ENTITY) {
                     public void onPacketReceiving(PacketEvent event) {
@@ -64,7 +65,7 @@ public class FurnitureEvents {
                                                 }
                                             });
                                         } else {
-                                            event.getPlayer().sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.FurnitureToggleEvent"));
+                                            event.getPlayer().sendMessage(LanguageManager.getInstance().getString("message.FurnitureToggleEvent"));
                                         }
                                         break;
                                     case INTERACT_AT:
@@ -83,7 +84,7 @@ public class FurnitureEvents {
                                                 }
                                             });
                                         } else {
-                                            event.getPlayer().sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.FurnitureToggleEvent"));
+                                            event.getPlayer().sendMessage(LanguageManager.getInstance().getString("message.FurnitureToggleEvent"));
                                         }
                                         break;
                                     default:
@@ -111,20 +112,6 @@ public class FurnitureEvents {
                             }
                         }
                     }
-                });
-        
-        ProtocolLibrary.getProtocolManager().addPacketListener(
-        		new PacketAdapter(instance, ListenerPriority.HIGHEST, PacketType.Play.Server.MAP_CHUNK) {
-        			public void onPacketSending(PacketEvent event) {
-        				int chunkX = event.getPacket().getIntegers().read(0);
-        				int chunkZ = event.getPacket().getIntegers().read(1);
-        				final Player player = event.getPlayer();
-        				Bukkit.getScheduler().runTask(instance, () -> {
-        					FurnitureManager.getInstance().updatePlayerView(player, chunkX, chunkZ);
-        				});
-        			}
-        		}
-        );
-        		
+                });	
     }
 }

@@ -20,6 +20,7 @@ import org.bukkit.plugin.Plugin;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
+import de.Ste3et_C0st.FurnitureLib.Utilitis.LanguageManager;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.Wrapper.ChatComponentWrapper;
 import de.Ste3et_C0st.FurnitureLib.main.LightAPI.iLightAPI;
 import de.Ste3et_C0st.FurnitureLib.main.Type.ProtocolFields;
@@ -75,17 +76,18 @@ public class DumpHandler {
 		packetInfos.addProperty("furnitureModels", FurnitureManager.getInstance().getProjects().size());
 		packetInfos.addProperty("furnitureObjects", FurnitureManager.getInstance().getObjectList().size());
 		packetInfos.addProperty("armorStands", armorStands.get() + "");
-		packetInfos.addProperty("viewDistanceFurniture", FurnitureLib.getInstance().getViewDistance());
+		packetInfos.addProperty("viewDistanceFurniture", FurnitureConfig.getFurnitureConfig().getViewDistance());
 		packetInfos.addProperty("viewDistanceServer", Bukkit.getServer().getViewDistance());
-		packetInfos.addProperty("syncLoading", FurnitureLib.getInstance().isSync());
-		packetInfos.addProperty("purgeTime", FurnitureLib.getInstance().getPurgeTime());
-		packetInfos.addProperty("autoPure", FurnitureLib.getInstance().isAutoPurge());
-		packetInfos.addProperty("useGamemode", FurnitureLib.getInstance().useGamemode());
-		packetInfos.addProperty("language", FurnitureLib.getInstance().getLangManager().getLanguage());
-		packetInfos.addProperty("limitConfig", FurnitureLib.getInstance().getLimitManager().getType().name());
-		packetInfos.addProperty("regionMemberAccess", FurnitureLib.getInstance().haveRegionMemberAccess());
-		packetInfos.addProperty("eventType", FurnitureLib.getInstance().getDefaultEventType().name());
-		packetInfos.addProperty("publicType", FurnitureLib.getInstance().getDefaultPublicType().name());
+		packetInfos.addProperty("syncLoading", FurnitureConfig.getFurnitureConfig().isSync());
+		packetInfos.addProperty("PacketRenderMethod", FurnitureConfig.getFurnitureConfig().isRenderPacketMethode());
+		packetInfos.addProperty("purgeTime", FurnitureConfig.getFurnitureConfig().getPurgeTime());
+		packetInfos.addProperty("autoPure", FurnitureConfig.getFurnitureConfig().isAutoPurge());
+		packetInfos.addProperty("useGamemode", FurnitureConfig.getFurnitureConfig().useGamemode());
+		packetInfos.addProperty("language", LanguageManager.getInstance().getLanguage());
+		packetInfos.addProperty("limitConfig", FurnitureConfig.getFurnitureConfig().getLimitManager().getType().name());
+		packetInfos.addProperty("regionMemberAccess", FurnitureConfig.getFurnitureConfig().haveRegionMemberAccess());
+		packetInfos.addProperty("eventType", FurnitureConfig.getFurnitureConfig().getDefaultEventType().name());
+		packetInfos.addProperty("publicType", FurnitureConfig.getFurnitureConfig().getDefaultPublicType().name());
 		packetInfos.addProperty("databaseType", FurnitureLib.getInstance().getSQLManager().getDatabase().getType().name());
 		packetInfos.addProperty("protectionLib-hook", FurnitureLib.getInstance().getPermManager().useProtectionLib());
 		

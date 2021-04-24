@@ -1,5 +1,6 @@
 package de.Ste3et_C0st.FurnitureLib.Utilitis;
 
+import de.Ste3et_C0st.FurnitureLib.main.FurnitureConfig;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
@@ -50,7 +51,7 @@ public class ColorUtil {
                     DyeColor now = DyeColor.getDyeToReplace(packet.getInventory().getHelmet().getType());
                     if (!now.equals(start)) {
                         packet.getInventory().setHelmet(start.applyToItemStack(packet.getInventory().getHelmet()));
-                        if (!p.getGameMode().equals(GameMode.CREATIVE) || !lib.useGamemode()) {
+                        if (!p.getGameMode().equals(GameMode.CREATIVE) || !FurnitureConfig.getFurnitureConfig().useGamemode()) {
                             j--;
                             if (j == 0) {
                                 Amount.getAndDecrement();
@@ -70,7 +71,7 @@ public class ColorUtil {
                         ItemStack stack = entity.getInventory().getHelmet().clone();
                         stack.setDurability(color);
                         entity.getInventory().setHelmet(stack);
-                        if (!p.getGameMode().equals(GameMode.CREATIVE) || !lib.useGamemode()) {
+                        if (!p.getGameMode().equals(GameMode.CREATIVE) || !FurnitureConfig.getFurnitureConfig().useGamemode()) {
                             Amount.getAndDecrement();
                         }
                     }
@@ -87,7 +88,7 @@ public class ColorUtil {
 
     private void removeIS(ObjectID obj, Player p, int Amount) {
         manager.updateFurniture(obj);
-        if (p.getGameMode().equals(GameMode.CREATIVE) && FurnitureLib.getInstance().useGamemode()) return;
+        if (p.getGameMode().equals(GameMode.CREATIVE) && FurnitureConfig.getFurnitureConfig().useGamemode()) return;
         int i = p.getInventory().getHeldItemSlot();
         ItemStack item = p.getInventory().getItemInMainHand();
         item.setAmount(Amount);

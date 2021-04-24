@@ -1,6 +1,5 @@
-package de.Ste3et_C0st.FurnitureLib.Events.internal;
+package de.Ste3et_C0st.FurnitureLib.Listener;
 
-import de.Ste3et_C0st.FurnitureLib.Events.ChunkOnLoad;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockDispenseEvent;

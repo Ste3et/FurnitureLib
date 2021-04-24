@@ -41,6 +41,7 @@ config:
   DisableSitting: false
   ignoredWorlds: []
   viewRange: 10
+  packetRenderMethode: false
   limit:
     limitConfig: "PLAYER"
     #You can give your player the permissions furniture.globallimit.# | furniture.globallimit.125 -> let the player can place 125 furnitures objects it override the limitconfig

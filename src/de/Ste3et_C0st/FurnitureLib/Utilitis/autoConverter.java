@@ -4,6 +4,7 @@ import com.comphenix.protocol.wrappers.EnumWrappers;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTCompressedStreamTools;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
 import de.Ste3et_C0st.FurnitureLib.main.ChunkData;
+import de.Ste3et_C0st.FurnitureLib.main.FurnitureConfig;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
 import de.Ste3et_C0st.FurnitureLib.main.Type.PlaceableSide;
@@ -135,7 +136,7 @@ public class autoConverter {
 
     public static void databaseConverter(CommandSender sender, String table) {
         if (!FurnitureLib.getInstance().isAutoFileUpdater()) {
-            if (FurnitureLib.getInstance().isSync()) {
+            if (FurnitureConfig.getFurnitureConfig().isSync()) {
                 FurnitureLib.getInstance().getSQLManager().loadALL();
             } else {
                 Bukkit.getScheduler().runTaskLater(FurnitureLib.getInstance(), () -> {

@@ -2,6 +2,8 @@ package de.Ste3et_C0st.FurnitureLib.main.Protection;
 
 import de.Ste3et_C0st.FurnitureLib.Events.FurnitureRegionClear;
 import de.Ste3et_C0st.FurnitureLib.ModelLoader.Block.ModelBlockAquaticUpdate;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.LanguageManager;
+import de.Ste3et_C0st.FurnitureLib.main.FurnitureConfig;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.EventType;
@@ -132,7 +134,7 @@ public class ProtectionManager {
             	}
         	}
         	if(sendMessage) {
-        		 p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.NoPermissions"));
+        		 p.sendMessage(LanguageManager.getInstance().getString("message.NoPermissions"));
         	}
         	return false;
         }
@@ -152,7 +154,7 @@ public class ProtectionManager {
             b = isEventType(id, type);
         }
         if (!b && sendMessage) {
-            p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.NoPermissions"));
+            p.sendMessage(LanguageManager.getInstance().getString("message.NoPermissions"));
         }
         return b;
     }
@@ -174,7 +176,7 @@ public class ProtectionManager {
             }
         }
 
-        if (memberOfRegion && ownerOfRegion && FurnitureLib.getInstance().haveRegionMemberAccess()) {
+        if (memberOfRegion && ownerOfRegion && FurnitureConfig.getFurnitureConfig().haveRegionMemberAccess()) {
             if (!p.getUniqueId().equals(id.getUUID())) {
                 return true;
             }

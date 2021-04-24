@@ -2,8 +2,10 @@ package de.Ste3et_C0st.FurnitureLib.SchematicLoader;
 
 import de.Ste3et_C0st.FurnitureLib.ModelLoader.ModelHandler;
 import de.Ste3et_C0st.FurnitureLib.ModelLoader.Block.ModelBlock;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.LanguageManager;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.LocationUtil;
 import de.Ste3et_C0st.FurnitureLib.main.Furniture;
+import de.Ste3et_C0st.FurnitureLib.main.FurnitureConfig;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
@@ -85,7 +87,7 @@ public class ProjectLoader extends Furniture {
             }
         } else if (function) {
             if (!runPublicFunctions(player)) {
-                player.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.NoPermissions"));
+                player.sendMessage(LanguageManager.getInstance().getString("message.NoPermissions"));
             }
             return;
         }

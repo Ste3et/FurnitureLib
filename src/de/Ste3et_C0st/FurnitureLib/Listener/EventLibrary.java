@@ -1,4 +1,4 @@
-package de.Ste3et_C0st.FurnitureLib.Events.internal;
+package de.Ste3et_C0st.FurnitureLib.Listener;
 
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
@@ -11,8 +11,13 @@ public abstract class EventLibrary {
         this.manager = FurnitureLib.getInstance().getFurnitureManager();
     }
 
+    @Deprecated
     public FurnitureManager getFurnitureMgr() {
-        return this.manager;
+        return this.getFurnitureManager();
     }
 
+    public FurnitureManager getFurnitureManager() {
+        return this.manager;
+    }
+    
 }

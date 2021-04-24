@@ -246,7 +246,7 @@ public class downloadCommand extends iCommand{
 				Project projObj = ModelFileLoader.loadModelFile(new File("plugins/"+FurnitureLib.getInstance().getName()+"/Crafting/" + project + ".yml"));
 				if(Objects.nonNull(projObj) && projObj.haveModelSchematic()) {
 					if(!projObj.getModelschematic().isDestroyAble()) {
-						sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("command.download.noHitbox"));
+						sender.sendMessage(getLHandler().getString("command.download.noHitbox"));
 					}
 				}
 			});
@@ -366,7 +366,7 @@ public class downloadCommand extends iCommand{
 			Project projObj = ModelFileLoader.loadModelFile(new File("plugins/"+FurnitureLib.getInstance().getName()+"/models/" + project + ".dModel"));
 			if(Objects.nonNull(projObj) && projObj.haveModelSchematic()) {
 				if(!projObj.getModelschematic().isDestroyAble()) {
-					sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("command.download.noHitbox"));
+					sender.sendMessage(getLHandler().getString("command.download.noHitbox"));
 				}
 			}
 		});
@@ -479,7 +479,7 @@ public class downloadCommand extends iCommand{
 		Project projObj = ModelFileLoader.loadModelFile(new File(filePath));
 		if(Objects.nonNull(projObj) && projObj.haveModelSchematic()) {
 			if(!projObj.getModelschematic().isDestroyAble()) {
-				sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("command.download.noHitbox"));
+				sender.sendMessage(getLHandler().getString("command.download.noHitbox"));
 			}
 		}
 	}

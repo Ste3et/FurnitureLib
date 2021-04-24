@@ -113,7 +113,7 @@ public abstract class FurnitureHelper {
     }
 
     public void consumeItem(Player p) {
-        if (p.getGameMode().equals(GameMode.CREATIVE) && FurnitureLib.getInstance().useGamemode())
+        if (p.getGameMode().equals(GameMode.CREATIVE) && FurnitureConfig.getFurnitureConfig().useGamemode())
             return;
         ItemStack is = p.getInventory().getItemInMainHand();
         if ((is.getAmount() - 1) <= 0) {

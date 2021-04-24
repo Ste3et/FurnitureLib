@@ -1,4 +1,4 @@
-package de.Ste3et_C0st.FurnitureLib.Events.internal;
+package de.Ste3et_C0st.FurnitureLib.Listener.player;
 
 import java.util.Optional;
 
@@ -7,6 +7,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerQuitEvent;
 
+import de.Ste3et_C0st.FurnitureLib.Listener.EventLibrary;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.cache.DiceOfflinePlayer;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 

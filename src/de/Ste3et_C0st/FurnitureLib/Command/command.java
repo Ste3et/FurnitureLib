@@ -27,6 +27,7 @@ import de.Ste3et_C0st.FurnitureLib.Utilitis.LanguageManager;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.StringTranslator;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.Wrapper.ChatComponentWrapper;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.cache.DiceOfflinePlayer;
+import de.Ste3et_C0st.FurnitureLib.main.FurnitureConfig;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
@@ -125,7 +126,7 @@ public class command implements CommandExecutor, Listener{
 			manageList.remove(p);
 			if(!e.getID().getUUID().equals(p.getUniqueId())){
 				if(!lib.getPermission().hasPerm(p, "furniture.admin") && !p.isOp() && !lib.getPermission().hasPerm(p, "furniture.manage.other")){
-					p.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.WrongOwner"));
+					p.sendMessage(LanguageManager.getInstance().getString("message.WrongOwner"));
 					return;
 				}
 			}
@@ -147,7 +148,7 @@ public class command implements CommandExecutor, Listener{
 					if(comm != null) {
 						if(comm.getSubCommand().equalsIgnoreCase("create")) {
 							if(lib.getFurnitureManager().getIgnoreList().contains(((Player) sender).getUniqueId())){
-								sender.sendMessage(lib.getLangManager().getString("message.FurnitureToggleEvent"));
+								sender.sendMessage(LanguageManager.getInstance().getString("message.FurnitureToggleEvent"));
 								return true;
 							}
 						}

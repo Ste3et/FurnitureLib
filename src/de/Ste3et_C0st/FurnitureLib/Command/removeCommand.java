@@ -33,7 +33,7 @@ public class removeCommand extends iCommand {
         String filterTypes = "";
         boolean remove = true;
         if(args.length < 2) {
-        	FurnitureLib.getInstance().getLangManager().getString("message.WrongArgument");
+        	getLHandler().getString("message.WrongArgument");
         	return;
         }
         

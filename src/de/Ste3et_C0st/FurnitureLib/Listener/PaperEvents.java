@@ -1,4 +1,4 @@
-package de.Ste3et_C0st.FurnitureLib.Events;
+package de.Ste3et_C0st.FurnitureLib.Listener;
 
 import org.bukkit.Location;
 import org.bukkit.event.EventHandler;

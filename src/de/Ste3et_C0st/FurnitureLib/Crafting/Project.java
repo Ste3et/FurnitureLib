@@ -4,8 +4,10 @@ import com.google.gson.JsonObject;
 import de.Ste3et_C0st.FurnitureLib.ModelLoader.ModelHandler;
 import de.Ste3et_C0st.FurnitureLib.SchematicLoader.ProjectLoader;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.BoundingBox;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.LanguageManager;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.config;
 import de.Ste3et_C0st.FurnitureLib.main.Furniture;
+import de.Ste3et_C0st.FurnitureLib.main.FurnitureConfig;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
@@ -86,7 +88,7 @@ public class Project {
             this.modelschematic = new ModelHandler(this.getConfig(), this.getCraftingFile().getFileHeader());
             FurnitureLib.getInstance().getFurnitureManager().addProject(this);
             this.loadDefaults();
-            FurnitureLib.getInstance().getLimitManager().loadDefault(this.project);
+            FurnitureConfig.getFurnitureConfig().getLimitManager().loadDefault(this.project);
             PermissionHandler.registerPermission("furniture.craft.*","furniture.craft." + name.toLowerCase());
             PermissionHandler.registerPermission("furniture.place.*","furniture.place." + name.toLowerCase());
             PermissionHandler.registerPermission("furniture.sit.*","furniture.sit." + name.toLowerCase());
@@ -247,7 +249,7 @@ public class Project {
                 }
             }
         }
-        player.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.NoPermissions"));
+        player.sendMessage(LanguageManager.getInstance().getString("message.NoPermissions"));
         return false;
     }
 
@@ -305,7 +307,7 @@ public class Project {
         this.limitationFile = this.limitationConfig.getConfig(conf, "/limitation/");
         if (conf.equalsIgnoreCase("chunk")) {
             if (limitationFile.getBoolean("ChunkLimit.total.enable", false)) {
-                FurnitureLib.getInstance().getLimitManager().setGlobal(limitationFile.getBoolean("ChunkLimit.total.global", false));
+            	FurnitureConfig.getFurnitureConfig().getLimitManager().setGlobal(limitationFile.getBoolean("ChunkLimit.total.global", false));
                 return limitationFile.getInt("ChunkLimit.total.amount", -1);
             } else {
                 return limitationFile.getInt("ChunkLimit.projects." + getSystemID(), -1);

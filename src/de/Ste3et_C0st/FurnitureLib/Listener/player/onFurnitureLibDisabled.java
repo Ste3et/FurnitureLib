@@ -1,4 +1,4 @@
-package de.Ste3et_C0st.FurnitureLib.Events.internal;
+package de.Ste3et_C0st.FurnitureLib.Listener.player;
 
 import java.util.List;
 

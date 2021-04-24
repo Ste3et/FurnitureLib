@@ -7,10 +7,16 @@ import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.Database.DeSerializer;
 import de.Ste3et_C0st.FurnitureLib.Database.SQLManager;
 import de.Ste3et_C0st.FurnitureLib.Database.Serializer;
-import de.Ste3et_C0st.FurnitureLib.Events.ChunkOnLoad;
-import de.Ste3et_C0st.FurnitureLib.Events.FurnitureEvents;
-import de.Ste3et_C0st.FurnitureLib.Events.internal.*;
-import de.Ste3et_C0st.FurnitureLib.LimitationManager.LimitationManager;
+import de.Ste3et_C0st.FurnitureLib.Listener.ChunkOnLoad;
+import de.Ste3et_C0st.FurnitureLib.Listener.FurnitureProtocolListener;
+import de.Ste3et_C0st.FurnitureLib.Listener.onBlockDispense;
+import de.Ste3et_C0st.FurnitureLib.Listener.onChunkChange;
+import de.Ste3et_C0st.FurnitureLib.Listener.onCrafting;
+import de.Ste3et_C0st.FurnitureLib.Listener.onEntityExplode;
+import de.Ste3et_C0st.FurnitureLib.Listener.player.onFurnitureLibDisabled;
+import de.Ste3et_C0st.FurnitureLib.Listener.player.onPlayerDeath;
+import de.Ste3et_C0st.FurnitureLib.Listener.player.onPlayerJoin;
+import de.Ste3et_C0st.FurnitureLib.Listener.player.onPlayerQuit;
 import de.Ste3et_C0st.FurnitureLib.SchematicLoader.ProjectManager;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.*;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.cache.DiceOfflinePlayer;
@@ -37,7 +43,6 @@ import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.*;
-import java.util.concurrent.TimeUnit;
 import java.util.logging.Logger;
 
 public class FurnitureLib extends JavaPlugin {
@@ -60,34 +65,23 @@ public class FurnitureLib extends JavaPlugin {
     private ProtectionManager Pmanager;
     private LightManager lightMgr;
     private HashMap<String, List<String>> permissionKit = new HashMap<>();
-    private boolean useGamemode = true, canSit = true, update = true, useParticle = true, useRegionMemberAccess = false,
-            autoPurge = false, removePurge = false, creativeInteract = true, creativePlace = true, glowing = true,
-            spamBreak = true, spamPlace = true, rotateOnSit = true, useSSL = false;
+
     private CraftingInv craftingInv;
-    private LanguageManager lmanager;
     private SQLManager sqlManager;
-    private LimitationManager limitManager;
     private ColorUtil colorManager;
     private Serializer serializeNew;
     private DeSerializer deSerializerNew;
     private Updater updater;
     private BlockManager bmanager;
     private InventoryManager inventoryManager;
-    private PublicMode mode;
-    private EventType type;
     private ProtocolFields field = ProtocolFields.Spigot110;
     private ProjectManager pManager;
     private PermissionHandler permissionHandler;
-    private String timePattern = "mm:ss:SSS";
-    private int purgeTime = 30, viewDistance = 100, limitGlobal = -1;
-    private long purgeTimeMS = 0, spamBreakTime = 5000, spamPlaceTime = 5000;
     private Material defMaterial = Material.valueOf(isNewVersion() ? "COW_SPAWN_EGG" : "MONSTER_EGG");
-    private boolean sync = true;
-    private static final int BSTATS_ID = 454;
-    private List<String> ignoredWorlds = new ArrayList<String>();
     private OfflinePlayerCache cache;
     private boolean enabledPlugin = false;
-    
+    private FurnitureConfig furnitureConfig;
+    private FurnitureProtocolListener furnitureProtocolListener;
     
     static {
     	 String bukkitVersion = getBukkitVersion();
@@ -132,10 +126,6 @@ public class FurnitureLib extends JavaPlugin {
     	return newVersion;
     }
 
-    public LanguageManager getLangManager() {
-        return this.lmanager;
-    }
-
     public LightManager getLightManager() {
         return this.lightMgr;
     }
@@ -146,10 +136,6 @@ public class FurnitureLib extends JavaPlugin {
     
     public InventoryManager getInventoryManager() {
     	return this.inventoryManager;
-    }
-
-    public LimitationManager getLimitManager() {
-        return this.limitManager;
     }
 
     public ColorUtil getColorManager() {
@@ -184,24 +170,12 @@ public class FurnitureLib extends JavaPlugin {
         return new ObjectID(c, plugin, loc);
     }
 
-    public Boolean useGamemode() {
-        return this.useGamemode;
-    }
-
     public Serializer getSerializer() {
         return serializeNew;
     }
 
     public DeSerializer getDeSerializer() {
         return deSerializerNew;
-    }
-
-    public EventType getDefaultEventType() {
-        return this.type;
-    }
-
-    public PublicMode getDefaultPublicType() {
-        return this.mode;
     }
 
     public PluginManager getPluginManager() {
@@ -236,32 +210,8 @@ public class FurnitureLib extends JavaPlugin {
         return this.timeStampBreak;
     }
 
-    public String getTimePattern() {
-        return this.timePattern;
-    }
-
     public PermissionHandler getPermission() {
         return this.permissionHandler;
-    }
-
-    public int getPurgeTime() {
-        return this.purgeTime;
-    }
-
-    public int getViewDistance() {
-        return this.viewDistance;
-    }
-
-    public int getLimitGlobal() {
-        return this.limitGlobal;
-    }
-
-    public long getBreakTime() {
-        return this.spamBreakTime;
-    }
-
-    public long getPlaceTime() {
-        return this.spamPlaceTime;
     }
 
     public void send(String s) {
@@ -276,72 +226,18 @@ public class FurnitureLib extends JavaPlugin {
         return this.canBuild(p, id, type, true);
     }
 
-    public boolean canSitting() {
-        return this.canSit;
-    }
 
-    public boolean creativeInteract() {
-        return this.creativeInteract;
-    }
-
-    public boolean creativePlace() {
-        return this.creativePlace;
-    }
-
-    public boolean haveRegionMemberAccess() {
-        return this.useRegionMemberAccess;
-    }
 
     public boolean isAutoFileUpdater() {
         return this.autoFileUpdater;
     }
 
-    public boolean useSSL() {
-        return this.useSSL;
-    }
-
     public boolean checkPurge(ObjectID obj, UUID uuid) {
-        return checkPurge(obj, uuid, this.purgeTime);
+        return checkPurge(obj, uuid, this.furnitureConfig.getPurgeTime());
     }
 
     public boolean checkPurge(ObjectID obj, OfflinePlayer player) {
         return checkPurge(obj, player.getUniqueId());
-    }
-
-    public boolean isSync() {
-        return this.sync;
-    }
-
-    public boolean isGlowing() {
-        return this.glowing;
-    }
-
-    public boolean isAutoPurge() {
-        return this.autoPurge;
-    }
-
-    public boolean isPurgeRemove() {
-        return this.removePurge;
-    }
-
-    public boolean isUpdate() {
-        return this.update;
-    }
-
-    public boolean isParticleEnable() {
-        return this.useParticle;
-    }
-
-    public boolean isSpamPlace() {
-        return this.spamPlace;
-    }
-
-    public boolean isSpamBreak() {
-        return this.spamBreak;
-    }
-
-    public boolean isRotateOnSitEnable() {
-        return this.rotateOnSit;
     }
 
     public boolean isDouble(String s) {
@@ -372,7 +268,7 @@ public class FurnitureLib extends JavaPlugin {
     }
 
     public boolean isAfterDate(long time, int purgeTime) {
-        return System.currentTimeMillis() - (time + purgeTimeMS) > 0;
+        return System.currentTimeMillis() - (time + this.furnitureConfig.getPurgeTimeDays()) > 0;
     }
 
     private boolean isRightProtocollib(String s) {
@@ -428,11 +324,9 @@ public class FurnitureLib extends JavaPlugin {
 			send("==========================================");
 			return;
 		}
+		this.furnitureConfig = new FurnitureConfig(instance);
+		this.updater = new Updater();
 		this.enabledPlugin = true;
-		getConfig().addDefaults(YamlConfiguration.loadConfiguration(loadStream("config.yml")));
-		getConfig().options().copyDefaults(true);
-		getConfig().options().copyHeader(true);
-		saveConfig();
 		field = ProtocolFields.getField(getServer().getBukkitVersion());
 		this.lUtil = new LocationUtil();
 		this.manager = new FurnitureManager();
@@ -440,18 +334,16 @@ public class FurnitureLib extends JavaPlugin {
 		this.serializeNew = new Serializer();
 		this.deSerializerNew = new DeSerializer();
 		this.lightMgr = new LightManager(this);
-		this.useSSL = getConfig().getBoolean("config.Database.useSSL");
+		
 		this.pManager = new ProjectManager();
 		this.permissionHandler = new PermissionHandler();
 		this.Pmanager = new ProtectionManager(instance);
-		this.sync = getConfig().getBoolean("config.sync", true);
 		this.cache = new OfflinePlayerCache();
 		send("==========================================");
 		send("FurnitureLibrary Version: §e" + this.getDescription().getVersion());
 		send("Furniture Author: §6" + this.getDescription().getAuthors().get(0));
 		send("Furniture Website: §e" + this.getDescription().getWebsite());
 		send("FurnitureLib load for Minecraft: 1." + getVersionInt());
-
 		send("Furniture start load");
 		boolean b = isEnable("ProtectionLib", false);
 		send("Furniture find ProtectionLib: §e" + Boolean.toString(b));
@@ -460,10 +352,7 @@ public class FurnitureLib extends JavaPlugin {
 		this.loadPermissionKit();
 		this.autoFileUpdater = getConfig().getBoolean("config.fileConverter.auto_mode", false);
 		autoConverter.modelConverter(getServer().getConsoleSender());
-		loadPluginConfig();
-		if (getConfig().getBoolean("config.UseMetrics"))
-			new Metrics(this, BSTATS_ID);
-		
+		this.furnitureConfig.loadPluginConfig();
 		this.sqlManager = new SQLManager(instance);
 		
 		this.inventoryManager = new InventoryManager();
@@ -472,23 +361,10 @@ public class FurnitureLib extends JavaPlugin {
 		this.pManager.loadProjectFiles();
 		
 		this.getFurnitureManager().getObjectList().stream().forEach(ObjectID::registerBlocks);
+		this.registerEvents();
 		
-		new FurnitureEvents(instance, manager);
-		getServer().getPluginManager().registerEvents(new onCrafting(), getInstance());
-		getServer().getPluginManager().registerEvents(new onBlockDispense(), getInstance());
-		getServer().getPluginManager().registerEvents(new onEntityExplode(), getInstance());
-		
-		//getServer().getPluginManager().registerEvents(new onPlayerChangeWorld(), getInstance());
-		getServer().getPluginManager().registerEvents(new onPlayerDeath(), getInstance());
-		//getServer().getPluginManager().registerEvents(new onPlayerJoin(), getInstance());
-		getServer().getPluginManager().registerEvents(new onPlayerQuit(), getInstance());
-		//getServer().getPluginManager().registerEvents(new onPlayerRespawn(), getInstance());
-		//getServer().getPluginManager().registerEvents(new onPlayerTeleportEvent(), getInstance());
-		getServer().getPluginManager().registerEvents(new ChunkOnLoad(), getInstance());
-		getServer().getPluginManager().registerEvents(new onChunkChange(), getInstance());
-
-		if (this.autoPurge) {
-			DeSerializer.autoPurge(purgeTime);
+		if (this.furnitureConfig.isAutoPurge()) {
+			DeSerializer.autoPurge(this.furnitureConfig.getPurgeTime());
 		}
 
 		send("§2Furniture load finish :)");
@@ -505,6 +381,18 @@ public class FurnitureLib extends JavaPlugin {
 		
     }
     
+    private void registerEvents() {
+    	this.furnitureProtocolListener = new FurnitureProtocolListener(instance, manager);
+    	getPluginManager().registerEvents(new onPlayerJoin(), getInstance());
+    	getPluginManager().registerEvents(new onCrafting(), getInstance());
+    	getPluginManager().registerEvents(new onBlockDispense(), getInstance());
+    	getPluginManager().registerEvents(new onEntityExplode(), getInstance());
+    	getPluginManager().registerEvents(new onPlayerDeath(), getInstance());
+    	getPluginManager().registerEvents(new onPlayerQuit(), getInstance());
+    	getPluginManager().registerEvents(new ChunkOnLoad(), getInstance());
+    	getPluginManager().registerEvents(new onChunkChange(), getInstance());
+    }
+    
     private void disableFurnitureLib(List<String> instructions) {
     	System.out.println(instructions);
     	this.enabled = false;
@@ -512,88 +400,16 @@ public class FurnitureLib extends JavaPlugin {
 		c.setExecutor(new disabledCommand(this, instructions));
 		Bukkit.getPluginManager().registerEvents(new onFurnitureLibDisabled(instructions), this);
     }
-
-    private void loadPluginConfig() {
-        enableDebug = getConfig().getBoolean("config.debugMode", false);
-        this.lmanager = new LanguageManager(instance, getConfig().getString("config.Language"));
-        this.useGamemode = !getConfig().getBoolean("config.Creative.RemoveItems");
-        this.creativeInteract = getConfig().getBoolean("config.Creative.Interact");
-        this.creativePlace = getConfig().getBoolean("config.Creative.Place");
-        this.useRegionMemberAccess = getConfig().getBoolean("config.ProtectionLib.RegeionMemberAccess");
-        this.canSit = !getConfig().getBoolean("config.DisableSitting");
-        this.useParticle = getConfig().getBoolean("config.useParticles");
-        this.purgeTime = getConfig().getInt("config.Purge.time");
-        this.autoPurge = getConfig().getBoolean("config.Purge.autoPurge");
-        this.purgeTimeMS = TimeUnit.DAYS.toMillis(purgeTime);
-        this.removePurge = getConfig().getBoolean("config.Purge.removePurge");
-        this.viewDistance = (Bukkit.getViewDistance());
-        this.ignoredWorlds = getConfig().getStringList("config.ignoredWorlds");
-        if (getConfig().getInt("config.viewRange") < this.viewDistance) {
-            this.viewDistance = getConfig().getInt("config.viewRange", 10);
-        }
-        
-        ObjectID.setRange(this.viewDistance);
-
-        this.glowing = getConfig().getBoolean("config.glowing");
-        this.spamBreak = getConfig().getBoolean("config.spamBlock.Break.Enable");
-        this.spamPlace = getConfig().getBoolean("config.spamBlock.Place.Enable");
-        this.spamBreakTime = getConfig().getLong("config.spamBlock.Break.time");
-        this.spamPlaceTime = getConfig().getLong("config.spamBlock.Place.time");
-        this.timePattern = getConfig().getString("config.spamBlock.timeDisplay");
-        this.rotateOnSit = getConfig().getBoolean("config.rotateOnSit");
-        String limitConfig = getConfig().getString("config.limit.limitConfig", "PLAYER");
-        this.limitManager = new LimitationManager(this, LimitationType.valueOf(limitConfig.toUpperCase()));
-        this.limitGlobal = getConfig().getInt("config.limit.limitGlobal", -1);
-        this.type = EventType.valueOf(getConfig().getString("config.PlaceMode.Access", "INTERACT"));
-        this.mode = PublicMode.valueOf(getConfig().getString("config.PlaceMode.Mode", "PRIVATE"));
-        this.update = getConfig().getBoolean("config.CheckUpdate");
-        this.updater = new Updater();
-        this.loadIgnore();
-
-        debug("Config->useGamemode:" + useGamemode);
-        debug("Config->creativeInteract:" + creativeInteract);
-        debug("Config->creativePlace:" + creativePlace);
-        debug("Config->useRegionMemberAccess:" + useRegionMemberAccess);
-        debug("Config->canSit:" + canSit);
-        debug("Config->useParticle:" + useParticle);
-        debug("Config->purgeTime" + purgeTime);
-        debug("Config->autoPurge:" + autoPurge);
-        debug("Config->removePurge:" + removePurge);
-        debug("Config->viewDistance:" + viewDistance);
-        debug("Config->glowing:" + glowing);
-        debug("Config->spamBreak:" + spamBreak);
-        debug("Config->spamPlace:" + spamPlace);
-        debug("Config->spamBreakTime:" + spamBreakTime);
-        debug("Config->spamPlaceTime:" + spamPlaceTime);
-        debug("Config->timePattern:" + timePattern);
-        debug("Config->rotateOnSit:" + rotateOnSit);
-        debug("Config->limitConfig:" + limitConfig);
-        debug("Config->limitGlobal:" + limitGlobal);
-        debug("Config->PlaceMode.Access:" + type.name);
-        debug("Config->PlaceMode.Mode:" + mode.name);
-        debug("Config->update:" + update);
-    }
     
     public boolean isEnabledPlugin() {
     	return this.enabledPlugin;
     }
-
+    
     public void reloadPluginConfig() {
         enableDebug = true;
         this.reloadConfig();
-        this.loadPluginConfig();
-
+        this.furnitureConfig.loadPluginConfig();
         FurnitureManager.getInstance().getProjects().forEach(Project::loadDefaults);
-    }
-
-    private void loadIgnore() {
-        config c = new config(getInstance());
-        FileConfiguration configuration = c.getConfig("ignoredPlayers", "");
-        if (configuration.isSet("ignoreList")) {
-            configuration.getStringList("ignoreList").forEach(letter -> {
-                getFurnitureManager().getIgnoreList().add(UUID.fromString(letter));
-            });
-        }
     }
 
     public BufferedReader loadStream(String str) {
@@ -646,7 +462,7 @@ public class FurnitureLib extends JavaPlugin {
     		long lastSeen = optional.get().getLastSeen();
     		if (!isAfterDate(lastSeen, purgeTime))
     		    return false;
-    		if (removePurge) {
+    		if (this.furnitureConfig.isPurgeRemove()) {
     		   getFurnitureManager().remove(obj);
     		   return false;
     		}
@@ -724,15 +540,11 @@ public class FurnitureLib extends JavaPlugin {
         }
     }
     
-    public List<String> getIgnoredWorldList(){
-    	return this.ignoredWorlds;
-    }
-    
-    public boolean isWorldIgnored(String worldName) {
-    	return this.ignoredWorlds.contains(worldName.toLowerCase());
-    }
-    
     public OfflinePlayerCache getPlayerCache() {
     	return this.cache;
+    }
+    
+    public static void setDebug(boolean bool) {
+    	enableDebug = bool;
     }
 }

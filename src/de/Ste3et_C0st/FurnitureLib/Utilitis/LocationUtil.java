@@ -1,5 +1,6 @@
 package de.Ste3et_C0st.FurnitureLib.Utilitis;
 
+import de.Ste3et_C0st.FurnitureLib.main.FurnitureConfig;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.Type;
 import org.bukkit.*;
@@ -25,7 +26,7 @@ public class LocationUtil {
     }
 
     public static void particleBlock(Block b, org.bukkit.Particle particleData, float value) {
-        if (!FurnitureLib.getInstance().isParticleEnable()) return;
+        if (!FurnitureConfig.getFurnitureConfig().isParticleEnable()) return;
         try {
             Location loc = b.getLocation();
             World world = loc.getWorld();

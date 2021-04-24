@@ -4,6 +4,7 @@ import de.Ste3et_C0st.FurnitureLib.NBT.NBTCompressedStreamTools;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagList;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.cache.DiceOfflinePlayer;
+import de.Ste3et_C0st.FurnitureLib.main.FurnitureConfig;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
@@ -111,7 +112,7 @@ public class DeSerializer {
 				long lastSeen = player.get().getLastSeen();
 				if(lastSeen > 0) {
 					if(FurnitureLib.getInstance().isAfterDate(lastSeen, purgeTime)) {
-						if(FurnitureLib.getInstance().isPurgeRemove()) {
+						if(FurnitureConfig.getFurnitureConfig().isPurgeRemove()) {
 							FurnitureManager.getInstance().remove(entry);
 						}else {
 							entry.setSQLAction(SQLAction.REMOVE);

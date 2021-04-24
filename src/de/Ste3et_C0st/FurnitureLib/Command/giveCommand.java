@@ -26,11 +26,11 @@ public class giveCommand extends iCommand {
         if (args.length > 1) {
             pro = getProject(args[1]);
             if (pro == null) {
-                sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.ProjectNotFound").replaceAll("#PROJECT#", args[1]));
+                sender.sendMessage(getLHandler().getString("message.ProjectNotFound").replaceAll("#PROJECT#", args[1]));
                 return;
             }
         } else {
-            sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.WrongArgument"));
+            sender.sendMessage(getLHandler().getString("message.WrongArgument"));
             return;
         }
         if (args.length == 2) {
@@ -40,7 +40,7 @@ public class giveCommand extends iCommand {
                 player.updateInventory();
                 return;
             } else {
-                sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.WrongArgument"));
+                sender.sendMessage(getLHandler().getString("message.WrongArgument"));
                 return;
             }
         } else if (args.length == 3) {
@@ -55,7 +55,7 @@ public class giveCommand extends iCommand {
                     player.updateInventory();
                     return;
                 } else {
-                    sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.WrongArgument"));
+                    sender.sendMessage(getLHandler().getString("message.WrongArgument"));
                     return;
                 }
             } else if (Bukkit.getPlayer(args[2]) != null) {
@@ -69,20 +69,20 @@ public class giveCommand extends iCommand {
                     if (sender.equals(p2)) {
                         return;
                     }
-                    String str = FurnitureLib.getInstance().getLangManager().getString("message.GivePlayer");
+                    String str = getLHandler().getString("message.GivePlayer");
                     str = str.replace("#PLAYER#", p2.getName());
                     str = str.replace("#PROJECT#", pro.getName());
                     str = str.replace("#AMOUNT#", 1 + "");
                     sender.sendMessage(str);
                     return;
                 } else {
-                    String s = FurnitureLib.getInstance().getLangManager().getString("message.PlayerNotOnline");
+                    String s = getLHandler().getString("message.PlayerNotOnline");
                     s = s.replace("#PLAYER#", args[2]);
                     sender.sendMessage(s);
                     return;
                 }
             } else {
-                String s = FurnitureLib.getInstance().getLangManager().getString("message.PlayerNotOnline");
+                String s = getLHandler().getString("message.PlayerNotOnline");
                 s = s.replace("#PLAYER#", args[2]);
                 sender.sendMessage(s);
                 return;
@@ -94,7 +94,7 @@ public class giveCommand extends iCommand {
                 }
                 Player p2 = Bukkit.getPlayer(args[2]);
                 if(Objects.isNull(p2)) {
-                	String s = FurnitureLib.getInstance().getLangManager().getString("message.PlayerNotOnline");
+                	String s = getLHandler().getString("message.PlayerNotOnline");
                     s = s.replace("#PLAYER#", args[2]);
                     sender.sendMessage(s);
                     return;
@@ -110,30 +110,30 @@ public class giveCommand extends iCommand {
                         if (sender.equals(p2)) {
                             return;
                         }
-                        String str = FurnitureLib.getInstance().getLangManager().getString("message.GivePlayer");
+                        String str = getLHandler().getString("message.GivePlayer");
                         str = str.replace("#PLAYER#", p2.getName());
                         str = str.replace("#PROJECT#", pro.getName());
                         str = str.replace("#AMOUNT#", i + "");
                         sender.sendMessage(str);
                         return;
                     } else {
-                        sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.WrongArgument"));
+                        sender.sendMessage(getLHandler().getString("message.WrongArgument"));
                         return;
                     }
                 } else {
-                    String s = FurnitureLib.getInstance().getLangManager().getString("message.PlayerNotOnline");
+                    String s = getLHandler().getString("message.PlayerNotOnline");
                     s = s.replace("#PLAYER#", args[2]);
                     sender.sendMessage(s);
                     return;
                 }
             } else {
-                String s = FurnitureLib.getInstance().getLangManager().getString("message.PlayerNotOnline");
+                String s = getLHandler().getString("message.PlayerNotOnline");
                 s = s.replace("#PLAYER#", args[2]);
                 sender.sendMessage(s);
                 return;
             }
         } else {
-            sender.sendMessage(FurnitureLib.getInstance().getLangManager().getString("message.WrongArgument"));
+            sender.sendMessage(getLHandler().getString("message.WrongArgument"));
             return;
         }
     }

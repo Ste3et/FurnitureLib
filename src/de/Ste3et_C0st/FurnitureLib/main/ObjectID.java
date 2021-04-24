@@ -35,8 +35,8 @@ public class ObjectID {
     private Location loc;
     private UUID uuid;
     private HashSet<UUID> uuidList = new HashSet<UUID>();
-    private DefaultKey<PublicMode> publicMode = new DefaultKey<Type.PublicMode>(FurnitureLib.getInstance().getDefaultPublicType());
-    private DefaultKey<EventType> memberType = new DefaultKey<Type.EventType>(FurnitureLib.getInstance().getDefaultEventType());
+    private DefaultKey<PublicMode> publicMode = new DefaultKey<Type.PublicMode>(FurnitureConfig.getFurnitureConfig().getDefaultPublicType());
+    private DefaultKey<EventType> memberType = new DefaultKey<Type.EventType>(FurnitureConfig.getFurnitureConfig().getDefaultEventType());
     private SQLAction sqlAction = SQLAction.SAVE;
     private HashSet<fEntity> packetList = new HashSet<fEntity>();
    
@@ -323,29 +323,40 @@ public class ObjectID {
         	return;
         }
         
-//        if(isInRange(player) == false) {
-//        	return;
-//        }
-        
         this.sendArmorStands(player);
-        
-        // player.sendMessage(getID());
-        // if(!isFinish()) return;
-//        if (!isInWorld(player)) {
-//			players.remove(player);
-//            return;
-//        } else {
-//            if (isInRange(player)) {
-//                if (players.contains(player)) {
-//                    return;
-//                }
-//                this.sendArmorStands(player);
-//            } else {
-//                if (!players.contains(player))
-//                    return;
-//                removeArmorStands(player);
-//            }
-//        }
+    }
+    
+    private HashSet<Player> players = new HashSet<>();
+    public void updatePlayerViewWithRange(Player player) {
+        if (FurnitureManager.getInstance().getIgnoreList().contains(player.getUniqueId())) {
+            return;
+        }
+        if (isPrivate()) {
+            return;
+        }
+        if (getPacketList().isEmpty()) {
+            return;
+        }
+        if (getSQLAction().equals(SQLAction.REMOVE)) {
+            return;
+        }
+        if (!isInWorld(player)) {
+			players.remove(player);
+            return;
+        } else {
+            if (isInRange(player)) {
+                if (players.contains(player)) {
+                    return;
+                }
+                this.packetList.forEach(stand -> stand.send(player));
+                players.add(player);
+            } else {
+                if (!players.contains(player))
+                    return;
+                this.packetList.forEach(stand -> stand.kill(player, false));
+                players.remove(player);
+            }
+        }
     }
     
     public void sendArmorStands(Player player) {
@@ -482,7 +493,7 @@ public class ObjectID {
     }
 
     public void dropItem(Player p, Location loc, Project project) {
-        if (FurnitureLib.getInstance().useGamemode() && p.getGameMode().equals(GameMode.CREATIVE)) {
+        if (FurnitureConfig.getFurnitureConfig().useGamemode() && p.getGameMode().equals(GameMode.CREATIVE)) {
             return;
         }
         World w = loc.getWorld();

@@ -1,7 +1,8 @@
 package de.Ste3et_C0st.FurnitureLib.SchematicLoader.functions;
 
 import com.google.gson.JsonObject;
-import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
+
+import de.Ste3et_C0st.FurnitureLib.main.FurnitureConfig;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fInventory.EquipmentSlot;
@@ -28,7 +29,7 @@ public abstract class projectFunction {
     }
 
     public void consumeItem(Player p) {
-        if (p.getGameMode().equals(GameMode.CREATIVE) && FurnitureLib.getInstance().useGamemode()) return;
+        if (p.getGameMode().equals(GameMode.CREATIVE) && FurnitureConfig.getFurnitureConfig().useGamemode()) return;
         ItemStack is = p.getInventory().getItemInMainHand();
         if ((is.getAmount() - 1) <= 0) {
             is.setType(Material.AIR);
