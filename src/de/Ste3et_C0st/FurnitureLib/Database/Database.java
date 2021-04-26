@@ -127,8 +127,6 @@ public abstract class Database {
         	if (Objects.nonNull(entry.getProjectOBJ())) {
         		entry.registerBlocks();
             	entry.getProjectOBJ().applyFunction(entry);
-        	}else {
-        		System.out.println("Project: [" + entry.getProject() + "] not found.");
         	}
         });
         
