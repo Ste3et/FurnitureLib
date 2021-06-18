@@ -414,7 +414,8 @@ public abstract class fEntity extends fSerializer implements Cloneable {
     }
 
     public void kill(Player p, boolean b) {
-        this.destroy.getIntegerArrays().write(0, new int[]{getEntityID()});
+        this.destroy.getIntegerArrays().writeSafely(0, new int[]{getEntityID()});
+        this.destroy.getIntegers().writeSafely(0, getEntityID());
         try {
             getManager().sendServerPacket(p, destroy);
         } catch (Exception e) {

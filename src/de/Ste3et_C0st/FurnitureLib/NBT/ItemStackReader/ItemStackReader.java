@@ -20,12 +20,13 @@ public abstract class ItemStackReader {
 	
 	static {
 		try {
+			String nbtFolder = FurnitureLib.getVersionInt() > 16 ? "net.minecraft.nbt" : "net.minecraft.server." + FurnitureLib.getBukkitVersion();
+			String itemStack = FurnitureLib.getVersionInt() > 16 ? "net.minecraft.world.item.ItemStack" : "net.minecraft.server." + FurnitureLib.getBukkitVersion() + ".ItemStack";
 			clazz_obc_CraftItemStack = Class.forName("org.bukkit.craftbukkit." + FurnitureLib.getBukkitVersion() + ".inventory.CraftItemStack");
-			clazz_nms_nbt  = Class.forName("net.minecraft.server." + FurnitureLib.getBukkitVersion() + ".NBTTagCompound");
-			clazz_nbttools = Class.forName("net.minecraft.server." + FurnitureLib.getBukkitVersion() + ".NBTCompressedStreamTools");
-			clazz_nms_item = Class.forName("net.minecraft.server." + FurnitureLib.getBukkitVersion() + ".ItemStack");
-			
+			clazz_nms_nbt  = Class.forName(nbtFolder + ".NBTTagCompound");
+			clazz_nbttools = Class.forName(nbtFolder +  ".NBTCompressedStreamTools");
 			asNMSCopy = clazz_obc_CraftItemStack.getMethod("asNMSCopy", org.bukkit.inventory.ItemStack.class);
+			clazz_nms_item = Class.forName(itemStack);
 			method_save = clazz_nms_item.getMethod("save", clazz_nms_nbt);
 			clazz_nbttools_method_a_input = clazz_nbttools.getMethod("a", InputStream.class);
 			clazz_nbttools_method_a_output = clazz_nbttools.getMethod("a", clazz_nms_nbt, OutputStream.class);

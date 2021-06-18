@@ -1,6 +1,7 @@
 package de.Ste3et_C0st.FurnitureLib.Listener.render;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
@@ -26,32 +27,36 @@ public class RenderWithBukkit extends RenderEventHandler implements Listener{
 	}
 
 	@EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
-	public void onPlayerMove(PlayerMoveEvent e) {
-		Player player = e.getPlayer();
+	public void onPlayerMove(PlayerMoveEvent event) {
+		Player player = event.getPlayer();
 		if (player.getHealth() <= 0.0D) return;
-		int xFrom = e.getFrom().getBlockX() >> 4, xTo = e.getTo().getBlockX() >> 4;
-		int zFrom = e.getFrom().getBlockZ() >> 4, zTo = e.getTo().getBlockZ() >> 4;
+		
+		Location fromLocation = event.getFrom();
+		Location toLocation = event.getTo();
+		
+		int xFrom = fromLocation.getBlockX() >> 4, xTo = toLocation.getBlockX() >> 4;
+		int zFrom = fromLocation.getBlockZ() >> 4, zTo = toLocation.getBlockZ() >> 4;
 		if ((xFrom != xTo) || (zFrom != zTo)) {
-			getFurnitureManager().updatePlayerViewWithRange(player);
+			getFurnitureManager().updatePlayerViewWithRange(player, toLocation);
 		}
 	}
 	
     @EventHandler
     public void onPlayerRespawnEvent(PlayerRespawnEvent event) {
         final Player player = event.getPlayer();
-        Bukkit.getScheduler().runTaskLater(FurnitureLib.getInstance(), () -> getFurnitureManager().updatePlayerViewWithRange(player), 5);
+        Bukkit.getScheduler().runTaskLater(FurnitureLib.getInstance(), () -> getFurnitureManager().updatePlayerViewWithRange(player, event.getRespawnLocation()), 5);
     }
     
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onPayerTeleport(PlayerTeleportEvent event) {
-        final Player player = event.getPlayer();      
-        Bukkit.getScheduler().runTaskLater(FurnitureLib.getInstance(), () -> getFurnitureManager().updatePlayerViewWithRange(player), 5);
+        final Player player = event.getPlayer();
+        Bukkit.getScheduler().runTaskLater(FurnitureLib.getInstance(), () -> getFurnitureManager().updatePlayerViewWithRange(player,  event.getTo()), 5);
     }
     
  	@EventHandler
      public void onPlayerChangedWorld(PlayerChangedWorldEvent event) {
-         final Player player = event.getPlayer();  
-         Bukkit.getScheduler().runTaskLater(FurnitureLib.getInstance(), () -> getFurnitureManager().updatePlayerViewWithRange(player), 5);
+         final Player player = event.getPlayer();
+         Bukkit.getScheduler().runTaskLater(FurnitureLib.getInstance(), () -> getFurnitureManager().updatePlayerViewWithRange(player, player.getLocation()), 5);
      }
 	
 }

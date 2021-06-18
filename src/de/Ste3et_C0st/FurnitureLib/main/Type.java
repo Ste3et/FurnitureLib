@@ -148,7 +148,8 @@ public class Type {
         Spigot19(10, 11, 12, 13, 14, 15, 16, 9, 7),
         Spigot110(11, 12, 13, 14, 15, 16, 17, 10, 7),
         Spigot114(13, 14, 15, 16, 17, 18, 19, 11, 8),
-        Spigot115(14, 15, 16, 17, 18, 19, 20, 12, 9);
+        Spigot115(14, 15, 16, 17, 18, 19, 20, 12, 9),
+    	Spigot117(15, 16, 17, 18, 19, 20, 21, 13, 10);
 
         int bitMask, HeadRotation, BodyRotation, LeftArmRotation, RightArmRotation, LeftLegRotation, RightLegRotation, wrapperBit, healthField;
 
@@ -176,6 +177,9 @@ public class Type {
             }
             if (s.startsWith("1.15") || s.startsWith("1.16")) {
                 return Spigot115;
+            }
+            if (s.startsWith("1.17")) {
+                return Spigot117;
             }
             return Spigot110;
         }

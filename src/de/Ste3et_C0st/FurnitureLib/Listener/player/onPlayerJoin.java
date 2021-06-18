@@ -22,7 +22,11 @@ public class onPlayerJoin extends EventLibrary implements Listener {
         Bukkit.getScheduler().runTaskLater(FurnitureLib.getInstance(), () -> {
         	if(player.isOnline()) {
         		if(FurnitureConfig.getFurnitureConfig().isRenderPacketMethode() == false) {
-        			getFurnitureManager().updatePlayerViewWithRange(player);
+        			getFurnitureManager().updatePlayerViewWithRange(player, player.getLocation());
+        		}else {
+        			int x = player.getLocation().getBlockX() >> 4;
+        			int z = player.getLocation().getBlockZ() >> 4;
+        			getFurnitureManager().updatePlayerView(player, x, z);
         		}
         		Optional<DiceOfflinePlayer> offlinePlayer = FurnitureLib.getInstance().getPlayerCache().getPlayer(player.getUniqueId());
         		if(offlinePlayer.isPresent()) {

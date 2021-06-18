@@ -143,7 +143,7 @@ public class CraftingFile {
         try {
             this.isDisable = file.getBoolean(header + ".crafting.disable");
             String[] fragements = returnFragment();
-            this.recipe = new ShapedRecipe(returnResult(s)).shape(fragements[0], fragements[1], fragements[2]);
+            this.recipe = new ShapedRecipe(returnResult(s)).shape(fragements);
             returnMaterial(s, fragements).entrySet().stream().filter(c -> c.getValue() != Material.AIR).forEach(c -> {
                 this.recipe.setIngredient(c.getKey(), c.getValue());
             });
@@ -169,10 +169,10 @@ public class CraftingFile {
                 this.recipe.setIngredient(c.getKey(), c.getValue());
                 materialCount.addAndGet(1);
             });
-            if (!isDisable && !isKeyisKeyRegistered(key)) {
+            if (!isDisable) {
                 if (materialCount.get() > 0) {
                     Bukkit.getScheduler().runTask(FurnitureLib.getInstance(), () -> {
-                    	if(Bukkit.getRecipe(key) == null) {
+                    	if(isKeyisKeyRegistered(key) == false) {
                     		Bukkit.getServer().addRecipe(this.recipe);
                     	}
                     });
@@ -202,8 +202,16 @@ public class CraftingFile {
     }
 
     private boolean isKeyisKeyRegistered(org.bukkit.NamespacedKey key) {
-    	Recipe recipe =  Bukkit.getServer().getRecipe(key);
-        return Objects.nonNull(recipe);
+    	Iterator<Recipe> it = Bukkit.getServer().recipeIterator();
+    	while (it.hasNext()) {
+			Recipe recipe = it.next();
+			if(ShapedRecipe.class.isInstance(recipe)) {
+				if(ShapedRecipe.class.cast(recipe).getKey().equals(key)) {
+					return true;
+				}
+			}
+		}
+        return false;
     }
 
     public PlaceableSide getPlaceAbleSide() {

@@ -333,7 +333,7 @@ public class downloadCommand extends iCommand{
 				String str = (String) s;
 				if(blocks.hasKey(str)){
 					NBTTagCompound block = blocks.getCompound(str);
-					String blockData = block.hasKey("material") ? "minecraft:" + block.getString("material") : block.getString("blockData");
+					String blockData = MaterialConverter.updateChangedMaterial(block.hasKey("material") ? "minecraft:" + block.getString("material") : block.getString("blockData"));
 					if(block.hasKey("material")) {
 						if(block.hasKey("Rotation")) blockData += "[facing=" + block.getString("Rotation") + "]";
 					}

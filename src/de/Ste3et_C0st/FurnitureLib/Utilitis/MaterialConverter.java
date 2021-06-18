@@ -147,4 +147,11 @@ public class MaterialConverter {
         }
         return null;
     }
+    
+    public static String updateChangedMaterial(String string) {
+    	if(FurnitureLib.getVersionInt() > 16) {
+    		string = string.replace("grass_path", "dirt_path");
+    	}
+    	return string;
+    }
 }

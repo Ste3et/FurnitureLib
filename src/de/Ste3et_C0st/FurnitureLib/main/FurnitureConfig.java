@@ -74,12 +74,9 @@ public class FurnitureConfig {
         this.viewDistance = (Bukkit.getViewDistance());
         this.ignoredWorlds = getConfig().getStringList("config.ignoredWorlds");
         this.packetRenderMethode = getConfig().getBoolean("config.packetRenderMethode");
-        if (getConfig().getInt("config.viewRange") < this.viewDistance) {
-            this.viewDistance = getConfig().getInt("config.viewRange", 10);
-        }
+        this.viewDistance = getConfig().getInt("config.viewRange", 10);
         
         ObjectID.setRange(this.viewDistance);
-
         this.glowing = getConfig().getBoolean("config.glowing");
         this.spamBreak = getConfig().getBoolean("config.spamBlock.Break.Enable");
         this.spamPlace = getConfig().getBoolean("config.spamBlock.Place.Enable");

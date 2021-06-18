@@ -16,8 +16,8 @@ public class EntityID {
 		String name = Bukkit.getServer().getClass().getPackage().getName();
 		version = name.substring(name.lastIndexOf('.') + 1) + ".";
 		try {
-			entityClass = Class.forName("net.minecraft.server." + getVersion() + "Entity");
-			entityCountField = entityClass.getDeclaredField("entityCount");
+			entityClass = Class.forName(FurnitureLib.getVersionInt() == 17 ? "net.minecraft.world.entity.Entity" : "net.minecraft.server." + getVersion() + "Entity");
+			entityCountField = entityClass.getDeclaredField(FurnitureLib.getVersionInt() == 17 ? "b" : "entityCount");
 			entityCountField.setAccessible(true);
 		}catch(Exception ex) {
 			ex.printStackTrace();

@@ -322,12 +322,11 @@ public class ObjectID {
         if(isInWorld(player) == false) {
         	return;
         }
-        
         this.sendArmorStands(player);
     }
     
     private HashSet<Player> players = new HashSet<>();
-    public void updatePlayerViewWithRange(Player player) {
+    public void updatePlayerViewWithRange(Player player, Location location) {
         if (FurnitureManager.getInstance().getIgnoreList().contains(player.getUniqueId())) {
             return;
         }
@@ -344,7 +343,7 @@ public class ObjectID {
 			players.remove(player);
             return;
         } else {
-            if (isInRange(player)) {
+            if (isInRange(location)) {
                 if (players.contains(player)) {
                     return;
                 }

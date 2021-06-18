@@ -15,6 +15,7 @@ import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 public class RenderWithProtocols extends RenderEventHandler{
 
 	private final PacketListener packetListener;
+
 	
 	public RenderWithProtocols() {
 		this.packetListener = getPacketListener();
@@ -32,7 +33,7 @@ public class RenderWithProtocols extends RenderEventHandler{
 	}
 
 	private PacketListener getPacketListener() {
-		return new PacketAdapter(FurnitureLib.getInstance(), ListenerPriority.HIGHEST, PacketType.Play.Server.ENTITY) {
+		return new PacketAdapter(FurnitureLib.getInstance(), ListenerPriority.HIGHEST, PacketType.Play.Server.SPAWN_ENTITY) {
 			public void onPacketSending(PacketEvent event) {
 				int chunkX = event.getPacket().getIntegers().read(0);
 				int chunkZ = event.getPacket().getIntegers().read(1);

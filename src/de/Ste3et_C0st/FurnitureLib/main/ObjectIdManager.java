@@ -85,9 +85,9 @@ public class ObjectIdManager {
 		return getObjectStreamFromWorld(worldName).collect(Collectors.toList());
 	}
 
-	public void updatePlayerViewWithRange(Player player) {
+	public void updatePlayerViewWithRange(Player player, Location location) {
 		if(player.isOnline()) {
-			getAllExistObjectIDs().forEach(entry -> entry.updatePlayerViewWithRange(player));
+			getAllExistObjectIDs().forEach(entry -> entry.updatePlayerViewWithRange(player, location));
 		}
 	}
 	
