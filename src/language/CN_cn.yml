@@ -27,6 +27,7 @@ message:
   FurnitureToggleCMDOff: '&a已将家具&c隐形'
   FurnitureToggleCMDOn: '&a已将所有家具&2显形'
   FurnitureToggleEvent: '&c你不能这么做.'
+  FurnitureToggleCantChange: '&cYou cant change the Furniture Visibility'
   FurnitureToFastPlace: '&c你必须等待&4#TIME#&c才能放置.'
   FurnitureToFastBreak: '&c你必须等候&4#TIME#&c才能破坏家具.'
   LimitAnnouncer: '&6你已放置&2#CURRENT#&6/&c#MAX# of &e#TYPE#.'
@@ -74,7 +75,7 @@ command:
     wrongUsage: '&c请使用 /furniture download [id]'
   dump:
     help_name: "&7/furniture &edump"
-    help_hover: 
+    help_hover:
         - "&7Upload some important informations to help bug finding"
     suggest: "/furniture dump"
     wrongUsage: "&cPlease use /furniture dump"

@@ -12,6 +12,9 @@ commands:
     usage:  /<command>
 
 permissions:
+  furniture.hide:
+      default: false
+      description: Hide all Furnitures if that permissions is set!
   furniture.player:
     children:
       furniture.command.help: true

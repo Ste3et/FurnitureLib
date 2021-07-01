@@ -21,18 +21,23 @@ public class onPlayerJoin extends EventLibrary implements Listener {
         final Player player = event.getPlayer();
         Bukkit.getScheduler().runTaskLater(FurnitureLib.getInstance(), () -> {
         	if(player.isOnline()) {
-        		if(FurnitureConfig.getFurnitureConfig().isRenderPacketMethode() == false) {
-        			getFurnitureManager().updatePlayerViewWithRange(player, player.getLocation());
+        		if(player.hasPermission("furniture.hide")) {
+        			FurnitureLib.getInstance().getFurnitureManager().getIgnoreList().add(player.getUniqueId());
+                    FurnitureLib.getInstance().getFurnitureManager().removeFurniture(player);
         		}else {
-        			int x = player.getLocation().getBlockX() >> 4;
-        			int z = player.getLocation().getBlockZ() >> 4;
-        			getFurnitureManager().updatePlayerView(player, x, z);
-        		}
-        		Optional<DiceOfflinePlayer> offlinePlayer = FurnitureLib.getInstance().getPlayerCache().getPlayer(player.getUniqueId());
-        		if(offlinePlayer.isPresent()) {
-        			offlinePlayer.get().update(player);
-        		}else {
-        			FurnitureLib.getInstance().getPlayerCache().addPlayer(player);
+        			if(FurnitureConfig.getFurnitureConfig().isRenderPacketMethode() == false) {
+            			getFurnitureManager().updatePlayerViewWithRange(player, player.getLocation());
+            		}else {
+            			int x = player.getLocation().getBlockX() >> 4;
+            			int z = player.getLocation().getBlockZ() >> 4;
+            			getFurnitureManager().updatePlayerView(player, x, z);
+            		}
+            		Optional<DiceOfflinePlayer> offlinePlayer = FurnitureLib.getInstance().getPlayerCache().getPlayer(player.getUniqueId());
+            		if(offlinePlayer.isPresent()) {
+            			offlinePlayer.get().update(player);
+            		}else {
+            			FurnitureLib.getInstance().getPlayerCache().addPlayer(player);
+            		}
         		}
         	}
         }, 5);

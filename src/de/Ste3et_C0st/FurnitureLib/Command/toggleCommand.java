@@ -14,6 +14,10 @@ public class toggleCommand extends iCommand {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
+    	if(sender.hasPermission("furniture.hide")) {
+    		sender.sendMessage(getLHandler().getString("message.FurnitureToggleCantChange"));
+    		return;
+    	}
         if (args.length == 1) {
             if (sender instanceof Player) {
                 if (hasCommandPermission(sender)) {
@@ -37,6 +41,12 @@ public class toggleCommand extends iCommand {
                     sender.sendMessage(getLHandler().getString("message.PlayerNotOnline"));
                     return;
                 }
+                
+                if(player.hasPermission("furniture.hide")) {
+            		sender.sendMessage(getLHandler().getString("message.FurnitureToggleCantChange"));
+            		return;
+            	}
+                
                 if (!FurnitureLib.getInstance().getFurnitureManager().getIgnoreList().contains(player.getUniqueId())) {
                     FurnitureLib.getInstance().getFurnitureManager().getIgnoreList().add(player.getUniqueId());
                     FurnitureLib.getInstance().getFurnitureManager().removeFurniture(player);

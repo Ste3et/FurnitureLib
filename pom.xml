@@ -11,13 +11,13 @@
 		<furniture.tag></furniture.tag>
 	</properties>
 	
-	<version>2.5.0${furniture.tag}</version>
+	<version>2.5.1${furniture.tag}</version>
 	<packaging>jar</packaging>
 
 	<name>FurnitureLib</name>
 
 	<build>
-		<defaultGoal>clean package install</defaultGoal>
+		<defaultGoal>clean package install -X</defaultGoal>
 		<sourceDirectory>src</sourceDirectory>
 		<finalName>FurnitureLib</finalName>
 		<resources>
