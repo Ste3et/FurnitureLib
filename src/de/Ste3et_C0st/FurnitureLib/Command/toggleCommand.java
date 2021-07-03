@@ -14,7 +14,7 @@ public class toggleCommand extends iCommand {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-    	if(sender.hasPermission("furniture.hide")) {
+    	if(sender.hasPermission("furniturelib.hidemodels")) {
     		sender.sendMessage(getLHandler().getString("message.FurnitureToggleCantChange"));
     		return;
     	}
@@ -42,7 +42,7 @@ public class toggleCommand extends iCommand {
                     return;
                 }
                 
-                if(player.hasPermission("furniture.hide")) {
+                if(player.hasPermission("furniturelib.hidemodels")) {
             		sender.sendMessage(getLHandler().getString("message.FurnitureToggleCantChange"));
             		return;
             	}

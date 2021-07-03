@@ -12,7 +12,7 @@ commands:
     usage:  /<command>
 
 permissions:
-  furniture.hide:
+  furniturelib.hidemodels:
       default: false
       description: Hide all Furnitures if that permissions is set!
   furniture.player:
