@@ -94,6 +94,18 @@ public class ObjectIdManager {
 	public void updatePlayerView(Player player, int chunkX, int chunkZ) {
 		getAllExistObjectIDs().filter(entry -> entry.isInChunk(chunkX, chunkZ)).forEach(entry -> entry.updatePlayerView(player));
 	}
+
+	public void destroyChunkPlayerView(Player player, int chunkX, int chunkZ) {
+		getAllExistObjectIDs().filter(entry -> entry.isInChunk(chunkX, chunkZ)).forEach(entry -> entry.removeArmorStands(player));
+	}
+	
+	public void updatePlayerView(Player player, int chunkX, int chunkZ, World world) {
+		getObjectStreamFromWorld(world).filter(entry -> entry.isInChunk(chunkX, chunkZ)).forEach(entry -> entry.updatePlayerView(player));
+	}
+
+	public void destroyChunkPlayerView(Player player, int chunkX, int chunkZ, World world) {
+		getObjectStreamFromWorld(world).filter(entry -> entry.isInChunk(chunkX, chunkZ)).forEach(entry -> entry.removeArmorStands(player));
+	}
 	
 	public void sendAllInView(Player player) {
 		if(player.isOnline()) {
