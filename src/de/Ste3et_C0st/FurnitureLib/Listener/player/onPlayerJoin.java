@@ -21,7 +21,7 @@ public class onPlayerJoin extends EventLibrary implements Listener {
         final Player player = event.getPlayer();
         Bukkit.getScheduler().runTaskLater(FurnitureLib.getInstance(), () -> {
         	if(player.isOnline()) {
-        		if(player.hasPermission("furniturelib.hidemodels")) {
+        		if(player.hasPermission("furniturelib.hidemodels") && player.isOp() == false) {
         			FurnitureLib.getInstance().getFurnitureManager().getIgnoreList().add(player.getUniqueId());
                     FurnitureLib.getInstance().getFurnitureManager().removeFurniture(player);
         		}else {
