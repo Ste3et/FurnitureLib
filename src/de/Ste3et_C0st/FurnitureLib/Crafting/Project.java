@@ -50,7 +50,7 @@ public class Project {
     private ModelHandler modelschematic = null;
     private Function<ObjectID, Furniture> furnitureObject = ProjectLoader::new;
     private YamlConfiguration configuartion = null;
-    
+    private boolean enabled = true;
     /**
      * Create a new Project instance load the modelFile and calculate the boundingbox.
      *
@@ -70,6 +70,7 @@ public class Project {
         	this.configuartion = CraftingFile.loadDefaultConfig(craftingFile, YamlConfiguration.loadConfiguration(configFile), CraftingFile.getPath(name));
         	
     		if(this.configuartion.getBoolean(name + ".enabled", true) == false) {
+    			this.enabled = false;
         		return;
         	}
     		
@@ -339,12 +340,18 @@ public class Project {
     }
 
     public Project applyFunction() {
+    	 if (this.isEnabled() == false) return this;
     	this.getObjects().forEach(this::applyFunction);
         return this;
+    }
+    
+    public boolean isEnabled() {
+    	return this.enabled;
     }
 
     public Project applyFunction(ObjectID obj) {
         if (Objects.isNull(this.furnitureObject)) return this;
+        if (this.isEnabled() == false) return this;
         try {
         	obj.setFurnitureObject(furnitureObject.apply(obj));
         } catch (Exception e) {
