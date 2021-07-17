@@ -403,7 +403,7 @@ public class FurnitureLib extends JavaPlugin {
     }
     
     private void registerEvents() {
-    	this.furnitureProtocolListener = new FurnitureProtocolListener(instance, manager);
+    	
     	getPluginManager().registerEvents(new onPlayerJoin(), getInstance());
     	getPluginManager().registerEvents(new onCrafting(), getInstance());
     	getPluginManager().registerEvents(new onBlockDispense(), getInstance());
@@ -412,6 +412,10 @@ public class FurnitureLib extends JavaPlugin {
     	getPluginManager().registerEvents(new onPlayerQuit(), getInstance());
     	getPluginManager().registerEvents(new ChunkOnLoad(), getInstance());
     	getPluginManager().registerEvents(new onChunkChange(), getInstance());
+    	
+    	Bukkit.getScheduler().runTaskLater(instance, () ->{
+    		this.furnitureProtocolListener = new FurnitureProtocolListener();
+    	}, 200);
     }
     
     private void disableFurnitureLib(List<String> instructions) {
