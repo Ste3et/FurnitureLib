@@ -412,10 +412,7 @@ public class FurnitureLib extends JavaPlugin {
     	getPluginManager().registerEvents(new onPlayerQuit(), getInstance());
     	getPluginManager().registerEvents(new ChunkOnLoad(), getInstance());
     	getPluginManager().registerEvents(new onChunkChange(), getInstance());
-    	
-    	Bukkit.getScheduler().runTaskLater(instance, () ->{
-    		this.furnitureProtocolListener = new FurnitureProtocolListener();
-    	}, 200);
+    	this.furnitureProtocolListener = new FurnitureProtocolListener();
     }
     
     private void disableFurnitureLib(List<String> instructions) {

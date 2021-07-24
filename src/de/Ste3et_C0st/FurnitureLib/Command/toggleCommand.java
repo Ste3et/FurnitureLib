@@ -17,7 +17,7 @@ public class toggleCommand extends iCommand {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-    	if(sender.hasPermission("furniturelib.hidemodels")) {
+    	if(FurnitureLib.getInstance().getPermission().hasPermRaw(sender, "furniturelib.hidemodels")) {
     		sender.sendMessage(getLHandler().getString("message.FurnitureToggleCantChange"));
     		return;
     	}

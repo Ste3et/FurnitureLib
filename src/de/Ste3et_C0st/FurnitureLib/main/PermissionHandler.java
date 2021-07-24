@@ -1,8 +1,5 @@
 package de.Ste3et_C0st.FurnitureLib.main;
 
-import java.util.HashMap;
-import java.util.Objects;
-
 import org.bukkit.Bukkit;
 import org.bukkit.permissions.Permission;
 import org.bukkit.permissions.PermissionDefault;
@@ -19,11 +16,18 @@ public class PermissionHandler {
             VaultInstalled = true;
             setupPermissions();
         }
+       
+        registerPermission("furniturelib.hidemodels", PermissionDefault.FALSE);
     }
 
     public boolean hasPerm(CommandSender sender, String str) {
         if (sender == null) return true;
         if (str == null || str.isEmpty()) return true;
+        
+        if(str.equalsIgnoreCase("furniturelib.hidemodels")) {
+        	return this.hasPermRaw(sender, str);
+        }
+        
         if (sender.isOp()) return true;
         str = str.toLowerCase();
         if (!VaultInstalled) {
@@ -32,6 +36,16 @@ public class PermissionHandler {
         } else {
             if (permission.has(sender, "furniture.admin")) return true;
             return permission.has(sender, str);
+        }
+    }
+    
+    public boolean hasPermRaw(CommandSender sender, String str) {
+    	if (sender == null) return true;
+        if (str == null || str.isEmpty()) return true;
+        if (VaultInstalled == false) {
+        	return sender.hasPermission(str);
+        }else {
+        	return permission.has(sender, str);
         }
     }
 
@@ -51,6 +65,10 @@ public class PermissionHandler {
 			return false;
 		}
 	}
+    
+    public static void registerPermission(String name, PermissionDefault defaultPerm) {
+    	Bukkit.getPluginManager().addPermission(new Permission(name, defaultPerm));
+    }
     
     public static boolean registerPermission(String parentPermission, String name) {
     	try {
