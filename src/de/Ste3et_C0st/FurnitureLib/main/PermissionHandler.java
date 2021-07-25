@@ -16,18 +16,12 @@ public class PermissionHandler {
             VaultInstalled = true;
             setupPermissions();
         }
-       
-        registerPermission("furniturelib.hidemodels", PermissionDefault.FALSE);
     }
 
     public boolean hasPerm(CommandSender sender, String str) {
         if (sender == null) return true;
         if (str == null || str.isEmpty()) return true;
-        
-        if(str.equalsIgnoreCase("furniturelib.hidemodels")) {
-        	return this.hasPermRaw(sender, str);
-        }
-        
+
         if (sender.isOp()) return true;
         str = str.toLowerCase();
         if (!VaultInstalled) {

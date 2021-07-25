@@ -2,6 +2,7 @@ package de.Ste3et_C0st.FurnitureLib.Listener.player;
 
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureConfig;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
+import de.Ste3et_C0st.FurnitureLib.main.FurniturePlayer;
 
 import java.util.Optional;
 
@@ -21,7 +22,7 @@ public class onPlayerJoin extends EventLibrary implements Listener {
         final Player player = event.getPlayer();
         Bukkit.getScheduler().runTaskLater(FurnitureLib.getInstance(), () -> {
         	if(player.isOnline()) {
-        		if(player.isOp() == false && FurnitureLib.getInstance().getPermission().hasPermRaw(player, "furniturelib.hidemodels")) {
+        		if(FurniturePlayer.wrap(player).isBedrockPlayer()) {
         			FurnitureLib.getInstance().getFurnitureManager().getIgnoreList().add(player.getUniqueId());
                     FurnitureLib.getInstance().getFurnitureManager().removeFurniture(player);
         		}else {

@@ -1,6 +1,7 @@
 package de.Ste3et_C0st.FurnitureLib.Command;
 
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
+import de.Ste3et_C0st.FurnitureLib.main.FurniturePlayer;
 
 import java.util.UUID;
 
@@ -17,12 +18,13 @@ public class toggleCommand extends iCommand {
 
     @Override
     public void execute(CommandSender sender, String[] args) {
-    	if(FurnitureLib.getInstance().getPermission().hasPermRaw(sender, "furniturelib.hidemodels")) {
-    		sender.sendMessage(getLHandler().getString("message.FurnitureToggleCantChange"));
-    		return;
-    	}
         if (args.length == 1) {
             if (sender instanceof Player) {
+            	if(FurniturePlayer.wrap(Player.class.cast(sender)).isBedrockPlayer()) {
+            		sender.sendMessage(getLHandler().getString("message.FurnitureToggleCantChange"));
+            		return;
+            	}
+            	
                 if (hasCommandPermission(sender)) {
                 	this.toggle(sender, Player.class.cast(sender));
                 }
@@ -44,7 +46,7 @@ public class toggleCommand extends iCommand {
     }
    
     private void toggle(CommandSender sender, Player player) {
-    	if(player.hasPermission("furniturelib.hidemodels") && player.isOp() == false) {
+    	if(FurniturePlayer.wrap(Player.class.cast(sender)).isBedrockPlayer()) {
     		sender.sendMessage(getLHandler().getString("message.FurnitureToggleCantChange"));
     		return;
     	}

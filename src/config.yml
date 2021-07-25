@@ -1,7 +1,7 @@
 # Description:
 # UseMetrics: The plugin does send information about your server to http://mcstats.org/plugin/Furniturelib
 # Language: currently available Language:
-#       - EN_en: english 
+#       - EN_en: english
 #       - DE_de: german
 #       - PL_pl: polish | By gabixdev
 #       - FR_fr: france | By Niasios
@@ -38,6 +38,7 @@ config:
   debugMode: false
   Language: "EN_en"
   useParticles: true
+  autoHideBedrockPlayers: true
   DisableSitting: false
   ignoredWorlds: []
   viewRange: 10

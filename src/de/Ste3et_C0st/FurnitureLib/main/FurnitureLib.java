@@ -83,6 +83,7 @@ public class FurnitureLib extends JavaPlugin {
     private boolean enabledPlugin = false;
     private FurnitureConfig furnitureConfig;
     private FurnitureProtocolListener furnitureProtocolListener;
+    private FloodgateManager floodgateManager = null;
     
     static {
     	 String bukkitVersion = getBukkitVersion();
@@ -345,6 +346,11 @@ public class FurnitureLib extends JavaPlugin {
 			send("==========================================");
 			return;
 		}
+		
+		if(this.getPluginManager().isPluginEnabled("Floodgate")) {
+			this.floodgateManager = new FloodgateManager();
+		}
+		
 		this.furnitureConfig = new FurnitureConfig(instance);
 		this.updater = new Updater();
 		this.enabledPlugin = true;
@@ -560,6 +566,10 @@ public class FurnitureLib extends JavaPlugin {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+    
+    public FloodgateManager getFloodgateManager() {
+    	return this.floodgateManager;
     }
     
     public OfflinePlayerCache getPlayerCache() {

@@ -27,7 +27,8 @@ public class FurnitureConfig {
 	
     private boolean useGamemode = true, canSit = true, update = true, useParticle = true, useRegionMemberAccess = false,
             autoPurge = false, removePurge = false, creativeInteract = true, creativePlace = true, glowing = true,
-            spamBreak = true, spamPlace = true, rotateOnSit = true, useSSL = false, sync = true, packetRenderMethode = false;
+            spamBreak = true, spamPlace = true, rotateOnSit = true, useSSL = false, sync = true, packetRenderMethode = false,
+            hideBedrockPlayers = true;
     
     private int purgeTime = 30, viewDistance = 100, limitGlobal = -1;
     private long purgeTimeMS = 0, spamBreakTime = 5000, spamPlaceTime = 5000;
@@ -75,6 +76,7 @@ public class FurnitureConfig {
         this.ignoredWorlds = getConfig().getStringList("config.ignoredWorlds");
         this.packetRenderMethode = getConfig().getBoolean("config.packetRenderMethode");
         this.viewDistance = getConfig().getInt("config.viewRange", 10);
+        this.hideBedrockPlayers = getConfig().getBoolean("config.autoHideBedrockPlayers", true);
         
         ObjectID.setRange(this.viewDistance);
         this.glowing = getConfig().getBoolean("config.glowing");
@@ -260,5 +262,9 @@ public class FurnitureConfig {
     public boolean isRenderPacketMethode() {
     	return this.packetRenderMethode;
     }
+
+	public boolean isHideBedrockPlayers() {
+		return hideBedrockPlayers;
+	}
     
 }
