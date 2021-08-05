@@ -13,7 +13,7 @@
   </issueManagement>
   <build>
     <sourceDirectory>src</sourceDirectory>
-    <defaultGoal>clean package install</defaultGoal>
+    <defaultGoal>clean package install -X</defaultGoal>
     <resources>
       <resource>
         <filtering>true</filtering>

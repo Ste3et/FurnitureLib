@@ -40,6 +40,7 @@ import org.bukkit.plugin.java.JavaPlugin;
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -305,6 +306,26 @@ public class FurnitureLib extends JavaPlugin {
 			send("§5Download it here: §l§9https://www.spigotmc.org/resources/protocollib.1997/");
 			send("§5Otherwise you will receive: §cNo field with type java.util.Map exists in class EnumProtocol.");
 		} else if (getVersionInt() > 15) {
+			if (getVersionInt() == 17) {
+				try {
+					Class<?> clazz = Class.forName("com.comphenix.protocol.events.PacketContainer");
+					Method method = clazz.getDeclaredMethod("getEnumEntityUseActions");
+					if(Objects.isNull(method)) {
+						this.disableFurnitureLib(Arrays.asList(
+								"§5Info: §eFor Spigot 1.17.x you need §6ProtocolLib 4.7.0 Build #511 §eor above",
+								"§5Download it here: §l§9https://ci.dmulloy2.net/job/ProtocolLib/lastSuccessfulBuild/",
+								"§7FurnitureLib will stop working!"));
+						return;
+					}
+				}catch (Exception e) {
+					this.disableFurnitureLib(Arrays.asList(
+							"§5Info: §eFor Spigot 1.17.x you need §6ProtocolLib 4.7.0 Build #511 §eor above",
+							"§5Download it here: §l§9https://ci.dmulloy2.net/job/ProtocolLib/lastSuccessfulBuild/",
+							"§7FurnitureLib will stop working!"));
+					return;
+				}
+			}
+			
 			try {
 				Class.forName("com.comphenix.protocol.wrappers.Pair");
 			} catch (ClassNotFoundException ex) {

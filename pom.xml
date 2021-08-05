@@ -17,7 +17,7 @@
 	<name>FurnitureLib</name>
 
 	<build>
-		<defaultGoal>clean package install</defaultGoal>
+		<defaultGoal>clean package install -X</defaultGoal>
 		<sourceDirectory>src</sourceDirectory>
 		<finalName>FurnitureLib</finalName>
 		<resources>
