@@ -18,6 +18,7 @@ import java.lang.reflect.Method;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Objects;
+import java.util.UUID;
 
 @SuppressWarnings("deprecation")
 public class MaterialConverter {

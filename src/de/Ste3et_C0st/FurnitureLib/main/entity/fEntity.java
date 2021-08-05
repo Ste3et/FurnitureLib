@@ -2,6 +2,7 @@ package de.Ste3et_C0st.FurnitureLib.main.entity;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
+import com.comphenix.protocol.wrappers.BukkitConverters;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.Registry;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
@@ -416,6 +417,7 @@ public abstract class fEntity extends fSerializer implements Cloneable {
     public void kill(Player p, boolean b) {
         this.destroy.getIntegerArrays().writeSafely(0, new int[]{getEntityID()});
         this.destroy.getIntegers().writeSafely(0, getEntityID());
+        this.destroy.getIntLists().writeSafely(0, Arrays.asList(getEntityID()));
         try {
             getManager().sendServerPacket(p, destroy);
         } catch (Exception e) {

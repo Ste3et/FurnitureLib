@@ -82,71 +82,97 @@ public class ChunkOnLoad implements Listener {
      */
 
     @EventHandler(priority = EventPriority.HIGH)
-    public void onSpawn(final PlayerInteractEvent e) {
-        if (Action.RIGHT_CLICK_BLOCK == e.getAction()) {
-            if (!e.hasBlock()) return;
-            if (!e.hasItem()) return;
-            if (e.useInteractedBlock().equals(Result.DENY)) return;
-            if (e.useItemInHand().equals(Result.DENY)) return;
-            if (e.isCancelled()) return;
-            final Block b = e.getClickedBlock();
-            final ItemStack stack = e.getItem();
-            if (stack == null) return;
-            final Project pro = getProjectByItem(stack);
-            if (Objects.isNull(pro)) return;
-            e.setCancelled(true);
-            if (FurnitureLib.getInstance().getBlockManager().contains(b.getLocation())) return;
-            if (eventList.contains(e.getPlayer())) return;
-            if (b.isLiquid()) return;
-            if (EquipmentSlot.HAND != e.getHand()) return;
-            final Player player = e.getPlayer();
-            
-            if(FurnitureConfig.getFurnitureConfig().isWorldIgnored(e.getPlayer().getWorld().getName())) {
-            	player.sendMessage(LanguageManager.getInstance().getString("message.IgnoredWorld", new StringTranslator("%WORLD%", e.getPlayer().getWorld().getName())));
-            	return;
-            }
-            
-            eventList.add(player);
-            final BlockFace face = e.getBlockFace();
-            final Location loc = b.getLocation();
-            
-            loc.setYaw(FurnitureLib.getInstance().getLocationUtil().FaceToYaw(LocationUtil.yawToFace(player.getLocation().getYaw())));
-
-			FurnitureItemEvent itemEvent = new FurnitureItemEvent(player, stack, pro, loc, face);
-			FurnitureLib.debug("FurnitureLib -> Place Furniture Start (" + pro.getName() + ").");
+    public void onSpawn(final PlayerInteractEvent event) {
+    	final Action action = event.getAction();
+    	final EquipmentSlot equipmentSlot = event.getHand();
+    	final Player player = event.getPlayer();
+    	
+    	if(event.hasItem()) {
+    		final ItemStack stack = event.getItem();
+    		final Project project = getProjectByItem(stack);
+    		if(Objects.isNull(project)) return;
+    		if(event.isCancelled()) return;
+    		
+    		final String projectName = project.getName();
+    		
+    		if(Result.DENY == event.useInteractedBlock()) {
+    			FurnitureLib.debug("[FurnitureLib] ");
+    			return;
+    		}
+    		
+    		if(Result.DENY == event.useItemInHand()) {
+    			return;
+    		}
+    		
+    		event.setCancelled(true);
+    		
+    		if(EquipmentSlot.HAND != equipmentSlot) {
+    			return;
+    		}
+    		
+    		if(Action.RIGHT_CLICK_BLOCK != action) {
+    			return;
+    		}
+    		
+    		if(event.hasBlock() == false) {
+    			return;
+    		}
+    			
+    		
+    		final BlockFace blockFace = event.getBlockFace();
+    		final Block block = event.getClickedBlock();
+    		final Location location = block.getLocation();
+    		final World world = location.getWorld();
+    		
+    		if(block.isLiquid() == true) {
+    			return;
+    		}
+    		
+    		if(this.eventList.contains(player) == true) {
+    			return;
+    		}
+    		
+    		if(FurnitureLib.getInstance().getBlockManager().contains(location) == true) {
+    			return;
+    		}
+    		
+    		if(FurnitureConfig.getFurnitureConfig().isWorldIgnored(world.getName()) == true) {
+    			player.sendMessage(LanguageManager.getInstance().getString("message.IgnoredWorld", new StringTranslator("%WORLD%", world.getName())));
+    			return;
+    		}
+    		
+    		this.eventList.add(player);
+    		
+    		location.setYaw(FurnitureLib.getInstance().getLocationUtil().FaceToYaw(LocationUtil.yawToFace(player.getLocation().getYaw())));
+    		
+    		FurnitureItemEvent itemEvent = new FurnitureItemEvent(player, stack, project, location, blockFace);
+			FurnitureLib.debug("FurnitureLib -> Place Furniture Start (" + projectName + ").");
 			Bukkit.getPluginManager().callEvent(itemEvent);
 			FurnitureLib.debug("FurnitureLib -> Call FurnitureItemEvent cancel (" + itemEvent.isCancelled() + ").");
 			if (!itemEvent.isCancelled()) {
 				if (itemEvent.canBuild()) {
-					FurnitureLib.debug("FurnitureLib -> Can Place Model (" + pro.getName() + ") here");
+					FurnitureLib.debug("FurnitureLib -> Can Place Model (" + projectName + ") here");
 					if (itemEvent.isTimeToPlace()) {
 						itemEvent.debugTime("FurnitureLib -> {ChunkOnLoad} isTime to Place");
 						if (Objects.nonNull(itemEvent.getProject().getModelschematic())) {
-							itemEvent.debugTime("FurnitureLib -> Model " + pro.getName() + " have Schematic place it.");
-							if (pro.getModelschematic().isPlaceable(itemEvent.getObjID().getStartLocation())) {
-								itemEvent.debugTime("FurnitureLib -> Model " + pro.getName() + " is Placeable");
+							itemEvent.debugTime("FurnitureLib -> Model " + projectName + " have Schematic place it.");
+							if (project.getModelschematic().isPlaceable(itemEvent.getObjID().getStartLocation())) {
+								itemEvent.debugTime("FurnitureLib -> Model " + projectName + " is Placeable");
 								spawn(itemEvent);
 							} else {
 								player.sendMessage(LanguageManager.getInstance().getString("message.NotEnoughSpace"));
 							}
 						} else {
-							FurnitureLib.debug("FurnitureLib -> Can't place model [no Modelschematic (" + pro.getName() + ")]");
+							FurnitureLib.debug("FurnitureLib -> Can't place model [no Modelschematic (" + projectName + ")]");
 						}
 					}
 				} else {
-					FurnitureLib.debug("FurnitureLib -> Can't place model " + pro.getName() + " here canBuild(" + false + ")");
+					FurnitureLib.debug("FurnitureLib -> Can't place model " + projectName + " here canBuild(" + false + ")");
 				}
 			}
-			removePlayer(player);
-        } else if (Action.RIGHT_CLICK_AIR == e.getAction()) {
-            final ItemStack stack = e.getItem();
-            if (stack == null) return;
-            final Project pro = getProjectByItem(stack);
-            if (pro == null) return;
-            e.setCancelled(true);
-        }
-
-
+    		
+    		this.removePlayer(player);
+    	}
     }
     
     @EventHandler

@@ -20,5 +20,6 @@ public class onPlayerQuit extends EventLibrary implements Listener {
         if(offlinePlayer.isPresent()) {
 			offlinePlayer.get().update(player);
         }
+        
     }
 }

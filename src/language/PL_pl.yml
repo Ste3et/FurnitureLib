@@ -29,6 +29,7 @@ message:
   FurnitureToggleCMDOff: '&aWszystkie meble sa teraz &cniewidoczne'
   FurnitureToggleCMDOn: '&aWszystie meble sa teraz &2widoczne'
   FurnitureToggleEvent: '&cNie mozesz tego zrobic.'
+  FurnitureToggleCantChange: '&cYou cant change the Furniture Visibility'
   FurnitureToFastPlace: '&cYou must be wait &4#TIME# &cbefore you can place it.'
   FurnitureToFastBreak: '&cYou must be wait &4#TIME# &cbefore you can break it.'
   LimitAnnouncer: '&6Pozstawiles &2#CURRENT#&6 z &c#MAX# &e#TYPE#.'
@@ -42,14 +43,14 @@ message:
   IgnoredWorld: "&7You can't place furniture models at &2%WORLD%"
   command:
     help:
-        header: 
+        header:
             - "&7&m+-------------------&7[&2&lFurniture&7]&m--------------------+"
             - "&7 "
         footer:
-            - "&7 " 
-            - "&e&lTip: &7Try to &e&nclick &7or &e&nhover&7 the commands" 
+            - "&7 "
+            - "&e&lTip: &7Try to &e&nclick &7or &e&nhover&7 the commands"
             - "&7&m+--------------------------------------------------+"
-        hover: 
+        hover:
             - "&7version: &2#VERSION#"
             - "&7author: &2#AUTHOR#"
     debug:
@@ -60,7 +61,7 @@ message:
         suggest: "/furniture debug"
     delete:
         help_name: "&7/furniture &edelete &a[systemID] {confirm}"
-        help_hover: 
+        help_hover:
             - "&7Use this command if you want to &edelete"
             - "&7a Model from the &esystem"
         suggest: "/furniture delete systemID"
@@ -74,13 +75,13 @@ message:
         wrongUsage: '&cPlease use /furniture download [id]'
     dump:
         help_name: "&7/furniture &edump"
-        help_hover: 
+        help_hover:
             - "&7Upload some important informations to help bug finding"
         suggest: "/furniture dump"
         wrongUsage: "&cPlease use /furniture dump"
     give:
         help_name: "&7/furniture &egive &a[systemID] &b(player) &b(amount)"
-        help_hover: 
+        help_hover:
             - "&7Give a &emodel Item &7to a &ePlayer"
         suggest: "/furniture give [systemID]"
         wrongUsage: "&cPlease use /furniture give [systemID]"
@@ -174,7 +175,7 @@ message:
         suggest: "/furniture save"
     spawn:
         help_name: "&7/furniture &espawn [x] [y] [z] [yaw] [systemID] {world}"
-        help_hover: 
+        help_hover:
             - "&7Spawn a furniture on &eposition"
         suggest: "/furniture spawn [x] [y] [z] [yaw] [systemID] {world}"
         help_hide: true

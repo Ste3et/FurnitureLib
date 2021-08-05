@@ -3,6 +3,7 @@ package de.Ste3et_C0st.FurnitureLib.main;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
@@ -10,15 +11,19 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 
+import de.Ste3et_C0st.FurnitureLib.Utilitis.FloodgateManager;
+
 public class FurniturePlayer {
 
 	private final Player player;
+	private final UUID uuid;
 	private HashSet<ObjectID> receivedObjects = new HashSet<ObjectID>();
 	private static final HashMap<UUID, FurniturePlayer> playerSet = new HashMap<UUID, FurniturePlayer>();
 	
 	public FurniturePlayer(Player player) {
 		this.player = player;
-		playerSet.put(player.getUniqueId(), this);
+		this.uuid = player.getUniqueId();
+		playerSet.put(this.uuid, this);
 	}
 
 	public Player getPlayer() {
@@ -78,5 +83,13 @@ public class FurniturePlayer {
     
     public boolean containsObjectID(ObjectID objectID) {
     	return this.receivedObjects.contains(objectID);
+    }
+    
+    public boolean isBedrockPlayer() {
+    	FloodgateManager manager = FurnitureLib.getInstance().getFloodgateManager();
+    	if(Objects.nonNull(manager)) {
+    		manager.isBedrockPlayer(uuid);
+    	}
+    	return false;
     }
 }

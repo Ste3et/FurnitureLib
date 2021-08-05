@@ -2,6 +2,8 @@ package de.Ste3et_C0st.FurnitureLib.Utilitis;
 
 import java.lang.reflect.Field;
 import java.util.Collection;
+import java.util.Objects;
+import java.util.UUID;
 
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -14,33 +16,42 @@ import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 
 public class SkullMetaPatcher {
 
-	private static Class<?> craftSkullMeta;
+	private final static Class<?> skullMetaClass;
 	private static Field profileField;
 	
 	static {
+		skullMetaClass = SkullMeta.class;
 		try {
-			craftSkullMeta = Class.forName("org.bukkit.craftbukkit." + FurnitureLib.getBukkitVersion() + ".inventory");
-			profileField = craftSkullMeta.getField("profile");
+			profileField = skullMetaClass.getDeclaredField("profile");
 			profileField.setAccessible(true);
-		}catch (Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
-		}
+		} 
 	}
 	
 	public static ItemStack convertStack(ItemStack stack) {
 		if(stack.getType() == Material.PLAYER_HEAD) {
 			if(stack.hasItemMeta()) {
-				SkullMeta meta = (SkullMeta) stack.getItemMeta();
-				Object obcSkullMeta = craftSkullMeta.cast(meta);
-				try {
-					WrappedGameProfile wrappedGameProfile = WrappedGameProfile.fromHandle(profileField.get(obcSkullMeta));
-					Collection<WrappedSignedProperty> property = wrappedGameProfile.getProperties().get("texture");
-				}catch (Exception e) {
-					e.printStackTrace();
-				}
+				
 			}
 		}
 		return stack;
 	}
 	
+    static void sanitizeUUID(SkullMeta skullMeta) {
+    	
+    	try {
+    		Field profileField = skullMeta.getClass().getDeclaredField("profile");
+			profileField.setAccessible(true);
+    		
+    		WrappedGameProfile wrappedProfile = WrappedGameProfile.fromHandle(profileField.get(skullMeta));
+    		
+    		if(Objects.nonNull(wrappedProfile)) {
+    			
+    			profileField.set(skullMeta, wrappedProfile.getHandle());
+    		}
+    	}catch (Exception e) {
+			e.printStackTrace();
+		}
+     }
 }

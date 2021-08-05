@@ -83,6 +83,7 @@ public class FurnitureLib extends JavaPlugin {
     private boolean enabledPlugin = false;
     private FurnitureConfig furnitureConfig;
     private FurnitureProtocolListener furnitureProtocolListener;
+    private FloodgateManager floodgateManager = null;
     
     static {
     	 String bukkitVersion = getBukkitVersion();
@@ -326,6 +327,26 @@ public class FurnitureLib extends JavaPlugin {
 				}
 			}
 			
+			if (getVersionInt() == 17) {
+				try {
+					Class<?> clazz = Class.forName("com.comphenix.protocol.events.PacketContainer");
+					Method method = clazz.getMethod("getEnumEntityUseActions");
+					if(Objects.isNull(method)) {
+						this.disableFurnitureLib(Arrays.asList(
+								"§5Info: §eFor Spigot 1.17.x you need §6ProtocolLib 4.7.0 Build #511 §eor above",
+								"§5Download it here: §l§9https://ci.dmulloy2.net/job/ProtocolLib/lastSuccessfulBuild/",
+								"§7FurnitureLib will stop working!"));
+						return;
+					}
+				}catch (Exception e) {
+					this.disableFurnitureLib(Arrays.asList(
+							"§5Info: §eFor Spigot 1.17.x you need §6ProtocolLib 4.7.0 Build #511 §eor above",
+							"§5Download it here: §l§9https://ci.dmulloy2.net/job/ProtocolLib/lastSuccessfulBuild/",
+							"§7FurnitureLib will stop working!"));
+					return;
+				}
+			}
+			
 			try {
 				Class.forName("com.comphenix.protocol.wrappers.Pair");
 			} catch (ClassNotFoundException ex) {
@@ -345,6 +366,11 @@ public class FurnitureLib extends JavaPlugin {
 			send("==========================================");
 			return;
 		}
+		
+		if(this.getPluginManager().isPluginEnabled("Floodgate")) {
+			this.floodgateManager = new FloodgateManager();
+		}
+		
 		this.furnitureConfig = new FurnitureConfig(instance);
 		this.updater = new Updater();
 		this.enabledPlugin = true;
@@ -403,7 +429,7 @@ public class FurnitureLib extends JavaPlugin {
     }
     
     private void registerEvents() {
-    	this.furnitureProtocolListener = new FurnitureProtocolListener(instance, manager);
+    	
     	getPluginManager().registerEvents(new onPlayerJoin(), getInstance());
     	getPluginManager().registerEvents(new onCrafting(), getInstance());
     	getPluginManager().registerEvents(new onBlockDispense(), getInstance());
@@ -412,6 +438,7 @@ public class FurnitureLib extends JavaPlugin {
     	getPluginManager().registerEvents(new onPlayerQuit(), getInstance());
     	getPluginManager().registerEvents(new ChunkOnLoad(), getInstance());
     	getPluginManager().registerEvents(new onChunkChange(), getInstance());
+    	this.furnitureProtocolListener = new FurnitureProtocolListener();
     }
     
     private void disableFurnitureLib(List<String> instructions) {
@@ -559,6 +586,10 @@ public class FurnitureLib extends JavaPlugin {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+    
+    public FloodgateManager getFloodgateManager() {
+    	return this.floodgateManager;
     }
     
     public OfflinePlayerCache getPlayerCache() {
