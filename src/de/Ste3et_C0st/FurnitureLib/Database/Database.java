@@ -29,6 +29,7 @@ public abstract class Database {
     public FurnitureLib plugin;
     private HikariConfig config;
     private HikariDataSource dataSource;
+    private Connection currentConnection;
     private Converter converter;
     public static final String TABLE_NAME = "furnitureLibData";
     
@@ -45,13 +46,22 @@ public abstract class Database {
         return this.config;
     }
 
+    public void closeConnection() {
+        try {
+            currentConnection.close();
+            this.currentConnection = null;
+        } catch (SQLException throwables) {
+            throwables.printStackTrace();
+        }
+    }
+
     public Connection getConnection() {
         try {
-            Connection connection = this.dataSource.getConnection();
-            if (connection == null) {
+            this.currentConnection = dataSource.getConnection();
+            if (currentConnection == null) {
                 throw new SQLException("Unable to get a connection from the pool.");
             }
-            return connection;
+            return currentConnection;
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -61,6 +71,7 @@ public abstract class Database {
     public boolean save(String query) {
     	 try (Connection con = getConnection(); Statement stmt = con.createStatement()) {
              stmt.executeUpdate(query);
+             closeConnection();
              return true;
          } catch (Exception e) {
              e.printStackTrace();
@@ -90,6 +101,7 @@ public abstract class Database {
         	stmt.setInt(5, z);
         	stmt.setString(6, id.getUUID().toString());
         	stmt.executeUpdate();
+            closeConnection();
             return true;
         } catch (Exception e) {
             e.printStackTrace();
@@ -118,6 +130,7 @@ public abstract class Database {
             			} while (rs.next());
             		}
         		}
+                closeConnection();
         	}catch (Exception e) {
                 e.printStackTrace();
         	}
@@ -178,6 +191,7 @@ public abstract class Database {
     	String query = "DELETE FROM " + TABLE_NAME + " WHERE ObjID = '" + objID.getID() + "'";
         try (Connection con = getConnection(); Statement stmt = con.createStatement()) {
             stmt.execute(query);
+            closeConnection();
         } catch (Exception e) {
             e.printStackTrace();
         }
