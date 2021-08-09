@@ -71,10 +71,11 @@ public abstract class Database {
     public boolean save(String query) {
     	 try (Connection con = getConnection(); Statement stmt = con.createStatement()) {
              stmt.executeUpdate(query);
-             closeConnection();
              return true;
          } catch (Exception e) {
              e.printStackTrace();
+         } finally {
+    	     closeConnection();
          }
          return false;
     }
@@ -101,10 +102,11 @@ public abstract class Database {
         	stmt.setInt(5, z);
         	stmt.setString(6, id.getUUID().toString());
         	stmt.executeUpdate();
-            closeConnection();
             return true;
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            closeConnection();
         }
         return false;
     }
@@ -130,10 +132,11 @@ public abstract class Database {
             			} while (rs.next());
             		}
         		}
-                closeConnection();
         	}catch (Exception e) {
                 e.printStackTrace();
-        	}
+        	} finally {
+                closeConnection();
+            }
         }
         
         idList.stream().filter(Objects::nonNull).forEach(entry -> {
@@ -191,9 +194,10 @@ public abstract class Database {
     	String query = "DELETE FROM " + TABLE_NAME + " WHERE ObjID = '" + objID.getID() + "'";
         try (Connection con = getConnection(); Statement stmt = con.createStatement()) {
             stmt.execute(query);
-            closeConnection();
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            closeConnection();
         }
     }
 
