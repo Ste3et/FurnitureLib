@@ -36,6 +36,7 @@ public abstract class Database {
     public int stepSize = 250, offset = 0, dataFiles = 0, step = 1, stepComplete = 0;
     private HikariConfig config;
     private HikariDataSource dataSource;
+    private Connection currentConnection;
     
     public Database(FurnitureLib instance, HikariConfig config){
         this.plugin = instance;
@@ -48,14 +49,23 @@ public abstract class Database {
     public HikariConfig getConfig() {
     	return this.config;
     }
+
+    public void closeConnection() {
+    	try {
+    		currentConnection.close();
+    		this.currentConnection = null;
+		} catch(SQLException throwable) {
+    		throwable.printStackTrace();
+		}
+	}
     
 	public Connection getConnection() {
 		 try{
-			 Connection connection = this.dataSource.getConnection();
-		     if (connection == null) {
+			 this.currentConnection = dataSource.getConnection();
+		     if (currentConnection == null) {
 		          throw new SQLException("Unable to get a connection from the pool.");
 		     }
-		     return connection;
+		     return currentConnection;
 		}catch (Exception e) {
 			e.printStackTrace();
 			return null;
@@ -79,7 +89,9 @@ public abstract class Database {
     		return true;
     	}catch(Exception e){
     		e.printStackTrace();
-    	}
+    	} finally {
+    		closeConnection();
+		}
     	return false;
     }
     
@@ -106,6 +118,7 @@ public abstract class Database {
 		} finally {
 			FurnitureLib.getInstance().getConfig().set("config.autoFileUpdater", false);
 			FurnitureLib.getInstance().saveConfig();
+			closeConnection();
 		}
     }
 
@@ -184,6 +197,8 @@ public abstract class Database {
 				}catch (Exception e) {
 					e.printStackTrace();
 					FurnitureLib.getInstance().send("==========================================");
+				} finally {
+					closeConnection();
 				}
 		});
     }
@@ -217,6 +232,8 @@ public abstract class Database {
 	    		callBack.onResult(idList);
 			}catch (Exception e) {
 				e.printStackTrace();
+			} finally {
+				closeConnection();
 			}
 		});
 	}
@@ -254,6 +271,7 @@ public abstract class Database {
     		e.printStackTrace();
     	}finally {
 			FurnitureManager.getInstance().getProjects().forEach(Project::applyFunction);
+			closeConnection();
 		}
     }
 
@@ -262,6 +280,8 @@ public abstract class Database {
     		stmt.execute("DELETE FROM furnitureLibData WHERE ObjID = '" + objID.getID() + "'");
 		} catch (Exception e) {
     		e.printStackTrace();
+		} finally {
+    		closeConnection();
 		}
     }
 }
