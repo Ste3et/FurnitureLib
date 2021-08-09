@@ -27,10 +27,18 @@ public class SQLite extends Database {
     }
 
     public void createTable() {
-        try (Connection con = getConnection(); Statement stmt = con.createStatement()) {
+        Connection con = null;
+        Statement stmt = null;
+
+        try {
+            con = getConnection();
+            stmt = con.createStatement();
             stmt.executeUpdate(Objects);
         } catch (SQLException e) {
             e.printStackTrace();
+        } finally {
+            try { if(stmt != null) stmt.close(); } catch (Exception e) {}
+            try { if(con != null) con.close(); } catch (Exception e) {}
         }
     }
 

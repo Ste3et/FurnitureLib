@@ -2,24 +2,15 @@ package de.Ste3et_C0st.FurnitureLib.Database;
 
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
-
 import de.Ste3et_C0st.FurnitureLib.Utilitis.ExecuteTimer;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.callbacks.CallbackObjectIDs;
-import de.Ste3et_C0st.FurnitureLib.main.ChunkData;
-import de.Ste3et_C0st.FurnitureLib.main.FurnitureConfig;
-import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
-import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
-import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
+import de.Ste3et_C0st.FurnitureLib.main.*;
 import de.Ste3et_C0st.FurnitureLib.main.Type.DataBaseType;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.UUID;
@@ -29,7 +20,6 @@ public abstract class Database {
     public FurnitureLib plugin;
     private HikariConfig config;
     private HikariDataSource dataSource;
-    private Connection currentConnection;
     private Converter converter;
     public static final String TABLE_NAME = "furnitureLibData";
     
@@ -46,22 +36,13 @@ public abstract class Database {
         return this.config;
     }
 
-    public void closeConnection() {
-        try {
-            currentConnection.close();
-            this.currentConnection = null;
-        } catch (SQLException throwables) {
-            throwables.printStackTrace();
-        }
-    }
-
     public Connection getConnection() {
         try {
-            this.currentConnection = dataSource.getConnection();
-            if (currentConnection == null) {
-                throw new SQLException("Unable to get a connection from the pool.");
+            Connection con = dataSource.getConnection();
+            if (con == null || con.isClosed()) {
+                throw new SQLException("Unable to get an open connection from the pool.");
             }
-            return currentConnection;
+            return con;
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -69,13 +50,19 @@ public abstract class Database {
     }
     
     public boolean save(String query) {
-    	 try (Connection con = getConnection(); Statement stmt = con.createStatement()) {
+        Connection con = null;
+        Statement stmt = null;
+
+         try {
+             con = getConnection();
+             stmt = con.createStatement();
              stmt.executeUpdate(query);
              return true;
          } catch (Exception e) {
              e.printStackTrace();
          } finally {
-    	     closeConnection();
+             try { if(stmt != null) stmt.close(); } catch (Exception e) {}
+             try { if(con != null) con.close(); } catch (Exception e) {}
          }
          return false;
     }
@@ -94,19 +81,25 @@ public abstract class Database {
         int x = id.getStartLocation().getBlockX() >> 4;
         int z = id.getStartLocation().getBlockZ() >> 4;
         String query = "REPLACE INTO " + TABLE_NAME + " (ObjID, Data, world, `x`, `z`, `uuid`) VALUES (?, ?, ?, ?, ?, ?);";
-        try (Connection con = getConnection(); PreparedStatement stmt = con.prepareStatement(query)) {
-        	stmt.setString(1, id.getID());
-        	stmt.setString(2, base64NBT);
-        	stmt.setString(3, id.getWorldName());
-        	stmt.setInt(4, x);
-        	stmt.setInt(5, z);
-        	stmt.setString(6, id.getUUID().toString());
-        	stmt.executeUpdate();
+        Connection con = null;
+        PreparedStatement stmt = null;
+
+        try {
+            con = getConnection();
+            stmt = con.prepareStatement(query);
+            stmt.setString(1, id.getID());
+            stmt.setString(2, base64NBT);
+            stmt.setString(3, id.getWorldName());
+            stmt.setInt(4, x);
+            stmt.setInt(5, z);
+            stmt.setString(6, id.getUUID().toString());
+            stmt.executeUpdate();
             return true;
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            closeConnection();
+            try { if(stmt != null) stmt.close(); } catch (Exception e) {}
+            try { if(con != null) con.close(); } catch (Exception e) {}
         }
         return false;
     }
@@ -116,26 +109,32 @@ public abstract class Database {
     	if(Objects.isNull(query)) return idList;
         String worldName = bukkitWorld.getName();
         if(Objects.nonNull(bukkitWorld)) {
-        	try (Connection con = getConnection(); ResultSet rs = con.createStatement().executeQuery(query)) {
-        		if(Objects.nonNull(rs)) {
-        			if (rs.next() == true) {
-            			do {
-            				String objectSerial = rs.getString("ObjID");
-            				String data = rs.getString("Data");
-                            if (!(objectSerial.isEmpty())) {
+            Connection con = null;
+            ResultSet rs = null;
+
+            try {
+                con = getConnection();
+                rs = con.createStatement().executeQuery(query);
+                if(Objects.nonNull(rs)) {
+                    if(rs.next() == true) {
+                        do {
+                            String objectSerial = rs.getString("ObjID");
+                            String data = rs.getString("Data");
+                            if(!(objectSerial.isEmpty())) {
                                 ObjectID obj = DeSerializer.Deserialize(objectSerial, data, action, bukkitWorld);
-                                if (Objects.nonNull(obj)) {
-                                	obj.setWorldName(worldName);
+                                if(Objects.nonNull(obj)) {
+                                    obj.setWorldName(worldName);
                                     idList.add(obj);
                                 }
                             }
-            			} while (rs.next());
-            		}
-        		}
-        	}catch (Exception e) {
+                        } while(rs.next());
+                    }
+                }
+        	} catch (Exception e) {
                 e.printStackTrace();
         	} finally {
-                closeConnection();
+                try { if(rs != null) rs.close(); } catch (Exception e) {}
+                try { if(con != null) con.close(); } catch (Exception e) {}
             }
         }
         
@@ -192,12 +191,18 @@ public abstract class Database {
 
     public void delete(ObjectID objID) {
     	String query = "DELETE FROM " + TABLE_NAME + " WHERE ObjID = '" + objID.getID() + "'";
-        try (Connection con = getConnection(); Statement stmt = con.createStatement()) {
+        Connection con = null;
+        Statement stmt = null;
+
+        try {
+            con = getConnection();
+            stmt = con.createStatement();
             stmt.execute(query);
         } catch (Exception e) {
             e.printStackTrace();
         } finally {
-            closeConnection();
+            try { if(stmt != null) stmt.close(); } catch (Exception e) {}
+            try { if(con != null) con.close(); } catch (Exception e) {}
         }
     }
 

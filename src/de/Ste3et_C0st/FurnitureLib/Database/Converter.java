@@ -11,12 +11,7 @@ import org.bukkit.command.CommandSender;
 import java.io.ByteArrayInputStream;
 import java.sql.Connection;
 import java.sql.ResultSet;
-import java.util.ArrayList;
-import java.util.Base64;
-import java.util.EnumSet;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 public class Converter {
 
@@ -51,10 +46,18 @@ public class Converter {
     private boolean checkIfTableExist(String str) {
     	if(str.isEmpty()) return false;
         boolean b = false;
-        try (Connection con = database.getConnection(); ResultSet rs = database.getConnection().getMetaData().getTables(null, null, str, null)) {
+        Connection con = null;
+        ResultSet rs = null;
+
+        try {
+            con = database.getConnection();
+            rs = database.getConnection().getMetaData().getTables(null, null, str, null);
             b = rs.next();
         } catch (Exception e) {
             e.printStackTrace();
+        } finally {
+            try { if(rs != null) rs.close(); } catch (Exception e) {}
+            try { if(con != null) con.close(); } catch (Exception e) {}
         }
         return b;
     }
@@ -64,22 +67,30 @@ public class Converter {
         System.out.println("Try to convert database Table: " + tableName);
         if (this.checkIfTableExist(tableName)) {
             System.out.println("FurnitureLib: Found table to convert (" + tableName +")");
-            try (Connection con = database.getConnection(); ResultSet rs = con.createStatement().executeQuery(sql)) {
-                if (rs.next()) {
+            Connection con = null;
+            ResultSet rs = null;
+
+            try {
+                con = database.getConnection();
+                rs = con.createStatement().executeQuery(sql);
+                if(rs.next()) {
                     do {
-                        if (Objects.nonNull(rs)) {
+                        if(Objects.nonNull(rs)) {
                             this.dataFiles = rs.getInt(1);
-                            if (dataFiles != 0) {
+                            if(dataFiles != 0) {
                                 stepComplete = (int) Math.ceil(((double) dataFiles) / ((double) stepSize));
                                 sender.sendMessage("Convert of " + dataFiles + " from " + database.getType().name());
                                 sender.sendMessage("It takes a while " + stepComplete + " Steps");
                                 convert(sender, tableName);
                             }
                         }
-                    } while (rs.next());
+                    } while(rs.next());
                 }
             } catch (Exception e) {
                 e.printStackTrace();
+            } finally {
+                try { if(rs != null) rs.close(); } catch (Exception e) {}
+                try { if(con != null) con.close(); } catch (Exception e) {}
             }
         } else {
             System.out.println("FurnitureLib: Found no table to convert");
@@ -92,7 +103,12 @@ public class Converter {
 
     private void convert(CommandSender sender, String tableName) {
         Bukkit.getScheduler().runTaskAsynchronously(FurnitureLib.getInstance(), () -> {
-            try (Connection con = database.getConnection(); ResultSet rs = con.createStatement().executeQuery("SELECT * FROM " + tableName + " LIMIT " + stepSize + " OFFSET " + offset)) {
+            Connection con = null;
+            ResultSet rs = null;
+
+            try {
+                con = database.getConnection();
+                rs = con.createStatement().executeQuery("SELECT * FROM " + tableName + " LIMIT " + stepSize + " OFFSET " + offset);
                 sender.sendMessage("§7Convert Models Step §e" + step + "/" + stepComplete + " start !");
                 if (rs.next()) {
                     do {
@@ -100,8 +116,8 @@ public class Converter {
                         if (Objects.nonNull(rs)) {
                             String a = rs.getString(1), c = rs.getString(2);
                             if (!(a.isEmpty() || c.isEmpty())) {
-                            	if(!objID.contains(a)) {
-                            		ByteArrayInputStream bin = new ByteArrayInputStream(Base64.getDecoder().decode(c));
+                                if(!objID.contains(a)) {
+                                    ByteArrayInputStream bin = new ByteArrayInputStream(Base64.getDecoder().decode(c));
                                     NBTTagCompound compound = NBTCompressedStreamTools.read(bin);
                                     bin.close();
 
@@ -125,15 +141,15 @@ public class Converter {
                                                 "'" + uuid + "');";
                                         con.createStatement().executeUpdate(sql);
                                     } else {
-                                    	if(compound.hasKey("entities")) {
-                                    		NBTTagCompound armorStands = compound.getCompound("entities");
-                                    		compound.set("entities", convertPacketItemStack(armorStands));
-                                    	}else if(compound.hasKey("ArmorStands")) {
-                                    		NBTTagCompound armorStands = compound.getCompound("ArmorStands");
+                                        if(compound.hasKey("entities")) {
+                                            NBTTagCompound armorStands = compound.getCompound("entities");
+                                            compound.set("entities", convertPacketItemStack(armorStands));
+                                        }else if(compound.hasKey("ArmorStands")) {
+                                            NBTTagCompound armorStands = compound.getCompound("ArmorStands");
                                             compound.set("entities", convertPacketItemStack(armorStands));
                                             compound.remove("ArmorStands");
-                                    	}
-                                        
+                                        }
+
                                         String g = Base64.getEncoder().encodeToString(Serializer.armorStandtoBytes(compound));
                                         String sql = "REPLACE INTO furnitureLibData (ObjID, Data, world, `x`, `z`, `uuid`) " +
                                                 "VALUES (" +
@@ -146,7 +162,7 @@ public class Converter {
                                         con.createStatement().executeUpdate(sql);
                                     }
                                     objID.add(a);
-                            	}
+                                }
                             }
                         }
                     } while (rs.next());
@@ -167,6 +183,9 @@ public class Converter {
                 }
             } catch (Exception e) {
                 e.printStackTrace();
+            } finally {
+                try { if(rs != null) rs.close(); } catch (Exception e) {}
+                try { if(con != null) con.close(); } catch (Exception e) {}
             }
         });
     }
