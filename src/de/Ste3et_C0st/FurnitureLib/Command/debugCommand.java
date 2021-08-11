@@ -1,6 +1,7 @@
 package de.Ste3et_C0st.FurnitureLib.Command;
 
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
+import de.Ste3et_C0st.FurnitureLib.Database.Database;
 import de.Ste3et_C0st.FurnitureLib.NBT.MathHelper;
 import de.Ste3et_C0st.FurnitureLib.SchematicLoader.functions.projectFunction;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.ExecuteTimer;
@@ -20,7 +21,9 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import com.google.common.util.concurrent.AtomicDouble;
+import com.mysql.fabric.xmlrpc.base.Data;
 
+import java.sql.SQLException;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Objects;
@@ -77,6 +80,23 @@ public class debugCommand extends iCommand {
             		}catch (Exception e) {
 						e.printStackTrace();
 					}
+                }else if (args[1].equalsIgnoreCase("connection")) {
+                	sender.sendMessage("There are actually stored: " + Database.getConnections().size() + " connections");
+                	AtomicInteger openConnections = new AtomicInteger(0);
+                	AtomicInteger closedConnections = new AtomicInteger(0);
+                	Database.getConnections().stream().forEach(entry -> {
+                		try {
+							if(entry.isClosed()) {
+								closedConnections.incrementAndGet();
+							}else {
+								openConnections.incrementAndGet();
+							}
+						} catch (SQLException e) {
+							e.printStackTrace();
+						}
+                	});
+                	sender.sendMessage("There are §c" + openConnections + " open Connections");
+                	sender.sendMessage("There are §2" + closedConnections + " closed Connections");
                 }
             }
         } else if(args.length == 3) {

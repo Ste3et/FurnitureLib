@@ -32,6 +32,9 @@ public abstract class Database {
     private Converter converter;
     public static final String TABLE_NAME = "furnitureLibData";
     
+    //Prepare debugPool to store the connection Objects
+    private static HashSet<Connection> connectionDebugPool = new HashSet<Connection>();
+    
     public Database(FurnitureLib instance, HikariConfig config) {
         this.plugin = instance;
         this.config = config;
@@ -51,11 +54,16 @@ public abstract class Database {
             if (connection == null) {
                 throw new SQLException("Unable to get a connection from the pool.");
             }
+            connectionDebugPool.add(connection);
             return connection;
         } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
+    }
+    
+    public static HashSet<Connection> getConnections(){
+    	return connectionDebugPool;
     }
     
     public boolean save(String query) {

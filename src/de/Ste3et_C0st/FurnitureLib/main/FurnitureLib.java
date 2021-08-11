@@ -44,6 +44,7 @@ import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.logging.Level;
 import java.util.logging.Logger;
 
 public class FurnitureLib extends JavaPlugin {
@@ -117,7 +118,7 @@ public class FurnitureLib extends JavaPlugin {
     }
     
     public static void debug(String str, int level) {
-        if (enableDebug || level < debugLevel) System.out.println(str);
+        if (enableDebug || level < debugLevel) FurnitureLib.getInstance().getLogger().log(Level.INFO, str);
     }
 
     public static int getVersionInt() {
