@@ -10,10 +10,10 @@ import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 public class physicsEvent implements Listener {
 	
 	public physicsEvent() {
-		System.out.println("FurnitureLib did use the BlockPhysicsEvent to prevent item Duplication");
-		System.out.println("If you use PaperSpigot there is a better solution BlockDestroyEvent");
-		System.out.println("If you switch to PaperSpigot that can improve your Server Performance a lot!");
-		System.out.println("https://papermc.io/");
+		FurnitureLib.debug("FurnitureLib did use the BlockPhysicsEvent to prevent item Duplication", 1);
+		FurnitureLib.debug("If you use PaperSpigot there is a better solution BlockDestroyEvent", 1);
+		FurnitureLib.debug("If you switch to PaperSpigot that can improve your Server Performance a lot!", 1);
+		FurnitureLib.debug("https://papermc.io/", 1);
 	}
 
 	@EventHandler(priority = EventPriority.LOW)

@@ -41,7 +41,7 @@ public class CraftingFile {
         this.filePath = new File(getPath(name));
         this.file = fileConfiguration;
         if (file == null) {
-            System.out.println("problems to load " + name);
+        	FurnitureLib.debug("problems to load " + name, 10);
             return;
         }
         

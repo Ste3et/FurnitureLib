@@ -112,12 +112,12 @@ public final class FurnitureItemEvent extends Event implements Cancellable {
         }
         this.debugTime("FurnitureLib {FurnitureItemEvent} -> Start canBuild check");
         if (!FurnitureLib.getInstance().getPermManager().canBuild(p, obj.getStartLocation())) {
-            FurnitureLib.debug("FurnitureLib -> ProtectionLib can't build here (" + getProject().getName() + ")");
+            FurnitureLib.debug("FurnitureLib -> ProtectionLib can't build here (" + getProject().getName() + ")", 0);
             return false;
         }
         this.debugTime("FurnitureLib {FurnitureItemEvent} -> ProtectionLib("+ FurnitureLib.getInstance().getPermManager().useProtectionLib() +") canBuild on Position = true ");
         if (getBlock() == null) {
-            FurnitureLib.debug("FurnitureLib -> Didn't find block (" + getProject().getName() + ")");
+            FurnitureLib.debug("FurnitureLib -> Didn't find block (" + getProject().getName() + ")", 0);
             return false;
         }
         if (!FurnitureLib.getInstance().getPermManager().isSolid(getBlock().getType(), getProject().getPlaceableSide(), getBlock())) {

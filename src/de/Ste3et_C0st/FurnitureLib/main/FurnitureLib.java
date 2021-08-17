@@ -118,7 +118,11 @@ public class FurnitureLib extends JavaPlugin {
     }
     
     public static void debug(String str, int level) {
-        if (enableDebug || level < debugLevel) FurnitureLib.getInstance().getLogger().log(Level.INFO, str);
+        if (enableDebug || level > debugLevel) FurnitureLib.getInstance().getLogger().log(Level.INFO, str);
+    }
+    
+    public static void debug(List<String> str, int level) {
+    	str.forEach(entry -> debug(entry, level));
     }
 
     public static int getVersionInt() {
@@ -311,8 +315,9 @@ public class FurnitureLib extends JavaPlugin {
 			if (getVersionInt() == 17) {
 				try {
 					Class<?> clazz = Class.forName("com.comphenix.protocol.events.PacketContainer");
-					Method method = clazz.getDeclaredMethod("getEnumEntityUseActions");
+					Method method = clazz.getMethod("getEnumEntityUseActions");
 					if(Objects.isNull(method)) {
+						getLogger().warning("[FurnitureLib] getEnumEntityUseActions didn't exist");
 						this.disableFurnitureLib(Arrays.asList(
 								"§5Info: §eFor Spigot 1.17.x you need §6ProtocolLib 4.7.0 Build #511 §eor above",
 								"§5Download it here: §l§9https://ci.dmulloy2.net/job/ProtocolLib/lastSuccessfulBuild/",
@@ -443,7 +448,7 @@ public class FurnitureLib extends JavaPlugin {
     }
     
     private void disableFurnitureLib(List<String> instructions) {
-    	System.out.println(instructions);
+    	FurnitureLib.debug(instructions, 10);
     	this.enabled = false;
     	PluginCommand c = getCommand("furniture");
 		c.setExecutor(new disabledCommand(this, instructions));

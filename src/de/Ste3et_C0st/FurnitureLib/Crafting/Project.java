@@ -94,7 +94,7 @@ public class Project {
             PermissionHandler.registerPermission("furniture.place.*","furniture.place." + name.toLowerCase());
             PermissionHandler.registerPermission("furniture.sit.*","furniture.sit." + name.toLowerCase());
     	}else {
-    		System.out.println("FurnitureLib is not enabled check your console!");
+    		FurnitureLib.debug("FurnitureLib is not enabled check your console!", 10);
     	}
     }
     

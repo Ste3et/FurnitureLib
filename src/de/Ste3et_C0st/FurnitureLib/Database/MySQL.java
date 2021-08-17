@@ -29,9 +29,9 @@ public class MySQL extends Database {
     public void createTable() {
         try (Connection con = getConnection(); Statement stmt = con.createStatement()) {
             stmt.executeUpdate(Objects);
-            FurnitureLib.debug("MySQL createTable -> " + Objects);
+            FurnitureLib.debug("MySQL createTable -> " + Objects, 0);
         } catch (SQLException e) {
-            FurnitureLib.debug("MySQL createTable: Fail");
+            FurnitureLib.debug("MySQL createTable: Fail", 10);
             e.printStackTrace();
         }
     }

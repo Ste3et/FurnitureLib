@@ -56,7 +56,7 @@ public abstract class iCommand {
             return true;
         }
         boolean b = paramCommandSender.hasPermission(perm);
-        if (!b) FurnitureLib.debug("FurnitureLib: " + paramCommandSender.getName() + " is missing perm " + perm);
+        if (!b) FurnitureLib.debug("FurnitureLib: " + paramCommandSender.getName() + " is missing perm " + perm, 1);
         return b;
     }
 

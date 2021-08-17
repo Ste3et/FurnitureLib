@@ -62,8 +62,8 @@ public class ModelBlockAquaticUpdate extends ModelBlock {
             try {
                 this.blockData = Bukkit.createBlockData(str.toLowerCase());
             } catch (IllegalArgumentException e) {
-                System.out.println("Furniture Model File: " + yamlConfiguration.getCurrentPath() + " make Problems with:");
-                System.out.println("Parsing of: " + str + " -> (" + key + ")");
+                FurnitureLib.debug("Furniture Model File: " + yamlConfiguration.getCurrentPath() + " make Problems with:", 10);
+                FurnitureLib.debug("Parsing of: " + str + " -> (" + key + ")", 10);
             } catch (Exception e) {
                 e.printStackTrace();
             }

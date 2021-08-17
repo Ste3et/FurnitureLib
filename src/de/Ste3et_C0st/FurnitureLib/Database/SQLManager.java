@@ -68,7 +68,7 @@ public class SQLManager {
             Bukkit.getPluginManager().disablePlugin(plugin);
             return;
         }
-        System.out.println("FurnitureLib Started " + this.database.getType().name() + " database. Took " + timer.getMilliString());
+        FurnitureLib.debug("FurnitureLib Started " + this.database.getType().name() + " database. Took " + timer.getMilliString(), 1);
     }
 
     public void loadALL() {

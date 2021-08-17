@@ -159,7 +159,7 @@ public abstract class Database {
     	        UUID worldUUID = bukkitWorld.getUID();
     	        AtomicInteger atomic = new AtomicInteger(0);
     	        if(Objects.nonNull(bukkitWorld)) {
-    	        	System.out.println("FurnitureLib try to load models for world (" + worldName + ")");
+    	        	FurnitureLib.debug("FurnitureLib try to load models for world (" + worldName + ")", 1);
     	        	idList.addAll(loadQuery(action, bukkitWorld, "SELECT ObjID,Data FROM " + TABLE_NAME + " WHERE world='"+ worldName +"' OR world='" + worldUUID.toString() + "'"));
     	        	double difference = timer.difference();
     	            double size = idList.size();
@@ -167,15 +167,15 @@ public abstract class Database {
     	            idList.stream().forEach(entry -> atomic.addAndGet(entry.getPacketList().size()));
     	            
     	            if(size > 0) {
-    	            	System.out.println("FurnitureLib load " + idList.size() + " models with " + atomic.get() +" entities");
+    	            	FurnitureLib.debug("FurnitureLib load " + idList.size() + " models with " + atomic.get() +" entities", 1);
     	            	double avgSpeed = Math.round((difference / size) * 100d) / 100d;
-    	            	System.out.println("With avg speed of " + avgSpeed + " FurnitureModel/ms");
+    	            	FurnitureLib.debug("With avg speed of " + avgSpeed + " FurnitureModel/ms", 1);
     	            }else {
-    	            	System.out.println("No Models are found in world: " + worldName);
+    	            	FurnitureLib.debug("No Models are found in world: " + worldName, 1);
     	            	return idList;
     	            }
     	            
-    	            System.out.println("It takes: " + timer.getDifference());
+    	            FurnitureLib.debug("It takes: " + timer.getDifference(), 1);
     	            //FurnitureManager.getInstance().addObjectID(idList);
     	        }
     	}

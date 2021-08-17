@@ -61,9 +61,9 @@ public class Converter {
 
     public void startConvert(CommandSender sender, String tableName) {
         String sql = "SELECT COUNT(*) FROM `"+ tableName +"`";
-        System.out.println("Try to convert database Table: " + tableName);
+        FurnitureLib.debug("Try to convert database Table: " + tableName, 10);
         if (this.checkIfTableExist(tableName)) {
-            System.out.println("FurnitureLib: Found table to convert (" + tableName +")");
+        	FurnitureLib.debug("FurnitureLib: Found table to convert (" + tableName +")", 10);
             try (Connection con = database.getConnection(); ResultSet rs = con.createStatement().executeQuery(sql)) {
                 if (rs.next()) {
                     do {
@@ -82,7 +82,7 @@ public class Converter {
                 e.printStackTrace();
             }
         } else {
-            System.out.println("FurnitureLib: Found no table to convert");
+        	FurnitureLib.debug("FurnitureLib: Found no able to convert", 1);
             FurnitureLib.getInstance().getConfig().set("config.fileConverter.auto_mode", false);
             FurnitureLib.getInstance().saveConfig();
             FurnitureLib.getInstance().autoFileUpdater = false;
