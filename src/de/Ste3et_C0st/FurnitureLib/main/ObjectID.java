@@ -18,12 +18,14 @@ import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class ObjectID {
 
@@ -45,6 +47,7 @@ public class ObjectID {
     private BlockFace placedFace = BlockFace.NORTH;
     private int chunkX, chunkZ;
     private boolean finish = false, fixed = false, fromDatabase = false, Private = false;
+    private final HashSet<Player> playerSet = new HashSet<Player>();
 
     public ObjectID(String name, String plugin, Location startLocation) {
         try {
@@ -556,8 +559,20 @@ public class ObjectID {
         if (getSQLAction().equals(SQLAction.REMOVE)) {
             return;
         }
-        for (Player p : getPlayerList())
+        
+        HashSet<Player> actuallyPlayers = getPlayerList();
+        HashSet<Player> removePlayers = new HashSet<Player>(this.playerSet.stream().filter(entry -> actuallyPlayers.contains(entry) == false).collect(Collectors.toSet()));
+        
+        for (Player p : actuallyPlayers) {
             getPacketList().forEach(entity -> entity.update(p));
+        }
+        
+        for(Player player : removePlayers) {
+        	getPacketList().forEach(entity -> entity.kill(player, false));
+        }
+        
+        this.playerSet.addAll(actuallyPlayers);
+        this.playerSet.removeAll(removePlayers);
     }
 
     public void removeAll() {
