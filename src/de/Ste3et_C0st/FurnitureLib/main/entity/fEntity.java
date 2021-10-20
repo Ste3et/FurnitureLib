@@ -416,8 +416,10 @@ public abstract class fEntity extends fSerializer implements Cloneable {
 
     public void kill(Player p, boolean b) {
         this.destroy.getIntegerArrays().writeSafely(0, new int[]{getEntityID()});
-        this.destroy.getIntegers().writeSafely(0, getEntityID());
-        this.destroy.getIntLists().writeSafely(0, Arrays.asList(getEntityID()));
+        if(FurnitureLib.getVersionInt() > 16) {
+        	this.destroy.getIntegers().writeSafely(0, getEntityID());
+            this.destroy.getIntLists().writeSafely(0, Arrays.asList(getEntityID()));
+        }
         try {
             getManager().sendServerPacket(p, destroy);
         } catch (Exception e) {
@@ -426,7 +428,7 @@ public abstract class fEntity extends fSerializer implements Cloneable {
     }
 
     public void kill() {
-        getObjID().getPlayerList().forEach(p -> {
+        getObjID().getPlayerListWorld().forEach(p -> {
             kill(p, false);
         });
         this.eject();

@@ -98,11 +98,6 @@
 			<id>dmulloy2-repo</id>
 			<url>https://repo.dmulloy2.net/repository/public/</url>
 		</repository>
-
-		<repository>
-			<id>opencollab-snapshot</id>
-			<url>https://repo.opencollab.dev/maven-snapshots/</url>
-		</repository>
 	</repositories>
 
 	<dependencies>
@@ -155,17 +150,17 @@
 		</dependency>
 
 		<dependency>
-			<groupId>com.github.Ste3et</groupId>
-			<artifactId>ProtectionLib</artifactId>
-			<version>cc0456244b</version>
-			<scope>provided</scope>
+		    <groupId>com.gitlab.Ste3et_C0st.protectionlib</groupId>
+		    <artifactId>Core</artifactId>
+		    <version>v1.4</version>
 		</dependency>
 
 		<dependency>
 			<groupId>io.github.qveshn</groupId>
 			<artifactId>LightAPI-fork</artifactId>
 			<version>3.4.6-SNAPSHOT</version>
-			<scope>provided</scope>
+			<scope>system</scope>
+			<systemPath>${project.basedir}/lib/LightAPI-Bukkit-5.0.0-preview.jar</systemPath>
 		</dependency>
 
 		<dependency>

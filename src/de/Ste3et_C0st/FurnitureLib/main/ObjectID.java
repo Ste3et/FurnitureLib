@@ -219,6 +219,12 @@ public class ObjectID {
     	Bukkit.getOnlinePlayers().stream().filter(entry -> isInWorld(entry)).filter(entry -> isInRange(entry)).forEach(playerSet::add);
         return playerSet;
     }
+    
+    public HashSet<Player> getPlayerListWorld() {
+    	HashSet<Player> playerSet = new HashSet<Player>();
+    	Bukkit.getOnlinePlayers().stream().filter(entry -> isInWorld(entry)).forEach(playerSet::add);
+        return playerSet;
+    }
 
     public boolean isMember(UUID uuid) {
         return uuidList.contains(uuid);
@@ -421,6 +427,7 @@ public class ObjectID {
             return;
         }
         this.packetList.forEach(stand -> stand.kill(p, false));
+        playerSet.remove(p);
         //players.remove(p);
     }
 
@@ -585,7 +592,7 @@ public class ObjectID {
         if (getSQLAction().equals(SQLAction.REMOVE)) {
             return;
         }
-        for (Player p : getPlayerList()) getPacketList().forEach(entity -> entity.kill(p, false));
+        for (Player p : getPlayerListWorld()) getPacketList().forEach(entity -> entity.kill(p, false));
         //this.players.clear();
     }
 
