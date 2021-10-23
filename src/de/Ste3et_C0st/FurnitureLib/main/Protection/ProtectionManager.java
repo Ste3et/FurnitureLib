@@ -18,39 +18,23 @@ import org.bukkit.Material;
 import org.bukkit.block.Block;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
-import org.bukkit.plugin.PluginManager;
-
 import com.google.gson.JsonObject;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
 import java.util.UUID;
 
 public class ProtectionManager {
 
-    Plugin plugin, FP;
-    PluginManager manager;
-    FurnitureLib lib;
-    HashMap<Player, EventType> playerList = new HashMap<>();
-
     public ProtectionManager(Plugin plugin) {
-        this.lib = FurnitureLib.getInstance();
-        this.plugin = plugin;
-        this.manager = Bukkit.getPluginManager();
         if (Bukkit.getPluginManager().isPluginEnabled("ProtectionLib")) {
-            this.FP = Bukkit.getPluginManager().getPlugin("ProtectionLib");
             new FurnitureRegionClear();
         }
     }
 
     public boolean isSolid(Material mat, PlaceableSide side, Block block) {
-        if (!checkPlaceable(mat, side, block)) {
-            return false;
-        }
-        {
-            return mat.isSolid();
-        }
+        if (!checkPlaceable(mat, side, block))  return false;
+        return mat.isSolid();
     }
 
     private boolean checkPlaceable(Material mat, PlaceableSide side, Block block) {
@@ -62,40 +46,40 @@ public class ProtectionManager {
     }
 
     public int getSize() {
-        if (FP == null) {
+        if (isEnabled()) {
             return 0;
         }
-        ProtectionLib fp = (ProtectionLib) this.FP;
-        return fp.getWatchers().size();
+        return ProtectionLib.getInstance().getWatchers().size();
+    }
+    
+    public boolean isEnabled() {
+    	 return Bukkit.getPluginManager().isPluginEnabled("ProtectionLib");
     }
 
     public boolean useProtectionLib() {
-    	return FP != null;
+    	return isEnabled();
     }
 
     public boolean canBuild(Player p, Location loc) {
-        if (FP == null) {
+        if (isEnabled() == false) {
             return true;
         }
-        ProtectionLib fp = (ProtectionLib) this.FP;
-        return fp.canBuild(loc, p);
+        return ProtectionLib.getInstance().canBuild(loc, p);
     }
 
     public Boolean isOwner(Player p, Location loc) {
-        if (FP == null) {
+        if (isEnabled() == false) {
             return true;
         }
-        ProtectionLib fp = (ProtectionLib) this.FP;
-        return fp.isOwner(loc, p);
+        return ProtectionLib.getInstance().isOwner(loc, p);
     }
     
     public List<JsonObject> getProtectionClazz() {
-    	if (FP == null) {
+    	if (isEnabled() == false) {
             return null;
         }
     	List<JsonObject> json = new ArrayList<JsonObject>();
-    	ProtectionLib fp = (ProtectionLib) this.FP;
-    	for(protectionObj protection : fp.getWatchers()) {
+    	for(protectionObj protection : ProtectionLib.getInstance().getWatchers()) {
     		JsonObject object = new JsonObject();
     		object.addProperty("plugin", protection.getPlugin().getDescription().getName());
     		object.addProperty("clazz", protection.getClass().getSimpleName());
@@ -161,7 +145,7 @@ public class ProtectionManager {
 
     private boolean canBuild(Player p, ObjectID id) {
         if (p.getUniqueId().equals(id.getUUID())) return true;
-        if (FP == null) return true;
+        if (isEnabled() == false) return true;
         if (getSize() == 0) return true;
         boolean memberOfRegion = canBuild(p, id.getStartLocation());
         boolean ownerOfRegion = isOwner(p, id.getStartLocation());
@@ -186,9 +170,8 @@ public class ProtectionManager {
     }
     
     private boolean isProtectedRegion(ObjectID objectID) {
-    	if (FP == null) return false;
-    	ProtectionLib protectionLib = (ProtectionLib) this.FP;
-    	return protectionLib.isProtectedRegion(objectID.getStartLocation());
+    	if (isEnabled() == false) return false;
+    	return ProtectionLib.getInstance().isProtectedRegion(objectID.getStartLocation());
     }
 
     private boolean isEventType(ObjectID objID, EventType type) {

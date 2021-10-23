@@ -158,6 +158,7 @@
 		    <groupId>com.gitlab.Ste3et_C0st.protectionlib</groupId>
 		    <artifactId>Core</artifactId>
 		    <version>v1.4</version>
+		    <scope>provided</scope>
 		</dependency>
 
 		<dependency>

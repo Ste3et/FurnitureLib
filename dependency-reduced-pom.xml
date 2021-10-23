@@ -115,6 +115,12 @@
       <scope>provided</scope>
     </dependency>
     <dependency>
+      <groupId>com.gitlab.Ste3et_C0st.protectionlib</groupId>
+      <artifactId>Core</artifactId>
+      <version>v1.4</version>
+      <scope>provided</scope>
+    </dependency>
+    <dependency>
       <groupId>com.comphenix.protocol</groupId>
       <artifactId>ProtocolLib</artifactId>
       <version>4.7.0</version>
