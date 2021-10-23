@@ -119,13 +119,10 @@ public class removeCommand extends iCommand {
         			count.incrementAndGet();
     			}
     		});
-    		if(count.get() > 0) {
-    			sender.sendMessage(getLHandler().getString("command.remove.result", 
-    					new StringTranslator("#FILTERS#", StringUtils.removeEnd(filterTypes, "|")),
-    					new StringTranslator("#SIZE#", count.get() + "")));
-    		}else {
-    			sender.sendMessage(getLHandler().getString("command.remove.result", new StringTranslator("#FILTERS#", StringUtils.removeEnd(filterTypes, "|"))));
-    		}
+        	
+        	sender.sendMessage(getLHandler().getString("command.remove.result", 
+					new StringTranslator("#FILTERS#", StringUtils.removeEnd(filterTypes, "|")),
+					new StringTranslator("#SIZE#", count.get() + "")));
         }else if(!remove){
         	sender.sendMessage(getLHandler().getString("command.remove.result", new StringTranslator("#FILTERS#", StringUtils.removeEnd(filterTypes, "|"))));
         }

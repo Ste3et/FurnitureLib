@@ -11,7 +11,7 @@
 		<furniture.tag></furniture.tag>
 	</properties>
 
-	<version>2.5.1${furniture.tag}</version>
+	<version>2.5.4${furniture.tag}</version>
 	<packaging>jar</packaging>
 
 	<name>FurnitureLib</name>
