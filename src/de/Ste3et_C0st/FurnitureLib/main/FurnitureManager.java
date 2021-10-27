@@ -31,7 +31,7 @@ public class FurnitureManager extends ObjectIdManager{
     public WrappedDataWatcher watcher = null;
     public HashMap<World, HashMap<EntityType, WrappedDataWatcher>> defaultWatchers = new HashMap<>();
     private HashMap<String, Project> projects = new HashMap<>();
-    private List<UUID> ignoreList = new ArrayList<>();
+    private static List<UUID> ignoreList = new ArrayList<>();
     private HashSet<ChunkData> chunkList = new HashSet<>();
 
     public FurnitureManager() {
@@ -51,7 +51,7 @@ public class FurnitureManager extends ObjectIdManager{
     }
 
     public List<UUID> getIgnoreList() {
-        return this.ignoreList;
+        return ignoreList;
     }
 
     public void addProject(Project project) {
