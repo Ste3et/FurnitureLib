@@ -7,6 +7,7 @@ import de.Ste3et_C0st.FurnitureLib.main.FurniturePlayer;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
+import java.util.function.Predicate;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -56,7 +57,8 @@ public class toggleCommand extends iCommand {
     	
     	UUID uuid = player.getUniqueId();
     	String stringUUID = uuid.toString();
-    	Optional<UUID> optinal = getUUIDField(stringUUID);
+    	Predicate<UUID> predicate = entry -> entry.toString().equalsIgnoreCase(stringUUID);
+    	Optional<UUID> optinal = getUUIDField(predicate);
     	
     	FurnitureLib.debug("FurnitureToggle Debug [#1]", 100);
     	FurnitureLib.debug("Optional UUID is Present " + optinal.isPresent(), 100);
@@ -65,18 +67,18 @@ public class toggleCommand extends iCommand {
     		sendFeedback(sender, player, "message.FurnitureToggleCMDOff");
     		FurnitureLib.getInstance().getFurnitureManager().removeFurniture(player);
     		FurnitureLib.getInstance().getFurnitureManager().getIgnoreList().add(uuid);
-    		FurnitureLib.debug("FurnitureToggle Entry add: " + getUUIDField(stringUUID).isPresent(), 100);
+    		FurnitureLib.debug("FurnitureToggle Entry add: " + getUUIDField(predicate).isPresent(), 100);
     	}else {
     		sendFeedback(sender, player, "message.FurnitureToggleCMDOn");
 			int chunkX = player.getLocation().getBlockX() >> 4, chunkZ = player.getLocation().getBlockZ() >> 4;
             FurnitureLib.getInstance().getFurnitureManager().updatePlayerView(player, chunkX, chunkZ);
-            FurnitureLib.getInstance().getFurnitureManager().getIgnoreList().remove(uuid);
-            FurnitureLib.debug("FurnitureToggle Entry removed: " + !getUUIDField(stringUUID).isPresent(), 100);
+            FurnitureLib.getInstance().getFurnitureManager().getIgnoreList().removeIf(predicate);
+            FurnitureLib.debug("FurnitureToggle Entry removed: " + !getUUIDField(predicate).isPresent(), 100);
     	}
     }
     
-    private Optional<UUID> getUUIDField(String uuid){
-    	return FurnitureLib.getInstance().getFurnitureManager().getIgnoreList().stream().filter(entry -> entry.toString().equalsIgnoreCase(uuid)).findFirst();
+    private Optional<UUID> getUUIDField(Predicate<UUID> predicate){
+    	return FurnitureLib.getInstance().getFurnitureManager().getIgnoreList().stream().filter(predicate::test).findFirst();
     }
     
     
