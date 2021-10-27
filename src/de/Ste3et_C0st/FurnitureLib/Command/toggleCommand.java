@@ -60,20 +60,15 @@ public class toggleCommand extends iCommand {
     	Predicate<UUID> predicate = entry -> entry.toString().equalsIgnoreCase(stringUUID);
     	Optional<UUID> optinal = getUUIDField(predicate);
     	
-    	FurnitureLib.debug("FurnitureToggle Debug [#1]", 100);
-    	FurnitureLib.debug("Optional UUID is Present " + optinal.isPresent(), 100);
-    	
     	if(optinal.isPresent() == false) {
     		sendFeedback(sender, player, "message.FurnitureToggleCMDOff");
     		FurnitureLib.getInstance().getFurnitureManager().removeFurniture(player);
     		FurnitureLib.getInstance().getFurnitureManager().getIgnoreList().add(uuid);
-    		FurnitureLib.debug("FurnitureToggle Entry add: " + getUUIDField(predicate).isPresent(), 100);
     	}else {
     		sendFeedback(sender, player, "message.FurnitureToggleCMDOn");
 			int chunkX = player.getLocation().getBlockX() >> 4, chunkZ = player.getLocation().getBlockZ() >> 4;
             FurnitureLib.getInstance().getFurnitureManager().updatePlayerView(player, chunkX, chunkZ);
             FurnitureLib.getInstance().getFurnitureManager().getIgnoreList().removeIf(predicate);
-            FurnitureLib.debug("FurnitureToggle Entry removed: " + !getUUIDField(predicate).isPresent(), 100);
     	}
     }
     
