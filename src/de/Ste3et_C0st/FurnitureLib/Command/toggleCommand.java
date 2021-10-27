@@ -56,19 +56,27 @@ public class toggleCommand extends iCommand {
     	
     	UUID uuid = player.getUniqueId();
     	String stringUUID = uuid.toString();
-    	List<UUID> uuidList = FurnitureLib.getInstance().getFurnitureManager().getIgnoreList();
-    	Optional<UUID> optinal = uuidList.stream().filter(entry -> entry.toString().equalsIgnoreCase(stringUUID)).findFirst();
+    	Optional<UUID> optinal = getUUIDField(stringUUID);
+    	
+    	FurnitureLib.debug("FurnitureToggle Debug [#1]", 100);
+    	FurnitureLib.debug("Optional UUID is Present " + optinal.isPresent(), 100);
     	
     	if(optinal.isPresent() == false) {
     		sendFeedback(sender, player, "message.FurnitureToggleCMDOff");
     		FurnitureLib.getInstance().getFurnitureManager().removeFurniture(player);
     		FurnitureLib.getInstance().getFurnitureManager().getIgnoreList().add(uuid);
+    		FurnitureLib.debug("FurnitureToggle Entry add: " + getUUIDField(stringUUID).isPresent(), 100);
     	}else {
     		sendFeedback(sender, player, "message.FurnitureToggleCMDOn");
 			int chunkX = player.getLocation().getBlockX() >> 4, chunkZ = player.getLocation().getBlockZ() >> 4;
             FurnitureLib.getInstance().getFurnitureManager().updatePlayerView(player, chunkX, chunkZ);
-            FurnitureLib.getInstance().getFurnitureManager().getIgnoreList().add(uuid);
+            FurnitureLib.getInstance().getFurnitureManager().getIgnoreList().remove(uuid);
+            FurnitureLib.debug("FurnitureToggle Entry removed: " + !getUUIDField(stringUUID).isPresent(), 100);
     	}
+    }
+    
+    private Optional<UUID> getUUIDField(String uuid){
+    	return FurnitureLib.getInstance().getFurnitureManager().getIgnoreList().stream().filter(entry -> entry.toString().equalsIgnoreCase(uuid)).findFirst();
     }
     
     
