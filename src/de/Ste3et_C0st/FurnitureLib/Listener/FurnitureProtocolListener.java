@@ -94,6 +94,7 @@ public class FurnitureProtocolListener {
 
 						switch (action) {
 						case ATTACK:
+							FurnitureLib.debug("FurnitureLib -> Attack furniture (" + objID.toString() + ").");
 							FurnitureProtocolListener.this.onLeftClick(player, objID);
 							break;
 						case INTERACT_AT:
@@ -116,6 +117,7 @@ public class FurnitureProtocolListener {
 			Bukkit.getScheduler().runTask(FurnitureLib.getInstance(), () -> {
 				ProjectBreakEvent projectBreakEvent = new ProjectBreakEvent(player, objectID);
 				Bukkit.getPluginManager().callEvent(projectBreakEvent);
+				FurnitureLib.debug("FurnitureLib -> ProjectBreakEvent cancled (" + projectBreakEvent.isCancelled() + ").");
 				if (!projectBreakEvent.isCancelled()) {
 					Furniture furnitureOject = objectID.getFurnitureObject();
 					if (Objects.nonNull(furnitureOject)) {

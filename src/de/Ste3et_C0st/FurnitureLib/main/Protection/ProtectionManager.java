@@ -53,7 +53,9 @@ public class ProtectionManager {
     }
     
     public boolean isEnabled() {
-    	 return Bukkit.getPluginManager().isPluginEnabled("ProtectionLib");
+    	boolean enabled = Bukkit.getPluginManager().isPluginEnabled("ProtectionLib");
+    	FurnitureLib.debug("FurnitureLib -> ProtectionLib is hooked (" + enabled +").");
+    	return enabled;
     }
 
     public boolean useProtectionLib() {
@@ -94,18 +96,28 @@ public class ProtectionManager {
 
     public boolean canBuild(Player p, ObjectID id, EventType type, boolean sendMessage) {
         if (p.isOp() || FurnitureLib.getInstance().getPermission().hasPerm(p, "furniture.bypass.protection") || FurnitureLib.getInstance().getPermission().hasPerm(p, "furniture.admin")) {
-            return true;
+        	FurnitureLib.debug("FurnitureLib -> canBuild check (bypassed).");
+        	return true;
         }
         PublicMode publicMode = id.getPublicMode();
         UUID userID = p.getUniqueId();
         UUID ownerID = id.getUUID();
         EventType eventType = id.getEventType();
         if (ownerID == null) {
+        	FurnitureLib.debug("FurnitureLib -> canBuild check (ownerID is null).");
             return true;
         }
         
         if(!isProtectedRegion(id)) {
-        	if(id.getUUID().equals(userID)) return true;
+        	FurnitureLib.debug("FurnitureLib -> canBuild check (is not inside Protected Region).");
+        	if(id.getUUID().equals(userID)) {
+        		FurnitureLib.debug("FurnitureLib -> canBuild furnitureowner try to destroy");
+        		return true;
+        	}
+        	
+        	FurnitureLib.debug("FurnitureLib -> canBuild interactType: " + type.name());
+        	FurnitureLib.debug("FurnitureLib -> canBuild eventType: " + eventType.name());
+        	
         	if(EventType.INTERACT == type) {
         		if(EventType.INTERACT == eventType || EventType.BREAK_INTERACT == eventType) {
         			return true;
@@ -118,7 +130,8 @@ public class ProtectionManager {
             	}
         	}
         	if(sendMessage) {
-        		 p.sendMessage(LanguageManager.getInstance().getString("message.NoPermissions"));
+        		FurnitureLib.debug("FurnitureLib -> canBuild check (Player has no Permission).");
+        	    p.sendMessage(LanguageManager.getInstance().getString("message.NoPermissions"));
         	}
         	return false;
         }
@@ -144,11 +157,24 @@ public class ProtectionManager {
     }
 
     private boolean canBuild(Player p, ObjectID id) {
-        if (p.getUniqueId().equals(id.getUUID())) return true;
-        if (isEnabled() == false) return true;
-        if (getSize() == 0) return true;
+        if (p.getUniqueId().equals(id.getUUID())) {
+        	FurnitureLib.debug("FurnitureLib -> canBuild furnitureowner try to destroy");
+        	return true;
+        }
+        if (isEnabled() == false) {
+        	FurnitureLib.debug("FurnitureLib -> ProtectionLib isn't enabled");
+        	return true;
+        }
+        if (getSize() == 0) {
+        	FurnitureLib.debug("FurnitureLib -> ProtectionLib didn't hook inside a watcher");
+        	return true;
+        }
         boolean memberOfRegion = canBuild(p, id.getStartLocation());
         boolean ownerOfRegion = isOwner(p, id.getStartLocation());
+        
+        FurnitureLib.debug("FurnitureLib -> ProtectionLib memberOfRegion " + memberOfRegion);
+        FurnitureLib.debug("FurnitureLib -> ProtectionLib ownerOfRegion " + ownerOfRegion);
+        
         
         if (memberOfRegion && !ownerOfRegion) {
 			return p.getUniqueId().equals(id.getUUID());
@@ -162,6 +188,7 @@ public class ProtectionManager {
 
         if (memberOfRegion && ownerOfRegion && FurnitureConfig.getFurnitureConfig().haveRegionMemberAccess()) {
             if (!p.getUniqueId().equals(id.getUUID())) {
+            	FurnitureLib.debug("FurnitureLib -> ProtectionLib haveRegionMemberAccess grant access to Region Owner");
                 return true;
             }
             return true;
@@ -175,6 +202,8 @@ public class ProtectionManager {
     }
 
     private boolean isEventType(ObjectID objID, EventType type) {
-		return objID.getEventType().equals(type) || objID.getEventType().equals(EventType.BREAK_INTERACT);
+    	boolean eventType = objID.getEventType().equals(type) || objID.getEventType().equals(EventType.BREAK_INTERACT);
+    	FurnitureLib.debug("FurnitureLib -> isEventType Eventtype equals tpye or is BREAK_INTERACT" + eventType);
+		return eventType;
 	}
 }
