@@ -46,7 +46,7 @@ public class ProtectionManager {
     }
 
     public int getSize() {
-        if (isEnabled()) {
+        if (isEnabled() == false) {
             return 0;
         }
         return ProtectionLib.getInstance().getWatchers().size();
