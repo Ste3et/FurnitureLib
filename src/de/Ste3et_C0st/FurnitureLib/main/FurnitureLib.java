@@ -285,8 +285,8 @@ public class FurnitureLib extends JavaPlugin {
     @Override
     public void onEnable() {
     	instance = this;
-        if (getVersionInt() < 9 || getVersionInt() > 17) {
-            this.disableFurnitureLib(Arrays.asList("§cFurnitureLib only works on Spigot 1.9 - 1.17"));
+        if (getVersionInt() < 9 || getVersionInt() > 18) {
+            this.disableFurnitureLib(Arrays.asList("§cFurnitureLib only works on Spigot 1.9 - 1.18"));
             return;
         }
 
@@ -312,32 +312,12 @@ public class FurnitureLib extends JavaPlugin {
 			send("§5Download it here: §l§9https://www.spigotmc.org/resources/protocollib.1997/");
 			send("§5Otherwise you will receive: §cNo field with type java.util.Map exists in class EnumProtocol.");
 		} else if (getVersionInt() > 15) {
-			if (getVersionInt() == 17) {
+			if (getVersionInt() > 16) {
 				try {
 					Class<?> clazz = Class.forName("com.comphenix.protocol.events.PacketContainer");
 					Method method = clazz.getMethod("getEnumEntityUseActions");
 					if(Objects.isNull(method)) {
 						getLogger().warning("[FurnitureLib] getEnumEntityUseActions didn't exist");
-						this.disableFurnitureLib(Arrays.asList(
-								"§5Info: §eFor Spigot 1.17.x you need §6ProtocolLib 4.7.0 Build #511 §eor above",
-								"§5Download it here: §l§9https://ci.dmulloy2.net/job/ProtocolLib/lastSuccessfulBuild/",
-								"§7FurnitureLib will stop working!"));
-						return;
-					}
-				}catch (Exception e) {
-					this.disableFurnitureLib(Arrays.asList(
-							"§5Info: §eFor Spigot 1.17.x you need §6ProtocolLib 4.7.0 Build #511 §eor above",
-							"§5Download it here: §l§9https://ci.dmulloy2.net/job/ProtocolLib/lastSuccessfulBuild/",
-							"§7FurnitureLib will stop working!"));
-					return;
-				}
-			}
-			
-			if (getVersionInt() == 17) {
-				try {
-					Class<?> clazz = Class.forName("com.comphenix.protocol.events.PacketContainer");
-					Method method = clazz.getMethod("getEnumEntityUseActions");
-					if(Objects.isNull(method)) {
 						this.disableFurnitureLib(Arrays.asList(
 								"§5Info: §eFor Spigot 1.17.x you need §6ProtocolLib 4.7.0 Build #511 §eor above",
 								"§5Download it here: §l§9https://ci.dmulloy2.net/job/ProtocolLib/lastSuccessfulBuild/",

@@ -4,6 +4,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Method;
+import java.util.Objects;
 
 import org.bukkit.inventory.ItemStack;
 
@@ -27,8 +28,10 @@ public abstract class ItemStackReader {
 			clazz_nbttools = Class.forName(nbtFolder +  ".NBTCompressedStreamTools");
 			asNMSCopy = clazz_obc_CraftItemStack.getMethod("asNMSCopy", org.bukkit.inventory.ItemStack.class);
 			clazz_nms_item = Class.forName(itemStack);
-			method_save = clazz_nms_item.getMethod("save", clazz_nms_nbt);
+			method_save = clazz_nms_item.getMethod(FurnitureLib.getVersionInt() > 17 ? "b" : "save", clazz_nms_nbt);
 			clazz_nbttools_method_a_input = clazz_nbttools.getMethod("a", InputStream.class);
+			System.out.println("clazz_nbttools is:Null(" + Objects.isNull(clazz_nbttools) + ")");
+			System.out.println("clazz_nbttools_method_a_input is:Null(" + Objects.isNull(clazz_nbttools_method_a_input) + ")");
 			clazz_nbttools_method_a_output = clazz_nbttools.getMethod("a", clazz_nms_nbt, OutputStream.class);
 		}catch(Exception ex) {
 			ex.printStackTrace();
