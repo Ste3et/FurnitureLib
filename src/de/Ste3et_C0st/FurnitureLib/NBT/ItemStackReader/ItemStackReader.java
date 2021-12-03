@@ -30,8 +30,6 @@ public abstract class ItemStackReader {
 			clazz_nms_item = Class.forName(itemStack);
 			method_save = clazz_nms_item.getMethod(FurnitureLib.getVersionInt() > 17 ? "b" : "save", clazz_nms_nbt);
 			clazz_nbttools_method_a_input = clazz_nbttools.getMethod("a", InputStream.class);
-			System.out.println("clazz_nbttools is:Null(" + Objects.isNull(clazz_nbttools) + ")");
-			System.out.println("clazz_nbttools_method_a_input is:Null(" + Objects.isNull(clazz_nbttools_method_a_input) + ")");
 			clazz_nbttools_method_a_output = clazz_nbttools.getMethod("a", clazz_nms_nbt, OutputStream.class);
 		}catch(Exception ex) {
 			ex.printStackTrace();
