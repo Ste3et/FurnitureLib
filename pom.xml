@@ -162,11 +162,11 @@
 		</dependency>
 
 		<dependency>
-			<groupId>io.github.qveshn</groupId>
-			<artifactId>LightAPI-fork</artifactId>
-			<version>3.4.6-SNAPSHOT</version>
+		    <groupId>com.github.BeYkeRYkt.LightAPI</groupId>
+		    <artifactId>lightapi-bukkit-backward-support</artifactId>
+		    <version>5.1.0-Bukkit</version>
 			<scope>system</scope>
-			<systemPath>${project.basedir}/lib/LightAPI-Bukkit-5.0.0-preview.jar</systemPath>
+			<systemPath>${project.basedir}/lib/LightAPI-Bukkit-5.1.0.jar</systemPath>
 		</dependency>
 
 		<dependency>

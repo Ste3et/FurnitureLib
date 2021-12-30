@@ -2,28 +2,24 @@ package de.Ste3et_C0st.FurnitureLib.main.LightAPI;
 
 import org.bukkit.Location;
 
-import ru.beykerykt.lightapi.LightAPI;
-import ru.beykerykt.lightapi.LightType;
+import ru.beykerykt.minecraft.lightapi.common.LightAPI;
+import ru.beykerykt.minecraft.lightapi.common.api.engine.LightFlag;
 
 public class LightAPIv5 implements iLightAPI{
 
 	@Override
 	public boolean deleteLight(Location location) {
 		int lightLevel = location.getBlock().getLightFromBlocks();
-		boolean bool = LightAPI.deleteLight(location, LightType.BLOCK, false);
-		if(bool) {
-        	LightAPI.collectChunks(location, LightType.BLOCK , lightLevel).forEach(entry -> LightAPI.updateChunk(entry, LightType.BLOCK));
-        }
+		if(lightLevel > 0) {
+			LightAPI.get().setLightLevel(location.getWorld().getName(), location.getBlockX(), location.getBlockY(), location.getBlockZ(), 0, LightFlag.BLOCK_LIGHTING);
+			return true;
+		}
 		return false;
 	}
 
 	@Override
 	public boolean createLight(Location location, int lightLevel) {
-		boolean bool = LightAPI.createLight(location, LightType.BLOCK, lightLevel, false);
-        if(bool) {
-        	LightAPI.collectChunks(location, LightType.BLOCK , lightLevel).forEach(entry -> LightAPI.updateChunk(entry, LightType.BLOCK));
-        }
-		return bool;
+		return LightAPI.get().setLightLevel(location.getWorld().getName(), location.getBlockX(), location.getBlockY(), location.getBlockZ(), lightLevel, LightFlag.BLOCK_LIGHTING) > 0;
 	}
 
 	
