@@ -1,15 +1,28 @@
-image: maven:3-jdk-8
+image: gradle:jdk17
 
 stages:
-- build
-- tag
+  - build
 
-FurnitureLib:
+before_script:
+  - export GRADLE_USER_HOME=`pwd`/.gradle
+  - mkdir target
+
+build:
   stage: build
-  script:
-     - mvn clean package -Dfurniture.tag="-dev-$CI_COMMIT_SHORT_SHA"
+  script: gradle --build-cache assemble
+  cache:
+    key: "$CI_COMMIT_REF_NAME"
+    policy: push
+    paths:
+      - build
+      - .gradle
   artifacts:
-     paths:
-     - target/FurnitureLib.jar
+    paths:
+      - build/libs/*.jar
+      - target/*.jar
+    expire_in: 1 week
   only:
     - master
+
+after_script:
+  - echo "End CI"
