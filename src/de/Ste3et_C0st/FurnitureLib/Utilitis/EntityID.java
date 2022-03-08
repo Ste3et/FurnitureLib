@@ -4,6 +4,8 @@ import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import org.bukkit.Bukkit;
 
 import java.lang.reflect.Field;
+import java.util.Arrays;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class EntityID {
@@ -16,9 +18,20 @@ public class EntityID {
 		String name = Bukkit.getServer().getClass().getPackage().getName();
 		version = name.substring(name.lastIndexOf('.') + 1) + ".";
 		try {
-			entityClass = Class.forName(FurnitureLib.getVersionInt() > 16 ? "net.minecraft.world.entity.Entity" : "net.minecraft.server." + getVersion() + "Entity");
-			entityCountField = entityClass.getDeclaredField(FurnitureLib.getVersionInt() > 16 ? "b" : "entityCount");
-			entityCountField.setAccessible(true);
+			if(FurnitureLib.getVersionInt() < 16) {
+				entityClass = Class.forName("net.minecraft.server." + getVersion() + "Entity");
+				entityCountField = entityClass.getDeclaredField("entityCount");
+				entityCountField.setAccessible(true);
+			}else {
+				entityClass =  Class.forName("net.minecraft.world.entity.Entity");
+				Optional<Field> field = Arrays.asList(entityClass.getDeclaredFields()).stream().filter(entry -> entry.getType().equals(AtomicInteger.class)).findFirst();
+				if(field.isPresent()) {
+					entityCountField = field.get();
+					entityCountField.setAccessible(true);
+				}else {
+					System.out.println("Unsuported Spigot Version Detected");
+				}
+			}
 		}catch(Exception ex) {
 			ex.printStackTrace();
 		}

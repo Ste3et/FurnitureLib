@@ -299,15 +299,15 @@ public class FurnitureLib extends JavaPlugin {
             		));
             send("==========================================");
             return;
-        } 
+        }
         
-        String s = getPluginManager().getPlugin("ProtocolLib").getDescription().getVersion();
-        boolean protocollib = isRightProtocollib(s);
+        int protocolLibVersion = getProcotoLlibVersion(getPluginManager().getPlugin("ProtocolLib"));
+        
 		if (getBukkitVersion().startsWith("v1_14")) {
 			send("§5Info: §eFor Spigot 1.14.x you need §6ProtocolLib 4.5.0 Build #8 §eor above");
 			send("§5Download it here: §l§9https://ci.dmulloy2.net/job/ProtocolLib/lastSuccessfulBuild/");
 			send("§5Otherwise you will receive: §cNoClassDefFoundError: org/apache/commons/lang3/Validate");
-		} else if (getBukkitVersion().startsWith("v1_15_2") && !s.equals("4.5.1")) {
+		} else if (getBukkitVersion().startsWith("v1_15_2") && protocolLibVersion < 46) {
 			send("§5Info: §eFor Spigot 1.15.2 you need §6ProtocolLib 4.5.1 §eor above");
 			send("§5Download it here: §l§9https://www.spigotmc.org/resources/protocollib.1997/");
 			send("§5Otherwise you will receive: §cNo field with type java.util.Map exists in class EnumProtocol.");
@@ -333,6 +333,16 @@ public class FurnitureLib extends JavaPlugin {
 				}
 			}
 			
+			if(getVersionInt() == 18) {
+				if(protocolLibVersion < 48) {
+					this.disableFurnitureLib(Arrays.asList(
+							"§5Info: §eFor Spigot 1.18.x you need §6ProtocolLib 4.8.0 §eor above",
+							"§5Download it here: §l§9https://ci.dmulloy2.net/job/ProtocolLib/lastSuccessfulBuild/",
+							"§7FurnitureLib will stop working!"));
+					return;
+				}
+			}
+			
 			try {
 				Class.forName("com.comphenix.protocol.wrappers.Pair");
 			} catch (ClassNotFoundException ex) {
@@ -344,7 +354,7 @@ public class FurnitureLib extends JavaPlugin {
 			}
 		}
         
-		if(!protocollib) {
+		if(protocolLibVersion < 40) {
 			List<String> instructions = Arrays.asList("Furniture Lib doesn't find the correct ProtocolLib",
 					"Please Install Protocollib §c4.x",
 					"You can it download at: §6§lhttps://www.spigotmc.org/resources/protocollib.1997/");
@@ -412,6 +422,13 @@ public class FurnitureLib extends JavaPlugin {
 		c.setExecutor(new command(this));
 		c.setTabCompleter(new TabCompleterHandler());
 		
+    }
+    
+    private int getProcotoLlibVersion(Plugin plugin) {
+    	String version = plugin.getDescription().getVersion();
+    	int maxLength = 3;
+    	String subString = version.substring(0, maxLength > version.length() ? version.length() : maxLength).replaceAll("[^0-9]", "");
+    	return Integer.parseInt(subString);
     }
     
     private void registerEvents() {

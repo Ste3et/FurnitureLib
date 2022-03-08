@@ -45,7 +45,8 @@ public class SQLManager {
             config.setDriverClassName("org.sqlite.JDBC");
             config.setPoolName("FurnitureLib");
             config.setConnectionTestQuery("SELECT 1");
-            config.setMaximumPoolSize(50);
+            config.setMaximumPoolSize(10);
+            config.setIdleTimeout(15);
             this.database = new SQLite(plugin, config);
         } else if (plugin.getConfig().getString("config.Database.type").equalsIgnoreCase("Mysql")) {
             isExist();
@@ -61,7 +62,8 @@ public class SQLManager {
             config.setUsername(user);
             config.setPassword(password);
             config.setPoolName("FurnitureLib");
-            config.setMaximumPoolSize(50);
+            config.setMaximumPoolSize(10);
+            config.setIdleTimeout(15);
             this.database = new MySQL(plugin, config);
         } else {
             plugin.getLogger().warning("Database Type not supported: FurnitureLib will shutdown.");

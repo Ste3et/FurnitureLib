@@ -3,7 +3,6 @@ package de.Ste3et_C0st.FurnitureLib.Command;
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.Database.Database;
 import de.Ste3et_C0st.FurnitureLib.NBT.MathHelper;
-import de.Ste3et_C0st.FurnitureLib.SchematicLoader.functions.projectFunction;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.ExecuteTimer;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.RandomStringGenerator;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.Wrapper.ChatComponentWrapper;
@@ -21,7 +20,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitRunnable;
 
 import com.google.common.util.concurrent.AtomicDouble;
-import com.mysql.fabric.xmlrpc.base.Data;
 
 import java.sql.SQLException;
 import java.util.HashMap;
@@ -30,7 +28,6 @@ import java.util.Objects;
 import java.util.Random;
 import java.util.UUID;
 import java.util.concurrent.atomic.AtomicInteger;
-import java.util.stream.Collectors;
 
 public class debugCommand extends iCommand {
 
