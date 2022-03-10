@@ -19,7 +19,7 @@ build:
       - .gradle
   artifacts:
     paths:
-      - build/libs/ProtectionLib.jar
+      - build/libs/FurnitureLib.jar
     expire_in: 1 week
   only:
     - master
