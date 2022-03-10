@@ -53,8 +53,8 @@ dependencies {
 
 version = '2.7'
 group = 'de.Ste3et_C0st.furniture'
-sourceCompatibility = 17
-targetCompatibility = 17
+sourceCompatibility = 1.8
+targetCompatibility = 1.8
 shadowJar.archiveFileName = "${project.name}-${project.version}.jar"
 
 compileJava.options.encoding = 'UTF-8'
