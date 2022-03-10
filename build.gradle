@@ -79,8 +79,8 @@ tasks {
         enabled = true
     }
     
-    build {
-        dependsOn(shadowJar)
+    assemble{
+    	dependsOn(shadowJar)
     }
 }
 
