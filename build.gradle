@@ -67,7 +67,7 @@ dependencies {
     compileOnly 'io.papermc.paper:paper-api:1.18.2-R0.1-SNAPSHOT'
     compileOnly 'com.github.MilkBowl:VaultAPI:1.7'
     compileOnly 'com.gitlab.Ste3et_C0st.protectionlib:Core:v1.4'
-    compileOnly 'com.comphenix.protocol:ProtocolLib:4.8.0-SNAPSHOT'
+    compileOnly 'com.comphenix.protocol:ProtocolLib:4.7.1-SNAPSHOT'
     compileOnly 'io.papermc:paperlib:1.0.2'
     compileOnly 'org.geysermc.floodgate:api:2.0-SNAPSHOT'
     
