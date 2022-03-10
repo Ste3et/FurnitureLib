@@ -1,4 +1,4 @@
-image: gradle:jdk17
+image: gradle:jdk8
 
 stages:
   - build
