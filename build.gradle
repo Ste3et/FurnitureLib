@@ -78,8 +78,8 @@ group = 'de.Ste3et_C0st.furniture'
 version = '2.7'
 description = 'FurnitureLib'
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+sourceCompatibility = 17
+targetCompatibility = 17
 
 shadowJar.archiveFileName = "${project.name}-${project.version}.jar"
 
