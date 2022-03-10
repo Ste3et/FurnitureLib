@@ -24,37 +24,14 @@ apply plugin: 'com.github.johnrengelman.shadow'
 
 repositories {
     mavenLocal()
-    maven {
-        url = uri('https://hub.spigotmc.org/nexus/content/repositories/snapshots/')
-    }
-
-    maven {
-        url = uri('https://ci.ender.zone/plugin/repository/everything/')
-    }
-
-    maven {
-        url = uri('https://jitpack.io')
-    }
-
-    maven {
-        url = uri('https://papermc.io/repo/repository/maven-public/')
-    }
-
-    maven {
-        url = uri('https://oss.sonatype.org/content/groups/public/')
-    }
-
-    maven {
-        url = uri('https://repo.dmulloy2.net/repository/public/')
-    }
-
-    maven {
-        url = uri('https://repo.opencollab.dev/maven-snapshots/')
-    }
-
-    maven {
-        url = uri('https://repo.maven.apache.org/maven2/')
-    }
+    
+    maven {url = uri('https://hub.spigotmc.org/nexus/content/repositories/snapshots/')}
+    maven {url = uri('https://jitpack.io')}
+    maven {url = uri('https://papermc.io/repo/repository/maven-public/')}
+    maven {url = uri('https://oss.sonatype.org/content/groups/public/')}
+    maven {url = uri('https://repo.dmulloy2.net/repository/public/')}
+    maven {url = uri('https://repo.opencollab.dev/maven-snapshots/')}
+    maven {url = uri('https://repo.maven.apache.org/maven2/')}
 }
 
 dependencies {
@@ -67,21 +44,24 @@ dependencies {
     compileOnly 'io.papermc.paper:paper-api:1.18.2-R0.1-SNAPSHOT'
     compileOnly 'com.github.MilkBowl:VaultAPI:1.7'
     compileOnly 'com.gitlab.Ste3et_C0st.protectionlib:Core:v1.4'
-    compileOnly 'com.comphenix.protocol:ProtocolLib:4.7.1-SNAPSHOT'
+    compileOnly 'com.comphenix.protocol:ProtocolLib:4.8.0'
     compileOnly 'io.papermc:paperlib:1.0.2'
     compileOnly 'org.geysermc.floodgate:api:2.0-SNAPSHOT'
     
-    implementation files('lib/LightAPI-Bukkit-5.1.0.jar')
+    compileOnly files('lib/LightAPI-Bukkit-5.1.0.jar')
 }
 
-group = 'de.Ste3et_C0st.furniture'
 version = '2.7'
-description = 'FurnitureLib'
-
+group = 'de.Ste3et_C0st.furniture'
 sourceCompatibility = 17
 targetCompatibility = 17
-
 shadowJar.archiveFileName = "${project.name}-${project.version}.jar"
+
+compileJava.options.encoding = 'UTF-8'
+tasks.withType(JavaCompile) {
+    options.encoding = 'UTF-8'
+}
+
 
 shadowJar {
    relocate 'org.slf4j', 'de.Ste3et_C0st.FurnitureLib.Database.org.slf4j'
@@ -104,12 +84,6 @@ tasks {
     }
 }
 
-compileJava.options.encoding = 'UTF-8'
-
-tasks.withType(JavaCompile) {
-    options.encoding = 'UTF-8'
-}
-
 sourceSets {
     main {
         java {
@@ -128,9 +102,22 @@ processResources {
 }
 
 publishing {
-    publications {
-        maven(MavenPublication) {
-            from(components.java)
-        }
-    }
+	publications {
+		maven(MavenPublication) {
+			groupId project.group
+			artifactId project.name
+			version project.version
+			artifact "build/libs/${project.name}-${project.version}.jar"
+		}
+	}
+}
+
+task copyJarToBin {
+	copy {
+	    from "build/libs/${project.name}-${project.version}.jar"
+	    into "build/libs/"
+	    rename { String fileName ->
+        	fileName.replace("-$project.version", "")
+    	}
+	}
 }

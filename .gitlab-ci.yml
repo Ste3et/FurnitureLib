@@ -5,11 +5,12 @@ stages:
 
 before_script:
   - export GRADLE_USER_HOME=`pwd`/.gradle
-  - mkdir target
 
 build:
   stage: build
-  script: gradle --build-cache assemble
+  script: 
+    - gradle --build-cache assemble
+    - gradle copyJarToBin
   cache:
     key: "$CI_COMMIT_REF_NAME"
     policy: push
@@ -18,8 +19,7 @@ build:
       - .gradle
   artifacts:
     paths:
-      - build/libs/*.jar
-      - target/*.jar
+      - build/libs/ProtectionLib.jar
     expire_in: 1 week
   only:
     - master
