@@ -9,8 +9,8 @@ before_script:
 build:
   stage: build
   script: 
-    - ./gradlew build
-    - ./gradlew copyJarToBin
+    - ./gradle build
+    - ./gradle copyJarToBin
   artifacts:
     paths:
       - build/libs/FurnitureLib.jar
