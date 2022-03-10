@@ -3,3 +3,5 @@
 /${dir}/
 *.idea
 *.iml
+/.gradle/
+/build/
