@@ -16,8 +16,8 @@ message:
   RemoveAll: '&e成功删除所有家具.'
   RemovePlayer: '&e成功删除所有#PLAYER#放置的家具.'
   RemoveLookat: '&e成功删除#SERIAL#.'
-  RemoveWorld: '&eSucessfully removed all furnitures from World %WORLD%'
-  SideNotFound: '&c这一页面不存在.'
+  RemoveWorld: '&e成功将所有家具从%WORLD%删除'
+  SideNotFound: '&c页面不存在.'
   SideNavigation: '&e输入 /furniture list <option> (0-#MAX#) 列出所有的家具.'
   WrongOwner: '&c你不是这件家具的拥有者!'
   NotONThisSide: '&c你不能在这个方块上放置这件家具.'
@@ -27,7 +27,7 @@ message:
   FurnitureToggleCMDOff: '&a已将家具&c隐形'
   FurnitureToggleCMDOn: '&a已将所有家具&2显形'
   FurnitureToggleEvent: '&c你不能这么做.'
-  FurnitureToggleCantChange: '&cYou cant change the Furniture Visibility'
+  FurnitureToggleCantChange: '&c你不能改变家具的可见性'
   FurnitureToFastPlace: '&c你必须等待&4#TIME#&c才能放置.'
   FurnitureToFastBreak: '&c你必须等候&4#TIME#&c才能破坏家具.'
   LimitAnnouncer: '&6你已放置&2#CURRENT#&6/&c#MAX# of &e#TYPE#.'
@@ -39,7 +39,7 @@ message:
   BlockOfInstability: '&c请尝试在其他地方放置家具'
   reload: '&7已重载&2&lFurnitureLib'
   NoPermissions: '&c你没有权限这么做.'
-  IgnoredWorld: "&7You can't place furniture models at &2%WORLD%"
+  IgnoredWorld: "&7你不能在&2%WORLD%&7放置这个"
 command:
   help:
     header:
@@ -52,7 +52,7 @@ command:
     hover:
     - '&7版本: &2#VERSION#'
     - '&7作者: &2#AUTHOR#'
-    - '&7译者: &2qsefthuopq'
+    - '&7译者: &2qsefthuopq, YuanYuanOwO'
   debug:
     help_name: '&7/furniture &edebug'
     help_hover:
@@ -76,31 +76,31 @@ command:
   dump:
     help_name: "&7/furniture &edump"
     help_hover:
-        - "&7Upload some important informations to help bug finding"
+        - "&7上传重要的信息以帮助查找错误"
     suggest: "/furniture dump"
-    wrongUsage: "&cPlease use /furniture dump"
+    wrongUsage: "&c请使用 /furniture dump"
   give:
     help_name: '&7/furniture &egive &a[系统ID] &b(玩家名) &b(数量)'
     help_hover:
     - '&7将&e模型物品&7发送给一名&e玩家'
     nothing:
-    - "&7There are no furniture models are found."
-    - "&7With applied filters -> {#FILTERS# &7}"
+    - "&7这里没有找到家具."
+    - "&7应用过滤器-> {#FILTERS# &7}"
     delete:
         button: " &7[&4✘&7]"
         hover:
-        - "&7Remove all &c#PROJECT# &7models from"
-        - "&7All worlds that &c&ncan`t be make undo"
-        - "&7And &cremove &7the model from your Server or &cdisable &7it."
+        - "&7移除所有 &c#PROJECT# &7模型"
+        - "&7所有的世界都&c&n无法撤销"
+        - "&7从服务器上&c删除&7或禁用这个模型"
     remove:
         button: " &7[&cremove&7]"
         hover:
-        - "&7Remove all &c#PROJECT# &7models from"
-        - "&7All worlds that &c&ncan`t be make undo"
+        - "&7移除所有 &c#PROJECT# &7模型"
+        - "&7所有的世界都&c&n无法撤销"
     filtered_hover:
-        - "&7Remove all &c#PROJECT# &7models from"
-        - "&7These filters: #FILTERS#"
-        - "&7that &c&ncan't be make undo"
+        - "&7移除所有 &c#PROJECT# &7模型"
+        - "&7过滤器: #FILTERS#"
+        - "&7该操作&c&n无法撤销"
     suggest: /furniture give [系统ID]
     wrongUsage: '&c请使用 /furniture give [系统ID]'
   list:
@@ -150,11 +150,11 @@ command:
     suggest: /furniture remove
     wrongUsage: 请使用 /furniture remove [家具类型]
     result:
-        - "&7Remove &2#SIZE# &7furniture models"
-        - "&7With applied filters -> {#FILTERS# &7}"
+        - "&7删除了 &2#SIZE# &7个家具"
+        - "&7应用过滤器 -> {#FILTERS# &7}"
     nothing:
-        - "&7There are no furniture models are found."
-        - "&7With applied filters -> {#FILTERS# &7}"
+        - "&7这里没有找到家具."
+        - "&7应用过滤器-> {#FILTERS# &7}"
   save:
     help_name: '&7/furniture &esave'
     help_hover: '&7保存所有手动更改的家具'
