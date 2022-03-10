@@ -9,14 +9,8 @@ before_script:
 build:
   stage: build
   script: 
-    - gradle --build-cache assemble
-    - gradle copyJarToBin
-  cache:
-    key: "$CI_COMMIT_REF_NAME"
-    policy: push
-    paths:
-      - build
-      - .gradle
+    - ./gradlew build
+    - ./gradlew copyJarToBin
   artifacts:
     paths:
       - build/libs/FurnitureLib.jar
