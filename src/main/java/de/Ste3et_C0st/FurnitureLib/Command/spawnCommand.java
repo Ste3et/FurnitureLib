@@ -2,6 +2,9 @@ package de.Ste3et_C0st.FurnitureLib.Command;
 
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
+import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
+import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
+
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.BlockCommandSender;
@@ -34,7 +37,8 @@ public class spawnCommand extends iCommand {
                     Location l = new Location(w, x, y, z).getBlock().getLocation();
                     l.setYaw(yaw);
                     Project pro = FurnitureLib.getInstance().getFurnitureManager().getProject(args[5]);
-                    FurnitureLib.getInstance().spawn(pro, l);
+                    ObjectID objectID = FurnitureLib.getInstance().spawn(pro, l);
+                    FurnitureManager.getInstance().addObjectID(objectID);
                 }
             }
         }

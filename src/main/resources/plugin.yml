@@ -1,8 +1,8 @@
-name: ${project.name}
-version: ${project.version}
-description: ${project.description}
+name: FurnitureLib
+version: @version@
+description: The FurnitureLib is an API to create packet based entity creations for Spigot based Minecraft Servers.
 author: Ste3et_C0st
-website: ${project.url}
+website: https://dicecraft.de/furniture/
 softdepend: [ProtocolLib,ProtectionLib,LightAPI,Multiverse,Multiverse-Core,MultiWorld,Vault,Hyperverse,Floodgate]
 main: de.Ste3et_C0st.FurnitureLib.main.FurnitureLib
 api-version: 1.13
