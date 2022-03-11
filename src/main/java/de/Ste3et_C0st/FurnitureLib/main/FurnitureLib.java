@@ -353,6 +353,11 @@ public class FurnitureLib extends JavaPlugin {
 				return;
 			}
 		}
+		
+		if(getVersionInt() < 13) {
+			debug("FurnitureLib >> Please Update your Server to a newer environment (1.13 or higher)");
+			debug("FurnitureLib >> Maybye your Server Version " + getBukkitVersion() + " can't be supported in the future!");
+		}
         
 		if(protocolLibVersion < 40) {
 			List<String> instructions = Arrays.asList("Furniture Lib doesn't find the correct ProtocolLib",

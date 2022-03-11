@@ -20,10 +20,10 @@ public class LightManager {
     
     public LightManager(Plugin plugin) {
         if (Bukkit.getPluginManager().isPluginEnabled("LightAPI")) {
-            if (Bukkit.getPluginManager().getPlugin("LightAPI").getDescription().getVersion().startsWith("3")) {
+            if (Bukkit.getPluginManager().getPlugin("LightAPI").getDescription().getVersion().contains("3.")) {
                 this.plugin = plugin;
                 this.lightApi = new LightAPIv3();
-            } else if(Bukkit.getPluginManager().getPlugin("LightAPI").getDescription().getVersion().startsWith("5")) {
+            } else if(Bukkit.getPluginManager().getPlugin("LightAPI").getDescription().getVersion().contains("5.")) {
             	 this.plugin = plugin;
                  this.lightApi = new LightAPIv5();
             } else {

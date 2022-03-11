@@ -21,7 +21,4 @@ public class LightAPIv5 implements iLightAPI{
 	public boolean createLight(Location location, int lightLevel) {
 		return LightAPI.get().setLightLevel(location.getWorld().getName(), location.getBlockX(), location.getBlockY(), location.getBlockZ(), lightLevel, LightFlag.BLOCK_LIGHTING) > 0;
 	}
-
-	
-	
 }
