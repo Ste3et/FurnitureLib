@@ -100,6 +100,11 @@ public abstract class fEntity extends fSerializer implements Cloneable {
     public boolean isCustomNameVisible() {
         return this.nameVisible.getOrDefault();
     }
+    
+    public boolean hasCustomName() {
+    	if(Objects.isNull(getCustomName())) return false;
+    	return getCustomName().isEmpty() == false;
+    }
 
     public Location getLocation() {
         return this.location;

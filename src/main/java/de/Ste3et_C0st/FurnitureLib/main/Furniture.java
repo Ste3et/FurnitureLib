@@ -55,11 +55,9 @@ public abstract class Furniture extends FurnitureHelper implements Listener {
             return true;
         } else {
             AtomicBoolean b = new AtomicBoolean(false);
-            getfAsList().forEach(as -> {
-                if (as.getName().startsWith("#ITEM") || as.getName().startsWith("/")) {
-                    if (!b.get())
-                        b.set(true);
-                }
+            getfAsList().stream().filter(fEntity::hasCustomName).forEach(as -> {
+                if (as.getName().toUpperCase().startsWith("#ITEM") || as.getName().startsWith("/")) {b.set(true);}
+                if (as.getName().toUpperCase().startsWith("#LIGHT")) {b.set(true);}
             });
             return b.get();
         }
@@ -129,8 +127,10 @@ public abstract class Furniture extends FurnitureHelper implements Listener {
                                 p.chat(str);
                             }
                         }
+                        return true;
                     }
                 }
+                this.toggleLight();
             }
         }
         return false;

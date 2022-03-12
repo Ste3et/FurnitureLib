@@ -42,7 +42,8 @@ public class LightManager {
         if (Objects.isNull(size)) {
             return;
         }
-        this.lightApi.createLight(location, size);
+        boolean bool = this.lightApi.createLight(location, size);
+        FurnitureLib.debug("imit light [" + size + "]: " + bool, 0);
     }
 
     public synchronized void removeLight(Location location) {
@@ -51,7 +52,8 @@ public class LightManager {
         }
         try {
             if (Objects.isNull(location)) return; 
-            this.lightApi.deleteLight(location);
+            boolean bool = this.lightApi.deleteLight(location);
+            FurnitureLib.debug("remove light" + bool, 0);
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -1,6 +1,7 @@
 package de.Ste3et_C0st.FurnitureLib.main;
 
 import de.Ste3et_C0st.FurnitureLib.Utilitis.LocationUtil;
+import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fArmorStand;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
 import org.bukkit.GameMode;
@@ -12,9 +13,11 @@ import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
 
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 
 public abstract class FurnitureHelper {
@@ -162,32 +165,92 @@ public abstract class FurnitureHelper {
     }
 
     public void toggleLight(boolean change) {
-        getfAsList().forEach(stand -> {
-            if (stand.getName().startsWith("#Light:")) {
-                String[] str = stand.getName().split(":");
-                String lightBool = str[2];
-                if (change) {
-                    if (lightBool.equalsIgnoreCase("off#")) {
-                        stand.setName(stand.getName().replace("off#", "on#"));
-                        if (!stand.isFire()) {
-                            stand.setFire(true);
-                        }
-                    } else if (lightBool.equalsIgnoreCase("on#")) {
-                        stand.setName(stand.getName().replace("on#", "off#"));
-                        if (stand.isFire()) {
-                            stand.setFire(false);
-                        }
+    	Collection<fEntity> fEntities = getfAsList().stream()
+    										.filter(fEntity::hasCustomName)
+    										.filter(entry -> entry.getName().toUpperCase().startsWith("#FIRE:"))
+    										.collect(Collectors.toList());
+    	if(fEntities.isEmpty() == false) {
+    		this.toggleLight(fEntities, change);
+    	}
+    }
+    
+    public void toggleLight(Collection<fEntity> fEntityCollection,boolean change) {
+    	AtomicBoolean needUpdate = new AtomicBoolean(false);
+    	fEntityCollection.forEach(entity -> {
+    		if(changeLight(entity, change)) needUpdate.set(true);
+    	});
+    	
+    	if(needUpdate.get()) {
+    		update();
+    		this.getObjID().setSQLAction(SQLAction.UPDATE);
+    	}
+    }
+    
+    private boolean changeLight(fEntity entity, boolean change) {
+    	if(entity.getName().contains(":")) {
+    		String[] str = entity.getName().split(":");
+            String lightBool = str[2];
+            if (Objects.nonNull(change) && change) {
+                if (lightBool.equalsIgnoreCase("off#")) {
+                	entity.setName(entity.getName().replace("off#", "on#"));
+                    if (!entity.isFire()) {
+                    	entity.setFire(true);
+                    	return true;
                     }
-                } else {
-                    if (lightBool.equalsIgnoreCase("on#")) {
-                        if (!stand.isFire()) {
-                            stand.setFire(true);
-                        }
+                } else if (lightBool.equalsIgnoreCase("on#")) {
+                	entity.setName(entity.getName().replace("on#", "off#"));
+                    if (entity.isFire()) {
+                    	entity.setFire(false);
+                    	return true;
+                    }
+                }
+            } else {
+                if (lightBool.equalsIgnoreCase("on#")) {
+                    if (!entity.isFire()) {
+                    	entity.setFire(true);
+                    	return true;
                     }
                 }
             }
-        });
-        update();
+    	}
+        return false;
+    }
+    
+    private boolean switchLight(fEntity entity) {
+    	if(entity.getName().contains(":")) {
+    		String[] str = entity.getName().split(":");
+            String lightBool = str[2];
+            if (lightBool.equalsIgnoreCase("off#")) {
+            	entity.setName(entity.getName().replace("off#", "on#"));
+                if (!entity.isFire()) {
+                	entity.setFire(true);
+                	return true;
+                }
+            } else if (lightBool.equalsIgnoreCase("on#")) {
+            	entity.setName(entity.getName().replace("on#", "off#"));
+                if (entity.isFire()) {
+                	entity.setFire(false);
+                	return true;
+                }
+            }
+    	}
+        return false;
+    }
+    
+    public void toggleLight() {
+    	AtomicBoolean needUpdate = new AtomicBoolean(false);
+    	getfAsList().stream()
+			.filter(fEntity::hasCustomName)
+			.filter(entry -> entry.getName().toUpperCase().startsWith("#LIGHT:"))
+			.forEach(fentity -> {
+				if(switchLight(fentity)) needUpdate.set(true);
+			}
+		);;
+		
+		if(needUpdate.get()) {
+    		update();
+    		this.getObjID().setSQLAction(SQLAction.UPDATE);
+    	}
     }
 
     public abstract void onClick(Player player);
