@@ -18,6 +18,7 @@ import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
 
 import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -399,5 +400,14 @@ public class Project {
 				}
 			});
 		}
+	}
+	
+	public ObjectID createObjectID(Location location) {
+		ObjectID objectID = new ObjectID(getName(), getPlugin().getName(), location);
+		return objectID;
+	}
+	
+	public ObjectID spawnProject(Location location) {
+		return FurnitureLib.getInstance().spawn(this, location);
 	}
 }

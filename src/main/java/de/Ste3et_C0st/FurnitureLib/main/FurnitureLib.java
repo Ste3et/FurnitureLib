@@ -60,6 +60,7 @@ public class FurnitureLib extends JavaPlugin {
     public HashMap<Project, Long> deleteMap = new HashMap<>();
     public HashMap<UUID, Long> timeStampPlace = new HashMap<>();
     public HashMap<UUID, Long> timeStampBreak = new HashMap<>();
+    
     @SuppressWarnings("unused")
     private Logger logger = Logger.getLogger("Minecraft");
     private LocationUtil lUtil;
@@ -572,8 +573,7 @@ public class FurnitureLib extends JavaPlugin {
     }
 
     public ObjectID spawn(Project pro, Location l) {
-        ObjectID objectID = new ObjectID(pro.getName(), pro.getPlugin().getName(), l);
-        pro.applyFunction(objectID);
+        ObjectID objectID = pro.createObjectID(l);
         spawn(pro, objectID);
         return objectID;
     }
