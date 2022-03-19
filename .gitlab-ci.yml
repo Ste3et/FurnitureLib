@@ -9,7 +9,7 @@ before_script:
 build:
   stage: build
   script: 
-    - gradle build
+    - gradle -PsnapshotVersion=$CI_COMMIT_SHORT_SHA build
     - gradle copyJarToBin
   artifacts:
     paths:
