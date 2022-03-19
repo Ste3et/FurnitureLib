@@ -85,6 +85,16 @@ public class FurniturePlayer {
     	return this.receivedObjects.contains(objectID);
     }
     
+    public HashSet<ObjectID> getReceivedObjects(){
+    	HashSet<ObjectID> objHashSet = new HashSet<ObjectID>();
+    	objHashSet.addAll(this.receivedObjects);
+    	return objHashSet;
+    }
+    
+    public void clear() {
+    	this.receivedObjects.clear();
+    }
+    
     public boolean isBedrockPlayer() {
     	FloodgateManager manager = FurnitureLib.getInstance().getFloodgateManager();
     	if(Objects.nonNull(manager)) {

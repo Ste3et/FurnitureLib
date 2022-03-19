@@ -15,7 +15,7 @@ public class onPlayerQuit extends EventLibrary implements Listener {
     @EventHandler
     public void onPlayerQuitEvent(PlayerQuitEvent event) {
     	Player player = event.getPlayer();
-        getFurnitureMgr().removeFurniture(player);
+        getFurnitureManager().removeFurniture(player);
         Optional<DiceOfflinePlayer> offlinePlayer = FurnitureLib.getInstance().getPlayerCache().getPlayer(player.getUniqueId());
         if(offlinePlayer.isPresent()) {
 			offlinePlayer.get().update(player);

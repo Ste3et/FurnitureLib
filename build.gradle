@@ -119,7 +119,6 @@ sourceSets {
 processResources {
     filter ReplaceTokens, tokens: [
             "version": project.property("version") + (project.hasProperty('snapshotVersion') ? "-" + project.getProperty('snapshotVersion') : "" )
-            
     ]
 }
 

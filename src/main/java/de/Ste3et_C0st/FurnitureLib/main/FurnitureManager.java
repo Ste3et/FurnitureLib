@@ -2,6 +2,7 @@ package de.Ste3et_C0st.FurnitureLib.main;
 
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.Wrapper.packet.WrapperPlayServerEntityDestroy;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 import de.Ste3et_C0st.FurnitureLib.main.entity.*;
 
@@ -12,9 +13,12 @@ import org.bukkit.block.Block;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Player;
+
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.function.BiFunction;
+import java.util.stream.Collectors;
 
 public class FurnitureManager extends ObjectIdManager{
 
@@ -170,4 +174,12 @@ public class FurnitureManager extends ObjectIdManager{
     	int x = block.getX(), y = block.getY(), z = block.getZ();
     	return getInChunk(block.getChunk()).stream().anyMatch(entry -> entry.getBlockX() == x && entry.getBlockY() == y && entry.getBlockZ() == z);
     }
+
+	public void killObject(ObjectID objectID, Player player) {
+		WrapperPlayServerEntityDestroy.destroyPackets(objectID, player);
+	}
+	
+	public void killObject(ObjectID objectID) {
+		WrapperPlayServerEntityDestroy.destroyPackets(objectID, objectID.getPlayerList());
+	}
 }

@@ -2,23 +2,17 @@ package de.Ste3et_C0st.FurnitureLib.main;
 
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.ModelLoader.ModelHandler;
-import de.Ste3et_C0st.FurnitureLib.Utilitis.DefaultKey;
-import de.Ste3et_C0st.FurnitureLib.Utilitis.DoubleKey;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.LocationUtil;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.RandomStringGenerator;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.Wrapper.packet.WrapperPlayServerEntityDestroy;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.cache.DiceOfflinePlayer;
-import de.Ste3et_C0st.FurnitureLib.main.Type.EventType;
-import de.Ste3et_C0st.FurnitureLib.main.Type.PublicMode;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
 import org.bukkit.*;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
-import org.bukkit.util.Vector;
-
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -27,27 +21,7 @@ import java.util.UUID;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-public class ObjectID {
-
-    private Furniture functionObject = null;
-    private static int viewRange = 10;
-    private String ObjectID, serial, Project, plugin, worldName;
-    private HashSet<Location> locList = new HashSet<Location>();
-    private DoubleKey<Integer> chunkKey = null;
-    private Location loc;
-    private UUID uuid;
-    private HashSet<UUID> uuidList = new HashSet<UUID>();
-    private DefaultKey<PublicMode> publicMode = new DefaultKey<Type.PublicMode>(FurnitureConfig.getFurnitureConfig().getDefaultPublicType());
-    private DefaultKey<EventType> memberType = new DefaultKey<Type.EventType>(FurnitureConfig.getFurnitureConfig().getDefaultEventType());
-    private SQLAction sqlAction = SQLAction.SAVE;
-    private HashSet<fEntity> packetList = new HashSet<fEntity>();
-   
-    //private HashSet<Player> players = new HashSet<>();
-    
-    private BlockFace placedFace = BlockFace.NORTH;
-    private int chunkX, chunkZ;
-    private boolean finish = false, fixed = false, fromDatabase = false, Private = false;
-    private final HashSet<Player> playerSet = new HashSet<Player>();
+public class ObjectID extends ObjectData{
 
     public ObjectID(String name, String plugin, Location startLocation) {
         try {
@@ -63,155 +37,6 @@ public class ObjectID {
 
     public ObjectID(String name) {
     	this.setID(name);
-    }
-    
-    public String getWorldName() {
-        return this.worldName;
-    }
-    
-    public void setWorldName(String worldName) {
-    	this.worldName = worldName;
-    }
-
-    public String getID() {
-        return this.ObjectID;
-    }
-
-    public void setID(String s) {
-        this.ObjectID = s;
-        try {
-            if (s.contains(":")) {
-                String[] l = s.split(":");
-                this.Project = l[0];
-                this.serial = l[1];
-                this.plugin = l[2];
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    public String getProject() {
-        return this.Project;
-    }
-
-    public Project getProjectOBJ() {
-        return FurnitureManager.getInstance().getProject(this.Project);
-    }
-
-    public String getPlugin() {
-        return this.plugin;
-    }
-
-    public String getSerial() {
-        return this.serial;
-    }
-
-    public Location getStartLocation() {
-        return this.loc;
-    }
-    
-    public BlockFace getBlockFace() {
-    	return this.placedFace;
-    }
-
-    public void setStartLocation(Location loc) {
-        this.loc = loc;
-        this.worldName = loc.getWorld().getName();
-        this.chunkX = loc.getBlockX() >> 4;
-        this.chunkZ = loc.getBlockZ() >> 4;
-        this.chunkKey = new DoubleKey<Integer>(chunkX, chunkZ);
-        this.placedFace = LocationUtil.yawToFace(loc.getYaw());
-    }
-
-    public EventType getEventType() {
-        return this.memberType.getOrDefault();
-    }
-
-    public SQLAction getSQLAction() {
-        return this.sqlAction;
-    }
-
-    public void setSQLAction(SQLAction action) {
-        this.sqlAction = action;
-    }
-
-    public boolean isFixed() {
-        return this.fixed;
-    }
-
-    public void setFixed(boolean b) {
-        fixed = b;
-    }
-
-    public boolean isFinish() {
-        return this.finish;
-    }
-
-    public void setFinish() {
-        this.finish = true;
-    }
-
-    public void setEventTypeAccess(EventType type) {
-        this.memberType.setValue(type);
-    }
-
-    public HashSet<UUID> getMemberList() {
-        return this.uuidList;
-    }
-
-    public void setMemberList(HashSet<UUID> uuidList) {
-    	this.uuidList.addAll(uuidList);
-    }
-
-    public PublicMode getPublicMode() {
-        return this.publicMode.getOrDefault();
-    }
-
-    public void setPublicMode(PublicMode publicMode) {
-        this.publicMode.setValue(publicMode);
-    }
-    
-    public boolean hasPublicMode() {
-    	return !this.publicMode.isDefault();
-    }
-    
-    public boolean hasEventType() {
-    	return !this.memberType.isDefault();
-    }
-
-    public UUID getUUID() {
-        return this.uuid;
-    }
-
-    public void setUUID(UUID uuid) {
-        this.uuid = uuid;
-    }
-
-    public World getWorld() {
-    	if(Objects.isNull(this.loc)) return null;
-        return this.loc.getWorld();
-    }
-
-    public Chunk getChunk() {
-        return this.loc.getChunk();
-    }
-    
-    public DoubleKey<Integer> getChunkKey(){
-    	if(Objects.isNull(this.chunkKey)) this.chunkKey = new DoubleKey<Integer>(getStartLocation().getBlockX() >> 4, getStartLocation().getBlockZ() >> 4);
-    	return chunkKey;
-    }
-    
-    public int getBlockX() {
-    	return getStartLocation().getBlockX();
-    }
-    
-    public int getBlockY() {
-    	return getStartLocation().getBlockY();
-    }
-    
-    public int getBlockZ() {
-    	return getStartLocation().getBlockZ();
     }
 
     public HashSet<Player> getPlayerList() {
@@ -335,6 +160,7 @@ public class ObjectID {
     }
     
     private HashSet<Player> players = new HashSet<>();
+    
     public void updatePlayerViewWithRange(Player player, Location location) {
         if (FurnitureManager.getInstance().getIgnoreList().contains(player.getUniqueId())) {
             return;
@@ -361,7 +187,7 @@ public class ObjectID {
             } else {
                 if (!players.contains(player))
                     return;
-                this.packetList.forEach(stand -> stand.kill(player, false));
+                WrapperPlayServerEntityDestroy.destroyPackets(this, player);
                 players.remove(player);
             }
         }
@@ -373,7 +199,7 @@ public class ObjectID {
     }
     
     public void removeArmorStands(Player player) {
-    	this.packetList.forEach(stand -> stand.kill(player, false));
+    	WrapperPlayServerEntityDestroy.destroyPackets(this, player);
         //players.remove(player);
     }
 
@@ -381,7 +207,7 @@ public class ObjectID {
     	return getPacketList().stream().filter(entry -> entityID == entry.getEntityID()).findFirst().orElse(null);
     }
     
-    
+    @Deprecated
     public void sendAllInView() {
 //        if (isPrivate())
 //            return;
@@ -404,19 +230,7 @@ public class ObjectID {
 //        });
     }
     
-    public static void setRange(int chunkRange) {
-    	viewRange = chunkRange;
-    }
-    
-    public void setFurnitureObject(Furniture furniture) {
-    	this.functionObject = furniture;
-    }
-    
-    public Furniture getFurnitureObject() {
-    	return this.functionObject;
-    }
-    
-    public void removePacket(Player p) {
+    public void removePacket(Player player) {
         if (isPrivate()) {
             return;
         }
@@ -426,9 +240,8 @@ public class ObjectID {
         if (getSQLAction().equals(SQLAction.REMOVE)) {
             return;
         }
-        this.packetList.forEach(stand -> stand.kill(p, false));
-        playerSet.remove(p);
-        //players.remove(p);
+        FurnitureManager.getInstance().killObject(this, player);
+        playerSet.remove(player);
     }
 
     public void addBlock(List<Block> bl) {
@@ -496,8 +309,8 @@ public class ObjectID {
                 dropItem(p, loc.clone().add(0, 1, 0), getProjectOBJ());
         if (deleteEffect)
             deleteEffect(packetList);
-        removeAll();
         FurnitureManager.getInstance().remove(this);
+        this.removeAll();
         this.setFurnitureObject(null);
     }
 
@@ -574,9 +387,7 @@ public class ObjectID {
             getPacketList().forEach(entity -> entity.update(p));
         }
         
-        for(Player player : removePlayers) {
-        	getPacketList().forEach(entity -> entity.kill(player, false));
-        }
+        WrapperPlayServerEntityDestroy.destroyPackets(this, removePlayers);
         
         this.playerSet.addAll(actuallyPlayers);
         this.playerSet.removeAll(removePlayers);
@@ -592,7 +403,7 @@ public class ObjectID {
         if (getSQLAction().equals(SQLAction.REMOVE)) {
             return;
         }
-        for (Player p : getPlayerListWorld()) getPacketList().forEach(entity -> entity.kill(p, false));
+        FurnitureManager.getInstance().killObject(this);
         //this.players.clear();
     }
 
@@ -607,13 +418,5 @@ public class ObjectID {
         	this.functionObject = Furniture.class.cast(obj);
         }
     }
-    
-    public Optional<fEntity> getEntityByVector(Vector vector){
-    	return this.packetList.stream().filter(entry -> entry.getLocation().toVector().equals(vector)).findFirst();
-    }
-
-	public boolean isInChunk(int chunkX, int chunkZ) {
-		return this.chunkX == chunkX && this.chunkZ == chunkZ;
-	}
 
 }

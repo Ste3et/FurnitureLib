@@ -160,13 +160,11 @@ public class ObjectIdManager {
 	public void remove(ObjectID objectID) {
 		if(Objects.nonNull(objectID)) {
 			objectID.setSQLAction(SQLAction.REMOVE);
-			
 			if(!objectID.getBlockList().isEmpty()) {
 				FurnitureLib.getInstance().getBlockManager().destroy(objectID.getBlockList(), false);
 				objectID.getBlockList().clear();
 			}
-			
-			objectID.getPacketList().stream().forEach(fEntity::kill);
+			FurnitureManager.getInstance().killObject(objectID);
 			objectID.getPacketList().clear();
 		}
 	}
@@ -185,6 +183,14 @@ public class ObjectIdManager {
 	}
 	
 	public void removeFurniture(Player player) {
+		FurniturePlayer furniturePlayer = FurniturePlayer.wrap(player);
+		
+		if(Objects.nonNull(furniturePlayer)) {
+			furniturePlayer.getReceivedObjects().forEach(entry -> entry.removePacket(player));
+			furniturePlayer.clear();
+			return;
+		}
+		
 		getAllExistObjectIDs().forEach(entry -> entry.removePacket(player));
 	}
 	
