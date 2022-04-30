@@ -183,6 +183,7 @@ public class ObjectID extends ObjectData{
                     return;
                 }
                 this.packetList.forEach(stand -> stand.send(player));
+                this.getFurnitureObject().receive(player);
                 players.add(player);
             } else {
                 if (!players.contains(player))

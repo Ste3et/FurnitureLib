@@ -4,12 +4,16 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.BukkitConverters;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
+import com.comphenix.protocol.wrappers.WrappedGameProfile;
+import com.comphenix.protocol.wrappers.WrappedSignedProperty;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.Registry;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
 import de.Ste3et_C0st.FurnitureLib.NBT.CraftItemStack;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
+import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagList;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.DefaultKey;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.EntityID;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.SkullMetaPatcher;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureConfig;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
@@ -19,7 +23,10 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
+import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 
+import java.lang.reflect.Field;
 import java.util.*;
 
 public abstract class fEntity extends fSerializer implements Cloneable {
@@ -61,9 +68,9 @@ public abstract class fEntity extends fSerializer implements Cloneable {
     }
 
     public abstract Entity toRealEntity();
-
     public abstract boolean isRealEntity();
-
+    public abstract fEntity clone();
+    public abstract void copyMetadata(fEntity entity);
     public abstract void setEntity(Entity e);
 
     public boolean isParticlePlayed() {
@@ -300,10 +307,6 @@ public abstract class fEntity extends fSerializer implements Cloneable {
         getObjID().getWorld().playEffect(getLocation(), Effect.STEP_SOUND, getHelmet().getType());
     }
 
-//    public World getWorld() {
-//        return this.world;
-//    }
-
     public fEntity setNameVisibility(boolean nameVisibility) {
         getWatcher().setObject(new WrappedDataWatcherObject(3, Registry.get(Boolean.class)), nameVisibility);
         this.nameVisible.setValue(Boolean.valueOf(nameVisibility));
@@ -353,7 +356,6 @@ public abstract class fEntity extends fSerializer implements Cloneable {
     }
 
     public void send(Player player) {
-        //getHandle().getDataWatcherModifier().write(0, getWatcher());
         try {
             getManager().sendServerPacket(player, getHandle());
             this.sendInventoryPacket(player);
@@ -374,7 +376,6 @@ public abstract class fEntity extends fSerializer implements Cloneable {
         }
     }
 
-    /* NEED BACKWARDS 1.13(7) -> 1.14(8) */
     public fEntity setHealth(float health) {
         if (health == 0) {
             return this;
@@ -493,17 +494,6 @@ public abstract class fEntity extends fSerializer implements Cloneable {
                     return;
                 }
                 getManager().sendServerPacket(player, packet);
-//                Bukkit.getScheduler().runTaskLater(FurnitureLib.getInstance(),
-//                        new Runnable() {
-//                            @Override
-//                            public void run() {
-//                                try {
-//                                    getManager().sendServerPacket(player, packet);
-//                                } catch (Exception e) {
-//                                }
-//                            }
-//                        }, 2);
-                
             }
             if(getPassenger().isEmpty() == false) {
            	   getManager().sendServerPacket(player, this.mountPacketContainer);
@@ -513,38 +503,8 @@ public abstract class fEntity extends fSerializer implements Cloneable {
         }
     }
 
-    public void sendParticle(Location loc, int particleID, boolean repeat) {
-//		Particle particle = Particle.getById(particleID);
-//	    PacketContainer container = new PacketContainer(PacketType.Play.Server.WORLD_PARTICLES);
-//	    container.getParticles().write(0, particle);
-//	    container.getBooleans().write(0, Boolean.valueOf(true));
-//	    container.getFloat().write(0, Float.valueOf((float)loc.getX()));
-//	    container.getFloat().write(1, Float.valueOf((float)loc.getY()));
-//	    container.getFloat().write(2, Float.valueOf((float)loc.getZ()));
-//
-//	    if(repeat){
-//	    	final PacketContainer packet = container.deepClone();
-//	    	isPlayed = true;
-//	    	new BukkitRunnable() {
-//				@Override
-//				public void run() {
-//					if(isKilled){isPlayed = false;cancel();return;}
-//					for (Player p : getObjID().getPlayerList()) {
-//						try {
-//							getManager().sendServerPacket(p, packet);
-//						} catch (Exception e) {e.printStackTrace();}
-//					}
-//				}
-//			}.runTaskTimer(FurnitureLib.getInstance(), 0L, 10L);
-//	    }else{
-//	    	if(isKilled) return;
-//		    for (Player p : getObjID().getPlayerList()) {
-//				try {
-//					getManager().sendServerPacket(p, container);
-//				} catch (Exception e) {e.printStackTrace();}
-//			}
-//	    }
-    }
+    @Deprecated
+    public void sendParticle(Location loc, int particleID, boolean repeat) {}
 
     @SuppressWarnings("unchecked")
 	public void loadMetadata(NBTTagCompound metadata) {
@@ -553,7 +513,11 @@ public abstract class fEntity extends fSerializer implements Cloneable {
     		inventory.c().stream().forEach(entry -> {
     			String name = (String) entry;
     			if (inventory.getString(name).equalsIgnoreCase("NONE") == false) {
-                    ItemStack is = new CraftItemStack().getItemStack(inventory.getCompound(name));
+    				NBTTagCompound compound = inventory.getCompound(name);
+                    ItemStack is = new CraftItemStack().getItemStack(compound);
+                    if(is.getType() == Material.PLAYER_HEAD && SkullMetaPatcher.shouldPatch()) {
+                    	is = SkullMetaPatcher.patch(is, compound);
+                    }
                     this.getInventory().setSlot(name, is);
                 }
     		});
@@ -578,9 +542,4 @@ public abstract class fEntity extends fSerializer implements Cloneable {
        
         return this.getNBTField();
     }
-    
-    public abstract fEntity clone();
-    
-    public abstract void copyMetadata(fEntity entity);
-//    public abstract BoundingBox getBoundingBox();
 }

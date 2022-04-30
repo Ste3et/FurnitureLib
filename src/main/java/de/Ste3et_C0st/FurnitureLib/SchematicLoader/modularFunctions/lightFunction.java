@@ -12,9 +12,9 @@ import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
 
 public class lightFunction extends modularFunction{
 
-	Predicate<fEntity> entityPredicate = entity -> entity.hasCustomName() && entity.getCustomName().toUpperCase().contains("#LIGHT:");
+	private final Predicate<fEntity> entityPredicate = entity -> entity.hasCustomName() && entity.getCustomName().toUpperCase().contains("#LIGHT:");
 	
-	BiFunction<Collection<fEntity>, Player, AtomicBoolean> function = (collection, player) -> {
+	private final BiFunction<Collection<fEntity>, Player, AtomicBoolean> function = (collection, player) -> {
 		AtomicBoolean returnValue = new AtomicBoolean(false);
 		collection.stream().forEach(entity -> {
 			if(entity.getName().contains(":")) {
@@ -37,6 +37,10 @@ public class lightFunction extends modularFunction{
 		});
 		return returnValue;
 	};
+	
+	public lightFunction(){
+		this.setPriotity(2);
+	}
 
 	@Override
 	public AtomicBoolean run(Player player, Collection<fEntity> collection) {

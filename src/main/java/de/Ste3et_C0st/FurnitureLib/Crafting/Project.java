@@ -52,6 +52,7 @@ public class Project {
     private Function<ObjectID, Furniture> furnitureObject = ProjectLoader::new;
     private YamlConfiguration configuartion = null;
     private boolean enabled = true;
+    
     /**
      * Create a new Project instance load the modelFile and calculate the boundingbox.
      *
@@ -128,6 +129,10 @@ public class Project {
         return plugin;
     }
 
+    /**
+     * Get the Informations about the Crafting Recipe
+     * @return CraftingFile
+     */
     public CraftingFile getCraftingFile() {
         return file;
     }

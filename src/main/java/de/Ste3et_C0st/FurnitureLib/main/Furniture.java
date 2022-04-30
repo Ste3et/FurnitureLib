@@ -139,4 +139,6 @@ public abstract class Furniture extends FurnitureHelper implements Listener {
     public Project getProject() {
         return this.getObjID().getProjectOBJ();
     }
+    
+    public void receive(Player player) {}
 }

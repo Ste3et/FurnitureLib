@@ -18,7 +18,6 @@ import org.bukkit.entity.Player;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.function.BiFunction;
-import java.util.stream.Collectors;
 
 public class FurnitureManager extends ObjectIdManager{
 
@@ -134,13 +133,8 @@ public class FurnitureManager extends ObjectIdManager{
         }
         fArmorStand stand = (fArmorStand) obj;
         ObjectID id = stand.getObjID();
-        //if(!objecte.contains(id)){this.objecte.add(id);}
         id.addArmorStand(stand);
     }
-
-//    private boolean isExist(String s) {
-//        return projects.containsKey(s.toLowerCase());
-//    }
 
     public Project getProject(String s) {
         return projects.getOrDefault(s.toLowerCase(), null);

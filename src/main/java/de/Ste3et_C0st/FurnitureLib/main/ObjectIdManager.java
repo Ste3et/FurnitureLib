@@ -22,10 +22,8 @@ import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
 
 public class ObjectIdManager {
 
-	//World List<ObjectID>
 	private final static HashSet<ObjectID> objectList = new HashSet<ObjectID>();
 	private final static Predicate<ObjectID> predicate = objectID -> SQLAction.REMOVE != objectID.getSQLAction();
-	//private final HashMap<UUID, Set<ObjectID>> playerSet = new HashMap<UUID, Set<ObjectID>>();
 	
 	public HashSet<ObjectID> loadWorld(World world) {
 		return FurnitureLib.getInstance().getSQLManager().getDatabase().loadWorld(SQLAction.NOTHING, world);

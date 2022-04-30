@@ -233,9 +233,7 @@ public class FurnitureLib extends JavaPlugin {
     public boolean canBuild(Player p, ObjectID id, EventType type) {
         return this.canBuild(p, id, type, true);
     }
-
-
-
+    
     public boolean isAutoFileUpdater() {
         return this.autoFileUpdater;
     }
@@ -438,7 +436,6 @@ public class FurnitureLib extends JavaPlugin {
     }
     
     private void registerEvents() {
-    	
     	getPluginManager().registerEvents(new onPlayerJoin(), getInstance());
     	getPluginManager().registerEvents(new onCrafting(), getInstance());
     	getPluginManager().registerEvents(new onBlockDispense(), getInstance());
@@ -453,8 +450,8 @@ public class FurnitureLib extends JavaPlugin {
     private void disableFurnitureLib(List<String> instructions) {
     	FurnitureLib.debug(instructions, 10);
     	this.enabled = false;
-    	PluginCommand c = getCommand("furniture");
-		c.setExecutor(new disabledCommand(this, instructions));
+    	PluginCommand pluginCommand = getCommand("furniture");
+    	pluginCommand.setExecutor(new disabledCommand(this, instructions));
 		Bukkit.getPluginManager().registerEvents(new onFurnitureLibDisabled(instructions), this);
     }
     
@@ -469,10 +466,10 @@ public class FurnitureLib extends JavaPlugin {
         FurnitureManager.getInstance().getProjects().forEach(Project::loadDefaults);
     }
 
-    public BufferedReader loadStream(String str) {
-        if (!str.startsWith("/"))
-            str = "/" + str;
-        InputStream stream = getInstance().getClass().getResourceAsStream(str);
+    public BufferedReader loadStream(String internUri) {
+        if (!internUri.startsWith("/"))
+        	internUri = "/" + internUri;
+        InputStream stream = getInstance().getClass().getResourceAsStream(internUri);
         return new BufferedReader(new InputStreamReader(stream, StandardCharsets.UTF_8));
     }
 
@@ -583,10 +580,8 @@ public class FurnitureLib extends JavaPlugin {
     }
 
     public void spawn(Project pro, ObjectID obj) {
-        if (pro == null)
-            return;
-        if (obj == null)
-            return;
+        if (pro == null) return;
+        if (obj == null) return;
         try {
             obj.getProjectOBJ().getModelschematic().spawn(obj);
             pro.applyFunction(obj);

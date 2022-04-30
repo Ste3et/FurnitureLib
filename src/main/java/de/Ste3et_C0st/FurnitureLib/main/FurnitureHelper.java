@@ -83,6 +83,10 @@ public abstract class FurnitureHelper {
         return Objects.nonNull(this.getObjID()) ? this.getObjID().getPacketList() : null;
     }
 
+    public HashSet<fEntity> getEntitySet() {
+    	return this.getfAsList();
+    }
+    
     public boolean isFinish() {
         return getObjID().isFinish();
     }

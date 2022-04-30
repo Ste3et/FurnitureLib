@@ -5,6 +5,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -20,7 +21,9 @@ import org.bukkit.plugin.Plugin;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 
+import de.Ste3et_C0st.FurnitureLib.Database.Database;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.LanguageManager;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.SkullMetaPatcher;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.Wrapper.ChatComponentWrapper;
 import de.Ste3et_C0st.FurnitureLib.main.LightAPI.iLightAPI;
 import de.Ste3et_C0st.FurnitureLib.main.Type.ProtocolFields;
@@ -90,6 +93,7 @@ public class DumpHandler {
 		packetInfos.addProperty("publicType", FurnitureConfig.getFurnitureConfig().getDefaultPublicType().name());
 		packetInfos.addProperty("databaseType", FurnitureLib.getInstance().getSQLManager().getDatabase().getType().name());
 		packetInfos.addProperty("protectionLib-hook", FurnitureLib.getInstance().getPermManager().useProtectionLib());
+		packetInfos.addProperty("skullPatcher", SkullMetaPatcher.shouldPatch());
 		
 		LightManager manager = FurnitureLib.getInstance().getLightManager();
 		if(Objects.nonNull(manager)) {
@@ -118,6 +122,23 @@ public class DumpHandler {
 			e.printStackTrace();
 		}
 		
+		JsonObject databaseInformations = new JsonObject();
+		AtomicInteger openConnections = new AtomicInteger(0);
+    	AtomicInteger closedConnections = new AtomicInteger(0);
+    	Database.getConnections().stream().forEach(entry -> {
+    		try {
+				if(entry.isClosed()) {
+					closedConnections.incrementAndGet();
+				}else {
+					openConnections.incrementAndGet();
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+    	});
+    	databaseInformations.addProperty("OpenConnections", openConnections.get());
+    	databaseInformations.addProperty("ClosedConnections", closedConnections.get());
+    	
 		/*
 		 * Add Plugin Informations !
 		 */
@@ -150,6 +171,7 @@ public class DumpHandler {
 		coreObject.add("server", spigotObject);
 		coreObject.add("furnitureLib", packetInfos);
 		coreObject.add("packets", packetInformations);
+		coreObject.add("databaseInformations", databaseInformations);
 		
 		if(FurnitureLib.getInstance().getPermManager().useProtectionLib()) {
 			coreObject.add("protectionLib", new Gson().toJsonTree(FurnitureLib.getInstance().getPermManager().getProtectionClazz()));

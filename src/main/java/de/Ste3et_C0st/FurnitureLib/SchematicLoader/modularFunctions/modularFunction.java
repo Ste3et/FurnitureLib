@@ -14,7 +14,27 @@ public abstract class modularFunction {
 	public abstract void update(Player player);
 	public abstract Predicate<fEntity> getPredicate();
 	
+	private int priority = 1;
+	private boolean functionIspublic = false;
+	
 	public boolean testPredicate(fEntity entity) {
 		return getPredicate().test(entity);
 	};
+	
+	public int getPriority() {
+		return this.priority;
+	}
+	
+	protected void setPriotity(int priority) {
+		this.priority = priority;
+	}
+	
+	public boolean isPublic() {
+		return this.functionIspublic;
+	}
+	
+	protected void setPublic(boolean runPublic) {
+		this.functionIspublic = runPublic;
+	}
+	
 }
