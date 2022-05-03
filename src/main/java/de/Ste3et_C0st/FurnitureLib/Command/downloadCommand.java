@@ -118,7 +118,7 @@ public class downloadCommand extends iCommand{
 						}else{
 							if(!line.isEmpty()) {
 								switch (i) {
-								case 0:config = line;
+								case 0:config = new String(line);
 								case 1:playerName = line;
 								case 2:projectName = normalize(line);
 								}
@@ -155,6 +155,7 @@ public class downloadCommand extends iCommand{
 	
 	private void add(String config, String playerName, String project, CommandSender sender){
 		try{
+			config = config.trim();
 			byte[] by = Base64.getUrlDecoder().decode(config);
 			ByteArrayInputStream bin = new ByteArrayInputStream(by);
 			NBTTagCompound compound = NBTCompressedStreamTools.read(bin);

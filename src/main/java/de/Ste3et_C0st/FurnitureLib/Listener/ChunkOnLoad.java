@@ -76,6 +76,27 @@ public class ChunkOnLoad implements Listener {
         }
         return null;
     }
+    
+    public String getProjectString(ItemStack stack) {
+    	if (Objects.isNull(stack)) return null;
+    	if (stack.hasItemMeta() == false) return null;
+    	if(FurnitureLib.getVersionInt() > 13) {
+    		ItemMeta meta = stack.getItemMeta();
+    		if (meta.hasLore()) {
+    			if(HiddenStringUtils.hasHiddenString(stack.getItemMeta().getLore().get(0))) {
+    				String projectString = HiddenStringUtils.extractHiddenString(stack.getItemMeta().getLore().get(0));
+                    if (projectString != null) return projectString;
+    			}
+    		}
+    		org.bukkit.NamespacedKey key = new org.bukkit.NamespacedKey(FurnitureLib.getInstance(), "model");
+    		String projectString = meta.getPersistentDataContainer().getOrDefault(key, PersistentDataType.STRING, null);
+    		if (projectString != null) return projectString;
+    	}else if (stack.getItemMeta().hasLore()) {
+    		String projectString = HiddenStringUtils.extractHiddenString(stack.getItemMeta().getLore().get(0));
+            if (projectString != null) return projectString;
+    	}
+    	return null;
+    }
 
     /*
      * RightClick Block
@@ -86,25 +107,21 @@ public class ChunkOnLoad implements Listener {
     	final Action action = event.getAction();
     	final EquipmentSlot equipmentSlot = event.getHand();
     	final Player player = event.getPlayer();
-    	
     	if(event.hasItem()) {
     		final ItemStack stack = event.getItem();
-    		final Project project = getProjectByItem(stack);
-    		if(Objects.isNull(project)) return;
-    		if(event.isCancelled()) return;
+    		final String projectString = this.getProjectString(stack);
+    		if(Objects.isNull(projectString)) return;
+    		if(projectString.isEmpty()) return;
+    		
+    		final Project project = FurnitureManager.getInstance().getProject(projectString);
+    		event.setCancelled(true);
+    		
+    		if(Objects.isNull(project)) {
+    			player.sendMessage(LanguageManager.getInstance().getString("message.ProjectNotFound", new StringTranslator("#PROJECT#", projectString)));
+    			return;
+    		}
     		
     		final String projectName = project.getName();
-    		
-    		if(Result.DENY == event.useInteractedBlock()) {
-    			FurnitureLib.debug("[FurnitureLib] ");
-    			return;
-    		}
-    		
-    		if(Result.DENY == event.useItemInHand()) {
-    			return;
-    		}
-    		
-    		event.setCancelled(true);
     		
     		if(EquipmentSlot.HAND != equipmentSlot) {
     			return;
@@ -117,7 +134,6 @@ public class ChunkOnLoad implements Listener {
     		if(event.hasBlock() == false) {
     			return;
     		}
-    			
     		
     		final BlockFace blockFace = event.getBlockFace();
     		final Block block = event.getClickedBlock();
