@@ -103,7 +103,9 @@ public class listCommand extends iCommand {
 			} else {
 				if (!hasCommandPermission(sender)) return;
 				try {
-					side.set(Integer.parseInt(argument));
+					int selectedSide = Integer.parseInt(argument);
+					selectedSide = selectedSide > 0 ? selectedSide : 1;
+					side.set(selectedSide - 1);
 					arguments = arguments.replace(argument, "");
 				} catch (Exception e) {
 				}
@@ -128,10 +130,11 @@ public class listCommand extends iCommand {
 			if (items.get()) {
 				String filters = filterTypes.substring(0, filterTypes.length() - 1);
 				componentList.add(new ComponentBuilder("§7FilterTypes: [" + filters + "§7]").create());
+				final int currentSide = (side.get() > 0 ? side.get() : 1) - 1;
 				projectCounter.entrySet().stream()
 						.sorted((k1, k2) -> Integer.compare(k1.getValue().get(), k2.getValue().get()))
 						.filter(entry -> entry.getValue().get() > 0)
-						.skip(itemsEachSide * side.get())
+						.skip(itemsEachSide * currentSide)
 						.limit(itemsEachSide)
 						.forEach(entry -> {
 							String name = ChatColor.stripColor(entry.getKey());
@@ -219,7 +222,7 @@ public class listCommand extends iCommand {
 			new objectToSide(componentList, sender, side.get(), "/furniture " + arguments, itemsEachSide, (int) maxPages);
 		}else {
 			sender.sendMessage(getLHandler().getString("message.SideNotFound"));
-			sender.sendMessage(getLHandler().getString("message.SideNavigation").replaceAll("#MAX#", maxPages + ""));
+			sender.sendMessage(getLHandler().getString("message.SideNavigation").replaceAll("#MAX#", (int) maxPages + ""));
             return;
 		}
 	}
