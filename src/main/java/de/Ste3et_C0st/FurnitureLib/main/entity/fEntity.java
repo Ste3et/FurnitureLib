@@ -515,7 +515,7 @@ public abstract class fEntity extends fSerializer implements Cloneable {
     			if (inventory.getString(name).equalsIgnoreCase("NONE") == false) {
     				NBTTagCompound compound = inventory.getCompound(name);
                     ItemStack is = new CraftItemStack().getItemStack(compound);
-                    if(is.getType() == Material.PLAYER_HEAD && SkullMetaPatcher.shouldPatch()) {
+                    if(is.getType().name().equalsIgnoreCase("PLAYER_HEAD") && SkullMetaPatcher.shouldPatch()) {
                     	is = SkullMetaPatcher.patch(is, compound);
                     }
                     this.getInventory().setSlot(name, is);
