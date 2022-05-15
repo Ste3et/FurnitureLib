@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.function.BiConsumer;
 import java.util.stream.Collectors;
 
+import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 
 import com.comphenix.protocol.PacketType;
@@ -29,13 +30,22 @@ public class WrapperPlayServerEntityDestroy extends AbstractPacket{
 				for(Player player : Player) massDestruction.sendPacket(player);
 			};
 		}else if(FurnitureLib.getBukkitVersion().equalsIgnoreCase("v1_17_R1")) {
-			KILLFUNCTION = (ObjectID, Player) -> {
-				ObjectID.getPacketList().stream().map(fEntity::getEntityID).forEach(entry -> {
+			if(Bukkit.getVersion().contains("1.17.1")) {
+				KILLFUNCTION = (ObjectID, Player) -> {
+					List<Integer> integers = ObjectID.getPacketList().stream().map(fEntity::getEntityID).map(Integer::valueOf).collect(Collectors.toList());
 					WrapperPlayServerEntityDestroy massDestruction = new WrapperPlayServerEntityDestroy();
-					massDestruction.getHandle().getIntegers().write(0, entry);
+					massDestruction.handle.getIntLists().write(0, integers);
 					for(Player player : Player) massDestruction.sendPacket(player);
-				});
-			};
+				};
+			}else {
+				KILLFUNCTION = (ObjectID, Player) -> {
+					ObjectID.getPacketList().stream().map(fEntity::getEntityID).forEach(entry -> {
+						WrapperPlayServerEntityDestroy massDestruction = new WrapperPlayServerEntityDestroy();
+						massDestruction.getHandle().getIntegers().write(0, entry);
+						for(Player player : Player) massDestruction.sendPacket(player);
+					});
+				};
+			}
 		}else {
 			KILLFUNCTION = (ObjectID, Player) -> {
 				List<Integer> integers = ObjectID.getPacketList().stream().map(fEntity::getEntityID).map(Integer::valueOf).collect(Collectors.toList());
