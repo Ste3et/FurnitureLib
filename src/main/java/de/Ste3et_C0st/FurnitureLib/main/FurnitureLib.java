@@ -284,8 +284,8 @@ public class FurnitureLib extends JavaPlugin {
     @Override
     public void onEnable() {
     	instance = this;
-        if (getVersionInt() < 9 || getVersionInt() > 18) {
-            this.disableFurnitureLib(Arrays.asList("§cFurnitureLib only works on Spigot 1.9 - 1.18"));
+        if (getVersionInt() < 9 || getVersionInt() > 19) {
+            this.disableFurnitureLib(Arrays.asList("§cFurnitureLib only works on Spigot 1.9 - 1.19"));
             return;
         }
 

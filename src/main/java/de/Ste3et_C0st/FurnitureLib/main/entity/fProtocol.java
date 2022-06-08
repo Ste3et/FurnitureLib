@@ -15,16 +15,21 @@ public class fProtocol {
 
     private final static ProtocolManager manager = ProtocolLibrary.getProtocolManager();
     private final static ProtocolFields fields = FurnitureLib.getInstance().getField();
-    private final PacketContainer container = new PacketContainer(PacketType.Play.Server.SPAWN_ENTITY_LIVING);
+    private final PacketContainer container;
     private final WrappedDataWatcher watcher = new WrappedDataWatcher();
     
     private EntityType type;
     private ObjectID id;
+    private final static PacketType packetType;
     
+    static {
+    	packetType = FurnitureLib.getVersionInt() > 18 ? PacketType.Play.Server.SPAWN_ENTITY : PacketType.Play.Server.SPAWN_ENTITY_LIVING;
+    }
 
     public fProtocol(EntityType type, ObjectID id) {
         this.id = id;
         this.type = type;
+        this.container = new PacketContainer(packetType);
         this.container.getModifier().writeDefaults();
     }
 

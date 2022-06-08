@@ -4,6 +4,7 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.ListenerPriority;
 import com.comphenix.protocol.events.PacketAdapter;
+import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.events.PacketListener;
 import com.comphenix.protocol.wrappers.EnumWrappers.EntityUseAction;
@@ -38,6 +39,18 @@ public class FurnitureProtocolListener {
 	private void init() {
 		ProtocolLibrary.getProtocolManager().addPacketListener(use_entity);
 		ProtocolLibrary.getProtocolManager().addPacketListener(steer_vehicle);
+	}
+	
+	@SuppressWarnings("unused")
+	private PacketListener test() {
+		return new PacketAdapter(FurnitureLib.getInstance(), ListenerPriority.HIGHEST, PacketType.Play.Server.SPAWN_ENTITY) {
+			public void onPacketSending(PacketEvent event) {
+				final Player player = event.getPlayer();
+				final PacketContainer container = event.getPacket();
+				player.sendMessage(container.getIntegers().read(0) + " EntityID");
+				player.sendMessage(container.getIntegers().read(1) + " TypeEntityID");
+			}
+		};
 	}
 	
 	private PacketListener steer_vehicle() {

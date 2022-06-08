@@ -45,6 +45,7 @@ public abstract class fEntity extends fSerializer implements Cloneable {
     private final PacketContainer mountPacketContainer = new PacketContainer(PacketType.Play.Server.MOUNT);
     private final PacketContainer destroy = new PacketContainer(PacketType.Play.Server.ENTITY_DESTROY);
     
+    @Deprecated
     private int entityTypeID;
     private double positionX, positionY, positionZ;
     private byte yaw, pitch;
@@ -62,6 +63,7 @@ public abstract class fEntity extends fSerializer implements Cloneable {
         this.entityTypeID = entityID;
         getHandle().getModifier().writeDefaults();
         getHandle().getIntegers().write(0, this.entityID).write(1, entityTypeID);
+        getHandle().getEntityTypeModifier().writeSafely(0, type);
         getHandle().getUUIDs().write(0, this.entityUUID);
         this.mountPacketContainer.getIntegers().write(0, this.entityID);
         setLocation(loc);
@@ -126,7 +128,8 @@ public abstract class fEntity extends fSerializer implements Cloneable {
             this.yaw = ((byte) (int) (loc.getYaw() * 256.0F / 360.0F));
             this.pitch = ((byte) (int) (loc.getPitch() * 256.0F / 360.0F));
             getHandle().getDoubles().write(0, this.positionX).write(1, this.positionY).write(2, this.positionZ);
-            getHandle().getBytes().write(0, this.yaw).write(1, this.pitch);
+            //pitch is unused
+            getHandle().getBytes().write(0, this.yaw).write(1, this.yaw);
         }
     }
 
