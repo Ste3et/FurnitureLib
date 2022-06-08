@@ -63,7 +63,7 @@ public abstract class fEntity extends fSerializer implements Cloneable {
         this.entityTypeID = entityID;
         getHandle().getModifier().writeDefaults();
         getHandle().getIntegers().write(0, this.entityID).write(1, entityTypeID);
-        getHandle().getEntityTypeModifier().writeSafely(0, type);
+        if(FurnitureLib.getVersionInt() > 18) getHandle().getEntityTypeModifier().writeSafely(0, type);
         getHandle().getUUIDs().write(0, this.entityUUID);
         this.mountPacketContainer.getIntegers().write(0, this.entityID);
         setLocation(loc);

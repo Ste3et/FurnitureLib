@@ -319,8 +319,6 @@ public class downloadCommand extends iCommand{
 			}
 		}
 		
-		System.err.println(compound.toString());
-		
 		PlaceableSide side = PlaceableSide.TOP;
 		if(compound.hasKey("placeAbleSide")){
 			side = PlaceableSide.valueOf(compound.getString("placeAbleSide"));
