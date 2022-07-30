@@ -6,8 +6,10 @@ import de.Ste3et_C0st.FurnitureLib.Utilitis.ExecuteTimer;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.callbacks.CallbackBoolean;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.callbacks.CallbackObjectIDs;
 import de.Ste3et_C0st.FurnitureLib.main.ChunkData;
+import de.Ste3et_C0st.FurnitureLib.main.FurnitureConfig;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
+import de.Ste3et_C0st.FurnitureLib.main.Type.DataBaseType;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
@@ -23,9 +25,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 public class SQLManager {
-
-    FurnitureLib plugin;
-    BukkitTask sqlSaveInterval;
+	
+	private FurnitureLib plugin;
+    private BukkitTask sqlSaveInterval = null;
     private Database database;
     private static int versionInt = FurnitureLib.getVersionInt();
     
@@ -36,40 +38,21 @@ public class SQLManager {
 
     private void initialize() {
     	ExecuteTimer timer = new ExecuteTimer();
-        if (plugin.getConfig() == null) return;
-        if (plugin.getConfig().getString("config.Database.type") == null) return;
-        if (plugin.getConfig().getString("config.Database.type").equalsIgnoreCase("SQLite")) {
-            String database = plugin.getConfig().getString("config.Database.database");
-            HikariConfig config = new HikariConfig();
-            config.setJdbcUrl("jdbc:sqlite:plugins/FurnitureLib/" + database + ".db");
-            config.setDriverClassName("org.sqlite.JDBC");
-            config.setPoolName("FurnitureLib");
-            config.setConnectionTestQuery("SELECT 1");
-            config.setMaximumPoolSize(10);
-            config.setIdleTimeout(15);
-            this.database = new SQLite(plugin, config);
-        } else if (plugin.getConfig().getString("config.Database.type").equalsIgnoreCase("Mysql")) {
-            isExist();
-            String database = plugin.getConfig().getString("config.Database.database");
-            String user = plugin.getConfig().getString("config.Database.user");
-            String password = plugin.getConfig().getString("config.Database.password");
-            String port = plugin.getConfig().getString("config.Database.port", "3306");
-            String host = plugin.getConfig().getString("config.Database.host");
-            boolean allowPublicKeyRetrieval = plugin.getConfig().getBoolean("config.Database.allowPublicKeyRetrieval", false);
-            boolean useSSL = plugin.getConfig().getBoolean("config.Database.useSSL", true);
-            HikariConfig config = new HikariConfig();
-            config.setJdbcUrl("jdbc:mysql://" + host + ":" + port + "/" + database + "?useSSL=" + useSSL + "&allowPublicKeyRetrieval=" + allowPublicKeyRetrieval);
-            config.setUsername(user);
-            config.setPassword(password);
-            config.setPoolName("FurnitureLib");
-            config.setMaximumPoolSize(10);
-            config.setIdleTimeout(15);
-            this.database = new MySQL(plugin, config);
-        } else {
-            plugin.getLogger().warning("Database Type not supported: FurnitureLib will shutdown.");
+        if (Objects.isNull(FurnitureLib.getInstance().getFurnitureConfig())) return;
+        HikariConfig config = FurnitureConfig.getFurnitureConfig().loadDatabaseAsset();
+        DataBaseType dataBaseType = FurnitureConfig.getFurnitureConfig().getDatabaseType();
+
+        if(dataBaseType == DataBaseType.MySQL) {
+        	isExist();
+        	this.database = new MySQL(plugin, config);
+        }else if(dataBaseType == DataBaseType.SQLite) {
+        	this.database = new SQLite(plugin, config);
+        }else {
+        	plugin.getLogger().warning("Database Type not supported: FurnitureLib will shutdown.");
             Bukkit.getPluginManager().disablePlugin(plugin);
             return;
         }
+        
         FurnitureLib.debug("FurnitureLib Started " + this.database.getType().name() + " database. Took " + timer.getMilliString(), 1);
     }
 
@@ -80,7 +63,7 @@ public class SQLManager {
 
     private void isExist() {
         File fileDB = null;
-        if (!plugin.getConfig().getBoolean("config.Database.importCheck")) {
+        if (!FurnitureConfig.getFurnitureConfig().isImportCheck()) {
             return;
         }
         File folder = new File("plugins/" + plugin.getName());
@@ -261,6 +244,8 @@ public class SQLManager {
     }
 
     public void saveInterval(int time) {
+    	if(Objects.nonNull(sqlSaveInterval)) sqlSaveInterval.cancel();
+    	if(time < 1) return;
         sqlSaveInterval = Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, () -> FurnitureLib.getInstance().getFurnitureManager().saveAsynchron(Bukkit.getConsoleSender()), 20 * time, 20 * time);
     }
 

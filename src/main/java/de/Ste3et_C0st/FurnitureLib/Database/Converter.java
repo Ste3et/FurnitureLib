@@ -4,6 +4,7 @@ import com.comphenix.protocol.wrappers.EnumWrappers;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTCompressedStreamTools;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.MaterialConverter;
+import de.Ste3et_C0st.FurnitureLib.main.FurnitureConfig;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
@@ -83,9 +84,8 @@ public class Converter {
             }
         } else {
         	FurnitureLib.debug("FurnitureLib: Found no able to convert", 1);
-            FurnitureLib.getInstance().getConfig().set("config.fileConverter.auto_mode", false);
+        	FurnitureConfig.getFurnitureConfig().setFileUpdater(false);
             FurnitureLib.getInstance().saveConfig();
-            FurnitureLib.getInstance().autoFileUpdater = false;
             FurnitureLib.getInstance().getSQLManager().loadALL();
         }
     }
@@ -158,7 +158,7 @@ public class Converter {
                     this.convert(sender, tableName);
                 } else {
                     sender.sendMessage("§2Database Convert Finished :D");
-                    FurnitureLib.getInstance().getConfig().set("config.fileConverter.auto_mode", false);
+                    FurnitureConfig.getFurnitureConfig().setFileUpdater(false);
                     FurnitureLib.getInstance().saveConfig();
 //                    con.createStatement().execute("ALTER TABLE `FurnitureLib_Objects` RENAME TO `FurnitureLib_ObjectsOLD`;");
 //                    con.close();

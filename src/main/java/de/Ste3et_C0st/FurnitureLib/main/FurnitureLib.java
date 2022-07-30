@@ -56,7 +56,7 @@ public class FurnitureLib extends JavaPlugin {
     private static int debugLevel = 0;
 
     private static Boolean newVersion = null;
-    public boolean autoFileUpdater = true, enabled = true;
+    public boolean enabled = true;
     public HashMap<Project, Long> deleteMap = new HashMap<>();
     public HashMap<UUID, Long> timeStampPlace = new HashMap<>();
     public HashMap<UUID, Long> timeStampBreak = new HashMap<>();
@@ -235,7 +235,7 @@ public class FurnitureLib extends JavaPlugin {
     }
     
     public boolean isAutoFileUpdater() {
-        return this.autoFileUpdater;
+        return this.furnitureConfig.isAutoFileUpdater();
     }
 
     public boolean checkPurge(ObjectID obj, UUID uuid) {
@@ -397,14 +397,13 @@ public class FurnitureLib extends JavaPlugin {
 		this.bmanager = new BlockManager();
 		this.craftingInv = new CraftingInv(this);
 		this.loadPermissionKit();
-		this.autoFileUpdater = getConfig().getBoolean("config.fileConverter.auto_mode", false);
+		
 		autoConverter.modelConverter(getServer().getConsoleSender());
 		this.furnitureConfig.loadPluginConfig();
 		this.sqlManager = new SQLManager(instance);
-		
+		this.sqlManager.saveInterval(FurnitureConfig.getFurnitureConfig().getSaveIntervall());
 		this.inventoryManager = new InventoryManager();
-		autoConverter.databaseConverter(getServer().getConsoleSender(),
-				getConfig().getString("config.fileConverter.database_table", ""));
+		autoConverter.databaseConverter(getServer().getConsoleSender(), this.furnitureConfig.getDatabaseString());
 		this.pManager.loadProjectFiles();
 		
 		this.getFurnitureManager().getObjectList().stream().forEach(ObjectID::registerBlocks);
@@ -415,11 +414,6 @@ public class FurnitureLib extends JavaPlugin {
 		}
 
 		send("§2Furniture load finish :)");
-		if (getConfig().getBoolean("config.timer.Enable")) {
-			int time = getConfig().getInt("config.timer.time");
-			sqlManager.saveInterval(time);
-		}
-
 		send("==========================================");
 		Bukkit.getOnlinePlayers().stream().filter(p -> p != null && p.isOp()).forEach(p -> getUpdater().sendPlayer(p));
 		PluginCommand c = getCommand("furniture");
@@ -601,5 +595,9 @@ public class FurnitureLib extends JavaPlugin {
     
     public static void setDebug(boolean bool) {
     	enableDebug = bool;
+    }
+    
+    public FurnitureConfig getFurnitureConfig() {
+    	return this.furnitureConfig;
     }
 }

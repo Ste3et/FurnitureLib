@@ -74,17 +74,16 @@ public class LimitationManager {
         	return true;
         }
         
-        if (LimitationType.PLAYER == this.type) {
-            int player = returnIntProject(p, pro);
-            int playerTotal = returnIntProjectTotal(p);
-            int limitGlobal = FurnitureConfig.getFurnitureConfig().getLimitGlobal();
+        int limitGlobal = FurnitureConfig.getFurnitureConfig().getLimitGlobal();
+        if(limitGlobal > 1) {
+        	int playerTotal = returnIntProjectTotal(p);
             //Permissions range check start
             if (limitGlobal > 0) {
                 for (int i = limitGlobal; i > 0; i--) {
                     if (p.hasPermission("furniture.globallimit." + i)) {
                         if (playerTotal < i) {
                             String s = LanguageManager.getInstance().getString("message.LimitAnnouncer");
-                            s = s.replace("#TYPE#", pro.getDisplayName()).replace("#SYSTEMID#", pro.getName()).replace("#CURRENT#", player + 1 + "").replace("#MAX#", i + "");
+                            s = s.replace("#TYPE#", pro.getDisplayName()).replace("#SYSTEMID#", pro.getName()).replace("#CURRENT#", playerTotal + 1 + "").replace("#MAX#", i + "");
                             p.sendMessage(s);
                             return true;
                         } else {
@@ -94,6 +93,10 @@ public class LimitationManager {
                     }
                 }
             }
+        }
+        
+        if (LimitationType.PLAYER == this.type) {
+            int player = returnIntProject(p, pro);
             //Permissions range check end
 
             int maxPlayer = limitOBJ.getAmountFromType(pro.getName());

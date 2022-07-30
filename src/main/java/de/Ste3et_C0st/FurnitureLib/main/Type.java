@@ -273,6 +273,10 @@ public class Type {
 		}
 	}
 	
+	public enum StorageType{
+		LEGACY
+	}
+	
 	public enum ToolType{
 		SWORD(swords),
 		SPADE(spades),
