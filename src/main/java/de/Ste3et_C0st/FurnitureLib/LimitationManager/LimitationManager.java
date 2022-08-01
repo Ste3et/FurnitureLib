@@ -138,22 +138,12 @@ public class LimitationManager {
         	Optional<LimitationInforamtion> canceldLimit = informationList.stream().filter(LimitationInforamtion::isCanceld).findFirst();
         	if(canceldLimit.isPresent()) {
         		LimitationInforamtion object = canceldLimit.get();
-        		p.sendMessage(LanguageManager.getInstance().getString("message.limit." + object.getType() + ".reached",  
-        				new StringTranslator("#amount#", Integer.toString(object.getAmount())), 
-        				new StringTranslator("#size#", Integer.toString(object.getMax())),
-        				new StringTranslator("#project#", pro.getDisplayName()),
-        				new StringTranslator("#world#", world.getName())
-        				));
+        		object.sendMessage(p, pro, object.getAmount());
             	return false;
         	}else {
         		LimitationInforamtion infoLimit = informationList.stream().findFirst().orElse(null);
         		if(Objects.nonNull(infoLimit)) {
-        			p.sendMessage(LanguageManager.getInstance().getString("message.limit." + infoLimit.getType() + ".info", 
-            				new StringTranslator("#amount#", Integer.toString(infoLimit.getAmount() + 1)), 
-            				new StringTranslator("#size#", Integer.toString(infoLimit.getMax())),
-            				new StringTranslator("#project#", pro.getDisplayName()),
-            				new StringTranslator("#world#", world.getName())
-            				));
+        			infoLimit.sendMessage(p, pro, infoLimit.getAmount() + 1);
         		}
         	}
         }
