@@ -39,6 +39,19 @@ message:
   reload: '&7FurnitureLib has been &2&lreloaded'
   NoPermissions: '&cYou do not have permissions to do this.'
   IgnoredWorld: "&7You can't place furniture models at &2%WORLD%"
+  limit:
+    world:
+      reached: '&7You reached the World Furniture Limit of: &c#amount#/#size#'
+      info: '&7You have placed: &e#amount#/#size# &7for project &a#project# &7in world &a#world#'
+    player:
+      reached: '&7You reached the Player Furniture Limit of: &c#amount#/#size#'
+      info: '&7You have placed: &c#amount#/#size# for project #project#'
+    chunk:
+      reached: '&7You reached the Chunk Furniture Limit of: &c#amount#/#size#'
+      info: '&7You have placed: &c#amount#/#size# for project #project#'
+    permission:
+      reached: '&7You reached the Chunk Permission Limit of: &c#amount#/#size#'
+      info: '&7You have placed: &c#amount#/#size# for project #project#'
 command:
     help:
         header:

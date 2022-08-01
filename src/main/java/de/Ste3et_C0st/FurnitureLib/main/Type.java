@@ -1,5 +1,6 @@
 package de.Ste3et_C0st.FurnitureLib.main;
 
+import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.LanguageManager;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -10,6 +11,7 @@ import org.bukkit.util.EulerAngle;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -35,7 +37,11 @@ public class Type {
 
     public enum ColorType {BLOCK, BANNER}
 
-    public enum LimitationType {PLAYER, CHUNK, WORLD}
+    public enum LimitationType {
+    	PLAYER(), 
+    	CHUNK(), 
+    	WORLD()
+    }
 
     public enum SQLAction {SAVE, UPDATE, REMOVE, PURGE, NOTHING}
 

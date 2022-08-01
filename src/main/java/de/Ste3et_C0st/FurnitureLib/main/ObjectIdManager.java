@@ -131,6 +131,10 @@ public class ObjectIdManager {
 		return new HashSet<ObjectID>(getObjectStreamFromWorld(c.getWorld()).filter(entry -> entry.getBlockX() >> 4 == x && entry.getBlockZ() >> 4 == z).collect(Collectors.toList()));
 	}
 	
+	public HashSet<ObjectID> getInChunkByCoord(int x, int z, World world) {
+		return new HashSet<ObjectID>(getObjectStreamFromWorld(world).filter(entry -> entry.getBlockX() >> 4 == x && entry.getBlockZ() >> 4 == z).collect(Collectors.toList()));
+	}
+	
 	public HashSet<fEntity> getfArmorStandByObjectID(ObjectID id) {
         return id.getPacketList();
     }

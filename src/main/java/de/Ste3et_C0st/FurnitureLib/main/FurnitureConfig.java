@@ -199,7 +199,18 @@ public class FurnitureConfig {
         
         //limit config
         String limitConfig = getConfig().getString("limit-options.limitConfig", "PLAYER").toUpperCase();
-        this.limitManager = new LimitationManager(instance, LimitationType.valueOf(limitConfig.toUpperCase()));
+        List<LimitationType> type = new ArrayList<LimitationType>();
+        if(limitConfig.contains(",")) {
+        	String[] arrays = limitConfig.split(",");
+        	for(String str : arrays) {
+        		try {
+        			type.add(LimitationType.valueOf(str.toUpperCase()));
+        		}catch (Exception e) {
+        			e.printStackTrace();
+				}
+        	}
+        }
+        this.limitManager = new LimitationManager(instance, type.toArray(new LimitationType[type.size()]));
         this.limitGlobal = getConfig().getInt("limit-options.limitGlobal", -1);
         
         //protection config 
@@ -226,8 +237,8 @@ public class FurnitureConfig {
         debug("Config->rotateOnSit:" + rotateOnSit);
         debug("Config->limitConfig:" + limitConfig);
         debug("Config->limitGlobal:" + limitGlobal);
-        debug("Config->PlaceMode.Access:" + type.name);
-        debug("Config->PlaceMode.Mode:" + mode.name);
+        debug("Config->PlaceMode.Access:" + this.type.name);
+        debug("Config->PlaceMode.Mode:" + this.mode.name);
         debug("Config->update:" + update);
         
         this.registerRenderEvents();
