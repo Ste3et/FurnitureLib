@@ -1,6 +1,10 @@
 package de.Ste3et_C0st.FurnitureLib.main;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -8,8 +12,10 @@ import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 
 import org.bukkit.Bukkit;
+import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.jetbrains.annotations.NotNull;
 
 import com.zaxxer.hikari.HikariConfig;
 
@@ -33,7 +39,7 @@ public class FurnitureConfig {
     private boolean useGamemode = true, canSit = true, update = true, useParticle = true, useRegionMemberAccess = false,
             autoPurge = false, removePurge = false, creativeInteract = true, creativePlace = true, glowing = true,
             spamBreak = true, spamPlace = true, rotateOnSit = true, useSSL = false, sync = true, packetRenderMethode = false,
-            hideBedrockPlayers = true, whitelist = false, autoFileUpdater = false, importCheck = false;
+            hideBedrockPlayers = true, whitelist = false, autoFileUpdater = false, importCheck = false, autoSaveConsoleMessage = true;
     
     private StorageType storageType = StorageType.LEGACY;
     private int purgeTime = 30, viewDistance = 100, limitGlobal = -1, saveIntervall;
@@ -59,10 +65,11 @@ public class FurnitureConfig {
     private void initStaticConfigs() {
     	if(isNewVersion()) {
     		//storage
+    		this.updateConfig();
     		final String key = "storage-options.";
     		this.storageType = StorageType.valueOf(getConfig().getString(key + "storage-methode", "LEGACY").toUpperCase());
     		this.autoFileUpdater = getConfig().getBoolean(key + "auto_convert", false);
-    		this.databaseTableString = getConfig().getString(key + "database_table", "FurnitureLib_Objects");
+    		this.databaseTableString = getConfig().getString(key + "database-table-old", "FurnitureLib_Objects");
     		this.importCheck = getConfig().getBoolean(key + "importCheck", false);
     		this.saveIntervall = getConfig().getInt("storage-options.auto-save-interval", 300);
     	}else {
@@ -166,6 +173,7 @@ public class FurnitureConfig {
         this.rotateOnSit = getConfig().getBoolean("gerneral-options.rotateOnSit");
         this.update = getConfig().getBoolean("gerneral-options.checkForUpdate");
         this.lmanager = new LanguageManager(instance, getConfig().getString("gerneral-options.Language"));
+        this.autoSaveConsoleMessage = getConfig().getBoolean("storage-options.auto-save-console-message", true);
         
         //creative config
         this.useGamemode = !getConfig().getBoolean("creative-options.RemoveItems");
@@ -244,6 +252,31 @@ public class FurnitureConfig {
         this.registerRenderEvents();
     }
     
+    private void updateConfig() {
+    	try (InputStream stream = FurnitureLib.getInstance().getClass().getResourceAsStream("/config.yml");InputStreamReader reader = new InputStreamReader(stream);) {
+    		YamlConfiguration defaults = YamlConfiguration.loadConfiguration(reader);
+    		@NotNull FileConfiguration furnitureConfig = getConfig();
+    		if(furnitureConfig.getInt("config-version", 2) != defaults.getInt("config-version", 3)) {
+    			boolean change = false;
+                for (String defaultKey : defaults.getKeys(true)) {
+                    if (!furnitureConfig.contains(defaultKey, true)) {
+                    	furnitureConfig.set(defaultKey, defaults.get(defaultKey));
+                        change = true;
+                        System.out.println(defaultKey + ":" + defaults.get(defaultKey) + ",contains: " + getConfig().contains(defaultKey));
+                    }
+                    
+                }
+                if (change) {
+                	furnitureConfig.set("config-version", defaults.getInt("config-version"));
+                	FurnitureLib.getInstance().saveConfig();
+                }
+    		}
+    	}catch (Exception e) {
+			e.printStackTrace();
+		}
+    	
+    }
+    
     private void loadLegacyConfig() {
     	FurnitureLib.setDebug(getConfig().getBoolean("config.debugMode", false));
         this.lmanager = new LanguageManager(instance, getConfig().getString("config.Language"));
@@ -270,8 +303,19 @@ public class FurnitureConfig {
         this.spamPlaceTime = getConfig().getLong("config.spamBlock.Place.time");
         this.timePattern = getConfig().getString("config.spamBlock.timeDisplay");
         this.rotateOnSit = getConfig().getBoolean("config.rotateOnSit");
-        String limitConfig = getConfig().getString("config.limit.limitConfig", "PLAYER");
-        this.limitManager = new LimitationManager(instance, LimitationType.valueOf(limitConfig.toUpperCase()));
+        String limitConfig = getConfig().getString("limit-options.limitConfig", "PLAYER").toUpperCase();
+        List<LimitationType> type = new ArrayList<LimitationType>();
+        if(limitConfig.contains(",")) {
+        	String[] arrays = limitConfig.split(",");
+        	for(String str : arrays) {
+        		try {
+        			type.add(LimitationType.valueOf(str.toUpperCase()));
+        		}catch (Exception e) {
+        			e.printStackTrace();
+				}
+        	}
+        }
+        this.limitManager = new LimitationManager(instance, type.toArray(new LimitationType[type.size()]));
         this.limitGlobal = getConfig().getInt("config.limit.limitGlobal", -1);
         this.type = EventType.valueOf(getConfig().getString("config.PlaceMode.Access", "INTERACT"));
         this.mode = PublicMode.valueOf(getConfig().getString("config.PlaceMode.Mode", "PRIVATE"));
@@ -297,7 +341,7 @@ public class FurnitureConfig {
         debug("Config->rotateOnSit:" + rotateOnSit);
         debug("Config->limitConfig:" + limitConfig);
         debug("Config->limitGlobal:" + limitGlobal);
-        debug("Config->PlaceMode.Access:" + type.name);
+        debug("Config->PlaceMode.Access:" + this.type.name);
         debug("Config->PlaceMode.Mode:" + mode.name);
         debug("Config->update:" + update);
         this.registerRenderEvents();
@@ -318,8 +362,12 @@ public class FurnitureConfig {
     	return this.whitelist ? !contains : contains;
     }
     
-    public Boolean useGamemode() {
+    public boolean useGamemode() {
         return this.useGamemode;
+    }
+    
+    public boolean shouldAutoSaveConsoleMessage() {
+    	return this.autoSaveConsoleMessage;
     }
     
     public boolean canSitting() {

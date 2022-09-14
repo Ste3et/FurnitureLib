@@ -13,7 +13,7 @@ public class reloadCommand extends iCommand {
     public void execute(CommandSender sender, String[] args) {
         if (!hasCommandPermission(sender)) return;
         FurnitureLib.getInstance().reloadPluginConfig();
-        sender.sendMessage(getLHandler().getString("message.reload"));
+        getLHandler().sendMessage(sender, "message.reload");
         return;
     }
 

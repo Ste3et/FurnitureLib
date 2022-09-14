@@ -30,16 +30,23 @@ message:
   FurnitureToggleCantChange: '&c你不能改变家具的可见性'
   FurnitureToFastPlace: '&c你必须等待&4#TIME#&c才能放置.'
   FurnitureToFastBreak: '&c你必须等候&4#TIME#&c才能破坏家具.'
-  LimitAnnouncer: '&6你已放置&2#CURRENT#&6/&c#MAX# of &e#TYPE#.'
-  LimitAnnouncerMaximum: '&6你已放置&2#CURRENT#&6/&c#MAX#件&e#TYPE#&6, 你还剩下&a#AMOUNT#&6件家具'
-  LimitReachedWorld: '&c你已达到该世界的家具放置上限'
-  LimitReachedChunk: '&c你已达到该区块的家具放置上限'
-  LimitReached: '&c你已达到这一物品的放置上限.'
-  LimitReachedMaximum: '&c你已达到家具放置上限.'
   BlockOfInstability: '&c请尝试在其他地方放置家具'
   reload: '&7已重载&2&lFurnitureLib'
   NoPermissions: '&c你没有权限这么做.'
   IgnoredWorld: "&7你不能在&2%WORLD%&7放置这个"
+  limit:
+    world:
+      reached: '&7You reached the World Furniture Limit of: &c#amount#/#size#'
+      info: '&7You have placed: &e#amount#/#size# &7for project &a#project# &7in world &a#world#'
+    player:
+      reached: '&7You reached the Player Furniture Limit of: &c#amount#/#size#'
+      info: '&7You have placed: &c#amount#/#size# for project #project#'
+    chunk:
+      reached: '&7You reached the Chunk Furniture Limit of: &c#amount#/#size#'
+      info: '&7You have placed: &c#amount#/#size# for project #project#'
+    permission:
+      reached: '&7You reached the Furniture Limit of: &c#amount#/#size#'
+      info: '&7You have placed: &c#amount#/#size# for project #project#'
 command:
   help:
     header:

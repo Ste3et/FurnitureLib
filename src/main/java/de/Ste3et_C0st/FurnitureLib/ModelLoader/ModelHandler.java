@@ -23,6 +23,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 public class ModelHandler extends Modelschematic {
@@ -52,6 +53,15 @@ public class ModelHandler extends Modelschematic {
         FurnitureLib.debug("FurnitureLib {ModelHandler} -> Spawn Send Models [" + id.getProject() + "]");
         id.send(startLocation.getWorld().getPlayers());
         FurnitureLib.debug("FurnitureLib {ModelHandler} -> Spawn Finish [" + id.getProject() + "]");
+    }
+    
+    public CompletableFuture<Void> spawnWithAnimation(ObjectID id) {
+    	FurnitureLib.debug("FurnitureLib {ModelHandler} -> Spawn [" + id.getProject() + "]");
+        Location startLocation = id.getStartLocation().add(.5, 0, .5);
+        BlockFace direction = LocationUtil.yawToFace(id.getStartLocation().getYaw()).getOppositeFace();
+    	List<fEntity> entities = addEntity(startLocation, direction, id);
+    	
+    	return null;
     }
 
     public HashMap<Location, ModelBlock> getBlockData(Location startLocation, BlockFace direction) {

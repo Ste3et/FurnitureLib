@@ -7,6 +7,7 @@ import net.md_5.bungee.api.chat.ComponentBuilder;
 import net.md_5.bungee.api.chat.TextComponent;
 
 import org.bukkit.Material;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -32,7 +33,9 @@ public class LanguageManager {
     private HashMap<String, Material> invMatList = new HashMap<>();
     private HashMap<String, String> invStringList = new HashMap<>();
     private HashMap<String, Short> invShortList = new HashMap<>();
-
+    private static final Pattern VARIABLE_PATTERN_ONE = Pattern.compile("%[a-zA-Z0-9_]+%", Pattern.CASE_INSENSITIVE);
+    private static final Pattern VARIABLE_PATTERN_TWO = Pattern.compile("#[a-zA-Z0-9_]+#", Pattern.CASE_INSENSITIVE);
+    
     public LanguageManager(Plugin plugin, String lang) {
         instance = this;
         //this.lang = lang;
@@ -146,6 +149,17 @@ public class LanguageManager {
         invStringList.put("playerRemoveInvName", file.getString("inv.playerRemoveInvName"));
         invStringList.put("playerSetInvName", file.getString("inv.playerSetInvName"));
     }
+    
+	private String transfareVariable(String name, Pattern VARIABLE_PATTERN, String character) {
+		String copyString = name;
+		Matcher matcher = VARIABLE_PATTERN.matcher(name);
+		while (matcher.find()) {
+		      String match = matcher.group();
+		      String replace = match.toLowerCase().replaceFirst(character, "<").replace(character, ">").toLowerCase();
+		      copyString = copyString.replace(match, replace);
+		}
+		return copyString;
+	}
 
     private void oldManageInv() {
         c = new config(plugin);
@@ -208,6 +222,7 @@ public class LanguageManager {
         return ChatColor.translateAlternateColorCodes('&', message);
     }
 
+    @Deprecated
     public String getString(String key, StringTranslator... stringTranslators) {
         String a = getString(key);
         if (stringTranslators != null) {
@@ -218,6 +233,12 @@ public class LanguageManager {
             }
         }
         return a;
+    }
+    
+    
+    public void sendMessage(CommandSender sender, String key, StringTranslator ... stringTranslators) {
+    	String rawString = this.applyHexColors(this.getString(key, stringTranslators));
+    	sender.sendMessage(rawString);
     }
 
     public List<String> getStringList(String a) {

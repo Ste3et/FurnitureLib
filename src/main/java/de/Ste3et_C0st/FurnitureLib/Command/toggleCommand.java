@@ -25,7 +25,7 @@ public class toggleCommand extends iCommand {
         if (args.length == 1) {
             if (sender instanceof Player) {
             	if(FurniturePlayer.wrap(Player.class.cast(sender)).isBedrockPlayer()) {
-            		sender.sendMessage(getLHandler().getString("message.FurnitureToggleCantChange"));
+            		getLHandler().sendMessage(sender, "message.FurnitureToggleCantChange");
             		return;
             	}
             	
@@ -37,21 +37,21 @@ public class toggleCommand extends iCommand {
             if (hasCommandPermission(sender, ".other")) {
                 Player player = Bukkit.getPlayer(args[1]);
                 if (player == null) {
-                    sender.sendMessage(getLHandler().getString("message.PlayerNotOnline", new StringTranslator("#PLAYER#", args[1])));
+                    getLHandler().sendMessage(sender, "message.PlayerNotOnline", new StringTranslator("player", args[1]));
                     return;
                 }
                 
                 this.toggle(sender, player);
             }
         } else {
-            sender.sendMessage(getLHandler().getString("message.WrongArgument"));
+            getLHandler().sendMessage(sender, "message.WrongArgument");
             return;
         }
     }
    
     private void toggle(CommandSender sender, Player player) {
     	if(FurniturePlayer.wrap(Player.class.cast(sender)).isBedrockPlayer()) {
-    		sender.sendMessage(getLHandler().getString("message.FurnitureToggleCantChange"));
+    		getLHandler().sendMessage(sender, "message.FurnitureToggleCantChange");
     		return;
     	}
     	
@@ -79,9 +79,9 @@ public class toggleCommand extends iCommand {
     
     private void sendFeedback(CommandSender sender, Player player, String message) {
     	if(sender.getName().equalsIgnoreCase(player.getName())) {
-    		player.sendMessage(getLHandler().getString(message));
+    		getLHandler().sendMessage(player, message);
     		return;
     	}
-    	player.sendMessage(getLHandler().getString(message));
+    	getLHandler().sendMessage(player, message);
     }
 }

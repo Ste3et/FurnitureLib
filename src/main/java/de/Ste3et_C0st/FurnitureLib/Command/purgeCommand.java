@@ -1,5 +1,6 @@
 package de.Ste3et_C0st.FurnitureLib.Command;
 
+import de.Ste3et_C0st.FurnitureLib.Utilitis.StringTranslator;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureConfig;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
@@ -20,11 +21,11 @@ public class purgeCommand extends iCommand {
             if (FurnitureLib.getInstance().isInt(args[1])) {
                 purgeTime = Integer.parseInt(args[1]);
             } else {
-                sender.sendMessage(getLHandler().getString("message.WrongArgument"));
+                getLHandler().sendMessage(sender, "message.WrongArgument");
                 return;
             }
         } else {
-            sender.sendMessage(getLHandler().getString("message.WrongArgument"));
+            getLHandler().sendMessage(sender, "message.WrongArgument");
             return;
         }
 
@@ -37,11 +38,10 @@ public class purgeCommand extends iCommand {
         }
 
         if (!FurnitureConfig.getFurnitureConfig().isPurgeRemove()) {
-            sender.sendMessage(getLHandler().getString("message.PurgeMarked").replace("#AMOUNT#", i + ""));
+            getLHandler().sendMessage(sender, "message.PurgeMarked", new StringTranslator("amount", Integer.toString(i)));
             return;
         }
-
-        sender.sendMessage(getLHandler().getString("message.RemoveDistance").replace("#AMOUNT#", i + ""));
+        getLHandler().sendMessage(sender, "message.RemoveDistance", new StringTranslator("amount", Integer.toString(i)));
         return;
     }
 }

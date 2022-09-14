@@ -1,6 +1,7 @@
 package de.Ste3et_C0st.FurnitureLib.Command;
 
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.StringTranslator;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 
 import java.util.Objects;
@@ -26,11 +27,11 @@ public class giveCommand extends iCommand {
         if (args.length > 1) {
             pro = getProject(args[1]);
             if (pro == null) {
-                sender.sendMessage(getLHandler().getString("message.ProjectNotFound").replaceAll("#PROJECT#", args[1]));
+                getLHandler().sendMessage(sender, "message.ProjectNotFound", new StringTranslator("project", args[1]));
                 return;
             }
         } else {
-            sender.sendMessage(getLHandler().getString("message.WrongArgument"));
+            getLHandler().sendMessage(sender, "message.WrongArgument");
             return;
         }
         if (args.length == 2) {
@@ -40,7 +41,7 @@ public class giveCommand extends iCommand {
                 player.updateInventory();
                 return;
             } else {
-                sender.sendMessage(getLHandler().getString("message.WrongArgument"));
+                getLHandler().sendMessage(sender, "message.WrongArgument");
                 return;
             }
         } else if (args.length == 3) {
@@ -55,7 +56,7 @@ public class giveCommand extends iCommand {
                     player.updateInventory();
                     return;
                 } else {
-                    sender.sendMessage(getLHandler().getString("message.WrongArgument"));
+                    getLHandler().sendMessage(sender, "message.WrongArgument");
                     return;
                 }
             } else if (Bukkit.getPlayer(args[2]) != null) {
@@ -69,22 +70,24 @@ public class giveCommand extends iCommand {
                     if (sender.equals(p2)) {
                         return;
                     }
-                    String str = getLHandler().getString("message.GivePlayer");
-                    str = str.replace("#PLAYER#", p2.getName());
-                    str = str.replace("#PROJECT#", pro.getName());
-                    str = str.replace("#AMOUNT#", 1 + "");
-                    sender.sendMessage(str);
+
+                    getLHandler().sendMessage(sender, "message.GivePlayer", 
+                    		new StringTranslator("project", pro.getName()), 
+                    		new StringTranslator("player", p2.getName()), 
+                    		new StringTranslator("amount", 1 + "")
+                    );
+                    
                     return;
                 } else {
-                    String s = getLHandler().getString("message.PlayerNotOnline");
-                    s = s.replace("#PLAYER#", args[2]);
-                    sender.sendMessage(s);
+                    getLHandler().sendMessage(sender, "message.PlayerNotOnline",
+                    		new StringTranslator("player", args[2])
+                    );
                     return;
                 }
             } else {
-                String s = getLHandler().getString("message.PlayerNotOnline");
-                s = s.replace("#PLAYER#", args[2]);
-                sender.sendMessage(s);
+            	getLHandler().sendMessage(sender, "message.PlayerNotOnline",
+                		new StringTranslator("player", args[2])
+                );
                 return;
             }
         } else if (args.length == 4) {
@@ -94,9 +97,9 @@ public class giveCommand extends iCommand {
                 }
                 Player p2 = Bukkit.getPlayer(args[2]);
                 if(Objects.isNull(p2)) {
-                	String s = getLHandler().getString("message.PlayerNotOnline");
-                    s = s.replace("#PLAYER#", args[2]);
-                    sender.sendMessage(s);
+                	getLHandler().sendMessage(sender, "message.PlayerNotOnline",
+                    		new StringTranslator("player", args[2])
+                    );
                     return;
                 }
                 if (p2.isOnline()) {
@@ -110,31 +113,27 @@ public class giveCommand extends iCommand {
                         if (sender.equals(p2)) {
                             return;
                         }
-                        String str = getLHandler().getString("message.GivePlayer");
-                        str = str.replace("#PLAYER#", p2.getName());
-                        str = str.replace("#PROJECT#", pro.getName());
-                        str = str.replace("#AMOUNT#", i + "");
-                        sender.sendMessage(str);
+                        getLHandler().sendMessage(sender, "message.GivePlayer", 
+                        		new StringTranslator("project", pro.getName()), 
+                        		new StringTranslator("player", p2.getName()), 
+                        		new StringTranslator("amount", i + "")
+                        );
                         return;
                     } else {
-                        sender.sendMessage(getLHandler().getString("message.WrongArgument"));
+                    	getLHandler().sendMessage(sender, "message.WrongArgument");
                         return;
                     }
                 } else {
-                    String s = getLHandler().getString("message.PlayerNotOnline");
-                    s = s.replace("#PLAYER#", args[2]);
-                    sender.sendMessage(s);
+                    getLHandler().sendMessage(sender, "message.PlayerNotOnline", new StringTranslator("player", args[2]));
                     return;
                 }
             } else {
-                String s = getLHandler().getString("message.PlayerNotOnline");
-                s = s.replace("#PLAYER#", args[2]);
-                sender.sendMessage(s);
+            	getLHandler().sendMessage(sender, "message.PlayerNotOnline", new StringTranslator("player", args[2]));
                 return;
             }
         } else {
-            sender.sendMessage(getLHandler().getString("message.WrongArgument"));
-            return;
+        	getLHandler().sendMessage(sender, "message.WrongArgument");
+        	return;
         }
     }
 

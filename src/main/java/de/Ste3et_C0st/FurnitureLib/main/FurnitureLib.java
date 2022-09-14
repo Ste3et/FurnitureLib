@@ -585,6 +585,18 @@ public class FurnitureLib extends JavaPlugin {
         }
     }
     
+    public void spawnWithAnimation(Project pro, ObjectID objectID) {
+    	if (pro == null) return;
+        if (objectID == null) return;
+        try {
+        	objectID.getProjectOBJ().getModelschematic().spawn(objectID);
+            pro.applyFunction(objectID);
+            objectID.setFinish();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+    
     public FloodgateManager getFloodgateManager() {
     	return this.floodgateManager;
     }

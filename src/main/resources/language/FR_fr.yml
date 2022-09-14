@@ -37,15 +37,22 @@ message:
   FurnitureToggleCantChange: '&cYou cant change the Furniture Visibility'
   FurnitureToFastPlace: "&cVous devez attendre &4#TIME# &cavant de pouvoir le placer."
   FurnitureToFastBreak: "&cVous devez attendre &4#TIME# &cavant de pouvoir le casser."
-  LimitAnnouncer: "&6Vous avez placé &2#CURRENT#&6/&c#MAX# de &e#TYPE#."
-  LimitAnnouncerMaximum: "&6Vous avez placé &2#CURRENT#&6/&c#MAX# de &e#TYPE#&6, &a#AMOUNT# &6meubles restants"
-  LimitReachedWorld: "&cLa limite des meubles dans ce monde est atteinte"
-  LimitReachedChunk: "&cLa limite des meubles dans ce Chunk est atteinte"
-  LimitReached: "&cLa limite de cet objet est atteinte."
-  LimitReachedMaximum: "&cLe mobilier maximal est atteint."
   BlockOfInstability: "&cEssayez d''installer les meubles sur un autre endroit"
   reload: '&7FurnitureLib has been &2&lreloaded'
   IgnoredWorld: "&7You can't place furniture models at &2%WORLD%"
+  limit:
+    world:
+      reached: '&7You reached the World Furniture Limit of: &c#amount#/#size#'
+      info: '&7You have placed: &e#amount#/#size# &7for project &a#project# &7in world &a#world#'
+    player:
+      reached: '&7You reached the Player Furniture Limit of: &c#amount#/#size#'
+      info: '&7You have placed: &c#amount#/#size# for project #project#'
+    chunk:
+      reached: '&7You reached the Chunk Furniture Limit of: &c#amount#/#size#'
+      info: '&7You have placed: &c#amount#/#size# for project #project#'
+    permission:
+      reached: '&7You reached the Furniture Limit of: &c#amount#/#size#'
+      info: '&7You have placed: &c#amount#/#size# for project #project#'
   command:
     help:
         header:

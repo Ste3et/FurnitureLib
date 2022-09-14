@@ -39,6 +39,19 @@ message:
    BlockOfInstability: '&cBitte platziere das Objekt wo anders.'
    reload: '&7FurnitureLib wurde &2&lneu geladen'
    IgnoredWorld: "&7You can't place furniture models at &2%WORLD%"
+  limit:
+    world:
+      reached: '&7Du hast das Furniture Welt Limit erreicht: &c#amount#/#size#'
+      info: '&7Du hast &e#amount#/#size# &7Furniture (&a#project#) &7in der Welt &a#world# platziert'
+    player:
+      reached: '&7Du hast das Furniture Spieler Limit erreicht: &c#amount#/#size#'
+      info: '&7Du hast &e#amount#/#size# &7Furniture (&a#project#) &7platziert#'
+    chunk:
+      reached: '&7Du hast das Furniture Chunk Limit erreicht: &c#amount#/#size#'
+      info: '&7Du hast &e#amount#/#size# &7Furniture (&a#project#) &7platziert#'
+    permission:
+      reached: '&7Du hast das Furniture Limit erreicht: &c#amount#/#size#'
+      info: '&7Du hast &e#amount#/#size# &7Furniture (&a#project#) &7platziert#'
 command:
     help:
         header:

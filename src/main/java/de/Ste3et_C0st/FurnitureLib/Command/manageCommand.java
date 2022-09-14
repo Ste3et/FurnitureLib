@@ -12,16 +12,16 @@ public class manageCommand extends iCommand {
     @Override
     public void execute(CommandSender sender, String[] args) {
         if (args.length != 1) {
-            sender.sendMessage(getLHandler().getString("message.WrongArgument"));
+            getLHandler().sendMessage(sender, "message.WrongArgument");
             return;
         }
         if (sender instanceof Player) {
             if (hasCommandPermission(sender)) {
                 command.manageList.add((Player) sender);
-                sender.sendMessage(getLHandler().getString("message.ManageModeEntered"));
+                getLHandler().sendMessage(sender, "message.ManageModeEntered");
                 return;
             } else {
-                sender.sendMessage(getLHandler().getString("message.NoPermissions"));
+                getLHandler().sendMessage(sender, "message.NoPermissions");
             }
         }
     }

@@ -14,6 +14,7 @@ import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.scheduler.BukkitTask;
 
 import java.io.File;
@@ -90,7 +91,9 @@ public class SQLManager {
     }
 
     public void save() {
-        plugin.getLogger().info("Furniture save started");
+    	if(FurnitureConfig.getFurnitureConfig().shouldAutoSaveConsoleMessage()) {
+    		plugin.getLogger().info("Furniture save started");
+    	}
         if (!plugin.getFurnitureManager().getObjectList().isEmpty()) {
             List<ObjectID> objList = new ArrayList<>();
             int j = 0, i = 0;
@@ -140,16 +143,18 @@ public class SQLManager {
             
             plugin.getFurnitureManager().deleteObjectID(removeList);
             
-            plugin.getLogger().info(i + " furniture has been saved to the database.");
-            plugin.getLogger().info(j + " furniture has been updated in the database.");
-            plugin.getLogger().info(removeList.size() + " furniture has been removed from the database.");
-        } else {
-            plugin.getLogger().info("the list of objects is empty.");
+            if(FurnitureConfig.getFurnitureConfig().shouldAutoSaveConsoleMessage()) {
+            	if(i != 0 || j != 0 || removeList.size() != 0) {
+            		plugin.getLogger().info(i + " furniture has been saved to the database.");
+                    plugin.getLogger().info(j + " furniture has been updated in the database.");
+                    plugin.getLogger().info(removeList.size() + " furniture has been removed from the database.");
+            	}
+            }
         }
     }
     
     public void save(CallbackBoolean callBackBoolean) {
-        plugin.getLogger().info("Furniture save started");
+    	if(FurnitureConfig.getFurnitureConfig().shouldAutoSaveConsoleMessage()) plugin.getLogger().info("Furniture save started");
         if (!plugin.getFurnitureManager().getObjectList().isEmpty()) {
             List<ObjectID> objList = new ArrayList<>();
             int j = 0, i = 0, l = 0;
@@ -196,12 +201,13 @@ public class SQLManager {
                     });
                 }
             }
-            
-            plugin.getLogger().info(i + " furniture has been saved to the database.");
-            plugin.getLogger().info(j + " furniture has been updated in the database.");
-            plugin.getLogger().info(l + " furniture has been removed from the database.");
-        } else {
-            plugin.getLogger().info("the list of objects is empty.");
+            if(FurnitureConfig.getFurnitureConfig().shouldAutoSaveConsoleMessage()) {
+            	if(i != 0 || j != 0 || l != 0) {
+            		plugin.getLogger().info(i + " furniture has been saved to the database.");
+                    plugin.getLogger().info(j + " furniture has been updated in the database.");
+                    plugin.getLogger().info(l + " furniture has been removed from the database.");       
+            	} 	
+            }
         }
         
         if(Objects.nonNull(callBackBoolean)) {

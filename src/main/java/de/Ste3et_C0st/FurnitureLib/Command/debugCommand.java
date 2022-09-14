@@ -189,15 +189,15 @@ public class debugCommand extends iCommand {
             	}
         } else {
             if (args.length != 1) {
-                sender.sendMessage(getLHandler().getString("message.WrongArgument"));
+                getLHandler().sendMessage(sender, "message.WrongArgument");
                 return;
             }
             if (sender instanceof Player) {
                 if (hasCommandPermission(sender)) {
                     command.playerList.add((Player) sender);
-                    sender.sendMessage(getLHandler().getString("message.DebugModeEntered"));
+                    getLHandler().sendMessage(sender, "message.DebugModeEntered");
                 } else {
-                    sender.sendMessage(getLHandler().getString("message.NoPermissions"));
+                    getLHandler().sendMessage(sender, "message.NoPermissions");
                 }
             }
         }

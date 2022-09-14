@@ -33,7 +33,7 @@ public class removeCommand extends iCommand {
         String filterTypes = "";
         boolean remove = true;
         if(args.length < 2) {
-        	getLHandler().getString("message.WrongArgument");
+        	getLHandler().sendMessage(sender, "message.WrongArgument");
         	return;
         }
         
@@ -120,11 +120,12 @@ public class removeCommand extends iCommand {
     			}
     		});
         	
-        	sender.sendMessage(getLHandler().getString("command.remove.result", 
-					new StringTranslator("#FILTERS#", StringUtils.removeEnd(filterTypes, "|")),
-					new StringTranslator("#SIZE#", count.get() + "")));
+        	getLHandler().sendMessage(sender, "command.remove.result",
+        			new StringTranslator("filters", StringUtils.removeEnd(filterTypes, "|")),
+					new StringTranslator("size", count.get() + ""));
         }else if(!remove){
-        	sender.sendMessage(getLHandler().getString("command.remove.result", new StringTranslator("#FILTERS#", StringUtils.removeEnd(filterTypes, "|"))));
+        	getLHandler().sendMessage(sender, "command.remove.result",
+        			new StringTranslator("filters", StringUtils.removeEnd(filterTypes, "|")));
         }
 	}
 

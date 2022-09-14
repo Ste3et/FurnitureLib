@@ -3,11 +3,12 @@
 
 # Version: @version@
 
-config-version: 2 #do not touch these option
+config-version: 3 #do not touch these option
 storage-options:
   
   # Save Furniture in the Interval of nSecounds (-1 mean disable autosave)
   auto-save-interval: 300
+  auto-save-console-message: true
   
   # Only LEGACY is avaiable right now
   storage-methode: LEGACY
@@ -20,7 +21,6 @@ storage-options:
   password: 123abcdefg
   port: 3306
   
-  database_table: FurnitureLib_Objects
   auto_convert: false
   importCheck: false
   
@@ -39,6 +39,8 @@ storage-options:
     # However, we always recommend you use SSL where possible.
     useSSL: true
     allowPublicKeyRetrieval: false
+    
+  database-table-old: FurnitureLib_Objects #these option is the legacy Furniture Table to migrate from 1.12 to 1.13 DO NOT CHANGE THAT
 
 gerneral-options:
   useMetrics: true # Allow FurnitureLib to collect some data about your system and send them to https://bstats.org/plugin/bukkit/FurnitureLib/454
@@ -59,7 +61,7 @@ world-options:
   packetRenderMethode: false # send the furniture models if the player move packet have been triggered
 
 limit-options:
-  limitConfig: PLAYER # there is only these options avaiable: PLAYER, WORLD, CHUNK
+  limitConfig: PLAYER # there is only these options avaiable: PLAYER, WORLD, CHUNK you can simple combine then and the FurnitureLib use the config with the lowest value limitConfig: "PLAYER,WORLD"
   limitGlobal: 150 # You can give your player the permissions furniture.globallimit.# | furniture.globallimit.125 -> let the player can place 125 furnitures objects it override the limitconfig
 
 creative-options:

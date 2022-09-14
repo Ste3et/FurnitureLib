@@ -1,7 +1,10 @@
 package de.Ste3et_C0st.FurnitureLib.Command;
 
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.StringTranslator;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
+
+import org.apache.commons.lang.StringUtils;
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
@@ -19,11 +22,11 @@ public class recipeCommand extends iCommand {
         if (args.length > 1) {
             pro = getProject(args[1]);
             if (pro == null) {
-                sender.sendMessage(getLHandler().getString("message.ProjectNotFound").replaceAll("#PROJECT#", args[1]));
+                getLHandler().sendMessage(sender, "message.ProjectNotFound", new StringTranslator("project", args[1]));
                 return;
             }
         } else {
-            sender.sendMessage(getLHandler().getString("message.WrongArgument"));
+            getLHandler().sendMessage(sender, "message.WrongArgument");
             return;
         }
 
@@ -35,7 +38,7 @@ public class recipeCommand extends iCommand {
                 FurnitureLib.getInstance().getCraftingInv().openCrafting((Player) sender, pro, false);
                 return;
             } else {
-                sender.sendMessage(getLHandler().getString("message.WrongArgument"));
+            	getLHandler().sendMessage(sender, "message.WrongArgument");
                 return;
             }
         } else if (args.length == 3) {
@@ -44,9 +47,8 @@ public class recipeCommand extends iCommand {
                     FurnitureLib.getInstance().getCraftingInv().openCrafting(Bukkit.getPlayer(args[2]), pro, false);
                     return;
                 } else {
-                    String s = getLHandler().getString("message.PlayerNotOnline");
-                    s = s.replace("#PLAYER#", args[2]);
-                    sender.sendMessage(s);
+                    getLHandler().sendMessage(sender, "message.PlayerNotOnline", new StringTranslator("player", args[2]));
+                    
                     return;
                 }
             } else {
@@ -54,7 +56,7 @@ public class recipeCommand extends iCommand {
                     if (!hasCommandPermission(sender, ".edit")) return;
                     pro = getProject(args[1]);
                     if (pro == null) {
-                        sender.sendMessage(getLHandler().getString("message.ProjectNotFound").replaceAll("#PROJECT#", args[1]));
+                        getLHandler().sendMessage(sender, "message.ProjectNotFound", new StringTranslator("project", args[1]));
                         return;
                     }
                     FurnitureLib.getInstance().getCraftingInv().openCrafting((Player) sender, pro, true);
@@ -63,20 +65,20 @@ public class recipeCommand extends iCommand {
                     if (!hasCommandPermission(sender, ".remove")) return;
                     pro = getProject(args[1]);
                     if (pro == null) {
-                        sender.sendMessage(getLHandler().getString("message.ProjectNotFound").replaceAll("#PROJECT#", args[1]));
+                        getLHandler().sendMessage(sender, "message.ProjectNotFound", new StringTranslator("project", args[1]));
                         return;
                     }
                     pro.getCraftingFile().removeCrafting(pro.getCraftingFile().getItemstack());
                     //pro.getCraftingFile().setCraftingDisabled(true);
-                    sender.sendMessage(getLHandler().getString("message.CraftingRemove"));
+                    getLHandler().sendMessage(sender, "message.CraftingRemove");
                     return;
                 } else {
-                    sender.sendMessage(getLHandler().getString("message.WrongArgument"));
+                    getLHandler().sendMessage(sender, "message.WrongArgument");
                     return;
                 }
             }
         } else {
-            sender.sendMessage(getLHandler().getString("message.WrongArgument"));
+            getLHandler().sendMessage(sender, "message.WrongArgument");
             return;
         }
     }
