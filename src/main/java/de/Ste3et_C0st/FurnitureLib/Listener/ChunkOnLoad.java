@@ -227,7 +227,7 @@ public class ChunkOnLoad implements Listener {
             final Location loc = b.getLocation();
             loc.setYaw(FurnitureLib.getInstance().getLocationUtil().FaceToYaw(LocationUtil.yawToFace(player.getLocation().getYaw())));
             Location blockLocation = b.getLocation();
-            boolean bool = !b.getType().equals(Material.FLOWER_POT);
+            boolean bool = FurnitureLib.isNewVersion() ? !org.bukkit.Tag.FLOWER_POTS.isTagged(b.getType()) : !b.getType().equals(Material.FLOWER_POT);
             final ObjectID objID = FurnitureManager.getInstance().getObjectList().stream().filter(obj -> obj.containsBlock(blockLocation)).findFirst().orElse(null);
             if (Objects.isNull(objID)) return;
             if (objID.isPrivate()) return;
