@@ -7,10 +7,14 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
+import java.util.function.BiConsumer;
+import java.util.function.Supplier;
 
 import org.bukkit.Bukkit;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.util.Consumer;
 import org.jetbrains.annotations.NotNull;
 
 import com.zaxxer.hikari.HikariConfig;
@@ -27,6 +31,7 @@ import de.Ste3et_C0st.FurnitureLib.main.Type.EventType;
 import de.Ste3et_C0st.FurnitureLib.main.Type.LimitationType;
 import de.Ste3et_C0st.FurnitureLib.main.Type.PublicMode;
 import de.Ste3et_C0st.FurnitureLib.main.Type.StorageType;
+import de.Ste3et_C0st.ProtectionLib.main.plugins.fDiceChunk;
 
 public class FurnitureConfig {
 
@@ -50,6 +55,7 @@ public class FurnitureConfig {
     private RenderEventHandler renderEventHandler;
     private static final int BSTATS_ID = 454;
     private DataBaseType databaseType = DataBaseType.SQLite;
+    private BiConsumer<CommandSender,String> databaseOutput = (sender, message) -> sender.sendMessage(message);
     
     public FurnitureConfig(FurnitureLib instance) {
     	this.instance = instance;
@@ -93,12 +99,12 @@ public class FurnitureConfig {
                 config.setMaximumPoolSize(10);
                 config.setIdleTimeout(15);
                 this.databaseType = DataBaseType.SQLite;
-            } else if (getConfig().getString(key + "sotrage-type").equalsIgnoreCase("Mysql")) {
+            } else if (getConfig().getString(key + "storage-type").equalsIgnoreCase("Mysql")) {
             	String database = getConfig().getString(key + "database");
                 String user = getConfig().getString(key + "user");
                 String password = getConfig().getString(key + "password");
                 String port = getConfig().getString(key + "port", "3306");
-                String host = getConfig().getString(key + "host");
+                String host = getConfig().getString(key + "adress");
                 boolean allowPublicKeyRetrieval = getConfig().getBoolean(key + "connection-properties.allowPublicKeyRetrieval", false);
                 boolean useSSL = getConfig().getBoolean(key + "connection-properties.useSSL", true);
                 config.setJdbcUrl("jdbc:mysql://" + host + ":" + port + "/" + database + "?useSSL=" + useSSL + "&allowPublicKeyRetrieval=" + allowPublicKeyRetrieval);
@@ -170,6 +176,12 @@ public class FurnitureConfig {
         this.update = getConfig().getBoolean("gerneral-options.checkForUpdate");
         this.lmanager = new LanguageManager(instance, getConfig().getString("gerneral-options.Language"));
         this.autoSaveConsoleMessage = getConfig().getBoolean("storage-options.auto-save-console-message", true);
+        
+        if(this.autoSaveConsoleMessage) {
+        	databaseOutput = (sender, message) -> sender.sendMessage(message);
+        }else {
+        	databaseOutput = (sender, message) -> {};
+        }
         
         //creative config
         this.useGamemode = !getConfig().getBoolean("creative-options.RemoveItems");
@@ -523,6 +535,18 @@ public class FurnitureConfig {
 
 	public int getSaveIntervall() {
 		return this.saveIntervall;
+	}
+	
+	public void sendDatabaseLog(CommandSender sender, String string){
+		this.sendDatabaseLog(null, string, false);
+	}
+	
+	public void sendDatabaseLog(CommandSender sender, String string, boolean force){
+		if(force) {
+			sender.sendMessage(string);
+		}else {
+			this.databaseOutput.accept(sender, string);
+		}
 	}
     
 }

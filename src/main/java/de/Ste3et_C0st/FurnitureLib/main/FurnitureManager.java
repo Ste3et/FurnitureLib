@@ -73,16 +73,22 @@ public class FurnitureManager extends ObjectIdManager{
 
     public void saveAsynchron(final CommandSender sender) {
         Bukkit.getScheduler().runTaskAsynchronously(FurnitureLib.getInstance(), () -> {
-            long currentTime = System.currentTimeMillis();
-            sender.sendMessage("§n§7--------------------------------------");
-            sender.sendMessage("§7Furniture async saving started");
-            FurnitureLib.getInstance().getSQLManager().save();
-            long newTime = System.currentTimeMillis();
-            long time = newTime - currentTime;
-            SimpleDateFormat timeDate = new SimpleDateFormat("mm:ss.SSS");
-            String timeStr = timeDate.format(time);
-            sender.sendMessage("§7Furniture saving finish : §9" + timeStr);
-            sender.sendMessage("§n§7--------------------------------------");
+        	final long count = FurnitureManager.this.getAllObjectIDs().filter(entry -> entry.getSQLAction().isImportant()).count();
+        	if(count > 0) {
+        		long currentTime = System.currentTimeMillis();
+        		final boolean force = Player.class.isInstance(sender);
+        		
+        		FurnitureConfig.getFurnitureConfig().sendDatabaseLog(sender, "§n§7--------------------------------------", force);
+        		FurnitureConfig.getFurnitureConfig().sendDatabaseLog(sender, "§7Furniture async saving started", force);
+                FurnitureLib.getInstance().getSQLManager().save();
+                long newTime = System.currentTimeMillis();
+                long time = newTime - currentTime;
+                SimpleDateFormat timeDate = new SimpleDateFormat("mm:ss.SSS");
+                String timeStr = timeDate.format(time);
+                
+                FurnitureConfig.getFurnitureConfig().sendDatabaseLog(sender, "§7Furniture saving finish : §9" + timeStr, force);
+                FurnitureConfig.getFurnitureConfig().sendDatabaseLog(sender, "§n§7--------------------------------------", force);
+        	}
         });
     }
 

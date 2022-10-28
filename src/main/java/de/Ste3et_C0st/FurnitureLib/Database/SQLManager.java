@@ -91,9 +91,7 @@ public class SQLManager {
     }
 
     public void save() {
-    	if(FurnitureConfig.getFurnitureConfig().shouldAutoSaveConsoleMessage()) {
-    		plugin.getLogger().info("Furniture save started");
-    	}
+    	if(FurnitureConfig.getFurnitureConfig().shouldAutoSaveConsoleMessage()) plugin.getLogger().info("Furniture save started");
         if (!plugin.getFurnitureManager().getObjectList().isEmpty()) {
             List<ObjectID> objList = new ArrayList<>();
             int j = 0, i = 0;

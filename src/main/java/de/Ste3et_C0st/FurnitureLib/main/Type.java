@@ -1,6 +1,5 @@
 package de.Ste3et_C0st.FurnitureLib.main;
 
-import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.LanguageManager;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -11,7 +10,6 @@ import org.bukkit.util.EulerAngle;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
-import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -43,7 +41,19 @@ public class Type {
     	WORLD()
     }
 
-    public enum SQLAction {SAVE, UPDATE, REMOVE, PURGE, NOTHING}
+    public enum SQLAction {
+    	SAVE(true), UPDATE(true), REMOVE(true), PURGE(true), NOTHING(false);
+    	
+    	private final boolean important;
+    	
+    	SQLAction(boolean important) {
+    		this.important = important;
+    	}
+
+		public boolean isImportant() {
+			return important;
+		}
+    }
 
     public enum CenterType {LEFT, RIGHT, CENTER, FRONT}
 
