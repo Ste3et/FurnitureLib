@@ -1,11 +1,17 @@
+# Build outputs
 /bin/
+/build/
 /target/
 /${dir}/
+# Editor
 *.idea
-*.iml
-/.gradle/
-/.gradle
-/build/
+# Config
 /.settings
 /.settings/
+# Gradle
 /.gradle/*
+/.gradle/
+/.gradle
+# Misc
+*.iml
+.DS_Store
