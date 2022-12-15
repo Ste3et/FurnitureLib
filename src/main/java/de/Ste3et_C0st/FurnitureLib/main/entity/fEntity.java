@@ -3,19 +3,13 @@ package de.Ste3et_C0st.FurnitureLib.main.entity;
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.utility.MinecraftVersion;
-import com.comphenix.protocol.wrappers.BukkitConverters;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
-import com.comphenix.protocol.wrappers.WrappedDataValue;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
-import com.comphenix.protocol.wrappers.WrappedGameProfile;
-import com.comphenix.protocol.wrappers.WrappedSignedProperty;
-import com.comphenix.protocol.wrappers.WrappedWatchableObject;
 import com.google.common.collect.Lists;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.Registry;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
 import de.Ste3et_C0st.FurnitureLib.NBT.CraftItemStack;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
-import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagList;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.DefaultKey;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.EntityID;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.SkullMetaPatcher;
@@ -28,10 +22,6 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.inventory.meta.SkullMeta;
-
-import java.lang.reflect.Field;
 import java.util.*;
 
 public abstract class fEntity extends fSerializer implements Cloneable {
@@ -376,12 +366,11 @@ public abstract class fEntity extends fSerializer implements Cloneable {
     private void sendMetadata(Player player) {
         PacketContainer update = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
         update.getIntegers().write(0, getEntityID());
-        
         if(MinecraftVersion.getCurrentVersion().isAtLeast(new MinecraftVersion("1.19.3"))) {
-        	 final List<WrappedDataValue> wrappedDataValueList = Lists.newArrayList();
+        	 final List<com.comphenix.protocol.wrappers.WrappedDataValue> wrappedDataValueList = Lists.newArrayList();
         	 getWatcher().getWatchableObjects().stream().filter(Objects::nonNull).forEach(entry -> {
         		 final WrappedDataWatcher.WrappedDataWatcherObject dataWatcherObject = entry.getWatcherObject();
-        		 wrappedDataValueList.add(new WrappedDataValue(dataWatcherObject.getIndex(), dataWatcherObject.getSerializer(), entry.getRawValue()));
+        		 wrappedDataValueList.add(new com.comphenix.protocol.wrappers.WrappedDataValue(dataWatcherObject.getIndex(), dataWatcherObject.getSerializer(), entry.getRawValue()));
         	 });
         	 update.getDataValueCollectionModifier().write(0, wrappedDataValueList);
         }else {
