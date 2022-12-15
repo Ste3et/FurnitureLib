@@ -64,15 +64,17 @@ dependencies {
     compileOnly 'com.destroystokyo.paper:paper-api:1.16.5-R0.1-SNAPSHOT'
     compileOnly 'com.github.MilkBowl:VaultAPI:1.7'
     compileOnly 'com.gitlab.Ste3et_C0st.protectionlib:Core:v1.4'
-    compileOnly 'com.comphenix.protocol:ProtocolLib:4.8.0'
     compileOnly 'io.papermc:paperlib:1.0.2'
     compileOnly 'org.geysermc.floodgate:api:2.0-SNAPSHOT'
     
     compileOnly 'com.github.BeYkeRYkt.LightAPI:lightapi-bukkit-common:5.1.0-Bukkit'
     compileOnly 'com.github.BeYkeRYkt.LightAPI:lightapi-bukkit-backward-support:5.1.0-Bukkit'
+    
+    //temp local depenceys
+    compileOnly files('tempDependenys/ProtocolLib.jar')
 }
 
-version = '2.8.4'
+version = '2.9'
 group = 'de.Ste3et_C0st.furniture'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8

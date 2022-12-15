@@ -3,7 +3,7 @@
 
 # Version: @version@
 
-config-version: 3 #do not touch these option
+config-version: 4 #do not touch these option
 storage-options:
   
   # Save Furniture in the Interval of nSecounds (-1 mean disable autosave)
@@ -42,7 +42,7 @@ storage-options:
     
   database-table-old: FurnitureLib_Objects #these option is the legacy Furniture Table to migrate from 1.12 to 1.13 DO NOT CHANGE THAT
 
-gerneral-options:
+general-options:
   useMetrics: true # Allow FurnitureLib to collect some data about your system and send them to https://bstats.org/plugin/bukkit/FurnitureLib/454
   debugMode: false # Enable or disable the Debug mode, these mode can spam you console but nice to debug stuff
   language: EN_en # Avaiable Language [EN_en, DE_de, PL_pl, FR_fr, RU_ru, CN_cn]

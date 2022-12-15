@@ -2,10 +2,15 @@ package de.Ste3et_C0st.FurnitureLib.main.entity;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
+import com.comphenix.protocol.utility.MinecraftVersion;
 import com.comphenix.protocol.wrappers.BukkitConverters;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
+import com.comphenix.protocol.wrappers.WrappedDataValue;
+import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import com.comphenix.protocol.wrappers.WrappedSignedProperty;
+import com.comphenix.protocol.wrappers.WrappedWatchableObject;
+import com.google.common.collect.Lists;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.Registry;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
 import de.Ste3et_C0st.FurnitureLib.NBT.CraftItemStack;
@@ -371,7 +376,18 @@ public abstract class fEntity extends fSerializer implements Cloneable {
     private void sendMetadata(Player player) {
         PacketContainer update = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
         update.getIntegers().write(0, getEntityID());
-        update.getWatchableCollectionModifier().write(0, getWatcher().getWatchableObjects());
+        
+        if(MinecraftVersion.getCurrentVersion().isAtLeast(new MinecraftVersion("1.19.3"))) {
+        	 final List<WrappedDataValue> wrappedDataValueList = Lists.newArrayList();
+        	 getWatcher().getWatchableObjects().stream().filter(Objects::nonNull).forEach(entry -> {
+        		 final WrappedDataWatcher.WrappedDataWatcherObject dataWatcherObject = entry.getWatcherObject();
+        		 wrappedDataValueList.add(new WrappedDataValue(dataWatcherObject.getIndex(), dataWatcherObject.getSerializer(), entry.getRawValue()));
+        	 });
+        	 update.getDataValueCollectionModifier().write(0, wrappedDataValueList);
+        }else {
+        	update.getWatchableCollectionModifier().write(0, getWatcher().getWatchableObjects());
+        }
+        
         try {
             getManager().sendServerPacket(player, update);
         } catch (Exception e) {

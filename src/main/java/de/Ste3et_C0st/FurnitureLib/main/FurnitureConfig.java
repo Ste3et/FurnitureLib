@@ -168,13 +168,13 @@ public class FurnitureConfig {
     
     private void loadNewConfig() {
     	//general Config
-    	FurnitureLib.setDebug(getConfig().getBoolean("gerneral-options.debugMode", false));
-        this.canSit = !getConfig().getBoolean("gerneral-options.DisableSitting");
-        this.useParticle = getConfig().getBoolean("gerneral-options.useParticles");
-        this.glowing = getConfig().getBoolean("gerneral-options.glowing");
-        this.rotateOnSit = getConfig().getBoolean("gerneral-options.rotateOnSit");
-        this.update = getConfig().getBoolean("gerneral-options.checkForUpdate");
-        this.lmanager = new LanguageManager(instance, getConfig().getString("gerneral-options.Language"));
+    	FurnitureLib.setDebug(getConfig().getBoolean("general-options.debugMode", false));
+        this.canSit = !getConfig().getBoolean("general-options.DisableSitting");
+        this.useParticle = getConfig().getBoolean("general-options.useParticles");
+        this.glowing = getConfig().getBoolean("general-options.glowing");
+        this.rotateOnSit = getConfig().getBoolean("general-options.rotateOnSit");
+        this.update = getConfig().getBoolean("general-options.checkForUpdate");//
+        this.lmanager = new LanguageManager(instance, getConfig().getString("general-options.Language"));
         this.autoSaveConsoleMessage = getConfig().getBoolean("storage-options.auto-save-console-message", true);
         
         if(this.autoSaveConsoleMessage) {

@@ -37,6 +37,10 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.comphenix.protocol.ProtocolLib;
+import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.utility.MinecraftVersion;
+
 import java.io.BufferedReader;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -54,7 +58,7 @@ public class FurnitureLib extends JavaPlugin {
     private static int versionInt = 0;
     private static boolean enableDebug = false;
     private static int debugLevel = 0;
-
+    
     private static Boolean newVersion = null;
     public boolean enabled = true;
     public HashMap<Project, Long> deleteMap = new HashMap<>();
@@ -397,7 +401,6 @@ public class FurnitureLib extends JavaPlugin {
 		this.bmanager = new BlockManager();
 		this.craftingInv = new CraftingInv(this);
 		this.loadPermissionKit();
-		
 		autoConverter.modelConverter(getServer().getConsoleSender());
 		this.furnitureConfig.loadPluginConfig();
 		this.sqlManager = new SQLManager(instance);
@@ -611,5 +614,9 @@ public class FurnitureLib extends JavaPlugin {
     
     public FurnitureConfig getFurnitureConfig() {
     	return this.furnitureConfig;
+    }
+    
+    public static boolean getVersion(MinecraftVersion minecraftVersion) {
+    	return minecraftVersion.atOrAbove();
     }
 }
