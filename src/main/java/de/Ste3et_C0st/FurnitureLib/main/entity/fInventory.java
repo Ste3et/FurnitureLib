@@ -7,13 +7,18 @@ import de.Ste3et_C0st.FurnitureLib.Utilitis.Wrapper.IEntityEquipment;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.Wrapper.WrapperPlayServerEntityEquipmentNew;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.Wrapper.WrapperPlayServerEntityEquipmentOld;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
+import de.Ste3et_C0st.FurnitureLib.main.Type.BodyPart;
 
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
+import java.util.EnumSet;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class fInventory implements Cloneable {
@@ -111,6 +116,17 @@ public class fInventory implements Cloneable {
     public ItemStack[] getIS() {
         return this.items;
     }
+    
+    public HashMap<EquipmentSlot, ItemStack> getStackMap(){
+    	final Predicate<ItemStack> stackPredicate = stack -> Objects.nonNull(stack) && stack.getType() != Material.AIR;
+    	final HashMap<EquipmentSlot, ItemStack> result = new HashMap<fInventory.EquipmentSlot, ItemStack>();
+    	EnumSet.allOf(EquipmentSlot.class).stream()
+    		.filter(entry -> stackPredicate.test(getSlot(entry.getSlot())))
+    		.forEach(entry -> {
+    			result.put(entry, getSlot(entry.getSlot()));
+    		});
+    	return result;
+    }
 
     public ItemStack getSlot(int slot) {
         if (slot < 0 || slot >= this.items.length) {
@@ -205,6 +221,16 @@ public class fInventory implements Cloneable {
         
         public ItemSlot getItemSlot() {
         	return this.itemSlot;
+        }
+        
+        public BodyPart toBodyPart() {
+        	switch(this) {
+        		case MAINHAND: return BodyPart.RIGHT_ARM;
+        		case OFFHAND: return BodyPart.LEFT_ARM;
+        		case HEAD: return BodyPart.HEAD;
+        		case CHEST: return BodyPart.BODY;
+        		default: return BodyPart.RIGHT_LEG;
+        	}
         }
     }
 }

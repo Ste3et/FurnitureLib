@@ -174,7 +174,7 @@ public class FurnitureConfig {
         this.glowing = getConfig().getBoolean("general-options.glowing");
         this.rotateOnSit = getConfig().getBoolean("general-options.rotateOnSit");
         this.update = getConfig().getBoolean("general-options.checkForUpdate");//
-        this.lmanager = new LanguageManager(instance, getConfig().getString("general-options.Language"));
+        this.lmanager = new LanguageManager(instance, getConfig().getString("general-options.language"));
         this.autoSaveConsoleMessage = getConfig().getBoolean("storage-options.auto-save-console-message", true);
         
         if(this.autoSaveConsoleMessage) {

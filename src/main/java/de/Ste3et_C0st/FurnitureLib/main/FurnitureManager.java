@@ -56,6 +56,10 @@ public class FurnitureManager extends ObjectIdManager{
     public List<UUID> getIgnoreList() {
         return ignoreList;
     }
+    
+    public HashMap<String, Project> getProjectMap(){
+    	return this.projects;
+    }
 
     public void addProject(Project project) {
     	projects.put(project.getName().toLowerCase(), project);

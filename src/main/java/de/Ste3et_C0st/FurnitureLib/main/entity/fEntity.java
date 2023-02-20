@@ -8,6 +8,8 @@ import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.google.common.collect.Lists;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.Registry;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
+import com.comphenix.protocol.wrappers.WrappedWatchableObject;
+
 import de.Ste3et_C0st.FurnitureLib.NBT.CraftItemStack;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.DefaultKey;
@@ -23,6 +25,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import java.util.*;
+import java.util.function.BiFunction;
 
 public abstract class fEntity extends fSerializer implements Cloneable {
 
@@ -39,6 +42,7 @@ public abstract class fEntity extends fSerializer implements Cloneable {
     private final UUID entityUUID = UUID.randomUUID();
     private final PacketContainer mountPacketContainer = new PacketContainer(PacketType.Play.Server.MOUNT);
     private final PacketContainer destroy = new PacketContainer(PacketType.Play.Server.ENTITY_DESTROY);
+    private static final BiFunction<PacketContainer, List<WrappedWatchableObject>, Void> metadataFunction;
     
     @Deprecated
     private int entityTypeID;
@@ -52,7 +56,26 @@ public abstract class fEntity extends fSerializer implements Cloneable {
     protected DefaultKey<Boolean> glowing = new DefaultKey<Boolean>(false), invisible = new DefaultKey<Boolean>(false), gravity = new DefaultKey<Boolean>(false);
     
     private List<Integer> passengerIDs = new ArrayList<>();
-
+    
+    static {
+    	if(MinecraftVersion.getCurrentVersion().isAtLeast(new MinecraftVersion("1.19.3"))) {
+    		metadataFunction = (container, list) -> {
+        		final List<com.comphenix.protocol.wrappers.WrappedDataValue> wrappedDataValueList = Lists.newArrayList();
+        		list.forEach(entry -> {
+        			final WrappedDataWatcher.WrappedDataWatcherObject dataWatcherObject = entry.getWatcherObject();
+              		wrappedDataValueList.add(new com.comphenix.protocol.wrappers.WrappedDataValue(dataWatcherObject.getIndex(), dataWatcherObject.getSerializer(), entry.getRawValue()));
+        		});
+        		container.getDataValueCollectionModifier().write(0, wrappedDataValueList);
+				return null;
+        	};
+    	}else {
+    		metadataFunction = (container, list) -> {
+        		container.getWatchableCollectionModifier().write(0, list);
+				return null;
+        	};
+    	}
+    }
+    
     public fEntity(Location loc, EntityType type, int entityID, ObjectID id) {
         super(type, id);
         this.entityTypeID = entityID;
@@ -366,16 +389,7 @@ public abstract class fEntity extends fSerializer implements Cloneable {
     private void sendMetadata(Player player) {
         PacketContainer update = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
         update.getIntegers().write(0, getEntityID());
-        if(MinecraftVersion.getCurrentVersion().isAtLeast(new MinecraftVersion("1.19.3"))) {
-        	 final List<com.comphenix.protocol.wrappers.WrappedDataValue> wrappedDataValueList = Lists.newArrayList();
-        	 getWatcher().getWatchableObjects().stream().filter(Objects::nonNull).forEach(entry -> {
-        		 final WrappedDataWatcher.WrappedDataWatcherObject dataWatcherObject = entry.getWatcherObject();
-        		 wrappedDataValueList.add(new com.comphenix.protocol.wrappers.WrappedDataValue(dataWatcherObject.getIndex(), dataWatcherObject.getSerializer(), entry.getRawValue()));
-        	 });
-        	 update.getDataValueCollectionModifier().write(0, wrappedDataValueList);
-        }else {
-        	update.getWatchableCollectionModifier().write(0, getWatcher().getWatchableObjects());
-        }
+        metadataFunction.apply(update, getWatcher().getWatchableObjects());
         
         try {
             getManager().sendServerPacket(player, update);
@@ -411,18 +425,16 @@ public abstract class fEntity extends fSerializer implements Cloneable {
     }
 
     public void update(Player p) {
-        if (!getObjID().getPlayerList().contains(p)) {
+       if (!getObjID().getPlayerList().contains(p)) {
             return;
-        }
-        PacketContainer update = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
-        update.getIntegers().write(0, getEntityID());
-        update.getWatchableCollectionModifier().write(0, getWatcher().getWatchableObjects());
-        try {
-            getManager().sendServerPacket(p, update);
-            this.sendInventoryPacket(p);
-            if(getPassenger().isEmpty() == false) {
-            	getManager().sendServerPacket(p, mountPacketContainer);
-            }
+       }
+       
+       try {
+    	   sendMetadata(p);
+           this.sendInventoryPacket(p);
+           if(getPassenger().isEmpty() == false) {
+           	  getManager().sendServerPacket(p, mountPacketContainer);
+           }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -537,7 +549,6 @@ public abstract class fEntity extends fSerializer implements Cloneable {
         this.setInvisible((metadata.getInt("Invisible") == 1));
     }
     
-    
     public NBTTagCompound getMetaData() {
     	setMetadata("EntityType", this.getEntityType().toString());
         if(!this.customName.isDefault()) setMetadata("Name", this.getName());
@@ -547,7 +558,6 @@ public abstract class fEntity extends fSerializer implements Cloneable {
         if(!this.glowing.isDefault()) setMetadata("Glowing", this.isGlowing());
         setMetadata(this.getLocation());
         if(!getInventory().isEmpty()) setMetadata(this.getInventory());
-       
         return this.getNBTField();
     }
 }

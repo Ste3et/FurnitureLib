@@ -5,10 +5,17 @@ import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
+import org.bukkit.inventory.ItemStack;
+import org.bukkit.util.EulerAngle;
 import org.bukkit.util.NumberConversions;
 import org.bukkit.util.Vector;
 import org.jetbrains.annotations.NotNull;
 
+import de.Ste3et_C0st.FurnitureLib.main.Type.BodyPart;
+import de.Ste3et_C0st.FurnitureLib.main.entity.fArmorStand;
+import de.Ste3et_C0st.FurnitureLib.main.entity.fInventory.EquipmentSlot;
+
+import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Objects;
@@ -28,6 +35,17 @@ public class BoundingBox implements Cloneable, ConfigurationSerializable {
 
     public BoundingBox(final double x1, final double y1, final double z1, final double x2, final double y2, final double z2) {
         this.resize(x1, y1, z1, x2, y2, z2);
+    }
+    
+    public static BoundingBox of(fArmorStand stand){
+    	final double x = 0D, y = 0D, z = 0D;
+    	final HashMap<EquipmentSlot, ItemStack> stackMap = stand.getInventory().getStackMap();
+    	stackMap.entrySet().stream().forEach(entry -> {
+    		final BodyPart part = entry.getKey().toBodyPart();
+    		final EulerAngle angle = stand.getPose(part);
+    		
+    	});
+    	return new BoundingBox();
     }
 
     @NotNull

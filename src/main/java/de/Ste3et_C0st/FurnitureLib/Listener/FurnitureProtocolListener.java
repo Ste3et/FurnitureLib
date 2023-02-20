@@ -139,7 +139,7 @@ public class FurnitureProtocolListener {
 				}
 			});
 		} else {
-			player.sendMessage(LanguageManager.getInstance().getString("message.FurnitureToggleEvent"));
+			LanguageManager.send(player, "message.FurnitureToggleEvent");
 		}
 	}
 
@@ -158,7 +158,7 @@ public class FurnitureProtocolListener {
 				}
 			});
 		} else {
-			player.sendMessage(LanguageManager.getInstance().getString("message.FurnitureToggleEvent"));
+			LanguageManager.send(player, "message.FurnitureToggleEvent");
 		}
 	}
 }

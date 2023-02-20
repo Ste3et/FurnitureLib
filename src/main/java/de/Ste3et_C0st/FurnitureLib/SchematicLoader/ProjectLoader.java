@@ -87,7 +87,7 @@ public class ProjectLoader extends Furniture {
             }
         } else if (function) {
             if (!runPublicFunctions(player)) {
-                player.sendMessage(LanguageManager.getInstance().getString("message.NoPermissions"));
+                LanguageManager.send(player, "message.NoPermissions");
             }
             return;
         }

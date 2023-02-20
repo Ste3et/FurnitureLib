@@ -149,7 +149,7 @@ public class CraftingInv implements Listener {
                     file.setFileConfiguration(conf);
                     file.loadCrafting(file.getFileName());
                 }
-                e.getPlayer().sendMessage(LanguageManager.getInstance().getString("message.CraftingEdit"));
+                LanguageManager.send(e.getPlayer(), "message.CraftingEdit");
             }
             e.getInventory().clear();
             playerList.remove(e.getPlayer());

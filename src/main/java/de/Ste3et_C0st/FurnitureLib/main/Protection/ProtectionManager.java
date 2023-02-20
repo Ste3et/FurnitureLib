@@ -9,8 +9,8 @@ import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.EventType;
 import de.Ste3et_C0st.FurnitureLib.main.Type.PlaceableSide;
 import de.Ste3et_C0st.FurnitureLib.main.Type.PublicMode;
-import de.Ste3et_C0st.ProtectionLib.main.ProtectionLib;
 import de.Ste3et_C0st.ProtectionLib.main.protectionObj;
+import de.Ste3et_C0st.ProtectionLib.main.ProtectionLib;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -26,6 +26,9 @@ import java.util.UUID;
 
 public class ProtectionManager {
 
+	//rework here!
+	//private final ProtectionLib protectionLib = new ProtectionLib();
+	
     public ProtectionManager(Plugin plugin) {
         if (Bukkit.getPluginManager().isPluginEnabled("ProtectionLib")) {
             new FurnitureRegionClear();

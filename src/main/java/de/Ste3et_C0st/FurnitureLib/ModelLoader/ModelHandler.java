@@ -9,10 +9,12 @@ import de.Ste3et_C0st.FurnitureLib.main.Type.CenterType;
 import de.Ste3et_C0st.FurnitureLib.main.Type.PlaceableSide;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.util.Vector;
 
 import java.io.File;
@@ -188,12 +190,38 @@ public class ModelHandler extends Modelschematic {
                 Location location = vector.toLocation(world);
                 Block block = location.getBlock();
                 if (block.getType().isSolid()) {
-                    returnValue.set(false);
-                    LocationUtil.particleBlock(block);
+                	if(FurnitureLib.getVersionInt() < 16) {
+                		returnValue.set(false);
+                        LocationUtil.particleBlock(block);
+                	}else if(block.isBuildable() == true) {
+                		returnValue.set(false);
+                        LocationUtil.particleBlock(block);
+                	}
                 }
             });
         }
         return returnValue.get();
+    }
+    
+    public boolean checkPermission(Player player, Location startLocation, BlockFace direction) {
+    	 AtomicBoolean returnValue = new AtomicBoolean(true);
+         if(FurnitureLib.getInstance().getPermManager().useProtectionLib() == false) return true;
+    	 if (Objects.nonNull(startLocation)) {
+             ModelVector min = rotateVector(new ModelVector(this.min), direction.getOppositeFace());
+             ModelVector max = rotateVector(new ModelVector(this.max), direction.getOppositeFace());
+             BoundingBox box = BoundingBox.of(min.toVector(), max.toVector());
+             box.shift(startLocation.clone().add(0,0,0));
+             List<Vector> vectorList = getBlocksInArea(box.getMin(), box.getMax());
+             World world = startLocation.getWorld();
+             vectorList.forEach(vector -> {
+                 Location location = vector.toLocation(world);
+                 if (FurnitureLib.getInstance().getPermManager().canBuild(player, location) == false) {
+                     returnValue.set(false);
+                     LocationUtil.particleBlock(location.getBlock());
+                 }
+             });
+         }
+         return returnValue.get();
     }
 
     public void setSize(Integer length, Integer height, Integer width, CenterType type) {

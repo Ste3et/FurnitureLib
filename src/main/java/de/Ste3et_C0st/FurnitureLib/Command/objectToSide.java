@@ -1,6 +1,7 @@
 package de.Ste3et_C0st.FurnitureLib.Command;
 
 import de.Ste3et_C0st.FurnitureLib.Utilitis.LanguageManager;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.StringTranslator;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.Wrapper.ChatComponentWrapper;
 import net.md_5.bungee.api.chat.BaseComponent;
 import net.md_5.bungee.api.chat.ClickEvent;
@@ -41,8 +42,8 @@ public class objectToSide {
         }
 
         if (page > maxPage) {
-        	sender.sendMessage(LanguageManager.getInstance().getString("message.SideNotFound"));
-        	sender.sendMessage(LanguageManager.getInstance().getString("message.SideNavigation").replaceAll("#MAX#", maxPage + ""));
+        	LanguageManager.send(sender, "message.SideNotFound");
+        	LanguageManager.send(sender, "message.SideNavigation", new StringTranslator("max", maxPage + ""));
             return;
         }
 
@@ -119,8 +120,8 @@ public class objectToSide {
         }
 
         if (currentPage > maxPage) {
-        	sender.sendMessage(LanguageManager.getInstance().getString("message.SideNotFound"));
-        	sender.sendMessage(LanguageManager.getInstance().getString("message.SideNavigation").replaceAll("#MAX#", maxPage + ""));
+        	LanguageManager.send(sender, "message.SideNotFound");
+        	LanguageManager.send(sender, "message.SideNavigation", new StringTranslator("max", maxPage + ""));
             return;
         }
 

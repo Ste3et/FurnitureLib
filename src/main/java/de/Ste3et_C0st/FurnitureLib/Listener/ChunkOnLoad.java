@@ -117,7 +117,7 @@ public class ChunkOnLoad implements Listener {
     		event.setCancelled(true);
     		
     		if(Objects.isNull(project)) {
-    			player.sendMessage(LanguageManager.getInstance().getString("message.ProjectNotFound", new StringTranslator("#PROJECT#", projectString)));
+    			LanguageManager.send(player, "message.ProjectNotFound", new StringTranslator("project", projectString));
     			return;
     		}
     		
@@ -153,7 +153,7 @@ public class ChunkOnLoad implements Listener {
     		}
     		
     		if(FurnitureConfig.getFurnitureConfig().isWorldIgnored(world.getName()) == true) {
-    			player.sendMessage(LanguageManager.getInstance().getString("message.IgnoredWorld", new StringTranslator("%WORLD%", world.getName())));
+    			LanguageManager.send(player, "message.IgnoredWorld", new StringTranslator("world", world.getName()));
     			return;
     		}
     		
@@ -176,7 +176,7 @@ public class ChunkOnLoad implements Listener {
 								itemEvent.debugTime("FurnitureLib -> Model " + projectName + " is Placeable");
 								spawn(itemEvent);
 							} else {
-								player.sendMessage(LanguageManager.getInstance().getString("message.NotEnoughSpace"));
+								LanguageManager.send(player, "message.NotEnoughSpace");
 							}
 						} else {
 							FurnitureLib.debug("FurnitureLib -> Can't place model [no Modelschematic (" + projectName + ")]");
@@ -251,7 +251,7 @@ public class ChunkOnLoad implements Listener {
                     e.setCancelled(true);
                     return;
                 } else {
-                    e.getPlayer().sendMessage(LanguageManager.getInstance().getString("message.FurnitureToggleEvent"));
+                    LanguageManager.send(player, "message.FurnitureToggleEvent");
                     e.setCancelled(true);
                     return;
                 }
@@ -311,7 +311,7 @@ public class ChunkOnLoad implements Listener {
                         }
                         return;
                     } else {
-                        event.getPlayer().sendMessage(LanguageManager.getInstance().getString("message.FurnitureToggleEvent"));
+                        LanguageManager.send(event.getPlayer(), "message.FurnitureToggleEvent");
                     }
                 }
             }
@@ -343,11 +343,11 @@ public class ChunkOnLoad implements Listener {
         e.debugTime("FurnitureLib -> spawn Start " + e.getObjID().getProject());
         ObjectID obj = e.getObjID();
         if (FurnitureLib.getInstance().getFurnitureManager().getIgnoreList().contains(e.getPlayer().getUniqueId())) {
-            e.getPlayer().sendMessage(LanguageManager.getInstance().getString("message.FurnitureToggleEvent"));
+            LanguageManager.send(e.getPlayer(), "message.FurnitureToggleEvent");
             return;
         }
         if (FurnitureManager.getInstance().furnitureAlreadyExistOnBlock(obj.getStartLocation().getBlock())) {
-            e.getPlayer().sendMessage(LanguageManager.getInstance().getString("message.FurnitureOnThisPlace"));
+            LanguageManager.send(e.getPlayer(), "message.FurnitureOnThisPlace");
             return;
         }
         

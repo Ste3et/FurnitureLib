@@ -2,6 +2,7 @@ package de.Ste3et_C0st.FurnitureLib.Events;
 
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.LanguageManager;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.StringTranslator;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureConfig;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
@@ -107,7 +108,7 @@ public final class FurnitureItemEvent extends Event implements Cancellable {
         if (p == null || obj == null || getProject() == null) return true;
         BlockFace face = isOnTheRightSide();
         if (face == null) {
-            p.sendMessage(LanguageManager.getInstance().getString("message.NotONThisSide"));
+            LanguageManager.send(p, "message.NotONThisSide");
             return false;
         }
         this.debugTime("FurnitureLib {FurnitureItemEvent} -> Start canBuild check");
@@ -148,9 +149,7 @@ public final class FurnitureItemEvent extends Event implements Cancellable {
                     long dif = FurnitureConfig.getFurnitureConfig().getPlaceTime();
                     if (newCurrent < dif) {
                         String str = FurnitureLib.getInstance().getTimeDif(since, dif, FurnitureConfig.getFurnitureConfig().getTimePattern());
-                        String msg = LanguageManager.getInstance().getString("message.FurnitureToFastPlace");
-                        msg = msg.replace("#TIME#", str);
-                        getPlayer().sendMessage(msg);
+                        LanguageManager.send(p, "message.FurnitureToFastPlace", new StringTranslator("time", str));
                         return false;
                     }
                 }

@@ -126,7 +126,7 @@ public class command implements CommandExecutor, Listener{
 			manageList.remove(p);
 			if(!e.getID().getUUID().equals(p.getUniqueId())){
 				if(!lib.getPermission().hasPerm(p, "furniture.admin") && !p.isOp() && !lib.getPermission().hasPerm(p, "furniture.manage.other")){
-					p.sendMessage(LanguageManager.getInstance().getString("message.WrongOwner"));
+					LanguageManager.send(p, "message.WrongOwner");
 					return;
 				}
 			}
@@ -148,7 +148,7 @@ public class command implements CommandExecutor, Listener{
 					if(comm != null) {
 						if(comm.getSubCommand().equalsIgnoreCase("create")) {
 							if(lib.getFurnitureManager().getIgnoreList().contains(((Player) sender).getUniqueId())){
-								sender.sendMessage(LanguageManager.getInstance().getString("message.FurnitureToggleEvent"));
+								LanguageManager.send(sender, "message.FurnitureToggleEvent");
 								return true;
 							}
 						}
@@ -169,8 +169,8 @@ public class command implements CommandExecutor, Listener{
 		BaseComponent[] components = new ComponentBuilder(LanguageManager.getInstance().getString("command.help.header"))
 				.event(new HoverEvent(Action.SHOW_TEXT, 
 						   new ComponentBuilder(LanguageManager.getInstance().getString("command.help.hover",
-								   	new StringTranslator("#VERSION#", FurnitureLib.getInstance().getDescription().getVersion()),
-								   	new StringTranslator("#AUTHOR#", "Ste3et_C0st")))
+								   	new StringTranslator("version", FurnitureLib.getInstance().getDescription().getVersion()),
+								   	new StringTranslator("author", "Ste3et_C0st")))
 						   .create()
 					)
 				).create();
@@ -192,7 +192,7 @@ public class command implements CommandExecutor, Listener{
 			});
 		}
 		
-		sender.sendMessage(LanguageManager.getInstance().getString("command.help.footer"));
+		LanguageManager.send(sender, "command.help.footer");
 	}
 	
 	public static BaseComponent[] jsonText(String key) {

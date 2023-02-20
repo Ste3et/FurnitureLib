@@ -1,5 +1,6 @@
 package de.Ste3et_C0st.FurnitureLib.Command;
 
+import de.Ste3et_C0st.FurnitureLib.Utilitis.LanguageManager;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.StringTranslator;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.cache.DiceOfflinePlayer;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
@@ -145,8 +146,8 @@ public class listCommand extends iCommand {
 								.event(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
 										new ComponentBuilder(
 												getLHandler().getString("command.list.remove.hover", 
-														new StringTranslator("#PROJECT#", entry.getKey()),
-														new StringTranslator("#FILTERS#", filters))).create())
+														new StringTranslator("project", entry.getKey()),
+														new StringTranslator("filters", filters))).create())
 									  ).event(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
 												"/furniture remove " + ChatColor.stripColor(filters.replace("|", " "))
 														+ " project:" + name));
@@ -156,7 +157,7 @@ public class listCommand extends iCommand {
 				double count = projectCounter.values().stream().filter(entry -> entry.get() > 0).count();
 				maxPages = Math.ceil(count / ((double) itemsEachSide));
 			}else {
-				sender.sendMessage(getLHandler().getString("command.list.nothing", new StringTranslator("#FILTERS#", StringUtils.removeEnd(filterTypes, "|"))));
+				sender.sendMessage(getLHandler().getString("command.list.nothing", new StringTranslator("filters", StringUtils.removeEnd(filterTypes, "|"))));
     			return;
 			}
 		} else {
@@ -164,18 +165,18 @@ public class listCommand extends iCommand {
 					.skip(itemsEachSide * side.get())
 					.limit(itemsEachSide)
 					.forEach(entry -> {
-						TextComponent builder = new TextComponent(getLHandler().getString("command.list.main.message", new StringTranslator("#PROJECT#", ChatColor.stripColor(entry.getDisplayName()))));
+						TextComponent builder = new TextComponent(getLHandler().getString("command.list.main.message", new StringTranslator("project", ChatColor.stripColor(entry.getDisplayName()))));
 						
 						if (sender.hasPermission("furniture.command.debug")) {
 							ComponentBuilder devInfos = new ComponentBuilder(
 									getLHandler().getString("command.list.main.debug_hover",
-											new StringTranslator("#AMOUNT#", entry.getObjectSize() + ""),
-											new StringTranslator("#PROJECT#", entry.getName()),
-											new StringTranslator("#SIZE#", entry.getLength() + " §7|§e " + entry.getHeight() + " §7|§e " + entry.getWidth()),
-											new StringTranslator("#ENTITIES#", entry.getModelschematic().getEntityMap().size() + ""),
-											new StringTranslator("#BLOCK_COUNT#", entry.getModelschematic().getBlockMap().size() + ""),
-											new StringTranslator("#PLUGIN#", entry.getPlugin().getName()),
-											new StringTranslator("#DESTROYABLE#", entry.isDestroyable() + "")
+											new StringTranslator("amount", entry.getObjectSize() + ""),
+											new StringTranslator("project", entry.getName()),
+											new StringTranslator("size", entry.getLength() + " §7|§e " + entry.getHeight() + " §7|§e " + entry.getWidth()),
+											new StringTranslator("entities", entry.getModelschematic().getEntityMap().size() + ""),
+											new StringTranslator("block_count", entry.getModelschematic().getBlockMap().size() + ""),
+											new StringTranslator("plugin", entry.getPlugin().getName()),
+											new StringTranslator("destroyable", entry.isDestroyable() + "")
 									));
 							builder.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, devInfos.create()));
 						}
@@ -198,7 +199,7 @@ public class listCommand extends iCommand {
 						if (sender.hasPermission("furniture.command.remove.project")) {
 							TextComponent remove = new TextComponent(getLHandler().getString("command.list.remove.button"));
 							remove.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-											new ComponentBuilder(getLHandler().getString("command.list.remove.hover", new StringTranslator("#PROJECT#", entry.getName()))).create()));
+											new ComponentBuilder(getLHandler().getString("command.list.remove.hover", new StringTranslator("project", entry.getName()))).create()));
 							remove.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
 											"/furniture remove project:" + entry.getName()));
 							builder.addExtra(remove);
@@ -206,7 +207,7 @@ public class listCommand extends iCommand {
 						if (sender.hasPermission("furniture.command.delete.project")) {
 							TextComponent delete = new TextComponent(getLHandler().getString("command.list.delete.button"));
 							delete.setHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT,
-											new ComponentBuilder(getLHandler().getString("command.list.delete.hover", new StringTranslator("#PROJECT#", entry.getName()))).create()));
+											new ComponentBuilder(getLHandler().getString("command.list.delete.hover", new StringTranslator("project", entry.getName()))).create()));
 							delete.setClickEvent(new ClickEvent(ClickEvent.Action.RUN_COMMAND,
 											"/furniture delete " + entry.getName()));
 							builder.addExtra(delete);
@@ -221,8 +222,8 @@ public class listCommand extends iCommand {
 		if (!componentList.isEmpty()) {
 			new objectToSide(componentList, sender, side.get(), "/furniture " + arguments, itemsEachSide, (int) maxPages);
 		}else {
-			sender.sendMessage(getLHandler().getString("message.SideNotFound"));
-			sender.sendMessage(getLHandler().getString("message.SideNavigation").replaceAll("#MAX#", (int) maxPages + ""));
+			LanguageManager.send(sender, "message.SideNotFound");
+			LanguageManager.send(sender, "message.SideNavigation", new StringTranslator("max", (int) maxPages + ""));
             return;
 		}
 	}

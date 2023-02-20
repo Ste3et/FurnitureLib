@@ -42,10 +42,10 @@ public class LimitationInforamtion {
 		String name = isCanceld() ? ".reached" : ".info";
 		String messageName = "message.limit." + type + name;
 		player.sendMessage(LanguageManager.getInstance().getString(messageName,
-				new StringTranslator("#amount#", Integer.toString(amount)), 
-				new StringTranslator("#size#", Integer.toString(getMax())),
-				new StringTranslator("#project#", project.getDisplayName()),
-				new StringTranslator("#world#", player.getWorld().getName())
+				new StringTranslator("amount", Integer.toString(amount)), 
+				new StringTranslator("size", Integer.toString(getMax())),
+				new StringTranslator("project", project.getDisplayName()),
+				new StringTranslator("world", player.getWorld().getName())
 		));
 	}
 	

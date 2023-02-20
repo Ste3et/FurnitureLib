@@ -2,10 +2,6 @@ package de.Ste3et_C0st.FurnitureLib.Utilitis;
 
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.chat.TextComponent;
-
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.Configuration;
@@ -17,7 +13,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
-import java.util.TreeMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -33,8 +28,6 @@ public class LanguageManager {
     private HashMap<String, Material> invMatList = new HashMap<>();
     private HashMap<String, String> invStringList = new HashMap<>();
     private HashMap<String, Short> invShortList = new HashMap<>();
-    private static final Pattern VARIABLE_PATTERN_ONE = Pattern.compile("%[a-zA-Z0-9_]+%", Pattern.CASE_INSENSITIVE);
-    private static final Pattern VARIABLE_PATTERN_TWO = Pattern.compile("#[a-zA-Z0-9_]+#", Pattern.CASE_INSENSITIVE);
     
     public LanguageManager(Plugin plugin, String lang) {
         instance = this;
@@ -75,19 +68,19 @@ public class LanguageManager {
                 if (key.startsWith(".")) key = key.replaceFirst(".", "");
                 if (file.isString(key)) {
                     String value = file.getString(key);
-                    hash.put(key.toLowerCase(), value);
+                    hash.put(key.toLowerCase(), StringTranslator.transfareVariable(value));
                 } else if (file.isList(key)) {
                     StringBuilder value = new StringBuilder();
                     List<String> stringList = file.getStringList(key);
                     int end = (stringList.size() - 1);
                     for (String a : stringList) {
                         if (stringList.indexOf(a) != end) {
-                            value.append(a).append("\n");
+                            value.append(StringTranslator.transfareVariable(a)).append("\n");
                         } else {
-                            value.append(a);
+                            value.append(StringTranslator.transfareVariable(a));
                         }
                     }
-                    hash.put(key.toLowerCase(), value.toString());
+                    hash.put(key.toLowerCase(), StringTranslator.transfareVariable(value.toString()));
                 } else {
                     hash.put(key.toLowerCase(), key.toLowerCase() + " is Missing");
                 }
@@ -228,11 +221,20 @@ public class LanguageManager {
         if (stringTranslators != null) {
             for (StringTranslator trans : stringTranslators) {
                 if (trans.getKey() != null && trans.getValue() != null) {
-                    a = a.replaceAll(trans.getKey(), trans.getValue());
+                    a = a.replaceAll(trans.oldKey(), trans.getValue());
+                    a = a.replaceAll(trans.newKey(), trans.getValue());
                 }
             }
         }
         return a;
+    }
+    
+    public void sendString(CommandSender sender, String key, StringTranslator ... stringTranslators) {
+    	sender.sendMessage(getString(key, stringTranslators));
+    }
+    
+    public static void send(CommandSender sender, String key, StringTranslator ... stringTranslators) {
+    	sender.sendMessage(LanguageManager.getInstance().getString(key, stringTranslators));
     }
     
     

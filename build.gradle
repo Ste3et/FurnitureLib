@@ -74,7 +74,7 @@ dependencies {
     compileOnly files('tempDependenys/ProtocolLib.jar')
 }
 
-version = '2.9.1'
+version = '2.9.2'
 group = 'de.Ste3et_C0st.furniture'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8

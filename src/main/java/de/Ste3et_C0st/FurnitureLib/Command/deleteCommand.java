@@ -34,9 +34,7 @@ public class deleteCommand extends iCommand {
 			if (project != null) {
 				// if (project.isEditorProject()) {
 				List<ObjectID> id = getObject(project);
-				int i = 0;
-				if (id != null)
-					i = id.size();
+				final int i = id != null ? id.size() : 0;
 				sender.sendMessage("§cThen you want to delete this Model");
 				sender.sendMessage("§cPlease confirm the delete from §a" + i + "§c Models");
 				ComponentBuilder builder = new ComponentBuilder("§cPlease type")
@@ -89,6 +87,7 @@ public class deleteCommand extends iCommand {
 										e.printStackTrace();
 									}
 									FurnitureLib.getInstance().getFurnitureManager().getProjects().remove(project);
+									FurnitureLib.getInstance().getFurnitureManager().getProjectMap().remove(project.getName().toLowerCase(), project);
 									sender.sendMessage("§2The Furniture Model §a" + systemID + " §2has been disabled");
 								}else if (file2.exists()) {
 									YamlConfiguration config = YamlConfiguration.loadConfiguration(file2);
@@ -99,6 +98,7 @@ public class deleteCommand extends iCommand {
 										e.printStackTrace();
 									}
 									FurnitureLib.getInstance().getFurnitureManager().getProjects().remove(project);
+									FurnitureLib.getInstance().getFurnitureManager().getProjectMap().remove(project.getName().toLowerCase(), project);
 									sender.sendMessage("§2The Furniture Model §a" + systemID + " §2has been disabled");
 								}else if (file3.exists()) {
 									YamlConfiguration config = YamlConfiguration.loadConfiguration(file3);
@@ -109,6 +109,7 @@ public class deleteCommand extends iCommand {
 										e.printStackTrace();
 									}
 									FurnitureLib.getInstance().getFurnitureManager().getProjects().remove(project);
+									FurnitureLib.getInstance().getFurnitureManager().getProjectMap().remove(project.getName().toLowerCase(), project);
 									sender.sendMessage("§2The Furniture Model §a" + systemID + " §2has been disabled");
 								}else {
 									sender.sendMessage("§cThe Furniture Model §a" + systemID + " §ccould not deleted");

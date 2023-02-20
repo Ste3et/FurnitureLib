@@ -5,6 +5,7 @@ import de.Ste3et_C0st.FurnitureLib.ModelLoader.ModelHandler;
 import de.Ste3et_C0st.FurnitureLib.SchematicLoader.ProjectLoader;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.BoundingBox;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.LanguageManager;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.StringTranslator;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.config;
 import de.Ste3et_C0st.FurnitureLib.main.Furniture;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureConfig;
@@ -256,7 +257,7 @@ public class Project {
                 }
             }
         }
-        player.sendMessage(LanguageManager.getInstance().getString("message.NoPermissions"));
+        LanguageManager.send(player, "message.NoPermissions");
         return false;
     }
 
