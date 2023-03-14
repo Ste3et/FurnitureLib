@@ -3,6 +3,7 @@ package de.Ste3et_C0st.FurnitureLib.main;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.Wrapper.packet.WrapperPlayServerEntityDestroy;
+import de.Ste3et_C0st.FurnitureLib.async.ChunkData;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 import de.Ste3et_C0st.FurnitureLib.main.entity.*;
 
@@ -175,8 +176,10 @@ public class FurnitureManager extends ObjectIdManager{
     }
 
     public boolean furnitureAlreadyExistOnBlock(Block block) {
-    	int x = block.getX(), y = block.getY(), z = block.getZ();
-    	return getInChunk(block.getChunk()).stream().anyMatch(entry -> entry.getBlockX() == x && entry.getBlockY() == y && entry.getBlockZ() == z);
+    	final int x = block.getX(), y = block.getY(), z = block.getZ();
+    	final int chunkX = x >> 4, chunkZ = z >> 4;
+    	final World world = block.getWorld();
+    	return getInChunkByCoord(chunkX, chunkZ, world).stream().anyMatch(entry -> entry.getBlockX() == x && entry.getBlockY() == y && entry.getBlockZ() == z);
     }
 
 	public void killObject(ObjectID objectID, Player player) {

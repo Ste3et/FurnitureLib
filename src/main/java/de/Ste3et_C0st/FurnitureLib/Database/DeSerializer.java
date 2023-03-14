@@ -51,6 +51,7 @@ public class DeSerializer {
 			FurnitureLib.getInstance().getFurnitureManager().addObjectID(obj);
 			return null;
 		}
+		
 		obj.setStartLocation(startLocation);
 		
 		if(compound.hasKeyOfType("EventType", 8)) {

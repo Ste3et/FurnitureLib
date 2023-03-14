@@ -5,7 +5,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.UUID;
 
-import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.BlockFace;
@@ -170,10 +169,6 @@ public class ObjectData {
     public World getWorld() {
     	if(Objects.isNull(this.loc)) return null;
         return this.loc.getWorld();
-    }
-
-    public Chunk getChunk() {
-        return this.loc.getChunk();
     }
     
     public DoubleKey<Integer> getChunkKey(){

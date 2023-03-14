@@ -46,4 +46,8 @@ public class DoubleKey<K extends Comparable<K>> implements Comparable<DoubleKey<
         }
         return 1;
     }
+    
+    public static DoubleKey<Integer> of(int a, int b){
+    	return new DoubleKey<Integer>(a, b);
+    }
 }

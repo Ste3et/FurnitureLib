@@ -8,13 +8,10 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
-import java.util.function.Supplier;
-
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.util.Consumer;
 import org.jetbrains.annotations.NotNull;
 
 import com.zaxxer.hikari.HikariConfig;
@@ -31,7 +28,6 @@ import de.Ste3et_C0st.FurnitureLib.main.Type.EventType;
 import de.Ste3et_C0st.FurnitureLib.main.Type.LimitationType;
 import de.Ste3et_C0st.FurnitureLib.main.Type.PublicMode;
 import de.Ste3et_C0st.FurnitureLib.main.Type.StorageType;
-import de.Ste3et_C0st.ProtectionLib.main.plugins.fDiceChunk;
 
 public class FurnitureConfig {
 

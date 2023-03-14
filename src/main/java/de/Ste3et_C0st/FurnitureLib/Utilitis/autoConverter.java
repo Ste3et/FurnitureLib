@@ -3,7 +3,7 @@ package de.Ste3et_C0st.FurnitureLib.Utilitis;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTCompressedStreamTools;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
-import de.Ste3et_C0st.FurnitureLib.main.ChunkData;
+import de.Ste3et_C0st.FurnitureLib.async.ChunkData;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureConfig;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
@@ -139,6 +139,7 @@ public class autoConverter {
             if (FurnitureConfig.getFurnitureConfig().isSync()) {
                 FurnitureLib.getInstance().getSQLManager().loadALL();
             } else {
+            	
                 Bukkit.getScheduler().runTaskLater(FurnitureLib.getInstance(), () -> {
                     Bukkit.getWorlds().forEach(world -> {
                         Arrays.asList(world.getLoadedChunks()).forEach(c -> {

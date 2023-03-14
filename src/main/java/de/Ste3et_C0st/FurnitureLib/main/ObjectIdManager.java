@@ -11,7 +11,6 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -124,12 +123,6 @@ public class ObjectIdManager {
 	public ObjectID getObjectIDByString(String objID) {
         return getAllExistObjectIDs().filter(entry -> entry.getID().equalsIgnoreCase(objID)).findFirst().orElse(null);
     }
-	
-	public HashSet<ObjectID> getInChunk(Chunk c) {
-		int x = c.getX();
-		int z = c.getZ();
-		return new HashSet<ObjectID>(getObjectStreamFromWorld(c.getWorld()).filter(entry -> entry.getBlockX() >> 4 == x && entry.getBlockZ() >> 4 == z).collect(Collectors.toList()));
-	}
 	
 	public HashSet<ObjectID> getInChunkByCoord(int x, int z, World world) {
 		return new HashSet<ObjectID>(getObjectStreamFromWorld(world).filter(entry -> entry.getBlockX() >> 4 == x && entry.getBlockZ() >> 4 == z).collect(Collectors.toList()));

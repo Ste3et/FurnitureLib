@@ -5,7 +5,7 @@ import com.zaxxer.hikari.HikariConfig;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.ExecuteTimer;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.callbacks.CallbackBoolean;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.callbacks.CallbackObjectIDs;
-import de.Ste3et_C0st.FurnitureLib.main.ChunkData;
+import de.Ste3et_C0st.FurnitureLib.async.ChunkData;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureConfig;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;

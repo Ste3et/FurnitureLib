@@ -1,8 +1,6 @@
-package de.Ste3et_C0st.FurnitureLib.main;
+package de.Ste3et_C0st.FurnitureLib.async;
 
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
-import de.Ste3et_C0st.FurnitureLib.Utilitis.DoubleKey;
-
 import java.util.HashSet;
 
 import org.bukkit.Bukkit;
@@ -10,20 +8,25 @@ import org.bukkit.Chunk;
 import org.bukkit.World;
 
 import de.Ste3et_C0st.FurnitureLib.Utilitis.callbacks.CallbackObjectIDs;
+import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
+import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
+import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 
 public class ChunkData {
 
-    private DoubleKey<Integer> points;
+	private final int chunkX, chunkZ;
     private String world;
     private boolean loaded = false;
 
     public ChunkData(Chunk c) {
-        points = new DoubleKey<>(c.getX(), c.getZ());
+        this.chunkX = c.getX();
+        this.chunkZ = c.getZ();
         this.world = c.getWorld().getName();
     }
 
     public ChunkData(int x, int z, String world) {
-        points = new DoubleKey<>(x, z);
+        this.chunkX = x;
+        this.chunkZ = z;
         this.world = world;
     }
 
@@ -82,11 +85,11 @@ public class ChunkData {
     }
 
     public int getX() {
-        return points.getKey1();
+        return this.chunkX;
     }
 
     public int getZ() {
-        return points.getKey2();
+        return this.chunkZ;
     }
 
     public String getWorld() {

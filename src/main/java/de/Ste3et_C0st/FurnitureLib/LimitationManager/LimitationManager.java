@@ -9,7 +9,6 @@ import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.LimitationType;
-import org.bukkit.Chunk;
 import org.bukkit.World;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -53,12 +52,6 @@ public class LimitationManager {
 
     private Integer returnIntProjectTotal(Player p) {
         return FurnitureManager.getInstance().getFromPlayer(p.getUniqueId()).size();
-    }
-
-    private Integer returnIntProjectChunk(Chunk c, Project pro) {
-        int i = 0;
-        if (pro == null) return i;
-        return (int) FurnitureManager.getInstance().getInChunk(c).stream().filter(obj -> obj.getProject().equals(pro.getName())).count();
     }
     
     private Integer returnIntProjectChunk(int chunkX, int chunkZ, World world, Project pro) {
@@ -120,7 +113,7 @@ public class LimitationManager {
         		case CHUNK:
         			final int xChunk = obj.getStartLocation().getBlockX() >> 4, zChunk = obj.getStartLocation().getBlockZ() >> 4;
                 	maxSize = (Objects.nonNull(limitOBJ) && limitOBJ.total) ? limitOBJ.totalAmount : pro.getAmountChunk();
-                	amountSize = this.global ? FurnitureManager.getInstance().getInChunk(obj.getChunk()).size() : returnIntProjectChunk(xChunk, zChunk, world, pro);
+                	amountSize = this.global ? FurnitureManager.getInstance().getInChunkByCoord(xChunk, zChunk, world).size() : returnIntProjectChunk(xChunk, zChunk, world, pro);
         			break;
         		default:
         			maxSize = -1;

@@ -1,6 +1,6 @@
-package de.Ste3et_C0st.FurnitureLib.Listener;
+package de.Ste3et_C0st.FurnitureLib.async.listener;
 
-import de.Ste3et_C0st.FurnitureLib.main.ChunkData;
+import de.Ste3et_C0st.FurnitureLib.async.ChunkData;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureConfig;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
 
