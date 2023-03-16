@@ -3,6 +3,7 @@ package de.Ste3et_C0st.FurnitureLib.ModelLoader;
 import de.Ste3et_C0st.FurnitureLib.ModelLoader.Block.ModelBlock;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.BoundingBox;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.LocationUtil;
+import de.Ste3et_C0st.FurnitureLib.main.BlockManager;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.CenterType;
@@ -193,10 +194,15 @@ public class ModelHandler extends Modelschematic {
                 	if(FurnitureLib.getVersionInt() < 16) {
                 		returnValue.set(false);
                         LocationUtil.particleBlock(block);
-                	}else if(block.isBuildable() == true) {
-                		returnValue.set(false);
-                        LocationUtil.particleBlock(block);
                 	}
+                	
+                	if(FurnitureLib.getInstance().getBlockManager().isPaper()) {
+//                		if(block.isBuildable() == true) {
+//                    		returnValue.set(false);
+//                            LocationUtil.particleBlock(block);
+//                    	}
+                	}
+                	
                 }
             });
         }

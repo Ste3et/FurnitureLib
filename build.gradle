@@ -51,6 +51,9 @@ repositories {
     	url = uri('https://repo.maven.apache.org/maven2/')
     }
 
+	maven {
+		url = uri('https://hub.spigotmc.org/nexus/content/repositories/snapshots/')
+	}
 
 
 }
@@ -59,14 +62,13 @@ dependencies {
     implementation 'com.brsanthu:migbase64:2.2'
     implementation 'com.zaxxer:HikariCP:4.0.3'
     implementation 'org.jetbrains:annotations:15.0'
-    
     runtimeOnly 'org.slf4j:slf4j-jdk14:1.7.30'
-    compileOnly 'com.destroystokyo.paper:paper-api:1.16.5-R0.1-SNAPSHOT'
+    
+    //compileOnly 'com.destroystokyo.paper:paper-api:1.16.5-R0.1-SNAPSHOT'
     compileOnly 'com.github.MilkBowl:VaultAPI:1.7'
     compileOnly 'com.gitlab.Ste3et_C0st.protectionlib:Core:v1.4'
-    compileOnly 'io.papermc:paperlib:1.0.2'
     compileOnly 'org.geysermc.floodgate:api:2.0-SNAPSHOT'
-    
+    compileOnly 'org.spigotmc:spigot-api:1.19.4-R0.1-SNAPSHOT'
     compileOnly 'com.github.BeYkeRYkt.LightAPI:lightapi-bukkit-common:5.1.0-Bukkit'
     compileOnly 'com.github.BeYkeRYkt.LightAPI:lightapi-bukkit-backward-support:5.1.0-Bukkit'
     
@@ -74,10 +76,12 @@ dependencies {
     compileOnly files('tempDependenys/ProtocolLib.jar')
 }
 
-version = '2.9.2'
-group = 'de.Ste3et_C0st.furniture'
 sourceCompatibility = 1.8
 targetCompatibility = 1.8
+
+version = '2.9.3'
+group = 'de.Ste3et_C0st.furniture'
+
 shadowJar.archiveFileName = "${project.name}-${project.version}.jar"
 
 compileJava.options.encoding = 'UTF-8'

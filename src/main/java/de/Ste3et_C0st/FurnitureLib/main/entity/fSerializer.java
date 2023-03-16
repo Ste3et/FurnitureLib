@@ -24,59 +24,69 @@ public abstract class fSerializer extends fProtocol {
         super(type, id);
     }
 
-    public NBTTagCompound getNBTField() {
+    protected NBTTagCompound getNBTField() {
         return this.metadata;
     }
 
-    public void setMetadata(String field, String value) {
+    protected void setMetadata(String field, String value) {
         metadata.setString(field, value);
     }
 
-    public void setMetadata(String field, Boolean value) {
+    protected void setMetadata(String field, Boolean value) {
         setMetadata(field, value ? 1 : 0);
     }
 
-    public void setMetadata(String field, Integer value) {
+    protected void setMetadata(String field, Integer value) {
         metadata.setInt(field, value);
     }
 
-    public void setMetadata(String field, Byte value) {
+    protected void setMetadata(String field, Byte value) {
         metadata.setByte(field, value);
     }
 
-    public void setMetadata(String field, Double value) {
+    protected void setMetadata(String field, Double value) {
         metadata.setDouble(field, value);
     }
 
-    public void setMetadata(String field, Float value) {
+    protected void setMetadata(String field, Float value) {
         metadata.setFloat(field, value);
     }
 
-    public void setMetadata(String field, Long value) {
+    protected void setMetadata(String field, Long value) {
         metadata.setLong(field, value);
     }
 
-    public void setMetadata(String field, Short value) {
+    protected void setMetadata(String field, Short value) {
         metadata.setShort(field, value);
     }
 
-    public void setMetadata(String field, byte[] value) {
+    protected void setMetadata(String field, byte[] value) {
         metadata.setByteArray(field, value);
     }
 
-    public void setMetadata(String field, int[] value) {
+    protected void setMetadata(String field, int[] value) {
         metadata.setIntArray(field, value);
     }
 
-    public void setMetadata(Location value) {
+    protected void setMetadata(Location value) {
         set("Location", getFromLocation(value));
     }
 
-    public void setMetadata(fInventory inventory) {
+    protected void setMetadata(fInventory inventory) {
         set("Inventory", getFromInventory(inventory));
     }
+    
+    protected void setMetadata(ItemStack stack) {
+        if (Objects.isNull(stack)) return;
+        if (Material.AIR == stack.getType()) return;
+        try {
+			set("stack", new CraftItemStack().getNBTTag(stack));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+    }
 
-    public void set(String field, NBTTagCompound value) {
+    protected void set(String field, NBTTagCompound value) {
         metadata.set(field, value);
     }
 
@@ -111,7 +121,7 @@ public abstract class fSerializer extends fProtocol {
         return inventory;
     }
 
-    public void setBitMask(boolean flag, int field, int i) {
+    protected void setBitMask(boolean flag, int field, int i) {
         byte b0 = (byte) 0;
         if (getWatcher().hasIndex(field)) {
             b0 = (byte) getWatcher().getObject(new WrappedDataWatcherObject(field, Registry.get(Byte.class)));

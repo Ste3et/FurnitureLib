@@ -249,12 +249,10 @@ public class ObjectID extends ObjectData{
         if (bl == null || bl.isEmpty()) {
             return;
         }
-        for (Block b : bl) {
-            if (Objects.nonNull(b)) {
-                FurnitureLib.getInstance().getBlockManager().addBlock(b);
-                this.locList.add(b.getLocation());
-            }
-        }
+        
+        final List<Location> locationList = bl.stream().filter(Objects::nonNull).map(Block::getLocation).collect(Collectors.toList());
+        this.locList.addAll(locationList);
+        FurnitureLib.getInstance().getBlockManager().getList().addAll(locationList);
     }
     
     public void addBlockLocations(List<Location> bl) {

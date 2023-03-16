@@ -1,5 +1,6 @@
 package de.Ste3et_C0st.FurnitureLib.main;
 
+import com.comphenix.protocol.utility.MinecraftVersion;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.Wrapper.packet.WrapperPlayServerEntityDestroy;
@@ -30,6 +31,12 @@ public class FurnitureManager extends ObjectIdManager{
         packetClasses.put("pig", fPig::new);
         packetClasses.put("creeper", fCreeper::new);
         packetClasses.put("giant", fGiant::new);
+        if(FurnitureLib.getVersion(new MinecraftVersion("1.19.4"))) {
+        	packetClasses.put("block_display", fBlock_display::new);
+        	packetClasses.put("item_display", fItem_display::new);
+        	packetClasses.put("text_display", fText_display::new);
+        	packetClasses.put("interaction", fInteraction::new);
+        }
     }
 
     public WrappedDataWatcher watcher = null;

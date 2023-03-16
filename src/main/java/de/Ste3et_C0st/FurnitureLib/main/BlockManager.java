@@ -22,6 +22,7 @@ public class BlockManager implements Listener {
 
     public HashSet<Location> locList = new HashSet<>();
     private List<Listener> listener = new ArrayList<Listener>();
+    private boolean isPaper = false;
     
     public void addBlock(Block block) {
         if (block == null || block.getType() == null) return;
@@ -39,6 +40,7 @@ public class BlockManager implements Listener {
         		if(Objects.isNull(clazz)) {
         			listener.add(new physicsEvent());
         		}else {
+        			isPaper = true;
         			listener.add(new PaperEvents());
         		}
         	}catch (ClassNotFoundException e) {
@@ -100,4 +102,8 @@ public class BlockManager implements Listener {
     	location.getBlockZ() == entry.getBlockZ();
     	return this.locList.stream().filter(predicate).findFirst().orElse(null);
     }
+
+	public boolean isPaper() {
+		return isPaper;
+	}
 }

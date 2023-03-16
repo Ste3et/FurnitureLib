@@ -8,7 +8,9 @@ import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.events.PacketListener;
 import com.comphenix.protocol.wrappers.EnumWrappers.EntityUseAction;
+import com.comphenix.protocol.wrappers.nbt.NbtBase;
 
+import de.Ste3et_C0st.FurnitureLib.NBT.NBTBase;
 import de.Ste3et_C0st.FurnitureLib.SchematicLoader.Events.ProjectBreakEvent;
 import de.Ste3et_C0st.FurnitureLib.SchematicLoader.Events.ProjectClickEvent;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.LanguageManager;
@@ -39,19 +41,29 @@ public class FurnitureProtocolListener {
 	private void init() {
 		ProtocolLibrary.getProtocolManager().addPacketListener(use_entity);
 		ProtocolLibrary.getProtocolManager().addPacketListener(steer_vehicle);
+		//ProtocolLibrary.getProtocolManager().addPacketListener(debug());
 	}
 	
-	@SuppressWarnings("unused")
-	private PacketListener test() {
-		return new PacketAdapter(FurnitureLib.getInstance(), ListenerPriority.HIGHEST, PacketType.Play.Server.SPAWN_ENTITY) {
-			public void onPacketSending(PacketEvent event) {
-				final Player player = event.getPlayer();
-				final PacketContainer container = event.getPacket();
-				player.sendMessage(container.getIntegers().read(0) + " EntityID");
-				player.sendMessage(container.getIntegers().read(1) + " TypeEntityID");
-			}
-		};
-	}
+//	private PacketListener debug() {
+//		return new PacketAdapter(FurnitureLib.getInstance(), ListenerPriority.HIGHEST, PacketType.Play.Server.SPAWN_ENTITY) {
+//			public void onPacketSending(PacketEvent event) {
+//				final Player player = event.getPlayer();
+//				final PacketContainer container = event.getPacket();
+//				player.sendMessage(container.getIntegers().read(0) + " EntityID");
+//				player.sendMessage(container.getIntegers().read(1) + " TypeEntityID");
+//				
+//				for(int i = 0; i < 100; i++) {
+//					NbtBase<?> base = container.getNbtModifier().readSafely(i);
+//					if(Objects.nonNull(base)) {
+//						player.sendMessage(base.getName());
+//					}else {
+//						return;
+//					}
+//				}
+//				
+//			}
+//		};
+//	}
 	
 	private PacketListener steer_vehicle() {
 		return new PacketAdapter(FurnitureLib.getInstance(), ListenerPriority.HIGHEST, PacketType.Play.Client.STEER_VEHICLE) {

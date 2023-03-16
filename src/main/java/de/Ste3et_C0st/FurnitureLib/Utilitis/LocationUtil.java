@@ -80,11 +80,6 @@ public class LocationUtil {
         return axis[Math.round(yaw / 90f) & 0x3];
     }
 
-//	@SuppressWarnings("deprecation")
-//	public Color getDyeFromDurability(short s){
-//		return DyeColor.getByDyeData((byte) s).getColor();
-//	}
-
     public EulerAngle degresstoRad(EulerAngle degressAngle) {
         return new EulerAngle(degressAngle.getX() * Math.PI / 180, degressAngle.getY() * Math.PI / 180, degressAngle.getZ() * Math.PI / 180);
     }

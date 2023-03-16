@@ -3,7 +3,6 @@ package de.Ste3et_C0st.FurnitureLib.main.entity;
 import com.comphenix.protocol.wrappers.Vector3F;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.Registry;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
-import com.destroystokyo.paper.ParticleBuilder;
 
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.DefaultKey;
@@ -15,13 +14,11 @@ import de.Ste3et_C0st.FurnitureLib.main.Type;
 import de.Ste3et_C0st.FurnitureLib.main.Type.BodyPart;
 
 import org.bukkit.Location;
-import org.bukkit.Particle;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.util.EulerAngle;
 import java.util.HashMap;
-import java.util.stream.Stream;
 
 public class fArmorStand extends fEntity{
 
@@ -311,16 +308,16 @@ public class fArmorStand extends fEntity{
 //		return this.isSmall() ? new BoundingBox(x1, y1, z1) : BoundingBox.;
 //	}
 	
-	public void debug() {
-		Stream.of(BodyPart.values()).forEach(entry -> {
-			if(entry == BodyPart.HEAD) {
-				ParticleBuilder builder = new ParticleBuilder(Particle.FLAME);
-				builder.location(getLocation().add(0, 1.3, 0));
-				builder.offset(0, 0, 0);
-				builder.count(1);
-				builder.allPlayers();
-				builder.spawn();
-			}
-		});
-	}
+//	public void debug() {
+//		Stream.of(BodyPart.values()).forEach(entry -> {
+//			if(entry == BodyPart.HEAD) {
+//				ParticleBuilder builder = new ParticleBuilder(Particle.FLAME);
+//				builder.location(getLocation().add(0, 1.3, 0));
+//				builder.offset(0, 0, 0);
+//				builder.count(1);
+//				builder.allPlayers();
+//				builder.spawn();
+//			}
+//		});
+//	}
 }
