@@ -76,10 +76,10 @@ dependencies {
     compileOnly files('tempDependenys/ProtocolLib.jar')
 }
 
-sourceCompatibility = 1.8
-targetCompatibility = 1.8
+sourceCompatibility = 17
+targetCompatibility = 17
 
-version = '2.9.3'
+version = '3.0.0'
 group = 'de.Ste3et_C0st.furniture'
 
 shadowJar.archiveFileName = "${project.name}-${project.version}.jar"

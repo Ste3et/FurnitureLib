@@ -52,13 +52,14 @@ public class fBlock_display extends fDisplay{
 		
 	}
 	
-	public void setBlockData(final Material material) {
-		this.setBlockData(material.createBlockData());
+	public fBlock_display setBlockData(final Material material) {
+		return this.setBlockData(material.createBlockData());
 	}
 	
-	public void setBlockData(final BlockData blockData) {
+	public fBlock_display setBlockData(final BlockData blockData) {
 		this.blockDefaultKey.setValue(blockData);
 		getWatcher().setObject(new WrappedDataWatcherObject(22, Registry.getBlockDataSerializer(false)), WrappedBlockData.createData(blockData));
+		return this;
 	}
 	
 	public EntitySize getEntitySize() {
