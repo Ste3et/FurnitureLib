@@ -60,4 +60,14 @@ public class ItemStackBuilder {
 	public ItemStack build() {
 		return this.stack;
 	}
+	
+	public static ItemStackBuilder of(Material material) {
+		return of(new ItemStack(material));
+	}
+	
+	public static ItemStackBuilder of(ItemStack stack) {
+		final ItemStackBuilder builder = new ItemStackBuilder(stack.getType());
+		builder.setMeta(stack.getItemMeta());
+		return builder;
+	}
 }
