@@ -65,6 +65,10 @@ public class ItemStackBuilder {
 		return of(new ItemStack(material));
 	}
 	
+	public static ItemStackBuilder of(String string) {
+		return of(Material.valueOf(string));
+	}
+	
 	public static ItemStackBuilder of(ItemStack stack) {
 		final ItemStackBuilder builder = new ItemStackBuilder(stack.getType());
 		builder.setMeta(stack.getItemMeta());
