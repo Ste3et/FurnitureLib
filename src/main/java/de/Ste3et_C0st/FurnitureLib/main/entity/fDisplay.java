@@ -23,8 +23,8 @@ public class fDisplay extends fEntity{
 	private DefaultKey<AxisAngle4f> leftRotation = new DefaultKey<AxisAngle4f>(new AxisAngle4f()), rightRotation = new DefaultKey<AxisAngle4f>(new AxisAngle4f());
 	
 	private DefaultKey<Billboard> billboard = new DefaultKey<Billboard>(Billboard.FIXED);
-	private DefaultKey<Float> viewRange = new DefaultKey<Float>(1f), shadowRadius = new DefaultKey<Float>(0f), shadowStrength = new DefaultKey<Float>(1f), width = new DefaultKey<Float>(1f), height = new DefaultKey<Float>(1f);
-	private DefaultKey<Integer> interpolationDelay = new DefaultKey<Integer>(0), interpolationDuration = new DefaultKey<Integer>(0), brightness = new DefaultKey<Integer>(0), glow_override = new DefaultKey<Integer>(0);
+	private DefaultKey<Float> viewRange = new DefaultKey<Float>(1f), shadowRadius = new DefaultKey<Float>(0f), shadowStrength = new DefaultKey<Float>(1f), width = new DefaultKey<Float>(0f), height = new DefaultKey<Float>(0f);
+	private DefaultKey<Integer> interpolationDelay = new DefaultKey<Integer>(0), interpolationDuration = new DefaultKey<Integer>(0), brightness = new DefaultKey<Integer>(-1), glow_override = new DefaultKey<Integer>(-1);
 	
 	public fDisplay(Location loc, EntityType type, int entityID, ObjectID id) {
 		super(loc, type, entityID, id);
@@ -48,7 +48,23 @@ public class fDisplay extends fEntity{
 
 	@Override
 	public void copyMetadata(fEntity entity) {
-		
+		if(entity instanceof fDisplay) {
+			fDisplay display = this.getClass().cast(entity);
+			this.setBillboard(display.getBillboard());
+			this.setScale(display.getScale());
+			this.setLeftRotation(display.getLeftRotationObj());
+			this.setRightRotation(display.getRightRotationObj());
+			this.setTranslation(display.getTranslation());
+			this.setInterpolationDelay(display.getInterpolationDelay());
+			this.setInterpolationDuration(display.getInterpolationDuration());
+			this.setViewRange(display.getViewRange());
+			this.setShadowRadius(display.getShadowRadius());
+			this.setShadowStrength(display.getShadowStrength());
+			this.setWidth(display.getWidth());
+			this.setHeight(display.getHeight());
+			this.setBrightness(display.getBrightness());
+			this.setGlowOverride(display.getGlowOverride());
+		}
 	}
 
 	@Override
@@ -56,8 +72,17 @@ public class fDisplay extends fEntity{
 		
 	}
 	
+	protected void clone(fEntity entity) {
+		
+	}
+	
 	public void setScale(Vector3f vector) {
 		this.scale.setValue(vector);
+		this.writeTransformation();
+	}
+	
+	public void setTranslation(Vector3f vector) {
+		this.translation.setValue(vector);
 		this.writeTransformation();
 	}
 	
@@ -73,6 +98,22 @@ public class fDisplay extends fEntity{
 	
 	public int getInterpolationDelay() {
 		return this.interpolationDelay.getOrDefault();
+	}
+	
+	public AxisAngle4f getLeftRotationObj() {
+		return this.leftRotation.getOrDefault();
+	}
+	
+	public AxisAngle4f getRightRotationObj() {
+		return this.rightRotation.getOrDefault();
+	}
+	
+	public Vector3f getScale() {
+		return this.scale.getOrDefault();
+	}
+	
+	public Vector3f getTranslation() {
+		return this.translation.getOrDefault();
 	}
 	
 	public Quaternionf getLeftRotation() {
@@ -192,7 +233,7 @@ public class fDisplay extends fEntity{
 	
 	public fDisplay setGlowOverride(int i) {
 		this.glow_override.setValue(i);
-		getWatcher().setObject(new WrappedDataWatcherObject(21, Registry.get(Float.class)), this.getGlowOverride());
+		getWatcher().setObject(new WrappedDataWatcherObject(21, Registry.get(Integer.class)), this.getGlowOverride());
 		return this;
 	}
 	

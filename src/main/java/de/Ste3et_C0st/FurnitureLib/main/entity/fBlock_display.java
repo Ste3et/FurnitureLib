@@ -39,12 +39,17 @@ public class fBlock_display extends fDisplay{
 	@Override
 	public fBlock_display clone() {
 		final fBlock_display display = new fBlock_display(null, getObjID());
+		display.copyMetadata(this);
 		return display;
 	}
 
 	@Override
 	public void copyMetadata(fEntity entity) {
-		
+		if(entity instanceof fBlock_display) {
+			super.copyMetadata(entity);
+			fBlock_display blockDisplay = this.getClass().cast(entity);
+			this.setBlockData(blockDisplay.getBlockData());
+		}
 	}
 
 	@Override
@@ -60,6 +65,10 @@ public class fBlock_display extends fDisplay{
 		this.blockDefaultKey.setValue(blockData);
 		getWatcher().setObject(new WrappedDataWatcherObject(22, Registry.getBlockDataSerializer(false)), WrappedBlockData.createData(blockData));
 		return this;
+	}
+	
+	public BlockData getBlockData() {
+		return this.blockDefaultKey.getOrDefault();
 	}
 	
 	public EntitySize getEntitySize() {
