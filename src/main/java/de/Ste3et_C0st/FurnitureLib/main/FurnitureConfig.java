@@ -266,7 +266,6 @@ public class FurnitureConfig {
                     if (!furnitureConfig.contains(defaultKey, true)) {
                     	furnitureConfig.set(defaultKey, defaults.get(defaultKey));
                         change = true;
-                        System.out.println(defaultKey + ":" + defaults.get(defaultKey) + ",contains: " + getConfig().contains(defaultKey));
                     }
                     
                 }

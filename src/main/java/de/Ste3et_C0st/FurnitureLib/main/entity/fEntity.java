@@ -147,7 +147,7 @@ public abstract class fEntity extends fSerializer implements Cloneable {
             this.pitch = ((byte) (int) (loc.getPitch() * 256.0F / 360.0F));
             getHandle().getDoubles().write(0, this.positionX).write(1, this.positionY).write(2, this.positionZ);
             //pitch is unused
-            getHandle().getBytes().write(0, this.yaw).write(1, this.yaw);
+            getHandle().getBytes().write(0, this.pitch).write(1, this.yaw);
         }
     }
 

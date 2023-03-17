@@ -313,25 +313,25 @@ public class fDisplay extends fEntity{
         	final NBTTagCompound transformation = metadata.getCompound("transformation");
         	
         	if(transformation.hasKeyOfType("translation", 10)) {
-        		final NBTTagCompound translation = metadata.getCompound("translation");
+        		final NBTTagCompound translation = transformation.getCompound("translation");
         		final Vector3f vector3f = new Vector3f(translation.getFloat("x"), translation.getFloat("y"), translation.getFloat("z"));
         		this.translation.setValue(vector3f);
         	}
         	
         	if(transformation.hasKeyOfType("scale", 10)) {
-        		final NBTTagCompound scale = metadata.getCompound("scale");
+        		final NBTTagCompound scale = transformation.getCompound("scale");
         		final Vector3f vector3f = new Vector3f(scale.getFloat("x"), scale.getFloat("y"), scale.getFloat("z"));
         		this.scale.setValue(vector3f);
         	}
         	
         	if(transformation.hasKeyOfType("leftRotation", 10)) {
-        		final NBTTagCompound leftRotation = metadata.getCompound("leftRotation");
+        		final NBTTagCompound leftRotation = transformation.getCompound("leftRotation");
         		final AxisAngle4f axisAngle4f = new AxisAngle4f(leftRotation.getFloat("angle"), leftRotation.getFloat("x"), leftRotation.getFloat("y"), leftRotation.getFloat("z"));
         		this.leftRotation.setValue(axisAngle4f);
         	}
         	
         	if(transformation.hasKeyOfType("rightRotation", 10)) {
-        		final NBTTagCompound rightRotation = metadata.getCompound("rightRotation");
+        		final NBTTagCompound rightRotation = transformation.getCompound("rightRotation");
         		final AxisAngle4f axisAngle4f = new AxisAngle4f(rightRotation.getFloat("angle"), rightRotation.getFloat("x"), rightRotation.getFloat("y"), rightRotation.getFloat("z"));
         		this.rightRotation.setValue(axisAngle4f);
         	}

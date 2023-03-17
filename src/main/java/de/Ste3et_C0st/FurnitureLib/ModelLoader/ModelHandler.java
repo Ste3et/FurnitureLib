@@ -8,6 +8,7 @@ import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.CenterType;
 import de.Ste3et_C0st.FurnitureLib.main.Type.PlaceableSide;
+import de.Ste3et_C0st.FurnitureLib.main.entity.fDisplay;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -89,6 +90,7 @@ public class ModelHandler extends Modelschematic {
  			entityLocation.setYaw(rotateVector.getYaw());
  			entityLocation.setPitch(rotateVector.getPitch());
  			entity.setLocation(entityLocation);
+ 			
  			locationList.add(entity);
  			String customName = entity.getCustomName();
  			if (customName.equalsIgnoreCase("#ITEM#")

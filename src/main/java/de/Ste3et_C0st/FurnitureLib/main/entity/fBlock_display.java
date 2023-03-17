@@ -85,6 +85,6 @@ public class fBlock_display extends fDisplay{
 	@Override
     public void loadMetadata(NBTTagCompound metadata) {
         super.loadMetadata(metadata);
-        if(metadata.hasKeyOfType("blockData", 8)) Bukkit.createBlockData(metadata.getString("blockData"));
+        if(metadata.hasKeyOfType("blockData", 8)) this.setBlockData(Bukkit.createBlockData(metadata.getString("blockData")));
 	}
 }
