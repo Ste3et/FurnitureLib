@@ -42,12 +42,25 @@ public class fText_display extends fDisplay{
 
 	@Override
 	public fEntity clone() {
-		return null;
+		final fText_display display = new fText_display(null, getObjID());
+		display.copyMetadata(this);
+		return display;
 	}
 
 	@Override
 	public void copyMetadata(fEntity entity) {
-		
+		if(entity instanceof fText_display) {
+			super.copyMetadata(entity);
+			fText_display display = fText_display.class.cast(entity);
+			this.setSeeThrough(display.isSeeThrough());
+			this.setDefaultBackground(display.isDefaultBackground());
+			this.setText(display.getText());
+			this.setBackgroundColor(display.getBackgroundColorInt());
+			this.setLineWidth(display.getLineWidth());
+			this.setTextOpacity(display.getTextOpacity());
+			this.setAlignment(display.getTextAligment());
+			this.setShadowed(display.isShadowed());
+		}
 	}
 
 	@Override
@@ -60,8 +73,8 @@ public class fText_display extends fDisplay{
 	}
 	
 	public int getBackgroundColorInt() {
-		return this.background_color.getOrDefault();
-	}
+		return background_color.getOrDefault();
+    }
 	
 	public byte getTextOpacity() {
 		return this.text_opacity.getOrDefault();
@@ -79,11 +92,6 @@ public class fText_display extends fDisplay{
 		return this.style_flags.getOrDefault();
 	}
 	
-	public Color getBackgroundColor() {
-		int color = getBackgroundColorInt();
-		return (color == -1) ? null : Color.fromRGB(color);
-	}
-	
 	public fText_display setText(String text) {
 		this.text.setValue(text);
 		getWatcher().setObject(new WrappedDataWatcherObject(22, Registry.getChatComponentSerializer(false)), WrappedChatComponent.fromText(text).getHandle());
@@ -94,10 +102,6 @@ public class fText_display extends fDisplay{
 		this.lineWitdth.setValue(width);
 		getWatcher().setObject(new WrappedDataWatcherObject(23, Registry.get(Integer.class)), this.getLineWidth());
 		return this;
-	}
-	
-	public fText_display setBackgroundColor(Color color) {
-		return this.setBackgroundColor(color.asRGB());
 	}
 	
 	public fText_display setBackgroundColor(int color) {
@@ -179,14 +183,14 @@ public class fText_display extends fDisplay{
 	@Override
     public void loadMetadata(NBTTagCompound metadata) {
         super.loadMetadata(metadata);
-        if(metadata.hasKeyOfType("lineWitdth", 8)) this.setLineWidth(metadata.getInt("lineWitdth"));
-        if(metadata.hasKeyOfType("background_color", 8)) this.setBackgroundColor(metadata.getInt("background_color"));
-        if(metadata.hasKeyOfType("text_opacity", 8)) this.setTextOpacity(metadata.getByte("text_opacity"));
+        if(metadata.hasKeyOfType("lineWitdth", 3)) this.setLineWidth(metadata.getInt("lineWitdth"));
+        if(metadata.hasKeyOfType("background_color", 3)) this.setBackgroundColor(metadata.getInt("background_color"));
+        if(metadata.hasKeyOfType("text_opacity", 3)) this.setTextOpacity(metadata.getByte("text_opacity"));
         
         if(metadata.hasKeyOfType("text", 8)) this.setText(metadata.getString("text"));
-        if(metadata.hasKeyOfType("shadowed", 8)) this.setShadowed(metadata.getBoolean("shadowed"));
-        if(metadata.hasKeyOfType("seeThrough", 8)) this.setSeeThrough(metadata.getBoolean("seeThrough"));
-        if(metadata.hasKeyOfType("defaultBackground", 8)) this.setDefaultBackground(metadata.getBoolean("defaultBackground"));
+        if(metadata.hasKeyOfType("shadowed", 3)) this.setShadowed(metadata.getInt("shadowed") == 1);
+        if(metadata.hasKeyOfType("seeThrough", 3)) this.setSeeThrough(metadata.getInt("seeThrough") == 1);
+        if(metadata.hasKeyOfType("defaultBackground", 3)) this.setDefaultBackground(metadata.getInt("defaultBackground") == 1);
         
         if(metadata.hasKeyOfType("style_flags", 8)) {
         	try {

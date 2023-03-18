@@ -4,6 +4,7 @@ import org.bukkit.Location;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Display.Billboard;
+import org.bukkit.entity.Display.Brightness;
 import org.bukkit.util.Transformation;
 
 import org.joml.AxisAngle4f;
@@ -74,6 +75,36 @@ public class fDisplay extends fEntity{
 	
 	protected void clone(fEntity entity) {
 		
+	}
+	
+	public fDisplay setBlockLight(int lightLevel) {
+		final Brightness brightness = new Brightness(lightLevel, this.getSkyLight());
+		this.setBrightness(brightness);
+		return this;
+	}
+	
+	public fDisplay setSkyLight(int skyLight) {
+		final Brightness brightness = new Brightness(this.getBlockLight(), skyLight);
+		this.setBrightness(brightness);
+		return this;
+	}
+	
+	public fDisplay setBrightness(Brightness brightness) {
+		return this.setBrightness(brightness.getBlockLight() << 4 | brightness.getSkyLight() << 20);
+	}
+	
+	public Brightness getBrightnessObject() {
+	    int var1 = this.brightness.getOrDefault() >> 4 & 0xFFFF;
+	    int var2 = this.brightness.getOrDefault() >> 20 & 0xFFFF;
+	    return new Brightness(var1, var2);
+	}
+	
+	public int getSkyLight() {
+		return getBrightnessObject().getSkyLight();
+	}
+	
+	public int getBlockLight() {
+		return getBrightnessObject().getBlockLight();
 	}
 	
 	public void setScale(Vector3f vector) {

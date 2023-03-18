@@ -34,12 +34,18 @@ public class fInteraction extends fEntity{
 
 	@Override
 	public fEntity clone() {
-		return null;
+		final fInteraction interaction = new fInteraction(null, getObjID());
+		interaction.copyMetadata(interaction);
+		return interaction;
 	}
 
 	@Override
 	public void copyMetadata(fEntity entity) {
-		
+		if(entity instanceof fInteraction) {
+			fInteraction interaction = (fInteraction) entity; 
+			interaction.setDimansion(this.getWidth(), this.getHeight());
+			interaction.setResponse(this.hasResponse());
+		}
 	}
 
 	@Override
@@ -63,14 +69,14 @@ public class fInteraction extends fEntity{
 	
 	public fInteraction setWidth(final float width) {
 		this.width.setValue(width);
-		this.entitySize.setValue(new EntitySize(this.getWidth(), this.entitySize.getValue().getHeight()));
+		//this.entitySize.setValue(new EntitySize(this.getWidth(), this.entitySize.getValue().getHeight()));
 		getWatcher().setObject(new WrappedDataWatcherObject(8, Registry.get(Float.class)), this.getWidth());
 		return this;
 	}
 	
 	public fInteraction setHeight(final float width) {
 		this.height.setValue(width);
-		this.entitySize.setValue(new EntitySize(this.entitySize.getValue().getWidth(), this.getHeight()));
+		//this.entitySize.setValue(new EntitySize(this.entitySize.getValue().getWidth(), this.getHeight()));
 		getWatcher().setObject(new WrappedDataWatcherObject(9, Registry.get(Float.class)), this.getHeight());
 		return this;
 	}
@@ -85,7 +91,7 @@ public class fInteraction extends fEntity{
 		return this.entitySize.getOrDefault();
 	}
 	
-	private Boolean hasResponse() {
+	public Boolean hasResponse() {
 		return this.response.getOrDefault();
 	}
 
