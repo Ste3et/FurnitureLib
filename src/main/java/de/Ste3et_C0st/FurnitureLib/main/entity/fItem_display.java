@@ -112,4 +112,9 @@ public class fItem_display extends fDisplay{
 			}
         }
 	}
+	
+	@Override
+	protected Material getDestroyMaterial() {
+		return getStack().getType().isBlock() ? getStack().getType() : Material.AIR;
+	}
 }

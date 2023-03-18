@@ -5,6 +5,7 @@ import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.SchematicLoader.functions.functionManager;
 import de.Ste3et_C0st.FurnitureLib.SchematicLoader.functions.projectFunction;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fArmorStand;
+import de.Ste3et_C0st.FurnitureLib.main.entity.fContainerEntity;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -92,23 +93,26 @@ public abstract class Furniture extends FurnitureHelper implements Listener {
             if (m.equals(Material.AIR) || !m.isBlock()) {
                 for (fEntity stand : getfAsList()) {
                     if (stand.getName().startsWith("#ITEM")) {
-                        if (stand.getInventory().getItemInMainHand() != null
-                                && !stand.getInventory().getItemInMainHand().getType().equals(Material.AIR)) {
-                            ItemStack is = stand.getInventory().getItemInMainHand();
-                            is.setAmount(1);
-                            getWorld().dropItem(getLocation(), is);
-                        }
-                        if (p.getInventory().getItemInMainHand() != null) {
-                            ItemStack is = p.getInventory().getItemInMainHand().clone();
-                            if (is.getAmount() <= 0) {
-                                is.setAmount(0);
-                            } else {
+                    	if(stand instanceof fContainerEntity) {
+                    		fContainerEntity container = fContainerEntity.class.cast(stand);
+                    		if (container.getInventory().getItemInMainHand() != null
+                                    && !container.getInventory().getItemInMainHand().getType().equals(Material.AIR)) {
+                                ItemStack is = container.getInventory().getItemInMainHand();
                                 is.setAmount(1);
+                                getWorld().dropItem(getLocation(), is);
                             }
-                            stand.setItemInMainHand(is);
-                            stand.update();
-                            consumeItem(p);
-                        }
+                            if (p.getInventory().getItemInMainHand() != null) {
+                                ItemStack is = p.getInventory().getItemInMainHand().clone();
+                                if (is.getAmount() <= 0) {
+                                    is.setAmount(0);
+                                } else {
+                                    is.setAmount(1);
+                                }
+                                container.setItemInMainHand(is);
+                                stand.update();
+                                consumeItem(p);
+                            }
+                    	}
                         return true;
                     }
                     if (stand.getName().startsWith("/")) {

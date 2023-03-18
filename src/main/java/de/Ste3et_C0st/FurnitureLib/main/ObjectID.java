@@ -325,7 +325,7 @@ public class ObjectID extends ObjectData{
         if (getProjectOBJ().isSilent()) {
             return;
         }
-        asList.stream().filter(entity -> entity.getHelmet() != null && entity.getHelmet().getType().isBlock()).limit(6)
+        asList.stream().filter(entity -> entity.haveDestroyMaterial()).limit(6)
                 .forEach(fEntity::sendParticle);
     }
 

@@ -6,6 +6,7 @@ import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.config;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
+import de.Ste3et_C0st.FurnitureLib.main.entity.fContainerEntity;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
@@ -63,7 +64,8 @@ public class ProjectInventory implements Listener {
                         String[] args = name.split(",");
                         int slot = Integer.parseInt(args[1]);
                         int entitySlot = Integer.parseInt(args[0]);
-                        entity.getInventory().setSlot(entitySlot, inv.getItem(slot));
+                        
+                        if(entity instanceof fContainerEntity) fContainerEntity.class.cast(entity).getInventory().setSlot(entitySlot, inv.getItem(slot));
                     }
                     this.id.update();
                 }

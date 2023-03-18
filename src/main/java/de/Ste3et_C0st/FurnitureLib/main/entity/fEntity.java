@@ -48,7 +48,7 @@ public abstract class fEntity extends fSerializer implements Cloneable {
     private int entityTypeID;
     private double positionX, positionY, positionZ;
     private byte yaw, pitch;
-    private fInventory entityInventory = new fInventory(this.entityID);
+    
     private Location location;
     private DefaultKey<String> customName = new DefaultKey<String>("");
     
@@ -151,75 +151,8 @@ public abstract class fEntity extends fSerializer implements Cloneable {
         }
     }
 
-    public fInventory getEquipment() {
-        return this.entityInventory;
-    }
-
-    public fInventory getInventory() {
-        return this.entityInventory;
-    }
-
-    public fEntity setInventory(fInventory inv) {
-        this.entityInventory = inv;
-        return this;
-    }
-
-    public ItemStack getBoots() {
-        return getInventory().getBoots();
-    }
-
-    public fEntity setBoots(ItemStack is) {
-        getInventory().setBoots(is);
-        return this;
-    }
-
-    public ItemStack getHelmet() {
-        return getInventory().getHelmet();
-    }
-
-    public fEntity setHelmet(ItemStack is) {
-        getInventory().setHelmet(is);
-        return this;
-    }
-
-    public ItemStack getChestPlate() {
-        return getInventory().getChestPlate();
-    }
-
-    public fEntity setChestPlate(ItemStack is) {
-        getInventory().setChestPlate(is);
-        return this;
-    }
-
-    public ItemStack getLeggings() {
-        return getInventory().getLeggings();
-    }
-
-    public fEntity setLeggings(ItemStack is) {
-        getInventory().setLeggings(is);
-        return this;
-    }
-
     public fEntity setGravity(boolean gravity) {
         this.gravity.setValue(Boolean.valueOf(gravity));
-        return this;
-    }
-
-    public ItemStack getItemInMainHand() {
-        return getInventory().getItemInMainHand();
-    }
-
-    public fEntity setItemInMainHand(ItemStack is) {
-        getInventory().setItemInMainHand(is);
-        return this;
-    }
-
-    public ItemStack getItemInOffHand() {
-        return getInventory().getItemInOffHand();
-    }
-
-    public fEntity setItemInOffHand(ItemStack is) {
-        getInventory().setItemInOffHand(is);
         return this;
     }
 
@@ -325,7 +258,8 @@ public abstract class fEntity extends fSerializer implements Cloneable {
     }
 
     public void sendParticle() {
-        getObjID().getWorld().playEffect(getLocation(), Effect.STEP_SOUND, getHelmet().getType());
+    	Material material = getDestroyMaterial();
+        getObjID().getWorld().playEffect(getLocation(), Effect.STEP_SOUND, material);
     }
 
     public fEntity setNameVisibility(boolean nameVisibility) {
@@ -379,8 +313,11 @@ public abstract class fEntity extends fSerializer implements Cloneable {
     public void send(Player player) {
         try {
             getManager().sendServerPacket(player, getHandle());
-            this.sendInventoryPacket(player);
             this.sendMetadata(player);
+            
+            if(getPassenger().isEmpty() == false) {
+            	   getManager().sendServerPacket(player, this.mountPacketContainer);
+             }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -431,7 +368,6 @@ public abstract class fEntity extends fSerializer implements Cloneable {
        
        try {
     	   sendMetadata(p);
-           this.sendInventoryPacket(p);
            if(getPassenger().isEmpty() == false) {
            	  getManager().sendServerPacket(p, mountPacketContainer);
            }
@@ -504,44 +440,11 @@ public abstract class fEntity extends fSerializer implements Cloneable {
         this.passengerIDs.clear();
     }
 
-    public void sendInventoryPacket(final Player player) {
-        List<PacketContainer> packets = this.entityInventory.createPackets();
-        if (packets.isEmpty())
-            return;
-        try {
-            for (final PacketContainer packet : packets) {
-                if (player == null || packet == null || getManager() == null) {
-                    return;
-                }
-                getManager().sendServerPacket(player, packet);
-            }
-            if(getPassenger().isEmpty() == false) {
-           	   getManager().sendServerPacket(player, this.mountPacketContainer);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
     @Deprecated
     public void sendParticle(Location loc, int particleID, boolean repeat) {}
 
     @SuppressWarnings("unchecked")
 	public void loadMetadata(NBTTagCompound metadata) {
-    	if(metadata.hasKeyOfType("Inventory", 10)) {
-    		NBTTagCompound inventory = metadata.getCompound("Inventory");
-    		inventory.c().stream().forEach(entry -> {
-    			String name = (String) entry;
-    			if (inventory.getString(name).equalsIgnoreCase("NONE") == false) {
-    				NBTTagCompound compound = inventory.getCompound(name);
-                    ItemStack is = new CraftItemStack().getItemStack(compound);
-                    if(is.getType().name().equalsIgnoreCase("PLAYER_HEAD") && SkullMetaPatcher.shouldPatch()) {
-                    	is = SkullMetaPatcher.patch(is, compound);
-                    }
-                    this.getInventory().setSlot(name, is);
-                }
-    		});
-    	}
         this.setNameVisibility((metadata.getInt("NameVisible") == 1));
         this.setName(metadata.getString("Name"));
         this.setFire((metadata.getInt("Fire") == 1));
@@ -557,7 +460,13 @@ public abstract class fEntity extends fSerializer implements Cloneable {
         if(!this.nameVisible.isDefault()) setMetadata("NameVisible", this.isCustomNameVisible());
         if(!this.glowing.isDefault()) setMetadata("Glowing", this.isGlowing());
         setMetadata(this.getLocation());
-        if(!getInventory().isEmpty()) setMetadata(this.getInventory());
         return this.getNBTField();
+    }
+    
+    protected abstract Material getDestroyMaterial();
+    
+    public boolean haveDestroyMaterial() {
+    	final Material material = getDestroyMaterial();
+    	return material != null && material.isBlock();
     }
 }

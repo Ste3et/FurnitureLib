@@ -2,6 +2,7 @@ package de.Ste3et_C0st.FurnitureLib.SchematicLoader.functions;
 
 import com.google.gson.JsonObject;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
+import de.Ste3et_C0st.FurnitureLib.main.entity.fContainerEntity;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -28,7 +29,7 @@ public class replaceFunction extends projectFunction {
                         this.searchEntityByName(jsonObject.get("entityName").getAsString(), id);
                 if (Objects.nonNull(entities) && !entities.isEmpty()) {
                     toReplace.setAmount(1);
-                    entities.forEach(entity -> {
+                    entities.stream().filter(fContainerEntity.class::isInstance).map(fContainerEntity.class::cast).forEach(entity -> {
                         ItemStack stack = entity.getInventory().getSlot(equipmentslot);
                         if (!stack.equals(toReplace)) {
                             bool.set(true);

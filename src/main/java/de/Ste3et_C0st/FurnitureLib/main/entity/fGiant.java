@@ -5,12 +5,13 @@ import com.comphenix.protocol.events.PacketContainer;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Giant;
 import org.bukkit.entity.Player;
 
-public class fGiant extends fEntity {
+public class fGiant extends fContainerEntity{
 
     public static EntityType type = EntityType.GIANT;
     private boolean AI = true;
@@ -90,5 +91,10 @@ public class fGiant extends fEntity {
 	public void copyMetadata(fEntity entity) {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	@Override
+	protected Material getDestroyMaterial() {
+		return Material.STONE;
 	}
 }

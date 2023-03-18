@@ -5,11 +5,12 @@ import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObje
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Pig;
 
-public class fPig extends fEntity {
+public class fPig extends fContainerEntity{
 
     public static EntityType type = EntityType.PIG;
     private boolean saddle = false;
@@ -70,5 +71,10 @@ public class fPig extends fEntity {
 	public void copyMetadata(fEntity entity) {
 		// TODO Auto-generated method stub
 		
+	}
+	
+	@Override
+	protected Material getDestroyMaterial() {
+		return Material.STONE;
 	}
 }

@@ -1,7 +1,7 @@
 package de.Ste3et_C0st.FurnitureLib.main.entity;
 
-import org.bukkit.Color;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.TextDisplay.TextAligment;
@@ -200,6 +200,11 @@ public class fText_display extends fDisplay{
 				e.printStackTrace();
 			}
         }
+	}
+	
+	@Override
+	protected Material getDestroyMaterial() {
+		return Material.AIR;
 	}
 
 }

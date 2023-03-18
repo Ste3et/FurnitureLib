@@ -9,6 +9,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 
+import de.Ste3et_C0st.FurnitureLib.main.entity.fContainerEntity;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
 
 public class itemFunction extends modularFunction{
@@ -21,7 +22,7 @@ public class itemFunction extends modularFunction{
 		ItemStack stack = player.getInventory().getItemInMainHand().clone();
 		stack.setAmount(stack.getAmount() <= 0 ? 0 : 1);
 		
-		collection.stream().forEach(entity -> {
+		collection.stream().filter(fContainerEntity.class::isInstance).map(fContainerEntity.class::cast).forEach(entity -> {
 			if (entity.getInventory().getItemInMainHand() != null && entity.getInventory().getItemInMainHand().getType() != Material.AIR) {
 				ItemStack is = entity.getInventory().getItemInMainHand();
                 is.setAmount(1);

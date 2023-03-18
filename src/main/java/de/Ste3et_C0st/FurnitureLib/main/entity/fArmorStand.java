@@ -14,13 +14,14 @@ import de.Ste3et_C0st.FurnitureLib.main.Type;
 import de.Ste3et_C0st.FurnitureLib.main.Type.BodyPart;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.util.EulerAngle;
 import java.util.HashMap;
 
-public class fArmorStand extends fEntity{
+public class fArmorStand extends fContainerEntity{
 
     public static EntityType type = EntityType.ARMOR_STAND;
     private int armorstandID;
@@ -301,6 +302,11 @@ public class fArmorStand extends fEntity{
 	
 	public EntitySize getEntitySize() {
 		return this.entitySize.getOrDefault();
+	}
+
+	@Override
+	protected Material getDestroyMaterial() {
+		return getHelmet() != null ? getHelmet().getType() : Material.AIR;
 	}
     
 //	@Override

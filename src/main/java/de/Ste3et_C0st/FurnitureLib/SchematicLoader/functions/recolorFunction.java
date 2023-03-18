@@ -3,6 +3,7 @@ package de.Ste3et_C0st.FurnitureLib.SchematicLoader.functions;
 import com.google.gson.JsonObject;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.DyeColor;
+import de.Ste3et_C0st.FurnitureLib.main.entity.fContainerEntity;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
@@ -32,7 +33,7 @@ public class recolorFunction extends projectFunction {
 
                 if (!entities.isEmpty()) {
                     AtomicBoolean bool = new AtomicBoolean(false);
-                    entities.forEach(entity -> {
+                    entities.stream().filter(fContainerEntity.class::isInstance).map(fContainerEntity.class::cast).forEach(entity -> {
                         ItemStack stack = entity.getInventory().getSlot(equipmentslot);
                         DyeColor now = DyeColor.getDyeToReplace(entity.getInventory().getHelmet().getType());
                         if (!now.equals(color)) {

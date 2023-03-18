@@ -1,6 +1,7 @@
 package de.Ste3et_C0st.FurnitureLib.main.entity;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Display.Billboard;
@@ -18,7 +19,7 @@ import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.DefaultKey;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 
-public class fDisplay extends fEntity{
+public abstract class fDisplay extends fEntity{
 	
 	private DefaultKey<Vector3f> translation = new DefaultKey<Vector3f>(new Vector3f()), scale = new DefaultKey<Vector3f>(new Vector3f());
 	private DefaultKey<AxisAngle4f> leftRotation = new DefaultKey<AxisAngle4f>(new AxisAngle4f()), rightRotation = new DefaultKey<AxisAngle4f>(new AxisAngle4f());
@@ -96,7 +97,7 @@ public class fDisplay extends fEntity{
 	public Brightness getBrightnessObject() {
 	    int var1 = this.brightness.getOrDefault() >> 4 & 0xFFFF;
 	    int var2 = this.brightness.getOrDefault() >> 20 & 0xFFFF;
-	    return new Brightness(var1, var2);
+	    return new Brightness(0 <= var1 && var1 <= 15 ? var1 : 0, 0 <= var2 && var2 <= 15 ? var2 : 0);
 	}
 	
 	public int getSkyLight() {
@@ -370,4 +371,9 @@ public class fDisplay extends fEntity{
         	this.writeTransformation();
         }
     }
+
+	@Override
+	protected Material getDestroyMaterial() {
+		return Material.AIR;
+	}
 }

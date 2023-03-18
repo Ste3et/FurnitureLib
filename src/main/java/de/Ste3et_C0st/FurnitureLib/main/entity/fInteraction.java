@@ -1,6 +1,7 @@
 package de.Ste3et_C0st.FurnitureLib.main.entity;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 
@@ -35,7 +36,7 @@ public class fInteraction extends fEntity{
 	@Override
 	public fEntity clone() {
 		final fInteraction interaction = new fInteraction(null, getObjID());
-		interaction.copyMetadata(interaction);
+		interaction.copyMetadata(this);
 		return interaction;
 	}
 
@@ -43,8 +44,8 @@ public class fInteraction extends fEntity{
 	public void copyMetadata(fEntity entity) {
 		if(entity instanceof fInteraction) {
 			fInteraction interaction = (fInteraction) entity; 
-			interaction.setDimansion(this.getWidth(), this.getHeight());
-			interaction.setResponse(this.hasResponse());
+			this.setDimansion(interaction.getWidth(), interaction.getHeight());
+			this.setResponse(interaction.hasResponse());
 		}
 	}
 
@@ -108,8 +109,12 @@ public class fInteraction extends fEntity{
     public void loadMetadata(NBTTagCompound metadata) {
         super.loadMetadata(metadata);
         if(metadata.hasKeyOfType("width", 5)) this.setWidth(metadata.getFloat("width"));
-        if(metadata.hasKeyOfType("height", 5)) this.setWidth(metadata.getFloat("height"));
+        if(metadata.hasKeyOfType("height", 5)) this.setHeight(metadata.getFloat("height"));
         if(metadata.hasKeyOfType("blockData", 3)) this.setResponse(metadata.getInt("blockData") == 1);
 	}
 	
+	@Override
+	protected Material getDestroyMaterial() {
+		return Material.AIR;
+	}
 }

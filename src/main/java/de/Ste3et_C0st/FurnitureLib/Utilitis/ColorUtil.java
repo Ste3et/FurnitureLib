@@ -6,6 +6,7 @@ import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.ColorType;
 import de.Ste3et_C0st.FurnitureLib.main.Type.DyeColor;
+import de.Ste3et_C0st.FurnitureLib.main.entity.fContainerEntity;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
 import org.bukkit.GameMode;
 import org.bukkit.entity.Player;
@@ -47,24 +48,27 @@ public class ColorUtil {
         if (FurnitureLib.isNewVersion()) {
             DyeColor start = DyeColor.getDyeColor(is.getType());
             for (fEntity packet : asp) {
-                if (Objects.nonNull(packet.getInventory().getHelmet()) && packet.getInventory().getHelmet().getType().name().contains(identifier) && Amount.get() > 0) {
-                    DyeColor now = DyeColor.getDyeToReplace(packet.getInventory().getHelmet().getType());
-                    if (!now.equals(start)) {
-                        packet.getInventory().setHelmet(start.applyToItemStack(packet.getInventory().getHelmet()));
-                        if (!p.getGameMode().equals(GameMode.CREATIVE) || !FurnitureConfig.getFurnitureConfig().useGamemode()) {
-                            j--;
-                            if (j == 0) {
-                                Amount.getAndDecrement();
-                                j = row;
+            	if(packet instanceof fContainerEntity) {
+            		fContainerEntity containerEntity = (fContainerEntity) packet;
+            		if (Objects.nonNull(containerEntity.getInventory().getHelmet()) && containerEntity.getInventory().getHelmet().getType().name().contains(identifier) && Amount.get() > 0) {
+                        DyeColor now = DyeColor.getDyeToReplace(containerEntity.getInventory().getHelmet().getType());
+                        if (!now.equals(start)) {
+                        	containerEntity.getInventory().setHelmet(start.applyToItemStack(containerEntity.getInventory().getHelmet()));
+                            if (!p.getGameMode().equals(GameMode.CREATIVE) || !FurnitureConfig.getFurnitureConfig().useGamemode()) {
+                                j--;
+                                if (j == 0) {
+                                    Amount.getAndDecrement();
+                                    j = row;
+                                }
                             }
                         }
                     }
-                }
+            	}
             }
         } else {
             short color = identifier.contains("BANNER") ? is.getDurability() : getFromDey(is.getDurability());
 
-            asp.stream().filter(entity -> Objects.nonNull(entity.getHelmet())).filter(entity -> entity.getHelmet().getType().name().contains(identifier)).forEach(entity -> {
+            asp.stream().filter(fContainerEntity.class::isInstance).map(fContainerEntity.class::cast).filter(entity -> Objects.nonNull(entity.getHelmet())).filter(entity -> entity.getHelmet().getType().name().contains(identifier)).forEach(entity -> {
                 short color2 = entity.getInventory().getHelmet().getDurability();
                 if (Amount.get() > 0) {
                     if (color2 != color) {

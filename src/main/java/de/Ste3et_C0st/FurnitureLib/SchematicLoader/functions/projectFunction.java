@@ -4,6 +4,7 @@ import com.google.gson.JsonObject;
 
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureConfig;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
+import de.Ste3et_C0st.FurnitureLib.main.entity.fContainerEntity;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fInventory.EquipmentSlot;
 import org.bukkit.GameMode;
@@ -60,11 +61,11 @@ public abstract class projectFunction {
     public List<fEntity> searchEntityByMaterialName(final String str, int slot, ObjectID obj) {
         final String query = str.replace("*", "").toUpperCase();
         if (str.startsWith("*")) {
-            return obj.getPacketList().stream().filter(entity -> entity.getInventory().getSlot(slot) != null).filter(entity -> entity.getInventory().getSlot(slot).getType().name().endsWith(query)).collect(Collectors.toList());
+            return obj.getPacketList().stream().filter(fContainerEntity.class::isInstance).map(fContainerEntity.class::cast).filter(entity -> entity.getInventory().getSlot(slot) != null).filter(entity -> entity.getInventory().getSlot(slot).getType().name().endsWith(query)).collect(Collectors.toList());
         } else if (str.endsWith("*")) {
-            return obj.getPacketList().stream().filter(entity -> entity.getInventory().getSlot(slot) != null).filter(entity -> entity.getInventory().getSlot(slot).getType().name().startsWith(query)).collect(Collectors.toList());
+            return obj.getPacketList().stream().filter(fContainerEntity.class::isInstance).map(fContainerEntity.class::cast).filter(entity -> entity.getInventory().getSlot(slot) != null).filter(entity -> entity.getInventory().getSlot(slot).getType().name().startsWith(query)).collect(Collectors.toList());
         } else {
-            return obj.getPacketList().stream().filter(entity -> entity.getInventory().getSlot(slot) != null).filter(entity -> entity.getInventory().getSlot(slot).getType().name().equalsIgnoreCase(query)).collect(Collectors.toList());
+            return obj.getPacketList().stream().filter(fContainerEntity.class::isInstance).map(fContainerEntity.class::cast).filter(entity -> entity.getInventory().getSlot(slot) != null).filter(entity -> entity.getInventory().getSlot(slot).getType().name().equalsIgnoreCase(query)).collect(Collectors.toList());
         }
     }
 

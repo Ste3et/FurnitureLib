@@ -8,6 +8,7 @@ import de.Ste3et_C0st.FurnitureLib.main.Furniture;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
+import de.Ste3et_C0st.FurnitureLib.main.entity.fContainerEntity;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
 import org.bukkit.Location;
 import org.bukkit.block.BlockFace;
@@ -113,11 +114,13 @@ public class ProjectLoader extends Furniture {
 
             getfAsList().stream().filter(entity -> entity.getName().equalsIgnoreCase("#ITEM#") || entity.getName().equalsIgnoreCase("#BLOCK#")).
                     forEach(entity -> {
-                        for (ItemStack stack : entity.getInventory().getIS()) {
-                            if (stack != null) {
-                                getWorld().dropItemNaturally(getLocation().clone().add(0, .5, 0), stack);
+                    	if(entity instanceof fContainerEntity) {
+                    		for (ItemStack stack : fContainerEntity.class.cast(entity).getInventory().getIS()) {
+                                if (stack != null) {
+                                    getWorld().dropItemNaturally(getLocation().clone().add(0, .5, 0), stack);
+                                }
                             }
-                        }
+                    	}
                     });
             if(Objects.nonNull(this.inv)) {
             	this.inv.getViewers().stream().forEach(HumanEntity::closeInventory);
