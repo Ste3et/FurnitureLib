@@ -21,7 +21,7 @@ public class fItem_display extends fDisplay{
 	public static EntityType type = EntityType.ITEM_DISPLAY;
 	private final DefaultKey<EntitySize> entitySize = new DefaultKey<EntitySize>(new EntitySize(0, 0));
 	private final DefaultKey<ItemStack> stack = new DefaultKey<ItemStack>(new ItemStack(Material.AIR));
-	private final DefaultKey<ItemDisplayTransform> display = new DefaultKey<ItemDisplayTransform>(ItemDisplayTransform.FIXED);
+	private final DefaultKey<ItemDisplayTransform> display = new DefaultKey<ItemDisplayTransform>(ItemDisplayTransform.NONE);
 	
 	public fItem_display(Location loc, ObjectID id) {
 		super(loc, type, 0, id);
@@ -48,7 +48,7 @@ public class fItem_display extends fDisplay{
 	public void copyMetadata(fEntity entity) {
 		if(entity instanceof fItem_display) {
 			super.copyMetadata(entity);
-			fItem_display display = fItem_display.class.cast(entity);
+			fItem_display display = this.getClass().cast(entity);
 			this.setItemDisplay(display.getItemDisplay());
 			this.setItemStack(display.getStack());
 		}

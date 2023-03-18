@@ -139,7 +139,8 @@ public abstract class fContainerEntity extends fEntity{
     }
     
     @Override
-    public void update(Player p) {
-    	this.sendInventoryPacket(p);
+    public void update(Player player) {
+    	super.send(player);
+    	this.sendInventoryPacket(player);
     }
 }

@@ -326,6 +326,7 @@ public abstract class fEntity extends fSerializer implements Cloneable {
     private void sendMetadata(Player player) {
         PacketContainer update = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
         update.getIntegers().write(0, getEntityID());
+        
         metadataFunction.apply(update, getWatcher().getWatchableObjects());
         
         try {
@@ -443,8 +444,7 @@ public abstract class fEntity extends fSerializer implements Cloneable {
     @Deprecated
     public void sendParticle(Location loc, int particleID, boolean repeat) {}
 
-    @SuppressWarnings("unchecked")
-	public void loadMetadata(NBTTagCompound metadata) {
+    public void loadMetadata(NBTTagCompound metadata) {
         this.setNameVisibility((metadata.getInt("NameVisible") == 1));
         this.setName(metadata.getString("Name"));
         this.setFire((metadata.getInt("Fire") == 1));

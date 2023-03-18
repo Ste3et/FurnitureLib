@@ -280,7 +280,7 @@ public abstract class fDisplay extends fEntity{
     	if(!this.interpolationDelay.isDefault()) setMetadata("interpolationDelay", this.getInterpolationDelay());
     	if(!this.interpolationDuration.isDefault()) setMetadata("interpolationDuration", this.getInterpolationDuration());
     	if(!this.brightness.isDefault()) setMetadata("brightness", this.getBrightness());
-    	if(!this.billboard.isDefault()) setMetadata("billboard", this.getBillboard().name());
+    	if(!this.billboard.isDefault()) setMetadata("billboard", (byte) this.getBillboard().ordinal());
     	
     	NBTTagCompound transformation = new NBTTagCompound();
     	
