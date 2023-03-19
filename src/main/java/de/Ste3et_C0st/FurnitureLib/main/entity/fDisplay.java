@@ -19,17 +19,17 @@ import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.DefaultKey;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 
-public abstract class fDisplay extends fEntity{
+public abstract class fDisplay extends fSize{
 	
 	private DefaultKey<Vector3f> translation = new DefaultKey<Vector3f>(new Vector3f()), scale = new DefaultKey<Vector3f>(new Vector3f());
 	private DefaultKey<AxisAngle4f> leftRotation = new DefaultKey<AxisAngle4f>(new AxisAngle4f()), rightRotation = new DefaultKey<AxisAngle4f>(new AxisAngle4f());
 	
 	private DefaultKey<Billboard> billboard = new DefaultKey<Billboard>(Billboard.FIXED);
-	private DefaultKey<Float> viewRange = new DefaultKey<Float>(1f), shadowRadius = new DefaultKey<Float>(0f), shadowStrength = new DefaultKey<Float>(1f), width = new DefaultKey<Float>(0f), height = new DefaultKey<Float>(0f);
+	private DefaultKey<Float> viewRange = new DefaultKey<Float>(1f), shadowRadius = new DefaultKey<Float>(0f), shadowStrength = new DefaultKey<Float>(1f);
 	private DefaultKey<Integer> interpolationDelay = new DefaultKey<Integer>(0), interpolationDuration = new DefaultKey<Integer>(0), brightness = new DefaultKey<Integer>(-1), glow_override = new DefaultKey<Integer>(-1);
 	
 	public fDisplay(Location loc, EntityType type, int entityID, ObjectID id) {
-		super(loc, type, entityID, id);
+		super(loc, type, entityID, id, 0F, 0F);
 		this.writeTransformation();
 	}
 
@@ -51,6 +51,7 @@ public abstract class fDisplay extends fEntity{
 	@Override
 	public void copyMetadata(fEntity entity) {
 		if(entity instanceof fDisplay) {
+			super.copyMetadata(entity);
 			fDisplay display = this.getClass().cast(entity);
 			this.setBillboard(display.getBillboard());
 			this.setScale(display.getScale());
@@ -62,8 +63,6 @@ public abstract class fDisplay extends fEntity{
 			this.setViewRange(display.getViewRange());
 			this.setShadowRadius(display.getShadowRadius());
 			this.setShadowStrength(display.getShadowStrength());
-			this.setWidth(display.getWidth());
-			this.setHeight(display.getHeight());
 			this.setBrightness(display.getBrightness());
 			this.setGlowOverride(display.getGlowOverride());
 		}
@@ -184,14 +183,6 @@ public abstract class fDisplay extends fEntity{
 		return this.shadowStrength.getOrDefault();	
 	}
 	
-	public float getWidth() {
-		return this.width.getOrDefault();
-	}
-	
-	public float getHeight() {
-		return this.height.getOrDefault();
-	}
-	
 	public int getGlowOverride() {
 		return glow_override.getOrDefault();
 	}
@@ -251,18 +242,6 @@ public abstract class fDisplay extends fEntity{
 		return this;
 	}
 	
-	public fDisplay setWidth(float f) {
-		this.width.setValue(f);
-		getWatcher().setObject(new WrappedDataWatcherObject(19, Registry.get(Float.class)), this.getWidth());
-		return this;
-	}
-	
-	public fDisplay setHeight(float f) {
-		this.height.setValue(f);
-		getWatcher().setObject(new WrappedDataWatcherObject(20, Registry.get(Float.class)), this.getHeight());
-		return this;
-	}
-	
 	public fDisplay setGlowOverride(int i) {
 		this.glow_override.setValue(i);
 		getWatcher().setObject(new WrappedDataWatcherObject(21, Registry.get(Integer.class)), this.getGlowOverride());
@@ -274,8 +253,6 @@ public abstract class fDisplay extends fEntity{
     	if(!this.viewRange.isDefault()) setMetadata("viewRange", this.getViewRange());
     	if(!this.shadowRadius.isDefault()) setMetadata("shadowRadius", this.getShadowRadius());
     	if(!this.shadowStrength.isDefault()) setMetadata("shadowStrength", this.getShadowStrength());
-    	if(!this.width.isDefault()) setMetadata("width", this.getWidth());
-    	if(!this.height.isDefault()) setMetadata("height", this.getHeight());
     	if(!this.glow_override.isDefault()) setMetadata("glow_override", this.getGlowOverride());
     	if(!this.interpolationDelay.isDefault()) setMetadata("interpolationDelay", this.getInterpolationDelay());
     	if(!this.interpolationDuration.isDefault()) setMetadata("interpolationDuration", this.getInterpolationDuration());
@@ -375,5 +352,15 @@ public abstract class fDisplay extends fEntity{
 	@Override
 	protected Material getDestroyMaterial() {
 		return Material.AIR;
+	}
+	
+	@Override
+	protected int widthField() {
+		return 19;
+	}
+
+	@Override
+	protected int heightField() {
+		return 20;
 	}
 }
