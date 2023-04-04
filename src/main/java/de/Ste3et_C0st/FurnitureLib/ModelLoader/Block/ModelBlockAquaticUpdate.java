@@ -13,7 +13,6 @@ import org.bukkit.block.data.Directional;
 import org.bukkit.block.data.type.Slab;
 import org.bukkit.block.data.type.Stairs;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.jetbrains.annotations.NotNull;
 
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import com.comphenix.protocol.wrappers.WrappedSignedProperty;
@@ -27,7 +26,7 @@ public class ModelBlockAquaticUpdate extends ModelBlock {
     private BlockData blockData;
     
     
-    public ModelBlockAquaticUpdate(@NotNull ModelVector vector, @NotNull String str) {
+    public ModelBlockAquaticUpdate(ModelVector vector, String str) {
         super(vector);
         this.blockData = Bukkit.createBlockData(str);
     }

@@ -14,9 +14,8 @@ import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 import org.bukkit.Location;
 import org.bukkit.World;
 
-import com.migcomponents.migbase64.Base64;
-
 import java.io.ByteArrayInputStream;
+import java.util.Base64;
 import java.util.HashSet;
 import java.util.Objects;
 import java.util.Optional;
@@ -27,7 +26,7 @@ public class DeSerializer {
 	public int purged = 0;
 	
 	public static ObjectID Deserialize(String objId, String md5, SQLAction action, World world) {
-		byte[] binary = Base64.decode(md5);
+		byte[] binary = Base64.getDecoder().decode(md5);
 		return Deserialize(objId, binary, action, world);
 	}
 	

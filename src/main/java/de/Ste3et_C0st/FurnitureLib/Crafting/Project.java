@@ -65,9 +65,10 @@ public class Project {
     	if(FurnitureLib.getInstance().isEnabledPlugin()) {
     		this.project = name;
             this.plugin = plugin;
-            
-            File configFile = new File(CraftingFile.getPath(name));
-        	this.configuartion = CraftingFile.loadDefaultConfig(craftingFile, YamlConfiguration.loadConfiguration(configFile), CraftingFile.getPath(name));
+
+            final File configFile = new File(CraftingFile.getPath(name));
+            final YamlConfiguration configuration = YamlConfiguration.loadConfiguration(configFile);
+        	this.configuartion = CraftingFile.loadDefaultConfig(craftingFile, configuration, CraftingFile.getPath(name));
         	
     		if(this.configuartion.getBoolean(name + ".enabled", true) == false) {
     			this.enabled = false;
@@ -83,8 +84,7 @@ public class Project {
             String configHeader = this.file.getFileHeader();
     		String systemID = this.configuartion.getString(configHeader + ".system-ID", "");
     		this.project = project.equalsIgnoreCase(systemID) ? project : systemID;
-            
-            this.functionList = this.file.loadFunction();
+            this.functionList = this.file.loadFunction(configuration);
             this.furnitureObject = functionObject;
             this.modelschematic = new ModelHandler(this.getConfig(), this.getCraftingFile().getFileHeader());
             FurnitureLib.getInstance().getFurnitureManager().addProject(this);

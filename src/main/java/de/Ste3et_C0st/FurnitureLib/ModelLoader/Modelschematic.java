@@ -8,6 +8,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -19,8 +20,6 @@ import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.util.Vector;
-
-import com.migcomponents.migbase64.Base64;
 
 import de.Ste3et_C0st.FurnitureLib.Database.Serializer;
 import de.Ste3et_C0st.FurnitureLib.ModelLoader.Block.ModelBlock;
@@ -142,9 +141,9 @@ public abstract class Modelschematic{
 		FurnitureLib.debug(this.name + " load: " + configString + " has loadet: " + this.entityMap.size() + " Entities");
 	}
 	
-	private Optional<byte[]> decodeBase64toByte(String md5, String key) {
+	private Optional<byte[]> decodeBase64toByte(String encodedString, String key) {
 		try {
-			return Optional.of(Base64.decodeFast(md5));
+			return Optional.of(Base64.getDecoder().decode(encodedString));
 		}catch (IllegalArgumentException e) {
 			System.err.println(this.name + " is a corrupted dModel file entity {" + key + "}");
 			System.err.println("FurnitureLib try to skip these entity: " + e.getMessage());
@@ -222,7 +221,7 @@ public abstract class Modelschematic{
         		NBTTagCompound metadata = entry.getValue().getMetaData();
         		metadata.set("Location", entry.getKey().toNBTTagCompound());
         		byte[] bytes = Serializer.armorStandtoBytes(metadata);
-        		String base64 = Base64.encodeToString(bytes, false);
+        		String base64 = Base64.getEncoder().encodeToString(bytes);
         		configuration.set(this.name + ".projectData.entities." + integer.getAndIncrement(), base64);
         	});
     	}else {
@@ -230,7 +229,7 @@ public abstract class Modelschematic{
         		NBTTagCompound metadata = entry.getValue().getMetaData();
         		metadata.set("Location", entry.getKey().toNBTTagCompound());
         		byte[] bytes = Serializer.armorStandtoBytes(metadata);
-        		String base64 = Base64.encodeToString(bytes, false);
+        		String base64 = Base64.getEncoder().encodeToString(bytes);
         		configuration.set(this.name + ".ProjectModels.ArmorStands." + integer.getAndIncrement(), base64);
         	});
     	}

@@ -14,6 +14,7 @@ buildscript {
 }
  
 import org.apache.tools.ant.filters.ReplaceTokens
+import com.github.jengelman.gradle.plugins.shadow.tasks.ShadowJar
 
 plugins {
     id 'java'
@@ -25,8 +26,7 @@ apply plugin: 'com.github.johnrengelman.shadow'
 
 repositories {
     mavenLocal()
-    
-    
+
     maven {
     	url = uri('https://jitpack.io')
     }
@@ -54,16 +54,14 @@ repositories {
 	maven {
 		url = uri('https://hub.spigotmc.org/nexus/content/repositories/snapshots/')
 	}
-
-
 }
 
 dependencies {
-    implementation 'com.brsanthu:migbase64:2.2'
-    implementation 'com.zaxxer:HikariCP:4.0.3'
-    implementation 'org.jetbrains:annotations:15.0'
+    implementation "com.zaxxer:HikariCP:5.0.1"
+    implementation "org.slf4j:slf4j-jdk14:1.7.30"
     implementation "net.kyori:adventure-text-minimessage:4.13.0"
-    runtimeOnly 'org.slf4j:slf4j-jdk14:1.7.30'
+    implementation "net.kyori:adventure-platform-bukkit:4.3.0"
+    implementation "net.kyori:adventure-text-serializer-legacy:4.13.0"
     
     //compileOnly 'io.papermc.paper:paper-api:1.19.4-R0.1-SNAPSHOT'
     compileOnly 'dev.folia:folia-api:1.19.4-R0.1-SNAPSHOT'
@@ -85,15 +83,41 @@ targetCompatibility = 17
 version = '3.0.1'
 group = 'de.Ste3et_C0st.furniture'
 
-shadowJar.archiveFileName = "${project.name}-${project.version}.jar"
-
 compileJava.options.encoding = 'UTF-8'
+
 tasks.withType(JavaCompile) {
     options.encoding = 'UTF-8'
 }
 
+task shadowJarPaper(type: ShadowJar) {
+  group 'paper'
+  from sourceSets.main.output
+  archiveBaseName.set('FurnitureLib-Paper')
+  archiveClassifier.set('')
+  configurations = [ project.configurations.runtimeClasspath ]
+  exclude('META-INF/INDEX.LIST', 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA')
+  
+  relocate 'org.slf4j', 'de.Ste3et_C0st.FurnitureLib.Database.org.slf4j'
+  relocate 'com.zaxxer.hikari', 'de.Ste3et_C0st.FurnitureLib.Database.com.zaxxer.hikari'
+  
+  manifest {
+      attributes('Main-Class': 'org.foo.Foo2')
+  }
+  
+  dependencies {
+     exclude(dependency('net.kyori:adventure-text-minimessage:4.13.0'))
+     exclude(dependency('net.kyori:adventure-platform-bukkit:4.3.0'))
+     exclude(dependency('net.kyori:adventure-text-serializer-legacy:4.13.0'))
+     include(dependency('com.zaxxer:HikariCP:5.0.1'))
+     include(dependency('org.slf4j:slf4j-jdk14:1.7.30'))
+  }
+}
 
 shadowJar {
+   mergeServiceFiles()
+   archiveBaseName.set('FurnitureLib-Spigot')
+   archiveClassifier.set('')
+   
    relocate 'org.slf4j', 'de.Ste3et_C0st.FurnitureLib.Database.org.slf4j'
    relocate 'com.zaxxer.hikari', 'de.Ste3et_C0st.FurnitureLib.Database.com.zaxxer.hikari'
 }
@@ -104,14 +128,15 @@ jar {
 }
 
 tasks {
-	
     jar {
         enabled = true
     }
     
     assemble{
+        dependsOn(shadowJarPaper)
     	dependsOn(shadowJar)
     }
+    
 }
 
 sourceSets {
@@ -127,7 +152,7 @@ sourceSets {
 
 processResources {
     filter ReplaceTokens, tokens: [
-            "version": project.property("version") + (project.hasProperty('snapshotVersion') ? "-" + project.getProperty('snapshotVersion') : "" )
+       "version": project.property("version") + (project.hasProperty('snapshotVersion') ? "-" + project.getProperty('snapshotVersion') : "" )
     ]
 }
 
@@ -143,11 +168,13 @@ publishing {
 }
 
 task copyJarToBin {
-	copy {
-	    from "build/libs/${project.name}-${project.version}.jar"
-	    into "build/libs/"
-	    rename { String fileName ->
-        	fileName.replace("-$project.version", "")
-    	}
+	doLast {
+		copy {
+		    from "build/libs/${project.name}-${project.version}.jar"
+		    into "build/libs/"
+		    rename { String fileName ->
+	        	fileName.replace("-$project.version", "-$project.version-spigot")
+	    	}
+		}
 	}
 }

@@ -18,12 +18,11 @@ import org.bukkit.event.inventory.InventoryCloseEvent;
 import org.bukkit.inventory.Inventory;
 import org.bukkit.inventory.ItemStack;
 
-import com.migcomponents.migbase64.Base64;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 import java.util.Objects;
 
@@ -123,11 +122,11 @@ public class ProjectInventory implements Listener {
         }
         inventory.setInt("size", getInv().getSize());
         inventory.set("inventory", items);
-        return Base64.encodeToString(armorStandtoBytes(inventory), false);
+        return Base64.getEncoder().encodeToString(armorStandtoBytes(inventory));
     }
 
     public void setItems(String string) {
-        byte[] by = Base64.decodeFast(string);
+        byte[] by = Base64.getDecoder().decode(string);
         ByteArrayInputStream bin = new ByteArrayInputStream(by);
         try {
             NBTTagCompound compound = NBTCompressedStreamTools.read(bin);

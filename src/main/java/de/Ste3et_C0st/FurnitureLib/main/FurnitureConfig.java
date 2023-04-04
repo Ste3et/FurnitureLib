@@ -13,7 +13,6 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.jetbrains.annotations.NotNull;
 
 import com.zaxxer.hikari.HikariConfig;
 
@@ -261,7 +260,7 @@ public class FurnitureConfig {
     private void updateConfig() {
     	try (InputStream stream = FurnitureLib.getInstance().getClass().getResourceAsStream("/config.yml");InputStreamReader reader = new InputStreamReader(stream);) {
     		YamlConfiguration defaults = YamlConfiguration.loadConfiguration(reader);
-    		@NotNull FileConfiguration furnitureConfig = getConfig();
+    		FileConfiguration furnitureConfig = getConfig();
     		if(furnitureConfig.getInt("config-version", 2) != defaults.getInt("config-version", 3)) {
     			boolean change = false;
                 for (String defaultKey : defaults.getKeys(true)) {

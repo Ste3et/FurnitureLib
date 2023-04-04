@@ -146,8 +146,7 @@ public class CraftingInv implements Listener {
                         conf.set(file.getFileHeader() + ".crafting.index." + str, materialList.get(str).name());
                     }
                     save(conf, file.getFilePath());
-                    file.setFileConfiguration(conf);
-                    file.loadCrafting(file.getFileName());
+                    file.loadCrafting(file.getFileName(), conf);
                 }
                 LanguageManager.send(e.getPlayer(), "message.CraftingEdit");
             }

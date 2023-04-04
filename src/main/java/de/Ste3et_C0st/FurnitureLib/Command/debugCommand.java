@@ -3,6 +3,7 @@ package de.Ste3et_C0st.FurnitureLib.Command;
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.NBT.MathHelper;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.ExecuteTimer;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.LanguageConverter;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.RandomStringGenerator;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.Wrapper.ChatComponentWrapper;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
@@ -74,6 +75,10 @@ public class debugCommand extends iCommand {
             		}catch (Exception e) {
 						e.printStackTrace();
 					}
+                }else if(args[1].equalsIgnoreCase("lang")) {
+                	new LanguageConverter(getLHandler(), FurnitureLib.getInstance());
+                	sender.sendMessage("languageConvertet");
+                	return;
                 }
             }
         } else if(args.length == 3) {

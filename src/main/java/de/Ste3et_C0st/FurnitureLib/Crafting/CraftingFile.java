@@ -27,47 +27,35 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public class CraftingFile {
     
-	public String systemID = "";
-    public File filePath;
-    private FileConfiguration file;
-    private String name;
-    private String header;
+	public  final String systemID;
+    public  final File filePath;
+    private final String name;
+    private final String header;
     private ShapedRecipe recipe;
     private boolean isDisable, useItemStackObject = false, enabledModel = false;
     private PlaceableSide side = null;
     
-    public CraftingFile(String name, FileConfiguration fileConfiguration) {
+    public CraftingFile(final String name,final YamlConfiguration fileConfiguration) {
         this.name = name;
-        if (Objects.isNull(this.name)) return;
-        this.filePath = new File(getPath(name));
-        this.file = fileConfiguration;
-        if (file == null) {
+        if (Objects.isNull(this.name) || Objects.isNull(fileConfiguration)) {
         	FurnitureLib.debug("problems to load " + name, 10);
+        	this.filePath = null;
+        	this.header = null;
+        	this.enabledModel = false;
+        	this.systemID = null;
             return;
         }
         
-        header = getHeader();
+        this.filePath = new File(getPath(name));
+        this.header = getHeader(fileConfiguration);
+        this.enabledModel = fileConfiguration.getBoolean(header + ".enabled", true);
+        this.systemID = fileConfiguration.getString(header + ".system-ID", name);
         
-        this.enabledModel = this.file.getBoolean(header + ".enabled", true);
-        if(!this.enabledModel) {
-        	return;
-        }
-        
-        if (this.file.contains(header + ".system-ID")) {
-            systemID = this.file.getString(header + ".system-ID");
-        } else {
-            this.file.set(header + ".system-ID", name);
-            systemID = name;
-            try {
-                this.file.save(filePath);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-        }
+        if(!this.enabledModel) {return;}
         
         try {
             if (Objects.nonNull(Class.forName("org.bukkit.NamespacedKey"))) {
-                loadCrafting(name);
+                loadCrafting(name, fileConfiguration);
             }
         } catch (ClassNotFoundException e) {
         	e.printStackTrace();
@@ -118,13 +106,9 @@ public class CraftingFile {
     	return useItemStackObject;
     }
 
-    public void setFileConfiguration(FileConfiguration file) {
-        this.file = file;
-    }
-
-    public String getHeader() {
+    public String getHeader(final YamlConfiguration configuration) {
         try {
-            return (String) this.file.getConfigurationSection("").getKeys(false).toArray()[0];
+            return (String) configuration.getConfigurationSection("").getKeys(false).toArray()[0];
         } catch (ArrayIndexOutOfBoundsException ex) {
             return this.name;
         }
@@ -140,17 +124,19 @@ public class CraftingFile {
     }
 
 
-    public void loadCrafting(String s) {
+    public void loadCrafting(final String name, final YamlConfiguration configuration) {
         try {
-            this.isDisable = file.getBoolean(header + ".crafting.disable", false);
+            this.isDisable = configuration.getBoolean(header + ".crafting.disable", false);
             org.bukkit.NamespacedKey key = new org.bukkit.NamespacedKey(FurnitureLib.getInstance(), this.name.toLowerCase()); // <-- Key
-            String[] fragements = returnFragment();
+            String[] fragements = returnFragment(configuration);
             AtomicInteger materialCount = new AtomicInteger(0);
-            this.recipe = new ShapedRecipe(key, returnResult(s)).shape(fragements[0], fragements[1], fragements[2]);
-            returnMaterial(s,fragements).entrySet().stream().filter(c -> c.getValue() != Material.AIR).forEach(c -> {
+            this.recipe = new ShapedRecipe(key, returnResult(name, configuration)).shape(fragements[0], fragements[1], fragements[2]);
+            
+            returnMaterial(name, fragements, configuration).entrySet().stream().filter(c -> c.getValue() != Material.AIR).forEach(c -> {
                 this.recipe.setIngredient(c.getKey(), c.getValue());
                 materialCount.addAndGet(1);
             });
+            
             if (!isDisable) {
                 if (materialCount.get() > 0) {
                     Bukkit.getScheduler().runTask(FurnitureLib.getInstance(), () -> {
@@ -160,18 +146,18 @@ public class CraftingFile {
                     });
                 }
             }
-            getPlaceAbleSide();
-            loadFunction();
+            getPlaceAbleSide(configuration);
+            loadFunction(configuration);
         } catch (Exception e) {
         	System.err.println(this.header + " is a corrupted model File !");
             e.printStackTrace();
         }
     }
 
-    public List<JsonObject> loadFunction() {
+    public List<JsonObject> loadFunction(final YamlConfiguration configuration) {
         List<JsonObject> jsonList = new ArrayList<>();
-        if (this.file.contains(header + ".projectData.functions")) {
-            List<String> stringList = this.file.getStringList(header + ".projectData.functions");
+        if (configuration.contains(header + ".projectData.functions")) {
+            List<String> stringList = configuration.getStringList(header + ".projectData.functions");
             for (String str : stringList) {
                 try {
                     jsonList.add(new JsonParser().parse(str).getAsJsonObject());
@@ -196,13 +182,9 @@ public class CraftingFile {
         return false;
     }
 
-    public PlaceableSide getPlaceAbleSide() {
-        this.side = PlaceableSide.valueOf(file.getString(header + ".PlaceAbleSide", "TOP").toUpperCase());
+    public PlaceableSide getPlaceAbleSide(YamlConfiguration configuration) {
+        this.side = PlaceableSide.valueOf(configuration.getString(header + ".PlaceAbleSide", "TOP").toUpperCase());
         return this.side;
-    }
-
-    public FileConfiguration getFile() {
-        return this.file;
     }
 
     public void setName(String s) {
@@ -219,10 +201,10 @@ public class CraftingFile {
             Bukkit.getServer().addRecipe(this.recipe);
     }
 
-    private ItemStack returnResult(String s) {
-    	if(file.contains(header + ".spawnItemStack")) {
+    private ItemStack returnResult(final String name,final YamlConfiguration configuration) {
+    	if(configuration.contains(header + ".spawnItemStack")) {
     		try {
-    			ItemStack stack = file.getItemStack(header + ".spawnItemStack");
+    			ItemStack stack = configuration.getItemStack(header + ".spawnItemStack");
     			if(!stack.getType().equals(Material.AIR)) {
     				ItemMeta meta = stack.getItemMeta();
         			List<String> loreText = new ArrayList<String>();
@@ -251,8 +233,8 @@ public class CraftingFile {
     	
     	
         Material mat = FurnitureLib.getInstance().getDefaultSpawnMaterial();
-        if (file.contains(header + ".spawnMaterial")) {
-            String str = file.getString(header + ".spawnMaterial");
+        if (configuration.contains(header + ".spawnMaterial")) {
+            String str = configuration.getString(header + ".spawnMaterial");
             if (!str.equalsIgnoreCase("383")) {
                 mat = Material.getMaterial(str);
             }
@@ -260,23 +242,23 @@ public class CraftingFile {
         ItemStack is = new ItemStack(mat);
         ItemMeta im = is.getItemMeta();
         try {
-            if (file.contains(header + ".unbreakable")) {
-                boolean str = file.getBoolean(header + ".unbreakable", false);
+            if (configuration.contains(header + ".unbreakable")) {
+                boolean str = configuration.getBoolean(header + ".unbreakable", false);
                 im.setUnbreakable(str);
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
 
-        String name = file.getString(header + (FurnitureLib.isNewVersion() ? ".displayName" : ".name"), header);
-        im.setDisplayName(ChatColor.translateAlternateColorCodes('&', name));
+        String displayName = configuration.getString(header + (FurnitureLib.isNewVersion() ? ".displayName" : ".name"), header);
+        im.setDisplayName(ChatColor.translateAlternateColorCodes('&', displayName));
 
         List<String> loreText = new ArrayList<String>();
         if (im.hasLore()) loreText = im.getLore();
         
-        if (file.contains(header + ".custommodeldata")) {
+        if (configuration.contains(header + ".custommodeldata")) {
         	try{
-        		im.setCustomModelData(file.getInt(header + ".custommodeldata"));
+        		im.setCustomModelData(configuration.getInt(header + ".custommodeldata"));
         	}catch (Exception e) {/* Method = setCustomModelData didn't exist (ignore Exception) */}
         }
 
@@ -286,9 +268,9 @@ public class CraftingFile {
 			loreText.add(HiddenStringUtils.encodeString(getSystemID()));
 		}
         
-        if (file.contains(header + ".itemLore")) {
-            if (file.isList(header + ".itemLore")) {
-                List<String> lore = file.getStringList(header + ".itemLore");
+        if (configuration.contains(header + ".itemLore")) {
+            if (configuration.isList(header + ".itemLore")) {
+                List<String> lore = configuration.getStringList(header + ".itemLore");
                 if (im.getLore() != null) {
                     loreText = im.getLore();
                 }
@@ -302,8 +284,8 @@ public class CraftingFile {
         if(!loreText.isEmpty()) im.setLore(loreText);
 
         try {
-            if (file.contains(header + ".durability")) {
-                int str = file.getInt(header + ".durability", 0);
+            if (configuration.contains(header + ".durability")) {
+                int str = configuration.getInt(header + ".durability", 0);
                 if (im instanceof Damageable) {
                     ((Damageable) im).setDamage(str);
                 }
@@ -317,15 +299,15 @@ public class CraftingFile {
         return is;
     }
 
-    private String[] returnFragment() {
-        return this.file.getString(header + ".crafting.recipe", "").split(",");
+    private String[] returnFragment(final YamlConfiguration configuartion) {
+        return configuartion.getString(header + ".crafting.recipe", "").split(",");
     }
 
-    private HashMap<Character, Material> returnMaterial(String s, String[] recipe) {
-        List<Character> stringList = returnCharacters(recipe);
+    private HashMap<Character, Material> returnMaterial(String s, String[] recipe, final YamlConfiguration configuration) {
+        List<Character> stringList = returnCharacters(recipe, configuration);
         HashMap<Character, Material> materialHash = new HashMap<Character, Material>();
         stringList.forEach(letter -> {
-            String part = this.file.getString(header + ".crafting.index." + letter, "AIR");
+            String part = configuration.getString(header + ".crafting.index." + letter, "AIR");
             Material material;
             if (!FurnitureLib.isNewVersion()) {
                 try {
@@ -344,9 +326,9 @@ public class CraftingFile {
         return materialHash;
     }
 
-    private List<Character> returnCharacters(String[] recipe) {
+    private List<Character> returnCharacters(final String[] recipe, final YamlConfiguration configuartion) {
         List<Character> stringList = new ArrayList<>();
-        for (String str : returnFragment()) {
+        for (final String str : returnFragment(configuartion)) {
             for (String o : str.split("(?!^)")) {
             	Character character = o.charAt(0);
                 if (!stringList.contains(character)) {
@@ -396,7 +378,7 @@ public class CraftingFile {
     }
     
     public static YamlConfiguration loadDefaultConfig(InputStream craftingFile, YamlConfiguration configuartion, String path) {
-    	File yamlPath = new File(path);
+    	final File yamlPath = new File(path);
     	try (Reader inReader = new InputStreamReader(craftingFile)) {
     		if(Objects.isNull(configuartion)) configuartion = new YamlConfiguration();
     		configuartion.addDefaults(YamlConfiguration.loadConfiguration(inReader));

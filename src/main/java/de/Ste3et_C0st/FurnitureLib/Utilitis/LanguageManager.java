@@ -1,15 +1,24 @@
 package de.Ste3et_C0st.FurnitureLib.Utilitis;
 
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
+import net.kyori.adventure.audience.Audience;
+import net.kyori.adventure.platform.bukkit.BukkitAudiences;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
+import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
-
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
 import java.util.regex.Matcher;
@@ -25,11 +34,13 @@ public class LanguageManager {
     private HashMap<String, Material> invMatList = new HashMap<>();
     private HashMap<String, String> invStringList = new HashMap<>();
     private HashMap<String, Short> invShortList = new HashMap<>();
-    
+    private BukkitAudiences adventure = null;
+
     public LanguageManager(Plugin plugin, String lang) {
         instance = this;
         this.lang = lang;
         this.plugin = plugin;
+        this.adventure = BukkitAudiences.create(plugin);
         this.loadLanguageConfig();
         if (FurnitureLib.isNewVersion()) {
             loadNewManageInv();
@@ -38,8 +49,8 @@ public class LanguageManager {
         }
 	}
     
-    private File getLangFolder() {
-    	final File folder = new File(FurnitureLib.getInstance().getDataFolder(), "/lang/");
+    public File getLangFolder() {
+    	final File folder = new File(FurnitureLib.getInstance().getDataFolder(), "/language/");
     	if(folder.exists() == Boolean.FALSE) folder.mkdirs();
     	return folder;
     }
@@ -55,8 +66,6 @@ public class LanguageManager {
             config.addDefaults(YamlConfiguration.loadConfiguration(FurnitureLib.getInstance().loadStream("language/" + selectetLanguage + ".yml")));
             config.options().copyDefaults(true);
             config.options().copyHeader(true);
-            config.save(languageFile);
-
             config.getConfigurationSection("").getKeys(true).forEach(key -> {
                 if (key.startsWith(".")) key = key.replaceFirst(".", "");
                 if (config.isString(key)) {
@@ -78,6 +87,8 @@ public class LanguageManager {
                     hash.put(key.toLowerCase(), key.toLowerCase() + " is Missing");
                 }
             });
+            
+            config.save(languageFile);
         } catch (Exception ex) {
             ex.printStackTrace();
             return;
@@ -222,7 +233,7 @@ public class LanguageManager {
 
     public void addText(YamlConfiguration configuration) {
         try {
-        	final File lang = new File("plugins/FurnitureLib/lang/" + this.lang + ".yml");
+        	final File lang = new File(getLangFolder(), this.lang);
             final YamlConfiguration conf = YamlConfiguration.loadConfiguration(lang);
             conf.addDefaults(configuration);
             conf.options().copyDefaults(true);
@@ -243,9 +254,47 @@ public class LanguageManager {
     
     
     public void sendMessage(CommandSender sender, String key, StringTranslator ... stringTranslators) {
-    	String rawString = this.applyHexColors(this.getString(key, stringTranslators));
-    	sender.sendMessage(rawString);
+    	final String rawString = LanguageConverter.serializeLegacyColors(this.getString(key, stringTranslators));
+    	if(sender instanceof Player player) {
+    		final TagResolver[] tags = getTagsArray(Arrays.asList(stringTranslators));
+    		final Component returnMessage = MiniMessage.miniMessage().deserialize(rawString, tags);
+    		
+    		if(FurnitureLib.getVersionInt() < 16) {
+    			final String legacyString = LegacyComponentSerializer.legacySection().serialize(returnMessage);
+    			sender.sendMessage(legacyString);
+    			return;
+    		}
+    		
+    		this.adventure.player(player).sendMessage(returnMessage);
+    	}else if(sender instanceof ConsoleCommandSender console) {
+    		final Audience audience = this.adventure.console();
+    		final TagResolver[] tags = getTagsArray(Arrays.asList(stringTranslators));
+    		final Component returnMessage = MiniMessage.miniMessage().deserialize(rawString, tags);
+    		
+    		if(FurnitureLib.getVersionInt() < 16) {
+    			final String legacyString = LegacyComponentSerializer.legacySection().serialize(returnMessage);
+    			sender.sendMessage(legacyString);
+    			return;
+    		}
+    		
+    		audience.sendMessage(returnMessage);
+    	}else {
+        	sender.sendMessage(rawString);
+    	}
     }
+    
+    public TagResolver[] getTagsArray(List<StringTranslator> stringTranslaters){
+		HashSet<TagResolver> tags = getTags(stringTranslaters);
+		return tags.toArray(new TagResolver[tags.size()]);
+	}
+    
+	public HashSet<TagResolver> getTags(List<StringTranslator> stringTranslaters){
+		HashSet<TagResolver> hashSet = new HashSet<TagResolver>();
+		stringTranslaters.stream().filter(Objects::nonNull).forEach(entry -> {
+			hashSet.add(entry.getPlaceHolder());
+		});
+		return hashSet;
+	}
     
     public String getName(String a) {
         String b = invStringList.get(a);
@@ -266,5 +315,12 @@ public class LanguageManager {
     
     public static LanguageManager getInstance() {
         return instance;
+    }
+    
+    public void close() {
+    	if(this.adventure != null) {
+    	    this.adventure.close();
+    	    this.adventure = null;
+    	}
     }
 }

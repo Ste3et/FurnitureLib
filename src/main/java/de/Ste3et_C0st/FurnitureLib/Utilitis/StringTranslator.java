@@ -3,6 +3,9 @@ package de.Ste3et_C0st.FurnitureLib.Utilitis;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import net.kyori.adventure.text.minimessage.tag.resolver.Placeholder;
+import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+
 public class StringTranslator {
 
     private final String key, value;
@@ -47,5 +50,9 @@ public class StringTranslator {
 		      copyString = copyString.replace(match, replace);
 		}
 		return copyString;
+	}
+
+	public TagResolver getPlaceHolder() {
+		return Placeholder.parsed(key, value);
 	}
 }
