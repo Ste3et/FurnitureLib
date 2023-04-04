@@ -112,7 +112,7 @@ public class ChunkOnLoad implements Listener {
     		event.setCancelled(true);
     		
     		if(Objects.isNull(project)) {
-    			LanguageManager.send(player, "message.ProjectNotFound", new StringTranslator("project", projectString));
+    			LanguageManager.getInstance().sendMessage(player, "message.ProjectNotFound", new StringTranslator("project", projectString));
     			return;
     		}
     		

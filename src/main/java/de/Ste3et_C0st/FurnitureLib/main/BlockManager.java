@@ -35,19 +35,13 @@ public class BlockManager implements Listener {
     
     public void registerBlockEvents() {
     	if (listener.isEmpty()) {
-        	try {
-        		Class<?> clazz = Class.forName("com.destroystokyo.paper.event.block.BlockDestroyEvent");
-        		if(Objects.isNull(clazz)) {
-        			listener.add(new physicsEvent());
-        		}else {
-        			isPaper = true;
-        			listener.add(new PaperEvents());
-        		}
-        	}catch (ClassNotFoundException e) {
-        		listener.add(new physicsEvent());
-			}catch (Exception ex) {
-				ex.printStackTrace();
-			}
+    		
+    		if(FurnitureLib.isPaper()) {
+    			isPaper = true;
+    			listener.add(new PaperEvents());
+    		}else {
+    			listener.add(new physicsEvent());
+    		}
         	
         	this.listener.add(this);
         	this.listener.forEach(handler -> Bukkit.getPluginManager().registerEvents(handler, FurnitureLib.getInstance()));

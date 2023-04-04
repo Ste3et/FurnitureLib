@@ -115,7 +115,7 @@ public class LanguageConverter {
 		String output = ChatColor.translateAlternateColorCodes('&', input).replaceAll("§m", "<st>").replaceAll("§o", "<i>").replaceAll("§n", "<u>").replaceAll("§l", "<b>").replaceAll("§k", "<obf>");
 		Matcher matcher = STRIP_COLOR_PATTERN.matcher(output);
 		
-        while (matcher.find()) {
+		while (matcher.find()) {
             String color = output.substring(matcher.start(), matcher.end());
             ChatColor chatColor = ChatColor.getByChar(color.charAt(1));
             if(Objects.isNull(chatColor)) continue;
@@ -123,7 +123,7 @@ public class LanguageConverter {
             output = output.replaceAll(color, colorCode + "");
             matcher = STRIP_COLOR_PATTERN.matcher(output);
         }
-        
+		
 		return transfareVariable(output);
 	}
 	

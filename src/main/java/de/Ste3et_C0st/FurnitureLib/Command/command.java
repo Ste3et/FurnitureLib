@@ -126,7 +126,7 @@ public class command implements CommandExecutor, Listener{
 			manageList.remove(p);
 			if(!e.getID().getUUID().equals(p.getUniqueId())){
 				if(!lib.getPermission().hasPerm(p, "furniture.admin") && !p.isOp() && !lib.getPermission().hasPerm(p, "furniture.manage.other")){
-					LanguageManager.send(p, "message.WrongOwner");
+					LanguageManager.getInstance().sendMessage(p, "message.WrongOwner");
 					return;
 				}
 			}

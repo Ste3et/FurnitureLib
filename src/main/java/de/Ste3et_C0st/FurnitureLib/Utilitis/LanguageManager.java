@@ -14,6 +14,9 @@ import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
+
+import com.comphenix.protocol.utility.MinecraftReflection;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
@@ -34,13 +37,12 @@ public class LanguageManager {
     private HashMap<String, Material> invMatList = new HashMap<>();
     private HashMap<String, String> invStringList = new HashMap<>();
     private HashMap<String, Short> invShortList = new HashMap<>();
-    private BukkitAudiences adventure = null;
-
+    private AdventureHandling handling = null;
+    
     public LanguageManager(Plugin plugin, String lang) {
         instance = this;
         this.lang = lang;
         this.plugin = plugin;
-        this.adventure = BukkitAudiences.create(plugin);
         this.loadLanguageConfig();
         if (FurnitureLib.isNewVersion()) {
             loadNewManageInv();
@@ -48,6 +50,12 @@ public class LanguageManager {
             oldManageInv();
         }
 	}
+    
+    private void initHandling() {
+    	if(FurnitureLib.isPaper() == false) {
+    		handling = new AdventureHandling(plugin);
+    	}
+    }
     
     public File getLangFolder() {
     	final File folder = new File(FurnitureLib.getInstance().getDataFolder(), "/language/");
@@ -249,38 +257,26 @@ public class LanguageManager {
     }
     
     public static void send(CommandSender sender, String key, StringTranslator ... stringTranslators) {
-    	sender.sendMessage(LanguageManager.getInstance().getString(key, stringTranslators));
+    	LanguageManager.getInstance().sendMessage(sender, key, stringTranslators);
     }
     
     
     public void sendMessage(CommandSender sender, String key, StringTranslator ... stringTranslators) {
     	final String rawString = LanguageConverter.serializeLegacyColors(this.getString(key, stringTranslators));
-    	if(sender instanceof Player player) {
-    		final TagResolver[] tags = getTagsArray(Arrays.asList(stringTranslators));
-    		final Component returnMessage = MiniMessage.miniMessage().deserialize(rawString, tags);
-    		
-    		if(FurnitureLib.getVersionInt() < 16) {
-    			final String legacyString = LegacyComponentSerializer.legacySection().serialize(returnMessage);
-    			sender.sendMessage(legacyString);
-    			return;
-    		}
-    		
-    		this.adventure.player(player).sendMessage(returnMessage);
-    	}else if(sender instanceof ConsoleCommandSender console) {
-    		final Audience audience = this.adventure.console();
-    		final TagResolver[] tags = getTagsArray(Arrays.asList(stringTranslators));
-    		final Component returnMessage = MiniMessage.miniMessage().deserialize(rawString, tags);
-    		
-    		if(FurnitureLib.getVersionInt() < 16) {
-    			final String legacyString = LegacyComponentSerializer.legacySection().serialize(returnMessage);
-    			sender.sendMessage(legacyString);
-    			return;
-    		}
-    		
-    		audience.sendMessage(returnMessage);
-    	}else {
-        	sender.sendMessage(rawString);
-    	}
+    	final TagResolver[] tags = getTagsArray(Arrays.asList(stringTranslators));
+		final Component returnMessage = MiniMessage.miniMessage().deserialize(rawString, tags);
+		
+		if(FurnitureLib.getVersionInt() < 16) {
+			final String legacyString = LegacyComponentSerializer.legacySection().serialize(returnMessage);
+			sender.sendMessage(legacyString);
+			return;
+		}
+		
+		if(Objects.isNull(handling)) {
+			sender.sendMessage(returnMessage);
+		}else {
+			handling.sendMessage(sender, returnMessage);
+		}
     }
     
     public TagResolver[] getTagsArray(List<StringTranslator> stringTranslaters){
@@ -318,9 +314,6 @@ public class LanguageManager {
     }
     
     public void close() {
-    	if(this.adventure != null) {
-    	    this.adventure.close();
-    	    this.adventure = null;
-    	}
+    	if(this.handling != null) this.handling.close();
     }
 }

@@ -89,6 +89,7 @@ public class FurnitureLib extends JavaPlugin {
     private FurnitureConfig furnitureConfig;
     private FurnitureProtocolListener furnitureProtocolListener;
     private FloodgateManager floodgateManager = null;
+    private static boolean folia = false, paper = false;
     
     static {
     	 String bukkitVersion = getBukkitVersion();
@@ -97,15 +98,26 @@ public class FurnitureLib extends JavaPlugin {
              versionInt = Integer.parseInt(versionString);
              newVersion = versionInt > 12;
          }
+         
+         folia = containsClass("io.papermc.paper.threadedregions.RegionisedServer");
+         paper = containsClass("com.destroystokyo.paper.event.block.BlockDestroyEvent");
     }
     
-    private static boolean isFolia() {
-        try {
-            Class.forName("io.papermc.paper.threadedregions.RegionisedServer");
-            return true;
+    private static boolean containsClass(String string) {
+    	try {
+	       	Class<?> foliaClass = Class.forName(string);
+	       	return Objects.nonNull(foliaClass);
         } catch (ClassNotFoundException e) {
-            return true;
+       	    return false;
         }
+    }
+    
+    public static boolean isFolia() {
+        return folia;
+    }
+    
+    public static boolean isPaper() {
+    	return paper;
     }
     
     public static String getBukkitVersion() {
@@ -476,6 +488,7 @@ public class FurnitureLib extends JavaPlugin {
     public void onDisable() {
         getLogger().info("==========================================");
         getLogger().info("Furniture shutdown started");
+        this.furnitureConfig.getLangManager().close();
         if(Objects.nonNull(sqlManager)) {
         	if (!getConfig().getBoolean("config.timer.Enable")) {
                 this.sqlManager = new SQLManager(this);

@@ -58,10 +58,12 @@ repositories {
 
 dependencies {
     implementation "com.zaxxer:HikariCP:5.0.1"
-    implementation "org.slf4j:slf4j-jdk14:1.7.30"
+    implementation "org.slf4j:slf4j-api:1.7.36"
+    implementation "org.slf4j:slf4j-simple:1.7.36"
     implementation "net.kyori:adventure-text-minimessage:4.13.0"
     implementation "net.kyori:adventure-platform-bukkit:4.3.0"
     implementation "net.kyori:adventure-text-serializer-legacy:4.13.0"
+    
     
     //compileOnly 'io.papermc.paper:paper-api:1.19.4-R0.1-SNAPSHOT'
     compileOnly 'dev.folia:folia-api:1.19.4-R0.1-SNAPSHOT'
@@ -97,20 +99,21 @@ task shadowJarPaper(type: ShadowJar) {
   configurations = [ project.configurations.runtimeClasspath ]
   exclude('META-INF/INDEX.LIST', 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA')
   
-  relocate 'org.slf4j', 'de.Ste3et_C0st.FurnitureLib.Database.org.slf4j'
-  relocate 'com.zaxxer.hikari', 'de.Ste3et_C0st.FurnitureLib.Database.com.zaxxer.hikari'
-  
   manifest {
       attributes('Main-Class': 'org.foo.Foo2')
   }
   
   dependencies {
      exclude(dependency('net.kyori:adventure-text-minimessage:4.13.0'))
-     exclude(dependency('net.kyori:adventure-platform-bukkit:4.3.0'))
      exclude(dependency('net.kyori:adventure-text-serializer-legacy:4.13.0'))
+     exclude(dependency('net.kyori:adventure-platform-bukkit:4.3.0'))
      include(dependency('com.zaxxer:HikariCP:5.0.1'))
-     include(dependency('org.slf4j:slf4j-jdk14:1.7.30'))
+     include(dependency('org.slf4j:slf4j-api:1.7.36'))
+     include(dependency('org.slf4j:slf4j-simple:1.7.36'))
   }
+  
+  relocate 'org.slf4j', 'de.Ste3et_C0st.FurnitureLib.Database.org.slf4j'
+  relocate 'com.zaxxer.hikari', 'de.Ste3et_C0st.FurnitureLib.Database.com.zaxxer.hikari'
 }
 
 shadowJar {
