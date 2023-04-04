@@ -80,9 +80,9 @@ public class DeSerializer {
 		
 		
 		if(compound.hasKey("entities") || compound.hasKey("entitys")) {
-			NBTTagCompound armorStands = compound.hasKey("entitys") ? compound.getCompound("entitys") : compound.getCompound("entities");
-			armorStands.c().stream().forEach(packet -> {
-				NBTTagCompound metadata = armorStands.getCompound((String) packet);
+			NBTTagCompound entitys = compound.hasKey("entitys") ? compound.getCompound("entitys") : compound.getCompound("entities");
+			entitys.c().stream().forEach(packet -> {
+				NBTTagCompound metadata = entitys.getCompound((String) packet);
 				Location loc = locationFetcher(metadata.getCompound("Location"), world);
 				FurnitureManager.getInstance().createFromType(metadata.getString("EntityType"), loc, obj).loadMetadata(metadata);
 			});

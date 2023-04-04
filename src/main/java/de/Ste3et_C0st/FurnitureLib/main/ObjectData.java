@@ -172,7 +172,7 @@ public class ObjectData {
     }
     
     public DoubleKey<Integer> getChunkKey(){
-    	if(Objects.isNull(this.chunkKey)) this.chunkKey = new DoubleKey<Integer>(getStartLocation().getBlockX() >> 4, getStartLocation().getBlockZ() >> 4);
+    	if(Objects.isNull(this.chunkKey)) this.chunkKey = DoubleKey.of(chunkX, chunkZ);
     	return chunkKey;
     }
     

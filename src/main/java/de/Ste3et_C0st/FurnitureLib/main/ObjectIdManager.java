@@ -190,9 +190,7 @@ public class ObjectIdManager {
 	}
 	
 	public void updateFurniture(ObjectID obj) {
-		if (obj.isFromDatabase()) {
-            obj.setSQLAction(SQLAction.UPDATE);
-        }
+		if (obj.isFromDatabase()) obj.setSQLAction(SQLAction.UPDATE);
         obj.update();
 	}
 	

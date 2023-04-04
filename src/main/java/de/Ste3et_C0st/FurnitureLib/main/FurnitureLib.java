@@ -7,6 +7,7 @@ import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.Database.DeSerializer;
 import de.Ste3et_C0st.FurnitureLib.Database.SQLManager;
 import de.Ste3et_C0st.FurnitureLib.Database.Serializer;
+import de.Ste3et_C0st.FurnitureLib.LimitationManager.Limitation;
 import de.Ste3et_C0st.FurnitureLib.Listener.ChunkOnLoad;
 import de.Ste3et_C0st.FurnitureLib.Listener.FurnitureProtocolListener;
 import de.Ste3et_C0st.FurnitureLib.Listener.onBlockDispense;
@@ -30,31 +31,30 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.OfflinePlayer;
 import org.bukkit.command.PluginCommand;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
-import com.comphenix.protocol.ProtocolLib;
-import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.utility.MinecraftVersion;
+import com.google.common.collect.Lists;
 
 import java.io.BufferedReader;
+import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.lang.reflect.Method;
 import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Stream;
 
 public class FurnitureLib extends JavaPlugin {
 
     private static FurnitureLib instance;
-    private static List<FurniturePlugin> furniturePlugins = new ArrayList<>();
+    private static List<FurniturePlugin> furniturePlugins = Lists.newArrayList();
     private static int versionInt = 0;
     private static boolean enableDebug = false;
     private static int debugLevel = 0;
@@ -65,7 +65,6 @@ public class FurnitureLib extends JavaPlugin {
     public HashMap<UUID, Long> timeStampPlace = new HashMap<>();
     public HashMap<UUID, Long> timeStampBreak = new HashMap<>();
     
-    @SuppressWarnings("unused")
     private Logger logger = Logger.getLogger("Minecraft");
     private LocationUtil lUtil;
     private FurnitureManager manager;
@@ -98,6 +97,15 @@ public class FurnitureLib extends JavaPlugin {
              versionInt = Integer.parseInt(versionString);
              newVersion = versionInt > 12;
          }
+    }
+    
+    private static boolean isFolia() {
+        try {
+            Class.forName("io.papermc.paper.threadedregions.RegionisedServer");
+            return true;
+        } catch (ClassNotFoundException e) {
+            return true;
+        }
     }
     
     public static String getBukkitVersion() {
@@ -226,8 +234,8 @@ public class FurnitureLib extends JavaPlugin {
         return this.permissionHandler;
     }
 
-    public void send(String s) {
-        getServer().getConsoleSender().sendMessage(s);
+    public void send(final String s) {
+    	getLogger().info(s);
     }
 
     public boolean canBuild(Player p, ObjectID id, EventType type, boolean sendMessage) {
@@ -276,20 +284,17 @@ public class FurnitureLib extends JavaPlugin {
         }
         return true;
     }
-
+    
     public boolean isAfterDate(long time, int purgeTime) {
         return System.currentTimeMillis() - (time + this.furnitureConfig.getPurgeTimeDays()) > 0;
-    }
-
-    private boolean isRightProtocollib(String s) {
-        return s.startsWith("4");
     }
 
     @Override
     public void onEnable() {
     	instance = this;
-        if (getVersionInt() < 9 || getVersionInt() > 19) {
-            this.disableFurnitureLib(Arrays.asList("§cFurnitureLib only works on Spigot 1.9 - 1.19"));
+    	
+        if (getVersionInt() < 12 || getVersionInt() > 19) {
+            this.disableFurnitureLib(Arrays.asList("§cFurnitureLib only works on Spigot 1.12 - 1.19"));
             return;
         }
 
@@ -303,77 +308,8 @@ public class FurnitureLib extends JavaPlugin {
             send("==========================================");
             return;
         }
-        
-        int protocolLibVersion = getProcotoLlibVersion(getPluginManager().getPlugin("ProtocolLib"));
-        
-		if (getBukkitVersion().startsWith("v1_14")) {
-			send("§5Info: §eFor Spigot 1.14.x you need §6ProtocolLib 4.5.0 Build #8 §eor above");
-			send("§5Download it here: §l§9https://ci.dmulloy2.net/job/ProtocolLib/lastSuccessfulBuild/");
-			send("§5Otherwise you will receive: §cNoClassDefFoundError: org/apache/commons/lang3/Validate");
-		} else if (getBukkitVersion().startsWith("v1_15_2") && protocolLibVersion < 46) {
-			send("§5Info: §eFor Spigot 1.15.2 you need §6ProtocolLib 4.5.1 §eor above");
-			send("§5Download it here: §l§9https://www.spigotmc.org/resources/protocollib.1997/");
-			send("§5Otherwise you will receive: §cNo field with type java.util.Map exists in class EnumProtocol.");
-		} else if (getVersionInt() > 15) {
-			if (getVersionInt() > 16) {
-				try {
-					Class<?> clazz = Class.forName("com.comphenix.protocol.events.PacketContainer");
-					Method method = clazz.getMethod("getEnumEntityUseActions");
-					if(Objects.isNull(method)) {
-						getLogger().warning("[FurnitureLib] getEnumEntityUseActions didn't exist");
-						this.disableFurnitureLib(Arrays.asList(
-								"§5Info: §eFor Spigot 1.17.x you need §6ProtocolLib 4.7.0 Build #511 §eor above",
-								"§5Download it here: §l§9https://ci.dmulloy2.net/job/ProtocolLib/lastSuccessfulBuild/",
-								"§7FurnitureLib will stop working!"));
-						return;
-					}
-				}catch (Exception e) {
-					this.disableFurnitureLib(Arrays.asList(
-							"§5Info: §eFor Spigot 1.17.x you need §6ProtocolLib 4.7.0 Build #511 §eor above",
-							"§5Download it here: §l§9https://ci.dmulloy2.net/job/ProtocolLib/lastSuccessfulBuild/",
-							"§7FurnitureLib will stop working!"));
-					return;
-				}
-			}
-			
-			if(getVersionInt() == 18) {
-				if(protocolLibVersion < 48) {
-					this.disableFurnitureLib(Arrays.asList(
-							"§5Info: §eFor Spigot 1.18.x you need §6ProtocolLib 4.8.0 §eor above",
-							"§5Download it here: §l§9https://ci.dmulloy2.net/job/ProtocolLib/lastSuccessfulBuild/",
-							"§7FurnitureLib will stop working!"));
-					return;
-				}
-			}
-			
-			try {
-				Class.forName("com.comphenix.protocol.wrappers.Pair");
-			} catch (ClassNotFoundException ex) {
-				this.disableFurnitureLib(Arrays.asList(
-						"§5Info: §eFor Spigot 1.16.x you need §6ProtocolLib 4.6.0 Build #472 §eor above",
-						"§5Download it here: §l§9https://ci.dmulloy2.net/job/ProtocolLib/lastSuccessfulBuild/",
-						"§7FurnitureLib will stop working!"));
-				return;
-			}
-		}
 		
-		if(getVersionInt() < 13) {
-			debug("FurnitureLib >> Please Update your Server to a newer environment (1.13 or higher)");
-			debug("FurnitureLib >> Maybye your Server Version " + getBukkitVersion() + " can't be supported in the future!");
-		}
-        
-		if(protocolLibVersion < 40) {
-			List<String> instructions = Arrays.asList("Furniture Lib doesn't find the correct ProtocolLib",
-					"Please Install Protocollib §c4.x",
-					"You can it download at: §6§lhttps://www.spigotmc.org/resources/protocollib.1997/");
-			this.disableFurnitureLib(instructions);
-			send("==========================================");
-			return;
-		}
-		
-		if(this.getPluginManager().isPluginEnabled("Floodgate")) {
-			this.floodgateManager = new FloodgateManager();
-		}
+		if(this.getPluginManager().isPluginEnabled("Floodgate")) this.floodgateManager = new FloodgateManager();
 		
 		this.furnitureConfig = new FurnitureConfig(instance);
 		this.updater = new Updater();
@@ -390,7 +326,7 @@ public class FurnitureLib extends JavaPlugin {
 		this.permissionHandler = new PermissionHandler();
 		this.Pmanager = new ProtectionManager(instance);
 		this.cache = new OfflinePlayerCache();
-		send("==========================================");
+		this.send("==========================================");
 		send("FurnitureLibrary Version: §e" + this.getDescription().getVersion());
 		send("Furniture Author: §6" + this.getDescription().getAuthors().get(0));
 		send("Furniture Website: §e" + this.getDescription().getWebsite());
@@ -425,13 +361,6 @@ public class FurnitureLib extends JavaPlugin {
 		
     }
     
-    private int getProcotoLlibVersion(Plugin plugin) {
-    	String version = plugin.getDescription().getVersion();
-    	int maxLength = 3;
-    	String subString = version.substring(0, maxLength > version.length() ? version.length() : maxLength).replaceAll("[^0-9]", "");
-    	return Integer.parseInt(subString);
-    }
-    
     private void registerEvents() {
     	getPluginManager().registerEvents(new onPlayerJoin(), getInstance());
     	getPluginManager().registerEvents(new onCrafting(), getInstance());
@@ -447,8 +376,7 @@ public class FurnitureLib extends JavaPlugin {
     private void disableFurnitureLib(List<String> instructions) {
     	FurnitureLib.debug(instructions, 10);
     	this.enabled = false;
-    	PluginCommand pluginCommand = getCommand("furniture");
-    	pluginCommand.setExecutor(new disabledCommand(this, instructions));
+    	this.getCommand("furniture").setExecutor(new disabledCommand(this, instructions));
 		Bukkit.getPluginManager().registerEvents(new onFurnitureLibDisabled(instructions), this);
     }
     
@@ -457,8 +385,8 @@ public class FurnitureLib extends JavaPlugin {
     }
     
     public void reloadPluginConfig() {
-        enableDebug = true;
         this.reloadConfig();
+        this.getFurnitureConfig().getLimitManager().getTypes().forEach(Limitation::reload);
         this.furnitureConfig.loadPluginConfig();
         FurnitureManager.getInstance().getProjects().forEach(Project::loadDefaults);
     }
@@ -471,40 +399,43 @@ public class FurnitureLib extends JavaPlugin {
     }
 
     private void loadPermissionKit() {
-        config c = new config(this);
-        FileConfiguration file = c.getConfig("permissionKit.yml", "");
-        if (file == null)
-            return;
-        file.addDefaults(YamlConfiguration.loadConfiguration(loadStream("permissionKit.yml")));
-        file.options().copyDefaults(true);
-        file.options().copyHeader(true);
-        c.saveConfig("permissionKit.yml", file, "");
-        if (file.contains("kit")) {
-            if (file.isSet("kit")) {
-                if (file.isConfigurationSection("kit")) {
-                    file.getConfigurationSection("kit").getKeys(false).forEach(letter -> {
-                        String header = letter;
-                        if (file.isSet("kit." + header)) {
-                            List<String> projectList = new ArrayList<String>();
-                            if (file.getStringList("kit." + header) != null) {
-                                projectList = file.getStringList("kit." + header);
-                            }
-                            permissionKit.put(header, projectList);
+    	try {
+    		final File permissionFile = new File(getDataFolder(), "permissionKit.yml");
+    		final YamlConfiguration permissionConfig = YamlConfiguration.loadConfiguration(permissionFile);
+    		if(Objects.isNull(permissionConfig)) return;
+    		permissionConfig.addDefaults(YamlConfiguration.loadConfiguration(loadStream("permissionKit.yml")));
+    		permissionConfig.options().copyDefaults(true);
+    		permissionConfig.options().copyHeader(true);
+    		permissionConfig.save(permissionFile);
+    		if (permissionConfig.contains("kit") == false) return;
+    		if (permissionConfig.isConfigurationSection("kit")) {
+    			permissionConfig.getConfigurationSection("kit").getKeys(false).forEach(letter -> {
+                    String header = letter;
+                    if (permissionConfig.isSet("kit." + header)) {
+                        List<String> projectList = new ArrayList<String>();
+                        if (permissionConfig.getStringList("kit." + header) != null) {
+                            projectList = permissionConfig.getStringList("kit." + header);
                         }
-                    });
-                }
+                        permissionKit.put(header, projectList);
+                    }
+                });
             }
-        }
+    	}catch (Exception e) {
+			e.printStackTrace();
+		}
     }
 
     private void saveIgnore() {
-        List<String> ignoreList = new ArrayList<>();
-        for (UUID uuid : getFurnitureManager().getIgnoreList())
-            ignoreList.add(uuid.toString());
-        config c = new config(this);
-        FileConfiguration configuration = c.getConfig("ignoredPlayers", "");
-        configuration.set("ignoreList", ignoreList);
-        c.saveConfig("ignoredPlayers", configuration, "");
+        try {
+        	final File ignoredFile = new File(this.getDataFolder(), "ignoredPlayers.yml");
+        	final YamlConfiguration configuration = new YamlConfiguration();
+        	final List<String> ignoreList = new ArrayList<>();
+        	this.getFurnitureManager().getIgnoreList().stream().map(UUID::toString).forEach(ignoreList::add);
+            configuration.set("ignoreList", ignoreList);
+            configuration.save(ignoredFile);
+        }catch (Exception e) {
+			e.printStackTrace();
+		}
     }
 
     public boolean checkPurge(ObjectID obj, UUID uuid, int purgeTime) {
@@ -577,27 +508,17 @@ public class FurnitureLib extends JavaPlugin {
     }
 
     public void spawn(Project pro, ObjectID obj) {
-        if (pro == null) return;
-        if (obj == null) return;
-        try {
-            obj.getProjectOBJ().getModelschematic().spawn(obj);
-            pro.applyFunction(obj);
-            obj.setFinish();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        if (pro == null || obj == null) return;
+        obj.getProjectOBJ().getModelschematic().spawn(obj);
+        pro.applyFunction(obj);
+        obj.setFinish();
     }
     
     public void spawnWithAnimation(Project pro, ObjectID objectID) {
-    	if (pro == null) return;
-        if (objectID == null) return;
-        try {
-        	objectID.getProjectOBJ().getModelschematic().spawn(objectID);
-            pro.applyFunction(objectID);
-            objectID.setFinish();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+    	if (pro == null || objectID == null) return;
+        objectID.getProjectOBJ().getModelschematic().spawnWithAnimation(objectID);
+        pro.applyFunction(objectID);
+        objectID.setFinish();
     }
     
     public FloodgateManager getFloodgateManager() {

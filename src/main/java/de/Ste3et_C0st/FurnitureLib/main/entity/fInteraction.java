@@ -33,17 +33,17 @@ public class fInteraction extends fSize{
 	@Override
 	public fEntity clone() {
 		final fInteraction interaction = new fInteraction(null, getObjID());
-		interaction.copyMetadata(this);
+		this.copyMetadata(interaction);
 		return interaction;
 	}
 
 	@Override
-	public void copyMetadata(fEntity entity) {
+	public void copyMetadata(final fEntity entity) {
 		if(entity instanceof fInteraction) {
 			super.copyMetadata(entity);
-			fInteraction interaction = (fInteraction) entity; 
-			this.setDimansion(interaction.getWidth(), interaction.getHeight());
-			this.setResponse(interaction.hasResponse());
+			final fInteraction interaction = (fInteraction) entity; 
+			interaction.setDimansion(this.getWidth(), this.getHeight());
+			interaction.setResponse(this.hasResponse());
 		}
 	}
 

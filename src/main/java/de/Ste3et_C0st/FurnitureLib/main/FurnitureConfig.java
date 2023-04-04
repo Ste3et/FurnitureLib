@@ -1,5 +1,6 @@
 package de.Ste3et_C0st.FurnitureLib.main;
 
+import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
@@ -22,7 +23,6 @@ import de.Ste3et_C0st.FurnitureLib.Listener.render.RenderWithBukkit;
 import de.Ste3et_C0st.FurnitureLib.Listener.render.RenderWithProtocols;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.LanguageManager;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.Metrics;
-import de.Ste3et_C0st.FurnitureLib.Utilitis.config;
 import de.Ste3et_C0st.FurnitureLib.main.Type.DataBaseType;
 import de.Ste3et_C0st.FurnitureLib.main.Type.EventType;
 import de.Ste3et_C0st.FurnitureLib.main.Type.LimitationType;
@@ -221,6 +221,8 @@ public class FurnitureConfig {
         			e.printStackTrace();
 				}
         	}
+        }else {
+        	type.add(LimitationType.valueOf(limitConfig));
         }
         this.limitManager = new LimitationManager(instance, type.toArray(new LimitationType[type.size()]));
         this.limitGlobal = getConfig().getInt("limit-options.limitGlobal", -1);
@@ -317,6 +319,8 @@ public class FurnitureConfig {
         			e.printStackTrace();
 				}
         	}
+        }else {
+        	type.add(LimitationType.valueOf(limitConfig));
         }
         this.limitManager = new LimitationManager(instance, type.toArray(new LimitationType[type.size()]));
         this.limitGlobal = getConfig().getInt("config.limit.limitGlobal", -1);
@@ -466,8 +470,8 @@ public class FurnitureConfig {
     }
     
     private void loadIgnore() {
-        config c = new config(instance);
-        FileConfiguration configuration = c.getConfig("ignoredPlayers", "");
+    	final File file = new File(FurnitureLib.getInstance().getDataFolder(), "ignoredPlayers.yml");
+    	final YamlConfiguration configuration = YamlConfiguration.loadConfiguration(file);
         if (configuration.isSet("ignoreList")) {
             configuration.getStringList("ignoreList").forEach(letter -> {
             	instance.getFurnitureManager().getIgnoreList().add(UUID.fromString(letter));

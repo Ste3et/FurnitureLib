@@ -24,7 +24,7 @@ import java.util.stream.Collectors;
 public class fInventory implements Cloneable {
 
     private ItemStack[] items = new ItemStack[6];
-    private int entityId = 0;
+    private final int entityId;
     
     private static Function<fInventory, List<IEntityEquipment>> entityEquipmentFunction;
     
@@ -114,6 +114,10 @@ public class fInventory implements Cloneable {
     }
 
     public ItemStack[] getIS() {
+        return this.items;
+    }
+    
+    public ItemStack[] getContents() {
         return this.items;
     }
     

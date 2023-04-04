@@ -45,23 +45,23 @@ public class fText_display extends fDisplay {
 	@Override
 	public fEntity clone() {
 		final fText_display display = new fText_display(null, getObjID());
-		display.copyMetadata(this);
+		this.copyMetadata(display);
 		return display;
 	}
 
 	@Override
-	public void copyMetadata(fEntity entity) {
+	public void copyMetadata(final fEntity entity) {
 		if (entity instanceof fText_display) {
 			super.copyMetadata(entity);
-			fText_display display = fText_display.class.cast(entity);
-			this.setSeeThrough(display.isSeeThrough());
-			this.setDefaultBackground(display.isDefaultBackground());
-			this.setText(display.getText());
-			this.setBackgroundColor(display.getBackgroundColorInt());
-			this.setLineWidth(display.getLineWidth());
-			this.setTextOpacity(display.getTextOpacity());
-			this.setAlignment(display.getTextAligment());
-			this.setShadowed(display.isShadowed());
+			final fText_display display = fText_display.class.cast(entity);
+			display.setSeeThrough(this.isSeeThrough());
+			display.setDefaultBackground(this.isDefaultBackground());
+			display.setText(this.getText());
+			display.setBackgroundColor(this.getBackgroundColorInt());
+			display.setLineWidth(this.getLineWidth());
+			display.setTextOpacity(this.getTextOpacity());
+			display.setAlignment(this.getTextAligment());
+			display.setShadowed(this.isShadowed());
 		}
 	}
 

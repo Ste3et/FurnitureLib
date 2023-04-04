@@ -48,7 +48,8 @@ public class BlockManager implements Listener {
 			}catch (Exception ex) {
 				ex.printStackTrace();
 			}
-        	listener.add(this);
+        	
+        	this.listener.add(this);
         	this.listener.forEach(handler -> Bukkit.getPluginManager().registerEvents(handler, FurnitureLib.getInstance()));
         }
     }

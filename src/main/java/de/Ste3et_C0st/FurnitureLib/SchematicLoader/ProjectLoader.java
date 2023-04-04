@@ -14,10 +14,9 @@ import org.bukkit.Location;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
-
 import java.util.HashMap;
 import java.util.Objects;
+import java.util.stream.Stream;
 
 public class ProjectLoader extends Furniture {
 
@@ -78,10 +77,12 @@ public class ProjectLoader extends Furniture {
 
         if ((function || Objects.nonNull(this.inv)) && canInteract) {
             if (Objects.nonNull(this.inv)) {
+            	if(FurnitureLib.getVersionInt() > 16) player.swingMainHand();
                 this.inv.openInventory(player);
                 return;
             }
             if (runFunction(player)) {
+            	if(FurnitureLib.getVersionInt() > 16) player.swingMainHand();
                 update();
                 return;
             }
@@ -91,7 +92,6 @@ public class ProjectLoader extends Furniture {
             }
             return;
         }
-
         runPublicFunctions(player);
     }
 
@@ -104,27 +104,19 @@ public class ProjectLoader extends Furniture {
         if (getObjID().getSQLAction().equals(SQLAction.REMOVE)) return;
         if (player == null) return;
         if (canBuild(player)) {
-            if (this.inv != null) {
-                for (ItemStack stack : inv.getInv().getContents()) {
-                    if (stack != null) {
-                        getWorld().dropItemNaturally(getLocation().clone().add(0, .5, 0), stack);
-                    }
-                }
-            }
-
-            getfAsList().stream().filter(entity -> entity.getName().equalsIgnoreCase("#ITEM#") || entity.getName().equalsIgnoreCase("#BLOCK#")).
-                    forEach(entity -> {
-                    	if(entity instanceof fContainerEntity) {
-                    		for (ItemStack stack : fContainerEntity.class.cast(entity).getInventory().getIS()) {
-                                if (stack != null) {
-                                    getWorld().dropItemNaturally(getLocation().clone().add(0, .5, 0), stack);
-                                }
-                            }
-                    	}
+        	final Location dropLocation = getLocation().clone().add(0, .5, 0);
+        	
+            if (Objects.nonNull(this.inv)) Stream.of(inv.getInv().getContents()).filter(Objects::nonNull).forEach(entry -> getWorld().dropItemNaturally(dropLocation, entry));
+     
+            getfAsList().stream().filter(entity -> entity.getName().equalsIgnoreCase("#ITEM#") || entity.getName().equalsIgnoreCase("#BLOCK#"))
+            		.filter(fContainerEntity.class::isInstance)
+            		.map(fContainerEntity.class::cast)
+                    .forEach(entity -> {
+                    	Stream.of(entity.getInventory().getContents()).filter(Objects::nonNull).forEach(stack -> getWorld().dropItemNaturally(dropLocation, stack));
                     });
-            if(Objects.nonNull(this.inv)) {
-            	this.inv.getViewers().stream().forEach(HumanEntity::closeInventory);
-            }
+            
+            if(Objects.nonNull(this.inv)) this.inv.getViewers().stream().forEach(HumanEntity::closeInventory);
+            
             this.destroy(player);
         }
     }

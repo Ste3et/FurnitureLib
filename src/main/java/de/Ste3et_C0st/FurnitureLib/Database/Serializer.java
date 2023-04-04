@@ -32,7 +32,6 @@ public class Serializer {
     
     public static NBTTagCompound serializeToNBT(ObjectID obj) {
     	NBTTagCompound compound = new NBTTagCompound();
-    	
         if(obj.hasEventType()) compound.setString("EventType", obj.getEventType().toString());
         if(obj.hasPublicMode()) compound.setString("PublicMode", obj.getPublicMode().toString());
         if(Objects.nonNull(obj.getUUID())) compound.setString("Owner-UUID", obj.getUUID().toString());

@@ -39,16 +39,16 @@ public class fBlock_display extends fDisplay{
 	@Override
 	public fBlock_display clone() {
 		final fBlock_display display = new fBlock_display(null, getObjID());
-		display.copyMetadata(this);
+		this.copyMetadata(display);
 		return display;
 	}
 
 	@Override
-	public void copyMetadata(fEntity entity) {
+	public void copyMetadata(final fEntity entity) {
 		if(entity instanceof fBlock_display) {
 			super.copyMetadata(entity);
 			fBlock_display blockDisplay = this.getClass().cast(entity);
-			this.setBlockData(blockDisplay.getBlockData());
+			blockDisplay.setBlockData(this.getBlockData());
 		}
 	}
 

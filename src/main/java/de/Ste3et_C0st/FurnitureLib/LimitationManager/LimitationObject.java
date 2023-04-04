@@ -1,11 +1,10 @@
 package de.Ste3et_C0st.FurnitureLib.LimitationManager;
 
-import de.Ste3et_C0st.FurnitureLib.Utilitis.config;
-import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
 import de.Ste3et_C0st.FurnitureLib.main.Type.LimitationType;
-import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 
+import java.io.File;
 import java.util.HashMap;
 
 public class LimitationObject {
@@ -27,55 +26,46 @@ public class LimitationObject {
                 permission = "furniture.limit." + section;
             }
         }
-        addDefault();
-        loadProjects();
-        loadTotal();
+        System.out.println("tryloadDefPlayer");
+        this.addDefault();
     }
 
     public void addDefault() {
-        config c = new config(FurnitureLib.getInstance());
-        FileConfiguration file = c.getConfig(type.name().toLowerCase(), "/limitation/");
-        if (type.equals(LimitationType.PLAYER)) {
-            FurnitureManager.getInstance().getProjects().forEach(pro -> {
-                file.addDefault("PlayerLimit." + section + ".projects." + pro.getName(), 10);
-            });
-            file.addDefault("PlayerLimit." + section + ".total.enable", false);
-            file.addDefault("PlayerLimit." + section + ".total.amount", -1);
-        }
-        file.options().copyDefaults(true);
-        c.saveConfig(type.name().toLowerCase(), file, "/limitation/");
-    }
-
-    public void loadProjects() {
-        config c = new config(FurnitureLib.getInstance());
-        FileConfiguration file = c.getConfig(type.name().toLowerCase(), "/limitation/");
-        if (file.isConfigurationSection("PlayerLimit." + section + ".projects")) {
-            for (String s : file.getConfigurationSection("PlayerLimit." + section + ".projects").getKeys(false)) {
-                int i = file.getInt("PlayerLimit." + section + ".projects." + s, -1);
-                if (!projectList.containsKey(s)) {
-                    projectList.put(s, i);
-                }
+    	try {
+    		final File file = new File(LimitationManager.getLimitationFolder(), type.name().toLowerCase() + ".yml");
+    		final YamlConfiguration configuration = YamlConfiguration.loadConfiguration(file);
+    		configuration.options().copyDefaults(true);
+    		if (type == LimitationType.PLAYER) {
+                FurnitureManager.getInstance().getProjects().forEach(pro -> {
+                	configuration.addDefault("PlayerLimit." + section + ".projects." + pro.getName(), 10);
+                	this.projectList.putIfAbsent(pro.getName(), configuration.getInt("PlayerLimit." + section + ".projects." + pro.getName(), -1));
+                });
+                configuration.addDefault("PlayerLimit." + section + ".total.enable", false);
+                configuration.addDefault("PlayerLimit." + section + ".total.amount", -1);
+                
+                this.total = configuration.getBoolean("PlayerLimit." + section + ".total.enable", false);
+                this.totalAmount = configuration.getInt("PlayerLimit." + section + ".total.amount", -1);
             }
-        }
+    		
+    		configuration.save(file);
+    	}catch (Exception ex) {
+			ex.printStackTrace();
+		}
     }
 
     public void addDefault(String projectName) {
-        config c = new config(FurnitureLib.getInstance());
-        FileConfiguration file = c.getConfig(type.name().toLowerCase(), "/limitation/");
-        if (type.equals(LimitationType.PLAYER)) {
-            file.addDefault("PlayerLimit." + section + ".projects." + projectName, 10);
-        }
-        file.options().copyDefaults(true);
-        c.saveConfig(type.name().toLowerCase(), file, "/limitation/");
-    }
-
-    public void loadProjects(String projectName) {
-        config c = new config(FurnitureLib.getInstance());
-        FileConfiguration file = c.getConfig(type.name().toLowerCase(), "/limitation/");
-        if (!projectList.containsKey(projectName)) {
-            int i = file.getInt("PlayerLimit." + section + ".projects." + projectName, -1);
-            projectList.put(projectName, i);
-        }
+    	try {
+    		final File file = new File(LimitationManager.getLimitationFolder(), type.name().toLowerCase() + ".yml");
+    		final YamlConfiguration configuration = YamlConfiguration.loadConfiguration(file);
+    		configuration.options().copyDefaults(true);
+    		if (type.equals(LimitationType.PLAYER)) {
+    			configuration.addDefault("PlayerLimit." + section + ".projects." + projectName, 10);
+    			projectList.putIfAbsent(projectName, configuration.getInt("PlayerLimit." + section + ".projects." + projectName, -1));
+            }
+    		configuration.save(file);
+    	}catch (Exception ex) {
+    		ex.printStackTrace();
+		}
     }
 
     public int getAmountFromType(String s) {
@@ -85,15 +75,6 @@ public class LimitationObject {
             }
         }
         return 0;
-    }
-
-    public void loadTotal() {
-        config c = new config(FurnitureLib.getInstance());
-        FileConfiguration file = c.getConfig(type.name().toLowerCase(), "/limitation/");
-        if (file.getBoolean("PlayerLimit." + section + ".total.enable", false)) {
-            this.total = true;
-            this.totalAmount = file.getInt("PlayerLimit." + section + ".total.amount");
-        }
     }
 
 }

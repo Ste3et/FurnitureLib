@@ -9,9 +9,6 @@ import org.bukkit.plugin.Plugin;
 import de.Ste3et_C0st.FurnitureLib.main.LightAPI.LightAPIv3;
 import de.Ste3et_C0st.FurnitureLib.main.LightAPI.LightAPIv5;
 import de.Ste3et_C0st.FurnitureLib.main.LightAPI.iLightAPI;
-import ru.beykerykt.lightapi.LightAPI;
-import ru.beykerykt.lightapi.LightType;
-import ru.beykerykt.lightapi.chunks.ChunkInfo;
 
 public class LightManager {
 

@@ -27,7 +27,6 @@ import de.Ste3et_C0st.FurnitureLib.Utilitis.LanguageManager;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.StringTranslator;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.Wrapper.ChatComponentWrapper;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.cache.DiceOfflinePlayer;
-import de.Ste3et_C0st.FurnitureLib.main.FurnitureConfig;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
@@ -108,6 +107,7 @@ public class command implements CommandExecutor, Listener{
 			for(fEntity stand : e.getID().getPacketList()){
 				stand.setGlowing(true);
 			}
+			
 			final SQLAction action = e.getID().getSQLAction();
 			manager.updateFurniture(e.getID());
 			playerList.remove(p);

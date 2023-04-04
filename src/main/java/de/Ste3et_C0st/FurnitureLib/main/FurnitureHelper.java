@@ -35,7 +35,7 @@ public abstract class FurnitureHelper {
         this.lib = FurnitureLib.getInstance();
         this.lutil = lib.getLocationUtil();
         this.manager = lib.getFurnitureManager();
-        this.b = lutil.yawToFace(id.getStartLocation().getYaw());
+        this.b = LocationUtil.yawToFace(id.getStartLocation().getYaw());
         this.w = id.getStartLocation().getWorld();
         this.plugin = id.getProjectOBJ().getPlugin();
         this.obj = id;
@@ -242,17 +242,19 @@ public abstract class FurnitureHelper {
     }
     
     public void toggleLight() {
-    	AtomicBoolean needUpdate = new AtomicBoolean(false);
+    	final HashSet<fEntity> updateSet = new HashSet<fEntity>();
     	getfAsList().stream()
 			.filter(fEntity::hasCustomName)
 			.filter(entry -> entry.getName().toUpperCase().startsWith("#LIGHT:"))
 			.forEach(fentity -> {
-				if(switchLight(fentity)) needUpdate.set(true);
+				if(switchLight(fentity)) {
+					updateSet.add(fentity);
+				}
 			}
 		);;
 		
-		if(needUpdate.get()) {
-    		update();
+		if(updateSet.isEmpty() == false) {
+			updateSet.stream().forEach(fEntity::update);
     		this.getObjID().setSQLAction(SQLAction.UPDATE);
     	}
     }

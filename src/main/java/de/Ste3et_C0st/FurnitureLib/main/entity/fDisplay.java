@@ -44,27 +44,22 @@ public abstract class fDisplay extends fSize{
 	}
 
 	@Override
-	public fEntity clone() {
-		return null;
-	}
-
-	@Override
-	public void copyMetadata(fEntity entity) {
+	public void copyMetadata(final fEntity entity) {
 		if(entity instanceof fDisplay) {
 			super.copyMetadata(entity);
-			fDisplay display = this.getClass().cast(entity);
-			this.setBillboard(display.getBillboard());
-			this.setScale(display.getScale());
-			this.setLeftRotation(display.getLeftRotationObj());
-			this.setRightRotation(display.getRightRotationObj());
-			this.setTranslation(display.getTranslation());
-			this.setInterpolationDelay(display.getInterpolationDelay());
-			this.setInterpolationDuration(display.getInterpolationDuration());
-			this.setViewRange(display.getViewRange());
-			this.setShadowRadius(display.getShadowRadius());
-			this.setShadowStrength(display.getShadowStrength());
-			this.setBrightness(display.getBrightness());
-			this.setGlowOverride(display.getGlowOverride());
+			final fDisplay display = this.getClass().cast(entity);
+			display.setBillboard(this.getBillboard());
+			display.setScale(this.getScale());
+			display.setLeftRotation(this.getLeftRotationObj());
+			display.setRightRotation(this.getRightRotationObj());
+			display.setTranslation(this.getTranslation());
+			display.setInterpolationDelay(this.getInterpolationDelay());
+			display.setInterpolationDuration(this.getInterpolationDuration());
+			display.setViewRange(this.getViewRange());
+			display.setShadowRadius(this.getShadowRadius());
+			display.setShadowStrength(this.getShadowStrength());
+			display.setBrightness(this.getBrightness());
+			display.setGlowOverride(this.getGlowOverride());
 		}
 	}
 
@@ -73,9 +68,7 @@ public abstract class fDisplay extends fSize{
 		
 	}
 	
-	protected void clone(fEntity entity) {
-		
-	}
+	protected void clone(fEntity entity) {}
 	
 	public fDisplay setBlockLight(int lightLevel) {
 		final Brightness brightness = new Brightness(lightLevel, this.getSkyLight());
@@ -90,6 +83,11 @@ public abstract class fDisplay extends fSize{
 	}
 	
 	public fDisplay setBrightness(Brightness brightness) {
+		
+		if(brightness.getBlockLight() == 0 && brightness.getSkyLight() == 0) {
+			return this.setBrightness(-1);
+		}
+		
 		return this.setBrightness(brightness.getBlockLight() << 4 | brightness.getSkyLight() << 20);
 	}
 	
@@ -257,7 +255,7 @@ public abstract class fDisplay extends fSize{
     	if(!this.interpolationDelay.isDefault()) setMetadata("interpolationDelay", this.getInterpolationDelay());
     	if(!this.interpolationDuration.isDefault()) setMetadata("interpolationDuration", this.getInterpolationDuration());
     	if(!this.brightness.isDefault()) setMetadata("brightness", this.getBrightness());
-    	if(!this.billboard.isDefault()) setMetadata("billboard", (byte) this.getBillboard().ordinal());
+    	if(!this.billboard.isDefault()) setMetadata("billboard", this.getBillboard().name());
     	
     	NBTTagCompound transformation = new NBTTagCompound();
     	
@@ -307,7 +305,7 @@ public abstract class fDisplay extends fSize{
 	@Override
     public void loadMetadata(NBTTagCompound metadata) {
         super.loadMetadata(metadata);
-        if(metadata.hasKeyOfType("billboard", 1)) this.setBillboard((metadata.getByte("billboard")));
+        if(metadata.hasKeyOfType("billboard", 8)) this.setBillboard((Billboard.valueOf(metadata.getString("billboard"))));
         if(metadata.hasKeyOfType("viewRange", 5)) this.setViewRange((metadata.getFloat("viewRange")));
         if(metadata.hasKeyOfType("shadowRadius", 5)) this.setShadowRadius(metadata.getFloat("shadowRadius"));
         if(metadata.hasKeyOfType("shadowStrength", 5)) this.setShadowStrength((metadata.getFloat("shadowStrength")));

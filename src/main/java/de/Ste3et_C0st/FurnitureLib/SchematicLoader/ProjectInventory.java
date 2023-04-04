@@ -3,14 +3,13 @@ package de.Ste3et_C0st.FurnitureLib.SchematicLoader;
 import de.Ste3et_C0st.FurnitureLib.NBT.CraftItemStack;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTCompressedStreamTools;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
-import de.Ste3et_C0st.FurnitureLib.Utilitis.config;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fContainerEntity;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.HumanEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
@@ -23,6 +22,7 @@ import com.migcomponents.migbase64.Base64;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -51,24 +51,28 @@ public class ProjectInventory implements Listener {
         if (e.getInventory().equals(inv)) {
             if (e.getPlayer().equals(getPlayer())) {
                 this.player = null;
-                config c = new config(FurnitureLib.getInstance());
-                FileConfiguration file = c.getConfig(this.id.getSerial(), "/plugin/DiceEditor/metadata/");
-                file.set("inventory", toString());
-                c.saveConfig(this.id.getSerial(), file, "/plugin/DiceEditor/metadata/");
+                try {
+                	final File inventoryFile = new File(FurnitureLib.getInstance().getDataFolder(), "metadata/" + this.id.getSerial() + ".yml");
+                    final YamlConfiguration config = YamlConfiguration.loadConfiguration(inventoryFile);
+                    config.set("inventory", toString());
+                    config.save(inventoryFile);
 
-                if (!entityList.isEmpty()) {
-                    for (fEntity entity : entityList) {
-                        String name = entity.getName();
-                        name = name.replace("OnInventoryCloseDisplayItem(", "");
-                        name = name.replace(")", "");
-                        String[] args = name.split(",");
-                        int slot = Integer.parseInt(args[1]);
-                        int entitySlot = Integer.parseInt(args[0]);
-                        
-                        if(entity instanceof fContainerEntity) fContainerEntity.class.cast(entity).getInventory().setSlot(entitySlot, inv.getItem(slot));
+                    if (!entityList.isEmpty()) {
+                        for (fEntity entity : entityList) {
+                            String name = entity.getName();
+                            name = name.replace("OnInventoryCloseDisplayItem(", "");
+                            name = name.replace(")", "");
+                            String[] args = name.split(",");
+                            int slot = Integer.parseInt(args[1]);
+                            int entitySlot = Integer.parseInt(args[0]);
+                            
+                            if(entity instanceof fContainerEntity) fContainerEntity.class.cast(entity).getInventory().setSlot(entitySlot, inv.getItem(slot));
+                        }
+                        this.id.update();
                     }
-                    this.id.update();
-                }
+                }catch (Exception ex) {
+					ex.printStackTrace();
+				}
             }
         }
     }
@@ -90,17 +94,16 @@ public class ProjectInventory implements Listener {
     }
     
     public void load() {
-        config c = new config(FurnitureLib.getInstance());
-        FileConfiguration file = c.getConfig(this.id.getSerial(), "/plugin/DiceEditor/metadata/");
-        if (file.isSet("inventory")) {
-            setItems(file.getString("inventory"));
-        }
-
-        for (fEntity entities : this.id.getPacketList()) {
-            if (entities.getName().startsWith("OnInventoryCloseDisplayItem")) {
-                this.entityList.add(entities);
-            }
-        }
+    	 try {
+    		 final File inventoryFile = new File(FurnitureLib.getInstance().getDataFolder(), "metadata/" + this.id.getSerial() + ".yml");
+             final YamlConfiguration config = YamlConfiguration.loadConfiguration(inventoryFile);
+    		 if(config.isSet("inventory")) {
+    			 setItems(config.getString("inventory"));
+    		 }
+    		 this.id.getPacketList().stream().filter(entry -> entry.getName().startsWith("OnInventoryCloseDisplayItem")).forEach(entityList::add);	 
+    	 }catch (Exception ex) {
+				ex.printStackTrace();
+		}
     }
 
     public String toString() {

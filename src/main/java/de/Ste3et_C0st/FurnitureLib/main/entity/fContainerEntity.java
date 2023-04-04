@@ -20,7 +20,7 @@ public abstract class fContainerEntity extends fEntity{
 	
 	public fContainerEntity(Location loc, EntityType type, int entityID, ObjectID id) {
 		super(loc, type, entityID, id);
-		this.entityInventory = new fInventory(entityID);
+		this.entityInventory = new fInventory(getEntityID());
 	}
 	
     public fInventory getEquipment() {
@@ -31,7 +31,7 @@ public abstract class fContainerEntity extends fEntity{
         return this.entityInventory;
     }
 
-    public fEntity setInventory(fInventory inv) {
+    public fContainerEntity setInventory(fInventory inv) {
         this.entityInventory = inv;
         return this;
     }
@@ -92,9 +92,11 @@ public abstract class fContainerEntity extends fEntity{
     
     public void sendInventoryPacket(final Player player) {
         List<PacketContainer> packets = this.entityInventory.createPackets();
+        
         if (packets.isEmpty())
             return;
         try {
+        	
             for (final PacketContainer packet : packets) {
                 if (player == null || packet == null || getManager() == null) {
                     return;
@@ -114,6 +116,7 @@ public abstract class fContainerEntity extends fEntity{
     		inventory.c().stream().forEach(entry -> {
     			String name = (String) entry;
     			if (inventory.getString(name).equalsIgnoreCase("NONE") == false) {
+    				
     				NBTTagCompound compound = inventory.getCompound(name);
                     ItemStack is = new CraftItemStack().getItemStack(compound);
                     if(is.getType().name().equalsIgnoreCase("PLAYER_HEAD") && SkullMetaPatcher.shouldPatch()) {
@@ -140,7 +143,7 @@ public abstract class fContainerEntity extends fEntity{
     
     @Override
     public void update(Player player) {
-    	super.send(player);
+    	super.update(player);
     	this.sendInventoryPacket(player);
     }
 }

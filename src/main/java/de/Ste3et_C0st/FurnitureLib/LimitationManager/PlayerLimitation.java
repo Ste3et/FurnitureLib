@@ -4,7 +4,6 @@ import java.util.Arrays;
 import java.util.function.Predicate;
 
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
@@ -13,19 +12,19 @@ import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.LimitationType;
 
-public class WorldLimitation extends Limitation{
+public class PlayerLimitation extends Limitation{
 
-	private static final String KEY = "World";
+	private static final String KEY = "Player";
 	private static final String headString = KEY + "Limit";
 	
-	public WorldLimitation() {
-		super(LimitationType.WORLD);
+	public PlayerLimitation() {
+		super(LimitationType.PLAYER);
 		this.writeConfig();
 	}
 	
 	@Override
-	public int getAmount(Predicate<ObjectID> predicate) {
-		return (int) FurnitureManager.getInstance().getAllExistObjectIDs().filter(predicate).count();
+	public int getAmount(Predicate<ObjectID> projectAmount) {
+		return (int) FurnitureManager.getInstance().getAllExistObjectIDs().filter(projectAmount).count();
 	}
 
 	@Override
@@ -37,8 +36,8 @@ public class WorldLimitation extends Limitation{
 	public void writeConfig() {
 		final YamlConfiguration configuration = super.loadYaml();
 		configuration.options().setHeader(Arrays.asList(
-			"This is the WorldLimitation File",
-			"You can limit the max amount of Furnitures each world",
+			"This is the PlayerLimitation file",
+			"You can limit the max amount of Furnitures each Player",
 			"total.enable = (bool) | set default value for each project",
 			"total.global = (bool) | override the project limit and force use total.amount for each project"
 		));
@@ -54,12 +53,9 @@ public class WorldLimitation extends Limitation{
 		super.ioProjectLimit(headString, project, configuration);
 		super.save(configuration, getFile());
 	}
-	
+
 	@Override
 	public Predicate<ObjectID> buildFilter(Location location, Project project, Player player) {
-		final World world = location.getWorld();
-		final Predicate<ObjectID> prediacte = objectID -> objectID.getWorld().equals(world); 
-		return prediacte;
+		return objectID -> objectID.getProjectOBJ().equals(project) && objectID.getUUID().equals(player.getUniqueId());
 	}
 }
-

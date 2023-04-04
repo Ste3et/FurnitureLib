@@ -15,6 +15,7 @@ import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
+
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
 import org.bukkit.Location;
@@ -23,7 +24,6 @@ import org.bukkit.World;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
-import org.bukkit.event.Event.Result;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
@@ -36,7 +36,6 @@ import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
-import org.bukkit.persistence.PersistentDataType;
 
 import java.util.HashSet;
 import java.util.List;
@@ -46,10 +45,6 @@ import java.util.stream.Collectors;
 public class ChunkOnLoad implements Listener {
 
     public HashSet<Player> eventList = new HashSet<Player>();
-
-    /*
-     * Spawn furniture from Project
-     */
 
     public static Project getProjectByItem(ItemStack is) {
         if (is == null) return null;
@@ -65,7 +60,7 @@ public class ChunkOnLoad implements Listener {
             		}
         		}
         		org.bukkit.NamespacedKey key = new org.bukkit.NamespacedKey(FurnitureLib.getInstance(), "model");
-        		String projectString = meta.getPersistentDataContainer().getOrDefault(key, PersistentDataType.STRING, null);
+        		String projectString = meta.getPersistentDataContainer().getOrDefault(key, org.bukkit.persistence.PersistentDataType.STRING, null);
         		if (projectString != null)
                     return FurnitureManager.getInstance().getProjects().stream().filter(pro -> pro.getSystemID().equalsIgnoreCase(projectString)).findFirst().orElse(null);
         	}else if (stack.getItemMeta().hasLore()) {
@@ -89,7 +84,7 @@ public class ChunkOnLoad implements Listener {
     			}
     		}
     		org.bukkit.NamespacedKey key = new org.bukkit.NamespacedKey(FurnitureLib.getInstance(), "model");
-    		String projectString = meta.getPersistentDataContainer().getOrDefault(key, PersistentDataType.STRING, null);
+    		String projectString = meta.getPersistentDataContainer().getOrDefault(key, org.bukkit.persistence.PersistentDataType.STRING, null);
     		if (projectString != null) return projectString;
     	}else if (stack.getItemMeta().hasLore()) {
     		String projectString = HiddenStringUtils.extractHiddenString(stack.getItemMeta().getLore().get(0));

@@ -1,12 +1,15 @@
 package de.Ste3et_C0st.FurnitureLib.Utilitis;
 
 import java.lang.reflect.Field;
+import java.util.Objects;
 import java.util.UUID;
 
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
+import org.bukkit.inventory.meta.SkullMeta;
 
+import com.comphenix.protocol.utility.MinecraftReflection;
 import com.comphenix.protocol.wrappers.WrappedGameProfile;
 import com.comphenix.protocol.wrappers.WrappedSignedProperty;
 
@@ -21,8 +24,27 @@ public class SkullMetaPatcher {
 		needPatcher = Bukkit.getServer().getName().toLowerCase().contains("paper") == false;
 	}
 	
+	public static ItemStack patchStack(ItemStack stack) {
+		if(needPatcher == false) return stack;
+		if(Objects.isNull(stack)) return stack;
+		if(stack.getItemMeta() instanceof SkullMeta skullmeta) {
+			try {
+				final Object craftBukkitMeta = MinecraftReflection.getCraftBukkitClass("inventory.CraftMetaSkull").cast(skullmeta);
+				final Field profileField = MinecraftReflection.getCraftBukkitClass("inventory.CraftMetaSkull").getDeclaredField("profile");
+				profileField.setAccessible(true);
+				final Object savedObject = profileField.get(craftBukkitMeta);
+				final WrappedGameProfile profile = WrappedGameProfile.fromHandle(savedObject);
+				System.out.println(profile.toString());
+			}catch (Exception e) {
+				e.printStackTrace();
+			}
+		}
+		return stack;
+	}
+	
 	public static ItemStack patch(ItemStack stack, NBTTagCompound compound) {
 		if(needPatcher) {
+			System.out.println("needPatch");
     		if(compound.hasKeyOfType("tag", 10)) {
         		NBTTagCompound tagCompound = compound.getCompound("tag");
         		if(tagCompound.hasKeyOfType("SkullOwner", 10)) {
@@ -35,6 +57,7 @@ public class SkullMetaPatcher {
         					NBTTagCompound texturestring = textureCompound.get(0);
         					String base64String = texturestring.getString("Value");
         					WrappedGameProfile gameProfile = makeProfile(base64String);
+        					
         					try {
         					    Field profileField = headMeta.getClass().getDeclaredField("profile");
         					    profileField.setAccessible(true);

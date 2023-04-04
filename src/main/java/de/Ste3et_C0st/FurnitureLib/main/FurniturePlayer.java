@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
@@ -96,6 +97,9 @@ public class FurniturePlayer {
     }
     
     public boolean isBedrockPlayer() {
+    	
+    	
+    	
     	FloodgateManager manager = FurnitureLib.getInstance().getFloodgateManager();
     	if(Objects.nonNull(manager)) {
     		manager.isBedrockPlayer(uuid);

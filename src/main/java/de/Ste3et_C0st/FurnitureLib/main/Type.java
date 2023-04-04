@@ -1,5 +1,9 @@
 package de.Ste3et_C0st.FurnitureLib.main;
 
+import de.Ste3et_C0st.FurnitureLib.LimitationManager.ChunkLimitation;
+import de.Ste3et_C0st.FurnitureLib.LimitationManager.Limitation;
+import de.Ste3et_C0st.FurnitureLib.LimitationManager.PlayerLimitation;
+import de.Ste3et_C0st.FurnitureLib.LimitationManager.WorldLimitation;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.LanguageManager;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -10,14 +14,15 @@ import org.bukkit.util.EulerAngle;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Type {
     public static String version = "1." + FurnitureLib.getBukkitVersion().split("_")[1];
     public static ProtocolFields field = ProtocolFields.getField(version);
-    static LanguageManager lang = LanguageManager.getInstance();
-    static List<Material> swords, spades, axt, pickaxe, hoes, weapons, tools;
+    private static LanguageManager lang = LanguageManager.getInstance();
+    private static List<Material> swords, spades, axt, pickaxe, hoes, weapons, tools;
 
     static {
         List<Material> matList = Arrays.asList(Material.values());
@@ -36,9 +41,9 @@ public class Type {
     public enum ColorType {BLOCK, BANNER}
 
     public enum LimitationType {
-    	PLAYER(), 
-    	CHUNK(), 
-    	WORLD()
+    	PLAYER, 
+    	CHUNK, 
+    	WORLD;
     }
 
     public enum SQLAction {
@@ -161,7 +166,6 @@ public class Type {
 
 
     public enum ProtocolFields {
-        Spigot19(10, 11, 12, 13, 14, 15, 16, 9, 7),
         Spigot110(11, 12, 13, 14, 15, 16, 17, 10, 7),
         Spigot114(13, 14, 15, 16, 17, 18, 19, 11, 8),
         Spigot115(14, 15, 16, 17, 18, 19, 20, 12, 9),
@@ -182,9 +186,6 @@ public class Type {
         }
 
         public static ProtocolFields getField(String s) {
-            if (s.startsWith("1.9")) {
-                return Spigot19;
-            }
             if (s.startsWith("1.10")) {
                 return Spigot110;
             }
@@ -358,13 +359,8 @@ public class Type {
         private float a = 0;
         private float b = 0;
         private boolean c = false;
+        
         EntityMoving(float a, float b, boolean c) {
-            this.a = a;
-            this.b = b;
-            this.c = c;
-        }
-
-        public void setValues(float a, float b, boolean c) {
             this.a = a;
             this.b = b;
             this.c = c;

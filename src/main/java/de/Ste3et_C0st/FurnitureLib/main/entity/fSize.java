@@ -26,11 +26,11 @@ public abstract class fSize extends fEntity {
 	protected abstract int heightField();
 	
 	@Override
-	public void copyMetadata(fEntity entity) {
+	public void copyMetadata(final fEntity entity) {
 		if(entity instanceof fSize) {
-			fSize fEntity = this.getClass().cast(entity);
-			this.setWidth(fEntity.getHeight());
-			this.setHeight(fEntity.getWidth());
+			final fSize fEntity = this.getClass().cast(entity);
+			fEntity.setWidth(this.getHeight());
+			fEntity.setHeight(this.getWidth());
 		}
 	}
 	

@@ -40,17 +40,17 @@ public class fItem_display extends fDisplay{
 	@Override
 	public fEntity clone() {
 		final fItem_display display = new fItem_display(null, getObjID());
-		display.copyMetadata(this);
+		this.copyMetadata(display);
 		return display;
 	}
 
 	@Override
-	public void copyMetadata(fEntity entity) {
+	public void copyMetadata(final fEntity entity) {
 		if(entity instanceof fItem_display) {
 			super.copyMetadata(entity);
-			fItem_display display = this.getClass().cast(entity);
-			this.setItemDisplay(display.getItemDisplay());
-			this.setItemStack(display.getStack());
+			final fItem_display display = this.getClass().cast(entity);
+			display.setItemDisplay(this.getItemDisplay());
+			display.setItemStack(this.getStack());
 		}
 	}
 

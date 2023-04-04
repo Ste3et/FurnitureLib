@@ -20,6 +20,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.util.EulerAngle;
 import java.util.HashMap;
+import java.util.Objects;
 
 public class fArmorStand extends fContainerEntity{
 
@@ -188,25 +189,7 @@ public class fArmorStand extends fContainerEntity{
     @Override
     public fArmorStand clone() {
         fArmorStand nStand = new fArmorStand(null, getObjID());
-        fInventory inv = new fInventory(nStand.getEntityID());
-        for (int i = 0; i < 7; i++) {
-            if (getInventory().getSlot(i) == null) continue;
-            inv.setSlot(i, getInventory().getSlot(i).clone());
-        }
-        nStand.setInventory(inv);
-        nStand.setSmall(this.isSmall());
-        nStand.setInvisible(this.isInvisible());
-        nStand.setMarker(this.isMarker());
-        nStand.setGlowing(this.isGlowing());
-        nStand.setArms(this.hasArms());
-        nStand.setBasePlate(this.hasBasePlate());
-        nStand.setFire(this.isFire());
-        nStand.setName(this.getCustomName());
-        nStand.setNameVisibility(this.isCustomNameVisible());
-        for (BodyPart part : BodyPart.values()) {
-            nStand.setPose(this.getPose(part), part);
-        }
-
+        this.copyMetadata(nStand);
         return nStand;
     }
 
@@ -293,11 +276,27 @@ public class fArmorStand extends fContainerEntity{
     }
 
 	@Override
-	public void copyMetadata(fEntity entity) {
+	public void copyMetadata(final fEntity entity) {
 		fArmorStand stand = this.getClass().cast(entity);
-		setMarker(stand.isMarker());
-    	setBasePlate(stand.hasBasePlate());
-    	setArms(stand.hasArms());
+		
+		for (int i = 0; i < 7; i++) {
+            if (this.getInventory().getSlot(i) == null) continue;
+            stand.getInventory().setSlot(i, this.getInventory().getSlot(i).clone());
+        }
+		
+		stand.setSmall(this.isSmall());
+		stand.setInvisible(this.isInvisible());
+		stand.setMarker(this.isMarker());
+        stand.setGlowing(this.isGlowing());
+        stand.setArms(this.hasArms());
+        stand.setBasePlate(this.hasBasePlate());
+        stand.setFire(this.isFire());
+        stand.setName(this.getCustomName());
+        stand.setNameVisibility(this.isCustomNameVisible());
+        
+        for (BodyPart part : BodyPart.values()) {
+        	stand.setPose(this.getPose(part), part);
+        }
 	}
 	
 	public EntitySize getEntitySize() {
@@ -306,7 +305,16 @@ public class fArmorStand extends fContainerEntity{
 
 	@Override
 	protected Material getDestroyMaterial() {
-		return getHelmet() != null ? getHelmet().getType() : Material.AIR;
+		if(Objects.nonNull(getHelmet())) {
+			if(getHelmet().getType().isBlock()) {
+				return getHelmet().getType();
+			}
+		}else if(Objects.nonNull(getItemInMainHand())) {
+			if(getItemInMainHand().getType().isBlock()) {
+				return getItemInMainHand().getType();
+			}
+		}
+		return Material.AIR;
 	}
     
 //	@Override

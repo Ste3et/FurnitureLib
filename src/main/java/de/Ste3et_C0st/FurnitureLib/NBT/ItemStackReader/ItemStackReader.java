@@ -4,8 +4,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Method;
-import java.util.Objects;
-
 import org.bukkit.inventory.ItemStack;
 
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTCompressedStreamTools;
@@ -38,7 +36,7 @@ public abstract class ItemStackReader {
 	
 	public abstract ItemStack getItemStack(NBTTagCompound nbtTagCompound);
 	
-	public NBTTagCompound getNBTTag(ItemStack is) throws Exception {
+	public NBTTagCompound getNBTTag(ItemStack is) throws Exception {		
 	        try {
 	            Object nms_item = asNMSCopy.invoke(null, is);
 	            Object nms_nbt = clazz_nms_nbt.newInstance();

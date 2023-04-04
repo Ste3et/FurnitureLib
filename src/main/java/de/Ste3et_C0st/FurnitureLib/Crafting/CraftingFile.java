@@ -26,7 +26,8 @@ import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class CraftingFile {
-    public String systemID = "";
+    
+	public String systemID = "";
     public File filePath;
     private FileConfiguration file;
     private String name;
@@ -69,7 +70,7 @@ public class CraftingFile {
                 loadCrafting(name);
             }
         } catch (ClassNotFoundException e) {
-            loadCrafting119111(name);
+        	e.printStackTrace();
         }
     }
 
@@ -136,25 +137,6 @@ public class CraftingFile {
         ItemMeta meta = stack.getItemMeta();
         meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', name));
         stack.setItemMeta(meta);
-    }
-
-    @SuppressWarnings("deprecation")
-    public void loadCrafting119111(String s) {
-        try {
-            this.isDisable = file.getBoolean(header + ".crafting.disable");
-            String[] fragements = returnFragment();
-            this.recipe = new ShapedRecipe(returnResult(s)).shape(fragements);
-            returnMaterial(s, fragements).entrySet().stream().filter(c -> c.getValue() != Material.AIR).forEach(c -> {
-                this.recipe.setIngredient(c.getKey(), c.getValue());
-            });
-            if (!isDisable) {
-                Bukkit.getServer().addRecipe(this.recipe);
-            }
-            getPlaceAbleSide();
-        } catch (Exception e) {
-        	System.err.println(this.header + " is a corrupted model File !");
-            e.printStackTrace();
-        }
     }
 
 

@@ -10,11 +10,9 @@ import com.comphenix.protocol.wrappers.WrappedDataWatcher.Registry;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
 import com.comphenix.protocol.wrappers.WrappedWatchableObject;
 
-import de.Ste3et_C0st.FurnitureLib.NBT.CraftItemStack;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.DefaultKey;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.EntityID;
-import de.Ste3et_C0st.FurnitureLib.Utilitis.SkullMetaPatcher;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureConfig;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
@@ -23,7 +21,6 @@ import org.bukkit.*;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
-import org.bukkit.inventory.ItemStack;
 import java.util.*;
 import java.util.function.BiFunction;
 
@@ -259,7 +256,7 @@ public abstract class fEntity extends fSerializer implements Cloneable {
 
     public void sendParticle() {
     	Material material = getDestroyMaterial();
-        getObjID().getWorld().playEffect(getLocation(), Effect.STEP_SOUND, material);
+        getObjID().getWorld().playEffect(getObjID().getStartLocation().clone().add(0, .3, 0), Effect.STEP_SOUND, material);
     }
 
     public fEntity setNameVisibility(boolean nameVisibility) {
@@ -314,7 +311,6 @@ public abstract class fEntity extends fSerializer implements Cloneable {
         try {
             getManager().sendServerPacket(player, getHandle());
             this.sendMetadata(player);
-            
             if(getPassenger().isEmpty() == false) {
             	   getManager().sendServerPacket(player, this.mountPacketContainer);
              }
@@ -326,9 +322,7 @@ public abstract class fEntity extends fSerializer implements Cloneable {
     private void sendMetadata(Player player) {
         PacketContainer update = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
         update.getIntegers().write(0, getEntityID());
-        
         metadataFunction.apply(update, getWatcher().getWatchableObjects());
-        
         try {
             getManager().sendServerPacket(player, update);
         } catch (Exception e) {
@@ -432,7 +426,6 @@ public abstract class fEntity extends fSerializer implements Cloneable {
         container.getIntegerArrays().write(0, i);
         getObjID().getPlayerList().forEach(player -> {
             try {
-            	
                 getManager().sendServerPacket(player, container);
             } catch (Exception e) {
                 e.printStackTrace();
@@ -467,6 +460,7 @@ public abstract class fEntity extends fSerializer implements Cloneable {
     
     public boolean haveDestroyMaterial() {
     	final Material material = getDestroyMaterial();
-    	return material != null && material.isBlock();
+    	final boolean returnValue = material != null && material.isAir() == false && material.isBlock();
+    	return returnValue;
     }
 }

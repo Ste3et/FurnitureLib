@@ -1,27 +1,24 @@
 package de.Ste3et_C0st.FurnitureLib.Crafting;
 
 import com.google.gson.JsonObject;
+
 import de.Ste3et_C0st.FurnitureLib.ModelLoader.ModelHandler;
 import de.Ste3et_C0st.FurnitureLib.SchematicLoader.ProjectLoader;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.BoundingBox;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.LanguageManager;
-import de.Ste3et_C0st.FurnitureLib.Utilitis.StringTranslator;
-import de.Ste3et_C0st.FurnitureLib.Utilitis.config;
 import de.Ste3et_C0st.FurnitureLib.main.Furniture;
-import de.Ste3et_C0st.FurnitureLib.main.FurnitureConfig;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.PermissionHandler;
+import de.Ste3et_C0st.FurnitureLib.main.Type;
 import de.Ste3et_C0st.FurnitureLib.main.Type.CenterType;
 import de.Ste3et_C0st.FurnitureLib.main.Type.PlaceableSide;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -36,15 +33,15 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class Project {
-    private String project;
+    
+	private String project;
     private CraftingFile file;
     private Plugin plugin;
     
     private Integer chunkLimit = -1;
-    private config limitationConfig;
-    private FileConfiguration limitationFile;
     private HashMap<World, Integer> limitationWorld = new HashMap<World, Integer>();
     private List<JsonObject> functionList;
     private CenterType type = CenterType.RIGHT;
@@ -92,7 +89,6 @@ public class Project {
             this.modelschematic = new ModelHandler(this.getConfig(), this.getCraftingFile().getFileHeader());
             FurnitureLib.getInstance().getFurnitureManager().addProject(this);
             this.loadDefaults();
-            FurnitureConfig.getFurnitureConfig().getLimitManager().loadDefault(this.project);
             PermissionHandler.registerPermission("furniture.craft.*","furniture.craft." + name.toLowerCase());
             PermissionHandler.registerPermission("furniture.place.*","furniture.place." + name.toLowerCase());
             PermissionHandler.registerPermission("furniture.sit.*","furniture.sit." + name.toLowerCase());
@@ -190,18 +186,18 @@ public class Project {
     }
 
     public int getWidth() {
-        BoundingBox box = getModelschematic().getBoundingBox();
+        final BoundingBox box = getModelschematic().getBoundingBox();
         int width = Math.abs(box.getMax().getBlockX() - box.getMin().getBlockX());
         return width + 1;
     }
 
     public int getHeight() {
-        BoundingBox box = getModelschematic().getBoundingBox();
+    	final BoundingBox box = getModelschematic().getBoundingBox();
         return (int) box.getHeight() + 1;
     }
 
     public int getLength() {
-        BoundingBox box = getModelschematic().getBoundingBox();
+    	final BoundingBox box = getModelschematic().getBoundingBox();
         int length = Math.abs(box.getMax().getBlockZ() - box.getMin().getBlockZ());
         return length + 1;
     }
@@ -262,66 +258,9 @@ public class Project {
     }
 
     public void loadDefaults() {
-        addDefaultWorld();
-        addDefault("chunk");
-        addDefault("player");
-        this.chunkLimit = getDefault("chunk");
-    }
-
-    private void addDefaultWorld() {
-        this.limitationConfig = new config(FurnitureLib.getInstance());
-        this.limitationFile = this.limitationConfig.getConfig("world", "/limitation/");
-        for (World w : Bukkit.getWorlds()) {
-            if (w == null || getSystemID() == null)
-                continue;
-            if (getSystemID().isEmpty())
-                continue;
-            this.limitationFile.addDefault("Projects." + w.getName() + "." + getSystemID(), -1);
-        }
-        this.limitationFile.options().copyDefaults(true);
-        this.limitationConfig.saveConfig("world", this.limitationFile, "/limitation/");
-        getAmountWorld();
-    }
-
-    private void getAmountWorld() {
-        this.limitationConfig = new config(FurnitureLib.getInstance());
-        this.limitationFile = this.limitationConfig.getConfig("world", "/limitation/");
-        for (World w : Bukkit.getWorlds()) {
-            Integer i = this.limitationFile.getInt("Projects." + w.getName() + "." + getSystemID());
-            limitationWorld.put(w, i);
-        }
-    }
-
-    private void addDefault(String conf) {
-        this.limitationConfig = new config(FurnitureLib.getInstance());
-        this.limitationFile = this.limitationConfig.getConfig(conf, "/limitation/");
-        if (conf.equalsIgnoreCase("chunk")) {
-            if (!this.limitationFile.isSet("ChunkLimit.total")) {
-                this.limitationFile.addDefault("ChunkLimit.total.enable", false);
-                this.limitationFile.addDefault("ChunkLimit.total.amount", -1);
-                this.limitationFile.addDefault("ChunkLimit.total.global", false);
-            }
-
-            if (!this.limitationFile.isSet("ChunkLimit.projects." + getSystemID())) {
-                this.limitationFile.addDefault("ChunkLimit.projects." + getSystemID(), -1);
-            }
-        }
-        this.limitationFile.options().copyDefaults(true);
-        this.limitationConfig.saveConfig(conf, this.limitationFile, "/limitation/");
-    }
-
-    private Integer getDefault(String conf) {
-        this.limitationConfig = new config(FurnitureLib.getInstance());
-        this.limitationFile = this.limitationConfig.getConfig(conf, "/limitation/");
-        if (conf.equalsIgnoreCase("chunk")) {
-            if (limitationFile.getBoolean("ChunkLimit.total.enable", false)) {
-            	FurnitureConfig.getFurnitureConfig().getLimitManager().setGlobal(limitationFile.getBoolean("ChunkLimit.total.global", false));
-                return limitationFile.getInt("ChunkLimit.total.amount", -1);
-            } else {
-                return limitationFile.getInt("ChunkLimit.projects." + getSystemID(), -1);
-            }
-        }
-        return -1;
+    	FurnitureLib.getInstance().getFurnitureConfig().getLimitManager().getTypes().forEach(entry -> {
+    		entry.updateConfig(this);
+    	});
     }
     
     public String getDisplayName() {

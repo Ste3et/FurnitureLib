@@ -1,38 +1,66 @@
 package de.Ste3et_C0st.FurnitureLib.LimitationManager;
 
-import java.util.HashMap;
+import java.util.Arrays;
+import java.util.function.Predicate;
 
 import org.bukkit.Location;
 import org.bukkit.World;
+import org.bukkit.configuration.file.YamlConfiguration;
+import org.bukkit.entity.Player;
 
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
+import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
+import de.Ste3et_C0st.FurnitureLib.main.Type.LimitationType;
 
-public class ChunkLimitation extends LimitationType{
-
-	private HashMap<String, Integer> amountMap = new HashMap<String, Integer>();
+public class ChunkLimitation extends Limitation{
 	
-	@Override
-	public void init() {
-		
+	private static final String KEY = "Chunk";
+	private static final String headString = KEY + "Limit";
+	
+	public ChunkLimitation() {
+		super(LimitationType.CHUNK);
+		this.writeConfig();
 	}
 	
 	@Override
-	public int getAmount(Location location, Project project) {
-		final World world = location.getWorld();
+	public int getAmount(Predicate<ObjectID> predicate) {
+		return (int) FurnitureManager.getInstance().getAllExistObjectIDs().filter(predicate).count();
+	}
+
+	@Override
+	public boolean canPlace(Location location, Project project, Player player) {
+		return getAmount(buildFilter(location, project, player)) < getLimit(project);
+	}
+
+	@Override
+	public void writeConfig() {
+		final YamlConfiguration configuration = super.loadYaml();
+		configuration.options().setHeader(Arrays.asList(
+			"This is the ChunkLimitation file",
+			"You can limit the max amount of Furnitures each chunk",
+			"total.enable = (bool) | set default value for each project",
+			"total.global = (bool) | override the project limit and force use total.amount for each project"
+		));
+		super.writeGlobal(configuration, headString);
+		FurnitureManager.getInstance().getProjects().forEach(project -> super.ioProjectLimit(headString, project, configuration));
+		super.save(configuration, getFile());
+	}
+
+	@Override
+	public void updateConfig(Project project) {
+		if(this.amountMap.containsKey(project)) return;
+		final YamlConfiguration configuration = super.loadYaml();
+		super.ioProjectLimit(headString, project, configuration);
+		super.save(configuration, getFile());
+	}
+	
+	@Override
+	public Predicate<ObjectID> buildFilter(Location location, Project project, Player player) {
 		final int chunkX = location.getBlockX() >> 4;
 		final int chunkZ = location.getBlockZ() >> 4;
-		return (int) FurnitureManager.getInstance().getInChunkByCoord(chunkX, chunkZ, world).stream().filter(entry -> entry.getProject().equalsIgnoreCase(project.getName())).count();
+		final World world = location.getWorld();
+		final Predicate<ObjectID> prediacte = objectID -> objectID.getWorld().equals(world); 
+		return prediacte.and(objectID -> objectID.isInChunk(chunkX, chunkZ));
 	}
-
-	@Override
-	public int getMaxCount(Project project) {
-		return amountMap.getOrDefault(project.getName(), -1);
-	}
-
-	@Override
-	public boolean canPlace(Location location, Project project) {
-		return getAmount(location, project) < getMaxCount(project);
-	}
-	
 }

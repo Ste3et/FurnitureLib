@@ -14,19 +14,16 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import org.bukkit.Bukkit;
-import org.bukkit.Location;
 import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import com.google.gson.Gson;
-import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 
-import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.Database.Database;
-import de.Ste3et_C0st.FurnitureLib.LimitationManager.LimitationType;
+import de.Ste3et_C0st.FurnitureLib.LimitationManager.Limitation;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.LanguageManager;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.SkullMetaPatcher;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.Wrapper.ChatComponentWrapper;
@@ -92,7 +89,7 @@ public class DumpHandler {
 		packetInfos.addProperty("autoPure", FurnitureConfig.getFurnitureConfig().isAutoPurge());
 		packetInfos.addProperty("useGamemode", FurnitureConfig.getFurnitureConfig().useGamemode());
 		packetInfos.addProperty("language", LanguageManager.getInstance().getLanguage());
-		packetInfos.addProperty("limitConfig", FurnitureConfig.getFurnitureConfig().getLimitManager().getTypes().stream().map(Enum::toString).collect(Collectors.joining(",")));
+		packetInfos.addProperty("limitConfig", FurnitureConfig.getFurnitureConfig().getLimitManager().getTypes().stream().map(Limitation::getEnum).map(Enum::toString).collect(Collectors.joining(",")));
 		packetInfos.addProperty("regionMemberAccess", FurnitureConfig.getFurnitureConfig().haveRegionMemberAccess());
 		packetInfos.addProperty("eventType", FurnitureConfig.getFurnitureConfig().getDefaultEventType().name());
 		packetInfos.addProperty("publicType", FurnitureConfig.getFurnitureConfig().getDefaultPublicType().name());
