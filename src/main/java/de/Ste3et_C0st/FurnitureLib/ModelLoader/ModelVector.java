@@ -122,4 +122,8 @@ public class ModelVector implements Cloneable {
     	double z = Math.max(vector.getZ(), this.getZ() + .5);
     	return new Vector(x, y, z);
     }
+
+	public UUID getUuid() {
+		return uuid;
+	}
 }

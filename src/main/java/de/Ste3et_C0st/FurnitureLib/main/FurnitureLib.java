@@ -48,8 +48,6 @@ import java.nio.charset.StandardCharsets;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.stream.Stream;
 
 public class FurnitureLib extends JavaPlugin {
 
@@ -65,7 +63,6 @@ public class FurnitureLib extends JavaPlugin {
     public HashMap<UUID, Long> timeStampPlace = new HashMap<>();
     public HashMap<UUID, Long> timeStampBreak = new HashMap<>();
     
-    private Logger logger = Logger.getLogger("Minecraft");
     private LocationUtil lUtil;
     private FurnitureManager manager;
     private ProtectionManager Pmanager;

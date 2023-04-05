@@ -35,13 +35,15 @@ public class autoConverter {
                 Reader inReader = new InputStreamReader(FurnitureLib.getInstance().getResource("default.dModel"));
                 newConfig.addDefaults(YamlConfiguration.loadConfiguration(inReader));
                 newConfig.options().copyDefaults(true);
-                newConfig.options().header("------------------------------------  #\n"
-                        + "                                      #\n"
-                        + "      never touch the system-ID !     #\n"
-                        + "                                      #\n"
-                        + "------------------------------------  #\n");
-                newConfig.options().copyHeader(true);
-
+                
+                newConfig.options().setHeader(Arrays.asList(
+                	"------------------------------------  #",
+                	"                                      #",
+                	"      never touch the system-ID !     #",
+                	"                                      #",
+                	"------------------------------------  #"
+                ));
+                
                 String header = getHeader(f.getName().replace(".yml", ""), config);
                 String systemID = config.getString(header + ".system-ID");
                 String name = config.getString(header + ".name");
@@ -139,16 +141,15 @@ public class autoConverter {
             if (FurnitureConfig.getFurnitureConfig().isSync()) {
                 FurnitureLib.getInstance().getSQLManager().loadALL();
             } else {
-            	
-                Bukkit.getScheduler().runTaskLater(FurnitureLib.getInstance(), () -> {
-                    Bukkit.getWorlds().forEach(world -> {
+            	SchedularHelper.runLater(() -> {
+            		Bukkit.getWorlds().forEach(world -> {
                         Arrays.asList(world.getLoadedChunks()).forEach(c -> {
                             ChunkData data = FurnitureManager.getInstance().getChunkDataList().stream().findFirst().filter(chunk -> c.getX() == chunk.getX() && c.getZ() == chunk.getZ()).orElse(new ChunkData(c));
                             if (!data.isLoaded()) data.load(world);
 							FurnitureManager.getInstance().getChunkDataList().add(data);
                         });
                     });
-                }, 20 * 10);
+            	}, 20 * 10, false);
             }
             return;
         }

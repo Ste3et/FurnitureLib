@@ -11,7 +11,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import de.Ste3et_C0st.FurnitureLib.ModelLoader.ModelVector;
 import de.Ste3et_C0st.FurnitureLib.ModelLoader.Block.state.ModelBlockSkullState;
 import de.Ste3et_C0st.FurnitureLib.ModelLoader.Block.state.ModelBlockState;
-import de.Ste3et_C0st.FurnitureLib.SchematicLoader.functions.projectFunction;
 
 public abstract class ModelBlock {
 

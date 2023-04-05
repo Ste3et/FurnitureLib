@@ -4,10 +4,9 @@ import com.comphenix.protocol.wrappers.EnumWrappers;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTCompressedStreamTools;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.MaterialConverter;
-import de.Ste3et_C0st.FurnitureLib.Utilitis.Task;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.SchedularHelper;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureConfig;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
-import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 
 import java.io.ByteArrayInputStream;
@@ -62,7 +61,7 @@ public class Converter {
     }
 
     public void startConvert(CommandSender sender, String tableName) {
-        String sql = "SELECT COUNT(*) FROM `"+ tableName +"`";
+        final String sql = "SELECT COUNT(*) FROM `"+ tableName +"`";
         FurnitureLib.debug("Try to convert database Table: " + tableName, 10);
         if (this.checkIfTableExist(tableName)) {
         	FurnitureLib.debug("FurnitureLib: Found table to convert (" + tableName +")", 10);
@@ -92,8 +91,8 @@ public class Converter {
     }
 
     private void convert(CommandSender sender, String tableName) {
-        Bukkit.getScheduler().runTaskAsynchronously(FurnitureLib.getInstance(), () -> {
-            try (Connection con = database.getConnection(); ResultSet rs = con.createStatement().executeQuery("SELECT * FROM " + tableName + " LIMIT " + stepSize + " OFFSET " + offset)) {
+    	SchedularHelper.runAsync(() -> {
+    		try (Connection con = database.getConnection(); ResultSet rs = con.createStatement().executeQuery("SELECT * FROM " + tableName + " LIMIT " + stepSize + " OFFSET " + offset)) {
                 sender.sendMessage("§7Convert Models Step §e" + step + "/" + stepComplete + " start !");
                 if (rs.next()) {
                     do {
@@ -169,6 +168,6 @@ public class Converter {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        });
+    	});
     }
 }

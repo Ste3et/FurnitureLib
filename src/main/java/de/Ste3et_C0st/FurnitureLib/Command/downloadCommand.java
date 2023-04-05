@@ -10,10 +10,10 @@ import java.io.Reader;
 import java.net.URL;
 import java.net.URLConnection;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Base64;
 import java.util.List;
 import java.util.Objects;
-import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -30,6 +30,7 @@ import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagInt;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagString;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.MaterialConverter;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.SchedularHelper;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.Type.PlaceableSide;
 
@@ -243,7 +244,7 @@ public class downloadCommand extends iCommand{
 			}
 			
 			file.save(new File("plugins/"+FurnitureLib.getInstance().getName()+"/Crafting/" + project + ".yml"));
-			Bukkit.getScheduler().runTask(FurnitureLib.getInstance(), () ->{
+			SchedularHelper.runAsync(() -> {
 				Project projObj = ModelFileLoader.loadModelFile(new File("plugins/"+FurnitureLib.getInstance().getName()+"/Crafting/" + project + ".yml"));
 				if(Objects.nonNull(projObj) && projObj.haveModelSchematic()) {
 					if(!projObj.getModelschematic().isDestroyAble()) {
@@ -262,12 +263,15 @@ public class downloadCommand extends iCommand{
 		Reader inReader = new InputStreamReader(FurnitureLib.getInstance().getResource("default.dModel"));
 		file.addDefaults(YamlConfiguration.loadConfiguration(inReader));
 		file.options().copyDefaults(true);
-		file.options().header("------------------------------------  #\n"
-				+ "                                      #\n"
-				+ "      never touch the system-ID !     #\n"
-				+ "                                      #\n"
-				+ "------------------------------------  #\n");
-		file.options().copyHeader(true);
+		
+		file.options().setHeader(Arrays.asList(
+				"------------------------------------  #",
+				"                                      #",
+				"      never touch the system-ID !     #",
+				"                                      #",
+				"------------------------------------  #"
+		));
+		
 		NBTTagCompound crafting = compound.getCompound("crafting");
 		NBTTagCompound index = crafting.getCompound("index");
 		NBTTagCompound lore = crafting.getCompound("lore");
@@ -361,7 +365,8 @@ public class downloadCommand extends iCommand{
 			file.set(header + ".projectData.functions", functions);
 		}
 		file.save(new File("plugins/"+FurnitureLib.getInstance().getName()+"/models/" + project + ".dModel"));
-		Bukkit.getScheduler().runTask(FurnitureLib.getInstance(), () ->{
+		
+		SchedularHelper.runAsync(() -> {
 			Project projObj = ModelFileLoader.loadModelFile(new File("plugins/"+FurnitureLib.getInstance().getName()+"/models/" + project + ".dModel"));
 			if(Objects.nonNull(projObj) && projObj.haveModelSchematic()) {
 				if(!projObj.getModelschematic().isDestroyAble()) {
@@ -376,12 +381,15 @@ public class downloadCommand extends iCommand{
 		Reader inReader = new InputStreamReader(FurnitureLib.getInstance().getResource("default.dModel"));
 		file.addDefaults(YamlConfiguration.loadConfiguration(inReader));
 		file.options().copyDefaults(true);
-		file.options().header("------------------------------------  #\n"
-				+ "                                      #\n"
-				+ "      never touch the system-ID !     #\n"
-				+ "                                      #\n"
-				+ "------------------------------------  #\n");
-		file.options().copyHeader(true);
+		
+		file.options().setHeader(Arrays.asList(
+				"------------------------------------  #",
+				"                                      #",
+				"      never touch the system-ID !     #",
+				"                                      #",
+				"------------------------------------  #"
+		));
+		
 		String header = project.replace(".", "").replace(":", "");
 		NBTTagCompound crafting = compound.getCompound("crafting");
 		NBTTagCompound index = crafting.getCompound("index");

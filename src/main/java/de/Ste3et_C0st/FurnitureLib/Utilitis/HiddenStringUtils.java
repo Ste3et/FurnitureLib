@@ -2,7 +2,6 @@ package de.Ste3et_C0st.FurnitureLib.Utilitis;
 
 import org.bukkit.ChatColor;
 
-import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 
 public class HiddenStringUtils {

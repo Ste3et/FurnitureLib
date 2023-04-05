@@ -16,7 +16,6 @@ import java.util.stream.Collectors;
 import org.bukkit.Bukkit;
 import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import com.google.gson.Gson;
@@ -26,13 +25,10 @@ import de.Ste3et_C0st.FurnitureLib.Database.Database;
 import de.Ste3et_C0st.FurnitureLib.LimitationManager.Limitation;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.LanguageManager;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.SkullMetaPatcher;
-import de.Ste3et_C0st.FurnitureLib.Utilitis.Wrapper.ChatComponentWrapper;
 import de.Ste3et_C0st.FurnitureLib.main.LightAPI.iLightAPI;
 import de.Ste3et_C0st.FurnitureLib.main.Type.ProtocolFields;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.ClickEvent.Action;
-import net.md_5.bungee.api.chat.ComponentBuilder;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 
 public class DumpHandler {
 
@@ -211,13 +207,7 @@ public class DumpHandler {
 						sender.sendMessage("§cThe dump can't be handeld");
 					}else {
 						sender.sendMessage("§7FurnitureLib dump file upload §2§lSuccess");
-						if(Player.class.isInstance(sender)) {
-							ComponentBuilder builder = new ComponentBuilder("§7You can find it here: ");
-							builder.append("§ehere").event(new ClickEvent(Action.OPEN_URL, response.toString().replace("#URL:", "")));
-							ChatComponentWrapper.sendChatComponent(Player.class.cast(sender), builder.create());
-						}else {
-							sender.sendMessage("§7You can find it here: §e" + response.toString().replace("#URL:", ""));
-						}
+						LanguageManager.sendChatMessage(sender, MiniMessage.miniMessage().deserialize("<gray>You can find it here: <click:open_url:" + response.toString().replace("#URL:", "") +"><yellow>Click</click>"));
 					}
 				}
 			}

@@ -63,8 +63,8 @@ dependencies {
     implementation "net.kyori:adventure-text-minimessage:4.13.0"
     implementation "net.kyori:adventure-platform-bukkit:4.3.0"
     implementation "net.kyori:adventure-text-serializer-legacy:4.13.0"
-    
-    
+    implementation "net.kyori:adventure-text-serializer-plain:4.13.0"
+
     //compileOnly 'io.papermc.paper:paper-api:1.19.4-R0.1-SNAPSHOT'
     compileOnly 'dev.folia:folia-api:1.19.4-R0.1-SNAPSHOT'
     compileOnly 'com.github.MilkBowl:VaultAPI:1.7'
@@ -107,6 +107,8 @@ task shadowJarPaper(type: ShadowJar) {
      exclude(dependency('net.kyori:adventure-text-minimessage:4.13.0'))
      exclude(dependency('net.kyori:adventure-text-serializer-legacy:4.13.0'))
      exclude(dependency('net.kyori:adventure-platform-bukkit:4.3.0'))
+     exclude(dependency('net.kyori:adventure-text-serializer-plain:4.13.0'))
+     
      include(dependency('com.zaxxer:HikariCP:5.0.1'))
      include(dependency('org.slf4j:slf4j-api:1.7.36'))
      include(dependency('org.slf4j:slf4j-simple:1.7.36'))
@@ -146,6 +148,7 @@ sourceSets {
     main {
         java {
             srcDirs= ["src/main/java"]
+            exclude 'de/Ste3et_C0st/ProtectionLibRework/**'
         }
         resources {
             srcDirs= ["src/main/resources"]

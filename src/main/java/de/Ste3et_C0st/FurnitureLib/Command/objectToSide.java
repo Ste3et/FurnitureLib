@@ -2,178 +2,58 @@ package de.Ste3et_C0st.FurnitureLib.Command;
 
 import de.Ste3et_C0st.FurnitureLib.Utilitis.LanguageManager;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.StringTranslator;
-import de.Ste3et_C0st.FurnitureLib.Utilitis.Wrapper.ChatComponentWrapper;
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.chat.TextComponent;
-
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.format.TextDecoration;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
-
 import java.util.List;
-import java.util.Objects;
+import java.util.function.BiFunction;
 
 public class objectToSide {
 
-	public objectToSide(List<ComponentBuilder> objList, CommandSender sender, Integer page, String command) {
+	private static final BiFunction<List<Component>, Integer, Integer> maxPage = (list, objects) -> {
+		if(list.isEmpty() == false && objects > 0) {
+			return (int) Math.ceil((double) list.size() / (double) objects);
+		}
+		return 0;
+	};
+	
+	public objectToSide(List<Component> objList, CommandSender sender, Integer page, String command) {
 		this(objList, sender, page, command, 10);
 	}
 	
-    public objectToSide(List<ComponentBuilder> objList, CommandSender sender, Integer page, String command, int objects) {
+    public objectToSide(List<Component> objList, CommandSender sender, Integer currentPage, String command, int objects) {
+        this(objList, sender, currentPage, command, objects, maxPage.apply(objList, objects));
+    }
+	
+    public objectToSide(List<Component> objList, CommandSender sender, Integer page, String command, int objects, int maxPage) {
         if (page == 0) page = 1;
-        int min = page * objects - objects;
-        int max = page * objects;
-        double d = objList.size();
-        double k = Math.ceil(d / objects);
-        int maxPage = (int) k;
-
-        String a = "";
-        String b = "";
-        if (maxPage < 10) {
-            a += "0" + maxPage;
-        } else {
-            a = maxPage + "";
-        }
-        if (page < 10) {
-            b += "0" + page;
-        } else {
-            b = page + "";
-        }
+        final int skip = page * objects - objects;
 
         if (page > maxPage) {
         	LanguageManager.send(sender, "message.SideNotFound");
         	LanguageManager.send(sender, "message.SideNavigation", new StringTranslator("max", maxPage + ""));
             return;
         }
-
-        sender.sendMessage("§7§m+--------------------------------------------+§8[§e" + b + "§8/§a" + a + "§8]");
-
-        int j = 0;
-        for (Object obj : objList) {
-            if (j >= min && j < max) {
-                if (obj instanceof String) {
-                	sender.sendMessage((String) obj);
-                } else if (obj instanceof ComponentBuilder) {
-                	if(sender instanceof Player) {
-                		ChatComponentWrapper.sendChatComponent(Player.class.cast(sender), ((ComponentBuilder) obj).create());
-                	}else {
-                		sender.sendMessage(TextComponent.toLegacyText(((ComponentBuilder) obj).create()));
-                	}
-                }
-            }
-            j++;
-        }
-
-        String prevCommand = null;
-        String nextCommand = null;
-        String prevColor = "§c";
-        String nextColor = "§a";
-
-        if (page >= 2) {
-            prevCommand = command + " " + (page - 1);
-        } else {
-            prevColor = "§7";
-        }
-
-        if (page + 1 > maxPage) {
-            nextColor = "§7";
-        } else {
-            nextCommand = command + " " + (page + 1);
-        }
-
-        ComponentBuilder builder = new ComponentBuilder("§7§m+--------------------------------------------+§8[§e");
-        if (Objects.nonNull(prevCommand)) {
-            builder.append(prevColor + "«").event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, prevCommand));
-        } else {
-            builder.reset().append("§7«");
-        }
-
-        builder.append("§8/§a");
-
-        if (Objects.nonNull(nextCommand)) {
-            builder.append(nextColor + "»").event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, nextCommand));
-        } else {
-            builder.reset().append("§7»");
-        }
         
-        if (sender instanceof Player) {
-            ChatComponentWrapper.sendChatComponent(Player.class.cast(sender), builder.append("§8]").create());
-        } else {
-            sender.sendMessage(TextComponent.toLegacyText(builder.create()));
-        }
-    }
-    
-    public objectToSide(List<BaseComponent[]> objList, CommandSender sender, Integer currentPage, String command, int objects, int maxPage) {
-        String a = "";
-        String b = "";
-        if(maxPage == 0) maxPage = 1;
-        if (maxPage < 10) {
-            a += "0" + maxPage;
-        } else {
-            a = maxPage + "";
-        }
-        if (currentPage < 10) {
-            b += "0" + (currentPage + 1);
-        } else {
-            b = (currentPage + 1) + "";
-        }
-
-        if (currentPage > maxPage) {
-        	LanguageManager.send(sender, "message.SideNotFound");
-        	LanguageManager.send(sender, "message.SideNavigation", new StringTranslator("max", maxPage + ""));
-            return;
-        }
+        final String a = maxPage < 10 ? "0" + maxPage : String.valueOf(maxPage);
+        final String b = page < 10 ? "" + page : String.valueOf(page);
 
         sender.sendMessage("§7§m+--------------------------------------------+§8[§e" + b + "§8/§a" + a + "§8]");
+        
+        objList.stream().skip(skip).limit(objects).forEach(component -> {
+        	LanguageManager.sendChatMessage(sender, component);
+        });
 
-        for (BaseComponent[] obj : objList) {
-        	if(Objects.nonNull(obj)) {
-        		if (sender instanceof Player) {
-            		ChatComponentWrapper.sendChatComponent(Player.class.cast(sender), obj);
-            	}else {
-                    sender.sendMessage(TextComponent.toLegacyText(obj));
-                }
-        	}
-        }
-
-        String prevCommand = null;
-        String nextCommand = null;
-        String prevColor = "§c";
-        String nextColor = "§a";
-
-        if (currentPage > 0) {
-            prevCommand = command + " " + (currentPage - 1);
-        } else {
-            prevColor = "§7";
-        }
-
-        if (currentPage + 1 < maxPage) {
-            nextCommand = command + " " + (currentPage + 1);
-        } else {
-        	nextColor = "§7";
-        }
-
-        ComponentBuilder builder = new ComponentBuilder("§7§m+--------------------------------------------+§8[§e");
-        if (Objects.nonNull(prevCommand)) {
-            builder.append(prevColor + "«").event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, prevCommand));
-        } else {
-            builder.reset().append("§7«");
-        }
-
-        builder.append("§8/§a");
-
-        if (Objects.nonNull(nextCommand)) {
-            builder.append(nextColor + "»").event(new ClickEvent(ClickEvent.Action.RUN_COMMAND, nextCommand));
-        } else {
-            builder.reset().append("§7»");
-        }
-       
-        if (sender instanceof Player) {
-            ChatComponentWrapper.sendChatComponent(Player.class.cast(sender), builder.append("§8]").create());
-        } else {
-            sender.sendMessage(TextComponent.toLegacyText(builder.create()));
-        }
+        final String prevCommand = page > 1 ? command + " " + (page - 1) : "";
+        final String nextCommand = page < maxPage ? command + " " + (page + 1) : "";
+        final NamedTextColor prevColor = page > 1 ? NamedTextColor.RED : NamedTextColor.GRAY;
+        final NamedTextColor nextColor = page < maxPage ? NamedTextColor.GREEN : NamedTextColor.GRAY;
+        final Component navigation = Component.text("+--------------------------------------------+").color(NamedTextColor.GRAY).decorate(TextDecoration.STRIKETHROUGH)
+        			.append(Component.text("«").color(prevColor).clickEvent(ClickEvent.runCommand(prevCommand)))
+        			.append(Component.text("|").color(NamedTextColor.GRAY)
+        			.append(Component.text("»")).color(nextColor).clickEvent(ClickEvent.runCommand(nextCommand)));
+        LanguageManager.sendChatMessage(sender, navigation);
     }
-
 }

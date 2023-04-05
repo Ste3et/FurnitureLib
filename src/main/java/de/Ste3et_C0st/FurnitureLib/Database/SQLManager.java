@@ -3,8 +3,9 @@ package de.Ste3et_C0st.FurnitureLib.Database;
 import com.zaxxer.hikari.HikariConfig;
 
 import de.Ste3et_C0st.FurnitureLib.Utilitis.ExecuteTimer;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.SchedularHelper;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.Task;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.callbacks.CallbackBoolean;
-import de.Ste3et_C0st.FurnitureLib.Utilitis.callbacks.CallbackObjectIDs;
 import de.Ste3et_C0st.FurnitureLib.async.ChunkData;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureConfig;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
@@ -14,21 +15,20 @@ import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.scheduler.BukkitTask;
-
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 public class SQLManager {
 	
 	private FurnitureLib plugin;
-    private BukkitTask sqlSaveInterval = null;
+    private Task sqlSaveInterval = null;
     private Database database;
     private static int versionInt = FurnitureLib.getVersionInt();
     
@@ -250,7 +250,7 @@ public class SQLManager {
     public void saveInterval(int time) {
     	if(Objects.nonNull(sqlSaveInterval)) sqlSaveInterval.cancel();
     	if(time < 1) return;
-        sqlSaveInterval = Bukkit.getScheduler().runTaskTimerAsynchronously(plugin, () -> FurnitureLib.getInstance().getFurnitureManager().saveAsynchron(Bukkit.getConsoleSender()), 20 * time, 20 * time);
+    	sqlSaveInterval = SchedularHelper.runTimer(() -> FurnitureLib.getInstance().getFurnitureManager().saveAsynchron(Bukkit.getConsoleSender()), 20 * time, 20 * time, false);
     }
 
     public void stop() {
@@ -264,8 +264,8 @@ public class SQLManager {
         database.getConverter().startConvert(sender, table);
     }
 
-    public void loadAsynchron(ChunkData data, CallbackObjectIDs callBack, World world) {
-        database.loadAsynchron(data, callBack, world);
+    public <T> CompletableFuture<HashSet<ObjectID>> loadAsynchron(ChunkData data, World world) {
+        return database.loadAsynchron(data, world);
     }
     
     public Database getDatabase() {

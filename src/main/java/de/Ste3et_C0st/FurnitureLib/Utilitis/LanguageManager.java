@@ -1,8 +1,6 @@
 package de.Ste3et_C0st.FurnitureLib.Utilitis;
 
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
-import net.kyori.adventure.audience.Audience;
-import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
@@ -10,12 +8,8 @@ import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.md_5.bungee.api.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
-import org.bukkit.command.ConsoleCommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
-import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
-
-import com.comphenix.protocol.utility.MinecraftReflection;
 
 import java.io.File;
 import java.io.IOException;
@@ -49,6 +43,7 @@ public class LanguageManager {
         } else {
             oldManageInv();
         }
+        this.initHandling();
 	}
     
     private void initHandling() {
@@ -279,6 +274,31 @@ public class LanguageManager {
 		}
     }
     
+    public void sendChatMessage(Component component, CommandSender sender) {
+    	if(Objects.isNull(component) || Objects.isNull(sender)) return;
+    	if(Objects.isNull(handling)) {
+			sender.sendMessage(component);
+		}else {
+			handling.sendMessage(sender, component);
+		}
+    }
+    
+    public void sendActionBarMessage(Component component, CommandSender sender) {
+    	if(Objects.isNull(component) || Objects.isNull(sender)) return;
+    	if(Objects.isNull(handling)) {
+    		sender.sendActionBar(component);
+		}else {
+			handling.sendActionBar(sender, component);
+		}
+    }
+    
+    public Component getComponent(String key, StringTranslator ... stringTranslators) {
+    	final String rawString = LanguageConverter.serializeLegacyColors(this.getString(key, stringTranslators));
+    	final TagResolver[] tags = getTagsArray(Arrays.asList(stringTranslators));
+		final Component returnMessage = MiniMessage.miniMessage().deserialize(rawString, tags);
+		return returnMessage;
+    }
+    
     public TagResolver[] getTagsArray(List<StringTranslator> stringTranslaters){
 		HashSet<TagResolver> tags = getTags(stringTranslaters);
 		return tags.toArray(new TagResolver[tags.size()]);
@@ -316,4 +336,12 @@ public class LanguageManager {
     public void close() {
     	if(this.handling != null) this.handling.close();
     }
+
+	public static void sendChatMessage(CommandSender sender, Component jsonText) {
+		getInstance().sendChatMessage(jsonText, sender);
+	}
+	
+	public static void sendActionBarMessage(CommandSender sender, Component jsonText) {
+		getInstance().sendActionBarMessage(jsonText, sender);
+	}
 }

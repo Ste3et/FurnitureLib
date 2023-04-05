@@ -95,12 +95,14 @@ public class Metrics {
             config.addDefault("logResponseStatusText", false);
 
             // Inform the server owners about bStats
-            config.options().header(
-                    "bStats collects some data for plugin authors like how many servers are using their plugins.\n" +
-                            "To honor their work, you should not disable it.\n" +
-                            "This has nearly no effect on the server performance!\n" +
-                            "Check out https://bStats.org/ to learn more :)"
-            ).copyDefaults(true);
+            
+            config.options().setHeader(Arrays.asList(
+            		"bStats collects some data for plugin authors like how many servers are using their plugins.",
+            		"To honor their work, you should not disable it.",
+            		"This has nearly no effect on the server performance!",
+            		"Check out https://bStats.org/ to learn more :)"
+            )).copyDefaults(true);
+            
             try {
                 config.save(configFile);
             } catch (IOException ignored) {
@@ -239,7 +241,7 @@ public class Metrics {
                 }
                 // Nevertheless we want our code to run in the Bukkit main thread, so we have to use the Bukkit scheduler
                 // Don't be afraid! The connection to the bStats server is still async, only the stats collection is sync ;)
-                Bukkit.getScheduler().runTask(plugin, () -> submitData());
+                SchedularHelper.runTask(() -> submitData(), true);
             }
         }, 1000 * 60 * 5, 1000 * 60 * 30);
         // Submit the data every 30 minutes, first time after 5 minutes to give other plugins enough time to start

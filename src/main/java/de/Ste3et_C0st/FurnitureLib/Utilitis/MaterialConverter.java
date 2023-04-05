@@ -8,17 +8,13 @@ import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
-import org.bukkit.inventory.ItemStack;
-import org.bukkit.inventory.meta.SkullMeta;
 import org.bukkit.material.MaterialData;
 
 import java.io.*;
-import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.Objects;
-import java.util.UUID;
 
 @SuppressWarnings("deprecation")
 public class MaterialConverter {

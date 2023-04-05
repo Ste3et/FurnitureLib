@@ -10,8 +10,6 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.HandlerList;
 import org.bukkit.event.Listener;
-import org.bukkit.scheduler.BukkitTask;
-
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 
 public class ChatInputHandler implements Listener{
@@ -19,22 +17,22 @@ public class ChatInputHandler implements Listener{
 	private final Player player;
 	private final Predicate<String> inputFilter;
 	private final Consumer<ReturnValue> supplier;
-	private final BukkitTask task;
+	private final Task task;
 	
 	public ChatInputHandler(Player player, Predicate<String> inputFilter, Consumer<ReturnValue> supplier, Consumer<Player> openSupplier, Duration timeDuration) {
 		this.player = player;
 		this.inputFilter = inputFilter;
 		this.supplier = supplier;
-		this.task = Bukkit.getScheduler().runTaskLaterAsynchronously(FurnitureLib.getInstance(), () -> {
+		this.task = SchedularHelper.runLater(() -> {
 			this.stop();
 			supplier.accept(ReturnValue.of(ReturnState.TIMEOUT));
-		}, timeDuration.toSeconds() * 20);
+		}, (int) (timeDuration.toSeconds() * 20), false);
 		Bukkit.getPluginManager().registerEvents(this, FurnitureLib.getInstance());
 		openSupplier.accept(player);
 	}
 	
 	private void stop() {
-		if(Objects.nonNull(task) && task.isCancelled() == false) {
+		if(Objects.nonNull(task)) {
 			this.task.cancel();
 		}
 		HandlerList.unregisterAll(this);

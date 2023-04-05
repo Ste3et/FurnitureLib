@@ -2,6 +2,7 @@ package de.Ste3et_C0st.FurnitureLib.ModelLoader.Block;
 
 import de.Ste3et_C0st.FurnitureLib.ModelLoader.ModelVector;
 import de.Ste3et_C0st.FurnitureLib.ModelLoader.Block.state.ModelBlockSkullState;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.LocationUtil;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -123,8 +124,7 @@ public class ModelBlockAquaticUpdate extends ModelBlock {
                 float originalYaw = FurnitureLib.getInstance().getLocationUtil().FaceToYaw(originalBlockFace);
                 float yawDirection = FurnitureLib.getInstance().getLocationUtil().FaceToYaw(face);
                 float newYaw = originalYaw + yawDirection;
-
-                directional.setFacing(FurnitureLib.getInstance().getLocationUtil().yawToFace(newYaw));
+                directional.setFacing(LocationUtil.yawToFace(newYaw));
             }
 
             /*

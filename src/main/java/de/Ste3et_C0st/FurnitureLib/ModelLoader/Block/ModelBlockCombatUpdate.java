@@ -90,7 +90,7 @@ public class ModelBlockCombatUpdate extends ModelBlock {
             float originalYaw = FurnitureLib.getInstance().getLocationUtil().FaceToYaw(originalBlockFace);
             float yawDirection = FurnitureLib.getInstance().getLocationUtil().FaceToYaw(face);
             float newYaw = originalYaw + yawDirection;
-            BlockFace newFace = FurnitureLib.getInstance().getLocationUtil().yawToFace(newYaw);
+            final BlockFace newFace = LocationUtil.yawToFace(newYaw);
 
             this.applyBlockState(loc);
             if (block.getType().name().contains("SIGN")) {

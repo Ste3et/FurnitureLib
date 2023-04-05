@@ -46,7 +46,6 @@ public abstract class Limitation {
 	
 	public YamlConfiguration loadYaml() {
 		final YamlConfiguration configuration = YamlConfiguration.loadConfiguration(getFile());
-		configuration.options().copyHeader(true);
 		configuration.options().copyDefaults(true);
 		return configuration;
 	}

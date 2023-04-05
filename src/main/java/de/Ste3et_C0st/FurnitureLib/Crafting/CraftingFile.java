@@ -6,6 +6,7 @@ import com.google.gson.JsonParser;
 
 import de.Ste3et_C0st.FurnitureLib.Utilitis.HiddenStringUtils;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.MaterialConverter;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.SchedularHelper;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.Type.PlaceableSide;
 import org.bukkit.Bukkit;
@@ -139,11 +140,11 @@ public class CraftingFile {
             
             if (!isDisable) {
                 if (materialCount.get() > 0) {
-                    Bukkit.getScheduler().runTask(FurnitureLib.getInstance(), () -> {
-                    	if(isKeyisKeyRegistered(key) == false) {
+                	SchedularHelper.runTask(() -> {
+                		if(isKeyisKeyRegistered(key) == false) {
                     		Bukkit.getServer().addRecipe(this.recipe);
                     	}
-                    });
+                	}, true);
                 }
             }
             getPlaceAbleSide(configuration);

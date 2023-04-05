@@ -13,18 +13,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
-import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class LimitationManager {
 
     private final List<Limitation> limitationListener = List.of(new ChunkLimitation(), new WorldLimitation(), new PlayerLimitation());
-    private final FurnitureLib lib;
-    
-    private boolean global = false;
+	private boolean global = false;
     
     public LimitationManager(FurnitureLib lib, LimitationType ... limitationType) {
-    	this.lib = lib;
     	Stream.of(limitationType).forEach(type -> this.setActivate(true, type));
     }
     
@@ -40,6 +36,10 @@ public class LimitationManager {
 
     public void setGlobal(boolean bool) {
         this.global = bool;
+    }
+    
+    public boolean isGlobal() {
+    	return this.global;
     }
 
     private Integer returnIntProjectTotal(Player p) {

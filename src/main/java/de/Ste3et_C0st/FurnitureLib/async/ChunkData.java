@@ -1,64 +1,58 @@
 package de.Ste3et_C0st.FurnitureLib.async;
 
-import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
-import java.util.HashSet;
+import java.util.concurrent.locks.ReentrantLock;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
+import org.bukkit.Location;
 import org.bukkit.World;
 
-import de.Ste3et_C0st.FurnitureLib.Utilitis.callbacks.CallbackObjectIDs;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.SchedularHelper;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
-import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 
 public class ChunkData {
 
 	private final int chunkX, chunkZ;
     private String world;
     private boolean loaded = false;
-
-    public ChunkData(Chunk c) {
-        this.chunkX = c.getX();
-        this.chunkZ = c.getZ();
-        this.world = c.getWorld().getName();
+    private final ReentrantLock lock = new ReentrantLock();
+    
+    public ChunkData(final Chunk chunk) {
+        this(chunk.getX(), chunk.getZ(), chunk.getWorld().getName());
+    }
+    
+    public ChunkData(final Location location) {
+    	this(location.getBlockX() >> 4, location.getBlockZ() >> 4, location.getWorld().getName());
     }
 
-    public ChunkData(int x, int z, String world) {
+    public ChunkData(final int x,final int z,final String world) {
         this.chunkX = x;
         this.chunkZ = z;
         this.world = world;
     }
 
     public ChunkData load(World world) {
-        if (!loaded) {
-            FurnitureLib.getInstance().getSQLManager().loadAsynchron(this, new CallbackObjectIDs() {
-                @Override
-                public void onResult(HashSet<ObjectID> idList) {
-                    if (!idList.isEmpty()) {
-                        Bukkit.getScheduler().runTask(FurnitureLib.getInstance(), () -> {
-                            idList.forEach(obj -> {
-                                Project pro = obj.getProjectOBJ();
-                                try {
-//									if(Objects.nonNull(pro.getFunctionClass()) && Objects.isNull(obj.getFunctionObject())) {
-//										Class<?> c = pro.getFunctionClass();
-//										Object o = c.getConstructor(ObjectID.class).newInstance(obj);
-//										obj.setFunctionObject(o);
-//									}
-                                    obj.setFinish();
-                                } catch (Exception e) {
-                                    e.printStackTrace();
-                                } finally {
-                                    obj.setFinish();
-                                    obj.sendAllInView();
-                                }
-                            });
-                            FurnitureManager.getInstance().addObjectID(idList);
+        if (!loaded && lock.isLocked() == false) {
+        	this.lock.lock();
+        	FurnitureLib.getInstance().getSQLManager().loadAsynchron(this, world).thenAccept(idList -> {
+        		if (!idList.isEmpty()) {
+        			SchedularHelper.runTask(() -> {
+        				idList.forEach(obj -> {
+                            try {
+                                obj.setFinish();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            } finally {
+                                obj.setFinish();
+                                obj.sendAll();
+                                this.loaded = true;
+                            }
                         });
-                    }
+        				this.lock.unlock();
+                        FurnitureManager.getInstance().addObjectID(idList);
+        			}, true);
                 }
-            }, world);
-            this.loaded = true;
+        	});
         }
         return this;
     }

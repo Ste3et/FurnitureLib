@@ -3,12 +3,11 @@ package de.Ste3et_C0st.FurnitureLib.main;
 import com.comphenix.protocol.utility.MinecraftVersion;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.SchedularHelper;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.Wrapper.packet.WrapperPlayServerEntityDestroy;
 import de.Ste3et_C0st.FurnitureLib.async.ChunkData;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 import de.Ste3et_C0st.FurnitureLib.main.entity.*;
-
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -84,8 +83,8 @@ public class FurnitureManager extends ObjectIdManager{
     }
 
     public void saveAsynchron(final CommandSender sender) {
-        Bukkit.getScheduler().runTaskAsynchronously(FurnitureLib.getInstance(), () -> {
-        	final long count = FurnitureManager.this.getAllObjectIDs().filter(entry -> entry.getSQLAction().isImportant()).count();
+    	SchedularHelper.runAsync(() -> {
+    		final long count = FurnitureManager.this.getAllObjectIDs().filter(entry -> entry.getSQLAction().isImportant()).count();
         	if(count > 0) {
         		long currentTime = System.currentTimeMillis();
         		final boolean force = Player.class.isInstance(sender);
@@ -101,7 +100,7 @@ public class FurnitureManager extends ObjectIdManager{
                 FurnitureConfig.getFurnitureConfig().sendDatabaseLog(sender, "§7Furniture saving finish : §9" + timeStr, force);
                 FurnitureConfig.getFurnitureConfig().sendDatabaseLog(sender, "§n§7--------------------------------------", force);
         	}
-        });
+    	});
     }
 
     public WrappedDataWatcher getDefaultWatcher(World w, EntityType type) {

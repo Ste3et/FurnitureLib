@@ -1,5 +1,6 @@
 package de.Ste3et_C0st.FurnitureLib.Command;
 
+import de.Ste3et_C0st.FurnitureLib.Utilitis.LocationUtil;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.StringTranslator;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.cache.DiceOfflinePlayer;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
@@ -134,7 +135,7 @@ public class removeCommand extends iCommand {
             return null;
         }
         int i = 10;
-        BlockFace face = FurnitureLib.getInstance().getLocationUtil().yawToFace(l.getYaw());
+        final BlockFace face = LocationUtil.yawToFace(l.getYaw());
         for (int j = 0; j <= i; j++) {
             Location loc = FurnitureLib.getInstance().getLocationUtil().getRelative(l, face, j, 0D);
             if (loc.getBlock() != null && loc.getBlock().getType() != Material.AIR) {

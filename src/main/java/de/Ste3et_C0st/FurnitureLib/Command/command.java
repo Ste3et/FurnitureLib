@@ -5,13 +5,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
-import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.ClickEvent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.chat.HoverEvent;
-import net.md_5.bungee.api.chat.HoverEvent.Action;
-import net.md_5.bungee.api.chat.TextComponent;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.event.ClickEvent;
+import net.kyori.adventure.text.event.HoverEvent;
+import net.kyori.adventure.text.format.NamedTextColor;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 
 import org.bukkit.Bukkit;
 import org.bukkit.command.Command;
@@ -24,8 +22,8 @@ import org.bukkit.plugin.Plugin;
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.SchematicLoader.Events.ProjectClickEvent;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.LanguageManager;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.SchedularHelper;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.StringTranslator;
-import de.Ste3et_C0st.FurnitureLib.Utilitis.Wrapper.ChatComponentWrapper;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.cache.DiceOfflinePlayer;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
@@ -111,15 +109,14 @@ public class command implements CommandExecutor, Listener{
 			final SQLAction action = e.getID().getSQLAction();
 			manager.updateFurniture(e.getID());
 			playerList.remove(p);
-			Bukkit.getScheduler().runTaskLater(plugin, () -> {
+			
+			SchedularHelper.runLater(() -> {
 				for(fEntity stand : e.getID().getPacketList()){
 					stand.setGlowing(false);
 				}
 				manager.updateFurniture(e.getID());
 				e.getID().setSQLAction(action);
-			}, 20*5);
-			
-			
+			}, 20*5, false);
 		}else if(manageList.contains(e.getPlayer())){
 			e.setCancelled(true);
 			Player p = e.getPlayer();
@@ -165,46 +162,26 @@ public class command implements CommandExecutor, Listener{
 	
 	public static void sendHelp(CommandSender sender){
 		if(sender==null) return;
+		final Component header = LanguageManager.getInstance().getComponent("command.help.header")
+				.hoverEvent(HoverEvent.showText(LanguageManager.getInstance().getComponent("command.help.hover", 
+							new StringTranslator("version", FurnitureLib.getInstance().getDescription().getVersion()),
+							new StringTranslator("author", "Ste3et_C0st")
+						)));
 		
-		BaseComponent[] components = new ComponentBuilder(LanguageManager.getInstance().getString("command.help.header"))
-				.event(new HoverEvent(Action.SHOW_TEXT, 
-						   new ComponentBuilder(LanguageManager.getInstance().getString("command.help.hover",
-								   	new StringTranslator("version", FurnitureLib.getInstance().getDescription().getVersion()),
-								   	new StringTranslator("author", "Ste3et_C0st")))
-						   .create()
-					)
-				).create();
-		
-		
-		if(sender instanceof Player) {
-			ChatComponentWrapper.sendChatComponent(Player.class.cast(sender), components);
-			commands.stream().forEach(str -> {
-				if(str.hasCommandPermission(sender) && !str.isHide()){
-					ChatComponentWrapper.sendChatComponent(Player.class.cast(sender), jsonText(str.getLanguageID()));
-				}
-			});
-		}else {
-			sender.sendMessage(TextComponent.toPlainText(components));
-			commands.stream().forEach(str -> {
-				if(str.hasCommandPermission(sender) && !str.isHide()){
-					sender.sendMessage(TextComponent.toPlainText(jsonText(str.getLanguageID())));
-				}
-			});
-		}
+		LanguageManager.sendChatMessage(sender, header);
+		commands.stream().forEach(str -> {
+			if(str.hasCommandPermission(sender) && !str.isHide()){
+				LanguageManager.sendChatMessage(sender, jsonText(str.getLanguageID()));
+			}
+		});
 		
 		LanguageManager.send(sender, "command.help.footer");
 	}
 	
-	public static BaseComponent[] jsonText(String key) {
-		String cmd = LanguageManager.getInstance().getString("command." + key + ".help_name");
-		String hover = LanguageManager.getInstance().getString("command." + key + ".help_hover");
-		return new ComponentBuilder("§6" + cmd).event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(hover).create())).event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, ChatColor.stripColor(cmd))).create();
-	}
-	
-	public static BaseComponent[] jsonText(String key, de.Ste3et_C0st.FurnitureLib.Utilitis.StringTranslator ... stringTranslators) {
-		String cmd = LanguageManager.getInstance().getString("command." + key + ".help_name", stringTranslators);
-		String hover = LanguageManager.getInstance().getString("command." + key + ".help_hover", stringTranslators);
-		return new ComponentBuilder("§6" + cmd).event(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ComponentBuilder(hover).create())).event(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, ChatColor.stripColor(cmd))).create();
+	public static Component jsonText(String key, de.Ste3et_C0st.FurnitureLib.Utilitis.StringTranslator ... stringTranslators) {
+		final Component cmd = LanguageManager.getInstance().getComponent("command." + key + ".help_name", stringTranslators);
+		final Component hover = LanguageManager.getInstance().getComponent("command." + key + ".help_name", stringTranslators);
+		return cmd.color(NamedTextColor.GOLD).hoverEvent(hover).clickEvent(ClickEvent.suggestCommand(PlainTextComponentSerializer.plainText().serialize(cmd)));
 	}
 	
 	public boolean sendMessages(Player p, String helpClass){
@@ -212,7 +189,7 @@ public class command implements CommandExecutor, Listener{
 		if(!b) return false;
 		commands.stream().filter(str -> !str.getHelpClass().isEmpty() && str.getHelpClass().equalsIgnoreCase(helpClass)).forEach(str -> {
 			if(str.hasCommandPermission(p, str.getPermissions())) {
-				ChatComponentWrapper.sendChatComponent(p, jsonText(str.getLanguageID().replaceAll("commands.", "")));
+				LanguageManager.getInstance().sendChatMessage(jsonText(str.getLanguageID().replaceAll("commands.", "")), p);
 			}
 		});
 		return true;

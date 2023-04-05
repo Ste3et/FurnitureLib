@@ -6,7 +6,6 @@ import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
-import net.kyori.adventure.audience.Audience;
 import net.kyori.adventure.platform.bukkit.BukkitAudiences;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
@@ -20,29 +19,34 @@ public class AdventureHandling {
 	}
 	
 	public void sendMessage(CommandSender sender, Component component) {
-    	if(sender instanceof Player player) {
-    		
-    		if(FurnitureLib.getVersionInt() < 16) {
-    			final String legacyString = LegacyComponentSerializer.legacySection().serialize(component);
-    			sender.sendMessage(legacyString);
-    			return;
-    		}
-    		
+		if(FurnitureLib.getVersionInt() < 16) {
+			final String legacyString = LegacyComponentSerializer.legacySection().serialize(component);
+			component = LegacyComponentSerializer.legacySection().deserialize(legacyString);
+		}
+		
+		if(sender instanceof Player player) {
     		this.adventure.player(player).sendMessage(component);
     	}else if(sender instanceof ConsoleCommandSender console) {
-    		final Audience audience = this.adventure.console();
-    		
-    		if(FurnitureLib.getVersionInt() < 16) {
-    			final String legacyString = LegacyComponentSerializer.legacySection().serialize(component);
-    			sender.sendMessage(legacyString);
-    			return;
-    		}
-    		
-    		audience.sendMessage(component);
+    		this.adventure.console().sendMessage(component);
     	}else {
-        	sender.sendMessage("");
+        	sender.sendMessage("hmm");
     	}
     }
+
+	public void sendActionBar(CommandSender sender, Component component) {
+		if(FurnitureLib.getVersionInt() < 16) {
+			final String legacyString = LegacyComponentSerializer.legacySection().serialize(component);
+			component = LegacyComponentSerializer.legacySection().deserialize(legacyString);
+		}
+		
+		if(sender instanceof Player player) {
+    		this.adventure.player(player).sendActionBar(component);
+    	}else if(sender instanceof ConsoleCommandSender console) {
+    		this.adventure.console().sendActionBar(component);
+    	}else {
+        	sender.sendMessage("hmm");
+    	}
+	}
 	
 	public void close() {
     	if(this.adventure != null) {

@@ -2,10 +2,7 @@ package de.Ste3et_C0st.FurnitureLib.Utilitis;
 
 import de.Ste3et_C0st.FurnitureLib.Crafting.CraftingFile;
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
-import de.Ste3et_C0st.FurnitureLib.main.Furniture;
-import de.Ste3et_C0st.FurnitureLib.main.FurnitureConfig;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
-import de.Ste3et_C0st.FurnitureLib.main.Type;
 import org.bukkit.Bukkit;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;

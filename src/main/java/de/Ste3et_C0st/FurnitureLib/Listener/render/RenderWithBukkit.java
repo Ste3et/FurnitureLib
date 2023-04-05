@@ -12,6 +12,7 @@ import org.bukkit.event.player.PlayerMoveEvent;
 import org.bukkit.event.player.PlayerRespawnEvent;
 import org.bukkit.event.player.PlayerTeleportEvent;
 
+import de.Ste3et_C0st.FurnitureLib.Utilitis.SchedularHelper;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 
 public class RenderWithBukkit extends RenderEventHandler implements Listener{
@@ -44,6 +45,7 @@ public class RenderWithBukkit extends RenderEventHandler implements Listener{
     @EventHandler
     public void onPlayerRespawnEvent(PlayerRespawnEvent event) {
         final Player player = event.getPlayer();
+        
         Bukkit.getScheduler().runTaskLater(FurnitureLib.getInstance(), () -> getFurnitureManager().updatePlayerViewWithRange(player, event.getRespawnLocation()), 5);
     }
     

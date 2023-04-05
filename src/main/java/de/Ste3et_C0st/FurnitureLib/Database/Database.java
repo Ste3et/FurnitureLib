@@ -4,7 +4,6 @@ import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
 
 import de.Ste3et_C0st.FurnitureLib.Utilitis.ExecuteTimer;
-import de.Ste3et_C0st.FurnitureLib.Utilitis.callbacks.CallbackObjectIDs;
 import de.Ste3et_C0st.FurnitureLib.async.ChunkData;
 import de.Ste3et_C0st.FurnitureLib.async.WorldData;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureConfig;
@@ -15,7 +14,6 @@ import de.Ste3et_C0st.FurnitureLib.main.Type.DataBaseType;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -23,8 +21,8 @@ import java.sql.SQLException;
 import java.sql.Statement;
 import java.util.HashSet;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class Database {
@@ -108,9 +106,9 @@ public abstract class Database {
     }
     
     public HashSet<ObjectID> loadQuery(SQLAction action, World bukkitWorld, String query){
-    	HashSet<ObjectID> idList = new HashSet<ObjectID>();
+    	final HashSet<ObjectID> idList = new HashSet<ObjectID>();
     	if(Objects.isNull(query)) return idList;
-        String worldName = bukkitWorld.getName();
+        final String worldName = bukkitWorld.getName();
         if(Objects.nonNull(bukkitWorld)) {
         	try (Connection con = getConnection(); ResultSet rs = con.createStatement().executeQuery(query)) {
         		if(Objects.nonNull(rs)) {
@@ -144,13 +142,16 @@ public abstract class Database {
 		return idList;
     }
 
-    public void loadAsynchron(ChunkData chunkdata, CallbackObjectIDs callBack, World bukkitWorld) {
-    	UUID worldUUID = bukkitWorld.getUID();
-        String worldName = bukkitWorld.getName();
-        Bukkit.getScheduler().runTaskAsynchronously(FurnitureLib.getInstance(), () -> {
-            String query = "SELECT ObjID,Data,world FROM " + TABLE_NAME + " WHERE x=" + chunkdata.getX() + " AND z=" + chunkdata.getZ() + " AND world='"+ worldName +"' OR world='" + worldUUID.toString() + "'";
-            callBack.onResult(loadQuery(SQLAction.NOTHING, bukkitWorld, query));
+    public <T> CompletableFuture<HashSet<ObjectID>> loadAsynchron(ChunkData chunkdata, World bukkitWorld) {
+    	final UUID worldUUID = bukkitWorld.getUID();
+        final String worldName = bukkitWorld.getName();
+        final String query = "SELECT ObjID,Data,world FROM " + TABLE_NAME + " WHERE x=" + chunkdata.getX() + " AND z=" + chunkdata.getZ() + " AND world='"+ worldName +"' OR world='" + worldUUID.toString() + "'";
+        
+        final CompletableFuture<HashSet<ObjectID>> future = CompletableFuture.supplyAsync(() -> {
+        	return loadQuery(SQLAction.NOTHING, bukkitWorld, query);
         });
+        
+        return future;
     }
     
     public HashSet<ObjectID> loadWorld(SQLAction action, World bukkitWorld) {

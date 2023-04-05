@@ -1,9 +1,5 @@
 package de.Ste3et_C0st.FurnitureLib.main;
 
-import de.Ste3et_C0st.FurnitureLib.LimitationManager.ChunkLimitation;
-import de.Ste3et_C0st.FurnitureLib.LimitationManager.Limitation;
-import de.Ste3et_C0st.FurnitureLib.LimitationManager.PlayerLimitation;
-import de.Ste3et_C0st.FurnitureLib.LimitationManager.WorldLimitation;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.LanguageManager;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -14,7 +10,6 @@ import org.bukkit.util.EulerAngle;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
