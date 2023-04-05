@@ -51,9 +51,12 @@ public class objectToSide {
         final NamedTextColor prevColor = page > 1 ? NamedTextColor.RED : NamedTextColor.GRAY;
         final NamedTextColor nextColor = page < maxPage ? NamedTextColor.GREEN : NamedTextColor.GRAY;
         final Component navigation = Component.text("+--------------------------------------------+").color(NamedTextColor.GRAY).decorate(TextDecoration.STRIKETHROUGH)
+        			.decoration(TextDecoration.STRIKETHROUGH, false)
+        			.append(Component.text("[").color(NamedTextColor.GRAY))
         			.append(Component.text("«").color(prevColor).clickEvent(ClickEvent.runCommand(prevCommand)))
         			.append(Component.text("|").color(NamedTextColor.GRAY)
-        			.append(Component.text("»")).color(nextColor).clickEvent(ClickEvent.runCommand(nextCommand)));
+        			.append(Component.text("»")).color(nextColor).clickEvent(ClickEvent.runCommand(nextCommand)))
+        			.append(Component.text("]").color(NamedTextColor.GRAY));
         LanguageManager.sendChatMessage(sender, navigation);
     }
 }

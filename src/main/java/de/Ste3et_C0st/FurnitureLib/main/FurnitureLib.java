@@ -96,8 +96,11 @@ public class FurnitureLib extends JavaPlugin {
              newVersion = versionInt > 12;
          }
          
-         folia = containsClass("io.papermc.paper.threadedregions.RegionisedServer");
+         folia = containsClass("io.papermc.paper.threadedregions.RegionizedServer");
          paper = containsClass("com.destroystokyo.paper.event.block.BlockDestroyEvent");
+         
+         System.out.println("folia-server:" + folia);
+         System.out.println("paper-server:" + paper);
     }
     
     private static boolean containsClass(String string) {

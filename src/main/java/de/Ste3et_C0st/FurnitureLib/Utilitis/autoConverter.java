@@ -4,6 +4,7 @@ import com.comphenix.protocol.wrappers.EnumWrappers;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTCompressedStreamTools;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
 import de.Ste3et_C0st.FurnitureLib.async.ChunkData;
+import de.Ste3et_C0st.FurnitureLib.async.WorldData;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureConfig;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
@@ -141,13 +142,13 @@ public class autoConverter {
             if (FurnitureConfig.getFurnitureConfig().isSync()) {
                 FurnitureLib.getInstance().getSQLManager().loadALL();
             } else {
+            	//asnyc here
             	SchedularHelper.runLater(() -> {
             		Bukkit.getWorlds().forEach(world -> {
-                        Arrays.asList(world.getLoadedChunks()).forEach(c -> {
-                            ChunkData data = FurnitureManager.getInstance().getChunkDataList().stream().findFirst().filter(chunk -> c.getX() == chunk.getX() && c.getZ() == chunk.getZ()).orElse(new ChunkData(c));
-                            if (!data.isLoaded()) data.load(world);
-							FurnitureManager.getInstance().getChunkDataList().add(data);
-                        });
+            			FurnitureLib.getInstance().getSQLManager().getDatabase().loadWorldAsync(world).thenAccept(worldData -> {
+            				worldData.loadData(world, world.getLoadedChunks());
+            				FurnitureManager.getInstance().getAsyncWorldFiles().add(worldData);
+            			});
                     });
             	}, 20 * 10, false);
             }

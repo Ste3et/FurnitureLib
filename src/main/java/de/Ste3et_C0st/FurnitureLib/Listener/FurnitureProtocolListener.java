@@ -4,16 +4,13 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.ListenerPriority;
 import com.comphenix.protocol.events.PacketAdapter;
-import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.events.PacketListener;
 import com.comphenix.protocol.wrappers.EnumWrappers.EntityUseAction;
-import com.comphenix.protocol.wrappers.nbt.NbtBase;
-
-import de.Ste3et_C0st.FurnitureLib.NBT.NBTBase;
 import de.Ste3et_C0st.FurnitureLib.SchematicLoader.Events.ProjectBreakEvent;
 import de.Ste3et_C0st.FurnitureLib.SchematicLoader.Events.ProjectClickEvent;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.LanguageManager;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.SchedularHelper;
 import de.Ste3et_C0st.FurnitureLib.main.Furniture;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
@@ -139,7 +136,7 @@ public class FurnitureProtocolListener {
 		if (GameMode.SPECTATOR == player.getGameMode())
 			return;
 		if (!FurnitureLib.getInstance().getFurnitureManager().getIgnoreList().contains(player.getUniqueId())) {
-			Bukkit.getScheduler().runTask(FurnitureLib.getInstance(), () -> {
+			SchedularHelper.runTask(() -> {
 				ProjectBreakEvent projectBreakEvent = new ProjectBreakEvent(player, objectID);
 				Bukkit.getPluginManager().callEvent(projectBreakEvent);
 				FurnitureLib.debug("FurnitureLib -> ProjectBreakEvent cancled (" + projectBreakEvent.isCancelled() + ").");
@@ -149,7 +146,7 @@ public class FurnitureProtocolListener {
 						furnitureOject.onBreak(player);
 					}
 				}
-			});
+			}, true);
 		} else {
 			LanguageManager.send(player, "message.FurnitureToggleEvent");
 		}
@@ -159,7 +156,7 @@ public class FurnitureProtocolListener {
 		if (GameMode.SPECTATOR == player.getGameMode())
 			return;
 		if (!FurnitureLib.getInstance().getFurnitureManager().getIgnoreList().contains(player.getUniqueId())) {
-			Bukkit.getScheduler().runTask(FurnitureLib.getInstance(), () -> {
+			SchedularHelper.runTask(() -> {
 				ProjectClickEvent projectBreakEvent = new ProjectClickEvent(player, objectID);
 				Bukkit.getPluginManager().callEvent(projectBreakEvent);
 				if (!projectBreakEvent.isCancelled()) {
@@ -168,7 +165,7 @@ public class FurnitureProtocolListener {
 						furnitureOject.onClick(player);
 					}
 				}
-			});
+			}, true);
 		} else {
 			LanguageManager.send(player, "message.FurnitureToggleEvent");
 		}

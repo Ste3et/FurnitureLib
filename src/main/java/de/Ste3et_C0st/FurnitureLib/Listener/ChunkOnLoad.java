@@ -7,6 +7,7 @@ import de.Ste3et_C0st.FurnitureLib.SchematicLoader.Events.ProjectClickEvent;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.HiddenStringUtils;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.LanguageManager;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.LocationUtil;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.SchedularHelper;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.StringTranslator;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.callbacks.CallbackBoolean;
 import de.Ste3et_C0st.FurnitureLib.main.Furniture;
@@ -188,11 +189,11 @@ public class ChunkOnLoad implements Listener {
     
     @EventHandler
     public void onWorldLoad(WorldLoadEvent event) {
-    	Bukkit.getScheduler().runTaskLater(FurnitureLib.getInstance(), () -> {
+    	SchedularHelper.runLater(() -> {
     		if(Objects.nonNull(event.getWorld())) {
     			FurnitureLib.getInstance().getSQLManager().getDatabase().loadWorld(SQLAction.NOTHING, event.getWorld());
     		}
-    	}, 20L);
+    	}, 20, true);
     }
     
     @EventHandler
@@ -359,10 +360,10 @@ public class ChunkOnLoad implements Listener {
     }
 
     private void removePlayer(final Player p) {
-        Bukkit.getScheduler().runTaskLater(FurnitureLib.getInstance(), () -> {
-			if (eventList != null && !eventList.isEmpty() && p != null && p.isOnline()) {
+    	SchedularHelper.runLater(() -> {
+    		if (eventList != null && !eventList.isEmpty() && p != null && p.isOnline()) {
 				eventList.remove(p);
 			}
-		}, 1);
+    	}, 1, true);
     }
 }

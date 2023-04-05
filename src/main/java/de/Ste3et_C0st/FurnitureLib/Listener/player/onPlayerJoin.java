@@ -6,13 +6,13 @@ import de.Ste3et_C0st.FurnitureLib.main.FurniturePlayer;
 
 import java.util.Optional;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
 import de.Ste3et_C0st.FurnitureLib.Listener.EventLibrary;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.SchedularHelper;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.cache.DiceOfflinePlayer;
 
 public class onPlayerJoin extends EventLibrary implements Listener {
@@ -20,7 +20,8 @@ public class onPlayerJoin extends EventLibrary implements Listener {
     @EventHandler
     public void onPlayerJoinEvent(PlayerJoinEvent event) {
         final Player player = event.getPlayer();
-        Bukkit.getScheduler().runTaskLater(FurnitureLib.getInstance(), () -> {
+        
+        SchedularHelper.runLater(() -> {
         	if(player.isOnline()) {
         		if(FurniturePlayer.wrap(player).isBedrockPlayer()) {
         			FurnitureLib.getInstance().getFurnitureManager().getIgnoreList().add(player.getUniqueId());
@@ -41,6 +42,6 @@ public class onPlayerJoin extends EventLibrary implements Listener {
             		}
         		}
         	}
-        }, 5);
+        }, 5, true);
     }
 }

@@ -2,11 +2,11 @@ package de.Ste3et_C0st.FurnitureLib.async;
 
 import java.util.concurrent.locks.ReentrantLock;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
 
-import de.Ste3et_C0st.FurnitureLib.Utilitis.SchedularHelper;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
 
@@ -32,25 +32,25 @@ public class ChunkData {
     }
 
     public ChunkData load(World world) {
-        if (!loaded && lock.isLocked() == false) {
-        	this.lock.lock();
+        if (!loaded && this.lock.isLocked() == false) {
         	FurnitureLib.getInstance().getSQLManager().loadAsynchron(this, world).thenAccept(idList -> {
         		if (!idList.isEmpty()) {
-        			SchedularHelper.runTask(() -> {
-        				idList.forEach(obj -> {
-                            try {
-                                obj.setFinish();
-                            } catch (Exception e) {
-                                e.printStackTrace();
-                            } finally {
-                                obj.setFinish();
-                                obj.sendAll();
-                                this.loaded = true;
-                            }
-                        });
-        				this.lock.unlock();
-                        FurnitureManager.getInstance().addObjectID(idList);
-        			}, true);
+        			idList.forEach(obj -> {
+                        try {
+                            obj.setFinish();
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                        obj.setFinish();
+                        obj.sendAll();
+                    });
+        			this.loaded = true;
+        			//	Spawn :	/tp -168.05 80.62 -261.81
+        			//  Placed: /tp -1680.05 80.62 -2610.81
+                    FurnitureManager.getInstance().addObjectID(idList);
+        			this.lock.unlock();
+                }else {
+                	this.lock.unlock();
                 }
         	});
         }

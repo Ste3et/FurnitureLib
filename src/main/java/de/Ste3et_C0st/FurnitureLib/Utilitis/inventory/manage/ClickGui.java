@@ -22,6 +22,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.scheduler.BukkitTask;
 
 import de.Ste3et_C0st.FurnitureLib.Utilitis.ItemStackBuilder;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.SchedularHelper;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 
 public class ClickGui implements Listener {
@@ -110,10 +111,10 @@ public class ClickGui implements Listener {
 	
 	public void open(Player p) {
 		if(p==null) return;
-		Bukkit.getScheduler().runTask(FurnitureLib.getInstance(), () -> {
+		SchedularHelper.runTask(() -> {
 			p.openInventory(getInventory());
 			Bukkit.getPluginManager().registerEvents(this, this.plugin);
-		});
+		}, true);
 	}
 	
 	public void close() {

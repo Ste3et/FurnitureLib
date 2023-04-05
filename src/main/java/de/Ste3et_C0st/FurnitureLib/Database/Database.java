@@ -185,29 +185,35 @@ public abstract class Database {
         return idList;
     }
     
-    public WorldData loadWorldAsync(World bukkitWorld){
+    public <T> CompletableFuture<WorldData> loadWorldAsync(World bukkitWorld){
     	final String worldName = bukkitWorld.getName();
     	final String worldUUID = bukkitWorld.getUID().toString();
     	final WorldData worldData = new WorldData(worldName);
     	if(!FurnitureConfig.getFurnitureConfig().isWorldIgnored(worldName)) {
     		ExecuteTimer timer = new ExecuteTimer();
     		final String query = ("SELECT x,z FROM <table> WHERE world='<worldName>' or world='<worldUUID>'").replace("<table>", TABLE_NAME).replace("<worldName>", worldName).replace("<worldUUID>", worldUUID);
-    		try (Connection con = getConnection(); ResultSet rs = con.createStatement().executeQuery(query)) {
-        		if(Objects.nonNull(rs)) {
-        			if (rs.next() == true) {
-            			do {
-            				final int chunkX = rs.getInt("x");
-            				final int chunkZ = rs.getInt("z");
-            				worldData.addPoint(chunkX, chunkZ);
-            			} while (rs.next());
+    		
+    		final CompletableFuture<WorldData> future = CompletableFuture.supplyAsync(() -> {
+    			try (Connection con = getConnection(); ResultSet rs = con.createStatement().executeQuery(query)) {
+            		if(Objects.nonNull(rs)) {
+            			if (rs.next() == true) {
+                			do {
+                				final int chunkX = rs.getInt("x");
+                				final int chunkZ = rs.getInt("z");
+                				worldData.addPoint(chunkX, chunkZ);
+                			} while (rs.next());
+                		}
             		}
-        		}
-    		}catch (Exception e) {
-    			e.printStackTrace();
-			}
+        		}catch (Exception e) {
+        			e.printStackTrace();
+    			}
+    			
+            	return worldData;
+            });
     		FurnitureLib.debug("It takes: " + timer.getDifference(), 1);
+    		return future;
     	}
-    	return worldData;
+    	return null;
     }
 
     public void delete(ObjectID objID) {

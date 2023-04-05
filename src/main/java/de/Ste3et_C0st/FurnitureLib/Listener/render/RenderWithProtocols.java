@@ -11,6 +11,7 @@ import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.events.PacketListener;
 
+import de.Ste3et_C0st.FurnitureLib.Utilitis.SchedularHelper;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 
 public class RenderWithProtocols extends RenderEventHandler{
@@ -40,10 +41,9 @@ public class RenderWithProtocols extends RenderEventHandler{
 				int chunkX = event.getPacket().getIntegers().read(0);
 				int chunkZ = event.getPacket().getIntegers().read(1);
 				final Player player = event.getPlayer();
-				Bukkit.getScheduler().runTask(FurnitureLib.getInstance(), () -> {
-					World world = player.getWorld();
-					getFurnitureManager().updatePlayerView(player, chunkX, chunkZ, world);
-				});
+				final World world = player.getWorld();
+				
+				SchedularHelper.runAsync(() -> getFurnitureManager().updatePlayerView(player, chunkX, chunkZ, world));
 			}
 		};
 	}
@@ -54,10 +54,8 @@ public class RenderWithProtocols extends RenderEventHandler{
 				int chunkX = event.getPacket().getIntegers().read(0);
 				int chunkZ = event.getPacket().getIntegers().read(1);
 				final Player player = event.getPlayer();
-				Bukkit.getScheduler().runTask(FurnitureLib.getInstance(), () -> {
-					World world = player.getWorld();
-					getFurnitureManager().destroyChunkPlayerView(player, chunkX, chunkZ, world);
-				});
+				final World world = player.getWorld();
+				SchedularHelper.runAsync(() -> getFurnitureManager().destroyChunkPlayerView(player, chunkX, chunkZ, world));
 			}
 		};
 	}

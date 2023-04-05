@@ -18,7 +18,11 @@ public class SchedularHelper {
 	
 	public static void runTask(final Runnable runnable, boolean sync) {
 		if(FurnitureLib.isFolia()) {
-			Bukkit.getAsyncScheduler().runNow(FurnitureLib.getInstance(), task -> runnable.run());
+			if(sync) {
+				Bukkit.getGlobalRegionScheduler().run(FurnitureLib.getInstance(), task -> runnable.run());
+			}else {
+				Bukkit.getAsyncScheduler().runNow(FurnitureLib.getInstance(), task -> runnable.run());
+			}
 		}else {
 			if(sync) {
 				Bukkit.getScheduler().runTask(FurnitureLib.getInstance(), task -> runnable.run());
@@ -30,10 +34,13 @@ public class SchedularHelper {
 	
 	public static Task runTimer(final Runnable runnable, int ticks, int delayed, boolean sync) {
 		if(FurnitureLib.isFolia()) {
-			ticks = ticks > 0 ? 1 : ticks;
-			delayed = delayed > 0 ? 1 : delayed;
-			
-			return Task.wrapFolia(Bukkit.getAsyncScheduler().runAtFixedRate(FurnitureLib.getInstance(), task -> runnable.run(), delayed * 50, ticks * 50, TimeUnit.MILLISECONDS));
+			if(sync) {
+				return Task.wrapFolia(Bukkit.getGlobalRegionScheduler().runAtFixedRate(FurnitureLib.getInstance(), task -> runnable.run(), delayed, ticks));
+			}else {
+				ticks = ticks > 0 ? ticks : 1;
+				delayed = delayed > 0 ? delayed : 1;
+				return Task.wrapFolia(Bukkit.getAsyncScheduler().runAtFixedRate(FurnitureLib.getInstance(), task -> runnable.run(), delayed * 50, ticks * 50, TimeUnit.MILLISECONDS));
+			}
 		}else {
 			if(sync) {
 				return Task.wrapBukkitTask(Bukkit.getScheduler().runTaskTimer(FurnitureLib.getInstance(), () -> runnable.run(), delayed, ticks));
@@ -45,8 +52,12 @@ public class SchedularHelper {
 	
 	public static Task runLater(final Runnable runnable, int ticks, boolean sync) {
 		if(FurnitureLib.isFolia()) {
-			ticks = ticks > 0 ? 1 : ticks;
-			return Task.wrapFolia(Bukkit.getAsyncScheduler().runDelayed(FurnitureLib.getInstance(), task -> runnable.run(), ticks * 50, TimeUnit.MILLISECONDS));
+			if(sync) {
+				return Task.wrapFolia(Bukkit.getGlobalRegionScheduler().runDelayed(FurnitureLib.getInstance(), task -> runnable.run(), ticks));
+			}else {
+				ticks = ticks > 0 ? 1 : ticks;
+				return Task.wrapFolia(Bukkit.getAsyncScheduler().runDelayed(FurnitureLib.getInstance(), task -> runnable.run(), ticks * 50, TimeUnit.MILLISECONDS));
+			}
 		}else {
 			if(sync) {
 				return Task.wrapBukkitTask(Bukkit.getScheduler().runTaskLater(FurnitureLib.getInstance(), () -> runnable.run(), ticks));

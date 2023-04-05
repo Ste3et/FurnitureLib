@@ -6,6 +6,8 @@ website: https://dicecraft.de/furniture/
 softdepend: [ProtocolLib,ProtectionLib,LightAPI,Multiverse,Multiverse-Core,MultiWorld,Vault,Hyperverse,Floodgate]
 main: de.Ste3et_C0st.FurnitureLib.main.FurnitureLib
 api-version: 1.13
+folia-supported: true
+
 commands:
   furniture:
     description: Furniture Command

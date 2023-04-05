@@ -1,8 +1,10 @@
 package de.Ste3et_C0st.FurnitureLib.async.listener;
 
-import de.Ste3et_C0st.FurnitureLib.async.ChunkData;
+import de.Ste3et_C0st.FurnitureLib.async.WorldData;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureConfig;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
+
+import java.util.Optional;
 
 import org.bukkit.World;
 import org.bukkit.event.EventHandler;
@@ -16,12 +18,15 @@ public class onChunkChange implements Listener {
     @EventHandler
     public void onChunkLoad(ChunkLoadEvent e) {
         if (!FurnitureConfig.getFurnitureConfig().isSync()) {
-        	World world = e.getWorld();
-            ChunkData data = manager.getChunkDataList().stream().findFirst().filter(c -> c.equals(e.getChunk())).orElse(new ChunkData(e.getChunk()));
-            if (!manager.getChunkDataList().contains(data)) {
-                manager.getChunkDataList().add(data);
-                if (!data.isLoaded()) data.load(world);
-            }
+        	final World world = e.getWorld();
+        	final Optional<WorldData> optWorldData = manager.getAsyncWorldFiles().stream().filter(entry -> entry.getWorldName().equalsIgnoreCase(world.getName())).findFirst();
+        	final int chunkX = e.getChunk().getX(), chunkZ = e.getChunk().getZ();
+        	
+            optWorldData.ifPresent(worldData -> {
+            	worldData.getChunk(chunkX, chunkZ).ifPresent(chunk -> {
+            		if(chunk.isLoaded() == false) chunk.load(world);
+            	});
+            });
         }
     }
 }

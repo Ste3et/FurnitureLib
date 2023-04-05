@@ -169,33 +169,32 @@ public class listCommand extends iCommand {
 									new StringTranslator("plugin", entry.getPlugin().getName()),
 									new StringTranslator("destroyable", entry.isDestroyable() + "")
 							);
-							component.hoverEvent(HoverEvent.showText(hoverComponent));
+							component = component.hoverEvent(HoverEvent.showText(hoverComponent));
 						}
 						
 						if (sender.hasPermission("furniture.command.give")) {
-							final Component giveComponent = getLHandler().getComponent("command.list.give.button");
-							giveComponent.clickEvent(ClickEvent.runCommand("/furniture give " + entry.getName()));
-							component.append(giveComponent);
+							final Component giveComponent = getLHandler().getComponent("command.list.give.button").clickEvent(ClickEvent.runCommand("/furniture give " + entry.getName())).hoverEvent(HoverEvent.showText(Component.empty()));
+							component = component.append(giveComponent);
 						}
 						
 						if (sender.hasPermission("furniture.command.recipe") && sender.hasPermission("furniture.command.recipe." + entry.getName().toLowerCase())) {
-							final Component giveComponent = getLHandler().getComponent("command.list.recipe.button");
-							giveComponent.clickEvent(ClickEvent.runCommand("/furniture recipe " + entry.getName()));
-							component.append(giveComponent);
+							final Component giveComponent = getLHandler().getComponent("command.list.recipe.button").clickEvent(ClickEvent.runCommand("/furniture recipe " + entry.getName())).hoverEvent(HoverEvent.showText(Component.empty()));
+							component = component.append(giveComponent);
 						}
 						
 						if (sender.hasPermission("furniture.command.remove.project")) {
-							final Component giveComponent = getLHandler().getComponent("command.list.recipe.button");
-							giveComponent.hoverEvent(HoverEvent.showText(getLHandler().getComponent("command.list.remove.hover", new StringTranslator("project", entry.getName()))));
-							giveComponent.clickEvent(ClickEvent.runCommand("/furniture remove project:" + entry.getName()));
-							component.append(giveComponent);
+							Component giveComponent = getLHandler().getComponent("command.list.remove.button");
+							giveComponent = giveComponent.hoverEvent(HoverEvent.showText(getLHandler().getComponent("command.list.remove.hover", new StringTranslator("project", entry.getName()))));
+							giveComponent = giveComponent.clickEvent(ClickEvent.runCommand("/furniture remove project:" + entry.getName()));
+							component = component.append(giveComponent);
 						}
 						if (sender.hasPermission("furniture.command.delete.project")) {
-							final Component giveComponent = getLHandler().getComponent("command.list.delete.button");
-							giveComponent.hoverEvent(HoverEvent.showText(getLHandler().getComponent("command.list.delete.hover", new StringTranslator("project", entry.getName()))));
-							giveComponent.clickEvent(ClickEvent.runCommand("/furniture remove delete " + entry.getName()));
-							component.append(giveComponent);
+							Component giveComponent = getLHandler().getComponent("command.list.delete.button");
+							giveComponent = giveComponent.hoverEvent(HoverEvent.showText(getLHandler().getComponent("command.list.delete.hover", new StringTranslator("project", entry.getName()))));
+							giveComponent = giveComponent.clickEvent(ClickEvent.runCommand("/furniture remove delete " + entry.getName()));
+							component = component.append(giveComponent);
 						}
+						
 						componentList.add(component);
 					});
 			double counts = FurnitureManager.getInstance().getProjects().size();

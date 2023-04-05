@@ -6,6 +6,7 @@ import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.SchedularHelper;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.Wrapper.packet.WrapperPlayServerEntityDestroy;
 import de.Ste3et_C0st.FurnitureLib.async.ChunkData;
+import de.Ste3et_C0st.FurnitureLib.async.WorldData;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 import de.Ste3et_C0st.FurnitureLib.main.entity.*;
 import org.bukkit.Location;
@@ -42,8 +43,8 @@ public class FurnitureManager extends ObjectIdManager{
     public HashMap<World, HashMap<EntityType, WrappedDataWatcher>> defaultWatchers = new HashMap<>();
     private HashMap<String, Project> projects = new HashMap<>();
     private static final List<UUID> ignoreList = new ArrayList<>();
-    private HashSet<ChunkData> chunkList = new HashSet<>();
-
+    private HashSet<WorldData> asyncWorldFiles = new HashSet<>();
+    
     public FurnitureManager() {
         manager = this;
     }
@@ -55,11 +56,7 @@ public class FurnitureManager extends ObjectIdManager{
     public static FurnitureManager getInstance() {
         return manager;
     }
-
-    public HashSet<ChunkData> getChunkDataList() {
-        return this.chunkList;
-    }
-
+    
     public List<UUID> getIgnoreList() {
         return ignoreList;
     }
@@ -194,5 +191,9 @@ public class FurnitureManager extends ObjectIdManager{
 	
 	public void killObject(ObjectID objectID) {
 		WrapperPlayServerEntityDestroy.destroyPackets(objectID, objectID.getPlayerList());
+	}
+
+	public HashSet<WorldData> getAsyncWorldFiles() {
+		return asyncWorldFiles;
 	}
 }

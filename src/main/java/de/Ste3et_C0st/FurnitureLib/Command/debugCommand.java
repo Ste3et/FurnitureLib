@@ -7,6 +7,7 @@ import de.Ste3et_C0st.FurnitureLib.Utilitis.LanguageConverter;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.LanguageManager;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.RandomStringGenerator;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.SchedularHelper;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.Task;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
@@ -30,6 +31,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class debugCommand extends iCommand {
 
 	public static HashMap<String, ExecuteTimer> debugMap = new HashMap<String, ExecuteTimer>();
+	private static Task task = null;
 	
     public debugCommand(String subCommand, String... args) {
         super(subCommand);
@@ -88,9 +90,9 @@ public class debugCommand extends iCommand {
 	            		if(debugMap.containsKey(key)) {
 	            			long dif = debugMap.get(key).difference();
 	            			if(dif < (60 * 1000)) {
-	            				Integer models = 100000;
+	            				Integer models = 10_000;
 	                            AtomicInteger aInt = new AtomicInteger(models);
-	                            Integer stepSize = 10000;
+	                            Integer stepSize = 1_000;
 	                            AtomicInteger aInt2 = new AtomicInteger(stepSize);
 	                            ExecuteTimer timer = new ExecuteTimer();
 	                            sender.sendMessage("§7Database Manipulation start");
@@ -99,13 +101,13 @@ public class debugCommand extends iCommand {
 	                            int currentX = player.getLocation().getBlockX();
 	                            int currentZ = player.getLocation().getBlockZ();
 	                            UUID uuid = player.getUniqueId();
-	                            Project pro = FurnitureManager.getInstance().getProject("Chair");
+	                            final Project pro = FurnitureManager.getInstance().getProject("Chair");
 	                            FurnitureManager manager = FurnitureManager.getInstance();
 	                            HashSet<ObjectID> objectIdSet = new HashSet<ObjectID>();
-	                            new BukkitRunnable() {
-	                                @Override
-	                                public void run() {
-	                                    if (aInt2.get() > 0) {
+	                            
+	                            if(Objects.isNull(task)) {
+	                            	task = SchedularHelper.runTimer(() -> {
+		                            	if (aInt2.get() > 0) {
 	                                        while (aInt2.getAndDecrement() > 0) {
 	                                            double x = MathHelper.a(new Random(), currentX -1000d, currentX + 1000d);
 	                                            double y = MathHelper.a(new Random(), 0, 256);
@@ -115,21 +117,21 @@ public class debugCommand extends iCommand {
 	                                            obj.setSQLAction(SQLAction.SAVE);
 	                                            obj.setUUID(uuid);
 	                                            objectIdSet.add(obj);
-	                                            LanguageManager.sendChatMessage(sender, MiniMessage.miniMessage().deserialize("<dark_green>" + aInt.get() + "<gray>/<yellow>" + 100000));
+	                                            LanguageManager.sendActionBarMessage(sender, MiniMessage.miniMessage().deserialize("<dark_green>" + aInt.get() + "<gray>/<yellow>" + 100000));
 	                                        }
 	                                    } else {
 	                                    	aInt2.set(stepSize);
 	                                        aInt.set(aInt.get() - stepSize);
 	                                        if (aInt.get() <= 0) {
-	                                        	cancel();
+	                                        	task.cancel();
 	                                        	manager.addObjectID(objectIdSet);
 	                                            sender.sendMessage("§7Database Manipulation §2finish §7" + timer.getDifference());
 	                                            sender.sendMessage("§7The Client receive: §e" + models + " §7ObjectIDs");
 	                                            sender.sendMessage("§7These are: §e" + (models * pro.getModelschematic().getEntityMap().size()) + " ArmorStands");
 	                                        }
 	                                    }
-	                                }
-	                            }.runTaskTimerAsynchronously(FurnitureLib.getInstance(), 0, 2);
+		                            }, 0, 2, true);
+	                            }
 	            			}else {
 	            				sender.sendMessage("You are to slow to start the database debug !");
 	            				sender.sendMessage("Please try again !");

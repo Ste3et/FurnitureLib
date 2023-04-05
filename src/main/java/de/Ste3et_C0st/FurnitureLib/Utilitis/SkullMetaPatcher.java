@@ -15,14 +15,11 @@ import com.comphenix.protocol.wrappers.WrappedSignedProperty;
 
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagList;
+import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 
 public class SkullMetaPatcher {
 
-	private static boolean needPatcher = false;
-	
-	static {
-		needPatcher = Bukkit.getServer().getName().toLowerCase().contains("paper") == false;
-	}
+	private static boolean needPatcher = FurnitureLib.isPaper() == false;
 	
 	public static ItemStack patchStack(ItemStack stack) {
 		if(needPatcher == false) return stack;
@@ -44,7 +41,6 @@ public class SkullMetaPatcher {
 	
 	public static ItemStack patch(ItemStack stack, NBTTagCompound compound) {
 		if(needPatcher) {
-			System.out.println("needPatch");
     		if(compound.hasKeyOfType("tag", 10)) {
         		NBTTagCompound tagCompound = compound.getCompound("tag");
         		if(tagCompound.hasKeyOfType("SkullOwner", 10)) {

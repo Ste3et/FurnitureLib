@@ -45,20 +45,19 @@ public class RenderWithBukkit extends RenderEventHandler implements Listener{
     @EventHandler
     public void onPlayerRespawnEvent(PlayerRespawnEvent event) {
         final Player player = event.getPlayer();
-        
-        Bukkit.getScheduler().runTaskLater(FurnitureLib.getInstance(), () -> getFurnitureManager().updatePlayerViewWithRange(player, event.getRespawnLocation()), 5);
+        SchedularHelper.runLater(() -> getFurnitureManager().updatePlayerViewWithRange(player, event.getRespawnLocation()), 5, true);
     }
     
     @EventHandler(priority = EventPriority.NORMAL, ignoreCancelled = true)
     public void onPayerTeleport(PlayerTeleportEvent event) {
         final Player player = event.getPlayer();
-        Bukkit.getScheduler().runTaskLater(FurnitureLib.getInstance(), () -> getFurnitureManager().updatePlayerViewWithRange(player,  event.getTo()), 5);
+        SchedularHelper.runLater(() -> getFurnitureManager().updatePlayerViewWithRange(player, event.getTo()), 5, true);
     }
     
  	@EventHandler
      public void onPlayerChangedWorld(PlayerChangedWorldEvent event) {
          final Player player = event.getPlayer();
-         Bukkit.getScheduler().runTaskLater(FurnitureLib.getInstance(), () -> getFurnitureManager().updatePlayerViewWithRange(player, player.getLocation()), 5);
+         SchedularHelper.runLater(() -> getFurnitureManager().updatePlayerViewWithRange(player, player.getLocation()), 5, true);
      }
 	
 }
