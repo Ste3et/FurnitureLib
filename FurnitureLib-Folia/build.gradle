@@ -1,0 +1,28 @@
+plugins {
+    id 'de.Ste3et_C0st.furniture.java-conventions'
+}
+
+repositories {
+    maven {
+    	url = uri('https://repo.papermc.io/repository/maven-public/')
+    }
+}
+
+java {
+    sourceCompatibility = 17
+    targetCompatibility = 17
+}
+
+
+dependencies {
+    implementation project(':FurnitureLib-Core')
+    compileOnly 'dev.folia:folia-api:1.19.4-R0.1-SNAPSHOT'
+}
+
+tasks {
+   jar {
+	   enabled = true
+   }
+}
+
+description = 'FurnitureLib-Folia'

@@ -3,3 +3,5 @@
  */
 
 rootProject.name = 'FurnitureLib'
+include ':FurnitureLib-Core'
+include ':FurnitureLib-Folia'

@@ -1,0 +1,185 @@
+#Created by @qsefthuopq -> https://www.spigotmc.org/members/qsefthuopq.339953/ thank you
+message:
+  FurnitureOnThisPlace: '&这个�?置已�?有家具了.'
+  NotEnoughSpace: '&a空间�?足.'
+  PlayerNotOnline: '&c玩家#PLAYER#�?在线.'
+  ProjectNotFound: '&c#PROJECT#�?存在.'
+  ProjectAlreadyExist: '&c#PROJECT#已存在.'
+  WrongArgument: '&c你输入的指令包�?�了错误的�?�数.'
+  GivePlayer: '&a玩家#PLAYER#获得了#PROJECT#(#AMOUNT#).'
+  DebugModeEntered: '&a你已进入调试默认.请�?�击一件家具.'
+  ManageModeEntered: '&a你已进入管�?�模�?. 请�?�击一件家具.'
+  RemoveDistance: '&e�?功删除#AMOUNT#件家具.'
+  RemoveID: '&e�?功删除#OBJID#'
+  RemovePlugin: '&e�?功删除所有#PLUGIN#的家具.'
+  RemoveType: '&e�?功删除所有#TYPE#类型的家具.'
+  RemoveAll: '&e�?功删除所有家具.'
+  RemovePlayer: '&e�?功删除所有#PLAYER#放置的家具.'
+  RemoveLookat: '&e�?功删除#SERIAL#.'
+  RemoveWorld: '&e�?功将所有家具从%WORLD%删除'
+  SideNotFound: '&c页�?��?存在.'
+  SideNavigation: '&e输入 /furniture list <option> (0-#MAX#) 列出所有的家具.'
+  WrongOwner: '&c你�?是这件家具的拥有者!'
+  NotONThisSide: '&c你�?能在这个方�?�上放置这件家具.'
+  PurgeMarked: '&a你标记了#AMOUNT#件家具并从数�?�库中删除这些家具.'
+  CraftingEdit: '&e你已更新家具的�?��?�?方'
+  CraftingRemove: '&a你删除了�?务器示例家具的�?��?�?方'
+  FurnitureToggleCMDOff: '&a已将家具&c�?形'
+  FurnitureToggleCMDOn: '&a已将所有家具&2显形'
+  FurnitureToggleEvent: '&c你�?能这么�?�.'
+  FurnitureToggleCantChange: '&c你�?能改�?�家具的�?��?性'
+  FurnitureToFastPlace: '&c你必须等待&4#TIME#&c�?能放置.'
+  FurnitureToFastBreak: '&c你必须等候&4#TIME#&c�?能破�??家具.'
+  BlockOfInstability: '&c请�?试在其他地方放置家具'
+  reload: '&7已�?载&2&lFurnitureLib'
+  NoPermissions: '&c你没有�?��?这么�?�.'
+  IgnoredWorld: "&7你�?能在&2%WORLD%&7放置这个"
+  limit:
+    world:
+      reached: '&7You reached the World Furniture Limit of: &c#amount#/#size#'
+      info: '&7You have placed: &e#amount#/#size# &7for project &a#project# &7in world &a#world#'
+    player:
+      reached: '&7You reached the Player Furniture Limit of: &c#amount#/#size#'
+      info: '&7You have placed: &c#amount#/#size# for project #project#'
+    chunk:
+      reached: '&7You reached the Chunk Furniture Limit of: &c#amount#/#size#'
+      info: '&7You have placed: &c#amount#/#size# for project #project#'
+    permission:
+      reached: '&7You reached the Furniture Limit of: &c#amount#/#size#'
+      info: '&7You have placed: &c#amount#/#size# for project #project#'
+command:
+  help:
+    header:
+    - '&7&m+-------------------&7[&2&l家具&7]&m--------------------+'
+    - '&7 '
+    footer:
+    - '&7 '
+    - '&e&l�??示: &7�?试&e&n点击&7或&e&n用鼠标查看&7指令'
+    - '&7&m+--------------------------------------------------+'
+    hover:
+    - '&7版本: &2#VERSION#'
+    - '&7作者: &2#AUTHOR#'
+    - '&7译者: &2qsefthuopq, YuanYuanOwO'
+  debug:
+    help_name: '&7/furniture &edebug'
+    help_hover:
+    - '&7你�?�以通过&e�?�击家具&7获�?�'
+    - '&7家具的&e详细信�?�'
+    suggest: /furniture debug
+  delete:
+    help_name: '&7/furniture &edelete &a[系统ID] {confirm}'
+    help_hover:
+    - '&7如果你想�?从&e系统中删除'
+    - '&7一个模型，请输入这个指令'
+    suggest: /furniture delete systemID
+    wrongUsage: '&c请使用 /furniture delete [系统ID]'
+  download:
+    help_name: '&7/furniture &edownload &a[id]'
+    help_hover:
+    - '&7从&e&ndicecraft.de/furniture'
+    - '&e下载一个家具模型'
+    suggest: /furniture download [id]
+    wrongUsage: '&c请使用 /furniture download [id]'
+  dump:
+    help_name: "&7/furniture &edump"
+    help_hover:
+        - "&7上传�?�?的信�?�以帮助查找错误"
+    suggest: "/furniture dump"
+    wrongUsage: "&c请使用 /furniture dump"
+  give:
+    help_name: '&7/furniture &egive &a[系统ID] &b(玩家�??) &b(数�?)'
+    help_hover:
+    - '&7将&e模型物�?&7�?��?给一�??&e玩家'
+    nothing:
+    - "&7这里没有找到家具."
+    - "&7应用过滤器-> {#FILTERS# &7}"
+    delete:
+        button: " &7[&4✘&7]"
+        hover:
+        - "&7移除所有 &c#PROJECT# &7模型"
+        - "&7所有的世界都&c&n无法撤销"
+        - "&7从�?务器上&c删除&7或�?用这个模型"
+    remove:
+        button: " &7[&cremove&7]"
+        hover:
+        - "&7移除所有 &c#PROJECT# &7模型"
+        - "&7所有的世界都&c&n无法撤销"
+    filtered_hover:
+        - "&7移除所有 &c#PROJECT# &7模型"
+        - "&7过滤器: #FILTERS#"
+        - "&7该�?作&c&n无法撤销"
+    suggest: /furniture give [系统ID]
+    wrongUsage: '&c请使用 /furniture give [系统ID]'
+  list:
+    help_name: '&7/furniture &elist (选项) (side)'
+    help_hover:
+    - '&e列出&7所有已安装或放置的家具'
+    - '&7选项�?�以为:'
+    - '&7 - &eplugin（�?�件）'
+    - '&7 - &etype（家具类型）'
+    - '&7 - &eworld（世界）'
+    suggest: /furniture list
+    wrongUsage: 请使用 /furniture list (选项)
+  manage:
+    help_name: '&7/furniture &emanage'
+    help_hover:
+    - '&7更改家具模型的&e设置'
+    suggest: /furniture manage
+  purge:
+    help_name: '&7/furniture &epurge &a[时间]'
+    help_hover:
+    - '&e从数�?�库中删除'
+    - '&7�?玩家的家具'
+    suggest: /furniture purge
+    wrongUsage: 请使用 /furniture purge [时间]
+  recipe:
+    help_name: '&7/furniture &erecipe &a[系统ID] &b(edit)'
+    help_hover:
+    - '&e查看&7或&e编辑&7家具的�?��?�?方'
+    suggest: /furniture recipe
+    wrongUsage: 请使用 /furniture recipe [系统ID]
+  reload:
+    help_name: '&7/furniture &ereload'
+    help_hover: '&e�?载&7所有FurnitureLib的�?置'
+    suggest: /furniture reload
+  remove:
+    help_name: '&7/furniture &eremove &a[家具类型]'
+    help_hover:
+    - '&7删除一个类型的家具'
+    - '&7选项:'
+    - ' - &etype&7: 项目�??'
+    - ' - &eplayer&7: 所有该玩家的家具'
+    - ' - &eworld&7: 所有该世界的家具'
+    - ' - &esystemID&7: 家具的系统ID'
+    - ' - &edistance&7: 指定�?离内的家具'
+    - ' - &elookat&7: 你所看�?�的家具'
+    - ' - &eall&7: 清空�?务器所有家具'
+    suggest: /furniture remove
+    wrongUsage: 请使用 /furniture remove [家具类型]
+    result:
+        - "&7删除了 &2#SIZE# &7个家具"
+        - "&7应用过滤器 -> {#FILTERS# &7}"
+    nothing:
+        - "&7这里没有找到家具."
+        - "&7应用过滤器-> {#FILTERS# &7}"
+  save:
+    help_name: '&7/furniture &esave'
+    help_hover: '&7�?存所有手动更改的家具'
+    suggest: /furniture save
+  spawn:
+    help_name: '&7/furniture &espawn [x] [y] [z] [�??航角] [系统ID] {world}'
+    help_hover:
+    - '&7在&e指定地点&7生�?一件家具'
+    suggest: /furniture spawn [x] [y] [z] [�??航角] [系统ID] {world}
+    help_hide: true
+    wrongUsage: 请使用 /furniture spawn [x] [y] [z] [�??航角] [系统ID] {world}
+  toggle:
+    help_name: '&7/furniture &etoggle (player)'
+    help_hover:
+    - '&7�?�?或显示家具'
+    suggest: /furniture toggle
+    wrongUsage: 请使用 /furniture toggle &b(player)
+  version:
+    help_name: '&7/furniture &eversion'
+    help_hover: '&7获�?�&eFurnitureLib的版本信�?�'
+    suggest: /furniture version
