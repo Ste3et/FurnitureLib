@@ -37,13 +37,21 @@ public class autoConverter {
                 newConfig.addDefaults(YamlConfiguration.loadConfiguration(inReader));
                 newConfig.options().copyDefaults(true);
                 
-                newConfig.options().setHeader(Arrays.asList(
-                	"------------------------------------  #",
-                	"                                      #",
-                	"      never touch the system-ID !     #",
-                	"                                      #",
-                	"------------------------------------  #"
-                ));
+                final List<String> headerConfig = Arrays.asList(
+                    	"------------------------------------  #",
+                    	"                                      #",
+                    	"      never touch the system-ID !     #",
+                    	"                                      #",
+                    	"------------------------------------  #"
+                    );
+        				
+        		if(FurnitureLib.getVersionInt() > 15) {	
+        			newConfig.options().setHeader(headerConfig);
+        		}else {
+        			final String headerString = String.join("\n", headerConfig.toArray(String[]::new));
+        			newConfig.options().copyHeader(true);
+        			newConfig.options().header(headerString);
+        		}
                 
                 String header = getHeader(f.getName().replace(".yml", ""), config);
                 String systemID = config.getString(header + ".system-ID");

@@ -19,10 +19,10 @@ public class AdventureHandling {
 	}
 	
 	public void sendMessage(CommandSender sender, Component component) {
-		if(FurnitureLib.getVersionInt() < 16) {
-			final String legacyString = LegacyComponentSerializer.legacySection().serialize(component);
-			component = LegacyComponentSerializer.legacySection().deserialize(legacyString);
-		}
+//		if(FurnitureLib.getVersionInt() < 16) {
+//			final String legacyString = LegacyComponentSerializer.legacySection().serialize(component);
+//			component = LegacyComponentSerializer.legacySection().deserialize(legacyString);
+//		}
 		
 		if(sender instanceof Player player) {
     		this.adventure.player(player).sendMessage(component);

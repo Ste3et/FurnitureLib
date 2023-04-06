@@ -69,7 +69,7 @@ public class FurnitureConfig {
     		this.databaseTableString = getConfig().getString(key + "database-table-old", "FurnitureLib_Objects");
     		this.importCheck = getConfig().getBoolean(key + "importCheck", false);
     		this.saveIntervall = getConfig().getInt("storage-options.auto-save-interval", 300);
-    		this.sync = getConfig().getBoolean(key + "sync", true);
+    		this.sync = getConfig().getBoolean("sync", true);
     	}else {
     		this.useSSL = getConfig().getBoolean("config.Database.useSSL");
     		this.sync = getConfig().getBoolean("config.sync", true);

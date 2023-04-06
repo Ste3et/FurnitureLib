@@ -3,6 +3,9 @@ package de.Ste3et_C0st.FurnitureLib.Utilitis;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+
+import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
+
 import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
@@ -96,12 +99,22 @@ public class Metrics {
 
             // Inform the server owners about bStats
             
-            config.options().setHeader(Arrays.asList(
+            final List<String> headerConfig = Arrays.asList(
             		"bStats collects some data for plugin authors like how many servers are using their plugins.",
             		"To honor their work, you should not disable it.",
             		"This has nearly no effect on the server performance!",
             		"Check out https://bStats.org/ to learn more :)"
-            )).copyDefaults(true);
+            );
+    				
+    		if(FurnitureLib.getVersionInt() > 15) {	
+    			config.options().setHeader(headerConfig);
+    			config.options().copyDefaults(true);
+    		}else {
+    			final String headerString = String.join("\n", headerConfig.toArray(String[]::new));
+    			config.options().copyHeader(true);
+    			config.options().header(headerString);
+    			config.options().copyDefaults(true);
+    		}
             
             try {
                 config.save(configFile);

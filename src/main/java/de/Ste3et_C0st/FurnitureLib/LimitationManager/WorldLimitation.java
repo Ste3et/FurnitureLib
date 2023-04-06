@@ -1,6 +1,7 @@
 package de.Ste3et_C0st.FurnitureLib.LimitationManager;
 
 import java.util.Arrays;
+import java.util.List;
 import java.util.function.Predicate;
 
 import org.bukkit.Location;
@@ -9,6 +10,7 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
+import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.LimitationType;
@@ -36,12 +38,22 @@ public class WorldLimitation extends Limitation{
 	@Override
 	public void writeConfig() {
 		final YamlConfiguration configuration = super.loadYaml();
-		configuration.options().setHeader(Arrays.asList(
-			"This is the WorldLimitation File",
-			"You can limit the max amount of Furnitures each world",
-			"total.enable = (bool) | set default value for each project",
-			"total.global = (bool) | override the project limit and force use total.amount for each project"
-		));
+		
+		final List<String> headerConfig = Arrays.asList(
+				"This is the WorldLimitation File",
+				"You can limit the max amount of Furnitures each world",
+				"total.enable = (bool) | set default value for each project",
+				"total.global = (bool) | override the project limit and force use total.amount for each project"
+		);
+				
+		if(FurnitureLib.getVersionInt() > 15) {	
+			configuration.options().setHeader(headerConfig);
+		}else {
+			final String headerString = String.join("\n", headerConfig.toArray(String[]::new));
+			configuration.options().copyHeader(true);
+			configuration.options().header(headerString);
+		}
+		
 		super.writeGlobal(configuration, headString);
 		FurnitureManager.getInstance().getProjects().forEach(project -> super.ioProjectLimit(headString, project, configuration));
 		super.save(configuration, getFile());

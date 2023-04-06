@@ -264,13 +264,21 @@ public class downloadCommand extends iCommand{
 		file.addDefaults(YamlConfiguration.loadConfiguration(inReader));
 		file.options().copyDefaults(true);
 		
-		file.options().setHeader(Arrays.asList(
-				"------------------------------------  #",
-				"                                      #",
-				"      never touch the system-ID !     #",
-				"                                      #",
-				"------------------------------------  #"
-		));
+		final List<String> headerConfig = Arrays.asList(
+			"------------------------------------  #",
+			"                                      #",
+			"      never touch the system-ID !     #",
+			"                                      #",
+			"------------------------------------  #"
+		);
+			
+		if(FurnitureLib.getVersionInt() > 15) {	
+			file.options().setHeader(headerConfig);
+		}else {
+			final String headerString = String.join("\n", headerConfig.toArray(String[]::new));
+			file.options().copyHeader(true);
+			file.options().header(headerString);
+		}
 		
 		NBTTagCompound crafting = compound.getCompound("crafting");
 		NBTTagCompound index = crafting.getCompound("index");
@@ -377,18 +385,26 @@ public class downloadCommand extends iCommand{
 	}
 	
 	private void convert(NBTTagCompound compound, String project, CommandSender sender) throws IOException{
-		YamlConfiguration file = new YamlConfiguration();
+		final YamlConfiguration file = new YamlConfiguration();
 		Reader inReader = new InputStreamReader(FurnitureLib.getInstance().getResource("default.dModel"));
 		file.addDefaults(YamlConfiguration.loadConfiguration(inReader));
 		file.options().copyDefaults(true);
-		
-		file.options().setHeader(Arrays.asList(
+
+		final List<String> headerConfig = Arrays.asList(
 				"------------------------------------  #",
 				"                                      #",
 				"      never touch the system-ID !     #",
 				"                                      #",
 				"------------------------------------  #"
-		));
+		);
+				
+		if(FurnitureLib.getVersionInt() > 15) {	
+			file.options().setHeader(headerConfig);
+		}else {
+			final String headerString = String.join("\n", headerConfig.toArray(String[]::new));
+			file.options().copyHeader(true);
+			file.options().header(headerString);
+		}
 		
 		String header = project.replace(".", "").replace(":", "");
 		NBTTagCompound crafting = compound.getCompound("crafting");
