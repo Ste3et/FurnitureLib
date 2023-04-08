@@ -54,7 +54,7 @@ public class ModelHandler extends Modelschematic {
         Location startLocation = id.getStartLocation().add(.5, 0, .5);
         BlockFace direction = LocationUtil.yawToFace(id.getStartLocation().getYaw()).getOppositeFace();
         id.addEntities(addEntity(startLocation, direction, id));
-        id.addBlock(addBlocks(startLocation, direction));
+        id.addBlockLocations(addBlocks(startLocation, direction));
         FurnitureLib.debug("FurnitureLib {ModelHandler} -> Spawn Send Models [" + id.getProject() + "]");
         id.send(startLocation.getWorld().getPlayers());
         FurnitureLib.debug("FurnitureLib {ModelHandler} -> Spawn Finish [" + id.getProject() + "]");

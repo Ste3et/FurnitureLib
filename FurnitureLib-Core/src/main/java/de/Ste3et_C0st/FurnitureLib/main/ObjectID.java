@@ -9,6 +9,7 @@ import de.Ste3et_C0st.FurnitureLib.Utilitis.cache.DiceOfflinePlayer;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
 import org.bukkit.*;
+import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import java.util.Collection;
@@ -244,17 +245,15 @@ public class ObjectID extends ObjectData{
         playerSet.remove(player);
     }
 
-    public void addBlock(List<Location> locationList) {
-        if (locationList == null || locationList.isEmpty()) {
-            return;
-        }
-        this.locList.addAll(locationList);
-        FurnitureLib.getInstance().getBlockManager().getList().addAll(locationList);
+    public void addBlock(List<Block> locationList) {
+        if (locationList == null || locationList.isEmpty()) return;
+        this.addBlockLocations(locationList.stream().map(Block::getLocation).collect(Collectors.toList()));
     }
     
     public void addBlockLocations(List<Location> bl) {
     	if(bl.isEmpty()) return;
     	this.locList.addAll(bl);
+    	FurnitureLib.getInstance().getBlockManager().getList().addAll(bl);
     }
 
     public void addBlock(Location loc) {
@@ -268,7 +267,7 @@ public class ObjectID extends ObjectData{
             ModelHandler modelschematic = getProjectOBJ().getModelschematic();
             if (Objects.nonNull(modelschematic)) {
                 BlockFace direction = LocationUtil.yawToFace(this.getStartLocation().getYaw()).getOppositeFace();
-                this.addBlock(modelschematic.addBlocks(this.getStartLocation(), direction));
+                this.addBlockLocations(modelschematic.addBlocks(this.getStartLocation(), direction));
             }
         }
     }
