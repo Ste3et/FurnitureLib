@@ -38,7 +38,7 @@ public class objectToSide {
         }
         
         final String a = maxPage < 10 ? "0" + maxPage : String.valueOf(maxPage);
-        final String b = page < 10 ? "" + page : String.valueOf(page);
+        final String b = page < 10 ? "0" + page : String.valueOf(page);
 
         sender.sendMessage("§7§m+--------------------------------------------+§8[§e" + b + "§8/§a" + a + "§8]");
         

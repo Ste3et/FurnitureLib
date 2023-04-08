@@ -9,17 +9,13 @@ import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockFromToEvent;
 
-import com.google.common.base.Supplier;
-
 import de.Ste3et_C0st.FurnitureLib.Listener.physicsEvent;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.SchedularHelper;
 
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
-import java.util.function.Consumer;
 import java.util.function.Predicate;
 
 public class BlockManager implements Listener {
@@ -91,6 +87,7 @@ public class BlockManager implements Listener {
                         }
                     }
             );
+        	locList.clear();
         }
     }
 

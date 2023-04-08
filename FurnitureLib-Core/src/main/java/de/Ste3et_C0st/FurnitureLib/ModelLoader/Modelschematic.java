@@ -79,8 +79,15 @@ public abstract class Modelschematic{
 	}
 	
 	public fEntity readNBTtag(NBTTagCompound compound) {
-		fEntity entity = FurnitureManager.getInstance().readEntity((compound.hasKey("EntityType") ? compound.getString("EntityType") : "armor_stand").toLowerCase(), null, null);
-		entity.loadMetadata(compound);
+		final String entityString = (compound.hasKey("EntityType") ? compound.getString("EntityType") : "armor_stand").toLowerCase();
+		fEntity entity = FurnitureManager.getInstance().readEntity(entityString, null, null);
+		if(Objects.nonNull(entity)) {
+			entity.loadMetadata(compound);
+		}else {
+			FurnitureLib.getInstance().send("Incorect Entity found:");
+			FurnitureLib.getInstance().send(entityString + " isn't supported but is incudet in: " + this.name);
+			return null;
+		}
 		return entity;
 	}
 	
@@ -126,9 +133,9 @@ public abstract class Modelschematic{
 			Optional<byte[]> optinalKey = decodeBase64toByte(config.getString(configString + "." + key, ""), key);
 			if(optinalKey.isPresent()) {
 				try(ByteArrayInputStream bin = new ByteArrayInputStream(optinalKey.get())) {
-					NBTTagCompound entityData = NBTCompressedStreamTools.read(bin);
-					ModelVector vector = new ModelVector(entityData.getCompound("Location"));
-					fEntity entity = readNBTtag(entityData);
+					final NBTTagCompound entityData = NBTCompressedStreamTools.read(bin);
+					final ModelVector vector = new ModelVector(entityData.getCompound("Location"));
+					final fEntity entity = readNBTtag(entityData);
 					if(Objects.nonNull(vector) && Objects.nonNull(entity)) {
 						this.entityMap.put(vector, entity);
 						//this.setMax(vector);

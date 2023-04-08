@@ -7,9 +7,14 @@ import org.bukkit.event.Listener;
 
 import com.destroystokyo.paper.event.block.BlockDestroyEvent;
 
+import de.Ste3et_C0st.FurnitureLib.ModelLoader.ModelHandler;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 
 public class PaperEvents implements Listener {
+	
+	static {
+		ModelHandler.MODELBUILD_FILTER = block -> block.getType().isSolid() && block.isReplaceable() == false;
+	}
 	
 	@EventHandler(priority = EventPriority.LOW)
 	public void onBlockDestroy(BlockDestroyEvent e) {

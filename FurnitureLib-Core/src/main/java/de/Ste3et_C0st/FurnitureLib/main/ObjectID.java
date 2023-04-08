@@ -9,7 +9,6 @@ import de.Ste3et_C0st.FurnitureLib.Utilitis.cache.DiceOfflinePlayer;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
 import org.bukkit.*;
-import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.entity.Player;
 import java.util.Collection;
@@ -245,11 +244,10 @@ public class ObjectID extends ObjectData{
         playerSet.remove(player);
     }
 
-    public void addBlock(List<Block> bl) {
-        if (bl == null || bl.isEmpty()) {
+    public void addBlock(List<Location> locationList) {
+        if (locationList == null || locationList.isEmpty()) {
             return;
         }
-        final List<Location> locationList = bl.stream().filter(Objects::nonNull).map(Block::getLocation).collect(Collectors.toList());
         this.locList.addAll(locationList);
         FurnitureLib.getInstance().getBlockManager().getList().addAll(locationList);
     }
@@ -324,8 +322,7 @@ public class ObjectID extends ObjectData{
         if (getProjectOBJ().isSilent()) {
             return;
         }
-        asList.stream().filter(entity -> entity.haveDestroyMaterial()).limit(6)
-                .forEach(fEntity::sendParticle);
+        asList.stream().filter(entity -> entity.haveDestroyMaterial()).limit(6).forEach(fEntity::sendParticle);
     }
 
     public String getPlayerName() {

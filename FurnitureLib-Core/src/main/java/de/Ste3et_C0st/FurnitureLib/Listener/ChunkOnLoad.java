@@ -41,6 +41,7 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class ChunkOnLoad implements Listener {
@@ -277,39 +278,25 @@ public class ChunkOnLoad implements Listener {
             if (FurnitureLib.getInstance().getBlockManager().getList() == null) {
                 return;
             }
-            if (FurnitureLib.getInstance().getBlockManager().contains(event.getClickedBlock().getLocation())) {
-                ObjectID objID = null;
-                for (ObjectID obj : FurnitureLib.getInstance().getFurnitureManager().getObjectList()) {
-                    if (obj.containsBlock(event.getClickedBlock().getLocation())) {
-                        objID = obj;
-                        break;
-                    }
-                }
-                if (objID != null) {
-                    if (objID.isPrivate()) {
-                        return;
-                    }
-                } else {
-                    return;
-                }
-                event.setCancelled(true);
-                if (EquipmentSlot.HAND != event.getHand()) return;
-                if (!objID.getSQLAction().equals(SQLAction.REMOVE)) {
-                    final ObjectID o = objID;
-                    if (!FurnitureLib.getInstance().getFurnitureManager().getIgnoreList().contains(player.getUniqueId())) {
-                    	ProjectBreakEvent projectBreakEvent = new ProjectBreakEvent(player, o);
+            final Location location = event.getClickedBlock().getLocation();
+            if (FurnitureLib.getInstance().getBlockManager().contains(location)) {
+                final Optional<ObjectID> optObjectID = FurnitureLib.getInstance().getFurnitureManager().getAllExistObjectIDs().filter(entry -> entry.containsBlock(location)).findFirst();
+                optObjectID.ifPresent(objectID -> {
+                	if(objectID.isPrivate()) return;
+                	event.setCancelled(true);
+            		if (!FurnitureLib.getInstance().getFurnitureManager().getIgnoreList().contains(player.getUniqueId())) {
+                    	ProjectBreakEvent projectBreakEvent = new ProjectBreakEvent(player, objectID);
                         Bukkit.getPluginManager().callEvent(projectBreakEvent);
                         if (!projectBreakEvent.isCancelled()) {
-                        	Furniture furniture = objID.getFurnitureObject();
+                        	Furniture furniture = objectID.getFurnitureObject();
                         	if(Objects.nonNull(furniture)) {
                         		furniture.onBreak(player);
                         	}
                         }
-                        return;
                     } else {
                         LanguageManager.send(event.getPlayer(), "message.FurnitureToggleEvent");
                     }
-                }
+                });
             }
         }
     }

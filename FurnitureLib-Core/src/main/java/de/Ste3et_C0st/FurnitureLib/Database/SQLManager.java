@@ -40,9 +40,8 @@ public class SQLManager {
     private void initialize() {
     	ExecuteTimer timer = new ExecuteTimer();
         if (Objects.isNull(FurnitureLib.getInstance().getFurnitureConfig())) return;
-        HikariConfig config = FurnitureConfig.getFurnitureConfig().loadDatabaseAsset();
-        DataBaseType dataBaseType = FurnitureConfig.getFurnitureConfig().getDatabaseType();
-
+        final HikariConfig config = FurnitureConfig.getFurnitureConfig().loadDatabaseAsset();
+        final DataBaseType dataBaseType = FurnitureConfig.getFurnitureConfig().getDatabaseType();
         if(dataBaseType == DataBaseType.MySQL) {
         	isExist();
         	this.database = new MySQL(plugin, config);

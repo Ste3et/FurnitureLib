@@ -21,18 +21,24 @@ import org.bukkit.entity.Player;
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
 import java.util.function.Predicate;
 
 public class listCommand extends iCommand {
 
 	private int itemsEachSide = 15;
+	private static final Function<String, Predicate<ObjectID>> PLUGIN = (string) -> objectID -> objectID.getPlugin().equalsIgnoreCase(string);
+	private static final Function<String, Predicate<ObjectID>> WORLD = (string) -> objectID -> objectID.getWorld().getName().equalsIgnoreCase(string);
+	private static final Function<UUID, Predicate<ObjectID>> PLAYER = (string) -> objectID -> objectID.getUUID().equals(string);
+	
+	private static final Function<String, Optional<String[]>> STRINGS_PLITTER = (string) -> Optional.ofNullable(string.contains(":") ? string.split(":") : null);
+	private static final String filters = "world:/player:/distance:/plugin:";
 	
 	public listCommand(String subCommand, String... args) {
 		super(subCommand);
-		setTab("world:/player:/distance:/plugin:", "world:/player:/distance:/plugin:");
+		setTab(filters, filters);
 	}
 
-	@SuppressWarnings("deprecation")
 	@Override
 	public void execute(CommandSender sender, String[] args) {
 		if (!hasCommandPermission(sender))
@@ -48,41 +54,50 @@ public class listCommand extends iCommand {
 		for (String argument : args) {
 			if(argument.equalsIgnoreCase("list")) continue;
 			argument = argument.toLowerCase();
-			if (argument.startsWith("plugin:") && !filterTypes.contains("plugin")) {
+			if(filterTypes.contains(argument)) continue;
+			
+//			STRINGS_PLITTER.apply(argument).ifPresent(returnArray -> {
+//				if(returnArray.length == 2) {
+//					if(filters.contains(returnArray[0])) {
+//						final String actualString = returnArray[0];
+//						if (hasCommandPermission(sender, actualString)) {
+//							final Predicate<ObjectID> selector;
+//							switch(returnArray[1]) {
+//								
+//							}
+//						}
+//					}
+//				}else {
+//					//handle wrong string
+//				}
+//			});
+			
+			if (argument.startsWith("plugin:")) {
 				if (!hasCommandPermission(sender, ".plugin")) return;
-				String plugin = argument.replace("plugin:", "");
-				if(plugin.startsWith("!")) {
-					filterPredicate = filterPredicate.and(entry -> !entry.getPlugin().equalsIgnoreCase(plugin.replaceFirst("!", "")));
-				}else {
-					filterPredicate = filterPredicate.and(entry -> entry.getPlugin().equalsIgnoreCase(plugin));
-				}
-				filterTypes += "§7plugin:§a" + plugin + "§8|";
-			} else if (argument.startsWith("world:") && !filterTypes.contains("world")) {
+				final String plugin = argument.replace("plugin:", "");
+				final Predicate<ObjectID> selector = plugin.startsWith("!") ? PLUGIN.apply(plugin.replaceFirst("!", "")).negate() : PLUGIN.apply(plugin);
+				filterPredicate = filterPredicate.and(selector);
+				filterTypes += "<gray>plugin:<green>" + plugin + "<dark_gray>|";
+			} else if (argument.startsWith("world:")) {
 				if (!hasCommandPermission(sender, ".world")) return;
-				String world = argument.replace("world:", "");
-				if(world.startsWith("!")) {
-					filterPredicate = filterPredicate.and(entry -> !entry.getWorldName().equalsIgnoreCase(world.replaceFirst("!", "")));
-				}else {
-					filterPredicate = filterPredicate.and(entry -> entry.getWorldName().equalsIgnoreCase(world));
-				}
-				filterTypes += "§7world:§a" + world + "§8|";
+				final String world = argument.replace("world:", "");
+				final Predicate<ObjectID> selector = world.startsWith("!") ? WORLD.apply(world.replaceFirst("!", "")).negate() : WORLD.apply(world);
+				filterPredicate = filterPredicate.and(selector);
+				filterTypes += "<gray>world:<green>" + world + "<dark_gray>|";
 				continue;
-			} else if (argument.startsWith("player:") && !filterTypes.contains("player")) {
+			} else if (argument.startsWith("player:")) {
 				if (!hasCommandPermission(sender, ".player")) return;
 				String playerName = argument.replace("player:", "").replaceFirst("!", "");
 				Optional<DiceOfflinePlayer> offlinePlayer = FurnitureLib.getInstance().getPlayerCache().getPlayer(playerName);
 				if (offlinePlayer.isPresent()) {
-					if(argument.startsWith("player:!")) {
-						filterPredicate = filterPredicate.and(entry -> !entry.getUUID().equals(offlinePlayer.get().getUuid()));
-					}else {
-						filterPredicate = filterPredicate.and(entry -> entry.getUUID().equals(offlinePlayer.get().getUuid()));
-					}
-					filterTypes += "§7player:§a" + offlinePlayer.get().getName() + "§8|";
+					final Predicate<ObjectID> selector = argument.startsWith("!") ? PLAYER.apply(offlinePlayer.get().getUuid()).negate() : PLAYER.apply(offlinePlayer.get().getUuid());
+					filterPredicate = filterPredicate.and(selector);
+					filterTypes += "<gray>player:<green>" + offlinePlayer.get().getName() + "<dark_gray>|";
 				}else {
-					filterTypes += "§7player:§c" + offlinePlayer.get().getName() + "§8|";
+					filterTypes += "<gray>player:<red>" + offlinePlayer.get().getName() + "<dark_gray>|";
 				}
 				continue;
-			} else if (argument.startsWith("distance:") && !filterTypes.contains("distance")) {
+			} else if (argument.startsWith("distance:")) {
 				if (!hasCommandPermission(sender, ".distance")) return;
 				if (Player.class.isInstance(sender)) {
 					Player player = Player.class.cast(sender);
@@ -93,7 +108,7 @@ public class listCommand extends iCommand {
 						String worldName = world.getName();
 						Location location = player.getLocation();
 						filterPredicate = filterPredicate.and(entry -> entry.getWorldName().equalsIgnoreCase(worldName) && entry.getStartLocation().distance(location) < distance.get());
-						filterTypes += "§7distance:§a" + distance.get() + "§8|";
+						filterTypes += "<gray>distance:<green>" + distance.get() + "<dark_gray>|";
 					} catch (Exception e) {
 					}
 				}
@@ -149,7 +164,7 @@ public class listCommand extends iCommand {
 				double count = projectCounter.values().stream().filter(entry -> entry.get() > 0).count();
 				maxPages = Math.ceil(count / ((double) itemsEachSide));
 			}else {
-				sender.sendMessage(getLHandler().getString("command.list.nothing", new StringTranslator("filters", StringUtils.removeEnd(filterTypes, "|"))));
+				getLHandler().sendMessage(sender, "command.list.nothing", new StringTranslator("filters", StringUtils.removeEnd(filterTypes, "|")));
     			return;
 			}
 		} else {

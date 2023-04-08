@@ -320,4 +320,19 @@ public class LanguageManager {
 	public static void sendActionBarMessage(CommandSender sender, Component jsonText) {
 		getInstance().sendActionBarMessage(jsonText, sender);
 	}
+	
+	public void sendConsoleMessage(String ... string) {
+		Arrays.asList(string).forEach(this::sendConsoleMessage);
+	}
+	
+	public void sendConsoleMessage(String string) {
+		final String rawString = LanguageConverter.serializeLegacyColors(string);
+		this.sendConsoleMessage(MiniMessage.miniMessage().deserialize(rawString));
+	}
+	
+	public void sendConsoleMessage(Component component) {
+		if(Objects.nonNull(this.handling)) {
+			this.handling.sendConsoleMessage(component);
+		}
+	}
 }

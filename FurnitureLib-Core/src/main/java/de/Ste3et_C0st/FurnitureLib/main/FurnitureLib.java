@@ -98,9 +98,6 @@ public class FurnitureLib extends JavaPlugin {
          
          folia = containsClass("io.papermc.paper.threadedregions.RegionizedServer");
          paper = containsClass("com.destroystokyo.paper.event.block.BlockDestroyEvent");
-         
-         System.out.println("folia-server:" + folia);
-         System.out.println("paper-server:" + paper);
     }
     
     private static boolean containsClass(String string) {
@@ -305,52 +302,49 @@ public class FurnitureLib extends JavaPlugin {
     public void onEnable() {
     	instance = this;
     	
+    	this.furnitureConfig = new FurnitureConfig(instance);
+    	this.furnitureConfig.initLanguage();
         if (getVersionInt() < 12 || getVersionInt() > 19) {
-            this.disableFurnitureLib(Arrays.asList("§cFurnitureLib only works on Spigot 1.12 - 1.19"));
+            this.disableFurnitureLib(Arrays.asList("<red>FurnitureLib only works on Spigot 1.12 - 1.19"));
             return;
         }
 
         if (!getPluginManager().isPluginEnabled("ProtocolLib")) {
             this.disableFurnitureLib(Arrays.asList(
-            		"§cFurnitureLib §7can't be enabled",
-            		"§7Please §cinstall §7the right §e§nProtocollib version",
-            		"§5Download it here: §l§9https://www.spigotmc.org/resources/protocollib.1997/",
-            		"§c§4FurnitureLib is temporarily disabled"
+            		"<red>FurnitureLib <gray>can't be enabled",
+            		"<gray>Please <red>install <gray>the right <yellow>Protocollib version",
+            		"<gold>Download it here: <blue>https://www.spigotmc.org/resources/protocollib.1997/",
+            		"<red>FurnitureLib is temporarily <dark_red>disabled"
             		));
             send("==========================================");
             return;
         }
 		
 		if(this.getPluginManager().isPluginEnabled("Floodgate")) this.floodgateManager = new FloodgateManager();
-		
-		this.furnitureConfig = new FurnitureConfig(instance);
 		this.updater = new Updater();
 		this.enabledPlugin = true;
-		field = ProtocolFields.getField(getServer().getBukkitVersion());
+		this.field = ProtocolFields.getField(getServer().getBukkitVersion());
 		this.lUtil = new LocationUtil();
 		this.manager = new FurnitureManager();
+		this.furnitureConfig.loadPluginConfig();
 		this.colorManager = new ColorUtil();
 		this.serializeNew = new Serializer();
 		this.deSerializerNew = new DeSerializer();
 		this.lightMgr = new LightManager(this);
-		
 		this.pManager = new ProjectManager();
 		this.permissionHandler = new PermissionHandler();
 		this.Pmanager = new ProtectionManager(instance);
 		this.cache = new OfflinePlayerCache();
-		this.send("==========================================");
-		send("FurnitureLibrary Version: §e" + this.getDescription().getVersion());
-		send("Furniture Author: §6" + this.getDescription().getAuthors().get(0));
-		send("Furniture Website: §e" + this.getDescription().getWebsite());
-		send("FurnitureLib load for Minecraft: 1." + getVersionInt());
-		send("Furniture start load");
-		boolean b = isEnable("ProtectionLib", false);
-		send("Furniture find ProtectionLib: §e" + Boolean.toString(b));
+		this.furnitureConfig.getLangManager().sendConsoleMessage("==========================================");
+		this.furnitureConfig.getLangManager().sendConsoleMessage("FurnitureLib Version: <yellow>" + this.getDescription().getVersion());
+		this.furnitureConfig.getLangManager().sendConsoleMessage("Furniture Author: <gold>Ste3et_C0st");
+		this.furnitureConfig.getLangManager().sendConsoleMessage("Furniture Website: <yellow>" + this.getDescription().getWebsite());
+		this.furnitureConfig.getLangManager().sendConsoleMessage("Furniture find ProtectionLib: " + (isEnable("ProtectionLib", false) ? "<green>true" : "<red>false"));
 		this.bmanager = new BlockManager();
 		this.craftingInv = new CraftingInv(this);
 		this.loadPermissionKit();
 		autoConverter.modelConverter(getServer().getConsoleSender());
-		this.furnitureConfig.loadPluginConfig();
+		
 		this.sqlManager = new SQLManager(instance);
 		this.sqlManager.saveInterval(FurnitureConfig.getFurnitureConfig().getSaveIntervall());
 		this.inventoryManager = new InventoryManager();
@@ -363,9 +357,8 @@ public class FurnitureLib extends JavaPlugin {
 		if (this.furnitureConfig.isAutoPurge()) {
 			DeSerializer.autoPurge(this.furnitureConfig.getPurgeTime());
 		}
-
-		send("§2Furniture load finish :)");
-		send("==========================================");
+		this.furnitureConfig.getLangManager().sendConsoleMessage("§2Furniture load finish :)");
+		this.furnitureConfig.getLangManager().sendConsoleMessage("==========================================");
 		Bukkit.getOnlinePlayers().stream().filter(p -> p != null && p.isOp()).forEach(p -> getUpdater().sendPlayer(p));
 		PluginCommand c = getCommand("furniture");
 		c.setExecutor(new command(this));
@@ -386,7 +379,7 @@ public class FurnitureLib extends JavaPlugin {
     }
     
     private void disableFurnitureLib(List<String> instructions) {
-    	FurnitureLib.debug(instructions, 10);
+    	this.furnitureConfig.getLangManager().sendConsoleMessage(instructions.toArray(new String[instructions.size()]));
     	this.enabled = false;
     	this.getCommand("furniture").setExecutor(new disabledCommand(this, instructions));
 		Bukkit.getPluginManager().registerEvents(new onFurnitureLibDisabled(instructions), this);
@@ -399,6 +392,7 @@ public class FurnitureLib extends JavaPlugin {
     public void reloadPluginConfig() {
         this.reloadConfig();
         this.getFurnitureConfig().getLimitManager().getTypes().forEach(Limitation::reload);
+        this.furnitureConfig.initLanguage();
         this.furnitureConfig.loadPluginConfig();
         FurnitureManager.getInstance().getProjects().forEach(Project::loadDefaults);
     }

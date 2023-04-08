@@ -159,10 +159,10 @@ public abstract class fEntity extends fSerializer implements Cloneable {
             
             getHandle().getDoubles().write(0, this.positionX).write(1, this.positionY).write(2, this.positionZ);
             
-            if(FurnitureLib.getVersionInt() < 15) {
-            	getHandle().getBytes().write(0, this.yaw).write(1, this.pitch);
-            }else {
+            if(FurnitureLib.getVersionInt() > 18) {
             	getHandle().getBytes().write(0, this.pitch).write(1, this.yaw);
+            }else {
+            	getHandle().getBytes().write(0, this.yaw).write(1, this.pitch);
             }
         }
     }

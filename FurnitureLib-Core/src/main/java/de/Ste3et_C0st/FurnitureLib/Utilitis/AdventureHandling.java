@@ -50,4 +50,8 @@ public class AdventureHandling {
     	}
     }
 	
+	public void sendConsoleMessage(Component component) {
+		this.adventure.console().sendMessage(component);
+	}
+	
 }

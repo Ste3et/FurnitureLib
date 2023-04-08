@@ -9,7 +9,6 @@ import de.Ste3et_C0st.FurnitureLib.main.Type.CenterType;
 import de.Ste3et_C0st.FurnitureLib.main.Type.PlaceableSide;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -28,9 +27,12 @@ import java.util.List;
 import java.util.Objects;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.function.Predicate;
 
 public class ModelHandler extends Modelschematic {
 
+	public static Predicate<Block> MODELBUILD_FILTER = block -> block.getType().isSolid();
+	
 	public ModelHandler(File file, String fileHeader) throws FileNotFoundException {
         super(file, fileHeader);
     }
@@ -105,13 +107,13 @@ public class ModelHandler extends Modelschematic {
     	 return locationList;
     }
 
-    public List<Block> addBlocks(Location startLocation, BlockFace direction) {
-        List<Block> blockList = new ArrayList<Block>();
+    public List<Location> addBlocks(Location startLocation, BlockFace direction) {
+        List<Location> blockList = new ArrayList<Location>();
         FurnitureLib.debug("FurnitureLib {ModelHandler} -> Calculate Blocks");
         this.getBlockData(startLocation, direction).entrySet().stream().sorted((e1, e2) -> Double.compare(e1.getKey().getY(), e2.getKey().getY()) ).forEach(entry -> {
-			Block b = entry.getKey().getBlock();
-			entry.getValue().place(b.getLocation(), direction);
-			blockList.add(b);
+        	final Location location = entry.getKey();
+			entry.getValue().place(location, direction);
+			blockList.add(location);
 		});
         return blockList;
     }
@@ -185,24 +187,13 @@ public class ModelHandler extends Modelschematic {
             ModelVector max = rotateVector(new ModelVector(this.max), direction.getOppositeFace());
             BoundingBox box = BoundingBox.of(min.toVector(), max.toVector());
             box.shift(startLocation.clone().add(0,0,0));
-            List<Vector> vectorList = getBlocksInArea(box.getMin(), box.getMax());
-            World world = startLocation.getWorld();
-            vectorList.forEach(vector -> {
-                Location location = vector.toLocation(world);
-                Block block = location.getBlock();
-                if (block.getType().isSolid()) {
-                	if(FurnitureLib.getVersionInt() < 16) {
-                		returnValue.set(false);
-                        LocationUtil.particleBlock(block);
-                	}
-                	
-                	if(FurnitureLib.getInstance().getBlockManager().isPaper()) {
-//                		if(block.isBuildable() == true) {
-//                    		returnValue.set(false);
-//                            LocationUtil.particleBlock(block);
-//                    	}
-                	}
-                	
+            final World world = startLocation.getWorld();
+            getBlocksInArea(box.getMin(), box.getMax()).forEach(vector -> {
+                final Location location = vector.toLocation(world);
+                final Block block = location.getBlock();
+                if (MODELBUILD_FILTER.test(block)) {
+                	returnValue.set(false);
+                    LocationUtil.particleBlock(block);
                 }
             });
         }

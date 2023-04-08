@@ -83,7 +83,7 @@ public class FurnitureConfig {
     }
     
     public HikariConfig loadDatabaseAsset() {
-    	HikariConfig config = new HikariConfig();
+    	final HikariConfig config = new HikariConfig();
     	if(isNewVersion()) {
     		final String key = "storage-options.";
     		if (getConfig().getString(key + "storage-type").equalsIgnoreCase("SQLite")) {
@@ -93,7 +93,6 @@ public class FurnitureConfig {
                 config.setPoolName("FurnitureLib");
                 config.setConnectionTestQuery("SELECT 1");
                 config.setMaximumPoolSize(10);
-                config.setIdleTimeout(15);
                 this.databaseType = DataBaseType.SQLite;
             } else if (getConfig().getString(key + "storage-type").equalsIgnoreCase("Mysql")) {
             	String database = getConfig().getString(key + "database");
@@ -162,6 +161,14 @@ public class FurnitureConfig {
     	return getConfig().getInt("config-version", 1) > 1;
     }
     
+    public void initLanguage() {
+    	if(isNewVersion()) {
+    		this.lmanager = new LanguageManager(instance, getConfig().getString("general-options.language"));
+    	}else {
+    		this.lmanager = new LanguageManager(instance, getConfig().getString("config.Language"));
+    	}
+    }
+    
     private void loadNewConfig() {
     	//general Config
     	FurnitureLib.setDebug(getConfig().getBoolean("general-options.debugMode", false));
@@ -170,7 +177,6 @@ public class FurnitureConfig {
         this.glowing = getConfig().getBoolean("general-options.glowing");
         this.rotateOnSit = getConfig().getBoolean("general-options.rotateOnSit");
         this.update = getConfig().getBoolean("general-options.checkForUpdate");//
-        this.lmanager = new LanguageManager(instance, getConfig().getString("general-options.language"));
         this.autoSaveConsoleMessage = getConfig().getBoolean("storage-options.auto-save-console-message", true);
         
         if(this.autoSaveConsoleMessage) {
@@ -284,7 +290,6 @@ public class FurnitureConfig {
     
     private void loadLegacyConfig() {
     	FurnitureLib.setDebug(getConfig().getBoolean("config.debugMode", false));
-        this.lmanager = new LanguageManager(instance, getConfig().getString("config.Language"));
         this.useGamemode = !getConfig().getBoolean("config.Creative.RemoveItems");
         this.creativeInteract = getConfig().getBoolean("config.Creative.Interact");
         this.creativePlace = getConfig().getBoolean("config.Creative.Place");
