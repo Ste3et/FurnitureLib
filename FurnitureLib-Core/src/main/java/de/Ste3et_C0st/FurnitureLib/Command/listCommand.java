@@ -6,7 +6,6 @@ import de.Ste3et_C0st.FurnitureLib.Utilitis.cache.DiceOfflinePlayer;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
-import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.event.ClickEvent;
 import net.kyori.adventure.text.event.HoverEvent;
@@ -14,15 +13,16 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.apache.commons.lang.StringUtils;
 import org.bukkit.ChatColor;
 import org.bukkit.Location;
-import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
 import java.util.*;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 public class listCommand extends iCommand {
 
@@ -30,8 +30,8 @@ public class listCommand extends iCommand {
 	private static final Function<String, Predicate<ObjectID>> PLUGIN = (string) -> objectID -> objectID.getPlugin().equalsIgnoreCase(string);
 	private static final Function<String, Predicate<ObjectID>> WORLD = (string) -> objectID -> objectID.getWorld().getName().equalsIgnoreCase(string);
 	private static final Function<UUID, Predicate<ObjectID>> PLAYER = (string) -> objectID -> objectID.getUUID().equals(string);
-	
-	private static final Function<String, Optional<String[]>> STRINGS_PLITTER = (string) -> Optional.ofNullable(string.contains(":") ? string.split(":") : null);
+	private static final Function<String, Optional<String[]>> STRINGS_PLITTER = (string) -> Optional.ofNullable(string.contains(":") ? string.toLowerCase().split(":") : null);
+	private static final BiFunction<Location, Integer, Predicate<ObjectID>> DISTANCE = (location, distance) -> objectID -> objectID.getWorldName().equalsIgnoreCase(location.getWorld().getName()) && location.distance(objectID.getStartLocation()) < distance;
 	private static final String filters = "world:/player:/distance:/plugin:";
 	
 	public listCommand(String subCommand, String... args) {
@@ -41,107 +41,85 @@ public class listCommand extends iCommand {
 
 	@Override
 	public void execute(CommandSender sender, String[] args) {
-		if (!hasCommandPermission(sender))
-			return;
-		List<ObjectID> objectList = new ArrayList<ObjectID>(FurnitureManager.getInstance().getObjectList());
-		AtomicInteger side = new AtomicInteger(0);
-		String arguments = String.join(" ", args);
-		String filterTypes = "";
-
-		Predicate<ObjectID> filterPredicate = Objects::nonNull;
-		filterPredicate = filterPredicate.and(entry -> SQLAction.REMOVE != entry.getSQLAction());
+		if (!hasCommandPermission(sender)) return;
+		final List<ObjectID> objectList = FurnitureManager.getInstance().getAllExistObjectIDs().collect(Collectors.toList());
+		final HashMap<String, Predicate<ObjectID>> predicateHashMap = new HashMap<>();
+		final AtomicInteger side = new AtomicInteger(0);
+		final StringBuilder argumentBuilder = new StringBuilder();
 		
-		for (String argument : args) {
-			if(argument.equalsIgnoreCase("list")) continue;
-			argument = argument.toLowerCase();
-			if(filterTypes.contains(argument)) continue;
-			
-//			STRINGS_PLITTER.apply(argument).ifPresent(returnArray -> {
-//				if(returnArray.length == 2) {
-//					if(filters.contains(returnArray[0])) {
-//						final String actualString = returnArray[0];
-//						if (hasCommandPermission(sender, actualString)) {
-//							final Predicate<ObjectID> selector;
-//							switch(returnArray[1]) {
-//								
-//							}
-//						}
-//					}
-//				}else {
-//					//handle wrong string
-//				}
-//			});
-			
-			if (argument.startsWith("plugin:")) {
-				if (!hasCommandPermission(sender, ".plugin")) return;
-				final String plugin = argument.replace("plugin:", "");
-				final Predicate<ObjectID> selector = plugin.startsWith("!") ? PLUGIN.apply(plugin.replaceFirst("!", "")).negate() : PLUGIN.apply(plugin);
-				filterPredicate = filterPredicate.and(selector);
-				filterTypes += "<gray>plugin:<green>" + plugin + "<dark_gray>|";
-			} else if (argument.startsWith("world:")) {
-				if (!hasCommandPermission(sender, ".world")) return;
-				final String world = argument.replace("world:", "");
-				final Predicate<ObjectID> selector = world.startsWith("!") ? WORLD.apply(world.replaceFirst("!", "")).negate() : WORLD.apply(world);
-				filterPredicate = filterPredicate.and(selector);
-				filterTypes += "<gray>world:<green>" + world + "<dark_gray>|";
-				continue;
-			} else if (argument.startsWith("player:")) {
-				if (!hasCommandPermission(sender, ".player")) return;
-				String playerName = argument.replace("player:", "").replaceFirst("!", "");
-				Optional<DiceOfflinePlayer> offlinePlayer = FurnitureLib.getInstance().getPlayerCache().getPlayer(playerName);
-				if (offlinePlayer.isPresent()) {
-					final Predicate<ObjectID> selector = argument.startsWith("!") ? PLAYER.apply(offlinePlayer.get().getUuid()).negate() : PLAYER.apply(offlinePlayer.get().getUuid());
-					filterPredicate = filterPredicate.and(selector);
-					filterTypes += "<gray>player:<green>" + offlinePlayer.get().getName() + "<dark_gray>|";
-				}else {
-					filterTypes += "<gray>player:<red>" + offlinePlayer.get().getName() + "<dark_gray>|";
-				}
-				continue;
-			} else if (argument.startsWith("distance:")) {
-				if (!hasCommandPermission(sender, ".distance")) return;
-				if (Player.class.isInstance(sender)) {
-					Player player = Player.class.cast(sender);
-					AtomicInteger distance = new AtomicInteger(0);
-					try {
-						distance.set(Integer.parseInt(argument.replace("distance:", "")));
-						World world = player.getWorld();
-						String worldName = world.getName();
-						Location location = player.getLocation();
-						filterPredicate = filterPredicate.and(entry -> entry.getWorldName().equalsIgnoreCase(worldName) && entry.getStartLocation().distance(location) < distance.get());
-						filterTypes += "<gray>distance:<green>" + distance.get() + "<dark_gray>|";
-					} catch (Exception e) {
+		Arrays.asList(args).stream().map(String::toLowerCase)
+		.filter(argument -> predicateHashMap.containsKey(argument) == false)
+		.forEach(argument -> {
+			STRINGS_PLITTER.apply(argument).ifPresent(returnArray -> {
+				if(returnArray.length == 2) {
+					if(filters.contains(returnArray[0])) {
+						final String actualString = returnArray[0];
+						if (hasCommandPermission(sender, actualString)) {
+							final Predicate<ObjectID> selector;
+							final boolean negate = returnArray[1].startsWith("!");
+							final String plainString = returnArray[1].replaceFirst("!", "");
+							
+							switch(returnArray[0]) {
+								case "plugin": selector = negate ? PLUGIN.apply(plainString).negate() : PLUGIN.apply(plainString);
+									break;
+								case "world": selector = negate ? WORLD.apply(plainString).negate() : WORLD.apply(plainString);
+									break;
+								case "player":
+									final Optional<DiceOfflinePlayer> offlinePlayer = FurnitureLib.getInstance().getPlayerCache().getPlayer(plainString);
+									final UUID uuid = offlinePlayer.isPresent() ? offlinePlayer.get().getUuid() : null;
+									if(Objects.nonNull(uuid)) {
+										selector = negate ? PLAYER.apply(uuid).negate() : PLAYER.apply(uuid);
+									}else {
+										selector = null;
+									}
+									break;
+								case "distance":
+									if (Player.class.isInstance(sender)) {
+										final Integer distance = Integer.parseInt(plainString);
+										final Location location = Player.class.cast(sender).getLocation();
+										selector = DISTANCE.apply(location, distance);
+									}else {
+										selector = null;
+									}
+									break;
+								default: selector = null; break;
+							}
+							
+							if(Objects.nonNull(selector)) {
+								predicateHashMap.put(actualString, selector);
+								argumentBuilder.append(argument);
+							}
+						}
 					}
 				}
-				continue;
-			} else {
-				if (!hasCommandPermission(sender)) return;
-				try {
-					int selectedSide = Integer.parseInt(argument);
-					selectedSide = selectedSide > 0 ? selectedSide : 1;
-					side.set(selectedSide - 1);
-					arguments = arguments.replace(argument, "");
-				} catch (Exception e) {
-				}
+			});
+			
+			if(argument.matches("-?(0|[1-9]\\d*)")) {
+				int selectedSide = Integer.parseInt(argument);
+				selectedSide = selectedSide > 0 ? selectedSide : 1;
+				side.set(selectedSide - 1);
 			}
-		}
+		});
 		
 		List<Component> componentList = new ArrayList<Component>();
 		double maxPages = 0;
-		if (!filterTypes.isEmpty()) {
+		if (!predicateHashMap.isEmpty()) {
 			final HashMap<String, AtomicInteger> projectCounter = new HashMap<String, AtomicInteger>();
-			FurnitureManager.getInstance().getProjects()
-					.forEach(entry -> projectCounter.put(entry.getName(), new AtomicInteger(0)));
-			AtomicBoolean items = new AtomicBoolean(false);
+			final Predicate<ObjectID> predicate = predicateHashMap.values().stream().reduce(Predicate::and).orElse(Objects::nonNull);
+			final String filters = String.join(",", predicateHashMap.keySet().stream().collect(Collectors.toList()));
+			final AtomicBoolean items = new AtomicBoolean(false);
 			
-			objectList.stream().filter(filterPredicate).forEach(entry -> {
+			FurnitureManager.getInstance().getProjects().forEach(entry -> projectCounter.put(entry.getName(), new AtomicInteger(0)));
+			
+			objectList.stream().filter(predicate).forEach(entry -> {
 				AtomicInteger integer = projectCounter.get(entry.getProject());
 				if (Objects.nonNull(integer)) {
 					integer.incrementAndGet();
 					items.set(true);
 				}
 			});
+			
 			if (items.get()) {
-				String filters = filterTypes.substring(0, filterTypes.length() - 1);
 				componentList.add(MiniMessage.miniMessage().deserialize("<gray>FilterTypes: [" + filters +"]"));
 				final int currentSide = (side.get() > 0 ? side.get() : 1) - 1;
 				projectCounter.entrySet().stream()
@@ -164,7 +142,7 @@ public class listCommand extends iCommand {
 				double count = projectCounter.values().stream().filter(entry -> entry.get() > 0).count();
 				maxPages = Math.ceil(count / ((double) itemsEachSide));
 			}else {
-				getLHandler().sendMessage(sender, "command.list.nothing", new StringTranslator("filters", StringUtils.removeEnd(filterTypes, "|")));
+				getLHandler().sendMessage(sender, "command.list.nothing", new StringTranslator("filters", StringUtils.removeEnd(filters, "|")));
     			return;
 			}
 		} else {
@@ -206,7 +184,7 @@ public class listCommand extends iCommand {
 						if (sender.hasPermission("furniture.command.delete.project")) {
 							Component giveComponent = getLHandler().getComponent("command.list.delete.button");
 							giveComponent = giveComponent.hoverEvent(HoverEvent.showText(getLHandler().getComponent("command.list.delete.hover", new StringTranslator("project", entry.getName()))));
-							giveComponent = giveComponent.clickEvent(ClickEvent.runCommand("/furniture remove delete " + entry.getName()));
+							giveComponent = giveComponent.clickEvent(ClickEvent.runCommand("/furniture delete " + entry.getName()));
 							component = component.append(giveComponent);
 						}
 						
@@ -218,7 +196,7 @@ public class listCommand extends iCommand {
 		}
 		
 		if (!componentList.isEmpty()) {
-			new objectToSide(componentList, sender, side.get(), "/furniture " + arguments, itemsEachSide, (int) maxPages);
+			new objectToSide(componentList, sender, side.get(), "/furniture " + argumentBuilder.toString(), itemsEachSide, (int) maxPages);
 		}else {
 			LanguageManager.send(sender, "message.SideNotFound");
 			LanguageManager.send(sender, "message.SideNavigation", new StringTranslator("max", (int) maxPages + ""));
