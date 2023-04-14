@@ -6,6 +6,7 @@ import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 
+import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
@@ -31,6 +32,7 @@ public class LanguageManager {
     private HashMap<String, String> invStringList = new HashMap<>();
     private HashMap<String, Short> invShortList = new HashMap<>();
     private AdventureHandling handling = null;
+    private final PlaceHolderHandling placeholderAPI;
     
     public LanguageManager(Plugin plugin, String lang) {
         instance = this;
@@ -43,6 +45,7 @@ public class LanguageManager {
             oldManageInv();
         }
         this.handling = new AdventureHandling(plugin);
+        this.placeholderAPI = Bukkit.getPluginManager().isPluginEnabled("PlaceholderAPI") ? new PlaceHolderHandling() : null;
 	}
     
     public File getLangFolder() {
@@ -242,7 +245,7 @@ public class LanguageManager {
     
     
     public void sendMessage(CommandSender sender, String key, StringTranslator ... stringTranslators) {
-    	final String rawString = LanguageConverter.serializeLegacyColors(this.getString(key, stringTranslators));
+    	final String rawString = this.placeholderAPI != null ? this.placeholderAPI.parsePlaceholders(LanguageConverter.serializeLegacyColors(this.getString(key, stringTranslators)), sender) : LanguageConverter.serializeLegacyColors(this.getString(key, stringTranslators));
     	final TagResolver[] tags = getTagsArray(Arrays.asList(stringTranslators));
 		final Component returnMessage = MiniMessage.miniMessage().deserialize(rawString, tags);
 		
