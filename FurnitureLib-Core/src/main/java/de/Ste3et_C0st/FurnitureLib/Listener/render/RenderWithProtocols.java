@@ -1,6 +1,5 @@
 package de.Ste3et_C0st.FurnitureLib.Listener.render;
 
-import org.bukkit.Bukkit;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
 

@@ -16,6 +16,7 @@ public class fPig extends fContainerEntity{
     private boolean saddle = false;
     private Pig entity;
 
+    @SuppressWarnings("deprecation")
     public fPig(Location loc, ObjectID obj) {
         super(loc, type, type.getTypeId(), obj);
     }

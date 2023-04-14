@@ -15,7 +15,8 @@ public class fCreeper extends fContainerEntity{
     public static EntityType type = EntityType.CREEPER;
     private boolean charged = false, ignited = false;
     private Creeper entity = null;
-
+    
+    @SuppressWarnings("deprecation")
     public fCreeper(Location loc, ObjectID obj) {
         super(loc, type, type.getTypeId(), obj);
     }

@@ -17,6 +17,7 @@ public class fGiant extends fContainerEntity{
     private boolean AI = true;
     private Giant entity = null;
 
+    @SuppressWarnings("deprecation")
     public fGiant(Location loc, ObjectID id) {
         super(loc, type, type.getTypeId(), id);
     }

@@ -3,6 +3,7 @@ package de.Ste3et_C0st.FurnitureLib.LimitationManager;
 import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -45,8 +46,20 @@ public abstract class Limitation {
 	}
 	
 	public YamlConfiguration loadYaml() {
+		return this.loadYaml("");
+	}
+	
+	public YamlConfiguration loadYaml(final List<String> headerList) {
+		final String headerString = String.join("\n", headerList.toArray(new String[headerList.size()]));
+		return this.loadYaml(headerString);
+	}
+	
+	@SuppressWarnings("deprecation")
+	public YamlConfiguration loadYaml(String headerString) {
 		final YamlConfiguration configuration = YamlConfiguration.loadConfiguration(getFile());
 		configuration.options().copyDefaults(true);
+		configuration.options().copyHeader(true);
+		configuration.options().header(headerString);
 		return configuration;
 	}
 	

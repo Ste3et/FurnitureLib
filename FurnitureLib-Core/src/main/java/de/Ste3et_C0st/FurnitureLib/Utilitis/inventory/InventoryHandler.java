@@ -19,7 +19,6 @@ import de.Ste3et_C0st.FurnitureLib.Utilitis.ItemStackBuilder;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.LanguageManager;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.callbacks.CallbackGUI;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.callbacks.CallbackGUIClose;
-import de.Ste3et_C0st.FurnitureLib.main.FurnitureConfig;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import net.md_5.bungee.api.ChatColor;
 

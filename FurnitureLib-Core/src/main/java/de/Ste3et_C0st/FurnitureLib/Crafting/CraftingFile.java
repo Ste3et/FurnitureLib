@@ -12,7 +12,6 @@ import de.Ste3et_C0st.FurnitureLib.main.Type.PlaceableSide;
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
-import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemFlag;
 import org.bukkit.inventory.ItemStack;

@@ -23,7 +23,6 @@ import org.bukkit.scheduler.BukkitTask;
 
 import de.Ste3et_C0st.FurnitureLib.Utilitis.ItemStackBuilder;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.SchedularHelper;
-import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 
 public class ClickGui implements Listener {
 

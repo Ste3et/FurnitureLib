@@ -18,7 +18,6 @@ import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
-import org.bukkit.scheduler.BukkitRunnable;
 import com.google.common.util.concurrent.AtomicDouble;
 
 import java.util.HashMap;

@@ -35,19 +35,13 @@ public class PlayerLimitation extends Limitation{
 
 	@Override
 	public void writeConfig() {
-		final YamlConfiguration configuration = super.loadYaml();
-		
 		final List<String> headerConfig = Arrays.asList(
 				"This is the PlayerLimitation file",
 				"You can limit the max amount of Furnitures each Player",
 				"total.enable = (bool) | set default value for each project",
 				"total.global = (bool) | override the project limit and force use total.amount for each project"
 		);
-				
-		final String headerString = String.join("\n", headerConfig.toArray(new String[headerConfig.size()]));
-		configuration.options().copyHeader(true);
-		configuration.options().header(headerString);
-		
+		final YamlConfiguration configuration = super.loadYaml(headerConfig);
 		super.writeGlobal(configuration, headString);
 		FurnitureManager.getInstance().getProjects().forEach(project -> super.ioProjectLimit(headString, project, configuration));
 		super.save(configuration, getFile());

@@ -228,4 +228,14 @@ public abstract class Database {
     public Converter getConverter() {
         return this.converter;
     }
+    
+    public void createTable(final String query) {
+        try (Connection con = getConnection(); Statement stmt = con.createStatement()) {
+            stmt.executeUpdate(query);
+            FurnitureLib.debug(getType().name() + " createTable -> " + query, 0);
+        } catch (SQLException e) {
+            FurnitureLib.debug(getType().name() + " createTable: Fail", 10);
+            e.printStackTrace();
+        }
+    }
 }

@@ -10,7 +10,6 @@ import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
-import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.LimitationType;
@@ -37,18 +36,13 @@ public class ChunkLimitation extends Limitation{
 
 	@Override
 	public void writeConfig() {
-		final YamlConfiguration configuration = super.loadYaml();
-		final List<String> header = Arrays.asList(
+		final List<String> headerConfig = Arrays.asList(
 				"This is the ChunkLimitation file",
 				"You can limit the max amount of Furnitures each chunk",
 				"total.enable = (bool) | set default value for each project",
 				"total.global = (bool) | override the project limit and force use total.amount for each project"
 		);
-				
-		final String headerString = String.join("\n", header.toArray(new String[header.size()]));
-		configuration.options().copyHeader(true);
-		configuration.options().header(headerString);
-		
+		final YamlConfiguration configuration = super.loadYaml(headerConfig);
 		super.writeGlobal(configuration, headString);
 		FurnitureManager.getInstance().getProjects().forEach(project -> super.ioProjectLimit(headString, project, configuration));
 		super.save(configuration, getFile());

@@ -2,7 +2,6 @@ package de.Ste3et_C0st.FurnitureLib.async;
 
 import java.util.concurrent.locks.ReentrantLock;
 
-import org.bukkit.Bukkit;
 import org.bukkit.Chunk;
 import org.bukkit.Location;
 import org.bukkit.World;
