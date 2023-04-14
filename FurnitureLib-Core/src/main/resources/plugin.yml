@@ -1,5 +1,5 @@
 name: FurnitureLib
-version: 3.0.1
+version: @version@
 description: The FurnitureLib is an API to create packet based entity creations for Spigot based Minecraft Servers.
 author: Ste3et_C0st
 website: https://dicecraft.de/furniture/

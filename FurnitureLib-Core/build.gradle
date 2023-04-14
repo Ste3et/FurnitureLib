@@ -20,7 +20,6 @@ dependencies {
     compileOnly 'org.spigotmc:spigot-api:1.19.4-R0.1-SNAPSHOT'
 
     implementation "com.zaxxer:HikariCP:4.0.3"
-    implementation "org.slf4j:slf4j-api:1.7.36"
     implementation "org.slf4j:slf4j-simple:1.7.36"
     implementation "net.kyori:adventure-text-minimessage:4.13.0"
     implementation "net.kyori:adventure-platform-bukkit:4.3.0"

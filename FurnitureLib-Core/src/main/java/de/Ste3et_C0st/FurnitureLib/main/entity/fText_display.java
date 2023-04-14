@@ -4,7 +4,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.TextDisplay.TextAligment;
+import org.bukkit.entity.TextDisplay.TextAlignment;
 
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.Registry;
@@ -23,7 +23,8 @@ public class fText_display extends fDisplay {
 	private final DefaultKey<Integer> lineWitdth = new DefaultKey<Integer>(200),
 			background_color = new DefaultKey<Integer>(1073741824);
 	private final DefaultKey<Byte> text_opacity = new DefaultKey<Byte>((byte) -1);
-	private final DefaultKey<TextAligment> style_flags = new DefaultKey<TextAligment>(TextAligment.CENTER);
+	
+	private final DefaultKey<TextAlignment> style_flags = new DefaultKey<TextAlignment>(TextAlignment.CENTER);
 	private final DefaultKey<String> text = new DefaultKey<String>("");
 	private final DefaultKey<Boolean> shadowed = new DefaultKey<Boolean>(false),
 			seeThrough = new DefaultKey<Boolean>(false), defaultBackground = new DefaultKey<Boolean>(true);
@@ -90,7 +91,7 @@ public class fText_display extends fDisplay {
 		return this.text.getOrDefault();
 	}
 
-	public TextAligment getTextAligment() {
+	public TextAlignment getTextAligment() {
 		return this.style_flags.getOrDefault();
 	}
 
@@ -119,7 +120,7 @@ public class fText_display extends fDisplay {
 		return this;
 	}
 
-	public fText_display setAlignment(TextAligment aligment) {
+	public fText_display setAlignment(TextAlignment aligment) {
 		this.style_flags.setValue(aligment);
 		switch (aligment) {
 		case LEFT:
@@ -208,7 +209,7 @@ public class fText_display extends fDisplay {
 
 		if (metadata.hasKeyOfType("style_flags", 8)) {
 			try {
-				final TextAligment aligment = TextAligment.valueOf(metadata.getString("style_flags"));
+				final TextAlignment aligment = TextAlignment.valueOf(metadata.getString("style_flags"));
 				this.setAlignment(aligment);
 			} catch (Exception e) {
 				e.printStackTrace();

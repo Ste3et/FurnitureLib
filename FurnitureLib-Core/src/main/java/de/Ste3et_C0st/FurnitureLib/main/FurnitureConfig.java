@@ -3,12 +3,17 @@ package de.Ste3et_C0st.FurnitureLib.main;
 import java.io.File;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;
 import java.util.function.BiConsumer;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+
 import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.FileConfiguration;
@@ -84,6 +89,7 @@ public class FurnitureConfig {
     
     public HikariConfig loadDatabaseAsset() {
     	final HikariConfig config = new HikariConfig();
+    	config.getDataSourceProperties().put("dataSource.logWriter", new PrintWriter(System.out));
     	if(isNewVersion()) {
     		final String key = "storage-options.";
     		if (getConfig().getString(key + "storage-type").equalsIgnoreCase("SQLite")) {
@@ -93,6 +99,7 @@ public class FurnitureConfig {
                 config.setPoolName("FurnitureLib");
                 config.setConnectionTestQuery("SELECT 1");
                 config.setMaximumPoolSize(10);
+                
                 this.databaseType = DataBaseType.SQLite;
             } else if (getConfig().getString(key + "storage-type").equalsIgnoreCase("Mysql")) {
             	String database = getConfig().getString(key + "database");

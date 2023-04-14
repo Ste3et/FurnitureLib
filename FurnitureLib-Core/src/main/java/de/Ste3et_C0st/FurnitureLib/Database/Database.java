@@ -27,9 +27,9 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 public abstract class Database {
     public FurnitureLib plugin;
-    private HikariConfig config;
-    private HikariDataSource dataSource;
-    private Converter converter;
+    private final HikariConfig config;
+    private final HikariDataSource dataSource;
+    private final Converter converter;
     public static final String TABLE_NAME = "furnitureLibData";
     
     //Prepare debugPool to store the connection Objects

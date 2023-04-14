@@ -41,6 +41,7 @@ public class SQLManager {
     	ExecuteTimer timer = new ExecuteTimer();
         if (Objects.isNull(FurnitureLib.getInstance().getFurnitureConfig())) return;
         final HikariConfig config = FurnitureConfig.getFurnitureConfig().loadDatabaseAsset();
+        
         final DataBaseType dataBaseType = FurnitureConfig.getFurnitureConfig().getDatabaseType();
         if(dataBaseType == DataBaseType.MySQL) {
         	isExist();
