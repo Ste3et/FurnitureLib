@@ -13,10 +13,15 @@ import com.comphenix.protocol.wrappers.WrappedWatchableObject;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.DefaultKey;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.EntityID;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.LanguageConverter;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureConfig;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
+
 import org.bukkit.*;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
@@ -188,7 +193,10 @@ public abstract class fEntity extends fSerializer implements Cloneable {
         if (str == null) return this;
         if (str.equalsIgnoreCase("")) setNameVisibility(false);
         if (FurnitureLib.isNewVersion()) {
-            getWatcher().setObject(new WrappedDataWatcherObject(2, Registry.getChatComponentSerializer(true)), Optional.of(WrappedChatComponent.fromText(str).getHandle()));
+    		final String workString = LanguageConverter.serializeLegacyColors(str);
+    		final Component textComponent = MiniMessage.miniMessage().deserialize(workString);
+    		final Object wrappedChat = WrappedChatComponent.fromJson(GsonComponentSerializer.gson().serialize(textComponent)).getHandle();
+            getWatcher().setObject(new WrappedDataWatcherObject(2, Registry.getChatComponentSerializer(true)), Optional.of(wrappedChat));
         } else {
             getWatcher().setObject(new WrappedDataWatcherObject(2, Registry.get(String.class)), str);
         }

@@ -13,7 +13,12 @@ import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObje
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.DefaultKey;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.EntitySize;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.LanguageConverter;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.LanguageManager;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 
 public class fText_display extends fDisplay {
 
@@ -95,10 +100,12 @@ public class fText_display extends fDisplay {
 		return this.style_flags.getOrDefault();
 	}
 
-	public fText_display setText(String text) {
+	public fText_display setText(final String text) {
 		this.text.setValue(text);
-		getWatcher().setObject(new WrappedDataWatcherObject(22, Registry.getChatComponentSerializer(false)),
-				WrappedChatComponent.fromText(text).getHandle());
+		final String workString = LanguageConverter.serializeLegacyColors(text);
+		final Component textComponent = MiniMessage.miniMessage().deserialize(workString);
+		final Object wrappedChat = WrappedChatComponent.fromJson(GsonComponentSerializer.gson().serialize(textComponent)).getHandle();
+		getWatcher().setObject(new WrappedDataWatcherObject(22, Registry.getChatComponentSerializer(false)), wrappedChat);
 		return this;
 	}
 
