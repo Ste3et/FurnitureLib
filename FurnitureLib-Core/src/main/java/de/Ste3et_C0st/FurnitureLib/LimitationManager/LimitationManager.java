@@ -64,6 +64,7 @@ public class LimitationManager {
                 for (int i = limitGlobal; i > 0; i--) {
                     if (player.hasPermission("furniture.globallimit." + i)) {
                         informationList.add(new LimitationInforamtion("permission", i, playerTotal));
+                        break;
                     }
                 }
             }

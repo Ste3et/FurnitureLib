@@ -277,29 +277,23 @@ public abstract class fDisplay extends fSize{
     		transformation.set("scale", scale);
     	}
     	
-    	if(this.leftRotation.isDefault() == false) {
-    		final NBTTagCompound leftRotation = new NBTTagCompound();
-        	final AxisAngle4f axis = this.rightRotation.getOrDefault();
-    		leftRotation.setFloat("angle", axis.angle);
-    		leftRotation.setFloat("x", axis.x);
-    		leftRotation.setFloat("y", axis.y);
-    		leftRotation.setFloat("z", axis.z);
-    		transformation.set("leftRotation", leftRotation);
-    	}
+    	//this.writeRotation(getLeftRotationObj(), transformation, "leftRotation");
+    	this.writeRotation(getRightRotationObj(), transformation, "rightRotation");
     	
-    	if(this.rightRotation.isDefault() == false) {
-    		final NBTTagCompound rightRotation = new NBTTagCompound();
-        	final AxisAngle4f axis = this.rightRotation.getOrDefault();
-        	rightRotation.setFloat("angle", axis.angle);
-        	rightRotation.setFloat("x", axis.x);
-        	rightRotation.setFloat("y", axis.y);
-        	rightRotation.setFloat("z", axis.z);
-        	transformation.set("rightRotation", rightRotation);
-    	}
+    	System.out.println(transformation.toString());
     	
     	if(!transformation.isEmpty()) set("transformation", transformation);
     	
         return getNBTField();
+    }
+    
+    private void writeRotation(final AxisAngle4f axis, final NBTTagCompound transformation, final String name) {
+    	final NBTTagCompound rotation = new NBTTagCompound();
+    	rotation.setFloat("angle", axis.angle);
+    	rotation.setFloat("x", axis.x);
+    	rotation.setFloat("y", axis.y);
+    	rotation.setFloat("z", axis.z);
+    	transformation.set(name, rotation);
     }
 
 	@Override
@@ -334,13 +328,19 @@ public abstract class fDisplay extends fSize{
         	if(transformation.hasKeyOfType("leftRotation", 10)) {
         		final NBTTagCompound leftRotation = transformation.getCompound("leftRotation");
         		final AxisAngle4f axisAngle4f = new AxisAngle4f(leftRotation.getFloat("angle"), leftRotation.getFloat("x"), leftRotation.getFloat("y"), leftRotation.getFloat("z"));
+        		System.out.println(axisAngle4f.toString());
         		this.leftRotation.setValue(axisAngle4f);
+        	}else {
+        		System.out.println("transformation.hasKeyOfType(leftRotation, 10) == false");
         	}
         	
         	if(transformation.hasKeyOfType("rightRotation", 10)) {
         		final NBTTagCompound rightRotation = transformation.getCompound("rightRotation");
         		final AxisAngle4f axisAngle4f = new AxisAngle4f(rightRotation.getFloat("angle"), rightRotation.getFloat("x"), rightRotation.getFloat("y"), rightRotation.getFloat("z"));
+        		System.out.println(axisAngle4f.toString());
         		this.rightRotation.setValue(axisAngle4f);
+        	}else {
+        		System.out.println("transformation.hasKeyOfType(rightRotation, 10) == false");
         	}
         	
         	this.writeTransformation();
