@@ -54,6 +54,11 @@ message:
   reload: <gray>FurnitureLib has been <dark_green><b>reloaded
   PurgeMarked: <green>Zaznaczyles <amount> mebli do usuniecia z bazy danych.
 command:
+  setname:
+    help_hover: <gray>Change the Model Name
+    suggest: /furniture setname
+    help_name: <gray>/furniture <yellow>setname [id] [newName]
+    success: <gray>You have updatet model <model> to show as <name>.
   save:
     help_hover: <gray>Save all furniture changes manually
     suggest: /furniture save

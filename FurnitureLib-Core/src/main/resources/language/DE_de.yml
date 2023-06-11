@@ -60,6 +60,11 @@ message:
   reload: <gray>FurnitureLib wurde <rainbow>neu geladen
   PurgeMarked: Du hast <amount> Rüstungsständer zum Entfernen aus der DB makiert.
 command:
+  setname:
+    help_hover: <gray>Ändert den Anzeigenamen
+    suggest: /furniture setname
+    help_name: <gray>/furniture <yellow>setname [id] [newName]
+    success: <gray>Das Model <model> hat nun den Namen <name>.
   reload:
     help_hover: <yellow>Lädt <gray>die Plugin Informationen neu
     suggest: /furniture reload

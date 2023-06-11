@@ -58,6 +58,7 @@ public class command implements CommandExecutor, Listener{
 		commands.add(new toggleCommand("toggle"));
 		commands.add(new versionCommand("version"));
 		commands.add(new dumpCommand("dump"));
+		commands.add(new setName("setName"));
 	}
 	
 	public static void addCommand(iCommand command){
