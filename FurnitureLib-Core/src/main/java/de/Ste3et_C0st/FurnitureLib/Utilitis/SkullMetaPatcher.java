@@ -30,7 +30,7 @@ public class SkullMetaPatcher {
 				profileField.setAccessible(true);
 				final Object savedObject = profileField.get(craftBukkitMeta);
 				final WrappedGameProfile profile = WrappedGameProfile.fromHandle(savedObject);
-				System.out.println(profile.toString());
+				//System.out.println(profile.toString());
 			}catch (Exception e) {
 				e.printStackTrace();
 			}

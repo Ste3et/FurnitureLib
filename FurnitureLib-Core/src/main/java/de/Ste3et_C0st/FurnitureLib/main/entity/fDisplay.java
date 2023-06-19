@@ -280,7 +280,7 @@ public abstract class fDisplay extends fSize{
     	//this.writeRotation(getLeftRotationObj(), transformation, "leftRotation");
     	this.writeRotation(getRightRotationObj(), transformation, "rightRotation");
     	
-    	System.out.println(transformation.toString());
+    	//System.out.println(transformation.toString());
     	
     	if(!transformation.isEmpty()) set("transformation", transformation);
     	
@@ -328,19 +328,15 @@ public abstract class fDisplay extends fSize{
         	if(transformation.hasKeyOfType("leftRotation", 10)) {
         		final NBTTagCompound leftRotation = transformation.getCompound("leftRotation");
         		final AxisAngle4f axisAngle4f = new AxisAngle4f(leftRotation.getFloat("angle"), leftRotation.getFloat("x"), leftRotation.getFloat("y"), leftRotation.getFloat("z"));
-        		System.out.println(axisAngle4f.toString());
+        		//System.out.println(axisAngle4f.toString());
         		this.leftRotation.setValue(axisAngle4f);
-        	}else {
-        		System.out.println("transformation.hasKeyOfType(leftRotation, 10) == false");
         	}
         	
         	if(transformation.hasKeyOfType("rightRotation", 10)) {
         		final NBTTagCompound rightRotation = transformation.getCompound("rightRotation");
         		final AxisAngle4f axisAngle4f = new AxisAngle4f(rightRotation.getFloat("angle"), rightRotation.getFloat("x"), rightRotation.getFloat("y"), rightRotation.getFloat("z"));
-        		System.out.println(axisAngle4f.toString());
+        		//System.out.println(axisAngle4f.toString());
         		this.rightRotation.setValue(axisAngle4f);
-        	}else {
-        		System.out.println("transformation.hasKeyOfType(rightRotation, 10) == false");
         	}
         	
         	this.writeTransformation();

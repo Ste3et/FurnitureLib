@@ -86,7 +86,7 @@ public class LanguageConverter {
 					configuration.set(key, exportList);
 				}else {
 					configuration.set(key, serializeLegacyColors(value));
-					System.out.println(key + ":" + serializeLegacyColors(value));
+					//System.out.println(key + ":" + serializeLegacyColors(value));
 				}
 			}
 		});

@@ -14,6 +14,7 @@ import de.Ste3et_C0st.FurnitureLib.main.Type.DataBaseType;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 import org.bukkit.Bukkit;
 import org.bukkit.World;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -24,6 +25,7 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.logging.Logger;
 
 public abstract class Database {
     public FurnitureLib plugin;
@@ -31,14 +33,16 @@ public abstract class Database {
     private final HikariDataSource dataSource;
     private final Converter converter;
     public static final String TABLE_NAME = "furnitureLibData";
+    private Logger logger;
     
     //Prepare debugPool to store the connection Objects
     private static HashSet<Connection> connectionDebugPool = new HashSet<Connection>();
     
     public Database(FurnitureLib instance, HikariConfig config) {
         this.plugin = instance;
+        this.logger = instance.getLogger();
         this.config = config;
-        this.dataSource = new HikariDataSource(config); //load 1
+        this.dataSource = new HikariDataSource(config);
         this.converter = new Converter(this);
     }
 
@@ -238,4 +242,8 @@ public abstract class Database {
             e.printStackTrace();
         }
     }
+    
+	public Logger getLogger() {
+		return logger;
+	} 
 }
