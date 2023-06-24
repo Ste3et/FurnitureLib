@@ -57,6 +57,6 @@ public class PlayerLimitation extends Limitation{
 
 	@Override
 	public Predicate<ObjectID> buildFilter(Location location, Project project, Player player) {
-		return objectID -> objectID.getProjectOBJ().equals(project) && objectID.getUUID().equals(player.getUniqueId());
+		return objectID -> objectID.hasProjectOBJ() && objectID.getProjectOBJ().equals(project) && objectID.getUUID().equals(player.getUniqueId());
 	}
 }

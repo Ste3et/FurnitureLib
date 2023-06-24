@@ -72,6 +72,10 @@ public class ObjectData {
     public String getProject() {
         return this.Project;
     }
+    
+    public boolean hasProjectOBJ() {
+    	return Objects.nonNull(this.getProjectOBJ());
+    }
 
     public Project getProjectOBJ() {
         return FurnitureManager.getInstance().getProject(this.Project);
