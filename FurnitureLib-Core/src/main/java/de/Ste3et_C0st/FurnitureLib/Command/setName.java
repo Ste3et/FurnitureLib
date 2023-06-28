@@ -18,6 +18,7 @@ public class setName extends iCommand {
 	
     @Override
     public void execute(CommandSender sender, String[] args) {
+    	if (!hasCommandPermission(sender)) return;
     	if (args.length > 1) {
     		final Optional<Project> projectOpt = getProjectOptional(args[1]);
     		if(projectOpt.isPresent()) {
