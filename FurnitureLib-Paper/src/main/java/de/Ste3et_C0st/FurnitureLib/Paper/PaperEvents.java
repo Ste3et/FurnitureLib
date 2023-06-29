@@ -16,6 +16,10 @@ public class PaperEvents implements Listener {
 		ModelHandler.MODELBUILD_FILTER = block -> block.getType().isSolid() && block.isReplaceable() == false;
 	}
 	
+	public PaperEvents(){
+		FurnitureLib.getInstance().send("FurnitureLib use FurnitureLib-Paper module");
+	}
+	
 	@EventHandler(priority = EventPriority.LOW)
 	public void onBlockDestroy(BlockDestroyEvent e) {
 		if(!e.isCancelled()) {
