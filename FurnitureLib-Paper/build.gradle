@@ -1,0 +1,26 @@
+plugins {
+    id 'de.Ste3et_C0st.furniture.java-conventions'
+}
+
+repositories {
+    maven {
+    	url = uri('https://repo.papermc.io/repository/maven-public/')
+    }
+}
+
+sourceCompatibility = '1.8'
+targetCompatibility = '1.8'
+
+
+dependencies {
+    implementation project(':FurnitureLib-Core')
+    compileOnly 'com.destroystokyo.paper:paper-api:1.16.4-R0.1-SNAPSHOT'
+}
+
+tasks {
+   jar {
+	   enabled = true
+   }
+}
+
+description = 'FurnitureLib-Paper'
