@@ -321,12 +321,12 @@ public class FurnitureLib extends JavaPlugin {
         }
 		
 		if(this.getPluginManager().isPluginEnabled("Floodgate")) this.floodgateManager = new FloodgateManager();
-		this.updater = new Updater();
 		this.enabledPlugin = true;
 		this.field = ProtocolFields.getField(getServer().getBukkitVersion());
 		this.lUtil = new LocationUtil();
 		this.manager = new FurnitureManager();
 		this.furnitureConfig.loadPluginConfig();
+		this.updater = new Updater();
 		this.colorManager = new ColorUtil();
 		this.serializeNew = new Serializer();
 		this.deSerializerNew = new DeSerializer();
