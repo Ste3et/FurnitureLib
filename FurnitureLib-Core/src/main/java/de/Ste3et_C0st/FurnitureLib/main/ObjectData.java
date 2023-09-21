@@ -211,4 +211,8 @@ public class ObjectData {
     public Furniture getFurnitureObject() {
     	return this.functionObject;
     }
+    
+    public Optional<Furniture> getFurnitureObjectOpt() {
+    	return Optional.ofNullable(this.functionObject);
+    }
 }

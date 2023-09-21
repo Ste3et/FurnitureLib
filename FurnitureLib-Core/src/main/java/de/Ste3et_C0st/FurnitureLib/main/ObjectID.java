@@ -182,9 +182,18 @@ public class ObjectID extends ObjectData{
                 if (players.contains(player)) {
                     return;
                 }
-                this.packetList.forEach(stand -> stand.send(player));
-                this.getFurnitureObject().receive(player);
-                players.add(player);
+                
+                if(this.getFurnitureObjectOpt().isPresent() == false) {
+                	FurnitureLib.debug(this.getID() + " have no function object", 100);
+                	FurnitureLib.debug("Project: " + this.getProject(), 100);
+                }
+                
+                this.getFurnitureObjectOpt().ifPresent(entry -> {
+                	this.packetList.forEach(stand -> stand.send(player));
+                	entry.receive(player);
+                    players.add(player);
+                });
+                
             } else {
                 if (!players.contains(player))
                     return;
