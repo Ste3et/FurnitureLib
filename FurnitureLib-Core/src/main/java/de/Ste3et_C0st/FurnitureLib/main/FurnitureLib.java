@@ -78,6 +78,7 @@ public class FurnitureLib extends JavaPlugin {
     private BlockManager bmanager;
     private InventoryManager inventoryManager;
     private ProtocolFields field = ProtocolFields.Spigot110;
+    
     private ProjectManager pManager;
     private PermissionHandler permissionHandler;
     private Material defMaterial = Material.valueOf(isNewVersion() ? "COW_SPAWN_EGG" : "MONSTER_EGG");

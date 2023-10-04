@@ -14,7 +14,6 @@ import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.DefaultKey;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.EntitySize;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.LanguageConverter;
-import de.Ste3et_C0st.FurnitureLib.Utilitis.LanguageManager;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
@@ -23,16 +22,13 @@ import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 public class fText_display extends fDisplay {
 
 	public static EntityType type = EntityType.valueOf("TEXT_DISPLAY");
-	private final DefaultKey<EntitySize> entitySize = new DefaultKey<EntitySize>(new EntitySize(0, 0));
-
-	private final DefaultKey<Integer> lineWitdth = new DefaultKey<Integer>(200),
-			background_color = new DefaultKey<Integer>(1073741824);
-	private final DefaultKey<Byte> text_opacity = new DefaultKey<Byte>((byte) -1);
 	
+	private final DefaultKey<EntitySize> entitySize = new DefaultKey<EntitySize>(new EntitySize(0, 0));
+	private final DefaultKey<Integer> lineWitdth = new DefaultKey<Integer>(200), background_color = new DefaultKey<Integer>(1073741824);
+	private final DefaultKey<Byte> text_opacity = new DefaultKey<Byte>((byte) -1);
 	private final DefaultKey<TextAlignment> style_flags = new DefaultKey<TextAlignment>(TextAlignment.CENTER);
 	private final DefaultKey<String> text = new DefaultKey<String>("");
-	private final DefaultKey<Boolean> shadowed = new DefaultKey<Boolean>(false),
-			seeThrough = new DefaultKey<Boolean>(false), defaultBackground = new DefaultKey<Boolean>(true);
+	private final DefaultKey<Boolean> shadowed = new DefaultKey<Boolean>(false), seeThrough = new DefaultKey<Boolean>(false), defaultBackground = new DefaultKey<Boolean>(true);
 
 	public fText_display(Location loc, ObjectID id) {
 		super(loc, type, 0, id);
@@ -111,19 +107,19 @@ public class fText_display extends fDisplay {
 
 	public fText_display setLineWidth(int width) {
 		this.lineWitdth.setValue(width);
-		getWatcher().setObject(new WrappedDataWatcherObject(23, Registry.get(Integer.class)), this.getLineWidth());
+		getWatcher().setObject(new WrappedDataWatcherObject(displayField.getVersionIndex() + 23, Registry.get(Integer.class)), this.getLineWidth());
 		return this;
 	}
 
 	public fText_display setBackgroundColor(int color) {
 		this.background_color.setValue(color);
-		getWatcher().setObject(new WrappedDataWatcherObject(24, Registry.get(Integer.class)), color);
+		getWatcher().setObject(new WrappedDataWatcherObject(displayField.getVersionIndex() + 24, Registry.get(Integer.class)), color);
 		return this;
 	}
 
 	public fText_display setTextOpacity(byte opacity) {
 		this.text_opacity.setValue(opacity);
-		getWatcher().setObject(new WrappedDataWatcherObject(25, Registry.get(Byte.class)), this.getTextOpacity());
+		getWatcher().setObject(new WrappedDataWatcherObject(displayField.getVersionIndex() + 25, Registry.get(Byte.class)), this.getTextOpacity());
 		return this;
 	}
 
@@ -231,7 +227,7 @@ public class fText_display extends fDisplay {
 	
 	//see org.bukkit.craftbukkit.v1_19_R3.entity.setFlag
 	private void setFlag(int flag, boolean set) {
-		final int field = 26;
+		final int field = displayField.getVersionIndex() + 26;
 		byte flagBits = (byte) 0;
 
 		if (getWatcher().hasIndex(field)) {

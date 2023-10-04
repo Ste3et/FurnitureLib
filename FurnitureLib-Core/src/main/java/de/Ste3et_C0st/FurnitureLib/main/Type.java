@@ -158,6 +158,21 @@ public class Type {
             return angle;
         }
     }
+    
+    public enum ProtocolFieldsDisplay {
+    	Spgiot120(0),
+    	Spigot120_2(1);
+    	
+    	final int indexAddition;
+    	
+    	ProtocolFieldsDisplay(int indexAddition) {
+    		this.indexAddition = indexAddition;
+    	}
+    	
+    	public int getVersionIndex() {
+    		return indexAddition;
+    	}
+    }
 
     public enum ProtocolFields {
         Spigot110(11, 12, 13, 14, 15, 16, 17, 10, 7),

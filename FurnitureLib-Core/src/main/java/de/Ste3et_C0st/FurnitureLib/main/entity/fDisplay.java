@@ -12,12 +12,15 @@ import org.joml.AxisAngle4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
+import com.comphenix.protocol.utility.MinecraftVersion;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.Registry;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
 
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.DefaultKey;
+import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
+import de.Ste3et_C0st.FurnitureLib.main.Type.ProtocolFieldsDisplay;
 
 public abstract class fDisplay extends fSize{
 	
@@ -27,6 +30,8 @@ public abstract class fDisplay extends fSize{
 	private DefaultKey<Billboard> billboard = new DefaultKey<Billboard>(Billboard.FIXED);
 	private DefaultKey<Float> viewRange = new DefaultKey<Float>(1f), shadowRadius = new DefaultKey<Float>(0f), shadowStrength = new DefaultKey<Float>(1f);
 	private DefaultKey<Integer> interpolationDelay = new DefaultKey<Integer>(0), interpolationDuration = new DefaultKey<Integer>(0), brightness = new DefaultKey<Integer>(-1), glow_override = new DefaultKey<Integer>(-1);
+	
+	public final static ProtocolFieldsDisplay displayField = FurnitureLib.getVersion(new MinecraftVersion("1.20.2")) ? ProtocolFieldsDisplay.Spigot120_2 : ProtocolFieldsDisplay.Spgiot120;
 	
 	public fDisplay(Location loc, EntityType type, int entityID, ObjectID id) {
 		super(loc, type, entityID, id, 0F, 0F);
@@ -83,11 +88,9 @@ public abstract class fDisplay extends fSize{
 	}
 	
 	public fDisplay setBrightness(Brightness brightness) {
-		
 		if(brightness.getBlockLight() == 0 && brightness.getSkyLight() == 0) {
 			return this.setBrightness(-1);
 		}
-		
 		return this.setBrightness(brightness.getBlockLight() << 4 | brightness.getSkyLight() << 20);
 	}
 	
@@ -204,45 +207,45 @@ public abstract class fDisplay extends fSize{
 	
 	private void writeTransformation() {
 		final Transformation transformation = getTransformation();
-		getWatcher().setObject(new WrappedDataWatcherObject(10, Registry.get(Vector3f.class)), transformation.getTranslation());
-		getWatcher().setObject(new WrappedDataWatcherObject(11, Registry.get(Vector3f.class)), transformation.getScale());
-		getWatcher().setObject(new WrappedDataWatcherObject(12, Registry.get(Quaternionf.class)), transformation.getLeftRotation());
-		getWatcher().setObject(new WrappedDataWatcherObject(13, Registry.get(Quaternionf.class)), transformation.getRightRotation());
+		getWatcher().setObject(new WrappedDataWatcherObject(displayField.getVersionIndex() + 10, Registry.get(Vector3f.class)), transformation.getTranslation());
+		getWatcher().setObject(new WrappedDataWatcherObject(displayField.getVersionIndex() + 11, Registry.get(Vector3f.class)), transformation.getScale());
+		getWatcher().setObject(new WrappedDataWatcherObject(displayField.getVersionIndex() + 12, Registry.get(Quaternionf.class)), transformation.getLeftRotation());
+		getWatcher().setObject(new WrappedDataWatcherObject(displayField.getVersionIndex() + 13, Registry.get(Quaternionf.class)), transformation.getRightRotation());
 	}
 	
 	public fDisplay setBillboard(Billboard billboard) {
 		this.billboard.setValue(billboard);
-		getWatcher().setObject(new WrappedDataWatcherObject(14, Registry.get(Byte.class)), (byte) this.getBillboard().ordinal());
+		getWatcher().setObject(new WrappedDataWatcherObject(displayField.getVersionIndex() + 14, Registry.get(Byte.class)), (byte) this.getBillboard().ordinal());
 		return this;
 	}
 	
 	public fDisplay setBrightness(int i) {
 		this.brightness.setValue(i);
-		getWatcher().setObject(new WrappedDataWatcherObject(15, Registry.get(Integer.class)), this.getBrightness());
+		getWatcher().setObject(new WrappedDataWatcherObject(displayField.getVersionIndex() + 15, Registry.get(Integer.class)), this.getBrightness());
 		return this;
 	}
 	
 	public fDisplay setViewRange(float f) {
 		this.viewRange.setValue(f);
-		getWatcher().setObject(new WrappedDataWatcherObject(16, Registry.get(Float.class)), this.getViewRange());
+		getWatcher().setObject(new WrappedDataWatcherObject(displayField.getVersionIndex() + 16, Registry.get(Float.class)), this.getViewRange());
 		return this;
 	}
 	
 	public fDisplay setShadowRadius(float f) {
 		this.shadowRadius.setValue(f);
-		getWatcher().setObject(new WrappedDataWatcherObject(17, Registry.get(Float.class)), this.getShadowRadius());
+		getWatcher().setObject(new WrappedDataWatcherObject(displayField.getVersionIndex() + 17, Registry.get(Float.class)), this.getShadowRadius());
 		return this;
 	}
 	
 	public fDisplay setShadowStrength(float f) {
 		this.shadowStrength.setValue(f);
-		getWatcher().setObject(new WrappedDataWatcherObject(18, Registry.get(Float.class)), this.getShadowStrength());
+		getWatcher().setObject(new WrappedDataWatcherObject(displayField.getVersionIndex() + 18, Registry.get(Float.class)), this.getShadowStrength());
 		return this;
 	}
 	
 	public fDisplay setGlowOverride(int i) {
 		this.glow_override.setValue(i);
-		getWatcher().setObject(new WrappedDataWatcherObject(21, Registry.get(Integer.class)), this.getGlowOverride());
+		getWatcher().setObject(new WrappedDataWatcherObject(displayField.getVersionIndex() + 21, Registry.get(Integer.class)), this.getGlowOverride());
 		return this;
 	}
 	
@@ -350,11 +353,11 @@ public abstract class fDisplay extends fSize{
 	
 	@Override
 	protected int widthField() {
-		return 19;
+		return displayField.getVersionIndex() + 19;
 	}
 
 	@Override
 	protected int heightField() {
-		return 20;
+		return displayField.getVersionIndex() + 20;
 	}
 }

@@ -63,7 +63,7 @@ public class fBlock_display extends fDisplay{
 	
 	public fBlock_display setBlockData(final BlockData blockData) {
 		this.blockDefaultKey.setValue(blockData);
-		getWatcher().setObject(new WrappedDataWatcherObject(22, Registry.getBlockDataSerializer(false)), WrappedBlockData.createData(blockData));
+		getWatcher().setObject(new WrappedDataWatcherObject(displayField.getVersionIndex() + 22, Registry.getBlockDataSerializer(false)), WrappedBlockData.createData(blockData));
 		return this;
 	}
 	
