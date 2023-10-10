@@ -22,6 +22,7 @@ import de.Ste3et_C0st.FurnitureLib.main.Type.LimitationType;
 public abstract class Limitation {
 	
 	protected HashMap<Project, Integer> amountMap = new HashMap<Project, Integer>();
+	protected HashMap<String, Integer> worldMap = new HashMap<String, Integer>();
 	
 	public abstract int getAmount(Predicate<ObjectID> projectAmount);
 	public abstract boolean canPlace(Location location, Project project, Player player);
@@ -73,7 +74,7 @@ public abstract class Limitation {
 	
     protected void ioProjectLimit(String headerString, Project project, YamlConfiguration configuration) {
     	if(Objects.isNull(project)) return;
-    	if(getEnum() == LimitationType.WORLD == false) {
+    	if(LimitationType.WORLD != getEnum()) {
     		configuration.addDefault(headerString + ".projects." + project.getName(), getEnum() == Type.LimitationType.PLAYER ? 10 : -1);
     		
         	if(configuration.getBoolean(headerString + ".total.enable", false)) {
@@ -85,8 +86,17 @@ public abstract class Limitation {
     	}else {
     		Bukkit.getWorlds().stream().forEach(entry -> {
     			configuration.addDefault(headerString + ".worlds." + entry.getName(), -1);
-    			this.setLimit(project, configuration.getInt(headerString + ".worlds." + entry.getName(), -1));
+    			if(configuration.getBoolean(headerString + ".total.enable", false)) {
+    				this.setWorldLimit(entry.getName(), configuration.getInt(headerString + ".total.amount", -1));
+    			}else {
+    				this.setWorldLimit(entry.getName(), configuration.getInt(headerString + ".worlds." + entry.getName(), -1));
+    			}
+    			//System.out.println(headerString + ".worlds." + entry.getName() + "/" + configuration.getInt(headerString + ".worlds." + entry.getName(), -1));
     		});
+    		
+    		if(configuration.getBoolean(headerString + ".total.enable", false)) {
+    			FurnitureConfig.getFurnitureConfig().getLimitManager().setGlobal(configuration.getBoolean(headerString + ".total.global", false));
+    		}
     	}
     }
     
@@ -99,15 +109,23 @@ public abstract class Limitation {
     }
     
     public Optional<LimitationInforamtion> buildInforamtion(Player player, Location location, Project project) {
-    	return Optional.of(new LimitationInforamtion(getEnum().name().toLowerCase(), getLimit(project), getAmount(buildFilter(location, project, player))));
+    	return Optional.of(new LimitationInforamtion(getEnum().name().toLowerCase(), getLimit(project, location), getAmount(buildFilter(location, project, player))));
     }
     
-	public int getLimit(Project project) {
+	public int getLimit(Project project, Location location) {
+		if(getEnum() == LimitationType.WORLD) {
+			final String world = location.getWorld().getName();
+			return worldMap.getOrDefault(world, -1);
+		}
 		return amountMap.getOrDefault(project, -1);
 	}
 	
 	protected void setLimit(Project project, int amount) {
 		this.amountMap.put(project, amount);
+	}
+	
+	protected void setWorldLimit(final String world, int amount) {
+		this.worldMap.put(world, amount);
 	}
 	
 	public boolean isGlobal() {

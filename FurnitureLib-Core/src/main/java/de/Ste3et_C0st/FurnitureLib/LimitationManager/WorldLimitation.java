@@ -31,7 +31,7 @@ public class WorldLimitation extends Limitation{
 
 	@Override
 	public boolean canPlace(Location location, Project project, Player player) {
-		return getAmount(buildFilter(location, project, player)) < getLimit(project);
+		return getAmount(buildFilter(location, project, player)) < getLimit(project, location);
 	}
 
 	@Override
@@ -59,7 +59,7 @@ public class WorldLimitation extends Limitation{
 	@Override
 	public Predicate<ObjectID> buildFilter(Location location, Project project, Player player) {
 		final World world = location.getWorld();
-		final Predicate<ObjectID> prediacte = objectID -> objectID.getWorld().equals(world); 
+		final Predicate<ObjectID> prediacte = objectID -> objectID.getWorld().getName().equalsIgnoreCase(world.getName()); 
 		return prediacte;
 	}
 }

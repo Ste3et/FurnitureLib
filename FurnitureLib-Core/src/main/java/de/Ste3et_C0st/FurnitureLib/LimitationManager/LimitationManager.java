@@ -6,6 +6,9 @@ import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.LimitationType;
+
+import org.bukkit.Bukkit;
+import org.bukkit.Location;
 import org.bukkit.entity.Player;
 
 import java.io.File;
@@ -53,6 +56,7 @@ public class LimitationManager {
         if (FurnitureLib.getInstance().getPermission().hasPerm(player, "furniture.bypass.limit")) return true;
         if (Objects.isNull(obj.getWorld())) return false;
         final Project project = obj.getProjectOBJ();
+        final Location location = obj.getStartLocation();
         if(Objects.isNull(project)) return false;
         
         final int limitGlobal = FurnitureConfig.getFurnitureConfig().getLimitGlobal();
@@ -61,9 +65,11 @@ public class LimitationManager {
         if(limitGlobal > 1) {
         	int playerTotal = returnIntProjectTotal(player);
             if (limitGlobal > 0) {
+            	//Bukkit.broadcastMessage("[DEBUG] config.yml limit: " + limitGlobal);
                 for (int i = limitGlobal; i > 0; i--) {
                     if (player.hasPermission("furniture.globallimit." + i)) {
                         informationList.add(new LimitationInforamtion("permission", i, playerTotal));
+                        //Bukkit.broadcastMessage("[DEBUG] config.yml limit: ✅");
                         break;
                     }
                 }
@@ -71,9 +77,10 @@ public class LimitationManager {
         }
         
         limitationListener.stream().filter(Limitation::isActivate).forEach(entry -> {
-        	final int maxSize = entry.getLimit(project), amountSize = entry.getAmount(entry.buildFilter(obj.getStartLocation(), project, player));
+        	final int maxSize = entry.getLimit(project, location), amountSize = entry.getAmount(entry.buildFilter(obj.getStartLocation(), project, player));
         	final Optional<LimitationInforamtion> inforamtion = entry.buildInforamtion(player, obj.getStartLocation(), project);
         	if(inforamtion.isPresent()) informationList.add(inforamtion.get());
+        	//Bukkit.broadcastMessage("[§7DEBUG§f] Limit Type {§d" + entry.getEnum().name() +"}: §a" + amountSize + "§f/§e" + maxSize + ":" + (inforamtion.isPresent() ? "§cX" : "§2✅"));
         	FurnitureLib.debug("LimitationManager -> {" + entry.getEnum().name() + "} " + amountSize + "/" + maxSize + " passed");
         });
         
