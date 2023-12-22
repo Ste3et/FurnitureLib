@@ -16,6 +16,7 @@ import java.util.stream.Collectors;
 import org.bukkit.Bukkit;
 import org.bukkit.command.BlockCommandSender;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
 import org.bukkit.plugin.Plugin;
 
 import com.google.gson.Gson;
@@ -208,7 +209,12 @@ public class DumpHandler {
 						sender.sendMessage("§cThe dump can't be handeld");
 					}else {
 						sender.sendMessage("§7FurnitureLib dump file upload §2§lSuccess");
-						LanguageManager.sendChatMessage(sender, MiniMessage.miniMessage().deserialize("<gray>You can find it here: <click:open_url:" + response.toString().replace("#URL:", "") +"><yellow>Click</click>"));
+						if(sender instanceof Player) {
+							LanguageManager.sendChatMessage(sender, MiniMessage.miniMessage().deserialize("<gray>You can find it here: <yellow><click:open_url:'" + response.toString().replace("#URL:", "") +"'>Click</click>"));
+						}else {
+							response.toString().replace("#URL:", "");
+						}
+						
 					}
 				}
 			}

@@ -9,15 +9,18 @@ import org.bukkit.inventory.ItemStack;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTCompressedStreamTools;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
 
-public class ItemStackV113 extends ItemStackReader{
+public class ItemStackV120_1 extends ItemStackReader{
 
+	private static Class<?> nmsNBTReadLimiter;
 	private static Method a, asBukkitCopy;
+	
 	
 	static {
 		try {
+			nmsNBTReadLimiter = Class.forName(getNbtFolder() + ".NBTReadLimiter");
 			a = clazz_nms_item.getMethod("a", clazz_nms_nbt);
-			clazz_nbttools_method_a_input = clazz_nbttools.getMethod("a", InputStream.class);
 			asBukkitCopy = clazz_obc_CraftItemStack.getMethod("asBukkitCopy", clazz_nms_item);
+			clazz_nbttools_method_a_input = clazz_nbttools.getMethod("a", InputStream.class, nmsNBTReadLimiter);
 		}catch(Exception ex) {
 			ex.printStackTrace();
 		}
@@ -26,7 +29,7 @@ public class ItemStackV113 extends ItemStackReader{
 	public ItemStack getItemStack(NBTTagCompound nbt) {
         try {
             byte[] data = NBTCompressedStreamTools.toByte(nbt);
-            Object nbtTag = clazz_nbttools_method_a_input.invoke(null, new ByteArrayInputStream(data));
+            Object nbtTag = clazz_nbttools_method_a_input.invoke(null, new ByteArrayInputStream(data), nmsNBTReadLimiter.getMethod("a").invoke(null));
             Object nms_item = a.invoke(null, nbtTag);
 			return (ItemStack) asBukkitCopy.invoke(null, nms_item);
         } catch (Exception e) {

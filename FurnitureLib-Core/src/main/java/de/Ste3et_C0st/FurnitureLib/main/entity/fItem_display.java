@@ -69,7 +69,7 @@ public class fItem_display extends fDisplay{
 	
 	public fItem_display setItemStack(final ItemStack stack) {
 		this.stack.setValue(stack);
-		getWatcher().setObject(new WrappedDataWatcherObject(displayField.getVersionIndex() + 22, Registry.getItemStackSerializer(false)), getStack());
+		getWatcher().setObject(new WrappedDataWatcherObject(displayField.getVersionIndex() + 22, Registry.getItemStackSerializer(false)), stack);
 		return this;
 	}
 	

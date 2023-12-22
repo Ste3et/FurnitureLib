@@ -101,7 +101,7 @@ public class fText_display extends fDisplay {
 		final String workString = LanguageConverter.serializeLegacyColors(text);
 		final Component textComponent = MiniMessage.miniMessage().deserialize(workString);
 		final Object wrappedChat = WrappedChatComponent.fromJson(GsonComponentSerializer.gson().serialize(textComponent)).getHandle();
-		getWatcher().setObject(new WrappedDataWatcherObject(22, Registry.getChatComponentSerializer(false)), wrappedChat);
+		getWatcher().setObject(new WrappedDataWatcherObject(displayField.getVersionIndex() + 22, Registry.getChatComponentSerializer(false)), wrappedChat);
 		return this;
 	}
 

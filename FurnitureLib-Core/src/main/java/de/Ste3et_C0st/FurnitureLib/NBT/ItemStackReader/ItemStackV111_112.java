@@ -1,6 +1,7 @@
 package de.Ste3et_C0st.FurnitureLib.NBT.ItemStackReader;
 
 import java.io.ByteArrayInputStream;
+import java.io.InputStream;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 
@@ -17,6 +18,7 @@ public class ItemStackV111_112 extends ItemStackReader{
 	static {
 		try {
 			constructor_nms_item = clazz_nms_item.getConstructor(clazz_nms_nbt);
+			clazz_nbttools_method_a_input = clazz_nbttools.getMethod("a", InputStream.class);
 			asBukkitCopy = clazz_obc_CraftItemStack.getMethod("asBukkitCopy", clazz_nms_item);
 		}catch(Exception ex) {
 			ex.printStackTrace();
