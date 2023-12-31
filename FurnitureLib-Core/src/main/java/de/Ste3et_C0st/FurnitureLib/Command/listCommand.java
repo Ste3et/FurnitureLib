@@ -97,7 +97,7 @@ public class listCommand extends iCommand {
 			if(argument.matches("-?(0|[1-9]\\d*)")) {
 				int selectedSide = Integer.parseInt(argument);
 				selectedSide = selectedSide > 0 ? selectedSide : 1;
-				side.set(selectedSide - 1);
+				side.set(selectedSide);
 			}
 		});
 		
@@ -147,7 +147,7 @@ public class listCommand extends iCommand {
 			}
 		} else {
 			FurnitureManager.getInstance().getProjects().stream().sorted((k1, k2) -> k1.getDisplayName().compareTo(k2.getDisplayName()))
-					.skip(itemsEachSide * side.get())
+					.skip(itemsEachSide * (side.get() - 1))
 					.limit(itemsEachSide)
 					.forEach(entry -> {
 						Component component = getLHandler().getComponent("command.list.main.message", new StringTranslator("project", ChatColor.stripColor(entry.getDisplayName())));
@@ -176,16 +176,16 @@ public class listCommand extends iCommand {
 						}
 						
 						if (sender.hasPermission("furniture.command.remove.project")) {
-							Component giveComponent = getLHandler().getComponent("command.list.remove.button");
-							giveComponent = giveComponent.hoverEvent(HoverEvent.showText(getLHandler().getComponent("command.list.remove.hover", new StringTranslator("project", entry.getName()))));
-							giveComponent = giveComponent.clickEvent(ClickEvent.runCommand("/furniture remove project:" + entry.getName()));
-							component = component.append(giveComponent);
+							Component removeComponent = getLHandler().getComponent("command.list.remove.button");
+							removeComponent = removeComponent.hoverEvent(HoverEvent.showText(getLHandler().getComponent("command.list.remove.hover", new StringTranslator("project", entry.getName()))));
+							removeComponent = removeComponent.clickEvent(ClickEvent.runCommand("/furniture remove project:" + entry.getName()));
+							component = component.append(removeComponent);
 						}
 						if (sender.hasPermission("furniture.command.delete.project")) {
-							Component giveComponent = getLHandler().getComponent("command.list.delete.button");
-							giveComponent = giveComponent.hoverEvent(HoverEvent.showText(getLHandler().getComponent("command.list.delete.hover", new StringTranslator("project", entry.getName()))));
-							giveComponent = giveComponent.clickEvent(ClickEvent.runCommand("/furniture delete " + entry.getName()));
-							component = component.append(giveComponent);
+							Component deleteComponent = getLHandler().getComponent("command.list.delete.button");
+							deleteComponent = deleteComponent.hoverEvent(HoverEvent.showText(getLHandler().getComponent("command.list.delete.hover", new StringTranslator("project", entry.getName()))));
+							deleteComponent = deleteComponent.clickEvent(ClickEvent.runCommand("/furniture delete " + entry.getName()));
+							component = component.append(deleteComponent);
 						}
 						
 						componentList.add(component);
@@ -193,6 +193,7 @@ public class listCommand extends iCommand {
 			double counts = FurnitureManager.getInstance().getProjects().size();
 			double items = itemsEachSide;
 			maxPages = Math.ceil(counts / items);
+			argumentBuilder.append("list ");
 		}
 		
 		if (!componentList.isEmpty()) {

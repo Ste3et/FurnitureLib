@@ -19,7 +19,7 @@ public class StringTranslator {
     
     public StringTranslator(String key, String value) {
         this.key = key.toLowerCase().replaceFirst("#", "").replace("#", "");
-        this.value = value;
+        this.value = LanguageManager.serializeLegacyColors(value);
     }
     
 	public StringTranslator(String key, Component component) {
