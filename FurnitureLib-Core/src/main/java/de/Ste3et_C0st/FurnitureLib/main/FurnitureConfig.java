@@ -193,7 +193,7 @@ public class FurnitureConfig {
         }
         
         //creative config
-        this.useGamemode = !getConfig().getBoolean("creative-options.RemoveItems");
+        this.useGamemode = !getConfig().getBoolean("creative-options.removeItems");
         this.creativeInteract = getConfig().getBoolean("creative-options.interact-with-models");
         this.creativePlace = getConfig().getBoolean("creative-options.place-models");
         
