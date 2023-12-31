@@ -87,6 +87,7 @@ public class FurnitureLib extends JavaPlugin {
     private FurnitureConfig furnitureConfig;
     private FurnitureProtocolListener furnitureProtocolListener;
     private FloodgateManager floodgateManager = null;
+    private ServerFunction serverFunction = null;
     private static boolean folia = false, paper = false;
     
     static {
@@ -325,6 +326,7 @@ public class FurnitureLib extends JavaPlugin {
 		this.enabledPlugin = true;
 		this.field = ProtocolFields.getField(getServer().getBukkitVersion());
 		this.lUtil = new LocationUtil();
+		this.loadServerFunctions();
 		this.manager = new FurnitureManager();
 		this.furnitureConfig.loadPluginConfig();
 		this.updater = new Updater();
@@ -364,7 +366,20 @@ public class FurnitureLib extends JavaPlugin {
 		PluginCommand c = getCommand("furniture");
 		c.setExecutor(new command(this));
 		c.setTabCompleter(new TabCompleterHandler());
-		
+    }
+    
+    private void loadServerFunctions() {
+    	try {
+    		if(isPaper()) {
+        		this.serverFunction = (ServerFunction) Class.forName("de.Ste3et_C0st.FurnitureLib.Paper.PaperFunctions").newInstance();
+        	}else if(isFolia()) {
+        		this.serverFunction = (ServerFunction) Class.forName("de.Ste3et_C0st.FurnitureLib.Folia.FoliaFunctions").newInstance();
+        	}
+    	}catch (Exception excpetion) {
+    		excpetion.printStackTrace();
+    	}
+    	if(this.serverFunction == null) this.serverFunction = new SpigotFunctions();
+    	this.serverFunction.onEnable();
     }
     
     private void registerEvents() {
@@ -548,4 +563,8 @@ public class FurnitureLib extends JavaPlugin {
     public static boolean getVersion(MinecraftVersion minecraftVersion) {
     	return minecraftVersion.atOrAbove();
     }
+
+	public ServerFunction getServerFunction() {
+		return this.serverFunction;
+	}
 }

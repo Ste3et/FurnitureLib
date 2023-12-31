@@ -5,10 +5,15 @@ import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
 import de.Ste3et_C0st.FurnitureLib.Utilitis.HiddenStringUtils;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.LanguageManager;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.MaterialConverter;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.SchedularHelper;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.Type.PlaceableSide;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.minimessage.MiniMessage;
+import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
+
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
 import org.bukkit.Material;
@@ -114,13 +119,10 @@ public class CraftingFile {
         }
     }
 
-    public void rename(String name) {
-        if (name == null || name.equalsIgnoreCase(""))
-            return;
+    public void rename(Component component) {
+        if (Objects.isNull(component)) return;
         ItemStack stack = getRecipe().getResult();
-        ItemMeta meta = stack.getItemMeta();
-        meta.setDisplayName(ChatColor.translateAlternateColorCodes('&', name));
-        stack.setItemMeta(meta);
+        FurnitureLib.getInstance().getServerFunction().displayName(stack, BungeeComponentSerializer.get().serialize(component));
     }
 
 
@@ -186,19 +188,27 @@ public class CraftingFile {
         this.side = PlaceableSide.valueOf(configuration.getString(header + ".PlaceAbleSide", "TOP").toUpperCase());
         return this.side;
     }
+    
+    public void saveName(Component component) {
+    	YamlConfiguration configuration = YamlConfiguration.loadConfiguration(this.getFilePath());
+    	configuration.set(header + ".displayName", MiniMessage.miniMessage().serialize(component));
+    	try {
+			configuration.save(this.getFilePath());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    }
 
-    public void setName(String s) {
-        ItemStack is = getRecipe().getResult();
-        ItemMeta im = is.getItemMeta();
-        im.setDisplayName(s);
-        is.setItemMeta(im);
-
+    public void setName(Component component) {
+        ItemStack stack = getRecipe().getResult();
+        FurnitureLib.getInstance().getServerFunction().displayName(stack, BungeeComponentSerializer.get().serialize(component));
         org.bukkit.NamespacedKey key = new org.bukkit.NamespacedKey(FurnitureLib.getInstance(), this.name.toLowerCase());
-        ShapedRecipe recipe = new ShapedRecipe(key, is).shape(this.getRecipe().getShape());
-        this.recipe.getIngredientMap().forEach((key1, value) -> recipe.setIngredient(key1, value.getData()));
+        ShapedRecipe recipe = new ShapedRecipe(key, stack).shape(this.getRecipe().getShape());
+        this.recipe.getIngredientMap().entrySet().stream().filter(entry -> Objects.nonNull(entry.getValue())).forEach(entry -> recipe.setIngredient(entry.getKey(), entry.getValue().getData()));
         this.recipe = recipe;
-        if (!isDisable)
-            Bukkit.getServer().addRecipe(this.recipe);
+        this.saveName(component);
+        if (!isDisable) Bukkit.getServer().addRecipe(this.recipe);
     }
 
     private ItemStack returnResult(final String name,final YamlConfiguration configuration) {
@@ -239,7 +249,9 @@ public class CraftingFile {
                 mat = Material.getMaterial(str);
             }
         }
-        ItemStack is = new ItemStack(mat);
+        
+        String displayName = configuration.getString(header + (FurnitureLib.isNewVersion() ? ".displayName" : ".name"), header);
+        ItemStack is = FurnitureLib.getInstance().getServerFunction().displayName(new ItemStack(mat), BungeeComponentSerializer.get().serialize(LanguageManager.getInstance().stringConvert(displayName)));
         ItemMeta im = is.getItemMeta();
         try {
             if (configuration.contains(header + ".unbreakable")) {
@@ -249,10 +261,7 @@ public class CraftingFile {
         } catch (Exception e) {
             e.printStackTrace();
         }
-
-        String displayName = configuration.getString(header + (FurnitureLib.isNewVersion() ? ".displayName" : ".name"), header);
-        im.setDisplayName(ChatColor.translateAlternateColorCodes('&', displayName));
-
+        
         List<String> loreText = new ArrayList<String>();
         if (im.hasLore()) loreText = im.getLore();
         

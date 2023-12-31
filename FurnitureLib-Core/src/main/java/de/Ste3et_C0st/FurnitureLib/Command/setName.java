@@ -1,13 +1,15 @@
 package de.Ste3et_C0st.FurnitureLib.Command;
 
+import java.util.Arrays;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 import org.bukkit.command.CommandSender;
 
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.StringTranslator;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
-import net.md_5.bungee.api.ChatColor;
+import net.kyori.adventure.text.Component;
 
 public class setName extends iCommand {
 
@@ -24,9 +26,10 @@ public class setName extends iCommand {
     		if(projectOpt.isPresent()) {
     			final Project project = projectOpt.get();
     			if(args.length > 2) {
-    				final String name = ChatColor.translateAlternateColorCodes('&', args[2]);
-    				project.getCraftingFile().setName(name);
-    				getLHandler().sendMessage(sender, "command.setname.success", new StringTranslator("model", project.getName()), new StringTranslator("name", ChatColor.stripColor(name)));
+    				final String name = Arrays.asList(args).stream().skip(2).collect(Collectors.joining(" "));
+    				final Component component = getLHandler().stringConvert(name);
+    				project.getCraftingFile().setName(component);
+    				getLHandler().sendMessage(sender, "command.setname.success", new StringTranslator("model", project.getName()), new StringTranslator("name", component));
     				return;
     			}
     		}else {

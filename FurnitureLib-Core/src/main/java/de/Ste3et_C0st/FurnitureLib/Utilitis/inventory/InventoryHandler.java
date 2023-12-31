@@ -129,8 +129,6 @@ public abstract class InventoryHandler implements Listener{
 		}
 	}
 	
-	
-	
 	public void onClick(CallbackGUI click) {
 		this.callbackClick = click;
 	}

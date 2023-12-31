@@ -35,7 +35,6 @@ public class BlockManager implements Listener {
     
     public void registerBlockEvents() {
     	if (listener.isEmpty()) {
-    		
     		if(FurnitureLib.isPaper()) {
     			isPaper = true;
     			try {

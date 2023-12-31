@@ -12,6 +12,7 @@ import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
+import org.checkerframework.checker.nullness.qual.NonNull;
 
 import java.io.File;
 import java.io.IOException;
@@ -20,6 +21,8 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class LanguageManager {
 
@@ -239,11 +242,45 @@ public class LanguageManager {
     	sender.sendMessage(getString(key, stringTranslators));
     }
     
+    public static final char COLOR_CHAR = '\u00A7';
+    public static final Pattern STRIP_COLOR_PATTERN = Pattern.compile( "(?i)" + String.valueOf( COLOR_CHAR ) + "[0-9A-FK-ORX]" );
+    
     public static void send(CommandSender sender, String key, StringTranslator ... stringTranslators) {
     	LanguageManager.getInstance().sendMessage(sender, key, stringTranslators);
     }
     
+    public Component stringConvert(String value, StringTranslator ... stringTranslators) {
+    	return stringConvert(value, Arrays.asList(stringTranslators));
+    }
     
+	public Component stringConvert(String value, List<StringTranslator> stringTranslaters) {
+		TagResolver[] tags = getTagsArray(stringTranslaters);
+		if(Objects.nonNull(tags)) {
+			return MiniMessage.miniMessage().deserialize(serializeLegacyColors(value), getTagsArray(stringTranslaters));
+		}else {
+			return MiniMessage.miniMessage().deserialize(serializeLegacyColors(value));
+		}
+	}
+    
+	public static String serializeLegacyColors(String input) {
+		if(Objects.isNull(input)) return "";
+		if(input.isEmpty()) return "";
+		String output = ChatColor.translateAlternateColorCodes('&', input).replaceAll("§m", "<st>").replaceAll("§o", "<i>").replaceAll("§n", "<u>").replaceAll("§l", "<b>").replaceAll("§k", "<obf>");
+		Matcher matcher = STRIP_COLOR_PATTERN.matcher(output);
+		
+        while (matcher.find()) {
+            String color = output.substring(matcher.start(), matcher.end());
+            ChatColor chatColor = ChatColor.getByChar(color.charAt(1));
+            if(Objects.isNull(chatColor)) continue;
+            
+            String colorCode = "<" + chatColor.name().toLowerCase() + ">";
+            output = output.replaceAll(color, colorCode + "");
+            matcher = STRIP_COLOR_PATTERN.matcher(output);
+        }
+        
+		return output;
+	}
+	
     public void sendMessage(CommandSender sender, String key, StringTranslator ... stringTranslators) {
     	final String rawString = this.placeholderAPI != null ? this.placeholderAPI.parsePlaceholders(LanguageConverter.serializeLegacyColors(this.getString(key, stringTranslators)), sender) : LanguageConverter.serializeLegacyColors(this.getString(key, stringTranslators));
     	final TagResolver[] tags = getTagsArray(Arrays.asList(stringTranslators));
