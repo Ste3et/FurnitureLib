@@ -47,10 +47,9 @@ public class PlayerManageInventoryAqua extends InventoryHandler{
 					if(stack.getType().equals(Material.PLAYER_HEAD)) {
 						SkullMeta skull = (SkullMeta) stack.getItemMeta();
 						OfflinePlayer skullOwner = skull.getOwningPlayer();
-						if(Objects.isNull(skullOwner)) return;
-						if(inventoryMode == InventoryMode.SETOWNER) {
+						if(inventoryMode == InventoryMode.SETOWNER && Objects.nonNull(skullOwner)) {
 							objectID.setUUID(skullOwner.getUniqueId());
-						}else if(inventoryMode == InventoryMode.ADDFRIEND) {
+						}else if(inventoryMode == InventoryMode.ADDFRIEND && Objects.nonNull(skullOwner)) {
 							objectID.addMember(skullOwner.getUniqueId());
 						}else if(inventoryMode == InventoryMode.REMOVEFRIEND) {
 							if(skull.hasDisplayName()) {
