@@ -1,5 +1,6 @@
 package de.Ste3et_C0st.FurnitureLib.Crafting;
 
+import com.google.common.collect.Lists;
 import com.google.common.collect.UnmodifiableIterator;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -13,6 +14,7 @@ import de.Ste3et_C0st.FurnitureLib.main.Type.PlaceableSide;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
+import net.md_5.bungee.api.chat.BaseComponent;
 
 import org.bukkit.Bukkit;
 import org.bukkit.ChatColor;
@@ -242,70 +244,52 @@ public class CraftingFile {
     	}
     	
     	
-        Material mat = FurnitureLib.getInstance().getDefaultSpawnMaterial();
+        Material material = FurnitureLib.getInstance().getDefaultSpawnMaterial();
         if (configuration.contains(header + ".spawnMaterial")) {
             String str = configuration.getString(header + ".spawnMaterial");
             if (!str.equalsIgnoreCase("383")) {
-                mat = Material.getMaterial(str);
+            	material = Material.getMaterial(str);
             }
         }
         
-        String displayName = configuration.getString(header + (FurnitureLib.isNewVersion() ? ".displayName" : ".name"), header);
-        ItemStack is = FurnitureLib.getInstance().getServerFunction().displayName(new ItemStack(mat), BungeeComponentSerializer.get().serialize(LanguageManager.getInstance().stringConvert(displayName)));
-        ItemMeta im = is.getItemMeta();
-        try {
-            if (configuration.contains(header + ".unbreakable")) {
-                boolean str = configuration.getBoolean(header + ".unbreakable", false);
-                im.setUnbreakable(str);
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        final String displayName = configuration.getString(header + (FurnitureLib.isNewVersion() ? ".displayName" : ".name"), header);
+        final ItemStack itemStack = new ItemStack(material);
+        final ItemMeta itemMeta = itemStack.getItemMeta();
+        final List<String> loreText = new ArrayList<String>();
         
-        List<String> loreText = new ArrayList<String>();
-        if (im.hasLore()) loreText = im.getLore();
+        /*
+         * set displayName to ItemStack
+         */
+        FurnitureLib.getInstance().getServerFunction().setDisplayName(itemMeta, BungeeComponentSerializer.get().serialize(LanguageManager.getInstance().stringConvert("<i:false>" + displayName)));
+        
+        if (itemMeta.hasLore()) loreText.addAll(itemMeta.getLore());
         
         if (configuration.contains(header + ".custommodeldata")) {
         	try{
-        		im.setCustomModelData(configuration.getInt(header + ".custommodeldata"));
+        		itemMeta.setCustomModelData(configuration.getInt(header + ".custommodeldata"));
         	}catch (Exception e) {/* Method = setCustomModelData didn't exist (ignore Exception) */}
         }
 
         if(FurnitureLib.getVersionInt() > 13) {
-        	im.getPersistentDataContainer().set(new org.bukkit.NamespacedKey(FurnitureLib.getInstance(), "model"), PersistentDataType.STRING, getSystemID());
+        	itemMeta.getPersistentDataContainer().set(new org.bukkit.NamespacedKey(FurnitureLib.getInstance(), "model"), PersistentDataType.STRING, getSystemID());
 		}else {
 			loreText.add(HiddenStringUtils.encodeString(getSystemID()));
 		}
         
-        if (configuration.contains(header + ".itemLore")) {
-            if (configuration.isList(header + ".itemLore")) {
-                List<String> lore = configuration.getStringList(header + ".itemLore");
-                if (im.getLore() != null) {
-                    loreText = im.getLore();
-                }
-                for (String str : lore) {
-                    String a = ChatColor.translateAlternateColorCodes('&', str);
-                    loreText.add(a);
-                }
-            }
+        if(configuration.contains(header + ".itemLore") && configuration.isList(header + ".itemLore")) {
+        	final List<BaseComponent[]> componentList = Lists.newArrayList();
+        	configuration.getStringList(header + ".itemLore").stream().forEach(loreString -> loreText.add("<i:false>" + loreString));
+        	loreText.stream().map(LanguageManager.getInstance()::stringConvert).map(BungeeComponentSerializer.get()::serialize).forEach(componentList::add);
+        	FurnitureLib.getInstance().getServerFunction().setLore(itemMeta, componentList);
         }
-        is.setAmount(1);
-        if(!loreText.isEmpty()) im.setLore(loreText);
+        
+        if (configuration.getBoolean(header + ".unbreakable", false)) itemMeta.setUnbreakable(true);
+        if (configuration.contains(header + ".durability") && itemMeta instanceof Damageable) ((Damageable) itemMeta).setDamage(configuration.getInt(header + ".durability", 0));
 
-        try {
-            if (configuration.contains(header + ".durability")) {
-                int str = configuration.getInt(header + ".durability", 0);
-                if (im instanceof Damageable) {
-                    ((Damageable) im).setDamage(str);
-                }
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-        im.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE, ItemFlag.HIDE_ATTRIBUTES);
-        is.setItemMeta(im);
-        return is;
+        itemMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE, ItemFlag.HIDE_ATTRIBUTES);
+        itemStack.setItemMeta(itemMeta);
+        itemStack.setAmount(1);
+        return itemStack;
     }
 
     private String[] returnFragment(final YamlConfiguration configuartion) {

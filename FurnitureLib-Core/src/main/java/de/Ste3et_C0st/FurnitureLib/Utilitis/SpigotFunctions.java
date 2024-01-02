@@ -1,6 +1,7 @@
 package de.Ste3et_C0st.FurnitureLib.Utilitis;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.bukkit.inventory.ItemStack;
@@ -8,13 +9,17 @@ import org.bukkit.inventory.meta.ItemMeta;
 
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import net.kyori.adventure.text.Component;
-import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.md_5.bungee.api.chat.BaseComponent;
 
 public class SpigotFunctions implements ServerFunction{
 
+	@Override
+	public void onEnable() {
+		FurnitureLib.debug("SpigotFunctions created");
+	}
+	
 	@Override
 	public ItemStack displayName(ItemStack stack, BaseComponent[] component) {
 		ItemMeta meta = stack.getItemMeta();
@@ -37,8 +42,20 @@ public class SpigotFunctions implements ServerFunction{
 	}
 
 	@Override
-	public void onEnable() {
-		FurnitureLib.debug("SpigotFunctions created");
+	public ItemMeta setDisplayName(ItemMeta meta, BaseComponent[] baseComponent) {
+		if(Objects.nonNull(meta)) {
+			meta.setDisplayName(convertToLegacy(BungeeComponentSerializer.get().deserialize(baseComponent)));
+		}
+		return meta;
+	}
+
+	@Override
+	public ItemMeta setLore(ItemMeta meta, List<BaseComponent[]> component) {
+		if(Objects.nonNull(meta)) {
+			List<String> legacyLore = component.stream().map(BungeeComponentSerializer.get()::deserialize).map(this::convertToLegacy).collect(Collectors.toList());
+			meta.setLore(legacyLore);
+		}
+		return meta;
 	}
 
 }

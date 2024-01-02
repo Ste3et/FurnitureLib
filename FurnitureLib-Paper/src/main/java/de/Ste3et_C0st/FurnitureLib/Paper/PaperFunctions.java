@@ -1,6 +1,8 @@
 package de.Ste3et_C0st.FurnitureLib.Paper;
 
 import java.util.List;
+import java.util.Objects;
+
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
@@ -10,6 +12,11 @@ import net.md_5.bungee.api.chat.BaseComponent;
 
 public class PaperFunctions implements ServerFunction {
 
+	@Override
+	public void onEnable() {
+		FurnitureLib.debug("PaperFunctions created");
+	}
+	
 	@Override
 	public ItemStack displayName(ItemStack stack, BaseComponent[] baseComponent) {
 		ItemMeta meta = stack.getItemMeta();
@@ -27,8 +34,19 @@ public class PaperFunctions implements ServerFunction {
 	}
 
 	@Override
-	public void onEnable() {
-		FurnitureLib.debug("PaperFunctions created");
+	public ItemMeta setDisplayName(ItemMeta meta, BaseComponent[] baseComponent) {
+		if(Objects.nonNull(meta)) {
+			meta.setDisplayNameComponent(baseComponent);
+		}
+		return meta;
+	}
+
+	@Override
+	public ItemMeta setLore(ItemMeta meta, List<BaseComponent[]> component) {
+		if(Objects.nonNull(meta)) {
+			meta.setLoreComponents(component);
+		}
+		return meta;
 	}
 
 }
