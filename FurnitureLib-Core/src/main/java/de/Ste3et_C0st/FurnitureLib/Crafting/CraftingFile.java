@@ -37,6 +37,7 @@ public class CraftingFile {
     public  final File filePath;
     private final String name;
     private final String header;
+    private Component displayName = Component.empty();
     private ShapedRecipe recipe;
     private boolean isDisable, useItemStackObject = false, enabledModel = false;
     private PlaceableSide side = null;
@@ -193,6 +194,7 @@ public class CraftingFile {
     public void saveName(Component component) {
     	YamlConfiguration configuration = YamlConfiguration.loadConfiguration(this.getFilePath());
     	configuration.set(header + ".displayName", MiniMessage.miniMessage().serialize(component));
+    	this.displayName = component;
     	try {
 			configuration.save(this.getFilePath());
 		} catch (IOException e) {
@@ -208,6 +210,7 @@ public class CraftingFile {
         ShapedRecipe recipe = new ShapedRecipe(key, stack).shape(this.getRecipe().getShape());
         this.recipe.getIngredientMap().entrySet().stream().filter(entry -> Objects.nonNull(entry.getValue())).forEach(entry -> recipe.setIngredient(entry.getKey(), entry.getValue().getData()));
         this.recipe = recipe;
+        this.displayName = component;
         this.saveName(component);
         if (!isDisable) Bukkit.getServer().addRecipe(this.recipe);
     }
@@ -251,14 +254,16 @@ public class CraftingFile {
             }
         }
         
-        final String displayName = configuration.getString(header + (FurnitureLib.isNewVersion() ? ".displayName" : ".name"), header);
+        this.displayName = LanguageManager.getInstance().stringConvert("<i:false>" + configuration.getString(header + (FurnitureLib.isNewVersion() ? ".displayName" : ".name"), header));
         final ItemStack itemStack = new ItemStack(material);
         final ItemMeta itemMeta = itemStack.getItemMeta();
         final List<String> loreText = new ArrayList<String>();
-        
-        FurnitureLib.getInstance().getServerFunction().setDisplayName(itemMeta, BungeeComponentSerializer.get().serialize(LanguageManager.getInstance().stringConvert("<i:false>" + displayName)));
+ 
+        FurnitureLib.getInstance().getServerFunction().setDisplayName(itemMeta, BungeeComponentSerializer.get().serialize(this.displayName));
         
         if (itemMeta.hasLore()) loreText.addAll(itemMeta.getLore());
+        
+        
         
         if (configuration.contains(header + ".custommodeldata")) {
         	try{
@@ -382,4 +387,8 @@ public class CraftingFile {
         }
 		return configuartion;
     }
+
+	public Component getDisplayName() {
+		return this.displayName;
+	}
 }

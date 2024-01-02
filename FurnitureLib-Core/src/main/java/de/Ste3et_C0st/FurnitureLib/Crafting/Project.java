@@ -15,6 +15,8 @@ import de.Ste3et_C0st.FurnitureLib.main.Type.CenterType;
 import de.Ste3et_C0st.FurnitureLib.main.Type.PlaceableSide;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
+import net.kyori.adventure.text.Component;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -261,16 +263,15 @@ public class Project {
     	});
     }
     
-    public String getDisplayName() {
+    public Component getDisplayNameComponent() {
     	if(Objects.nonNull(getCraftingFile().getItemstack())) {
-    		if(getCraftingFile().getItemstack().hasItemMeta()) {
-    			ItemMeta meta = getCraftingFile().getItemstack().getItemMeta();
-    			if(meta.hasDisplayName()) {
-    				return meta.getDisplayName();
-    			}
-    		}
+    		getCraftingFile().getDisplayName();
     	}
-    	return getName();
+    	return Component.text(getName());
+    }
+    
+    public String getDisplayName() {
+    	return PlainTextComponentSerializer.plainText().serialize(getDisplayNameComponent());
     }
 
     public List<ObjectID> getObjects() {

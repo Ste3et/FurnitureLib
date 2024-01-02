@@ -150,7 +150,7 @@ public class listCommand extends iCommand {
 					.skip(itemsEachSide * (side.get() - 1))
 					.limit(itemsEachSide)
 					.forEach(entry -> {
-						Component component = getLHandler().getComponent("command.list.main.message", new StringTranslator("project", ChatColor.stripColor(entry.getDisplayName())));
+						Component component = getLHandler().getComponent("command.list.main.message", new StringTranslator("project", entry.getDisplayName()));
 						
 						if (sender.hasPermission("furniture.command.debug")) {
 							final Component hoverComponent = getLHandler().getComponent("command.list.main.debug_hover", 

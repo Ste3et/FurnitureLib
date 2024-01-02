@@ -5,6 +5,7 @@ import org.bukkit.entity.Player;
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.LanguageManager;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.StringTranslator;
+import net.md_5.bungee.api.ChatColor;
 
 public class LimitationInforamtion { 
 	
