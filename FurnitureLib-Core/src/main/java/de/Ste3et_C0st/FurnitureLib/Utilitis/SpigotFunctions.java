@@ -15,6 +15,8 @@ import net.md_5.bungee.api.chat.BaseComponent;
 
 public class SpigotFunctions implements ServerFunction{
 
+	private static final LegacyComponentSerializer COMPONENT_SERIALIZER = LegacyComponentSerializer.legacySection().toBuilder().useUnusualXRepeatedCharacterHexFormat().hexColors().build();
+	
 	@Override
 	public void onEnable() {
 		FurnitureLib.debug("SpigotFunctions created");
@@ -38,7 +40,7 @@ public class SpigotFunctions implements ServerFunction{
 	}
 	
 	private String convertToLegacy(Component component) {
-		return LegacyComponentSerializer.legacyAmpersand().serialize(component);
+		return COMPONENT_SERIALIZER.serialize(component);
 	}
 
 	@Override

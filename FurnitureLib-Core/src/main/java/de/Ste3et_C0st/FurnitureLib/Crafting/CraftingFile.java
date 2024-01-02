@@ -17,7 +17,6 @@ import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
 import net.md_5.bungee.api.chat.BaseComponent;
 
 import org.bukkit.Bukkit;
-import org.bukkit.ChatColor;
 import org.bukkit.Material;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.inventory.ItemFlag;
@@ -257,9 +256,6 @@ public class CraftingFile {
         final ItemMeta itemMeta = itemStack.getItemMeta();
         final List<String> loreText = new ArrayList<String>();
         
-        /*
-         * set displayName to ItemStack
-         */
         FurnitureLib.getInstance().getServerFunction().setDisplayName(itemMeta, BungeeComponentSerializer.get().serialize(LanguageManager.getInstance().stringConvert("<i:false>" + displayName)));
         
         if (itemMeta.hasLore()) loreText.addAll(itemMeta.getLore());
