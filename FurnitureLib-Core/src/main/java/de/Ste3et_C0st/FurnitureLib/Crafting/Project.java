@@ -264,8 +264,8 @@ public class Project {
     }
     
     public Component getDisplayNameComponent() {
-    	if(Objects.nonNull(getCraftingFile().getItemstack())) {
-    		getCraftingFile().getDisplayName();
+    	if(Objects.nonNull(getCraftingFile().getDisplayName())) {
+    		return getCraftingFile().getDisplayName();
     	}
     	return Component.text(getName());
     }
