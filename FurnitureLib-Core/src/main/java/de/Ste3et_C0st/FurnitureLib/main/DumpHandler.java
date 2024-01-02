@@ -41,6 +41,7 @@ public class DumpHandler {
 			sender.sendMessage("You can't create dump from command blocks !");
 			return;
 		}
+		
 		if(latestDump > 0) {
 			long dif = System.currentTimeMillis() - latestDump;
 			if(dif < time) {
@@ -139,6 +140,8 @@ public class DumpHandler {
     	databaseInformations.addProperty("OpenConnections", openConnections.get());
     	databaseInformations.addProperty("ClosedConnections", closedConnections.get());
     	
+    	
+    	
 		/*
 		 * Add Plugin Informations !
 		 */
@@ -155,6 +158,17 @@ public class DumpHandler {
 				pluginList.add(pluginInformation);
 			}
 		};
+		
+		/*
+    	 * Add Sender Informations
+    	 */
+    	JsonObject senderObject = new JsonObject();
+    	senderObject.addProperty("senderName", sender.getName());
+    	
+    	if(sender instanceof Player) {
+			Player player = Player.class.cast(sender);
+			senderObject.addProperty("uuid", player.getUniqueId().toString());
+		}
 		
 //		List<JsonObject> models = new ArrayList<JsonObject>();
 //		for(Project project : FurnitureManager.getInstance().getProjects()) {
@@ -177,6 +191,7 @@ public class DumpHandler {
 			coreObject.add("protectionLib", new Gson().toJsonTree(FurnitureLib.getInstance().getPermManager().getProtectionClazz()));
 		}
 		
+		coreObject.add("sender", senderObject);
 		coreObject.add("plugins", new Gson().toJsonTree(pluginList));
 		
 		//coreObject.add("models", new Gson().toJsonTree(models));
