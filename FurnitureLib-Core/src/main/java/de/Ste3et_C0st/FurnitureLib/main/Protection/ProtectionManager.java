@@ -134,7 +134,7 @@ public class ProtectionManager {
         	}
         	if(sendMessage) {
         		FurnitureLib.debug("FurnitureLib -> canBuild check (Player has no Permission).");
-        	    p.sendMessage(LanguageManager.getInstance().getString("message.NoPermissions"));
+        		LanguageManager.getInstance().sendMessage(p, "message.NoPermissions");
         	}
         	return false;
         }
@@ -154,7 +154,7 @@ public class ProtectionManager {
             b = isEventType(id, type);
         }
         if (!b && sendMessage) {
-            p.sendMessage(LanguageManager.getInstance().getString("message.NoPermissions"));
+        	LanguageManager.getInstance().sendMessage(p, "message.NoPermissions");
         }
         return b;
     }
