@@ -2,6 +2,7 @@ package de.Ste3et_C0st.FurnitureLib.LimitationManager;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.OptionalInt;
 import java.util.function.Predicate;
 
 import org.bukkit.Location;
@@ -14,7 +15,7 @@ import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.LimitationType;
 
-public class ChunkLimitation extends Limitation{
+public class ChunkLimitation extends PermissionKitLimit{
 	
 	private static final String KEY = "Chunk";
 	private static final String headString = KEY + "Limit";
@@ -28,15 +29,21 @@ public class ChunkLimitation extends Limitation{
 	public int getAmount(Predicate<ObjectID> predicate) {
 		return (int) FurnitureManager.getInstance().getAllExistObjectIDs().filter(predicate).count();
 	}
+	
+	@Override
+	public int getLimit(Project project, Location location, Player player) {
+		OptionalInt kitLimit = super.getKitLimit(project, location, player);
+		return kitLimit.isPresent() ? kitLimit.getAsInt() : super.getLimit(project, location, player);
+	}
 
 	@Override
 	public boolean canPlace(Location location, Project project, Player player) {
-		return getAmount(buildFilter(location, project, player)) < getLimit(project, location);
+		return getAmount(buildFilter(location, project, player)) < getLimit(project, location, player);
 	}
 
 	@Override
 	public void writeConfig() {
-		final List<String> headerConfig = Arrays.asList(
+		List<String> headerConfig = Arrays.asList(
 				"This is the ChunkLimitation file",
 				"You can limit the max amount of Furnitures each chunk",
 				"total.enable = (bool) | set default value for each project",

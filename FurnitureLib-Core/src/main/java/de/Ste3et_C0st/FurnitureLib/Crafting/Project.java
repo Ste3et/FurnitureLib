@@ -354,4 +354,8 @@ public class Project {
 	public ObjectID spawnProject(Location location) {
 		return FurnitureLib.getInstance().spawn(this, location);
 	}
+	
+	public String toString() {
+		return this.getSystemID();
+	}
 }

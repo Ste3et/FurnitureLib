@@ -61,8 +61,8 @@ world-options:
   packetRenderMethode: false # send the furniture models if the player move packet have been triggered
 
 limit-options:
-  limitConfig: PLAYER # there is only these options avaiable: PLAYER, WORLD, CHUNK you can simple combine then and the FurnitureLib use the config with the lowest value limitConfig: "PLAYER,WORLD"
-  limitGlobal: 150 # You can give your player the permissions furniture.globallimit.# | furniture.globallimit.125 -> let the player can place 125 furnitures objects it override the limitconfig
+  limitConfig: PERMISSION,PLAYER # there is only these options avaiable: PERMISSION, PLAYER, WORLD, CHUNK you can simple combine then and the FurnitureLib use the config with the lowest value limitConfig: "PERMISSION,PLAYER"
+  limitGlobal: 150 # PERMISSION: You can give your player the permissions furniture.globallimit.# | furniture.globallimit.125 -> let the player can place 125 furnitures objects it override the limitconfig
 
 creative-options:
   removeItems: false # remove the item if it placed via creative

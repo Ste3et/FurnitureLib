@@ -2,6 +2,7 @@ package de.Ste3et_C0st.FurnitureLib.LimitationManager;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
@@ -13,8 +14,11 @@ import org.bukkit.Location;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
+import com.google.common.collect.Lists;
+
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureConfig;
+import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type;
 import de.Ste3et_C0st.FurnitureLib.main.Type.LimitationType;
@@ -47,20 +51,22 @@ public abstract class Limitation {
 	}
 	
 	public YamlConfiguration loadYaml() {
-		return this.loadYaml("");
-	}
-	
-	public YamlConfiguration loadYaml(final List<String> headerList) {
-		final String headerString = String.join("\n", headerList.toArray(new String[headerList.size()]));
-		return this.loadYaml(headerString);
+		return this.loadYaml(Lists.newArrayList());
 	}
 	
 	@SuppressWarnings("deprecation")
-	public YamlConfiguration loadYaml(String headerString) {
+	public YamlConfiguration loadYaml(List<String> headerList) {
 		final YamlConfiguration configuration = YamlConfiguration.loadConfiguration(getFile());
 		configuration.options().copyDefaults(true);
 		configuration.options().copyHeader(true);
-		configuration.options().header(headerString);
+		if(headerList.isEmpty() == false) {
+			if(FurnitureLib.getVersionInt() > 18) {
+				configuration.options().setHeader(headerList);
+			}else {
+				final String headerString = String.join("\n", headerList.toArray(new String[headerList.size()]));
+				configuration.options().header(headerString);
+			}
+		}
 		return configuration;
 	}
 	
@@ -109,10 +115,10 @@ public abstract class Limitation {
     }
     
     public Optional<LimitationInforamtion> buildInforamtion(Player player, Location location, Project project) {
-    	return Optional.of(new LimitationInforamtion(getEnum().name().toLowerCase(), getLimit(project, location), getAmount(buildFilter(location, project, player))));
+    	return Optional.of(new LimitationInforamtion(getEnum().name().toLowerCase(), getLimit(project, location, player), getAmount(buildFilter(location, project, player))));
     }
     
-	public int getLimit(Project project, Location location) {
+	public int getLimit(Project project, Location location, Player player) {
 		if(getEnum() == LimitationType.WORLD) {
 			final String world = location.getWorld().getName();
 			return worldMap.getOrDefault(world, -1);

@@ -31,7 +31,7 @@ public class WorldLimitation extends Limitation{
 
 	@Override
 	public boolean canPlace(Location location, Project project, Player player) {
-		return getAmount(buildFilter(location, project, player)) < getLimit(project, location);
+		return getAmount(buildFilter(location, project, player)) < getLimit(project, location, player);
 	}
 
 	@Override

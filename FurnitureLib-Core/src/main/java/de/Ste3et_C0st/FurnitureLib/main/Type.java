@@ -38,7 +38,8 @@ public class Type {
     public enum LimitationType {
     	PLAYER, 
     	CHUNK, 
-    	WORLD;
+    	WORLD,
+    	PERMISSION;
     }
 
     public enum SQLAction {
