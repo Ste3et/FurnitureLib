@@ -227,8 +227,8 @@ public class fArmorStand extends fContainerEntity{
 
     public NBTTagCompound getMetaData() {
     	super.getMetaData();
-    	if(!this.arms.isDefault()) setMetadata("Arms", this.hasArms());
-    	if(!this.basePlate.isDefault()) setMetadata("BasePlate", this.hasBasePlate());
+    	if(!this.arms.isDefault()) setMetadata("ShowArms", this.hasArms());
+    	if(!this.basePlate.isDefault()) setMetadata("NoBasePlate", this.hasBasePlate());
     	if(!this.gravity.isDefault()) setMetadata("Gravity", this.hasGravity());
     	if(this.marker.isDefault()) setMetadata("Marker", this.marker.getOrDefault());
     	if(!this.small.isDefault()) setMetadata("Small", this.isSmall());
@@ -240,10 +240,10 @@ public class fArmorStand extends fContainerEntity{
              partAngle.setDouble("X", angle.getX());
              partAngle.setDouble("Y", angle.getY());
              partAngle.setDouble("Z", angle.getZ());
-             eulerAngle.set(entry.getKey().toString(), partAngle);
+             eulerAngle.set(entry.getKey().getMojangName(), partAngle);
     	});
     	
-    	if(!eulerAngle.isEmpty()) set("EulerAngle", eulerAngle);
+    	if(!eulerAngle.isEmpty()) set("Pose", eulerAngle);
     	
         return getNBTField();
     }
@@ -260,11 +260,19 @@ public class fArmorStand extends fContainerEntity{
         		BodyPart part = BodyPart.valueOf(name.toUpperCase());
         		this.setPose(eulerAngleFetcher(euler.getCompound(name)), part);
         	});
+        }else if(metadata.hasKeyOfType("Pose", 10)) {
+        	NBTTagCompound euler = metadata.getCompound("Pose");
+        	euler.c().stream().forEach(entry -> {
+        		BodyPart.match((String) entry).ifPresent(bodyPart -> {
+        			this.setPose(eulerAngleFetcher(euler.getCompound((String) entry)), bodyPart);
+        		});
+        	});
         }
-        this.setBasePlate((metadata.getInt("BasePlate") == 1))
+
+        this.setBasePlate((metadata.getInt("NoBasePlate", metadata.getInt("BasePlate")) == 1))
         	.setSmall((metadata.getInt("Small") == 1))
         	.setMarker((metadata.getInt("Marker") == 1))
-        	.setArms(metadata.getInt("Arms") == 1)
+        	.setArms(metadata.getInt("ShowArms", metadata.getInt("Arms")) == 1)
         	.setGravity(metadata.getInt("Gravity") == 1);
     }
 

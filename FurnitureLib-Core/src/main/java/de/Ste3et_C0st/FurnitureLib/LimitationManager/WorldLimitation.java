@@ -2,6 +2,7 @@ package de.Ste3et_C0st.FurnitureLib.LimitationManager;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.OptionalInt;
 import java.util.function.Predicate;
 
 import org.bukkit.Location;
@@ -14,7 +15,7 @@ import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.LimitationType;
 
-public class WorldLimitation extends Limitation{
+public class WorldLimitation extends PermissionKitLimit{
 
 	private static final String KEY = "World";
 	private static final String headString = KEY + "Limit";
@@ -27,6 +28,12 @@ public class WorldLimitation extends Limitation{
 	@Override
 	public int getAmount(Predicate<ObjectID> predicate) {
 		return (int) FurnitureManager.getInstance().getAllExistObjectIDs().filter(predicate).count();
+	}
+	
+	@Override
+	public int getLimit(Project project, Location location, Player player) {
+		OptionalInt kitLimit = super.getKitLimitWorld(project, location, player);
+		return kitLimit.isPresent() ? kitLimit.getAsInt() : super.getLimit(project, location, player);
 	}
 
 	@Override

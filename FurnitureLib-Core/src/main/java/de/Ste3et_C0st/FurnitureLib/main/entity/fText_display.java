@@ -172,47 +172,46 @@ public class fText_display extends fDisplay {
 	public NBTTagCompound getMetaData() {
 		super.getMetaData();
 		if (!this.lineWitdth.isDefault())
-			setMetadata("lineWitdth", this.lineWitdth.getOrDefault());
+			setMetadata("line_width", this.lineWitdth.getOrDefault());
 		if (!this.background_color.isDefault())
-			setMetadata("background_color", this.background_color.getOrDefault());
+			setMetadata("background", this.background_color.getOrDefault());
 		if (!this.text_opacity.isDefault())
 			setMetadata("text_opacity", this.text_opacity.getOrDefault());
 		if (!this.style_flags.isDefault())
-			setMetadata("style_flags", this.style_flags.getOrDefault().name());
+			setMetadata("alignment", this.style_flags.getOrDefault().name());
 		if (!this.text.isDefault())
 			setMetadata("text", this.text.getOrDefault());
 		if (!this.shadowed.isDefault())
-			setMetadata("shadowed", this.shadowed.getOrDefault());
+			setMetadata("shadow", this.shadowed.getOrDefault());
 		if (!this.seeThrough.isDefault())
-			setMetadata("seeThrough", this.seeThrough.getOrDefault());
+			setMetadata("see_through", this.seeThrough.getOrDefault());
 		if (!this.defaultBackground.isDefault())
-			setMetadata("defaultBackground", this.defaultBackground.getOrDefault());
-
+			setMetadata("default_background", this.defaultBackground.getOrDefault());
 		return getNBTField();
 	}
 
 	@Override
 	public void loadMetadata(NBTTagCompound metadata) {
 		super.loadMetadata(metadata);
-		if (metadata.hasKeyOfType("lineWitdth", 3))
-			this.setLineWidth(metadata.getInt("lineWitdth"));
-		if (metadata.hasKeyOfType("background_color", 3))
-			this.setBackgroundColor(metadata.getInt("background_color"));
-		if (metadata.hasKeyOfType("text_opacity", 3))
-			this.setTextOpacity(metadata.getByte("text_opacity"));
-
-		if (metadata.hasKeyOfType("text", 8))
-			this.setText(metadata.getString("text"));
-		if (metadata.hasKeyOfType("shadowed", 3))
-			this.setShadowed(metadata.getInt("shadowed") == 1);
-		if (metadata.hasKeyOfType("seeThrough", 3))
-			this.setSeeThrough(metadata.getInt("seeThrough") == 1);
-		if (metadata.hasKeyOfType("defaultBackground", 3))
-			this.setDefaultBackground(metadata.getInt("defaultBackground") == 1);
-
+		
+		this.setLineWidth(metadata.getInt("line_width", metadata.getInt("lineWitdth", 200)));
+		this.setBackgroundColor(metadata.getInt("background", metadata.getInt("background_color", 1073741824)));
+		this.setTextOpacity(metadata.getByte("text_opacity", (byte) -1));
+		this.setText(metadata.getString("text"));
+		this.setShadowed(metadata.getInt("shadow", metadata.getInt("shadowed", 0)) == 1);
+		this.setSeeThrough(metadata.getInt("see_through", metadata.getInt("seeThrough", 0)) == 1);
+		this.setDefaultBackground(metadata.getInt("default_background", metadata.getInt("defaultBackground", 2)) == 1);
+		
 		if (metadata.hasKeyOfType("style_flags", 8)) {
 			try {
 				final TextAlignment aligment = TextAlignment.valueOf(metadata.getString("style_flags"));
+				this.setAlignment(aligment);
+			} catch (Exception e) {
+				e.printStackTrace();
+			}
+		}else if(metadata.hasKeyOfType("alignment", 8)) {
+			try {
+				final TextAlignment aligment = TextAlignment.valueOf(metadata.getString("alignment"));
 				this.setAlignment(aligment);
 			} catch (Exception e) {
 				e.printStackTrace();

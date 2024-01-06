@@ -86,8 +86,8 @@ public class fItem_display extends fDisplay{
 	@Override
 	public NBTTagCompound getMetaData() {
 		super.getMetaData();
-		if(!this.stack.isDefault()) setMetadata(getStack());
-		if(!this.display.isDefault()) setMetadata("display", this.display.getOrDefault().name());
+		if(!this.stack.isDefault()) setMetadata("item", getStack());
+		if(!this.display.isDefault()) setMetadata("item_display", this.display.getOrDefault().name());
 		return getNBTField();
 	}
 	
@@ -101,11 +101,25 @@ public class fItem_display extends fDisplay{
         	}catch (Exception e) {
 				e.printStackTrace();
 			}
-        };
+        }else if(metadata.hasKeyOfType("item", 10)) {
+        	try {
+        		final ItemStack stack = new CraftItemStack().getItemStack(metadata.getCompound("item"));
+        		this.setItemStack(stack);
+        	}catch (Exception e) {
+				e.printStackTrace();
+			}
+        }
         
         if(metadata.hasKeyOfType("display", 8)) {
         	try {
         		final ItemDisplayTransform displayTransform = ItemDisplayTransform.valueOf(metadata.getString("display"));
+        		this.setItemDisplay(displayTransform);
+        	}catch (Exception e) {
+				e.printStackTrace();
+			}
+        }else if(metadata.hasKeyOfType("item_display", 8)) {
+        	try {
+        		final ItemDisplayTransform displayTransform = ItemDisplayTransform.valueOf(metadata.getString("item_display"));
         		this.setItemDisplay(displayTransform);
         	}catch (Exception e) {
 				e.printStackTrace();

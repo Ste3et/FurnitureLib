@@ -5,7 +5,6 @@ import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.SchedularHelper;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.Wrapper.packet.WrapperPlayServerEntityDestroy;
-import de.Ste3et_C0st.FurnitureLib.async.ChunkData;
 import de.Ste3et_C0st.FurnitureLib.async.WorldData;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 import de.Ste3et_C0st.FurnitureLib.main.entity.*;
@@ -20,22 +19,23 @@ import org.bukkit.entity.Player;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.function.BiFunction;
+import java.util.stream.Stream;
 
 public class FurnitureManager extends ObjectIdManager{
 
-	private static HashMap<String, BiFunction<Location, ObjectID, fEntity>> packetClasses = new HashMap<>();
+	private static HashMap<EntityType, BiFunction<Location, ObjectID, fEntity>> packetClasses = new HashMap<>();
     private static FurnitureManager manager;
     
     static {
-        packetClasses.put("armor_stand", fArmorStand::new);
-        packetClasses.put("pig", fPig::new);
-        packetClasses.put("creeper", fCreeper::new);
-        packetClasses.put("giant", fGiant::new);
+        packetClasses.put(EntityType.ARMOR_STAND, fArmorStand::new);
+        packetClasses.put(EntityType.PIG, fPig::new);
+        packetClasses.put(EntityType.CREEPER, fCreeper::new);
+        packetClasses.put(EntityType.GIANT, fGiant::new);
         if(FurnitureLib.getVersion(new MinecraftVersion("1.19.4"))) {
-        	packetClasses.put("block_display", fBlock_display::new);
-        	packetClasses.put("item_display", fItem_display::new);
-        	packetClasses.put("text_display", fText_display::new);
-        	packetClasses.put("interaction", fInteraction::new);
+        	packetClasses.put(EntityType.BLOCK_DISPLAY, fBlock_display::new);
+        	packetClasses.put(EntityType.ITEM_DISPLAY, fItem_display::new);
+        	packetClasses.put(EntityType.TEXT_DISPLAY, fText_display::new);
+        	packetClasses.put(EntityType.INTERACTION, fInteraction::new);
         }
     }
 
@@ -140,6 +140,10 @@ public class FurnitureManager extends ObjectIdManager{
     public fCreeper createCreeper(ObjectID id, Location loc) {
         return (fCreeper) spawnEntity("creeper", loc, id);
     }
+    
+    public fEntity spawnEntity(ObjectID id, Location location, EntityType type) {
+    	return spawnEntity(type.name().toLowerCase(), location, id);
+    }
 
     public void addArmorStand(Object obj) {
         if (!(obj instanceof fArmorStand)) {
@@ -169,13 +173,21 @@ public class FurnitureManager extends ObjectIdManager{
 
     public fEntity spawnEntity(String str, Location loc, ObjectID obj) {
         fEntity entity = readEntity(str, loc, obj);
-        if (Objects.nonNull(entity)) obj.addArmorStand(entity);
+        if (Objects.nonNull(entity)) obj.addEntity(entity);
         return entity;
     }
 
     public fEntity readEntity(String str, Location loc, ObjectID obj) {
-        BiFunction<Location, ObjectID, fEntity> packetClass = packetClasses.get(str.toLowerCase());
-        return Objects.nonNull(packetClass) ? packetClass.apply(loc, obj) : null;
+    	final Optional<EntityType> entityType = Stream.of(EntityType.values()).filter(entry -> entry.name().equalsIgnoreCase(str)).findFirst();
+    	if(entityType.isPresent()) {
+    		return readEntity(entityType.get(), loc, obj);
+    	}
+        return null;
+    }
+    
+    public fEntity readEntity(EntityType entityType, Location loc, ObjectID obj) {
+    	BiFunction<Location, ObjectID, fEntity> packetClass = packetClasses.get(entityType);
+		return Objects.nonNull(packetClass) ? packetClass.apply(loc, obj) : null;
     }
 
     public boolean furnitureAlreadyExistOnBlock(Block block) {

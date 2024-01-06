@@ -1,5 +1,6 @@
 package de.Ste3et_C0st.FurnitureLib.main;
 
+import de.Ste3et_C0st.FurnitureLib.Utilitis.ItemStackBuilder;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.LanguageManager;
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -10,6 +11,7 @@ import org.bukkit.util.EulerAngle;
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -130,25 +132,30 @@ public class Type {
     }
 
     public enum BodyPart {
-        HEAD("Head", Type.field.getHeadRotation(), new EulerAngle(0D, 0D, 0D)),
-        BODY("Body", Type.field.getBodyRotation(), new EulerAngle(0D, 0D, 0D)),
-        LEFT_ARM("Left_Arm", Type.field.getLeftArmRotation(), new EulerAngle(-0.174533, 0.0D, -0.174533)),
-        RIGHT_ARM("Right_Arm", Type.field.getRightArmRotation(), new EulerAngle(-0.261799, 0.0D, 0.174533)),
-        LEFT_LEG("Left_Leg", Type.field.getLeftLegRotation(), new EulerAngle(-0.0174533, 0.0D, -0.0174533)),
-        RIGHT_LEG("Right_Leg", Type.field.getRightLegRotation(), new EulerAngle(0.0174533, 0.0D, 0.0174533));
+        HEAD("Head", "Head", Type.field.getHeadRotation(), new EulerAngle(0D, 0D, 0D)),
+        BODY("Body", "Body", Type.field.getBodyRotation(), new EulerAngle(0D, 0D, 0D)),
+        LEFT_ARM("Left_Arm", "LeftArm", Type.field.getLeftArmRotation(), new EulerAngle(-0.174533, 0.0D, -0.174533)),
+        RIGHT_ARM("Right_Arm", "RightArm", Type.field.getRightArmRotation(), new EulerAngle(-0.261799, 0.0D, 0.174533)),
+        LEFT_LEG("Left_Leg", "LeftLeg", Type.field.getLeftLegRotation(), new EulerAngle(-0.0174533, 0.0D, -0.0174533)),
+        RIGHT_LEG("Right_Leg", "RightLeg", Type.field.getRightLegRotation(), new EulerAngle(0.0174533, 0.0D, 0.0174533));
 
-        String name;
+        String name, mojangName;
         EulerAngle angle;
         int field;
 
-        BodyPart(String name, int field, EulerAngle angle) {
+        BodyPart(String name, String mojangName, int field, EulerAngle angle) {
             this.name = name;
+            this.mojangName = mojangName;
             this.field = field;
             this.angle = angle;
         }
 
         public String getName() {
             return name;
+        }
+        
+        public String getMojangName() {
+        	return mojangName;
         }
 
         public int getField() {
@@ -157,6 +164,11 @@ public class Type {
 
         public EulerAngle getDefAngle() {
             return angle;
+        }
+        
+        public static Optional<BodyPart> match(String name) {
+        	final String query = name.replace("_", "");
+        	return Stream.of(BodyPart.values()).filter(entry -> entry.getMojangName().equalsIgnoreCase(query)).findFirst();
         }
     }
     
@@ -293,11 +305,7 @@ public class Type {
 		}
 		
 		public ItemStack getItemStack() {
-			ItemStack is = new ItemStack(material, amount, durability);
-			ItemMeta im = is.getItemMeta();
-			im.setDisplayName(name);
-			is.setItemMeta(im);
-			return is;
+			return ItemStackBuilder.of(material).setAmount(amount).setDurability(durability).setName(name).build();
 		}
 	}
 	
@@ -346,12 +354,7 @@ public class Type {
         }
 		
 		public ItemStack getItemStack() {
-			ItemStack is = new ItemStack(material, amount, durability);
-			ItemMeta im = is.getItemMeta();
-			im.setLore(stringl);
-			im.setDisplayName(name);
-			is.setItemMeta(im);
-			return is;
+			return ItemStackBuilder.of(material).setAmount(amount).setDurability(durability).setLore(stringl).setName(name).build();
 		}
 	}
 

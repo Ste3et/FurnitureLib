@@ -1,9 +1,13 @@
 package de.Ste3et_C0st.FurnitureLib.Utilitis;
 
 import java.util.Objects;
+import java.util.function.Consumer;
+
+import com.google.common.base.Supplier;
 
 public class DefaultKey<K> {
-    private K key1;
+    
+	private K key1;
     private K key2;
 
     public DefaultKey(K key1) {
@@ -19,6 +23,12 @@ public class DefaultKey<K> {
 
         if (key1 != null ? !key1.equals(key.key1) : key.key1 != null) return false;
         return key2 != null ? key2.equals(key.key2) : key.key2 == null;
+    }
+    
+    public boolean equalsCurrent(K object) {
+        if (this == object) return true;
+        if (object == null || getOrDefault().getClass() != object.getClass()) return false;
+        return getOrDefault().equals(object);
     }
 
     @Override
@@ -47,8 +57,14 @@ public class DefaultKey<K> {
     	}
     }
     
-    public void setValue(K key2) {
+    public DefaultKey<K> setValue(K key2) {
     	this.key2 = key2;
+    	return this;
+    }
+    
+    public DefaultKey<K> setValue(Supplier<K> key) {
+    	this.key2 = key.get();
+    	return this;
     }
     
     public boolean isDefault() {

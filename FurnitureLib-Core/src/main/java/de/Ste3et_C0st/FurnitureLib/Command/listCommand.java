@@ -96,7 +96,6 @@ public class listCommand extends iCommand {
 			
 			if(argument.matches("-?(0|[1-9]\\d*)")) {
 				int selectedSide = Integer.parseInt(argument);
-				selectedSide = selectedSide > 0 ? selectedSide : 1;
 				side.set(selectedSide);
 			}
 		});
@@ -147,10 +146,10 @@ public class listCommand extends iCommand {
 			}
 		} else {
 			FurnitureManager.getInstance().getProjects().stream().sorted((k1, k2) -> k1.getDisplayName().compareTo(k2.getDisplayName()))
-					.skip(itemsEachSide * (side.get() - 1))
+					.skip(itemsEachSide * side.get())
 					.limit(itemsEachSide)
 					.forEach(entry -> {
-						Component component = getLHandler().getComponent("command.list.main.message", new StringTranslator("project", entry.getDisplayName()));
+						Component component = getLHandler().getComponent("command.list.main.message", new StringTranslator("project", entry.getDisplayNameComponent()));
 						
 						if (sender.hasPermission("furniture.command.debug")) {
 							final Component hoverComponent = getLHandler().getComponent("command.list.main.debug_hover", 

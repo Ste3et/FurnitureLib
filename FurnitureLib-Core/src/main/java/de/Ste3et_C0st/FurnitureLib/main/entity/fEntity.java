@@ -465,20 +465,22 @@ public abstract class fEntity extends fSerializer implements Cloneable {
     public void sendParticle(Location loc, int particleID, boolean repeat) {}
 
     public void loadMetadata(NBTTagCompound metadata) {
-        this.setNameVisibility((metadata.getInt("NameVisible") == 1));
-        this.setName(metadata.getString("Name"));
-        this.setFire((metadata.getInt("Fire") == 1));
-        this.setGlowing((metadata.getInt("Glowing") == 1));
-        this.setInvisible((metadata.getInt("Invisible") == 1));
+        this.setCustomName(metadata.getString("CustomName", metadata.getString("Name"))); //Use furniturelib fallback CustomName -> Name
+    	this.setNameVisibility((metadata.getInt("CustomNameVisible", metadata.getInt("NameVisible")) == 1)); //Use furniturelib fallback CustomNameVisible -> NameVisible
+    	this.setCustomName(metadata.getString("CustomName")); //Present in monjang
+    	this.setNameVisibility((metadata.getInt("CustomNameVisible") == 1));
+        this.setFire((metadata.getInt("Fire") == 1)); //Present in monjang
+        this.setGlowing((metadata.getInt("Glowing") == 1)); //Present in monjang
+        this.setInvisible((metadata.getInt("Invisible") == 1)); //Present in monjang
     }
     
     public NBTTagCompound getMetaData() {
     	setMetadata("EntityType", this.getEntityType().toString());
-        if(!this.customName.isDefault()) setMetadata("Name", this.getName());
+        if(!this.customName.isDefault()) setMetadata("CustomName", this.getName());
+        if(!this.nameVisible.isDefault()) setMetadata("CustomNameVisible", this.isCustomNameVisible());
         if(!this.fire.isDefault()) setMetadata("Fire", this.isFire());
-        if(!this.invisible.isDefault()) setMetadata("Invisible", this.isInvisible());
-        if(!this.nameVisible.isDefault()) setMetadata("NameVisible", this.isCustomNameVisible());
         if(!this.glowing.isDefault()) setMetadata("Glowing", this.isGlowing());
+        if(!this.invisible.isDefault()) setMetadata("Invisible", this.isInvisible());
         setMetadata(this.getLocation());
         return this.getNBTField();
     }

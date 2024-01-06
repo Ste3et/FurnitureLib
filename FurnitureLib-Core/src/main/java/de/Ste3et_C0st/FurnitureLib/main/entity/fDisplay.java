@@ -1,5 +1,7 @@
 package de.Ste3et_C0st.FurnitureLib.main.entity;
 
+import java.util.stream.Stream;
+
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
@@ -251,12 +253,12 @@ public abstract class fDisplay extends fSize{
 	
     public NBTTagCompound getMetaData() {
     	super.getMetaData();
-    	if(!this.viewRange.isDefault()) setMetadata("viewRange", this.getViewRange());
-    	if(!this.shadowRadius.isDefault()) setMetadata("shadowRadius", this.getShadowRadius());
-    	if(!this.shadowStrength.isDefault()) setMetadata("shadowStrength", this.getShadowStrength());
-    	if(!this.glow_override.isDefault()) setMetadata("glow_override", this.getGlowOverride());
-    	if(!this.interpolationDelay.isDefault()) setMetadata("interpolationDelay", this.getInterpolationDelay());
-    	if(!this.interpolationDuration.isDefault()) setMetadata("interpolationDuration", this.getInterpolationDuration());
+    	if(!this.viewRange.isDefault()) setMetadata("view_range", this.getViewRange());
+    	if(!this.shadowRadius.isDefault()) setMetadata("shadow_radius", this.getShadowRadius());
+    	if(!this.shadowStrength.isDefault()) setMetadata("shadow_strength", this.getShadowStrength());
+    	if(!this.glow_override.isDefault()) setMetadata("glow_color_override", this.getGlowOverride());
+    	if(!this.interpolationDelay.isDefault()) setMetadata("teleport_duration", this.getInterpolationDelay());
+    	if(!this.interpolationDuration.isDefault()) setMetadata("interpolation_duration", this.getInterpolationDuration());
     	if(!this.brightness.isDefault()) setMetadata("brightness", this.getBrightness());
     	if(!this.billboard.isDefault()) setMetadata("billboard", this.getBillboard().name());
     	
@@ -281,7 +283,7 @@ public abstract class fDisplay extends fSize{
     	}
     	
     	//this.writeRotation(getLeftRotationObj(), transformation, "leftRotation");
-    	this.writeRotation(getRightRotationObj(), transformation, "rightRotation");
+    	this.writeRotation(getRightRotationObj(), transformation, "right_Rotation");
     	
     	//System.out.println(transformation.toString());
     	
@@ -302,16 +304,14 @@ public abstract class fDisplay extends fSize{
 	@Override
     public void loadMetadata(NBTTagCompound metadata) {
         super.loadMetadata(metadata);
-        if(metadata.hasKeyOfType("billboard", 8)) this.setBillboard((Billboard.valueOf(metadata.getString("billboard"))));
-        if(metadata.hasKeyOfType("viewRange", 5)) this.setViewRange((metadata.getFloat("viewRange")));
-        if(metadata.hasKeyOfType("shadowRadius", 5)) this.setShadowRadius(metadata.getFloat("shadowRadius"));
-        if(metadata.hasKeyOfType("shadowStrength", 5)) this.setShadowStrength((metadata.getFloat("shadowStrength")));
-        if(metadata.hasKeyOfType("width", 5)) this.setWidth(metadata.getFloat("width"));
-        if(metadata.hasKeyOfType("height", 5)) this.setHeight(metadata.getFloat("height"));
-        if(metadata.hasKeyOfType("glow_override", 3)) this.setGlowOverride(metadata.getInt("glow_override"));
-        if(metadata.hasKeyOfType("interpolationDelay", 3)) this.setInterpolationDelay(metadata.getInt("interpolationDelay"));
-        if(metadata.hasKeyOfType("interpolationDuration", 3)) this.setInterpolationDuration(metadata.getInt("interpolationDuration"));
-        if(metadata.hasKeyOfType("brightness", 3)) this.setBrightness(metadata.getInt("brightness"));
+        this.setBillboard(Stream.of(Billboard.values()).filter(entry -> entry.name().equalsIgnoreCase(metadata.getString("billboard"))).findFirst().orElse(Billboard.FIXED));
+        this.setBrightness(metadata.getInt("brightness"));
+        this.setGlowOverride(metadata.getInt("glow_color_override", metadata.getInt("glow_override", 0)));
+        this.setViewRange(metadata.getFloat("view_range", metadata.getFloat("viewRange", 1F)));
+        this.setInterpolationDuration(metadata.getInt("interpolation_duration", metadata.getInt("interpolationDuration", 0)));
+        this.setInterpolationDelay(metadata.getInt("teleport_duration", metadata.getInt("interpolationDelay", 0)));
+        this.setShadowRadius(metadata.getFloat("shadow_radius", metadata.getFloat("shadowRadius")));
+        this.setShadowStrength(metadata.getFloat("shadow_strength", metadata.getFloat("shadowStrength")));
         
         if(metadata.hasKeyOfType("transformation", 10)) {
         	final NBTTagCompound transformation = metadata.getCompound("transformation");
@@ -333,10 +333,20 @@ public abstract class fDisplay extends fSize{
         		final AxisAngle4f axisAngle4f = new AxisAngle4f(leftRotation.getFloat("angle"), leftRotation.getFloat("x"), leftRotation.getFloat("y"), leftRotation.getFloat("z"));
         		//System.out.println(axisAngle4f.toString());
         		this.leftRotation.setValue(axisAngle4f);
+        	}else if(transformation.hasKeyOfType("left_Rotation", 10)) {
+        		final NBTTagCompound leftRotation = transformation.getCompound("left_Rotation");
+        		final AxisAngle4f axisAngle4f = new AxisAngle4f(leftRotation.getFloat("angle"), leftRotation.getFloat("x"), leftRotation.getFloat("y"), leftRotation.getFloat("z"));
+        		//System.out.println(axisAngle4f.toString());
+        		this.leftRotation.setValue(axisAngle4f);
         	}
         	
         	if(transformation.hasKeyOfType("rightRotation", 10)) {
         		final NBTTagCompound rightRotation = transformation.getCompound("rightRotation");
+        		final AxisAngle4f axisAngle4f = new AxisAngle4f(rightRotation.getFloat("angle"), rightRotation.getFloat("x"), rightRotation.getFloat("y"), rightRotation.getFloat("z"));
+        		//System.out.println(axisAngle4f.toString());
+        		this.rightRotation.setValue(axisAngle4f);
+        	}else if(transformation.hasKeyOfType("right_Rotation", 10)) {
+        		final NBTTagCompound rightRotation = transformation.getCompound("right_Rotation");
         		final AxisAngle4f axisAngle4f = new AxisAngle4f(rightRotation.getFloat("angle"), rightRotation.getFloat("x"), rightRotation.getFloat("y"), rightRotation.getFloat("z"));
         		//System.out.println(axisAngle4f.toString());
         		this.rightRotation.setValue(axisAngle4f);

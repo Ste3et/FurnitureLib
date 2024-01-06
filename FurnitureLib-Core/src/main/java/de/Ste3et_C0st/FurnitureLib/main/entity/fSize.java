@@ -71,8 +71,8 @@ public abstract class fSize extends fEntity {
 	@Override
     public void loadMetadata(NBTTagCompound metadata) {
         super.loadMetadata(metadata);
-        if(metadata.hasKeyOfType("width", 5)) this.setWidth(metadata.getFloat("width"));
-        if(metadata.hasKeyOfType("height", 5)) this.setHeight(metadata.getFloat("height"));
+        this.setWidth(metadata.getFloat("width", this.width.getDefault()));
+        this.setHeight(metadata.getFloat("height", this.height.getDefault()));
 	}
 	
 }

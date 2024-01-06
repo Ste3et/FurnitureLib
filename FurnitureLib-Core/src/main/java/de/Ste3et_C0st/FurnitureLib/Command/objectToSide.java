@@ -28,7 +28,6 @@ public class objectToSide {
     }
 	
     public objectToSide(List<Component> objList, CommandSender sender, Integer page, String command, int objects, int maxPage) {
-        if (page == 0) page = 1;
         //final int skip = page * objects - objects;
         if (page > maxPage) {
         	LanguageManager.send(sender, "message.SideNotFound");
@@ -37,7 +36,7 @@ public class objectToSide {
         }
         
         final String a = maxPage < 10 ? "0" + maxPage : String.valueOf(maxPage);
-        final String b = page < 10 ? "0" + page : String.valueOf(page);
+        final String b = page + 1 < 10 ? "0" + (page +1) : String.valueOf(page + 1);
 
         sender.sendMessage("§7§m+--------------------------------------------+§8[§e" + b + "§8/§a" + a + "§8]");
         
@@ -45,10 +44,10 @@ public class objectToSide {
         	LanguageManager.sendChatMessage(sender, component);
         });
         
-        final String prevCommand = page > 1 ? command + "" + (page - 1) : "";
-        final String nextCommand = page < maxPage ? command + "" + (page + 1) : "";
-        final NamedTextColor prevColor = page > 1 ? NamedTextColor.RED : NamedTextColor.GRAY;
-        final NamedTextColor nextColor = page < maxPage ? NamedTextColor.GREEN : NamedTextColor.GRAY;
+        final String prevCommand = page + 1 > 1 ? command + "" + (page - 1) : "";
+        final String nextCommand = page + 1 < maxPage ? command + "" + (page + 1) : "";
+        final NamedTextColor prevColor = page + 1 > 1 ? NamedTextColor.RED : NamedTextColor.GRAY;
+        final NamedTextColor nextColor = page + 1 < maxPage ? NamedTextColor.GREEN : NamedTextColor.GRAY;
         final Component navigation = Component.text("+--------------------------------------------+").color(NamedTextColor.GRAY).decorate(TextDecoration.STRIKETHROUGH)
         			.decoration(TextDecoration.STRIKETHROUGH, false)
         			.append(Component.text("[").color(NamedTextColor.GRAY))

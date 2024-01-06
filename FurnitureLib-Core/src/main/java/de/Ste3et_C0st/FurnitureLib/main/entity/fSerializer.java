@@ -77,6 +77,10 @@ public abstract class fSerializer extends fProtocol {
     }
     
     protected void setMetadata(ItemStack stack) {
+    	this.setMetadata("stack", stack);
+    }
+    
+    protected void setMetadata(String key, ItemStack stack) {
         if (Objects.isNull(stack)) return;
         if (Material.AIR == stack.getType()) return;
         try {

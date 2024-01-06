@@ -106,11 +106,15 @@ public class NBTTagCompound extends NBTBase implements Cloneable {
         return this.getByte(s) != 0;
     }
 
-    public byte getByte(String s) {
+    public byte getByte(String key) {
+        return getByte(key, (byte) 0);
+    }
+    
+    public byte getByte(String key, byte defaultVaule) {
         try {
-            return !this.map.containsKey(s) ? 0 : ((NBTNumber) this.map.get(s)).asByte();
+            return !this.map.containsKey(key) ? defaultVaule : ((NBTNumber) this.map.get(key)).asByte();
         } catch (ClassCastException classcastexception) {
-            return (byte) 0;
+            return (byte) defaultVaule;
         }
     }
 
@@ -130,35 +134,51 @@ public class NBTTagCompound extends NBTBase implements Cloneable {
         }
     }
 
-    public double getDouble(String s) {
+    public double getDouble(String key) {
+        return getDouble(key, 0D);
+    }
+    
+    public double getDouble(String key, double defaultValue) {
         try {
-            return !this.map.containsKey(s) ? 0.0D : ((NBTNumber) this.map.get(s)).asDouble();
+            return !this.map.containsKey(key) ? defaultValue : ((NBTNumber) this.map.get(key)).asDouble();
         } catch (ClassCastException classcastexception) {
-            return 0.0D;
+            return defaultValue;
         }
     }
 
-    public float getFloat(String s) {
+    public float getFloat(String key) {
+    	return getFloat(key, 0F);
+    }
+    
+    public float getFloat(String key, float defaultValue) {
         try {
-            return !this.map.containsKey(s) ? 0.0F : ((NBTNumber) this.map.get(s)).asFloat();
+            return !this.map.containsKey(key) ? defaultValue : ((NBTNumber) this.map.get(key)).asFloat();
         } catch (ClassCastException classcastexception) {
-            return 0.0F;
+            return defaultValue;
         }
     }
 
-    public int getInt(String s) {
+    public int getInt(String key) {
+        return getInt(key, 0);
+    }
+    
+    public int getInt(String key, int defaultValue) {
         try {
-            return !this.map.containsKey(s) ? 0 : ((NBTNumber) this.map.get(s)).asInt();
+            return !this.map.containsKey(key) ? defaultValue : ((NBTNumber) this.map.get(key)).asInt();
         } catch (ClassCastException classcastexception) {
-            return 0;
+            return defaultValue;
         }
     }
 
-    public int[] getIntArray(String s) {
+    public int[] getIntArray(String key) {
+        return getIntArray(key, new int[0]);
+    }
+    
+    public int[] getIntArray(String key, int[] defaultValue) {
         try {
-            return !this.map.containsKey(s) ? new int[0] : ((NBTTagIntArray) this.map.get(s)).getData();
+            return !this.map.containsKey(key) ? defaultValue : ((NBTTagIntArray) this.map.get(key)).getData();
         } catch (ClassCastException classcastexception) {
-            throw new RuntimeException();
+            return defaultValue;
         }
     }
 
@@ -176,28 +196,40 @@ public class NBTTagCompound extends NBTBase implements Cloneable {
         }
     }
 
-    public long getLong(String s) {
+    public long getLong(String key) {
+        return getLong(key, 0L);
+    }
+    
+    public long getLong(String key, long defaultValue) {
         try {
-            return !this.map.containsKey(s) ? 0L : ((NBTNumber) this.map.get(s)).asLong();
+            return !this.map.containsKey(key) ? defaultValue : ((NBTNumber) this.map.get(key)).asLong();
         } catch (ClassCastException classcastexception) {
-            return 0L;
+            return defaultValue;
+        }
+    }
+    
+    public short getShort(String key) {
+        return getShort(key, (short) 0);
+    }
+
+    public short getShort(String key, short defaultValue) {
+        try {
+            return !this.map.containsKey(key) ? defaultValue : ((NBTNumber) this.map.get(key)).asShort();
+        } catch (ClassCastException classcastexception) {
+            return (short) defaultValue;
         }
     }
 
-    public short getShort(String s) {
-        try {
-            return !this.map.containsKey(s) ? 0 : ((NBTNumber) this.map.get(s)).asShort();
-        } catch (ClassCastException classcastexception) {
-            return (short) 0;
-        }
+    public String getString(String key) {
+        return getString(key, "");
     }
-
-    public String getString(String s) {
+    
+    public String getString(String key, String defaultValue) {
         String str = "";
         try {
-            str = !this.map.containsKey(s) ? "" : this.map.get(s).toString();
+            str = !this.map.containsKey(key) ? defaultValue : this.map.get(key).toString();
         } catch (ClassCastException classcastexception) {
-            return "";
+            return defaultValue;
         }
 
         return str.replaceAll("\"", "");
@@ -294,6 +326,11 @@ public class NBTTagCompound extends NBTBase implements Cloneable {
     public void setString(String s, String s1) {
         this.map.put(s, new NBTTagString(s1));
     }
+    
+    public void setEnum(String s, Enum value) {
+    	this.setString(s, value == null ? "" : value.name());
+    }
+    
 
     @Override
     public String toString() {

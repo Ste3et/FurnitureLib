@@ -41,7 +41,6 @@ import org.bukkit.inventory.meta.ItemMeta;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class ChunkOnLoad implements Listener {
@@ -49,45 +48,21 @@ public class ChunkOnLoad implements Listener {
     public HashSet<Player> eventList = new HashSet<Player>();
 
     public static Project getProjectByItem(ItemStack is) {
-        if (is == null) return null;
-        ItemStack stack = is.clone();
-        if (stack.hasItemMeta()) {
-        	if(FurnitureLib.getVersionInt() > 13) {
-        		ItemMeta meta = stack.getItemMeta();
-        		if (meta.hasLore()) {
-        			if(HiddenStringUtils.hasHiddenString(stack.getItemMeta().getLore().get(0))) {
-        				String projectString = HiddenStringUtils.extractHiddenString(stack.getItemMeta().getLore().get(0));
-                        if (projectString != null)
-                            return FurnitureManager.getInstance().getProjects().stream().filter(pro -> pro.getSystemID().equalsIgnoreCase(projectString)).findFirst().orElse(null);
-            		}
-        		}
-        		org.bukkit.NamespacedKey key = new org.bukkit.NamespacedKey(FurnitureLib.getInstance(), "model");
-        		String projectString = meta.getPersistentDataContainer().getOrDefault(key, org.bukkit.persistence.PersistentDataType.STRING, null);
-        		if (projectString != null)
-                    return FurnitureManager.getInstance().getProjects().stream().filter(pro -> pro.getSystemID().equalsIgnoreCase(projectString)).findFirst().orElse(null);
-        	}else if (stack.getItemMeta().hasLore()) {
-                String projectString = HiddenStringUtils.extractHiddenString(stack.getItemMeta().getLore().get(0));
-                if (projectString != null)
-                    return FurnitureManager.getInstance().getProjects().stream().filter(pro -> pro.getSystemID().equalsIgnoreCase(projectString)).findFirst().orElse(null);
-            }
-        }
-        return null;
+        return FurnitureLib.getInstance().getFurnitureManager().getProject(getProjectString(is));
     }
     
-    public String getProjectString(ItemStack stack) {
+    public static String getProjectString(ItemStack stack) {
     	if (Objects.isNull(stack)) return null;
     	if (stack.hasItemMeta() == false) return null;
     	if(FurnitureLib.getVersionInt() > 13) {
     		ItemMeta meta = stack.getItemMeta();
     		if (meta.hasLore()) {
     			if(HiddenStringUtils.hasHiddenString(stack.getItemMeta().getLore().get(0))) {
-    				String projectString = HiddenStringUtils.extractHiddenString(stack.getItemMeta().getLore().get(0));
-                    if (projectString != null) return projectString;
+    				return HiddenStringUtils.extractHiddenString(stack.getItemMeta().getLore().get(0));
     			}
     		}
     		org.bukkit.NamespacedKey key = new org.bukkit.NamespacedKey(FurnitureLib.getInstance(), "model");
-    		String projectString = meta.getPersistentDataContainer().getOrDefault(key, org.bukkit.persistence.PersistentDataType.STRING, null);
-    		if (projectString != null) return projectString;
+    		return meta.getPersistentDataContainer().getOrDefault(key, org.bukkit.persistence.PersistentDataType.STRING, null);
     	}else if (stack.getItemMeta().hasLore()) {
     		String projectString = HiddenStringUtils.extractHiddenString(stack.getItemMeta().getLore().get(0));
             if (projectString != null) return projectString;
@@ -106,7 +81,7 @@ public class ChunkOnLoad implements Listener {
     	final Player player = event.getPlayer();
     	if(event.hasItem()) {
     		final ItemStack stack = event.getItem();
-    		final String projectString = this.getProjectString(stack);
+    		final String projectString = getProjectString(stack);
     		if(Objects.isNull(projectString)) return;
     		if(projectString.isEmpty()) return;
     		
@@ -280,22 +255,24 @@ public class ChunkOnLoad implements Listener {
             }
             final Location location = event.getClickedBlock().getLocation();
             if (FurnitureLib.getInstance().getBlockManager().contains(location)) {
-                final Optional<ObjectID> optObjectID = FurnitureLib.getInstance().getFurnitureManager().getAllExistObjectIDs().filter(entry -> entry.containsBlock(location)).findFirst();
-                optObjectID.ifPresent(objectID -> {
-                	if(objectID.isPrivate()) return;
-                	event.setCancelled(true);
-            		if (!FurnitureLib.getInstance().getFurnitureManager().getIgnoreList().contains(player.getUniqueId())) {
-                    	ProjectBreakEvent projectBreakEvent = new ProjectBreakEvent(player, objectID);
-                        Bukkit.getPluginManager().callEvent(projectBreakEvent);
-                        if (!projectBreakEvent.isCancelled()) {
-                        	Furniture furniture = objectID.getFurnitureObject();
-                        	if(Objects.nonNull(furniture)) {
-                        		furniture.onBreak(player);
-                        	}
-                        }
-                    } else {
-                        LanguageManager.send(event.getPlayer(), "message.FurnitureToggleEvent");
-                    }
+            	FurnitureLib.getInstance().getFurnitureManager().getAllExistObjectIDs()
+            		.filter(entry -> entry.containsBlock(location))
+            		.findFirst()
+            		.ifPresent(objectID -> {
+	                	if(objectID.isPrivate()) return;
+	                	event.setCancelled(true);
+	            		if (!FurnitureLib.getInstance().getFurnitureManager().getIgnoreList().contains(player.getUniqueId())) {
+	                    	ProjectBreakEvent projectBreakEvent = new ProjectBreakEvent(player, objectID);
+	                        Bukkit.getPluginManager().callEvent(projectBreakEvent);
+	                        if (!projectBreakEvent.isCancelled()) {
+	                        	Furniture furniture = objectID.getFurnitureObject();
+	                        	if(Objects.nonNull(furniture)) {
+	                        		furniture.onBreak(player);
+	                        	}
+	                        }
+	                    } else {
+	                        LanguageManager.send(event.getPlayer(), "message.FurnitureToggleEvent");
+	                    }
                 });
             }
         }
