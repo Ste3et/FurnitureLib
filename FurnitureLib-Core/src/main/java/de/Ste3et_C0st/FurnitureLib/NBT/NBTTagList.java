@@ -4,6 +4,7 @@ import java.io.DataInput;
 import java.io.DataOutput;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Stream;
 
 public class NBTTagList extends NBTBase implements Cloneable {
     private List<NBTBase> list = new ArrayList<NBTBase>();
@@ -147,5 +148,9 @@ public class NBTTagList extends NBTBase implements Cloneable {
 
     public int getType() {
         return this.type;
+    }
+    
+    public Stream<NBTBase> stream() {
+    	return this.list.stream();
     }
 }

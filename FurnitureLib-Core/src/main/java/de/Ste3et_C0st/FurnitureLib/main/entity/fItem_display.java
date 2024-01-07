@@ -112,14 +112,14 @@ public class fItem_display extends fDisplay{
         
         if(metadata.hasKeyOfType("display", 8)) {
         	try {
-        		final ItemDisplayTransform displayTransform = ItemDisplayTransform.valueOf(metadata.getString("display"));
+        		final ItemDisplayTransform displayTransform = ItemDisplayTransform.valueOf(metadata.getString("display").toUpperCase());
         		this.setItemDisplay(displayTransform);
         	}catch (Exception e) {
 				e.printStackTrace();
 			}
         }else if(metadata.hasKeyOfType("item_display", 8)) {
         	try {
-        		final ItemDisplayTransform displayTransform = ItemDisplayTransform.valueOf(metadata.getString("item_display"));
+        		final ItemDisplayTransform displayTransform = ItemDisplayTransform.valueOf(metadata.getString("item_display").toUpperCase());
         		this.setItemDisplay(displayTransform);
         	}catch (Exception e) {
 				e.printStackTrace();
