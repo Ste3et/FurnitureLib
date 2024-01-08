@@ -223,6 +223,15 @@ public abstract class fDisplay extends fSize{
 		getWatcher().setObject(new WrappedDataWatcherObject(displayField.getVersionIndex() + 13, Registry.get(Quaternionf.class)), transformation.getRightRotation());
 	}
 	
+	public fDisplay setTransformation(Transformation transformation) {
+		this.translation.setValue(transformation.getTranslation());
+		this.scale.setValue(transformation.getScale());
+		this.leftRotation.setValue(transformation.getLeftRotation());
+		this.rightRotation.setValue(transformation.getRightRotation());
+		this.writeTransformation();
+		return this;
+	}
+	
 	public fDisplay setBillboard(Billboard billboard) {
 		this.billboard.setValue(billboard);
 		getWatcher().setObject(new WrappedDataWatcherObject(displayField.getVersionIndex() + 14, Registry.get(Byte.class)), (byte) this.getBillboard().ordinal());
