@@ -2,7 +2,10 @@ package de.Ste3et_C0st.FurnitureLib.NBT.ItemStackReader;
 
 import java.io.ByteArrayOutputStream;
 import java.io.OutputStream;
+import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.function.Function;
+
 import org.bukkit.inventory.ItemStack;
 
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTCompressedStreamTools;
@@ -54,5 +57,6 @@ public abstract class ItemStackReader {
     static String getItemStackClass() {
     	return FurnitureLib.getVersionInt() > 16 ? "net.minecraft.world.item.ItemStack" : "net.minecraft.server." + FurnitureLib.getBukkitVersion() + ".ItemStack";
 	}
-	
+    
+    public abstract Object convertCompound(NBTTagCompound nbtTagCompound) throws Exception;
 }

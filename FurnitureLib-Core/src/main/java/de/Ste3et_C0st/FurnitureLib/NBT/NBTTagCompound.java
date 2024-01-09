@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
+import java.util.function.Consumer;
 import java.util.logging.Logger;
 
 @SuppressWarnings({"rawtypes", "unchecked", "unused"})
@@ -253,6 +254,19 @@ public class NBTTagCompound extends NBTBase implements Cloneable {
         byte b0 = this.getNBTBaseType(s);
 
         return b0 == i || i == 99 && (b0 == 1 || b0 == 2 || b0 == 3 || b0 == 4 || b0 == 5 || b0 == 6);
+    }
+    
+    public <M extends NBTBase> boolean getCompound(String key, final Class<M> clazz, Consumer<? super M> consumer){
+    	try {
+    		NBTBase base = this.get(key);
+    		if(base != null && clazz.isInstance(this.get(key))) {
+    			consumer.accept((M) base);
+    			return true;
+    		}
+    	}catch (Exception e) {
+    		e.printStackTrace();
+		}
+    	return false;
     }
 
     public boolean isEmpty() {

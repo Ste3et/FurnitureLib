@@ -13,7 +13,9 @@ import com.comphenix.protocol.wrappers.WrappedBlockData;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.Registry;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
 
+import de.Ste3et_C0st.FurnitureLib.NBT.CraftBlockData;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
+import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagString;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.DefaultKey;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.EntitySize;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
@@ -96,6 +98,12 @@ public class fBlock_display extends fDisplay{
         if(metadata.hasKeyOfType("block_state", 8)) {
         	this.setBlockData(Bukkit.createBlockData(metadata.getString("block_state")));
         }
+        
+        metadata.getCompound("block_state", NBTTagCompound.class, compound -> {
+        	CraftBlockData.getReader().ifPresent(reader -> {
+        		fBlock_display.this.setBlockData(reader.read(compound).get());
+        	});
+        });
 	}
 	
 	@Override

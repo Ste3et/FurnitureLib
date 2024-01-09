@@ -11,29 +11,34 @@ import org.bukkit.inventory.ItemStack;
 import com.comphenix.protocol.utility.MinecraftVersion;
 
 import java.util.Objects;
+import java.util.Optional;
 
 public class CraftItemStack {
 
-	private final static ItemStackReader reader;
+	private final static ItemStackReader READER;
 	
 	static {
 		if(FurnitureLib.getVersion(new MinecraftVersion("1.20.3"))) {
-			reader = new ItemStackV120_1();
+			READER = new ItemStackV120_1();
 		}else if(FurnitureLib.getVersionInt() < 13) {
-			reader = new ItemStackV111_112();
+			READER = new ItemStackV111_112();
 		}else {
-			reader = new ItemStackV113();
+			READER = new ItemStackV113();
 		}
 	}
 	
     public ItemStack getItemStack(NBTTagCompound nbtTagCompound) {
-        if(Objects.nonNull(reader)) {
-        	return reader.getItemStack(nbtTagCompound);
+        if(Objects.nonNull(READER)) {
+        	return READER.getItemStack(nbtTagCompound);
         }
         return null;
     }
 
     public NBTTagCompound getNBTTag(ItemStack is) throws Exception {
-    	return reader.getNBTTag(is);
+    	return READER.getNBTTag(is);
+    }
+    
+    public static Optional<ItemStackReader> getReader() {
+    	return Optional.ofNullable(READER);
     }
 }

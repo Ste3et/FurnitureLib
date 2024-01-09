@@ -12,20 +12,22 @@ import java.util.Optional;
 
 public class CraftBlockData {
 
-	private final static BlockDataReader reader;
-	
-	//test
+	private final static BlockDataReader READER;
 	
 	static {
 		if(FurnitureLib.getVersion(new MinecraftVersion("1.20.3"))) {
-			reader = new BlockDataConverter1_20();
+			READER = new BlockDataConverter1_20();
 		}else {
-			reader = null;
+			READER = null;
 		}
 	}
 	
 	public Optional<BlockData> read(NBTTagCompound compound){
-		if(Objects.isNull(reader)) return Optional.empty();
-		return reader.read(compound);
+		if(Objects.isNull(READER)) return Optional.empty();
+		return READER.read(compound);
+	}
+	
+	public static Optional<BlockDataReader> getReader() {
+		return Optional.ofNullable(READER);
 	}
 }

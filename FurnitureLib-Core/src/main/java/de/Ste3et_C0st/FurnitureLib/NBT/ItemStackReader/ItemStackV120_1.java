@@ -14,7 +14,6 @@ public class ItemStackV120_1 extends ItemStackReader{
 	private static Class<?> nmsNBTReadLimiter;
 	private static Method a, asBukkitCopy;
 	
-	
 	static {
 		try {
 			nmsNBTReadLimiter = Class.forName(getNbtFolder() + ".NBTReadLimiter");
@@ -28,14 +27,18 @@ public class ItemStackV120_1 extends ItemStackReader{
 	
 	public ItemStack getItemStack(NBTTagCompound nbt) {
         try {
-            byte[] data = NBTCompressedStreamTools.toByte(nbt);
-            Object nbtTag = clazz_nbttools_method_a_input.invoke(null, new ByteArrayInputStream(data), nmsNBTReadLimiter.getMethod("a").invoke(null));
-            Object nms_item = a.invoke(null, nbtTag);
+            Object nms_item = a.invoke(null, convertCompound(nbt));
 			return (ItemStack) asBukkitCopy.invoke(null, nms_item);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
     }
+
+	@Override
+	public Object convertCompound(NBTTagCompound nbtTagCompound) throws Exception {
+		byte[] data = NBTCompressedStreamTools.toByte(nbtTagCompound);
+        return  clazz_nbttools_method_a_input.invoke(null, new ByteArrayInputStream(data), nmsNBTReadLimiter.getMethod("a").invoke(null));
+	}
 	
 }
