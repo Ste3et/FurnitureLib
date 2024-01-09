@@ -14,6 +14,8 @@ public class CraftBlockData {
 
 	private final static BlockDataReader reader;
 	
+	//test
+	
 	static {
 		if(FurnitureLib.getVersion(new MinecraftVersion("1.20.3"))) {
 			reader = new BlockDataConverter1_20();
