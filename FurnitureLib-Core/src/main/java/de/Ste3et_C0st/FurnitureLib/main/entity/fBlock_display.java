@@ -4,6 +4,8 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.data.BlockData;
+import org.bukkit.entity.BlockDisplay;
+import org.bukkit.entity.Display;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 
@@ -51,10 +53,15 @@ public class fBlock_display extends fDisplay{
 			blockDisplay.setBlockData(this.getBlockData());
 		}
 	}
-
+	
 	@Override
-	public void setEntity(Entity e) {
-		
+	public fBlock_display copyEntity(Entity entity) {
+		super.copyEntity(entity);
+		if(entity instanceof BlockDisplay) {
+			final BlockDisplay display = BlockDisplay.class.cast(entity);
+			this.setBlockData(display.getBlock());
+		}
+		return this;
 	}
 	
 	public fBlock_display setBlockData(final Material material) {

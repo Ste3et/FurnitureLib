@@ -9,6 +9,8 @@ import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.ProtocolFields;
+
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 
 public class fProtocol {

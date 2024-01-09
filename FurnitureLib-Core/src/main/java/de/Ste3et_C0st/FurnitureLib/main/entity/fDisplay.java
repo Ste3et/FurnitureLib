@@ -6,6 +6,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Display;
 import org.bukkit.entity.Display.Billboard;
 import org.bukkit.entity.Display.Brightness;
 import org.bukkit.util.Transformation;
@@ -71,11 +72,28 @@ public abstract class fDisplay extends fSize{
 	}
 
 	@Override
-	public void setEntity(Entity e) {
-		
+	public fDisplay copyEntity(Entity entity) {
+		super.copyEntity(entity);
+		if(entity instanceof Display) {
+			final Display display = Display.class.cast(entity);
+			this.setBillboard(display.getBillboard());
+			this.setViewRange(display.getViewRange());
+			this.setShadowRadius(display.getShadowRadius());
+			this.setShadowStrength(display.getShadowStrength());
+			this.setBrightness(display.getBrightness());
+			this.setGlowOverride(display.getGlowColorOverride().asRGB());
+			this.setTransformation(display.getTransformation());
+			this.setInterpolationDelay(display.getInterpolationDelay());
+			this.setInterpolationDuration(display.getInterpolationDuration());
+			this.setWidth((float) display.getWidth());
+			this.setHeight((float) display.getHeight());
+		}
+		return this;
 	}
 	
-	protected void clone(fEntity entity) {}
+	protected void clone(fEntity entity) {
+		this.copyMetadata(entity);
+	}
 	
 	public fDisplay setBlockLight(int lightLevel) {
 		final Brightness brightness = new Brightness(lightLevel, this.getSkyLight());

@@ -6,6 +6,7 @@ import java.util.Objects;
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.EntityEquipment;
 import org.bukkit.inventory.ItemStack;
 
 import com.comphenix.protocol.events.PacketContainer;
@@ -22,6 +23,15 @@ public abstract class fContainerEntity extends fEntity{
 	public fContainerEntity(Location loc, EntityType type, int entityID, ObjectID id) {
 		super(loc, type, entityID, id);
 		this.entityInventory = new fInventory(getEntityID());
+	}
+	
+	public void setEntityEquipment(EntityEquipment equipment) {
+		this.setHelmet(equipment.getHelmet());
+		this.setChestPlate(equipment.getChestplate());
+		this.setLeggings(equipment.getLeggings());
+		this.setBoots(equipment.getBoots());
+		this.setItemInMainHand(equipment.getItemInMainHand());
+		this.setItemInOffHand(equipment.getItemInOffHand());
 	}
 	
     public fInventory getEquipment() {

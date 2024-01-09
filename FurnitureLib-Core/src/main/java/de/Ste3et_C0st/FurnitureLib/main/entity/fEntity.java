@@ -25,6 +25,7 @@ import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import org.bukkit.*;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import java.util.*;
 import java.util.function.BiFunction;
@@ -93,7 +94,6 @@ public abstract class fEntity extends fSerializer implements Cloneable {
     public abstract boolean isRealEntity();
     public abstract fEntity clone();
     public abstract void copyMetadata(fEntity entity);
-    public abstract void setEntity(Entity e);
 
     public boolean isParticlePlayed() {
         return this.isPlayed.getOrDefault();
@@ -105,6 +105,19 @@ public abstract class fEntity extends fSerializer implements Cloneable {
 
     public boolean isFire() {
         return this.fire.getOrDefault();
+    }
+    
+    @Override
+	public fEntity copyEntity(Entity entity) {
+    	this.setGravity(entity.hasGravity());
+    	this.setCustomName(entity.getCustomName());
+    	this.setNameVasibility(entity.isCustomNameVisible());
+    	this.setFire(entity.isVisualFire());
+    	if(entity instanceof LivingEntity) {
+    		LivingEntity livingEntity = (LivingEntity) entity;
+    		this.setInvisible(livingEntity.isInvisible());
+    	}
+    	return this;
     }
 
     public fEntity setFire(boolean fire) {

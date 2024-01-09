@@ -2,8 +2,10 @@ package de.Ste3et_C0st.FurnitureLib.main.entity;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.BlockDisplay;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.ItemDisplay;
 import org.bukkit.entity.ItemDisplay.ItemDisplayTransform;
 import org.bukkit.inventory.ItemStack;
 
@@ -55,8 +57,14 @@ public class fItem_display extends fDisplay{
 	}
 
 	@Override
-	public void setEntity(Entity e) {
-		
+	public fItem_display copyEntity(Entity entity) {
+		super.copyEntity(entity);
+		if(entity instanceof ItemDisplay) {
+			final ItemDisplay display = ItemDisplay.class.cast(entity);
+			this.setItemDisplay(display.getItemDisplayTransform());
+			this.setItemStack(display.getItemStack());
+		}
+		return this;
 	}
 	
 	public ItemStack getStack() {
@@ -102,8 +110,11 @@ public class fItem_display extends fDisplay{
 				e.printStackTrace();
 			}
         }else if(metadata.hasKeyOfType("item", 10)) {
+        	System.out.println("try to load stack");
+        	System.out.println(metadata.getCompound("item").toString());
         	try {
         		final ItemStack stack = new CraftItemStack().getItemStack(metadata.getCompound("item"));
+        		System.out.println(stack.toString());
         		this.setItemStack(stack);
         	}catch (Exception e) {
 				e.printStackTrace();

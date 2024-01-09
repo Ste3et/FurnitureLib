@@ -18,6 +18,7 @@ import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.util.EulerAngle;
 import java.util.HashMap;
 import java.util.Objects;
@@ -30,7 +31,6 @@ public class fArmorStand extends fContainerEntity{
     private DefaultKey<Boolean> arms = new DefaultKey<Boolean>(false), small = new DefaultKey<Boolean>(false), marker = new DefaultKey<Boolean>(true), basePlate = new DefaultKey<Boolean>(true);
     
     private HashMap<BodyPart, DefaultKey<EulerAngle>> angle = new HashMap<Type.BodyPart, DefaultKey<EulerAngle>>();
-    private ArmorStand entity = null;
     private final DefaultKey<EntitySize> entitySize = new DefaultKey<EntitySize>(new EntitySize(0.5, 1.975));
     
     @SuppressWarnings("deprecation")
@@ -135,12 +135,22 @@ public class fArmorStand extends fContainerEntity{
         return this;
     }
 
-    public boolean isRealEntity() {
-		return entity != null;
-	}
-
-    public void setEntity(Entity entity) {
-        if (entity instanceof ArmorStand) this.entity = (ArmorStand) entity;
+    public fArmorStand copyEntity(LivingEntity entity) {
+        if (entity instanceof ArmorStand) {
+        	final ArmorStand stand = ArmorStand.class.cast(entity);
+        	this.setSmall(stand.isSmall());
+        	this.setBasePlate(stand.hasBasePlate());
+        	this.setMarker(stand.isMarker());
+        	this.setArms(stand.hasArms());
+        	this.setHeadPose(stand.getHeadPose());
+        	this.setBodyPose(stand.getBodyPose());
+        	this.setLeftArmPose(stand.getLeftArmPose());
+        	this.setRightArmPose(stand.getRightArmPose());
+        	this.setLeftLegPose(stand.getLeftLegPose());
+        	this.setRightLegPose(stand.getRightLegPose());
+        	this.setEntityEquipment(stand.getEquipment());
+        }
+        return this;
     }
 
     public fArmorStand clone(Relative relative) {
@@ -191,38 +201,6 @@ public class fArmorStand extends fContainerEntity{
         fArmorStand nStand = new fArmorStand(null, getObjID());
         this.copyMetadata(nStand);
         return nStand;
-    }
-
-    public ArmorStand toRealEntity() {
-        if (entity != null) {
-            if (!entity.isDead()) {
-                return entity;
-            }
-        }
-        entity = (ArmorStand) getObjID().getWorld().spawnEntity(getLocation(), getEntityType());
-        entity.setArms(this.hasArms());
-        entity.setVisible(!this.isInvisible());
-        entity.setSmall(isSmall());
-        entity.setArms(hasArms());
-        entity.setGravity(hasGravity());
-        entity.setGlowing(isGlowing());
-        entity.setAI(false);
-        entity.setHeadPose(getHeadPose());
-        entity.setLeftArmPose(getLeftArmPose());
-        entity.setRightArmPose(getRightArmPose());
-        entity.setLeftLegPose(getLeftLegPose());
-        entity.setRightLegPose(getRightLegPose());
-        entity.setBodyPose(getBodyPose());
-
-        entity.setCustomName(getCustomName());
-        entity.setCustomNameVisible(isCustomNameVisible());
-
-        entity.setBasePlate(hasBasePlate());
-        entity.setHelmet(getHelmet());
-        entity.setChestplate(getChestPlate());
-        entity.setLeggings(getLeggings());
-        entity.setBoots(getBoots());
-        return entity;
     }
 
     public NBTTagCompound getMetaData() {
@@ -324,22 +302,10 @@ public class fArmorStand extends fContainerEntity{
 		}
 		return Material.AIR;
 	}
-    
-//	@Override
-//	public BoundingBox getBoundingBox() {
-//		return this.isSmall() ? new BoundingBox(x1, y1, z1) : BoundingBox.;
-//	}
-	
-//	public void debug() {
-//		Stream.of(BodyPart.values()).forEach(entry -> {
-//			if(entry == BodyPart.HEAD) {
-//				ParticleBuilder builder = new ParticleBuilder(Particle.FLAME);
-//				builder.location(getLocation().add(0, 1.3, 0));
-//				builder.offset(0, 0, 0);
-//				builder.count(1);
-//				builder.allPlayers();
-//				builder.spawn();
-//			}
-//		});
-//	}
+
+	@Override
+	public Entity toRealEntity() {return null;}
+
+	@Override
+	public boolean isRealEntity() {return false;}
 }

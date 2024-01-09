@@ -4,6 +4,8 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.Interaction;
+import org.bukkit.entity.LivingEntity;
 
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.Registry;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
@@ -48,9 +50,15 @@ public class fInteraction extends fSize{
 	}
 
 	@Override
-	public void setEntity(Entity e) {
-		
-	}
+	public fInteraction copyEntity(Entity entity) {
+    	super.copyEntity(entity);
+    	if(entity instanceof Interaction) {
+    		Interaction interaction = Interaction.class.cast(entity);
+    		this.setDimansion(interaction.getInteractionWidth(), interaction.getInteractionWidth());
+    		this.setResponse(interaction.isResponsive());
+    	}
+    	return this;
+    }
 	
 	public fInteraction setDimansion(float width, float height) {
 		this.setWidth(width);

@@ -10,7 +10,9 @@ import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.inventory.ItemStack;
 import java.io.ByteArrayOutputStream;
 import java.util.Base64;
@@ -152,4 +154,6 @@ public abstract class fSerializer extends fProtocol {
         }
         return out.toByteArray();
     }
+    
+    public abstract fEntity copyEntity(Entity entity);
 }

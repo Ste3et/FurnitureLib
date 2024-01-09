@@ -6,9 +6,11 @@ import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import org.bukkit.Location;
 import org.bukkit.Material;
+import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.LivingEntity;
 
 public class fCreeper extends fContainerEntity{
 
@@ -91,4 +93,12 @@ public class fCreeper extends fContainerEntity{
 	protected Material getDestroyMaterial() {
 		return Material.TNT;
 	}
+	
+    public fCreeper copyEntity(Entity entity) {
+    	super.copyEntity(entity);
+    	if(entity instanceof LivingEntity) {
+    		this.setEntityEquipment(((LivingEntity) entity).getEquipment());
+    	}
+    	return this;
+    }
 }

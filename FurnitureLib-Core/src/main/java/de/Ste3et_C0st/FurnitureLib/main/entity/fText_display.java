@@ -4,6 +4,8 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
+import org.bukkit.entity.ItemDisplay;
+import org.bukkit.entity.TextDisplay;
 import org.bukkit.entity.TextDisplay.TextAlignment;
 
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
@@ -66,10 +68,22 @@ public class fText_display extends fDisplay {
 			display.setShadowed(this.isShadowed());
 		}
 	}
-
+	
 	@Override
-	public void setEntity(Entity e) {
-
+	public fText_display copyEntity(Entity entity) {
+		super.copyEntity(entity);
+		if(entity instanceof ItemDisplay) {
+			final TextDisplay display = TextDisplay.class.cast(entity);
+			this.setText(display.getText());
+			this.setLineWidth(display.getLineWidth());
+			this.setTextOpacity(display.getTextOpacity());
+			this.setShadowed(display.isShadowed());
+			this.setSeeThrough(display.isSeeThrough());
+			this.setDefaultBackground(display.isDefaultBackground());
+			this.setAlignment(display.getAlignment());
+			this.setBackgroundColor(display.getBackgroundColor().asARGB());
+		}
+		return this;
 	}
 
 	public int getLineWidth() {
