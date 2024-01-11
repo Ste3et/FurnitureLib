@@ -209,7 +209,7 @@ public class FurnitureConfig {
         ObjectID.setRange(this.viewDistance);
         
         //hooked Plugins
-        this.useRegionMemberAccess = getConfig().getBoolean("hook.ProtectionLib.RegeionMemberAccess");
+        this.useRegionMemberAccess = getConfig().getBoolean("hook.ProtectionLib.RegionMemberAccess", getConfig().getBoolean("hook.ProtectionLib.RegeionMemberAccess"));
         this.hideBedrockPlayers = getConfig().getBoolean("hook.Floodgate.hideModelsForBedrockClients", true);
         
         this.spamBreak = getConfig().getBoolean("antispam-options.break-delay.enable");

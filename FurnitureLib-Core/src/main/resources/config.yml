@@ -75,7 +75,7 @@ model-protection:
 
 hook:
   ProtectionLib:
-    RegeionMemberAccess: false # the owner of an region have acces to all FurnitureModels on his region
+    RegionMemberAccess: false # the owner of an region have acces to all FurnitureModels on his region
   Floodgate:
     hideModelsForBedrockClients: true # hide furniture models for BedrockClients because the Armorstand System in the Bedrock Edition is limited https://minecraft.fandom.com/wiki/Armor_Stand
 
