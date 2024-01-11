@@ -13,6 +13,7 @@ import com.comphenix.protocol.events.PacketContainer;
 
 import de.Ste3et_C0st.FurnitureLib.NBT.CraftItemStack;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
+import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagList;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.SkullMetaPatcher;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 
@@ -122,14 +123,14 @@ public abstract class fContainerEntity extends fEntity{
     @SuppressWarnings("unchecked")
 	public void loadMetadata(NBTTagCompound metadata) {
     	super.loadMetadata(metadata);
-    	if(metadata.hasKeyOfType("Inventory", 10)) {
-    		NBTTagCompound inventory = metadata.getCompound("Inventory");
+    	final CraftItemStack craftItemStack = new CraftItemStack();
+    	
+    	metadata.getCompound("Inventory", NBTTagCompound.class, inventory -> {
     		inventory.c().stream().forEach(entry -> {
     			String name = (String) entry;
     			if (inventory.getString(name).equalsIgnoreCase("NONE") == false) {
-    				
     				NBTTagCompound compound = inventory.getCompound(name);
-                    ItemStack is = new CraftItemStack().getItemStack(compound);
+                    ItemStack is = craftItemStack.getItemStack(compound);
                     if(Objects.nonNull(is)) {
                     	if(is.getType().name().equalsIgnoreCase("PLAYER_HEAD") && SkullMetaPatcher.shouldPatch()) {
                         	is = SkullMetaPatcher.patch(is, compound);
@@ -138,7 +139,19 @@ public abstract class fContainerEntity extends fEntity{
                     }
                 }
     		});
-    	}
+    	});
+    	
+    	metadata.getCompound("HandItems", NBTTagList.class, handItems -> {
+    		this.setItemInMainHand(craftItemStack.getItemStack(handItems.get(0)));
+    		this.setItemInOffHand(craftItemStack.getItemStack(handItems.get(1)));
+    	});
+    	
+    	metadata.getCompound("ArmorItems", NBTTagList.class, armorItems -> {
+    		this.setHelmet(craftItemStack.getItemStack(armorItems.get(0)));
+    		this.setChestPlate(craftItemStack.getItemStack(armorItems.get(1)));
+    		this.setLeggings(craftItemStack.getItemStack(armorItems.get(2)));
+    		this.setBoots(craftItemStack.getItemStack(armorItems.get(3)));
+    	});
     }
     
     @Override

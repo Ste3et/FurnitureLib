@@ -340,7 +340,7 @@ public abstract class fDisplay extends fSize{
     public void loadMetadata(NBTTagCompound metadata) {
         super.loadMetadata(metadata);
         this.setBillboard(Stream.of(Billboard.values()).filter(entry -> entry.name().equalsIgnoreCase(metadata.getString("billboard"))).findFirst().orElse(Billboard.FIXED));
-        this.setBrightness(metadata.getInt("brightness"));
+        this.setBrightness(metadata.getInt("brightness", -1));
         this.setGlowOverride(metadata.getInt("glow_color_override", metadata.getInt("glow_override", 0)));
         this.setViewRange(metadata.getFloat("view_range", metadata.getFloat("viewRange", 1F)));
         this.setInterpolationDuration(metadata.getInt("interpolation_duration", metadata.getInt("interpolationDuration", 0)));

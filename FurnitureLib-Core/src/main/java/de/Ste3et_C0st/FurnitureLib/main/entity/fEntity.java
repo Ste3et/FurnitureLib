@@ -208,12 +208,11 @@ public abstract class fEntity extends fSerializer implements Cloneable {
         if (FurnitureLib.isNewVersion()) {
     		final String workString = LanguageConverter.serializeLegacyColors(str);
     		final Component textComponent = MiniMessage.miniMessage().deserialize(workString);
-    		final Object wrappedChat = WrappedChatComponent.fromJson(GsonComponentSerializer.gson().serialize(textComponent)).getHandle();
-            getWatcher().setObject(new WrappedDataWatcherObject(2, Registry.getChatComponentSerializer(true)), Optional.of(wrappedChat));
+    		final WrappedChatComponent wrappedChat = WrappedChatComponent.fromJson(GsonComponentSerializer.gson().serialize(textComponent));
+            getWatcher().setObject(new WrappedDataWatcherObject(2, Registry.getChatComponentSerializer(true)), Optional.of(wrappedChat.getHandle()));
         } else {
             getWatcher().setObject(new WrappedDataWatcherObject(2, Registry.get(String.class)), str);
         }
-
         this.customName.setValue(str);
         return this;
     }
@@ -480,8 +479,6 @@ public abstract class fEntity extends fSerializer implements Cloneable {
     public void loadMetadata(NBTTagCompound metadata) {
         this.setCustomName(metadata.getString("CustomName", metadata.getString("Name"))); //Use furniturelib fallback CustomName -> Name
     	this.setNameVisibility((metadata.getInt("CustomNameVisible", metadata.getInt("NameVisible")) == 1)); //Use furniturelib fallback CustomNameVisible -> NameVisible
-    	this.setCustomName(metadata.getString("CustomName")); //Present in monjang
-    	this.setNameVisibility((metadata.getInt("CustomNameVisible") == 1));
         this.setFire((metadata.getInt("Fire") == 1)); //Present in monjang
         this.setGlowing((metadata.getInt("Glowing") == 1)); //Present in monjang
         this.setInvisible((metadata.getInt("Invisible") == 1)); //Present in monjang

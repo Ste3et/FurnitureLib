@@ -214,18 +214,18 @@ public class fText_display extends fDisplay {
 		this.setText(metadata.getString("text"));
 		this.setShadowed(metadata.getInt("shadow", metadata.getInt("shadowed", 0)) == 1);
 		this.setSeeThrough(metadata.getInt("see_through", metadata.getInt("seeThrough", 0)) == 1);
-		this.setDefaultBackground(metadata.getInt("default_background", metadata.getInt("defaultBackground", 2)) == 1);
+		this.setDefaultBackground(metadata.getInt("default_background", metadata.getInt("defaultBackground", 1)) == 1);
 		
 		if (metadata.hasKeyOfType("style_flags", 8)) {
 			try {
-				final TextAlignment aligment = TextAlignment.valueOf(metadata.getString("style_flags"));
+				final TextAlignment aligment = TextAlignment.valueOf(metadata.getString("style_flags").toUpperCase());
 				this.setAlignment(aligment);
 			} catch (Exception e) {
 				e.printStackTrace();
 			}
 		}else if(metadata.hasKeyOfType("alignment", 8)) {
 			try {
-				final TextAlignment aligment = TextAlignment.valueOf(metadata.getString("alignment"));
+				final TextAlignment aligment = TextAlignment.valueOf(metadata.getString("alignment").toUpperCase());
 				this.setAlignment(aligment);
 			} catch (Exception e) {
 				e.printStackTrace();

@@ -119,17 +119,17 @@ public class NBTTagCompound extends NBTBase implements Cloneable {
         }
     }
 
-    public byte[] getByteArray(String s) {
+    public byte[] getByteArray(String key) {
         try {
-            return !this.map.containsKey(s) ? new byte[0] : ((NBTTagByteArray) this.map.get(s)).getData();
+            return !this.map.containsKey(key) ? new byte[0] : ((NBTTagByteArray) this.map.get(key)).getData();
         } catch (ClassCastException classcastexception) {
             throw new RuntimeException();
         }
     }
 
-    public NBTTagCompound getCompound(String s) {
+    public NBTTagCompound getCompound(String key) {
         try {
-            return !this.map.containsKey(s) ? new NBTTagCompound() : (NBTTagCompound) this.map.get(s);
+            return !this.map.containsKey(key) ? new NBTTagCompound() : (NBTTagCompound) this.map.get(key);
         } catch (ClassCastException classcastexception) {
             throw new RuntimeException();
         }
@@ -183,12 +183,12 @@ public class NBTTagCompound extends NBTBase implements Cloneable {
         }
     }
 
-    public NBTTagList getList(String s) {
+    public NBTTagList getList(String key) {
         try {
-            if (this.getNBTBaseType(s) != 9) {
+            if (this.getNBTBaseType(key) != 9) {
                 return new NBTTagList();
             } else {
-                NBTTagList nbttaglist = (NBTTagList) this.map.get(s);
+                NBTTagList nbttaglist = (NBTTagList) this.map.get(key);
 
                 return nbttaglist;
             }
@@ -246,8 +246,8 @@ public class NBTTagCompound extends NBTBase implements Cloneable {
         return super.hashCode() ^ this.map.hashCode();
     }
 
-    public boolean hasKey(String s) {
-        return this.map.containsKey(s);
+    public boolean hasKey(String key) {
+        return this.map.containsKey(key);
     }
 
     public boolean hasKeyOfType(String s, int i) {

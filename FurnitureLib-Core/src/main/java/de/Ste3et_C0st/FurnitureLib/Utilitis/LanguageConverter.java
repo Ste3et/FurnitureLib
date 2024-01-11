@@ -123,7 +123,7 @@ public class LanguageConverter {
             matcher = STRIP_COLOR_PATTERN.matcher(output);
         }
 		
-		return transfareVariable(output);
+		return output;
 	}
 	
 }
