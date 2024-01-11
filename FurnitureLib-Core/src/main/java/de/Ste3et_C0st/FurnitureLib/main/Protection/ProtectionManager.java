@@ -189,11 +189,7 @@ public class ProtectionManager {
             }
         }
 
-        if (memberOfRegion && ownerOfRegion && FurnitureConfig.getFurnitureConfig().haveRegionMemberAccess()) {
-            if (!p.getUniqueId().equals(id.getUUID())) {
-            	FurnitureLib.debug("FurnitureLib -> ProtectionLib haveRegionMemberAccess grant access to Region Owner");
-                return true;
-            }
+        if (ownerOfRegion && FurnitureConfig.getFurnitureConfig().haveRegionMemberAccess()) {
             return true;
         }
         return false;
