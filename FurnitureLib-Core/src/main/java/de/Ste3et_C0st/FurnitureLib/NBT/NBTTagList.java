@@ -106,6 +106,15 @@ public class NBTTagList extends NBTBase implements Cloneable {
         }
         return 0.0F;
     }
+    
+    public byte getType(int paramInt) {
+    	if ((paramInt < 0) || (paramInt >= this.list.size())) {
+            return -1;
+        }
+    	NBTBase localNBTBase = this.list.get(paramInt);
+    	return localNBTBase.getTypeId();
+    }
+    
 
     public String getString(int paramInt) {
         if ((paramInt < 0) || (paramInt >= this.list.size())) {

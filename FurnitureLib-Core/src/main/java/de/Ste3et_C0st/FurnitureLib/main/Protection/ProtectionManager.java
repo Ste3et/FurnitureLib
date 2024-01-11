@@ -174,25 +174,23 @@ public class ProtectionManager {
         }
         boolean memberOfRegion = canBuild(p, id.getStartLocation());
         boolean ownerOfRegion = isOwner(p, id.getStartLocation());
+        boolean isOwnerOfModel = p.getUniqueId().equals(id.getUUID());
         
         FurnitureLib.debug("FurnitureLib -> ProtectionLib memberOfRegion " + memberOfRegion);
         FurnitureLib.debug("FurnitureLib -> ProtectionLib ownerOfRegion " + ownerOfRegion);
         
         
         if (memberOfRegion && !ownerOfRegion) {
-			return p.getUniqueId().equals(id.getUUID());
+			return isOwnerOfModel;
 		}
         
         if (ownerOfRegion) {
-            if (!p.getUniqueId().equals(id.getUUID())) {
+            if (!isOwnerOfModel && FurnitureConfig.getFurnitureConfig().haveRegionMemberAccess()) {
                 return true;
             }
         }
 
-        if (ownerOfRegion && FurnitureConfig.getFurnitureConfig().haveRegionMemberAccess()) {
-            return true;
-        }
-        return false;
+        return isOwnerOfModel;
     }
     
     private boolean isProtectedRegion(ObjectID objectID) {

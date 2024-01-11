@@ -5,6 +5,7 @@ import com.comphenix.protocol.wrappers.WrappedDataWatcher.Registry;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
 
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
+import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagList;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.DefaultKey;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.EntitySize;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.Relative;
@@ -242,7 +243,21 @@ public class fArmorStand extends fContainerEntity{
         	NBTTagCompound euler = metadata.getCompound("Pose");
         	euler.c().stream().forEach(entry -> {
         		BodyPart.match((String) entry).ifPresent(bodyPart -> {
-        			this.setPose(eulerAngleFetcher(euler.getCompound((String) entry)), bodyPart);
+        			final String key = (String) entry;
+        			
+        			euler.getCompound(key, NBTTagCompound.class, compound -> {
+        				this.setPose(eulerAngleFetcher(euler.getCompound((String) entry)), bodyPart);
+        			});
+        			
+        			euler.getCompound(key, NBTTagList.class, tagList -> {
+        				EulerAngle defEngle = bodyPart.getDefAngle();
+        				double eulerAngles[] = {defEngle.getX(), defEngle.getY(), defEngle.getZ()};
+        				for(int i  = 0; i < 3; i++) {
+        					if(i >= tagList.size()) break;
+        					eulerAngles[i] = tagList.getFloat(i);
+        				}
+        				this.setPose(eulerAngleFetcher(eulerAngles), bodyPart);
+        			});
         		});
         	});
         }
@@ -252,6 +267,10 @@ public class fArmorStand extends fContainerEntity{
         	.setMarker((metadata.getInt("Marker") == 1))
         	.setArms(metadata.getInt("ShowArms", metadata.getInt("Arms")) == 1)
         	.setGravity(metadata.getInt("Gravity") == 1);
+    }
+    
+    private EulerAngle eulerAngleFetcher(double[] eulerAngle) {
+    	return new EulerAngle(eulerAngle[0], eulerAngle[1], eulerAngle[2]);
     }
 
     private EulerAngle eulerAngleFetcher(NBTTagCompound eularAngle) {
