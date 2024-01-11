@@ -162,6 +162,10 @@ public class FurnitureManager extends ObjectIdManager{
         if (obj == null) return false;
         return SQLAction.REMOVE != obj.getSQLAction();
     }
+    
+    public boolean isEntityTypeRegistred(EntityType type) {
+    	return Objects.nonNull(type) ? packetClasses.containsKey(type) : false;
+    }
 
     public fEntity spawnEntity(EntityType type, Location loc, ObjectID obj) {
         return this.spawnEntity(type.name(), loc, obj);
