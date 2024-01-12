@@ -147,10 +147,10 @@ public abstract class fContainerEntity extends fEntity{
     	});
     	
     	metadata.getCompound("ArmorItems", NBTTagList.class, armorItems -> {
-    		this.setHelmet(craftItemStack.getItemStack(armorItems.get(0)));
-    		this.setChestPlate(craftItemStack.getItemStack(armorItems.get(1)));
-    		this.setLeggings(craftItemStack.getItemStack(armorItems.get(2)));
-    		this.setBoots(craftItemStack.getItemStack(armorItems.get(3)));
+    		this.setHelmet(craftItemStack.getItemStack(armorItems.get(3)));
+    		this.setChestPlate(craftItemStack.getItemStack(armorItems.get(2)));
+    		this.setLeggings(craftItemStack.getItemStack(armorItems.get(1)));
+    		this.setBoots(craftItemStack.getItemStack(armorItems.get(0)));
     	});
     }
     

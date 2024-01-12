@@ -11,6 +11,7 @@ import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObje
 import com.comphenix.protocol.wrappers.WrappedWatchableObject;
 
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
+import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagList;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.DefaultKey;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.EntityID;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.LanguageConverter;
@@ -482,6 +483,13 @@ public abstract class fEntity extends fSerializer implements Cloneable {
         this.setFire((metadata.getInt("Fire") == 1)); //Present in monjang
         this.setGlowing((metadata.getInt("Glowing") == 1)); //Present in monjang
         this.setInvisible((metadata.getInt("Invisible") == 1)); //Present in monjang
+        
+        metadata.getCompound("Rotation", NBTTagList.class, list -> {
+        	Location location = getLocation();
+        	location.setYaw(list.getFloat(0, location.getYaw()));
+        	location.setPitch(list.getFloat(0, location.getPitch()));
+        	this.setLocation(location);
+        });
     }
     
     public NBTTagCompound getMetaData() {

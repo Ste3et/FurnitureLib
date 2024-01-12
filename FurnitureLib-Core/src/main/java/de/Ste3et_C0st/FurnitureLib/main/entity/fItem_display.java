@@ -110,11 +110,8 @@ public class fItem_display extends fDisplay{
 				e.printStackTrace();
 			}
         }else if(metadata.hasKeyOfType("item", 10)) {
-        	System.out.println("try to load stack");
-        	System.out.println(metadata.getCompound("item").toString());
         	try {
         		final ItemStack stack = new CraftItemStack().getItemStack(metadata.getCompound("item"));
-        		System.out.println(stack.toString());
         		this.setItemStack(stack);
         	}catch (Exception e) {
 				e.printStackTrace();

@@ -270,7 +270,8 @@ public class fArmorStand extends fContainerEntity{
     }
     
     private EulerAngle eulerAngleFetcher(double[] eulerAngle) {
-    	return new EulerAngle(eulerAngle[0], eulerAngle[1], eulerAngle[2]);
+    	EulerAngle eulerAngleReturn = FurnitureLib.getInstance().getLocationUtil().degresstoRad(new EulerAngle(eulerAngle[0], eulerAngle[1], eulerAngle[2]));
+    	return eulerAngleReturn;
     }
 
     private EulerAngle eulerAngleFetcher(NBTTagCompound eularAngle) {

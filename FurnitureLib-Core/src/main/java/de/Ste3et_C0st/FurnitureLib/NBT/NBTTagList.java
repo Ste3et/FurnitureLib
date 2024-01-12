@@ -73,38 +73,50 @@ public class NBTTagList extends NBTBase implements Cloneable {
         }
         return new NBTTagCompound();
     }
-
+    
     public int[] getIntArray(int paramInt) {
+        return getIntArray(paramInt, new int[0]);
+    }
+
+    public int[] getIntArray(int paramInt, int[] defaultValue) {
         if ((paramInt < 0) || (paramInt >= this.list.size())) {
-            return new int[0];
+            return defaultValue;
         }
         NBTBase localNBTBase = this.list.get(paramInt);
         if (localNBTBase.getTypeId() == 11) {
             return ((NBTTagIntArray) localNBTBase).getData();
         }
-        return new int[0];
+        return defaultValue;
+    }
+    
+    public double getDouble(int paramInt) {
+        return getDouble(paramInt, 0.0D);
     }
 
-    public double getDouble(int paramInt) {
+    public double getDouble(int paramInt, double defaultValue) {
         if ((paramInt < 0) || (paramInt >= this.list.size())) {
-            return 0.0D;
+            return defaultValue;
         }
         NBTBase localNBTBase = this.list.get(paramInt);
         if (localNBTBase.getTypeId() == 6) {
             return ((NBTTagDouble) localNBTBase).asDouble();
         }
-        return 0.0D;
+        return defaultValue;
+    }
+    
+    public float getFloat(int paramInt) {
+    	return getFloat(paramInt, 0f);
     }
 
-    public float getFloat(int paramInt) {
-        if ((paramInt < 0) || (paramInt >= this.list.size())) {
-            return 0.0F;
+    public float getFloat(int key, float defaultValue) {
+        if ((key < 0) || (key >= this.list.size())) {
+            return defaultValue;
         }
-        NBTBase localNBTBase = this.list.get(paramInt);
+        NBTBase localNBTBase = this.list.get(key);
         if (localNBTBase.getTypeId() == 5) {
             return ((NBTTagFloat) localNBTBase).asFloat();
         }
-        return 0.0F;
+        return defaultValue;
     }
     
     public byte getType(int paramInt) {
@@ -115,10 +127,14 @@ public class NBTTagList extends NBTBase implements Cloneable {
     	return localNBTBase.getTypeId();
     }
     
-
     public String getString(int paramInt) {
+        return getString(paramInt, "");
+    }
+    
+
+    public String getString(int paramInt, String defaultValue) {
         if ((paramInt < 0) || (paramInt >= this.list.size())) {
-            return "";
+            return defaultValue;
         }
         NBTBase localNBTBase = this.list.get(paramInt);
         if (localNBTBase.getTypeId() == 8) {
