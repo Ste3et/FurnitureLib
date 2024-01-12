@@ -40,26 +40,6 @@ public abstract class fDisplay extends fSize{
 		super(loc, type, entityID, id, 0F, 0F);
 		this.writeTransformation();
 	}
-	
-	@Override
-	public void copyMetadata(final fEntity entity) {
-		if(entity instanceof fDisplay) {
-			super.copyMetadata(entity);
-			final fDisplay display = this.getClass().cast(entity);
-			display.setBillboard(this.getBillboard());
-			display.setScale(this.getScale());
-			display.setLeftRotation(this.getLeftRotationObj());
-			display.setRightRotation(this.getRightRotationObj());
-			display.setTranslation(this.getTranslation());
-			display.setInterpolationDelay(this.getInterpolationDelay());
-			display.setInterpolationDuration(this.getInterpolationDuration());
-			display.setViewRange(this.getViewRange());
-			display.setShadowRadius(this.getShadowRadius());
-			display.setShadowStrength(this.getShadowStrength());
-			display.setBrightness(this.getBrightness());
-			display.setGlowOverride(this.getGlowOverride());
-		}
-	}
 
 	@Override
 	public fDisplay copyEntity(Entity entity) {
@@ -79,10 +59,6 @@ public abstract class fDisplay extends fSize{
 			this.setHeight((float) display.getHeight());
 		}
 		return this;
-	}
-	
-	protected void clone(fEntity entity) {
-		this.copyMetadata(entity);
 	}
 	
 	public fDisplay setBlockLight(int lightLevel) {
@@ -276,7 +252,7 @@ public abstract class fDisplay extends fSize{
 		return this;
 	}
 	
-    protected void writeDisplaySaveData() {
+	protected void writeDisplaySaveData() {
     	super.writeSizeData();
     	if(!this.viewRange.isDefault()) setMetadata("view_range", this.getViewRange());
     	if(!this.shadowRadius.isDefault()) setMetadata("shadow_radius", this.getShadowRadius());
@@ -309,8 +285,6 @@ public abstract class fDisplay extends fSize{
     	
     	this.writeRotation(getLeftRotationObj(), transformation, "left_Rotation");
     	this.writeRotation(getRightRotationObj(), transformation, "right_Rotation");
-    	
-    	//System.out.println(transformation.toString());
     	
     	if(!transformation.isEmpty()) set("transformation", transformation);
     }
@@ -352,30 +326,26 @@ public abstract class fDisplay extends fSize{
         	}
         	
         	if(transformation.hasKeyOfType("leftRotation", 10)) {
-        		final NBTTagCompound leftRotation = transformation.getCompound("leftRotation");
-        		final AxisAngle4f axisAngle4f = new AxisAngle4f(leftRotation.getFloat("angle"), leftRotation.getFloat("x"), leftRotation.getFloat("y"), leftRotation.getFloat("z"));
-        		this.leftRotation.setValue(new Quaternionf(axisAngle4f));
+        		this.leftRotation.setValue(new Quaternionf(this.readRotation(transformation, "leftRotation")));
         	}else if(transformation.hasKeyOfType("left_Rotation", 10)) {
-        		final NBTTagCompound leftRotation = transformation.getCompound("left_Rotation");
-        		final AxisAngle4f axisAngle4f = new AxisAngle4f(leftRotation.getFloat("angle"), leftRotation.getFloat("x"), leftRotation.getFloat("y"), leftRotation.getFloat("z"));
-        		this.leftRotation.setValue(new Quaternionf(axisAngle4f));
+        		this.leftRotation.setValue(new Quaternionf(this.readRotation(transformation, "left_Rotation")));
         	}
         	
         	if(transformation.hasKeyOfType("rightRotation", 10)) {
-        		final NBTTagCompound rightRotation = transformation.getCompound("rightRotation");
-        		final AxisAngle4f axisAngle4f = new AxisAngle4f(rightRotation.getFloat("angle"), rightRotation.getFloat("x"), rightRotation.getFloat("y"), rightRotation.getFloat("z"));
-        		this.rightRotation.setValue(new Quaternionf(axisAngle4f));
+        		this.rightRotation.setValue(new Quaternionf(this.readRotation(transformation, "rightRotation")));
         	}else if(transformation.hasKeyOfType("right_Rotation", 10)) {
-        		final NBTTagCompound rightRotation = transformation.getCompound("right_Rotation");
-        		final AxisAngle4f axisAngle4f = new AxisAngle4f(rightRotation.getFloat("angle"), rightRotation.getFloat("x"), rightRotation.getFloat("y"), rightRotation.getFloat("z"));
-        		this.rightRotation.setValue(new Quaternionf(axisAngle4f));
+        		this.rightRotation.setValue(new Quaternionf(this.readRotation(transformation, "right_Rotation")));
         	}
         	
         	this.writeTransformation();
         }
     }
+    
+    private AxisAngle4f readRotation(NBTTagCompound transformation, String key) {
+    	return this.readRotation(transformation, key, new AxisAngle4f());
+    }
 	
-	private AxisAngle4f loadAxisAngle4f(NBTTagCompound transformation, String key, AxisAngle4f defaultValue) {
+	private AxisAngle4f readRotation(NBTTagCompound transformation, String key, AxisAngle4f defaultValue) {
 		if(transformation.hasKeyOfType(key, 10)) {
 			final NBTTagCompound serializedAngle = transformation.getCompound(key);
 			final AxisAngle4f axisAngle4f = new AxisAngle4f(serializedAngle.getFloat("angle"), serializedAngle.getFloat("x"), serializedAngle.getFloat("y"), serializedAngle.getFloat("z"));

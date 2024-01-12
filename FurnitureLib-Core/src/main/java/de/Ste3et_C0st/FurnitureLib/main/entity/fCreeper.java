@@ -41,27 +41,16 @@ public class fCreeper extends fContainerEntity{
     }
 
     @Override
-    public void writeAdditionalSaveData() {
+    protected void writeAdditionalSaveData() {
         setMetadata("Ignite", this.isIgnited());
         setMetadata("Charged", this.isCharged());
     }
 
     @Override
-    public void readAdditionalSaveData(NBTTagCompound metadata) {
+    protected void readAdditionalSaveData(NBTTagCompound metadata) {
         boolean i = (metadata.getInt("Ignite") == 1), f = (metadata.getInt("Charged") == 1);
         this.setIgnited(i).setCharged(f);
     }
-
-    @Override
-    public fEntity clone() {
-        return null;
-    }
-
-	@Override
-	public void copyMetadata(fEntity entity) {
-		// TODO Auto-generated method stub
-		
-	}
 	
 	@Override
 	protected Material getDestroyMaterial() {

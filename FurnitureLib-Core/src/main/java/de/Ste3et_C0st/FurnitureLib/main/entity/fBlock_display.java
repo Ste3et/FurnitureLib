@@ -27,22 +27,6 @@ public class fBlock_display extends fDisplay{
 	public fBlock_display(Location loc, ObjectID id) {
 		super(loc, type, 0, id);
 	}
-
-	@Override
-	public fBlock_display clone() {
-		final fBlock_display display = new fBlock_display(null, getObjID());
-		this.copyMetadata(display);
-		return display;
-	}
-
-	@Override
-	public void copyMetadata(final fEntity entity) {
-		if(entity instanceof fBlock_display) {
-			super.copyMetadata(entity);
-			fBlock_display blockDisplay = this.getClass().cast(entity);
-			blockDisplay.setBlockData(this.getBlockData());
-		}
-	}
 	
 	@Override
 	public fBlock_display copyEntity(Entity entity) {
@@ -73,13 +57,13 @@ public class fBlock_display extends fDisplay{
 	}
 	
 	@Override
-	public void writeAdditionalSaveData() {
+	protected void writeAdditionalSaveData() {
 		super.writeDisplaySaveData();
 		if(!this.blockDefaultKey.isDefault()) setMetadata("block_state", this.blockDefaultKey.getOrDefault().getAsString());
 	}
 	
 	@Override
-    public void readAdditionalSaveData(NBTTagCompound metadata) {
+	protected void readAdditionalSaveData(NBTTagCompound metadata) {
 		super.readDisplayData(metadata);
         if(metadata.hasKeyOfType("blockData", 8)) this.setBlockData(Bukkit.createBlockData(metadata.getString("blockData")));
         if(metadata.hasKeyOfType("block_state", 8)) {

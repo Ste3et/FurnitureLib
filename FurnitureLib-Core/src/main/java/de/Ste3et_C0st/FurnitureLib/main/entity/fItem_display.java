@@ -30,23 +30,6 @@ public class fItem_display extends fDisplay{
 	}
 
 	@Override
-	public fEntity clone() {
-		final fItem_display display = new fItem_display(null, getObjID());
-		this.copyMetadata(display);
-		return display;
-	}
-
-	@Override
-	public void copyMetadata(final fEntity entity) {
-		if(entity instanceof fItem_display) {
-			super.copyMetadata(entity);
-			final fItem_display display = this.getClass().cast(entity);
-			display.setItemDisplay(this.getItemDisplay());
-			display.setItemStack(this.getStack());
-		}
-	}
-
-	@Override
 	public fItem_display copyEntity(Entity entity) {
 		super.copyEntity(entity);
 		if(entity instanceof ItemDisplay) {
@@ -81,14 +64,14 @@ public class fItem_display extends fDisplay{
 		return this.entitySize.getOrDefault();
 	}
 	
-	public void writeAdditionalSaveData() {
+	protected void writeAdditionalSaveData() {
 		super.writeDisplaySaveData();
 		if(!this.stack.isDefault()) setMetadata("item", getStack());
 		if(!this.display.isDefault()) setMetadata("item_display", this.display.getOrDefault().name());
 	}
 	
 	@Override
-    public void readAdditionalSaveData(NBTTagCompound metadata) {
+	protected void readAdditionalSaveData(NBTTagCompound metadata) {
 		super.readDisplayData(metadata);
         if(metadata.hasKeyOfType("stack", 10)) {
         	try {

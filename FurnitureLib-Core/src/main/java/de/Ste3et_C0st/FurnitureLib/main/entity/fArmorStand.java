@@ -153,16 +153,6 @@ public class fArmorStand extends fContainerEntity{
         return this;
     }
 
-    public fArmorStand clone(Relative relative) {
-        return clone(relative.getSecondLocation());
-    }
-
-    public fArmorStand clone(Location location) {
-        fArmorStand entity = clone();
-        entity.setLocation(location);
-        return entity;
-    }
-
     public EulerAngle getPose(BodyPart part) {
         if (!angle.containsKey(part)) {
             return part.getDefAngle();
@@ -197,14 +187,7 @@ public class fArmorStand extends fContainerEntity{
     }
 
     @Override
-    public fArmorStand clone() {
-        fArmorStand nStand = new fArmorStand(null, getObjID());
-        this.copyMetadata(nStand);
-        return nStand;
-    }
-
-    @Override
-    public void writeAdditionalSaveData() {
+    protected void writeAdditionalSaveData() {
     	super.writeInventoryData();
     	if(!this.arms.isDefault()) setMetadata("ShowArms", this.hasArms());
     	if(!this.basePlate.isDefault()) setMetadata("NoBasePlate", this.hasBasePlate());
@@ -227,7 +210,7 @@ public class fArmorStand extends fContainerEntity{
 
     @SuppressWarnings("unchecked")
 	@Override
-    public void readAdditionalSaveData(NBTTagCompound metadata) {
+	protected void readAdditionalSaveData(NBTTagCompound metadata) {
     	super.readInventorySaveData(metadata);
         if(metadata.hasKeyOfType("EulerAngle", 10)) {
         	NBTTagCompound euler = metadata.getCompound("EulerAngle");
@@ -277,30 +260,6 @@ public class fArmorStand extends fContainerEntity{
         double Z = eularAngle.getDouble("Z");
         return new EulerAngle(X, Y, Z);
     }
-
-	@Override
-	public void copyMetadata(final fEntity entity) {
-		fArmorStand stand = this.getClass().cast(entity);
-		
-		for (int i = 0; i < 7; i++) {
-            if (this.getInventory().getSlot(i) == null) continue;
-            stand.getInventory().setSlot(i, this.getInventory().getSlot(i).clone());
-        }
-		
-		stand.setSmall(this.isSmall());
-		stand.setInvisible(this.isInvisible());
-		stand.setMarker(this.isMarker());
-        stand.setGlowing(this.isGlowing());
-        stand.setArms(this.hasArms());
-        stand.setBasePlate(this.hasBasePlate());
-        stand.setFire(this.isFire());
-        stand.setName(this.getCustomName());
-        stand.setNameVisibility(this.isCustomNameVisible());
-        
-        for (BodyPart part : BodyPart.values()) {
-        	stand.setPose(this.getPose(part), part);
-        }
-	}
 	
 	public EntitySize getEntitySize() {
 		return this.entitySize.getOrDefault();

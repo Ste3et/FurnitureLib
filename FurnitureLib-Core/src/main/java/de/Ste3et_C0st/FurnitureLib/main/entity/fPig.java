@@ -35,17 +35,6 @@ public class fPig extends fContainerEntity{
         setMetadata("Saddle", this.hasSaddle());
         return getNBTField();
     }
-
-    @Override
-    public fEntity clone() {
-        return null;
-    }
-
-	@Override
-	public void copyMetadata(fEntity entity) {
-		// TODO Auto-generated method stub
-		
-	}
 	
 	@Override
 	protected Material getDestroyMaterial() {

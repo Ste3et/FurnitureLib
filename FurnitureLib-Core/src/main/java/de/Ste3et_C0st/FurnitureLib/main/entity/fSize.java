@@ -25,15 +25,6 @@ public abstract class fSize extends fEntity {
 	protected abstract int widthField();
 	protected abstract int heightField();
 	
-	@Override
-	public void copyMetadata(final fEntity entity) {
-		if(entity instanceof fSize) {
-			final fSize fEntity = this.getClass().cast(entity);
-			fEntity.setWidth(this.getHeight());
-			fEntity.setHeight(this.getWidth());
-		}
-	}
-	
 	public fSize setWidth(final float width) {
 		this.width.setValue(width);
 		this.entitySize.setValue(new EntitySize(this.getWidth(), this.getHeight()));
@@ -60,12 +51,12 @@ public abstract class fSize extends fEntity {
 		return this.entitySize.getOrDefault();
 	}
 	
-	public void writeSizeData() {
+	protected void writeSizeData() {
 		if(!this.width.isDefault()) setMetadata("width", this.width.getOrDefault());
 		if(!this.height.isDefault()) setMetadata("height", this.height.getOrDefault());
 	}
 	
-    public void readSizeData(NBTTagCompound metadata) {
+	protected void readSizeData(NBTTagCompound metadata) {
         this.setWidth(metadata.getFloat("width", this.width.getDefault()));
         this.setHeight(metadata.getFloat("height", this.height.getDefault()));
 	}

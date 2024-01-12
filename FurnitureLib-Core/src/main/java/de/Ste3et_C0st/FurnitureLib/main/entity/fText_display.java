@@ -35,29 +35,6 @@ public class fText_display extends fDisplay {
 	public fText_display(Location loc, ObjectID id) {
 		super(loc, type, 0, id);
 	}
-
-	@Override
-	public fEntity clone() {
-		final fText_display display = new fText_display(null, getObjID());
-		this.copyMetadata(display);
-		return display;
-	}
-
-	@Override
-	public void copyMetadata(final fEntity entity) {
-		if (entity instanceof fText_display) {
-			super.copyMetadata(entity);
-			final fText_display display = fText_display.class.cast(entity);
-			display.setSeeThrough(this.isSeeThrough());
-			display.setDefaultBackground(this.isDefaultBackground());
-			display.setText(this.getText());
-			display.setBackgroundColor(this.getBackgroundColorInt());
-			display.setLineWidth(this.getLineWidth());
-			display.setTextOpacity(this.getTextOpacity());
-			display.setAlignment(this.getTextAligment());
-			display.setShadowed(this.isShadowed());
-		}
-	}
 	
 	@Override
 	public fText_display copyEntity(Entity entity) {
@@ -173,7 +150,7 @@ public class fText_display extends fDisplay {
 	}
 
 	@Override
-	public void writeAdditionalSaveData() {
+	protected void writeAdditionalSaveData() {
 		super.writeDisplaySaveData();
 		if (!this.lineWitdth.isDefault())
 			setMetadata("line_width", this.lineWitdth.getOrDefault());
@@ -193,7 +170,7 @@ public class fText_display extends fDisplay {
 			setMetadata("default_background", this.defaultBackground.getOrDefault());
 	}
 
-	public void readAdditionalSaveData(NBTTagCompound metadata) {
+	protected void readAdditionalSaveData(NBTTagCompound metadata) {
 		super.readDisplayData(metadata);
 		this.setLineWidth(metadata.getInt("line_width", metadata.getInt("lineWitdth", 200)));
 		this.setBackgroundColor(metadata.getInt("background", metadata.getInt("background_color", 1073741824)));

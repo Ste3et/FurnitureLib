@@ -17,6 +17,7 @@ import de.Ste3et_C0st.FurnitureLib.Utilitis.EntityID;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.LanguageConverter;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureConfig;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
+import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type;
 import net.kyori.adventure.text.Component;
@@ -91,8 +92,6 @@ public abstract class fEntity extends fSerializer implements Cloneable {
         setLocation(loc);
     }
     
-    public abstract void copyMetadata(fEntity entity);
-    public abstract fEntity clone();
     protected abstract Material getDestroyMaterial();
     
     protected abstract void readAdditionalSaveData(NBTTagCompound paramCompoundTag);
@@ -512,5 +511,22 @@ public abstract class fEntity extends fSerializer implements Cloneable {
     	final Material material = getDestroyMaterial();
     	final boolean returnValue = material != null && material != Material.AIR && material.isBlock();
     	return returnValue;
+    }
+    
+    public fEntity clone(){
+    	return this.clone(this.getLocation());
+    }
+    
+    public fEntity clone(Location location) {
+    	NBTTagCompound originalNBTagCompound = this.getMetaData();
+    	fEntity clone = FurnitureManager.getInstance().spawnEntity(getEntityType(), location, getObjID());
+    	clone.loadMetadata(originalNBTagCompound);
+    	return clone;
+    }
+    
+    public void copyMetadata(fEntity toCopy) {
+    	if(toCopy != null && toCopy.getEntityType() == this.getEntityType()) {
+    		toCopy.loadMetadata(this.getMetaData());
+    	}
     }
 }

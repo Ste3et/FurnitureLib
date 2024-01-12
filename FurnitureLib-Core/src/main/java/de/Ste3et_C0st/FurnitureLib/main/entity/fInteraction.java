@@ -21,23 +21,6 @@ public class fInteraction extends fSize{
 	}
 
 	@Override
-	public fEntity clone() {
-		final fInteraction interaction = new fInteraction(null, getObjID());
-		this.copyMetadata(interaction);
-		return interaction;
-	}
-
-	@Override
-	public void copyMetadata(final fEntity entity) {
-		if(entity instanceof fInteraction) {
-			super.copyMetadata(entity);
-			final fInteraction interaction = (fInteraction) entity; 
-			interaction.setDimansion(this.getWidth(), this.getHeight());
-			interaction.setResponse(this.hasResponse());
-		}
-	}
-
-	@Override
 	public fInteraction copyEntity(Entity entity) {
     	super.copyEntity(entity);
     	if(entity instanceof Interaction) {
@@ -64,13 +47,13 @@ public class fInteraction extends fSize{
 		return this.response.getOrDefault();
 	}
 
-	public void writeAdditionalSaveData() {
+	protected void writeAdditionalSaveData() {
 		super.writeSizeData();
 		if(!this.response.isDefault()) setMetadata("response", this.response.getOrDefault());
 	}
 	
 	@Override
-    public void readAdditionalSaveData(NBTTagCompound metadata) {
+	protected void readAdditionalSaveData(NBTTagCompound metadata) {
         super.readSizeData(metadata);
         if(metadata.hasKeyOfType("response", 3)) this.setResponse(metadata.getInt("response") == 1);
 	}

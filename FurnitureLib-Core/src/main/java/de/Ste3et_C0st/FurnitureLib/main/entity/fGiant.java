@@ -60,17 +60,6 @@ public class fGiant extends fContainerEntity{
     	super.getMetaData();
         return getNBTField();
     }
-
-    @Override
-    public fEntity clone() {
-        return null;
-    }
-
-	@Override
-	public void copyMetadata(fEntity entity) {
-		// TODO Auto-generated method stub
-		
-	}
 	
 	@Override
 	protected Material getDestroyMaterial() {

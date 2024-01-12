@@ -178,7 +178,7 @@ public class FurnitureManager extends ObjectIdManager{
 
     public fEntity spawnEntity(String str, Location loc, ObjectID obj) {
         fEntity entity = readEntity(str, loc, obj);
-        if (Objects.nonNull(entity)) obj.addEntity(entity);
+        if (Objects.nonNull(entity) && Objects.nonNull(obj)) obj.addEntity(entity);
         return entity;
     }
 

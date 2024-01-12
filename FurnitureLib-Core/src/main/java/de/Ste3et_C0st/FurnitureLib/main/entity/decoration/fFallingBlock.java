@@ -30,20 +30,6 @@ public class fFallingBlock extends fEntity{
 	}
 
 	@Override
-	public fFallingBlock clone() {
-		fFallingBlock returnValue = new fFallingBlock(getLocation(), getObjID());
-		returnValue.setBlockData(this.getBlockData());
-		return null;
-	}
-
-	@Override
-	public void copyMetadata(fEntity entity) {
-		if(entity instanceof fFallingBlock) {
-			this.setBlockData(fFallingBlock.class.cast(entity).getBlockData());
-		}
-	}
-
-	@Override
 	protected Material getDestroyMaterial() {
 		return Objects.nonNull(blockDefaultKey.getOrDefault()) ? blockDefaultKey.getOrDefault().getMaterial() : Material.AIR;
 	}
