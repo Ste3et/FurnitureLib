@@ -17,7 +17,6 @@ import de.Ste3et_C0st.FurnitureLib.main.Type.BodyPart;
 import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.util.EulerAngle;
@@ -204,8 +203,9 @@ public class fArmorStand extends fContainerEntity{
         return nStand;
     }
 
-    public NBTTagCompound getMetaData() {
-    	super.getMetaData();
+    @Override
+    public void writeAdditionalSaveData() {
+    	super.writeInventoryData();
     	if(!this.arms.isDefault()) setMetadata("ShowArms", this.hasArms());
     	if(!this.basePlate.isDefault()) setMetadata("NoBasePlate", this.hasBasePlate());
     	if(!this.gravity.isDefault()) setMetadata("Gravity", this.hasGravity());
@@ -223,15 +223,12 @@ public class fArmorStand extends fContainerEntity{
     	});
     	
     	if(!eulerAngle.isEmpty()) set("Pose", eulerAngle);
-    	
-        return getNBTField();
     }
 
     @SuppressWarnings("unchecked")
 	@Override
-    public void loadMetadata(NBTTagCompound metadata) {
-        super.loadMetadata(metadata);
-        
+    public void readAdditionalSaveData(NBTTagCompound metadata) {
+    	super.readInventorySaveData(metadata);
         if(metadata.hasKeyOfType("EulerAngle", 10)) {
         	NBTTagCompound euler = metadata.getCompound("EulerAngle");
         	euler.c().stream().forEach(entry -> {
@@ -322,10 +319,5 @@ public class fArmorStand extends fContainerEntity{
 		}
 		return Material.AIR;
 	}
-
-	@Override
-	public Entity toRealEntity() {return null;}
-
-	@Override
-	public boolean isRealEntity() {return false;}
+	
 }

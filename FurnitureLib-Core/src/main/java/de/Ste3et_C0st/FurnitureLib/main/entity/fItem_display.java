@@ -28,16 +28,6 @@ public class fItem_display extends fDisplay{
 	public fItem_display(Location loc, ObjectID id) {
 		super(loc, type, 0, id);
 	}
-	
-	@Override
-	public Entity toRealEntity() {
-		return null;
-	}
-
-	@Override
-	public boolean isRealEntity() {
-		return false;
-	}
 
 	@Override
 	public fEntity clone() {
@@ -91,17 +81,15 @@ public class fItem_display extends fDisplay{
 		return this.entitySize.getOrDefault();
 	}
 	
-	@Override
-	public NBTTagCompound getMetaData() {
-		super.getMetaData();
+	public void writeAdditionalSaveData() {
+		super.writeDisplaySaveData();
 		if(!this.stack.isDefault()) setMetadata("item", getStack());
 		if(!this.display.isDefault()) setMetadata("item_display", this.display.getOrDefault().name());
-		return getNBTField();
 	}
 	
 	@Override
-    public void loadMetadata(NBTTagCompound metadata) {
-        super.loadMetadata(metadata);
+    public void readAdditionalSaveData(NBTTagCompound metadata) {
+		super.readDisplayData(metadata);
         if(metadata.hasKeyOfType("stack", 10)) {
         	try {
         		final ItemStack stack = new CraftItemStack().getItemStack(metadata.getCompound("stack"));

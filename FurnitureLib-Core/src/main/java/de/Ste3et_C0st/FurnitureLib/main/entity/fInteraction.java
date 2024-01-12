@@ -5,8 +5,6 @@ import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Interaction;
-import org.bukkit.entity.LivingEntity;
-
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.Registry;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
@@ -20,16 +18,6 @@ public class fInteraction extends fSize{
 	
 	public fInteraction(Location loc, ObjectID id) {
 		super(loc, type, 0, id, 1F, 1F);
-	}
-	
-	@Override
-	public Entity toRealEntity() {
-		return null;
-	}
-
-	@Override
-	public boolean isRealEntity() {
-		return false;
 	}
 
 	@Override
@@ -76,16 +64,14 @@ public class fInteraction extends fSize{
 		return this.response.getOrDefault();
 	}
 
-	@Override
-	public NBTTagCompound getMetaData() {
-		super.getMetaData();
+	public void writeAdditionalSaveData() {
+		super.writeSizeData();
 		if(!this.response.isDefault()) setMetadata("response", this.response.getOrDefault());
-		return getNBTField();
 	}
 	
 	@Override
-    public void loadMetadata(NBTTagCompound metadata) {
-        super.loadMetadata(metadata);
+    public void readAdditionalSaveData(NBTTagCompound metadata) {
+        super.readSizeData(metadata);
         if(metadata.hasKeyOfType("response", 3)) this.setResponse(metadata.getInt("response") == 1);
 	}
 	

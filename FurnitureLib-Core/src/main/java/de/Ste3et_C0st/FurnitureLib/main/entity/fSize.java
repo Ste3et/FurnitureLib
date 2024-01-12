@@ -60,17 +60,12 @@ public abstract class fSize extends fEntity {
 		return this.entitySize.getOrDefault();
 	}
 	
-	@Override
-	public NBTTagCompound getMetaData() {
-		super.getMetaData();
+	public void writeSizeData() {
 		if(!this.width.isDefault()) setMetadata("width", this.width.getOrDefault());
 		if(!this.height.isDefault()) setMetadata("height", this.height.getOrDefault());
-		return getNBTField();
 	}
 	
-	@Override
-    public void loadMetadata(NBTTagCompound metadata) {
-        super.loadMetadata(metadata);
+    public void readSizeData(NBTTagCompound metadata) {
         this.setWidth(metadata.getFloat("width", this.width.getDefault()));
         this.setHeight(metadata.getFloat("height", this.height.getDefault()));
 	}

@@ -6,16 +6,13 @@ import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
-import org.bukkit.entity.Giant;
 import org.bukkit.entity.Player;
 
 public class fGiant extends fContainerEntity{
 
     public static EntityType type = EntityType.GIANT;
     private boolean AI = true;
-    private Giant entity = null;
 
     @SuppressWarnings("deprecation")
     public fGiant(Location loc, ObjectID id) {
@@ -59,25 +56,6 @@ public class fGiant extends fContainerEntity{
         return this;
     }
 
-    public Giant toRealEntity() {
-        if (entity != null) {
-            if (!entity.isDead()) {
-                return entity;
-            }
-        }
-        entity = (Giant) getObjID().getWorld().spawnEntity(getLocation(), getEntityType());
-        entity.setAI(this.AI);
-        return entity;
-    }
-
-    public boolean isRealEntity() {
-		return entity != null;
-	}
-
-    public void setEntity(Entity entity) {
-        if (entity instanceof Giant) this.entity = (Giant) entity;
-    }
-
     public NBTTagCompound getMetaData() {
     	super.getMetaData();
         return getNBTField();
@@ -98,4 +76,10 @@ public class fGiant extends fContainerEntity{
 	protected Material getDestroyMaterial() {
 		return Material.STONE;
 	}
+
+	@Override
+	protected void readAdditionalSaveData(NBTTagCompound paramCompoundTag) {}
+
+	@Override
+	protected void writeAdditionalSaveData() {}
 }

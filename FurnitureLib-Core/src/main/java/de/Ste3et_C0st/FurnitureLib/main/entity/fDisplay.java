@@ -40,17 +40,7 @@ public abstract class fDisplay extends fSize{
 		super(loc, type, entityID, id, 0F, 0F);
 		this.writeTransformation();
 	}
-
-	@Override
-	public Entity toRealEntity() {
-		return null;
-	}
-
-	@Override
-	public boolean isRealEntity() {
-		return false;
-	}
-
+	
 	@Override
 	public void copyMetadata(final fEntity entity) {
 		if(entity instanceof fDisplay) {
@@ -286,8 +276,8 @@ public abstract class fDisplay extends fSize{
 		return this;
 	}
 	
-    public NBTTagCompound getMetaData() {
-    	super.getMetaData();
+    protected void writeDisplaySaveData() {
+    	super.writeSizeData();
     	if(!this.viewRange.isDefault()) setMetadata("view_range", this.getViewRange());
     	if(!this.shadowRadius.isDefault()) setMetadata("shadow_radius", this.getShadowRadius());
     	if(!this.shadowStrength.isDefault()) setMetadata("shadow_strength", this.getShadowStrength());
@@ -323,8 +313,6 @@ public abstract class fDisplay extends fSize{
     	//System.out.println(transformation.toString());
     	
     	if(!transformation.isEmpty()) set("transformation", transformation);
-    	
-        return getNBTField();
     }
     
     private void writeRotation(final Quaternionf quaternionf, final NBTTagCompound transformation, final String name) {
@@ -337,9 +325,8 @@ public abstract class fDisplay extends fSize{
     	transformation.set(name, rotation);
     }
 
-	@Override
-    public void loadMetadata(NBTTagCompound metadata) {
-        super.loadMetadata(metadata);
+    protected void readDisplayData(NBTTagCompound metadata) {
+		super.readSizeData(metadata);
         this.setBillboard(Stream.of(Billboard.values()).filter(entry -> entry.name().equalsIgnoreCase(metadata.getString("billboard"))).findFirst().orElse(Billboard.FIXED));
         this.setBrightness(metadata.getInt("brightness", -1));
         this.setGlowOverride(metadata.getInt("glow_color_override", metadata.getInt("glow_override", 0)));

@@ -14,7 +14,6 @@ public class fPig extends fContainerEntity{
 
     public static EntityType type = EntityType.PIG;
     private boolean saddle = false;
-    private Pig entity;
 
     @SuppressWarnings("deprecation")
     public fPig(Location loc, ObjectID obj) {
@@ -31,36 +30,10 @@ public class fPig extends fContainerEntity{
         return this.saddle;
     }
 
-    public Pig toRealEntity() {
-        if (entity != null) {
-            if (!entity.isDead()) {
-                return entity;
-            }
-        }
-        entity = (Pig) getObjID().getWorld().spawnEntity(getLocation(), getEntityType());
-        entity.setSaddle(saddle);
-        return entity;
-    }
-
-    public boolean isRealEntity() {
-		return entity != null;
-	}
-
-    public void setEntity(Entity entity) {
-        if (entity instanceof Pig) this.entity = (Pig) entity;
-    }
-
     public NBTTagCompound getMetaData() {
     	super.getMetaData();
         setMetadata("Saddle", this.hasSaddle());
         return getNBTField();
-    }
-
-    @Override
-    public void loadMetadata(NBTTagCompound metadata) {
-    	super.loadMetadata(metadata);
-        boolean s = (metadata.getInt("Saddle") == 1);
-        this.setSaddle(s);
     }
 
     @Override
@@ -77,5 +50,17 @@ public class fPig extends fContainerEntity{
 	@Override
 	protected Material getDestroyMaterial() {
 		return Material.STONE;
+	}
+
+	@Override
+	protected void readAdditionalSaveData(NBTTagCompound paramCompoundTag) {
+		boolean s = (paramCompoundTag.getInt("Saddle") == 1);
+        this.setSaddle(s);
+        super.readInventorySaveData(paramCompoundTag);
+	}
+
+	@Override
+	protected void writeAdditionalSaveData() {
+		setMetadata("Saddle", saddle);
 	}
 }

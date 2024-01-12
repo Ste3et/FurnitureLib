@@ -121,10 +121,9 @@ public abstract class fContainerEntity extends fEntity{
     }
     
     @SuppressWarnings("unchecked")
-	public void loadMetadata(NBTTagCompound metadata) {
-    	super.loadMetadata(metadata);
+	public void readInventorySaveData(NBTTagCompound metadata) {
     	final CraftItemStack craftItemStack = new CraftItemStack();
-    	
+
     	metadata.getCompound("Inventory", NBTTagCompound.class, inventory -> {
     		inventory.c().stream().forEach(entry -> {
     			String name = (String) entry;
@@ -154,11 +153,8 @@ public abstract class fContainerEntity extends fEntity{
     	});
     }
     
-    @Override
-    public NBTTagCompound getMetaData() {
-    	super.getMetaData();
+    public void writeInventoryData() {
     	if(!getInventory().isEmpty()) setMetadata(this.getInventory());
-    	return this.getNBTField();
     }
     
     @Override

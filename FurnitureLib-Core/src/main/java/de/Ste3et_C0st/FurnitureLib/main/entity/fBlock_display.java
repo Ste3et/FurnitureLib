@@ -5,7 +5,6 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.BlockDisplay;
-import org.bukkit.entity.Display;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 
@@ -15,7 +14,6 @@ import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObje
 
 import de.Ste3et_C0st.FurnitureLib.NBT.CraftBlockData;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
-import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagString;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.DefaultKey;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.EntitySize;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
@@ -28,16 +26,6 @@ public class fBlock_display extends fDisplay{
 	
 	public fBlock_display(Location loc, ObjectID id) {
 		super(loc, type, 0, id);
-	}
-	
-	@Override
-	public Entity toRealEntity() {
-		return null;
-	}
-
-	@Override
-	public boolean isRealEntity() {
-		return false;
 	}
 
 	@Override
@@ -85,15 +73,14 @@ public class fBlock_display extends fDisplay{
 	}
 	
 	@Override
-	public NBTTagCompound getMetaData() {
-		super.getMetaData();
+	public void writeAdditionalSaveData() {
+		super.writeDisplaySaveData();
 		if(!this.blockDefaultKey.isDefault()) setMetadata("block_state", this.blockDefaultKey.getOrDefault().getAsString());
-		return getNBTField();
 	}
 	
 	@Override
-    public void loadMetadata(NBTTagCompound metadata) {
-        super.loadMetadata(metadata);
+    public void readAdditionalSaveData(NBTTagCompound metadata) {
+		super.readDisplayData(metadata);
         if(metadata.hasKeyOfType("blockData", 8)) this.setBlockData(Bukkit.createBlockData(metadata.getString("blockData")));
         if(metadata.hasKeyOfType("block_state", 8)) {
         	this.setBlockData(Bukkit.createBlockData(metadata.getString("block_state")));

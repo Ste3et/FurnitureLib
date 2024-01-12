@@ -6,8 +6,6 @@ import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import org.bukkit.Location;
 import org.bukkit.Material;
-import org.bukkit.entity.ArmorStand;
-import org.bukkit.entity.Creeper;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
@@ -16,7 +14,6 @@ public class fCreeper extends fContainerEntity{
 
     public static EntityType type = EntityType.CREEPER;
     private boolean charged = false, ignited = false;
-    private Creeper entity = null;
     
     @SuppressWarnings("deprecation")
     public fCreeper(Location loc, ObjectID obj) {
@@ -43,37 +40,14 @@ public class fCreeper extends fContainerEntity{
         return this;
     }
 
-    public Creeper toRealEntity() {
-        if (entity != null) {
-            if (!entity.isDead()) {
-                return entity;
-            }
-        }
-        entity = (Creeper) getObjID().getWorld().spawnEntity(getLocation(), getEntityType());
-        entity.setPowered(charged);
-
-        return entity;
-    }
-
-    public boolean isRealEntity() {
-		return entity != null;
-	}
-
-    public void setEntity(Entity entity) {
-        if (entity instanceof Creeper) this.entity = (Creeper) entity;
-    }
-
     @Override
-    public NBTTagCompound getMetaData() {
-        super.getMetaData();
+    public void writeAdditionalSaveData() {
         setMetadata("Ignite", this.isIgnited());
         setMetadata("Charged", this.isCharged());
-        return getNBTField();
     }
 
     @Override
-    public void loadMetadata(NBTTagCompound metadata) {
-    	super.loadMetadata(metadata);
+    public void readAdditionalSaveData(NBTTagCompound metadata) {
         boolean i = (metadata.getInt("Ignite") == 1), f = (metadata.getInt("Charged") == 1);
         this.setIgnited(i).setCharged(f);
     }

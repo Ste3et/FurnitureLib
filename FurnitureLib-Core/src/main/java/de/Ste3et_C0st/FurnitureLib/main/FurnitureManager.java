@@ -155,6 +155,7 @@ public class FurnitureManager extends ObjectIdManager{
     }
 
     public Project getProject(String s) {
+    	if(Objects.isNull(s)) return null; 
         return projects.getOrDefault(s.toLowerCase(), null);
     }
 

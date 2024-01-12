@@ -37,16 +37,6 @@ public class fText_display extends fDisplay {
 	}
 
 	@Override
-	public Entity toRealEntity() {
-		return null;
-	}
-
-	@Override
-	public boolean isRealEntity() {
-		return false;
-	}
-
-	@Override
 	public fEntity clone() {
 		final fText_display display = new fText_display(null, getObjID());
 		this.copyMetadata(display);
@@ -183,8 +173,8 @@ public class fText_display extends fDisplay {
 	}
 
 	@Override
-	public NBTTagCompound getMetaData() {
-		super.getMetaData();
+	public void writeAdditionalSaveData() {
+		super.writeDisplaySaveData();
 		if (!this.lineWitdth.isDefault())
 			setMetadata("line_width", this.lineWitdth.getOrDefault());
 		if (!this.background_color.isDefault())
@@ -201,13 +191,10 @@ public class fText_display extends fDisplay {
 			setMetadata("see_through", this.seeThrough.getOrDefault());
 		if (!this.defaultBackground.isDefault())
 			setMetadata("default_background", this.defaultBackground.getOrDefault());
-		return getNBTField();
 	}
 
-	@Override
-	public void loadMetadata(NBTTagCompound metadata) {
-		super.loadMetadata(metadata);
-		
+	public void readAdditionalSaveData(NBTTagCompound metadata) {
+		super.readDisplayData(metadata);
 		this.setLineWidth(metadata.getInt("line_width", metadata.getInt("lineWitdth", 200)));
 		this.setBackgroundColor(metadata.getInt("background", metadata.getInt("background_color", 1073741824)));
 		this.setTextOpacity(metadata.getByte("text_opacity", (byte) -1));

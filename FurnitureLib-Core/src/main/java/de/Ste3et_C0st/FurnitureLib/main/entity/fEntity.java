@@ -90,12 +90,14 @@ public abstract class fEntity extends fSerializer implements Cloneable {
         this.mountPacketContainer.getIntegers().write(0, this.entityID);
         setLocation(loc);
     }
-
-    public abstract Entity toRealEntity();
-    public abstract boolean isRealEntity();
-    public abstract fEntity clone();
+    
     public abstract void copyMetadata(fEntity entity);
-
+    public abstract fEntity clone();
+    protected abstract Material getDestroyMaterial();
+    
+    protected abstract void readAdditionalSaveData(NBTTagCompound paramCompoundTag);
+    protected abstract void writeAdditionalSaveData();
+    
     public boolean isParticlePlayed() {
         return this.isPlayed.getOrDefault();
     }
@@ -490,6 +492,8 @@ public abstract class fEntity extends fSerializer implements Cloneable {
         	location.setPitch(list.getFloat(0, location.getPitch()));
         	this.setLocation(location);
         });
+        
+        readAdditionalSaveData(metadata);
     }
     
     public NBTTagCompound getMetaData() {
@@ -500,10 +504,9 @@ public abstract class fEntity extends fSerializer implements Cloneable {
         if(!this.glowing.isDefault()) setMetadata("Glowing", this.isGlowing());
         if(!this.invisible.isDefault()) setMetadata("Invisible", this.isInvisible());
         setMetadata(this.getLocation());
+        writeAdditionalSaveData();
         return this.getNBTField();
     }
-    
-    protected abstract Material getDestroyMaterial();
     
     public boolean haveDestroyMaterial() {
     	final Material material = getDestroyMaterial();
