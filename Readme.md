@@ -8,19 +8,19 @@ The FurnitureLib Spawn models from Entitys to decorate your server with vanilla 
 ##### Repository [FurnitureLib]
 **Maven**
 ```xml
-	<repositories>
-		<repository>
-		    <id>jitpack.io</id>
-		    <url>https://jitpack.io</url>
-		</repository>
-	</repositories>
+<repositories>
+	<repository>
+	    <id>jitpack.io</id>
+	    <url>https://jitpack.io</url>
+	</repository>
+</repositories>
 ```
 ```xml
-	<dependency>
-	    <groupId>com.github.Ste3et</groupId>
-	    <artifactId>FurnitureLib</artifactId>
-	    <version>3.1.4</version>
-	</dependency>
+<dependency>
+    <groupId>com.github.Ste3et</groupId>
+	<artifactId>FurnitureLib</artifactId>
+    <version>3.1.4</version>
+</dependency>
 ```
 **Gradle**
 ```kotlin
