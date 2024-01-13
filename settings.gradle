@@ -6,3 +6,6 @@ rootProject.name = 'FurnitureLib'
 include ':FurnitureLib-Core'
 include ':FurnitureLib-Paper'
 include ':FurnitureLib-Folia'
+
+gradle.ext.furnitureLibVersion = '3.1.5'
+gradle.ext.minecraftVersion = '1.20.2-R0.1-SNAPSHOT'

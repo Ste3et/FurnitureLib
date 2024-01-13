@@ -21,7 +21,6 @@ import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 public class fBlock_display extends fDisplay{
 
 	public static EntityType type = EntityType.valueOf("BLOCK_DISPLAY");
-	private final DefaultKey<EntitySize> entitySize = new DefaultKey<EntitySize>(new EntitySize(0, 0));
 	private final DefaultKey<BlockData> blockDefaultKey = new DefaultKey<BlockData>(Material.AIR.createBlockData());
 	
 	public fBlock_display(Location loc, ObjectID id) {
@@ -50,10 +49,6 @@ public class fBlock_display extends fDisplay{
 	
 	public BlockData getBlockData() {
 		return this.blockDefaultKey.getOrDefault();
-	}
-	
-	public EntitySize getEntitySize() {
-		return this.entitySize.getOrDefault();
 	}
 	
 	@Override

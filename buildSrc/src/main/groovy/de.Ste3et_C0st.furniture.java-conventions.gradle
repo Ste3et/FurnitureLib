@@ -21,35 +21,35 @@ repositories {
     mavenLocal()
 
     maven {
-    	url = uri('https://jitpack.io')
+    	url "https://jitpack.io"
     }
     
     maven {
-    	url = uri('https://repo.papermc.io/repository/maven-public/')
+    	url "https://repo.papermc.io/repository/maven-public/"
     }
     
     maven {
-    	url = uri('https://oss.sonatype.org/content/groups/public/')
+    	url "https://oss.sonatype.org/content/groups/public/"
     }
     
     maven {
-    	url = uri('https://repo.dmulloy2.net/repository/public/')
+    	url "https://repo.dmulloy2.net/repository/public/"
     }
     
     maven {
-    	url = uri('https://repo.opencollab.dev/maven-snapshots/')
+    	url "https://repo.opencollab.dev/maven-snapshots/"
     }
     
     maven {
-    	url = uri('https://repo.maven.apache.org/maven2/')
+    	url "https://repo.maven.apache.org/maven2/"
     }
 
 	maven {
-		url = uri('https://hub.spigotmc.org/nexus/content/repositories/snapshots/')
+		url "https://hub.spigotmc.org/nexus/content/repositories/snapshots/"
 	}
 	
 	maven {
-        url = uri("https://repo.extendedclip.com/content/repositories/placeholderapi/")
+        url "https://repo.extendedclip.com/content/repositories/placeholderapi/"
     }
 }
 
@@ -82,7 +82,7 @@ tasks {
 
 allprojects {
     group = 'de.Ste3et_C0st.furniture'
-    version = '3.1.4'
+    version = gradle.furnitureLibVersion
     compileJava.options.encoding = 'UTF-8'
 	tasks.withType(JavaCompile) {
 	    options.encoding = 'UTF-8'

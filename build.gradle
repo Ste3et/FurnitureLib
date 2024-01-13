@@ -11,7 +11,13 @@ dependencies {
     implementation project(':FurnitureLib-Folia')
 }
 
-subprojects.each { subproject -> evaluationDependsOn(subproject.path)}
+
+
+subprojects.each {
+	subproject -> {
+		evaluationDependsOn(subproject.path)
+	}
+}
 
 task allJar(type: Jar, dependsOn: subprojects.assemble) {
    archiveBaseName = project.name
