@@ -180,6 +180,10 @@ fabric.properties
 # https://plugins.jetbrains.com/plugin/8053-azure-toolkit-for-intellij
 .idea/**/azureSettings.xml
 
+# Mac Files
+.DS_Store/
+.DS_Store
+
 ### Gradle ###
 .gradle
 **/build/
