@@ -421,5 +421,4 @@ public class ObjectID extends ObjectData{
         	this.functionObject = Furniture.class.cast(obj);
         }
     }
-
 }

@@ -15,7 +15,6 @@ import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObje
 import de.Ste3et_C0st.FurnitureLib.NBT.CraftBlockData;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.DefaultKey;
-import de.Ste3et_C0st.FurnitureLib.Utilitis.EntitySize;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 
 public class fBlock_display extends fDisplay{

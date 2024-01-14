@@ -6,6 +6,7 @@ import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObje
 
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagList;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.BoundingBox;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.DefaultKey;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.EntitySize;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.Relative;
@@ -23,7 +24,7 @@ import org.bukkit.util.EulerAngle;
 import java.util.HashMap;
 import java.util.Objects;
 
-public class fArmorStand extends fContainerEntity{
+public class fArmorStand extends fContainerEntity implements SizeableEntity{
 
     public static EntityType type = EntityType.ARMOR_STAND;
     private int armorstandID;
@@ -278,5 +279,9 @@ public class fArmorStand extends fContainerEntity{
 		}
 		return Material.AIR;
 	}
-	
+
+	@Override
+	public BoundingBox getBoundingBox() {
+		return this.entitySize.getOrDefault().toBoundingBox(this);
+	}
 }

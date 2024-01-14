@@ -233,7 +233,7 @@ public class NBTTagCompound extends NBTBase implements Cloneable {
             return defaultValue;
         }
 
-        return str.replaceAll("\"", "");
+        return str != null ? str.replaceAll("\"", "") : str;
     }
 
     @Override

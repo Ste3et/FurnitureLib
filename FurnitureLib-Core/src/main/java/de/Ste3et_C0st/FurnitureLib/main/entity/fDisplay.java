@@ -20,12 +20,13 @@ import com.comphenix.protocol.wrappers.WrappedDataWatcher.Registry;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
 
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.BoundingBox;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.DefaultKey;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.ProtocolFieldsDisplay;
 
-public abstract class fDisplay extends fSize{
+public abstract class fDisplay extends fSize implements SizeableEntity{
 	
 	private DefaultKey<Vector3f> translation = new DefaultKey<Vector3f>(new Vector3f()), scale = new DefaultKey<Vector3f>(new Vector3f());
 	private DefaultKey<Quaternionf> leftRotation = new DefaultKey<Quaternionf>(new Quaternionf()), rightRotation = new DefaultKey<Quaternionf>(new Quaternionf());
@@ -201,6 +202,8 @@ public abstract class fDisplay extends fSize{
 	
 	private void writeTransformation() {
 		final Transformation transformation = getTransformation();
+
+		this.entitySize.getOrDefault().write(transformation.getScale());
 		getWatcher().setObject(new WrappedDataWatcherObject(displayField.getVersionIndex() + 10, Registry.get(Vector3f.class)), transformation.getTranslation());
 		getWatcher().setObject(new WrappedDataWatcherObject(displayField.getVersionIndex() + 11, Registry.get(Vector3f.class)), transformation.getScale());
 		getWatcher().setObject(new WrappedDataWatcherObject(displayField.getVersionIndex() + 12, Registry.get(Quaternionf.class)), transformation.getLeftRotation());
@@ -265,29 +268,22 @@ public abstract class fDisplay extends fSize{
     	
     	NBTTagCompound transformation = new NBTTagCompound();
     	
-    	if(this.translation.isDefault() == false) {
-    		final NBTTagCompound translation = new NBTTagCompound();
-    		final Vector3f vector = this.translation.getOrDefault();
-    		translation.setFloat("x", vector.x);
-    		translation.setFloat("y", vector.y);
-    		translation.setFloat("z", vector.z);
-        	transformation.set("translation", translation);
-    	}
+    	if(this.translation.isDefault() == false) this.writeVector(this.translation.getOrDefault(), transformation, "translation");
+    	if(this.scale.isDefault() == false) this.writeVector(this.scale.getOrDefault(), transformation, "scale");
     	
-    	if(this.scale.isDefault() == false) {
-    		final NBTTagCompound scale = new NBTTagCompound();
-    		final Vector3f vector = this.scale.getOrDefault();
-    		scale.setFloat("x", vector.x);
-    		scale.setFloat("y", vector.y);
-    		scale.setFloat("z", vector.z);
-    		transformation.set("scale", scale);
-    	}
+    	if(this.leftRotation.isDefault() == false) this.writeRotation(getLeftRotationObj(), transformation, "left_Rotation");
+    	if(this.rightRotation.isDefault() == false) this.writeRotation(getRightRotationObj(), transformation, "right_Rotation");
     	
-    	this.writeRotation(getLeftRotationObj(), transformation, "left_Rotation");
-    	this.writeRotation(getRightRotationObj(), transformation, "right_Rotation");
-    	
-    	if(!transformation.isEmpty()) set("transformation", transformation);
+    	if(transformation.isEmpty() == false) set("transformation", transformation);
     }
+	
+	private void writeVector(final Vector3f vector, final NBTTagCompound transformation, final String name) {
+		final NBTTagCompound rotation = new NBTTagCompound();
+		rotation.setFloat("x", vector.x);
+		rotation.setFloat("y", vector.y);
+		rotation.setFloat("z", vector.z);
+    	transformation.set(name, rotation);
+	}
     
     private void writeRotation(final Quaternionf quaternionf, final NBTTagCompound transformation, final String name) {
     	final NBTTagCompound rotation = new NBTTagCompound();
@@ -367,5 +363,11 @@ public abstract class fDisplay extends fSize{
 	@Override
 	protected int heightField() {
 		return displayField.getVersionIndex() + 20;
+	}
+	
+	@Override
+	public BoundingBox getBoundingBox() {
+		System.out.println(this.entitySize.getOrDefault().toString());
+		return this.entitySize.getOrDefault().toBoundingBox(this);
 	}
 }

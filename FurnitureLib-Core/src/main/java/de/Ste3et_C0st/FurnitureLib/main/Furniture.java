@@ -4,9 +4,14 @@ import com.google.gson.JsonObject;
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.SchematicLoader.functions.functionManager;
 import de.Ste3et_C0st.FurnitureLib.SchematicLoader.functions.projectFunction;
+import de.Ste3et_C0st.FurnitureLib.main.entity.SizeableEntity;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fArmorStand;
+import de.Ste3et_C0st.FurnitureLib.main.entity.fBlock_display;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fContainerEntity;
+import de.Ste3et_C0st.FurnitureLib.main.entity.fDisplay;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
+import de.Ste3et_C0st.FurnitureLib.main.entity.fItem_display;
+
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -88,9 +93,14 @@ public abstract class Furniture extends FurnitureHelper implements Listener {
     }
 
     public boolean runOldFunctions(Player p) {
+//    	getObjID().getPacketList().stream().filter(fBlock_display.class::isInstance).map(fBlock_display.class::cast).forEach(entry -> {
+//        	entry.getBoundingBox().debugParticle(getWorld());
+//        });
+    	
         ItemStack stack = p.getInventory().getItemInMainHand();
         if (stack != null) {
             Material m = stack.getType();
+            
             if (m.equals(Material.AIR) || !m.isBlock()) {
                 for (fEntity stand : getfAsList()) {
                     if (stand.getName().startsWith("#ITEM")) {
@@ -102,14 +112,19 @@ public abstract class Furniture extends FurnitureHelper implements Listener {
                                 is.setAmount(1);
                                 getWorld().dropItem(getLocation(), is);
                             }
-                            if (p.getInventory().getItemInMainHand() != null) {
-                                ItemStack is = p.getInventory().getItemInMainHand().clone();
-                                if (is.getAmount() <= 0) {
-                                    is.setAmount(0);
-                                } else {
-                                    is.setAmount(1);
-                                }
+                            if (Objects.nonNull(stack)) {
+                            	ItemStack is = stack.clone();
+                                is.setAmount(1);
                                 container.setItemInMainHand(is);
+                                stand.update();
+                                consumeItem(p);
+                            }
+                    	}else if(stand instanceof fItem_display) {
+                    		fItem_display item_display = fItem_display.class.cast(stand);
+                    		if (Objects.nonNull(stack)) {
+                                ItemStack is = stack.clone();
+                                is.setAmount(1);
+                                item_display.setItemStack(is);
                                 stand.update();
                                 consumeItem(p);
                             }

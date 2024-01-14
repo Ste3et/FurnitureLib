@@ -2,7 +2,6 @@ package de.Ste3et_C0st.FurnitureLib.main.entity;
 
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
-
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.Registry;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
 
@@ -14,7 +13,7 @@ import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 public abstract class fSize extends fEntity {
 
 	private final DefaultKey<Float> width, height;
-	private final DefaultKey<EntitySize> entitySize = new DefaultKey<EntitySize>(new EntitySize(0, 0));
+	protected final DefaultKey<EntitySize> entitySize = new DefaultKey<EntitySize>(new EntitySize(0, 0, 0));
 	
 	public fSize(Location loc, EntityType type, int entityID, ObjectID id, float width, float height) {
 		super(loc, type, entityID, id);
@@ -60,5 +59,4 @@ public abstract class fSize extends fEntity {
         this.setWidth(metadata.getFloat("width", this.width.getDefault()));
         this.setHeight(metadata.getFloat("height", this.height.getDefault()));
 	}
-	
 }

@@ -152,22 +152,14 @@ public class fText_display extends fDisplay {
 	@Override
 	protected void writeAdditionalSaveData() {
 		super.writeDisplaySaveData();
-		if (!this.lineWitdth.isDefault())
-			setMetadata("line_width", this.lineWitdth.getOrDefault());
-		if (!this.background_color.isDefault())
-			setMetadata("background", this.background_color.getOrDefault());
-		if (!this.text_opacity.isDefault())
-			setMetadata("text_opacity", this.text_opacity.getOrDefault());
-		if (!this.style_flags.isDefault())
-			setMetadata("alignment", this.style_flags.getOrDefault().name());
-		if (!this.text.isDefault())
-			setMetadata("text", this.text.getOrDefault());
-		if (!this.shadowed.isDefault())
-			setMetadata("shadow", this.shadowed.getOrDefault());
-		if (!this.seeThrough.isDefault())
-			setMetadata("see_through", this.seeThrough.getOrDefault());
-		if (!this.defaultBackground.isDefault())
-			setMetadata("default_background", this.defaultBackground.getOrDefault());
+		if (!this.lineWitdth.isDefault()) setMetadata("line_width", this.lineWitdth.getOrDefault());
+		if (!this.background_color.isDefault()) setMetadata("background", this.background_color.getOrDefault());
+		if (!this.text_opacity.isDefault()) setMetadata("text_opacity", this.text_opacity.getOrDefault());
+		if (!this.style_flags.isDefault()) setMetadata("alignment", this.style_flags.getOrDefault().name());
+		if (!this.text.isDefault()) setMetadata("text", this.text.getOrDefault());
+		if (!this.shadowed.isDefault()) setMetadata("shadow", this.shadowed.getOrDefault());
+		if (!this.seeThrough.isDefault()) setMetadata("see_through", this.seeThrough.getOrDefault());
+		if (!this.defaultBackground.isDefault()) setMetadata("default_background", this.defaultBackground.getOrDefault());
 	}
 
 	protected void readAdditionalSaveData(NBTTagCompound metadata) {

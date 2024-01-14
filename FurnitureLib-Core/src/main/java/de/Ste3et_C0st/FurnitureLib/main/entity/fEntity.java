@@ -12,6 +12,7 @@ import com.comphenix.protocol.wrappers.WrappedWatchableObject;
 
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagList;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.BoundingBox;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.DefaultKey;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.EntityID;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.LanguageConverter;
@@ -29,6 +30,7 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+
 import java.util.*;
 import java.util.function.BiFunction;
 
@@ -56,9 +58,10 @@ public abstract class fEntity extends fSerializer implements Cloneable {
     
     private Location location;
     private DefaultKey<String> customName = new DefaultKey<String>("");
-    
     protected DefaultKey<Boolean> fire = new DefaultKey<Boolean>(false), nameVisible = new DefaultKey<Boolean>(false), isPlayed = new DefaultKey<Boolean>(false);
     protected DefaultKey<Boolean> glowing = new DefaultKey<Boolean>(false), invisible = new DefaultKey<Boolean>(false), gravity = new DefaultKey<Boolean>(false);
+    //protected DefaultKey<BoundingBox> boundingBox = new DefaultKey<BoundingBox>(new BoundingBox(0, 0, 0, 0, 0, 0));
+    
     
     private List<Integer> passengerIDs = new ArrayList<>();
     
@@ -162,7 +165,6 @@ public abstract class fEntity extends fSerializer implements Cloneable {
             this.positionZ = loc.getZ();
             this.yaw = ((byte) (int) (loc.getYaw() * 256.0F / 360.0F));
             this.pitch = ((byte) (int) (loc.getPitch() * 256.0F / 360.0F));
-            
             /*  < 1.19
              *  this.yaw = ((byte) (int) (loc.getYaw() * 256.0F / 360.0F));
              *	this.pitch = ((byte) (int) (loc.getPitch() * 256.0F / 360.0F));
@@ -205,13 +207,15 @@ public abstract class fEntity extends fSerializer implements Cloneable {
     }
 
     public fEntity setName(String str) {
-        if (str == null) return this;
-        if (str.equalsIgnoreCase("")) setNameVisibility(false);
         if (FurnitureLib.isNewVersion()) {
-    		final String workString = LanguageConverter.serializeLegacyColors(str);
-    		final Component textComponent = MiniMessage.miniMessage().deserialize(workString);
-    		final WrappedChatComponent wrappedChat = WrappedChatComponent.fromJson(GsonComponentSerializer.gson().serialize(textComponent));
-            getWatcher().setObject(new WrappedDataWatcherObject(2, Registry.getChatComponentSerializer(true)), Optional.of(wrappedChat.getHandle()));
+        	if(str == null || str.isEmpty()) {
+                getWatcher().setObject(new WrappedDataWatcherObject(2, Registry.getChatComponentSerializer(true)), Optional.empty());
+        	}else {
+        		final String workString = LanguageConverter.serializeLegacyColors(str);
+        		final Component textComponent = MiniMessage.miniMessage().deserialize(workString);
+        		final WrappedChatComponent wrappedChat = WrappedChatComponent.fromJson(GsonComponentSerializer.gson().serialize(textComponent));
+                getWatcher().setObject(new WrappedDataWatcherObject(2, Registry.getChatComponentSerializer(true)), Optional.of(wrappedChat.getHandle()));
+        	}
         } else {
             getWatcher().setObject(new WrappedDataWatcherObject(2, Registry.get(String.class)), str);
         }
@@ -224,17 +228,16 @@ public abstract class fEntity extends fSerializer implements Cloneable {
     }
 
     public void setPassenger(Entity e) {
+    	if (FurnitureConfig.getFurnitureConfig().canSitting() == false) return;
         setPassenger(Collections.singletonList(e.getEntityId()));
-        if (!FurnitureConfig.getFurnitureConfig().isRotateOnSitEnable()) {
-            return;
-        }
+        final boolean rotate = FurnitureConfig.getFurnitureConfig().isRotateOnSitEnable();
         if (e.getType().equals(EntityType.PLAYER)) {
             PacketContainer container = new PacketContainer(PacketType.Play.Server.ENTITY_LOOK);
             container.getIntegers().write(0, e.getEntityId());
             container.getBytes().write(0, ((byte) (int) (getLocation().getYaw() * 256.0F / 360.0F)));
             try {
                 for (Player p : getObjID().getPlayerList()) {
-                    getManager().sendServerPacket(p, container);
+                    if(rotate) getManager().sendServerPacket(p, container);
                     getManager().sendServerPacket(p, this.mountPacketContainer);
                 }
             } catch (Exception ex) {
@@ -248,9 +251,7 @@ public abstract class fEntity extends fSerializer implements Cloneable {
     }
 
     public void setPassenger(final List<Integer> entityIDs) {
-        if (!FurnitureConfig.getFurnitureConfig().canSitting()) {
-            return;
-        }
+        if (!FurnitureConfig.getFurnitureConfig().canSitting()) {return;}
         if (entityIDs == null) {return;}
         this.passengerIDs.addAll(entityIDs);
         int[] passengerID = this.passengerIDs.stream().mapToInt(Integer::intValue).toArray();

@@ -2,20 +2,27 @@ package de.Ste3et_C0st.FurnitureLib.Utilitis;
 
 import org.apache.commons.lang.Validate;
 import org.bukkit.Location;
+import org.bukkit.Particle;
+import org.bukkit.World;
+import org.bukkit.Particle.DustOptions;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.NumberConversions;
+import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 
 import de.Ste3et_C0st.FurnitureLib.main.Type.BodyPart;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fArmorStand;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fInventory.EquipmentSlot;
 
+import java.awt.Color;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -602,4 +609,35 @@ public class BoundingBox implements Cloneable, ConfigurationSerializable {
         result.put("maxZ", this.maxZ);
         return result;
     }
+
+	public void debugParticle(World world) {
+		final Location startLocation = new Vector(this.minX, this.minY, this.minZ).toLocation(world);
+		final Location endLocation =  new Vector(this.maxX, this.maxY, this.maxZ).toLocation(world);
+		
+		final List<Vector> locationList = showCuboid(startLocation, endLocation, .25);
+		final Color color = Color.magenta;
+		final DustOptions option = new DustOptions(org.bukkit.Color.fromRGB(color.getRed(), color.getGreen(), color.getBlue()), 1f);
+		
+		locationList.stream().forEach(loc -> {
+			world.spawnParticle(Particle.REDSTONE, loc.toLocation(world), 1, option);
+		});
+	}
+	
+	private List<Vector> showCuboid(Location aLoc, Location bLoc, double step) {
+	    List<Vector> result = new ArrayList<Vector>();
+	    double[] xArr = {Math.min(aLoc.getX(), bLoc.getX()), Math.max(aLoc.getX(), bLoc.getX())};
+	    double[] yArr = {Math.min(aLoc.getY(), bLoc.getY()), Math.max(aLoc.getY(), bLoc.getY())};
+	    double[] zArr = {Math.min(aLoc.getZ(), bLoc.getZ()), Math.max(aLoc.getZ(), bLoc.getZ())};
+
+	    for (double x = xArr[0]; x < xArr[1]; x += step) for (double y : yArr) for (double z : zArr) {
+	    	result.add(new Vector(x, y, z));
+	    }
+	    for (double y = yArr[0]; y < yArr[1]; y += step) for (double x : xArr) for (double z : zArr) {
+	    	result.add(new Vector(x, y, z));
+	    }
+	    for (double z = zArr[0]; z < zArr[1]; z += step) for (double y : yArr) for (double x : xArr) {
+	    	result.add(new Vector(x, y, z));
+	    }
+	    return result;
+	}
 }

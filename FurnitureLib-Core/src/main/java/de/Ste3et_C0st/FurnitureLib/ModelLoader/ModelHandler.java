@@ -94,13 +94,15 @@ public class ModelHandler extends Modelschematic {
  			
  			locationList.add(entity);
  			String customName = entity.getCustomName();
- 			if (customName.equalsIgnoreCase("#ITEM#")
- 					|| customName.equalsIgnoreCase("#BLOCK#")
- 					|| customName.equalsIgnoreCase("#SITZ#")
- 					|| customName.startsWith("#Light")
- 					|| customName.startsWith("/")
- 					|| customName.toUpperCase().startsWith("#DYE_")) {
- 				entity.setNameVisibility(false);
+ 			if(entity.hasCustomName()) {
+ 				if (customName.equalsIgnoreCase("#ITEM#")
+ 	 					|| customName.equalsIgnoreCase("#BLOCK#")
+ 	 					|| customName.equalsIgnoreCase("#SITZ#")
+ 	 					|| customName.startsWith("#Light")
+ 	 					|| customName.startsWith("/")
+ 	 					|| customName.toUpperCase().startsWith("#DYE_")) {
+ 	 				entity.setNameVisibility(false);
+ 	 			}
  			}
  		 });
     	 FurnitureLib.debug("FurnitureLib {ModelHandler} -> Calculate Entities Finish");

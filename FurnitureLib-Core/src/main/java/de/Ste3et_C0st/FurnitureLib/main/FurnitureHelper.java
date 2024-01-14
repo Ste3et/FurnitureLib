@@ -9,6 +9,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.block.BlockFace;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.plugin.Plugin;
@@ -40,7 +41,12 @@ public abstract class FurnitureHelper {
         this.plugin = id.getProjectOBJ().getPlugin();
         this.obj = id;
     }
+    
+    public fEntity spawnEntity(Location location, EntityType type) {
+    	return getManager().spawnEntity(type, location, obj);
+    }
 
+    @Deprecated
     public fArmorStand spawnArmorStand(Location loc) {
         return getManager().createArmorStand(getObjID(), loc);
     }
