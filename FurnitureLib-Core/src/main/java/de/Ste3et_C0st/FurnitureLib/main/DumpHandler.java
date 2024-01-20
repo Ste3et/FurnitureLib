@@ -78,7 +78,7 @@ public class DumpHandler {
 		packetInfos.addProperty("pluginVersion", FurnitureLib.getInstance().getDescription().getVersion());
 		packetInfos.addProperty("furnitureModels", FurnitureManager.getInstance().getProjects().size());
 		packetInfos.addProperty("furnitureObjects", FurnitureManager.getInstance().getObjectList().size());
-		packetInfos.addProperty("armorStands", armorStands.get() + "");
+		packetInfos.addProperty("entities", armorStands.get() + "");
 		packetInfos.addProperty("viewDistanceFurniture", FurnitureConfig.getFurnitureConfig().getViewDistance());
 		packetInfos.addProperty("viewDistanceServer", Bukkit.getServer().getViewDistance());
 		packetInfos.addProperty("syncLoading", FurnitureConfig.getFurnitureConfig().isSync());

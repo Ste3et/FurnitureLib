@@ -189,28 +189,25 @@ public class ObjectID extends ObjectData{
                 }
                 
                 this.getFurnitureObjectOpt().ifPresent(entry -> {
-                	this.packetList.forEach(stand -> stand.send(player));
+                	this.sendArmorStands(player);
                 	entry.receive(player);
-                    players.add(player);
                 });
                 
             } else {
-                if (!players.contains(player))
-                    return;
-                WrapperPlayServerEntityDestroy.destroyPackets(this, player);
-                players.remove(player);
+                if (!players.contains(player)) return;
+                this.removeArmorStands(player);
             }
         }
     }
     
     public void sendArmorStands(Player player) {
     	this.packetList.forEach(stand -> stand.send(player));
-        //players.add(player);
+        players.add(player);
     }
     
     public void removeArmorStands(Player player) {
     	WrapperPlayServerEntityDestroy.destroyPackets(this, player);
-        //players.remove(player);
+        players.remove(player);
     }
 
     public fEntity getByID(int entityID) {

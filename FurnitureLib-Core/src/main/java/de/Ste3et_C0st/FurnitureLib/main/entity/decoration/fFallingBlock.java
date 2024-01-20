@@ -17,7 +17,6 @@ import de.Ste3et_C0st.FurnitureLib.NBT.CraftBlockData;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.DefaultKey;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
-import de.Ste3et_C0st.FurnitureLib.main.entity.fBlock_display;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
 
 public class fFallingBlock extends fEntity{

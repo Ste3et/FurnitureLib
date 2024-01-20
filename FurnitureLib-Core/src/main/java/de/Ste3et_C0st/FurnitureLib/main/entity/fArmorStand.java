@@ -9,7 +9,6 @@ import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagList;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.BoundingBox;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.DefaultKey;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.EntitySize;
-import de.Ste3et_C0st.FurnitureLib.Utilitis.Relative;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type;
@@ -24,7 +23,7 @@ import org.bukkit.util.EulerAngle;
 import java.util.HashMap;
 import java.util.Objects;
 
-public class fArmorStand extends fContainerEntity implements SizeableEntity{
+public class fArmorStand extends fContainerEntity implements SizeableEntity, Interactable{
 
     public static EntityType type = EntityType.ARMOR_STAND;
     private int armorstandID;
@@ -283,5 +282,10 @@ public class fArmorStand extends fContainerEntity implements SizeableEntity{
 	@Override
 	public BoundingBox getBoundingBox() {
 		return this.entitySize.getOrDefault().toBoundingBox(this);
+	}
+
+	@Override
+	public boolean canInteractWith() {
+		return this.isMarker();
 	}
 }

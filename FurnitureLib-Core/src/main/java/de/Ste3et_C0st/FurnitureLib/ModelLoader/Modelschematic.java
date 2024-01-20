@@ -15,7 +15,6 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
-
 import org.bukkit.Material;
 import org.bukkit.block.BlockFace;
 import org.bukkit.configuration.file.YamlConfiguration;
@@ -30,7 +29,7 @@ import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
 import de.Ste3et_C0st.FurnitureLib.main.Type.PlaceableSide;
-import de.Ste3et_C0st.FurnitureLib.main.entity.fArmorStand;
+import de.Ste3et_C0st.FurnitureLib.main.entity.Interactable;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
 
 public abstract class Modelschematic{
@@ -205,8 +204,8 @@ public abstract class Modelschematic{
     
     public boolean isDestroyAble() {
     	AtomicBoolean returnBoolean = new AtomicBoolean(getBlockMap().isEmpty() ? false : true);
-    	if(false == returnBoolean.get()) {
-    		returnBoolean.set(getEntityMap().values().stream().filter(fArmorStand.class::isInstance).filter(entry -> fArmorStand.class.cast(entry).isMarker()).findFirst().isPresent());
+    	if(returnBoolean.get() == false) {
+    		returnBoolean.set(getEntityMap().values().stream().filter(Interactable.class::isInstance).map(Interactable.class::cast).filter(Interactable::canInteractWith).findFirst().isPresent());
     	}
     	return returnBoolean.get();
     }

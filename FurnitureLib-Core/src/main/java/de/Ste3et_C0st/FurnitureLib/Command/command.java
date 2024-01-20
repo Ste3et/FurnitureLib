@@ -80,7 +80,7 @@ public class command implements CommandExecutor, Listener{
 			p.sendMessage("§6PublicMode:§e " + e.getID().getPublicMode().name().toLowerCase());
 			p.sendMessage("§6Owner: §2" + e.getID().getPlayerName());
 			p.sendMessage("§6PublicEventAccess: §e" + e.getID().getEventType().name().toLowerCase());
-			p.sendMessage("§6ArmorStands: §e" + e.getID().getPacketList().size());
+			p.sendMessage("§6Entities: §e" + e.getID().getPacketList().size());
 			p.sendMessage("§6FromDatabase: §c" + e.getID().isFromDatabase());
 			p.sendMessage("§6Object Finish: §c" + e.getID().isFinish());
 			p.sendMessage("§6Members: §e" + e.getID().getMemberList().size());

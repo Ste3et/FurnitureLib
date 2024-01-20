@@ -11,7 +11,7 @@ import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.DefaultKey;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 
-public class fInteraction extends fSize{
+public class fInteraction extends fSize implements Interactable{
 
 	public static EntityType type = EntityType.valueOf("INTERACTION");
 	private final DefaultKey<Boolean> response = new DefaultKey<Boolean>(false);
@@ -71,5 +71,10 @@ public class fInteraction extends fSize{
 	@Override
 	protected int heightField() {
 		return 9;
+	}
+
+	@Override
+	public boolean canInteractWith() {
+		return this.getWidth() > 0f && this.getHeight() > 0f;
 	}
 }
