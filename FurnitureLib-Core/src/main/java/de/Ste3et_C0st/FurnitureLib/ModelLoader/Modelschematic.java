@@ -26,11 +26,13 @@ import de.Ste3et_C0st.FurnitureLib.ModelLoader.Block.ModelBlockAquaticUpdate;
 import de.Ste3et_C0st.FurnitureLib.ModelLoader.Block.ModelBlockCombatUpdate;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTCompressedStreamTools;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.BoundingBox;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
 import de.Ste3et_C0st.FurnitureLib.main.Type.PlaceableSide;
 import de.Ste3et_C0st.FurnitureLib.main.entity.Interactable;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
+import de.Ste3et_C0st.FurnitureLib.main.entity.fInteraction;
 
 public abstract class Modelschematic{
 	
@@ -137,7 +139,15 @@ public abstract class Modelschematic{
 					final fEntity entity = readNBTtag(entityData);
 					if(Objects.nonNull(vector) && Objects.nonNull(entity)) {
 						this.entityMap.put(vector, entity);
-						//this.setMax(vector);
+						
+						if(entity instanceof fInteraction) {
+							fInteraction interaction = fInteraction.class.cast(entity);
+							
+							BoundingBox boundingBox = new BoundingBox(0, 0, 0, interaction.getWidth(), interaction.getHeight(), interaction.getWidth());
+							boundingBox.shift(vector.toVector());
+							//System.out.println(boundingBox);
+							//this.setMax(ModelVector.of(boundingBox.getMax()));
+						}
 					}
 				}catch (Exception e) {
 					e.printStackTrace();

@@ -2,10 +2,13 @@ package de.Ste3et_C0st.FurnitureLib.main.entity;
 
 import org.bukkit.Location;
 import org.bukkit.entity.EntityType;
+import org.bukkit.util.Vector;
+
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.Registry;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
 
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.BoundingBox;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.DefaultKey;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.EntitySize;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
@@ -58,5 +61,9 @@ public abstract class fSize extends fEntity {
 	protected void readSizeData(NBTTagCompound metadata) {
         this.setWidth(metadata.getFloat("width", this.width.getDefault()));
         this.setHeight(metadata.getFloat("height", this.height.getDefault()));
+	}
+	
+	public BoundingBox getBoundingBox() {
+		return BoundingBox.of(new Vector(), new Vector(getWidth(), getHeight(), getWidth()));
 	}
 }

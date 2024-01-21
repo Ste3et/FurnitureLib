@@ -65,8 +65,8 @@ public class EntitySize {
 		return BoundingBox.of(vector, toVector());
 	}
 	
-	public BoundingBox toBoundingBox(fEntity entity) {
-		return BoundingBox.of(entity.getLocation(), x, y, z);
+	public BoundingBox toBoundingBox() {
+		return BoundingBox.of(new Vector(), new Vector(x, y, z));
 	}
 
 	public void write(Vector3f scale) {

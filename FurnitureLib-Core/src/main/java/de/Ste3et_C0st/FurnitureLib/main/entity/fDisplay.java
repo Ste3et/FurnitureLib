@@ -10,7 +10,7 @@ import org.bukkit.entity.Display;
 import org.bukkit.entity.Display.Billboard;
 import org.bukkit.entity.Display.Brightness;
 import org.bukkit.util.Transformation;
-
+import org.bukkit.util.Vector;
 import org.joml.AxisAngle4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
@@ -115,7 +115,7 @@ public abstract class fDisplay extends fSize implements SizeableEntity{
 	}
 	
 	public void setRightRotation(AxisAngle4f rotAngle4f) {
-		this.setLeftRotation(new Quaternionf(rotAngle4f));
+		this.setRightRotation(new Quaternionf(rotAngle4f));
 	}
 	
 	public void setRightRotation(Quaternionf quaternionf) {
@@ -273,7 +273,7 @@ public abstract class fDisplay extends fSize implements SizeableEntity{
     	
     	if(this.leftRotation.isDefault() == false) this.writeRotation(getLeftRotationObj(), transformation, "left_Rotation");
     	if(this.rightRotation.isDefault() == false) this.writeRotation(getRightRotationObj(), transformation, "right_Rotation");
-    	
+
     	if(transformation.isEmpty() == false) set("transformation", transformation);
     }
 	
@@ -367,7 +367,10 @@ public abstract class fDisplay extends fSize implements SizeableEntity{
 	
 	@Override
 	public BoundingBox getBoundingBox() {
-		System.out.println(this.entitySize.getOrDefault().toString());
-		return this.entitySize.getOrDefault().toBoundingBox(this);
+		float width = getWidth();
+	    float height = getHeight();
+	    float distance = width / 2.0F;
+	    
+		return BoundingBox.of(new Vector( - distance, 0, - distance), new Vector(distance, height, distance));
 	}
 }

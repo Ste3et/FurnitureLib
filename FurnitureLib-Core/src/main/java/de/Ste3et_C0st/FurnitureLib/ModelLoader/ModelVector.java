@@ -126,4 +126,8 @@ public class ModelVector implements Cloneable {
 	public UUID getUuid() {
 		return uuid;
 	}
+
+	public static ModelVector of(Vector max) {
+		return new ModelVector(max);
+	}
 }

@@ -281,7 +281,7 @@ public class fArmorStand extends fContainerEntity implements SizeableEntity, Int
 
 	@Override
 	public BoundingBox getBoundingBox() {
-		return this.entitySize.getOrDefault().toBoundingBox(this);
+		return this.entitySize.getOrDefault().toBoundingBox();
 	}
 
 	@Override

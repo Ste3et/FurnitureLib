@@ -5,9 +5,12 @@ import org.bukkit.Material;
 import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Interaction;
+import org.bukkit.util.Vector;
+
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.Registry;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.BoundingBox;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.DefaultKey;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 
@@ -76,5 +79,11 @@ public class fInteraction extends fSize implements Interactable{
 	@Override
 	public boolean canInteractWith() {
 		return this.getWidth() > 0f && this.getHeight() > 0f;
+	}
+	
+	@Override
+	public BoundingBox getBoundingBox() {
+		final double width = getWidth() / 2;
+		return BoundingBox.of(new Vector(-width, 0,-width), new Vector(width, getHeight(), width));
 	}
 }

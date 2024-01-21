@@ -28,7 +28,10 @@ import de.Ste3et_C0st.FurnitureLib.Utilitis.cache.DiceOfflinePlayer;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
+import de.Ste3et_C0st.FurnitureLib.main.entity.fDisplay;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
+import de.Ste3et_C0st.FurnitureLib.main.entity.fInteraction;
+import de.Ste3et_C0st.FurnitureLib.main.entity.fSize;
 
 public class command implements CommandExecutor, Listener{
 
@@ -105,11 +108,23 @@ public class command implements CommandExecutor, Listener{
 			
 			for(fEntity stand : e.getID().getPacketList()){
 				stand.setGlowing(true);
+				
+				//render boundingboxes!!
+				
+//				if(stand instanceof fSize) {
+//					fSize size = fSize.class.cast(stand);
+//					size.getBoundingBox().shift(stand.getLocation()).debugParticle(p.getWorld());
+//					System.out.println(size.getBoundingBox());
+//				}
 			}
 			
 			final SQLAction action = e.getID().getSQLAction();
 			manager.updateFurniture(e.getID());
 			playerList.remove(p);
+			
+			
+			
+			
 			
 			SchedularHelper.runLater(() -> {
 				for(fEntity stand : e.getID().getPacketList()){

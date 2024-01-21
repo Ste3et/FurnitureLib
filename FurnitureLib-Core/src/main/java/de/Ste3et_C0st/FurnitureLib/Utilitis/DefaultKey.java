@@ -38,7 +38,11 @@ public class DefaultKey<K> {
 
     @Override
     public String toString() {
-        return "[" + key1.toString() + ", " + key2.toString() + "]";
+    	String key1String = this.isEmptyKey1() ? "null" : this.key1.toString();
+    	String key2String = this.isEmptyKey2() ? "null" : this.key2.toString();
+    	String className = this.isEmptyKey1() == false ? this.key1.getClass().getSimpleName() : this.isEmptyKey2() == false ? this.key2.getClass().getSimpleName() : "";
+    	
+        return className + "@ [" + key1String + ", " + key2String + "]";
     }
 
     public K getDefault() {
@@ -67,7 +71,16 @@ public class DefaultKey<K> {
     	return this;
     }
     
+    public boolean isEmptyKey1() {
+    	return Objects.isNull(this.key1);
+    }
+    
+    public boolean isEmptyKey2() {
+    	return Objects.isNull(this.key2);
+    }
+    
     public boolean isDefault() {
+    	if(Objects.isNull(this.key1) && Objects.nonNull(this.key2)) return false;
     	if(Objects.nonNull(this.key2)) return key1.equals(key2);
     	return true;
     }
