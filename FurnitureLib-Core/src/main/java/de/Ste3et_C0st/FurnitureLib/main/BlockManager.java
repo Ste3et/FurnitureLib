@@ -8,6 +8,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.BlockFromToEvent;
+import org.bukkit.event.block.BlockPistonExtendEvent;
+import org.bukkit.event.block.BlockPistonRetractEvent;
 
 import de.Ste3et_C0st.FurnitureLib.Listener.physicsEvent;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.SchedularHelper;
@@ -64,7 +66,6 @@ public class BlockManager implements Listener {
         
         if(FurnitureLib.isFolia()) {
         	final Location startLocation = locList.stream().findFirst().get();
-        	
         	SchedularHelper.regionTask(() -> {
         		locList.stream().filter(loc -> loc.getBlock() != null && loc.getBlock().getType() != Material.AIR).forEach(
                         loc -> {
@@ -86,8 +87,9 @@ public class BlockManager implements Listener {
                         }
                     }
             );
-        	locList.clear();
         }
+        
+        this.locList.removeAll(locList);
     }
 
     public HashSet<Location> getList() {
@@ -102,6 +104,20 @@ public class BlockManager implements Listener {
     		if(locList.contains(e.getBlock().getLocation())) e.setCancelled(true);
     		if(locList.contains(e.getToBlock().getLocation())) e.setCancelled(true);
     	}
+    }
+    
+    @EventHandler(ignoreCancelled = true)
+    public void onPistonExtract(BlockPistonExtendEvent event) {
+    	event.getBlocks().stream().filter(this::contains).findAny().ifPresent(block -> {
+    		event.setCancelled(true);
+    	});
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onPistonExtract(BlockPistonRetractEvent event) {
+    	event.getBlocks().stream().filter(this::contains).findAny().ifPresent(block -> {
+    		event.setCancelled(true);
+    	});
     }
     
     public boolean contains(Location location) {

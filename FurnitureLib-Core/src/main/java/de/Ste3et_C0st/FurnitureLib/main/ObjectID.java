@@ -406,6 +406,12 @@ public class ObjectID extends ObjectData{
         FurnitureManager.getInstance().killObject(this);
         //this.players.clear();
     }
+    
+    public void sendLocation() {
+    	this.packetList.stream().forEach(entry -> {
+    		entry.teleport(entry.getLocation());
+    	});
+    }
 
     @Override
     public String toString() {

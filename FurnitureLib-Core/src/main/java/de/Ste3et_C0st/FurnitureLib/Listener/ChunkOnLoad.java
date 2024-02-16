@@ -29,6 +29,7 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockPistonEvent;
 import org.bukkit.event.block.BlockPistonExtendEvent;
 import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
@@ -331,20 +332,6 @@ public class ChunkOnLoad implements Listener {
 				eventList.remove(p);
 			}
     	}, 1, true);
-    }
-    
-    @EventHandler(ignoreCancelled = true)
-    public void onPistonExtract(BlockPistonExtendEvent event) {
-    	event.getBlocks().stream().filter(FurnitureLib.getInstance().getBlockManager()::contains).findAny().ifPresent(block -> {
-    		event.setCancelled(true);
-    	});
-    }
-
-    @EventHandler(ignoreCancelled = true)
-    public void onPistonExtract(BlockPistonRetractEvent event) {
-    	event.getBlocks().stream().filter(FurnitureLib.getInstance().getBlockManager()::contains).findAny().ifPresent(block -> {
-    		event.setCancelled(true);
-    	});
     }
     
 //    private void resendPackets(Location startLocation, Event event) {
