@@ -108,6 +108,10 @@ public class BlockManager implements Listener {
     	return Objects.nonNull(getPresetLocation(location));
     }
     
+    public boolean contains(Block block) {
+    	return block != null && this.contains(block.getLocation());
+    }
+    
     public Location getPresetLocation(Location location) {
     	Predicate<Location> predicate = entry -> entry.getWorld().getName().equals(location.getWorld().getName()) && 
     	location.getBlockX() == entry.getBlockX() && 

@@ -29,6 +29,8 @@ import org.bukkit.event.EventHandler;
 import org.bukkit.event.EventPriority;
 import org.bukkit.event.Listener;
 import org.bukkit.event.block.Action;
+import org.bukkit.event.block.BlockPistonExtendEvent;
+import org.bukkit.event.block.BlockPistonRetractEvent;
 import org.bukkit.event.player.PlayerInteractEntityEvent;
 import org.bukkit.event.player.PlayerInteractEvent;
 import org.bukkit.event.world.WorldLoadEvent;
@@ -330,4 +332,32 @@ public class ChunkOnLoad implements Listener {
 			}
     	}, 1, true);
     }
+    
+    @EventHandler(ignoreCancelled = true)
+    public void onPistonExtract(BlockPistonExtendEvent event) {
+    	event.getBlocks().stream().filter(FurnitureLib.getInstance().getBlockManager()::contains).findAny().ifPresent(block -> {
+    		event.setCancelled(true);
+    	});
+    }
+
+    @EventHandler(ignoreCancelled = true)
+    public void onPistonExtract(BlockPistonRetractEvent event) {
+    	event.getBlocks().stream().filter(FurnitureLib.getInstance().getBlockManager()::contains).findAny().ifPresent(block -> {
+    		event.setCancelled(true);
+    	});
+    }
+    
+//    private void resendPackets(Location startLocation, Event event) {
+//    	final World world = startLocation.getWorld();
+//    	world.getNearbyEntities(startLocation, 20, 20, 20, entity -> Player.class.isInstance(entity)).stream().map(Player.class::cast).forEach(player -> {
+//    		player.sendMessage("found " + event.getEventName());
+//    		FurnitureManager.getInstance().getAllInRangeByPlayer(player).forEach(objectID -> {
+//    			
+//    			objectID.removeArmorStands(player);
+//    			Bukkit.getScheduler().runTaskLater(FurnitureLib.getInstance(), () -> {
+//    				objectID.sendArmorStands(player);
+//    			}, 5);
+//    		});
+//    	});
+//    }
 }
