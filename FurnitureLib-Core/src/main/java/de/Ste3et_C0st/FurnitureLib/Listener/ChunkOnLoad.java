@@ -41,6 +41,8 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.PlayerInventory;
 import org.bukkit.inventory.meta.ItemMeta;
 
+import com.google.common.collect.Lists;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -332,6 +334,34 @@ public class ChunkOnLoad implements Listener {
 				eventList.remove(p);
 			}
     	}, 1, true);
+    }
+    
+    @EventHandler(ignoreCancelled = true)
+    public void onPistonPush(BlockPistonExtendEvent event) {
+    	List<Location> locations = Lists.newArrayList();
+    	locations.add(event.getBlock().getLocation());
+    	event.getBlocks().stream().map(Block::getLocation).forEach(locations::add);
+    	locations.stream().forEach(location -> {
+    		if(FurnitureManager.getInstance().getAllEntitiesInRange(location, 1.7D).isEmpty() == false) {
+    			event.setCancelled(true);
+    		}else if(FurnitureLib.getInstance().getBlockManager().contains(location)) {
+    			event.setCancelled(true);
+    		}
+    	});
+    }
+    
+    @EventHandler(ignoreCancelled = true)
+    public void onPistonPush(BlockPistonRetractEvent event) {
+    	List<Location> locations = Lists.newArrayList();
+    	locations.add(event.getBlock().getLocation());
+    	event.getBlocks().stream().map(Block::getLocation).forEach(locations::add);
+    	locations.stream().forEach(location -> {
+    		if(FurnitureManager.getInstance().getAllEntitiesInRange(location, 1.7D).isEmpty() == false) {
+    			event.setCancelled(true);
+    		}else if(FurnitureLib.getInstance().getBlockManager().contains(location)) {
+    			event.setCancelled(true);
+    		}
+    	});
     }
     
 //    private void resendPackets(Location startLocation, Event event) {

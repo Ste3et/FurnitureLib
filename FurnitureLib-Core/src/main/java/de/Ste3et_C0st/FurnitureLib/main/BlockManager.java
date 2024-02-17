@@ -106,20 +106,6 @@ public class BlockManager implements Listener {
     	}
     }
     
-    @EventHandler(ignoreCancelled = true)
-    public void onPistonExtract(BlockPistonExtendEvent event) {
-    	event.getBlocks().stream().filter(this::contains).findAny().ifPresent(block -> {
-    		event.setCancelled(true);
-    	});
-    }
-
-    @EventHandler(ignoreCancelled = true)
-    public void onPistonExtract(BlockPistonRetractEvent event) {
-    	event.getBlocks().stream().filter(this::contains).findAny().ifPresent(block -> {
-    		event.setCancelled(true);
-    	});
-    }
-    
     public boolean contains(Location location) {
     	return Objects.nonNull(getPresetLocation(location));
     }

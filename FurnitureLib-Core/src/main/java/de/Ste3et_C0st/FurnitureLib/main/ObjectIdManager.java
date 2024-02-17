@@ -11,6 +11,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -131,6 +132,27 @@ public class ObjectIdManager {
 	public HashSet<fEntity> getfArmorStandByObjectID(ObjectID id) {
         return id.getPacketList();
     }
+	
+	public HashSet<fEntity> getAllEntitiesInRange(Location startLocation, double distance){
+		HashSet<fEntity> entitySet = new HashSet<>();
+		
+		Predicate<fEntity> entityPredicate = (entity) -> {
+			return entity.getLocation().distance(startLocation) < distance;
+		};
+		
+		Predicate<ObjectID> objectPredicate = (obj) -> {
+			if(obj.getPacketList().isEmpty() == false && obj.getStartLocation().distance(startLocation) < 10.0D) {
+				return obj.getPacketList().stream().filter(entityPredicate).findFirst().isPresent();
+			}
+			return false;
+		};
+		
+		getInWorld(startLocation.getWorld()).stream().filter(objectPredicate).map(ObjectID::getPacketList).forEach(packetSet -> {
+			packetSet.stream().filter(entityPredicate).forEach(entitySet::add);
+		});
+		
+		return entitySet;
+	}
 	
 	public ObjectID getObjectIDByEntityID(int entityID) {
 		return getAllExistObjectIDs().filter(entry -> entry.containsEntity(entityID)).findFirst().orElse(null);

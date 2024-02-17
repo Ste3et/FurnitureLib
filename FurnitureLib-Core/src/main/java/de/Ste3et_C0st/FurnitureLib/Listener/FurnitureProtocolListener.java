@@ -43,30 +43,41 @@ public class FurnitureProtocolListener {
 		//ProtocolLibrary.getProtocolManager().addPacketListener(debug());
 	}
 	
-	private PacketListener debug() {
-		return new PacketAdapter(FurnitureLib.getInstance(), ListenerPriority.HIGHEST, PacketType.Play.Server.BLOCK_ACTION) {
-			public void onPacketSending(PacketEvent event) {
-				final Player player = event.getPlayer();
-				final PacketContainer container = event.getPacket();
-				
-				Optional.ofNullable(FurnitureManager.getInstance().getfArmorStandByID(container.getIntegers().read(0))).ifPresent(objectID -> {
-					player.sendMessage("found");
-				});
-				
-				//player.sendMessage(container.getIntegers().read(1) + " TypeEntityID");
-				
-//				for(int i = 0; i < 100; i++) {
-//					NbtBase<?> base = container.getNbtModifier().readSafely(i);
-//					if(Objects.nonNull(base)) {
-//						player.sendMessage(base.getName());
-//					}else {
-//						return;
-//					}
-//				}
-				
-			}
-		};
-	}
+//	private PacketListener debug() {
+//		return new PacketAdapter(FurnitureLib.getInstance(), ListenerPriority.HIGHEST, PacketType.Play.Server.REL_ENTITY_MOVE) {
+//			
+//			public void onPacketReceiving(PacketEvent event) {
+//				final Player player = event.getPlayer();
+//				final PacketContainer container = event.getPacket();
+//				
+//				Optional.ofNullable(FurnitureManager.getInstance().getfArmorStandByID(container.getIntegers().read(0))).ifPresent(objectID -> {
+//					player.sendMessage("found receiving");
+//				});
+//			}
+//			
+//			
+//			public void onPacketSending(PacketEvent event) {
+//				final Player player = event.getPlayer();
+//				final PacketContainer container = event.getPacket();
+//				
+//				Optional.ofNullable(FurnitureManager.getInstance().getfArmorStandByID(container.getIntegers().read(0))).ifPresent(objectID -> {
+//					player.sendMessage("found sending");
+//				});
+//				
+//				//player.sendMessage(container.getIntegers().read(1) + " TypeEntityID");
+//				
+////				for(int i = 0; i < 100; i++) {
+////					NbtBase<?> base = container.getNbtModifier().readSafely(i);
+////					if(Objects.nonNull(base)) {
+////						player.sendMessage(base.getName());
+////					}else {
+////						return;
+////					}
+////				}
+//				
+//			}
+//		};
+//	}
 	
 	private PacketListener steer_vehicle() {
 		return new PacketAdapter(FurnitureLib.getInstance(), ListenerPriority.HIGHEST, PacketType.Play.Client.STEER_VEHICLE) {
