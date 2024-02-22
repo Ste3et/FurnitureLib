@@ -1,65 +1,65 @@
 message:
   ProjectAlreadyExist: <red><project>已存在.
-  RemoveDistance: <yellow>�?功删除<amount>件家具.
-  WrongOwner: <red>你�?是这件家具的拥有者!
-  RemoveLookat: <yellow>�?功删除<serial>.
-  BlockOfInstability: <red>请�?试在其他地方放置家具
-  NotEnoughSpace: <green>空间�?足.
-  ProjectNotFound: <red><project>�?存在.
-  RemoveType: <yellow>�?功删除所有<type>类型的家具.
+  RemoveDistance: <yellow>成功删除<amount>件家具.
+  WrongOwner: <red>你不是这件家具的拥有者!
+  RemoveLookat: <yellow>成功删除<serial>.
+  BlockOfInstability: <red>请尝试在其他地方放置家具
+  NotEnoughSpace: <green>空间不足.
+  ProjectNotFound: <red><project>不存在.
+  RemoveType: <yellow>成功删除所有<type>类型的家具.
   limit:
     chunk:
-      info: '<gray>You have placed: <red><amount>/<size> for project <project>'
-      reached: '<gray>You reached the Chunk Furniture Limit of: <red><amount>/<size>'
+      info: '<gray>你已为项目<project>放置的家具数量: <red><amount>/<size>'
+      reached: '<gray>达到区块家具数量限制: <red><amount>/<size>'
     permission:
-      reached: '<gray>You reached the Furniture Limit of: <red><amount>/<size>'
-      info: '<gray>You have placed: <red><amount>/<size> for project <project>'
+      reached: '<gray>达到家具数量限制: <red><amount>/<size>'
+      info: '<gray>你已为项目<project>放置的家具数量: <red><amount>/<size>'
     player:
-      info: '<gray>You have placed: <red><amount>/<size> for project <project>'
-      reached: '<gray>You reached the Player Furniture Limit of: <red><amount>/<size>'
+      info: '<gray>你已为项目<project>放置的家具数量: <red><amount>/<size>'
+      reached: '<gray>达到玩家家具数量限制: <red><amount>/<size>'
     world:
-      info: '<gray>You have placed: <yellow><amount>/<size> <gray>for project <green><project>
-        <gray>in world <green><world>'
-      reached: '<gray>You reached the World Furniture Limit of: <red><amount>/<size>'
-  FurnitureToFastPlace: <red>你必须等待<dark_red><time><red>�?能放置.
-  DebugModeEntered: <green>你已进入调试默认.请�?�击一件家具.
-  FurnitureToggleEvent: <red>你�?能这么�?�.
-  WrongArgument: <red>你输入的指令包�?�了错误的�?�数.
-  FurnitureToFastBreak: <red>你必须等候<dark_red><time><red>�?能破�??家具.
-  NoPermissions: <red>你没有�?��?这么�?�.
-  RemoveAll: <yellow>�?功删除所有家具.
-  PlayerNotOnline: <red>玩家<player>�?在线.
-  FurnitureToggleCMDOff: <green>已将家具<red>�?形
+      info: '<gray>你在世界<green><world>中已为项目<project>放置的家具数量: 
+        <yellow><amount>/<size>'
+      reached: '<gray>达到世界家具数量限制: <red><amount>/<size>'
+  FurnitureToFastPlace: <red>你必须等待<dark_red><time><red>才能放置.
+  DebugModeEntered: <green>你已进入调试模式. 请点击一件家具.
+  FurnitureToggleEvent: <red>你不能这么做.
+  WrongArgument: <red>你输入的指令包含了错误的参数.
+  FurnitureToFastBreak: <red>你必须等候<dark_red><time><red>才能破坏家具.
+  NoPermissions: <red>你没有权限这么做.
+  RemoveAll: <yellow>成功删除所有家具.
+  PlayerNotOnline: <red>玩家<player>不在线.
+  FurnitureToggleCMDOff: <green>已将家具<red>隐形
   GivePlayer: <green>玩家<player>获得了<project>(<amount>).
-  CraftingEdit: <yellow>你已更新家具的�?��?�?方
-  ManageModeEntered: <green>你已进入管�?�模�?. 请�?�击一件家具.
-  RemoveWorld: <yellow>�?功将所有家具从%WORLD%删除
+  CraftingEdit: <yellow>你已更新家具的合成配方
+  ManageModeEntered: <green>你已进入管理模式. 请右击一件家具.
+  RemoveWorld: <yellow>成功将所有家具从%WORLD%删除
   SideNavigation: <yellow>输入 /furniture list <option> (0-<max>) 列出所有的家具.
-  RemovePlugin: <yellow>�?功删除所有<plugin>的家具.
-  CraftingRemove: <green>你删除了�?务器示例家具的�?��?�?方
+  RemovePlugin: <yellow>成功删除所有<plugin>的家具.
+  CraftingRemove: <green>你删除了服务器示例家具的合成配方
   FurnitureToggleCMDOn: <green>已将所有家具<dark_green>显形
-  SideNotFound: <red>页�?��?存在.
-  FurnitureOnThisPlace: '&这个�?置已�?有家具了.'
-  IgnoredWorld: <gray>你�?能在<dark_green>%WORLD%<gray>放置这个
-  RemoveID: <yellow>�?功删除<objid>
-  RemovePlayer: <yellow>�?功删除所有<player>放置的家具.
-  NotONThisSide: <red>你�?能在这个方�?�上放置这件家具.
-  FurnitureToggleCantChange: <red>你�?能改�?�家具的�?��?性
-  reload: <gray>已�?载<dark_green><b>FurnitureLib
-  PurgeMarked: <green>你标记了<amount>件家具并从数�?�库中删除这些家具.
+  SideNotFound: <red>页面不存在.
+  FurnitureOnThisPlace: '&这个位置已经有家具了.'
+  IgnoredWorld: <gray>你不能在<dark_green>%WORLD%<gray>放置这个
+  RemoveID: <yellow>成功删除<objid>
+  RemovePlayer: <yellow>成功删除所有<player>放置的家具.
+  NotONThisSide: <red>你不能在这个方块上放置这件家具.
+  FurnitureToggleCantChange: <red>你不能改变家具的可见性
+  reload: <gray>已重载<dark_green><b>FurnitureLib
+  PurgeMarked: <green>你标记了<amount>件家具并从数据库中删除这些家具.
 command:
   setname:
-    help_hover: <gray>Change the Model Name
+    help_hover: <gray>修改家具模型名称
     suggest: /furniture setname
     help_name: <gray>/furniture <yellow>setname [id] [newName]
-    success: <gray>You have updatet model <model> to show as <name>.
+    success: <gray>已将家具模型<model>的名称修改为<name>.
   reload:
-    help_hover: <yellow>�?载<gray>所有FurnitureLib的�?置
+    help_hover: <yellow>重载<gray>所有FurnitureLib的配置
     suggest: /furniture reload
     help_name: <gray>/furniture <yellow>reload
   dump:
     wrongUsage: <red>请使用 /furniture dump
-    help_hover: <gray>上传�?�?的信�?�以帮助查找错误
+    help_hover: <gray>上传重要的信息以帮助查找错误
     suggest: /furniture dump
     help_name: <gray>/furniture <yellow>dump
   download:
@@ -78,9 +78,9 @@ command:
     filtered_hover:
     - <gray>移除所有 <red><project> <gray>模型
     - '<gray>过滤器: <filters>'
-    - <gray>该�?作<red><u>无法撤销
+    - <gray>该操作<red><u>无法撤销
     suggest: /furniture give [系统ID]
-    help_hover: <gray>将<yellow>模型物�?<gray>�?��?给一�??<yellow>玩家
+    help_hover: <gray>将<yellow>模型物品<gray>发送给一名<yellow>玩家
     nothing:
     - <gray>这里没有找到家具.
     - <gray>应用过滤器-> {<filters> <gray>}
@@ -89,9 +89,9 @@ command:
       hover:
       - <gray>移除所有 <red><project> <gray>模型
       - <gray>所有的世界都<red><u>无法撤销
-      - <gray>从�?务器上<red>删除<gray>或�?用这个模型
+      - <gray>从服务器上<red>删除<gray>或禁用这个模型
     wrongUsage: <red>请使用 /furniture give [系统ID]
-    help_name: <gray>/furniture <yellow>give <green>[系统ID] <aqua>(玩家�??) <aqua>(数�?)
+    help_name: <gray>/furniture <yellow>give <green>[系统ID] <aqua>(玩家名) <aqua>(数量)
   manage:
     help_hover: <gray>更改家具模型的<yellow>设置
     help_name: <gray>/furniture <yellow>manage
@@ -99,7 +99,7 @@ command:
   delete:
     suggest: /furniture delete systemID
     help_hover:
-    - <gray>如果你想�?从<yellow>系统中删除
+    - <gray>如果你想要从<yellow>系统中删除
     - <gray>一个模型，请输入这个指令
     wrongUsage: <red>请使用 /furniture delete [系统ID]
     help_name: <gray>/furniture <yellow>delete <green>[系统ID] {confirm}
@@ -109,26 +109,26 @@ command:
     wrongUsage: 请使用 /furniture list (选项)
     help_hover:
     - <yellow>列出<gray>所有已安装或放置的家具
-    - '<gray>选项�?�以为:'
-    - <gray> - <yellow>plugin（�?�件）
+    - '<gray>选项可以为:'
+    - <gray> - <yellow>plugin（插件）
     - <gray> - <yellow>type（家具类型）
     - <gray> - <yellow>world（世界）
   recipe:
     help_name: <gray>/furniture <yellow>recipe <green>[系统ID] <aqua>(edit)
     wrongUsage: 请使用 /furniture recipe [系统ID]
     suggest: /furniture recipe
-    help_hover: <yellow>查看<gray>或<yellow>编辑<gray>家具的�?��?�?方
+    help_hover: <yellow>查看<gray>或<yellow>编辑<gray>家具的合成配方
   remove:
     help_hover:
     - <gray>删除一个类型的家具
     - '<gray>选项:'
-    - ' - <yellow>type<gray>: 项目�??'
+    - ' - <yellow>type<gray>: 项目名'
     - ' - <yellow>player<gray>: 所有该玩家的家具'
     - ' - <yellow>world<gray>: 所有该世界的家具'
     - ' - <yellow>systemID<gray>: 家具的系统ID'
-    - ' - <yellow>distance<gray>: 指定�?离内的家具'
-    - ' - <yellow>lookat<gray>: 你所看�?�的家具'
-    - ' - <yellow>all<gray>: 清空�?务器所有家具'
+    - ' - <yellow>distance<gray>: 指定距离内的家具'
+    - ' - <yellow>lookat<gray>: 你所看看着的家具'
+    - ' - <yellow>all<gray>: 清空服务器所有家具'
     result:
     - <gray>删除了 <dark_green><size> <gray>个家具
     - <gray>应用过滤器 -> {<filters> <gray>}
@@ -140,15 +140,15 @@ command:
     - <gray>应用过滤器-> {<filters> <gray>}
   version:
     help_name: <gray>/furniture <yellow>version
-    help_hover: <gray>获�?�<yellow>FurnitureLib的版本信�?�
+    help_hover: <gray>获取<yellow>FurnitureLib的的版本信息
     suggest: /furniture version
   purge:
     suggest: /furniture purge
     help_name: <gray>/furniture <yellow>purge <green>[时间]
     wrongUsage: 请使用 /furniture purge [时间]
     help_hover:
-    - <yellow>从数�?�库中删除
-    - <gray>�?玩家的家具
+    - <yellow>从数据库中删除
+    - <gray>老玩家的家具
   help:
     header:
     - <gray><st>+-------------------<gray><st:false>[<dark_green><b>家具<gray>]<st>--------------------+
@@ -158,25 +158,25 @@ command:
     - '<gray>译者: <dark_green>qsefthuopq, YuanYuanOwO'
     footer:
     - '<gray> '
-    - '<yellow><b>�??示: <gray>�?试<yellow><u>点击<gray>或<yellow><u>用鼠标查看<gray>指令'
+    - '<yellow><b>提示: <gray>尝试<yellow><u>点击<gray>或<yellow><u>用鼠标查看<gray>指令'
     - <gray><u:false><st>+--------------------------------------------------+
   debug:
     help_name: <gray>/furniture <yellow>debug
     suggest: /furniture debug
     help_hover:
-    - <gray>你�?�以通过<yellow>�?�击家具<gray>获�?�
-    - <gray>家具的<yellow>详细信�?�
+    - <gray>你可以通过<yellow>右击家具<gray>获取
+    - <gray>家具的<yellow>详细信息
   toggle:
     wrongUsage: 请使用 /furniture toggle <aqua>(player)
     suggest: /furniture toggle
-    help_hover: <gray>�?�?或显示家具
+    help_hover: <gray>隐藏或显示家具
     help_name: <gray>/furniture <yellow>toggle (player)
   spawn:
-    wrongUsage: 请使用 /furniture spawn [x] [y] [z] [�??航角] [系统ID] {world}
-    suggest: /furniture spawn [x] [y] [z] [�??航角] [系统ID] {world}
-    help_hover: <gray>在<yellow>指定地点<gray>生�?一件家具
-    help_name: <gray>/furniture <yellow>spawn [x] [y] [z] [�??航角] [系统ID] {world}
+    wrongUsage: 请使用 /furniture spawn [x] [y] [z] [偏航角] [系统ID] {world}
+    suggest: /furniture spawn [x] [y] [z] [偏航角] [系统ID] {world}
+    help_hover: <gray>在<yellow>指定地点<gray>生成一件家具
+    help_name: <gray>/furniture <yellow>spawn [x] [y] [z] [偏航角] [系统ID] {world}
   save:
     suggest: /furniture save
     help_name: <gray>/furniture <yellow>save
-    help_hover: <gray>�?存所有手动更改的家具
+    help_hover: <gray>保存所有手动更改的家具
