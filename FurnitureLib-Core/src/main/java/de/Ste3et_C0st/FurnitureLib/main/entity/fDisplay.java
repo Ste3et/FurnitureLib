@@ -367,10 +367,7 @@ public abstract class fDisplay extends fSize implements SizeableEntity{
 	
 	@Override
 	public BoundingBox getBoundingBox() {
-		float width = getWidth();
-	    float height = getHeight();
-	    float distance = width / 2.0F;
-	    
-		return BoundingBox.of(new Vector( - distance, 0, - distance), new Vector(distance, height, distance));
+	    final Vector3f scale = this.getScale();
+		return BoundingBox.of(new Vector(0 , 0, 0), new Vector(scale.x, scale.y, scale.z));
 	}
 }

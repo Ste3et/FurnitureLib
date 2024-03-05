@@ -1,6 +1,7 @@
 package de.Ste3et_C0st.FurnitureLib.main.entity;
 
 import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.utility.MinecraftVersion;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
@@ -12,9 +13,9 @@ import com.comphenix.protocol.wrappers.WrappedWatchableObject;
 
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagList;
-import de.Ste3et_C0st.FurnitureLib.Utilitis.BoundingBox;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.DefaultKey;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.EntityID;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.ItemStackBuilder;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.LanguageConverter;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureConfig;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
@@ -30,11 +31,13 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.persistence.PersistentDataContainer;
+import org.bukkit.persistence.PersistentDataHolder;
 
 import java.util.*;
 import java.util.function.BiFunction;
 
-public abstract class fEntity extends fSerializer implements Cloneable {
+public abstract class fEntity extends fSerializer implements Cloneable{
 
     /*
      * Field a = EntityID
@@ -58,6 +61,7 @@ public abstract class fEntity extends fSerializer implements Cloneable {
     
     private Location location;
     private DefaultKey<String> customName = new DefaultKey<String>("");
+    private NBTTagCompound customNBT = new NBTTagCompound();
     protected DefaultKey<Boolean> fire = new DefaultKey<Boolean>(false), nameVisible = new DefaultKey<Boolean>(false), isPlayed = new DefaultKey<Boolean>(false);
     protected DefaultKey<Boolean> glowing = new DefaultKey<Boolean>(false), invisible = new DefaultKey<Boolean>(false), gravity = new DefaultKey<Boolean>(false);
     //protected DefaultKey<BoundingBox> boundingBox = new DefaultKey<BoundingBox>(new BoundingBox(0, 0, 0, 0, 0, 0));
@@ -493,6 +497,10 @@ public abstract class fEntity extends fSerializer implements Cloneable {
         	this.setLocation(location);
         });
         
+        metadata.getCompound("customnbt", NBTTagCompound.class, compound -> {
+        	this.customNBT.cloneFrom(compound);
+        });
+        
         readAdditionalSaveData(metadata);
     }
     
@@ -503,6 +511,7 @@ public abstract class fEntity extends fSerializer implements Cloneable {
         if(!this.fire.isDefault()) setMetadata("Fire", this.isFire());
         if(!this.glowing.isDefault()) setMetadata("Glowing", this.isGlowing());
         if(!this.invisible.isDefault()) setMetadata("Invisible", this.isInvisible());
+        if(!this.getCustomNBT().isEmpty()) setMetadata("customnbt", getCustomNBT());
         setMetadata(this.getLocation());
         writeAdditionalSaveData();
         return this.getNBTField();
@@ -530,4 +539,8 @@ public abstract class fEntity extends fSerializer implements Cloneable {
     		toCopy.loadMetadata(this.getMetaData());
     	}
     }
+
+	public NBTTagCompound getCustomNBT() {
+		return customNBT;
+	}
 }

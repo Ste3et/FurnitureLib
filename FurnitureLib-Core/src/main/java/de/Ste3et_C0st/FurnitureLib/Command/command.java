@@ -19,15 +19,22 @@ import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.plugin.Plugin;
+import org.bukkit.scheduler.BukkitRunnable;
+
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.SchematicLoader.Events.ProjectClickEvent;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.BoundingBox;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.LanguageManager;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.SchedularHelper;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.StringTranslator;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.cache.DiceOfflinePlayer;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
+import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
+import de.Ste3et_C0st.FurnitureLib.main.Type.BodyPart;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
+import de.Ste3et_C0st.FurnitureLib.main.entity.fArmorStand;
+import de.Ste3et_C0st.FurnitureLib.main.entity.fBlock_display;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fDisplay;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fInteraction;
@@ -113,8 +120,40 @@ public class command implements CommandExecutor, Listener{
 				
 //				if(stand instanceof fSize) {
 //					fSize size = fSize.class.cast(stand);
-//					size.getBoundingBox().shift(stand.getLocation()).debugParticle(p.getWorld());
-//					System.out.println(size.getBoundingBox());
+//					final BoundingBox boundingBox = size.getBoundingBox().shift(stand.getLocation());
+//					final ObjectID objectID = e.getID();
+//					
+//					if(stand instanceof fBlock_display) {
+//						new BukkitRunnable() {
+//							@Override
+//							public void run() {
+//								if(objectID.getPacketList().isEmpty() == false) {
+//									boundingBox.debugParticle(p.getWorld());
+//								}else {
+//									this.cancel();
+//								}
+//							}
+//						}.runTaskTimer(lib, 0, 5);
+//						
+//						System.out.println(boundingBox.toString());
+//					}
+//				}
+//				
+//				if(stand instanceof fArmorStand) {
+//					final ObjectID objectID = e.getID();
+//					new BukkitRunnable() {
+//						@Override
+//						public void run() {
+//							if(objectID.getPacketList().isEmpty() == false) {
+//								fArmorStand armorStand = (fArmorStand) stand;
+//								armorStand.getTipLocation(BodyPart.RIGHT_ARM).ifPresent(box -> {
+//									box.debugParticle(p.getWorld());
+//								});
+//							}else {
+//								this.cancel();
+//							}
+//						}
+//					}.runTaskTimer(lib, 0, 5);;
 //				}
 			}
 			

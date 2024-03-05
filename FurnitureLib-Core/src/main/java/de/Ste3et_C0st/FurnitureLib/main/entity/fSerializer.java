@@ -5,6 +5,7 @@ import com.comphenix.protocol.wrappers.EnumWrappers.ItemSlot;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.Registry;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
 import de.Ste3et_C0st.FurnitureLib.NBT.CraftItemStack;
+import de.Ste3et_C0st.FurnitureLib.NBT.NBTBase;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTCompressedStreamTools;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
@@ -68,6 +69,10 @@ public abstract class fSerializer extends fProtocol {
 
     protected void setMetadata(String field, int[] value) {
         metadata.setIntArray(field, value);
+    }
+    
+    protected void setMetadata(String field, NBTBase nbtBase) {
+    	metadata.set(field, nbtBase);
     }
 
     protected void setMetadata(Location value) {

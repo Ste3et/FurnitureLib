@@ -87,6 +87,14 @@ public class NBTTagCompound extends NBTBase implements Cloneable {
 
         return nbttagcompound;
     }
+    
+    public void cloneFrom(NBTTagCompound source) {
+    	Iterator iterator = source.map.keySet().iterator();
+    	while (iterator.hasNext()) {
+          String s = (String) iterator.next();
+          this.set(s, ((NBTBase) this.map.get(s)).clone());
+        }
+    }
 
     @Override
     public boolean equals(Object object) {

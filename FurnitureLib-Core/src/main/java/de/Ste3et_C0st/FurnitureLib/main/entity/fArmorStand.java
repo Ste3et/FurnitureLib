@@ -20,8 +20,11 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.util.EulerAngle;
+import org.bukkit.util.Vector;
+
 import java.util.HashMap;
 import java.util.Objects;
+import java.util.Optional;
 
 public class fArmorStand extends fContainerEntity implements SizeableEntity, Interactable{
 
@@ -288,4 +291,58 @@ public class fArmorStand extends fContainerEntity implements SizeableEntity, Int
 	public boolean canInteractWith() {
 		return this.isMarker();
 	}
+	
+//	public Optional<BoundingBox> getTipLocation(BodyPart bodyPart) {
+//		final Location entityLocation = this.getLocation().clone();
+//		entityLocation.setYaw(this.getLocation().getYaw() + 90);
+//		final Vector direction = entityLocation.getDirection();
+//		final EulerAngle eulerAngle = this.getPose(bodyPart);
+//		
+//		entityLocation.setX(entityLocation.getX() + 5f / 16f * direction.getX());
+//		entityLocation.setY(entityLocation.getY() + 22f / 16f);
+//		entityLocation.setZ(entityLocation.getZ() + 5f / 16f * direction.getZ());
+//        Vector armDir = getDirection(eulerAngle.getY(), eulerAngle.getX(), -eulerAngle.getZ());
+//        armDir = rotateAroundAxisY(armDir, Math.toRadians(entityLocation.getYaw()-90f));
+//        entityLocation.setX(entityLocation.getX() + 10f / 16f * armDir.getX());
+//        entityLocation.setY(entityLocation.getY() + 10f / 16f * armDir.getY());
+//        entityLocation.setZ(entityLocation.getZ() + 10f / 16f * armDir.getZ());
+//		
+//		return Optional.of(BoundingBox.of(entityLocation.clone().add(.25, .25, .25), entityLocation.clone().add(- .25, - .25, - .25)));
+//	}
+//	
+//    private static Vector getDirection(Double yaw, Double pitch, Double roll) {
+//        Vector v = new Vector(0, -1, 0);
+//        v = rotateAroundAxisX(v, pitch);
+//        v = rotateAroundAxisY(v, yaw);
+//        v = rotateAroundAxisZ(v, roll);
+//        return v;
+//    }
+//    
+//    private static Vector rotateAroundAxisX(Vector v, double angle) {
+//        double y, z, cos, sin;
+//        cos = Math.cos(angle);
+//        sin = Math.sin(angle);
+//        y = v.getY() * cos - v.getZ() * sin;
+//        z = v.getY() * sin + v.getZ() * cos;
+//        return v.setY(y).setZ(z);
+//    }
+//
+//    private static Vector rotateAroundAxisY(Vector v, double angle) {
+//        angle = -angle;
+//        double x, z, cos, sin;
+//        cos = Math.cos(angle);
+//        sin = Math.sin(angle);
+//        x = v.getX() * cos + v.getZ() * sin;
+//        z = v.getX() * -sin + v.getZ() * cos;
+//        return v.setX(x).setZ(z);
+//    }
+//
+//    private static Vector rotateAroundAxisZ(Vector v, double angle) {
+//        double x, y, cos, sin;
+//        cos = Math.cos(angle);
+//        sin = Math.sin(angle);
+//        x = v.getX() * cos - v.getY() * sin;
+//        y = v.getX() * sin + v.getY() * cos;
+//        return v.setX(x).setY(y);
+//    }
 }
