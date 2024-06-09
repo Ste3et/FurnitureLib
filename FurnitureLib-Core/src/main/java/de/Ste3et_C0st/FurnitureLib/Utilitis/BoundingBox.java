@@ -628,7 +628,7 @@ public class BoundingBox implements Cloneable, ConfigurationSerializable {
 	
 	public void spawnParticle(World world, Location location, Color color) {
 		final DustOptions option = new DustOptions(org.bukkit.Color.fromRGB(color.getRed(), color.getGreen(), color.getBlue()), 1f);
-		world.spawnParticle(Particle.REDSTONE, location, 1, option);
+		//world.spawnParticle(Particle.REDSTONE, location, 1, option);
 	}
 	
 	private List<Vector> showCuboid(Location aLoc, Location bLoc, double step) {

@@ -15,7 +15,7 @@ public class EntityID {
 	public static String version;
 	
 	static {
-		String name = Bukkit.getServer().getClass().getPackage().getName();
+		String name = Bukkit.getServer().getBukkitVersion();
 		version = name.substring(name.lastIndexOf('.') + 1) + ".";
 		try {
 			if(FurnitureLib.getVersionInt() < 17) {

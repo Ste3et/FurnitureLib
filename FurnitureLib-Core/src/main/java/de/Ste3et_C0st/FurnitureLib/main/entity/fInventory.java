@@ -141,6 +141,7 @@ public class fInventory implements Cloneable {
     }
 
     public ItemStack getSlot(String s) {
+    	s = s.replace("BODY", "CHEST");
         try {
             return getSlot(EquipmentSlot.valueOf(s).getSlot());
         } catch (Exception e) {

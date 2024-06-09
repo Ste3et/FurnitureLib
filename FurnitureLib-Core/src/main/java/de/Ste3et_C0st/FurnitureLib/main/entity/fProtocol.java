@@ -10,7 +10,6 @@ import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.ProtocolFields;
 
-import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 
 public class fProtocol {
@@ -18,7 +17,7 @@ public class fProtocol {
     private final static ProtocolManager manager = ProtocolLibrary.getProtocolManager();
     private final static ProtocolFields fields = FurnitureLib.getInstance().getField();
     private final PacketContainer container;
-    private final WrappedDataWatcher watcher = new WrappedDataWatcher();
+    private final WrappedDataWatcher watcher;
     
     private EntityType type;
     private ObjectID id;
@@ -33,6 +32,7 @@ public class fProtocol {
         this.type = type;
         this.container = new PacketContainer(packetType);
         this.container.getModifier().writeDefaults();
+        this.watcher = new WrappedDataWatcher();
     }
 
     public EntityType getEntityType() {

@@ -4,6 +4,7 @@ import de.Ste3et_C0st.FurnitureLib.NBT.ItemStackReader.ItemStackReader;
 import de.Ste3et_C0st.FurnitureLib.NBT.ItemStackReader.ItemStackV111_112;
 import de.Ste3et_C0st.FurnitureLib.NBT.ItemStackReader.ItemStackV113;
 import de.Ste3et_C0st.FurnitureLib.NBT.ItemStackReader.ItemStackV120_1;
+import de.Ste3et_C0st.FurnitureLib.NBT.ItemStackReader.ItemStackV120_5;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 
 import org.bukkit.inventory.ItemStack;
@@ -18,7 +19,9 @@ public class CraftItemStack {
 	private final static ItemStackReader READER;
 	
 	static {
-		if(FurnitureLib.getVersion(new MinecraftVersion("1.20.3"))) {
+		if(FurnitureLib.getVersion(new MinecraftVersion("1.20.5"))) {
+			READER = new ItemStackV120_5();
+		}else if(FurnitureLib.getVersion(new MinecraftVersion("1.20.3"))) {
 			READER = new ItemStackV120_1();
 		}else if(FurnitureLib.getVersionInt() < 13) {
 			READER = new ItemStackV111_112();

@@ -37,6 +37,7 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.comphenix.protocol.utility.MinecraftProtocolVersion;
 import com.comphenix.protocol.utility.MinecraftVersion;
 import com.google.common.collect.Lists;
 
@@ -91,13 +92,8 @@ public class FurnitureLib extends JavaPlugin {
     private static boolean folia = false, paper = false;
     
     static {
-    	 String bukkitVersion = getBukkitVersion();
-         if (bukkitVersion.contains("_")) {
-             String versionString = bukkitVersion.split("_")[1];
-             versionInt = Integer.parseInt(versionString);
-             newVersion = versionInt > 12;
-         }
-         
+    	 versionInt = Integer.parseInt(getBukkitVersion());
+    	 newVersion = versionInt > 12;
          folia = containsClass("io.papermc.paper.threadedregions.RegionizedServer");
          paper = containsClass("com.destroystokyo.paper.event.block.BlockDestroyEvent");
     }
@@ -120,7 +116,8 @@ public class FurnitureLib extends JavaPlugin {
     }
     
     public static String getBukkitVersion() {
-        return Bukkit.getServer().getClass().getPackage().getName().replace(".", ",").split(",")[3];
+    	//Bukkit.getServer().getClass().getPackage().getName()
+        return Bukkit.getServer().getBukkitVersion().replace(".", ",").split(",")[1];
     }
 
     public static FurnitureLib getInstance() {
@@ -566,5 +563,9 @@ public class FurnitureLib extends JavaPlugin {
 
 	public ServerFunction getServerFunction() {
 		return this.serverFunction;
+	}
+	
+	public static String getPacketVersion() {
+		return "";
 	}
 }

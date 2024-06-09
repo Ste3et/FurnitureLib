@@ -9,6 +9,8 @@ import org.bukkit.block.BlockFace;
 import org.bukkit.block.BlockState;
 import org.bukkit.util.EulerAngle;
 
+import com.comphenix.protocol.utility.MinecraftVersion;
+
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.List;
@@ -19,10 +21,12 @@ public class LocationUtil {
     public static final BlockFace[] axis = {BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST};
     public static final BlockFace[] radial = {BlockFace.NORTH, BlockFace.NORTH_EAST, BlockFace.EAST, BlockFace.SOUTH_EAST, BlockFace.SOUTH, BlockFace.SOUTH_WEST, BlockFace.WEST, BlockFace.NORTH_WEST};
     public static List<BlockFace> axisList = Arrays.asList(BlockFace.NORTH, BlockFace.EAST, BlockFace.SOUTH, BlockFace.WEST);
-
+    private static Particle restoneParticle = FurnitureLib.getVersion(new MinecraftVersion("1.20.5")) ? Particle.valueOf("DUST") : Particle.valueOf("REDSTONE");
+    
+    
     /* Check if the Furniture have enough space */
     public static void particleBlock(Block b) {
-        particleBlock(b, org.bukkit.Particle.REDSTONE, 1);
+        particleBlock(b, restoneParticle, 1);
     }
 
     public static void particleBlock(Block b, org.bukkit.Particle particleData, float value) {
