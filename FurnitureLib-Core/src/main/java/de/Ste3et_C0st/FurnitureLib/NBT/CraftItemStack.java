@@ -20,7 +20,17 @@ public class CraftItemStack {
 	
 	static {
 		if(FurnitureLib.getVersion(new MinecraftVersion("1.20.5"))) {
-			READER = new ItemStackV120_5();
+			if(FurnitureLib.isPaper()) {
+				ItemStackReader tempReader = null;
+				try {
+					tempReader = (ItemStackReader) Class.forName("de.Ste3et_C0st.FurnitureLib.NBT.ItemStackReader.ItemStack_Paper_V120_5").newInstance();
+				} catch (Exception e) {
+					e.printStackTrace();
+				}
+				READER = tempReader;
+			}else {
+				READER = new ItemStackV120_5();
+			}
 		}else if(FurnitureLib.getVersion(new MinecraftVersion("1.20.3"))) {
 			READER = new ItemStackV120_1();
 		}else if(FurnitureLib.getVersionInt() < 13) {
