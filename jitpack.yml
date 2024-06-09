@@ -1,2 +1,5 @@
 jdk:
   - openjdk21
+before_install:
+  - sdk install gradle 8.5
+  - sdk use gradle 8.5
