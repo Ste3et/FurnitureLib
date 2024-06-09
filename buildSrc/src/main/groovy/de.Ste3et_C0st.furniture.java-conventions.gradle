@@ -18,8 +18,6 @@ subprojects {
 }
 
 repositories {
-    mavenLocal()
-
     maven {
     	url "https://jitpack.io"
     }
@@ -87,6 +85,16 @@ allprojects {
 	tasks.withType(JavaCompile) {
 	    options.encoding = 'UTF-8'
 	}
+	
+	repositories {
+		mavenLocal()
+    }
+    
+    publishing {
+		repositories {
+			mavenLocal()
+	  	}
+	}
 }
 
 publishing {
@@ -98,6 +106,10 @@ publishing {
 			artifact "build/libs/${project.name}-${project.version}.jar"
 		}
 	}
+	
+	repositories {
+		mavenLocal()
+  	}
 }
 
 task copyJarToBin {

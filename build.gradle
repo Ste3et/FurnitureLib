@@ -26,6 +26,7 @@ task allJar(type: Jar, dependsOn: subprojects.assemble) {
       from subproject.configurations.archives.allArtifacts.files.collect {
          zipTree(it)
        }
+       //publishMavenPublicationToMavenLocal.dependsOn subproject.tasks.withType(Jar)
     }
 }
 
