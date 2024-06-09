@@ -5,8 +5,6 @@ import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Method;
-import java.util.stream.Stream;
-
 import org.bukkit.Bukkit;
 import org.bukkit.inventory.ItemStack;
 
