@@ -62,28 +62,3 @@ publishing {
 		mavenLocal()
   	}
 }
-
-/*task allJar(type: Jar, dependsOn: subprojects.assemble) {
-   archiveBaseName = project.name
-   version = project.version
-   subprojects.each { subproject -> 
-      from subproject.configurations.archives.allArtifacts.files.collect {
-         zipTree(it)
-       }
-       //publishMavenPublicationToMavenLocal.dependsOn subproject.tasks.withType(Jar)
-    }
-}
-
-artifacts {
-    archives allJar
-}*/
-
-/*task copyJarToBin {
-	copy {
-	    from "build/libs/${project.name}-${project.version}.jar"
-	    into "build/libs/"
-	    rename { String fileName ->
-        	fileName.replace("-$project.version", "")
-    	}
-	}
-}*/

@@ -43,3 +43,13 @@ subprojects.each {
 		evaluationDependsOn(subproject.path)
 	}
 }
+
+task copyJarToBin {
+	copy {
+	    from "build/libs/${project.name}-${project.version}.jar"
+	    into "build/libs/"
+	    rename { String fileName ->
+        	fileName.replace("-$project.version", "")
+    	}
+	}
+}
