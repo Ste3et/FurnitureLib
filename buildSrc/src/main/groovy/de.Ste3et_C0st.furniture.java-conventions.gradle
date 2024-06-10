@@ -6,7 +6,11 @@ import org.apache.tools.ant.filters.ReplaceTokens
 plugins {
     id 'java-library'
     id 'maven-publish'
+    id 'java'
 }
+
+group = "de.Ste3et_C0st.furniture"
+version = gradle.furnitureLibVersion
 
 subprojects {
 	apply plugin: 'java'
@@ -18,52 +22,14 @@ subprojects {
 }
 
 repositories {
-    maven {
-    	url "https://jitpack.io"
-    }
-    
-    maven {
-    	url "https://repo.papermc.io/repository/maven-public/"
-    }
-    
-    maven {
-    	url "https://oss.sonatype.org/content/groups/public/"
-    }
-    
-    maven {
-    	url "https://repo.dmulloy2.net/repository/public/"
-    }
-    
-    maven {
-    	url "https://repo.opencollab.dev/maven-snapshots/"
-    }
-    
-    maven {
-    	url "https://repo.maven.apache.org/maven2/"
-    }
-
-	maven {
-		url "https://hub.spigotmc.org/nexus/content/repositories/snapshots/"
-	}
-	
-	maven {
-        url "https://repo.extendedclip.com/content/repositories/placeholderapi/"
-    }
-}
-
-dependencies {
-
-}
-
-sourceSets {
-    main {
-         java {
-             srcDirs= ["src/main/java"]
-         }
-         resources {
-             srcDirs= ["src/main/resources"]
-         }
-    }
+    maven { url "https://jitpack.io" }
+    maven { url "https://repo.papermc.io/repository/maven-public/" }
+    maven { url "https://oss.sonatype.org/content/groups/public/" }
+    maven { url "https://repo.dmulloy2.net/repository/public/" }
+    maven { url "https://repo.opencollab.dev/maven-snapshots/" }
+    maven { url "https://repo.maven.apache.org/maven2/" }
+	maven { url "https://hub.spigotmc.org/nexus/content/repositories/snapshots/" }
+	maven { url "https://repo.extendedclip.com/content/repositories/placeholderapi/" }
 }
 
 processResources {
@@ -72,11 +38,6 @@ processResources {
     ]
 }
 
-tasks {
-   jar {
-	   enabled = false
-   }
-}
 
 allprojects {
     group = 'de.Ste3et_C0st.furniture'
@@ -84,16 +45,6 @@ allprojects {
     compileJava.options.encoding = 'UTF-8'
 	tasks.withType(JavaCompile) {
 	    options.encoding = 'UTF-8'
-	}
-	
-	repositories {
-		mavenLocal()
-    }
-    
-    publishing {
-		repositories {
-			mavenLocal()
-	  	}
 	}
 }
 
@@ -103,7 +54,7 @@ publishing {
 			groupId project.group
 			artifactId project.name
 			version project.version
-			artifact "build/libs/${project.name}-${project.version}.jar"
+			from components.java
 		}
 	}
 	
@@ -112,7 +63,22 @@ publishing {
   	}
 }
 
-task copyJarToBin {
+/*task allJar(type: Jar, dependsOn: subprojects.assemble) {
+   archiveBaseName = project.name
+   version = project.version
+   subprojects.each { subproject -> 
+      from subproject.configurations.archives.allArtifacts.files.collect {
+         zipTree(it)
+       }
+       //publishMavenPublicationToMavenLocal.dependsOn subproject.tasks.withType(Jar)
+    }
+}
+
+artifacts {
+    archives allJar
+}*/
+
+/*task copyJarToBin {
 	copy {
 	    from "build/libs/${project.name}-${project.version}.jar"
 	    into "build/libs/"
@@ -120,4 +86,4 @@ task copyJarToBin {
         	fileName.replace("-$project.version", "")
     	}
 	}
-}
+}*/
