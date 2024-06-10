@@ -560,6 +560,10 @@ public class FurnitureLib extends JavaPlugin {
     public static boolean getVersion(MinecraftVersion minecraftVersion) {
     	return minecraftVersion.atOrAbove();
     }
+    
+    public static boolean getVersion(String str) {
+    	return FurnitureLib.getVersion(str);
+    }
 
 	public ServerFunction getServerFunction() {
 		return this.serverFunction;
