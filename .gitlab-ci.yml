@@ -10,7 +10,6 @@ build:
   stage: build
   script: 
     - gradle -PsnapshotVersion=$CI_COMMIT_SHORT_SHA build
-    - gradle copyJarToBin
   artifacts:
     paths:
       - build/libs/FurnitureLib.jar

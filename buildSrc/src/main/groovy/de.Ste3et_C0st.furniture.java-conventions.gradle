@@ -34,7 +34,7 @@ repositories {
 
 processResources {
     filter ReplaceTokens, tokens: [
-       "version": project.property("version") + (project.hasProperty('snapshotVersion') ? "-" + project.getProperty('snapshotVersion') : "" )
+       "version": project.property("version") + (project.hasProperty('snapshotVersion') ? project.getProperty('snapshotVersion') : "" )
     ]
 }
 
