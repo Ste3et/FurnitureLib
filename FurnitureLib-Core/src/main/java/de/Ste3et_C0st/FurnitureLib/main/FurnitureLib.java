@@ -37,6 +37,8 @@ import org.bukkit.plugin.Plugin;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
+import com.comphenix.protocol.ProtocolLib;
+import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.utility.MinecraftProtocolVersion;
 import com.comphenix.protocol.utility.MinecraftVersion;
 import com.google.common.collect.Lists;
@@ -116,8 +118,7 @@ public class FurnitureLib extends JavaPlugin {
     }
     
     public static String getBukkitVersion() {
-    	//Bukkit.getServer().getClass().getPackage().getName()
-        return Bukkit.getServer().getBukkitVersion().replace(".", ",").split(",")[1];
+        return Bukkit.getServer().getBukkitVersion().replace(".", ",").replace("-", ",").split(",")[1];
     }
 
     public static FurnitureLib getInstance() {
@@ -303,7 +304,7 @@ public class FurnitureLib extends JavaPlugin {
     	
     	this.furnitureConfig = new FurnitureConfig(instance);
     	this.furnitureConfig.initLanguage();
-        if (getVersionInt() < 12 || getVersionInt() > 20) {
+        if (getVersionInt() < 12 || getVersionInt() > 21) {
             this.disableFurnitureLib(Arrays.asList("<red>FurnitureLib only works on Spigot 1.12 - 1.20"));
             return;
         }

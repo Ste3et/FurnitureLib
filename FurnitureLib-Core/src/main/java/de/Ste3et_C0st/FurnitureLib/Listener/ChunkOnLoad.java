@@ -70,6 +70,7 @@ public class ChunkOnLoad implements Listener {
     		return meta.getPersistentDataContainer().getOrDefault(key, org.bukkit.persistence.PersistentDataType.STRING, null);
     	}else if (stack.getItemMeta().hasLore()) {
     		String projectString = HiddenStringUtils.extractHiddenString(stack.getItemMeta().getLore().get(0));
+    		System.out.println(projectString);
             if (projectString != null) return projectString;
     	}
     	return null;

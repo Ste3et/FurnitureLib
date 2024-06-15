@@ -15,8 +15,14 @@ public class EntityID {
 	public static String version;
 	
 	static {
-		String name = Bukkit.getServer().getBukkitVersion();
-		version = name.substring(name.lastIndexOf('.') + 1) + ".";
+		if(FurnitureLib.isVersionOrAbove("1.20.5")) {
+			String name = Bukkit.getServer().getBukkitVersion();
+			version = name.substring(name.lastIndexOf('.') + 1) + ".";
+		}else {
+			String name = Bukkit.getServer().getClass().getPackage().getName();
+			version = name.substring(name.lastIndexOf('.') + 1) + ".";
+		}
+		
 		try {
 			if(FurnitureLib.getVersionInt() < 17) {
 				entityClass = Class.forName("net.minecraft.server." + getVersion() + "Entity");

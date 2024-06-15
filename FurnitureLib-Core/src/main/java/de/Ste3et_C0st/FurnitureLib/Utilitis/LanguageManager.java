@@ -227,7 +227,7 @@ public class LanguageManager {
 
     public void addText(YamlConfiguration configuration) {
         try {
-        	final File lang = new File(getLangFolder(), this.lang);
+        	final File lang = new File(getLangFolder(), this.lang + ".yml");
             final YamlConfiguration conf = YamlConfiguration.loadConfiguration(lang);
             conf.addDefaults(configuration);
             conf.options().copyDefaults(true);
