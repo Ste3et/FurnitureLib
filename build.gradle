@@ -33,15 +33,11 @@ tasks {
    }
 }
 
-ext {
-	snapshot = findProperty('snapshotVersion') ?: gradle.ext.furnitureLibVersion
-}
-
 shadowJar {
    mergeServiceFiles()
    archiveClassifier.set('')
    archiveBaseName.set("${project.name}")
-   archiveVersion.set("${project.version}${project.ext.snapshotVersion}")
+   
    dependencies {
 	   exclude(dependency('com.zaxxer:.*'))
 	   exclude(dependency('net.kyori:.*'))
