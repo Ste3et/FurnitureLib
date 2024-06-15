@@ -9,10 +9,10 @@ before_script:
 build:
   stage: build
   script: 
-    - gradle -PsnapshotVersion=$CI_COMMIT_SHORT_SHA build
+    - gradle -PsnapshotVersion=-$CI_COMMIT_SHORT_SHA build
   artifacts:
     paths:
-      - build/libs/FurnitureLib.jar
+      - build/libs/*.jar
     expire_in: 1 week
   only:
     - master
