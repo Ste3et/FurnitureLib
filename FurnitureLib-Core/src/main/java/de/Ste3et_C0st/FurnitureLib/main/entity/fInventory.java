@@ -141,7 +141,7 @@ public class fInventory implements Cloneable {
     }
 
     public ItemStack getSlot(String s) {
-    	s = s.replace("BODY", "CHEST");
+    	if(FurnitureLib.isVersionOrAbove("1.20.5")) s = s.replace("BODY", "CHEST");
         try {
             return getSlot(EquipmentSlot.valueOf(s).getSlot());
         } catch (Exception e) {
@@ -176,6 +176,7 @@ public class fInventory implements Cloneable {
     public void setSlot(String s, ItemStack item) {
         if (item == null) item = new ItemStack(Material.AIR, 1);
         try {
+        	if(FurnitureLib.isVersionOrAbove("1.20.5")) s = s.replace("BODY", "CHEST");
             setSlot(EquipmentSlot.valueOf(s).getSlot(), item);
         } catch (Exception e) {
             e.printStackTrace();
@@ -211,7 +212,7 @@ public class fInventory implements Cloneable {
         LEGS(3, ItemSlot.LEGS),
         CHEST(4, ItemSlot.CHEST),
         HEAD(5, ItemSlot.HEAD);
-
+    	//No enum constant de.Ste3et_C0st.FurnitureLib.main.entity.fInventory.EquipmentSlot.BODY
         private int slot;
         private ItemSlot itemSlot;
         
