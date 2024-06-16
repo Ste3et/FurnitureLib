@@ -25,7 +25,7 @@ dependencies {
 
 tasks {
    jar {
-	   enabled = false
+	   enabled = true
    }
    
    assemble{
@@ -36,7 +36,6 @@ tasks {
 shadowJar {
    mergeServiceFiles()
    archiveClassifier.set('')
-   archiveBaseName.set("${project.name}")
    
    dependencies {
 	   exclude(dependency('com.zaxxer:.*'))
@@ -47,5 +46,15 @@ shadowJar {
 subprojects.each {
 	subproject -> {
 		evaluationDependsOn(subproject.path)
+	}
+}
+
+task copyJarToBin {
+	copy {
+	    from "build/libs/${project.name}-${project.version}.jar"
+	    into "build/libs/"
+	    rename { String fileName ->
+        	fileName.replace("-$project.version", "")
+    	}
 	}
 }

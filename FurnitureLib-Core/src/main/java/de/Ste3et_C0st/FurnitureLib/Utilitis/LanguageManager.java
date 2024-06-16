@@ -265,7 +265,8 @@ public class LanguageManager {
 	public static String serializeLegacyColors(String input) {
 		if(Objects.isNull(input)) return "";
 		if(input.isEmpty()) return "";
-		String output = ChatColor.translateAlternateColorCodes('&', input).replaceAll("§m", "<st>").replaceAll("§o", "<i>").replaceAll("§n", "<u>").replaceAll("§l", "<b>").replaceAll("§k", "<obf>");
+		
+		String output = ChatColor.translateAlternateColorCodes('&', input).replaceAll("§r", "<reset>").replaceAll("§m", "<st>").replaceAll("§o", "<i>").replaceAll("§n", "<u>").replaceAll("§l", "<b>").replaceAll("§k", "<obf>");
 		Matcher matcher = STRIP_COLOR_PATTERN.matcher(output);
 		
         while (matcher.find()) {

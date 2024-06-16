@@ -1,5 +1,6 @@
 package de.Ste3et_C0st.FurnitureLib.Utilitis;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.stream.Collectors;
@@ -32,7 +33,11 @@ public class SpigotFunctions implements ServerFunction{
 
 	@Override
 	public ItemStack lore(ItemStack stack, List<BaseComponent[]> component) {
-		List<String> legacyLore = component.stream().map(BungeeComponentSerializer.get()::deserialize).map(this::convertToLegacy).collect(Collectors.toList());
+		List<String> legacyLore = new ArrayList<String>();
+		if(stack.hasItemMeta() && stack.getItemMeta().hasLore()) {
+			legacyLore.addAll(stack.getItemMeta().getLore());
+		}
+		legacyLore.addAll(component.stream().map(BungeeComponentSerializer.get()::deserialize).map(this::convertToLegacy).collect(Collectors.toList()));
 		ItemMeta meta = stack.getItemMeta();
 		meta.setLore(legacyLore);
 		stack.setItemMeta(meta);

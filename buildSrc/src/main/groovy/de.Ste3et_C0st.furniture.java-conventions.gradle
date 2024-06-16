@@ -10,6 +10,7 @@ plugins {
 }
 
 group = "de.Ste3et_C0st.furniture"
+version = gradle.furnitureLibVersion
 
 subprojects {
 	apply plugin: 'java'
@@ -33,13 +34,14 @@ repositories {
 
 processResources {
     filter ReplaceTokens, tokens: [
-       "version": project.property("version")
+       "version": project.property("version") + (project.hasProperty('snapshotVersion') ? "-" + project.getProperty('snapshotVersion') : "" )
     ]
 }
 
 
 allprojects {
     group = 'de.Ste3et_C0st.furniture'
+    version = gradle.furnitureLibVersion
     compileJava.options.encoding = 'UTF-8'
 	tasks.withType(JavaCompile) {
 	    options.encoding = 'UTF-8'

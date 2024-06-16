@@ -273,15 +273,23 @@ public class CraftingFile {
 
         if(FurnitureLib.getVersionInt() > 13) {
         	itemMeta.getPersistentDataContainer().set(new org.bukkit.NamespacedKey(FurnitureLib.getInstance(), "model"), PersistentDataType.STRING, getSystemID());
-		}else {
-			loreText.add(HiddenStringUtils.encodeString(getSystemID()));
 		}
         
         if(configuration.contains(header + ".itemLore") && configuration.isList(header + ".itemLore")) {
-        	final List<BaseComponent[]> componentList = Lists.newArrayList();
         	configuration.getStringList(header + ".itemLore").stream().forEach(loreString -> loreText.add("<i:false>" + loreString));
+        }
+        
+        if(loreText.isEmpty() == false) {
+        	final List<BaseComponent[]> componentList = Lists.newArrayList();
         	loreText.stream().map(LanguageManager.getInstance()::stringConvert).map(BungeeComponentSerializer.get()::serialize).forEach(componentList::add);
         	FurnitureLib.getInstance().getServerFunction().setLore(itemMeta, componentList);
+        }
+        
+        if(FurnitureLib.getVersionInt() < 14) {
+        	List<String> legacyLores = new ArrayList<>();
+        	legacyLores.add(HiddenStringUtils.encodeString(getSystemID()));
+        	if(itemMeta.hasLore()) legacyLores.addAll(itemMeta.getLore());
+        	itemMeta.setLore(legacyLores);
         }
         
         if (configuration.getBoolean(header + ".unbreakable", false)) itemMeta.setUnbreakable(true);
