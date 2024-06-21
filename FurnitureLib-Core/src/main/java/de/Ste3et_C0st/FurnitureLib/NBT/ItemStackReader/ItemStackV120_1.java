@@ -22,7 +22,7 @@ public class ItemStackV120_1 extends ItemStackReader{
 			a = clazz_nms_item.getMethod("a", clazz_nms_nbt);
 			asBukkitCopy = clazz_obc_CraftItemStack.getMethod("asBukkitCopy", clazz_nms_item);
 			clazz_nbttools_method_a_input = clazz_nbttools.getMethod("a", InputStream.class, nmsNBTReadLimiter);
-			method_save = clazz_nms_item.getMethod("save", clazz_nms_nbt);
+			method_save = clazz_nms_item.getMethod("b", clazz_nms_nbt);
 		}catch(Exception ex) {
 			ex.printStackTrace();
 		}
