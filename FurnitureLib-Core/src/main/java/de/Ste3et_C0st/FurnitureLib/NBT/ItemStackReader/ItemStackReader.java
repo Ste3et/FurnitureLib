@@ -25,14 +25,17 @@ public abstract class ItemStackReader {
 				asNMSCopy = clazz_obc_CraftItemStack.getMethod("asNMSCopy", org.bukkit.inventory.ItemStack.class);
 				clazz_nms_item = Class.forName(getItemStackClass());
 				
+				clazz_nms_nbt  = Class.forName(getNbtFolder() + ".NBTTagCompound");
+				clazz_nbttools = Class.forName(getNbtFolder() +  ".NBTCompressedStreamTools");
 				
-				if(FurnitureLib.isPaper()) {
-					clazz_nms_nbt  = Class.forName(getNbtFolder() + ".CompoundTag");
-					clazz_nbttools = Class.forName(getNbtFolder() +  ".NbtIo");
-				}else {
-					clazz_nms_nbt  = Class.forName(getNbtFolder() + ".NBTTagCompound");
-					clazz_nbttools = Class.forName(getNbtFolder() +  ".NBTCompressedStreamTools");
-				}
+				clazz_nbttools_method_a_output = clazz_nbttools.getMethod("a", clazz_nms_nbt, OutputStream.class);
+			}else {
+				clazz_obc_CraftItemStack = Class.forName(InternalClassReader.OBC + ".inventory.CraftItemStack");
+				asNMSCopy = clazz_obc_CraftItemStack.getMethod("asNMSCopy", org.bukkit.inventory.ItemStack.class);
+				clazz_nms_item = Class.forName(getItemStackClass());
+				
+				clazz_nms_nbt  = Class.forName(getNbtFolder() + ".CompoundTag");
+				clazz_nbttools = Class.forName(getNbtFolder() +  ".NbtIo");
 				
 				clazz_nbttools_method_a_output = clazz_nbttools.getMethod("a", clazz_nms_nbt, OutputStream.class);
 			}
