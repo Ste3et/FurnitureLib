@@ -18,7 +18,7 @@ import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 
 public class SkullMetaPatcher {
 
-	private static boolean needPatcher = FurnitureLib.isPaper() == false;
+	private static boolean needPatcher = FurnitureLib.isVersionOrAbove("1.20.4") ? true : FurnitureLib.isPaper() == false;
 	
 	public static ItemStack patchStack(ItemStack stack) {
 		if(needPatcher == false) return stack;
