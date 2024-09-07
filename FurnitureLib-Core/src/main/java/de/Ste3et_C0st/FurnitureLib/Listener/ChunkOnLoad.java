@@ -111,7 +111,6 @@ public class ChunkOnLoad implements Listener {
     		if(event.hasBlock() == false) {
     			return;
     		}
-    		
     		final BlockFace blockFace = event.getBlockFace();
     		final Block block = event.getClickedBlock();
     		final Location location = block.getLocation();
@@ -137,7 +136,6 @@ public class ChunkOnLoad implements Listener {
     		this.eventList.add(player);
     		
     		location.setYaw(FurnitureLib.getInstance().getLocationUtil().FaceToYaw(LocationUtil.yawToFace(player.getLocation().getYaw())));
-    		
     		FurnitureItemEvent itemEvent = new FurnitureItemEvent(player, stack, project, location, blockFace);
 			FurnitureLib.debug("FurnitureLib -> Place Furniture Start (" + projectName + ").");
 			Bukkit.getPluginManager().callEvent(itemEvent);
