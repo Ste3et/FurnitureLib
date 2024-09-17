@@ -39,7 +39,7 @@ dependencies {
     compileOnly 'com.gitlab.Ste3et_C0st.protectionlib:Core:v1.4'
     compileOnly 'com.github.BeYkeRYkt.LightAPI:lightapi-bukkit-common:5.1.0-Bukkit'
     compileOnly 'com.github.BeYkeRYkt.LightAPI:lightapi-bukkit-backward-support:5.1.0-Bukkit'
-    compileOnly 'me.clip:placeholderapi:2.11.2'
+    compileOnly 'me.clip:placeholderapi:2.11.6'
     
     //temp local depenceys
     compileOnly files('tempDependenys/ProtocolLib.jar')
