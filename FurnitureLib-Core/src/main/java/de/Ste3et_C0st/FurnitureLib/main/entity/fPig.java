@@ -1,5 +1,6 @@
 package de.Ste3et_C0st.FurnitureLib.main.entity;
 
+import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.Registry;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
@@ -51,5 +52,10 @@ public class fPig extends fContainerEntity{
 	@Override
 	protected void writeAdditionalSaveData() {
 		setMetadata("Saddle", saddle);
+	}
+	
+	@Override
+	protected PacketContainer additionalData() {
+		return null;
 	}
 }

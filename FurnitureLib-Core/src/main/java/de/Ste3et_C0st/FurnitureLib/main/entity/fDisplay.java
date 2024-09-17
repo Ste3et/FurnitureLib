@@ -15,6 +15,7 @@ import org.joml.AxisAngle4f;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
+import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.utility.MinecraftVersion;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.Registry;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
@@ -370,4 +371,7 @@ public abstract class fDisplay extends fSize implements SizeableEntity{
 	    final Vector3f scale = this.getScale();
 		return BoundingBox.of(new Vector(0 , 0, 0), new Vector(scale.x, scale.y, scale.z));
 	}
+	
+	@Override
+	protected PacketContainer additionalData() {return null;}
 }

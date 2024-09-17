@@ -1,8 +1,15 @@
 package de.Ste3et_C0st.FurnitureLib.main.entity;
 
+import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.events.PacketContainer;
+import com.comphenix.protocol.utility.MinecraftVersion;
 import com.comphenix.protocol.wrappers.Vector3F;
+import com.comphenix.protocol.wrappers.WrappedAttribute;
+import com.comphenix.protocol.wrappers.WrappedAttributeModifier;
+import com.comphenix.protocol.wrappers.WrappedAttributeModifier.Operation;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.Registry;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
+import com.google.common.collect.Lists;
 
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagList;
@@ -19,12 +26,11 @@ import org.bukkit.Material;
 import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
+import org.bukkit.entity.Player;
 import org.bukkit.util.EulerAngle;
-import org.bukkit.util.Vector;
-
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Objects;
-import java.util.Optional;
 
 public class fArmorStand extends fContainerEntity implements SizeableEntity, Interactable{
 
@@ -32,13 +38,15 @@ public class fArmorStand extends fContainerEntity implements SizeableEntity, Int
     private int armorstandID;
     
     private DefaultKey<Boolean> arms = new DefaultKey<Boolean>(false), small = new DefaultKey<Boolean>(false), marker = new DefaultKey<Boolean>(true), basePlate = new DefaultKey<Boolean>(true);
-    
+    private final PacketContainer attribute = new PacketContainer(PacketType.Play.Server.UPDATE_ATTRIBUTES);
     private HashMap<BodyPart, DefaultKey<EulerAngle>> angle = new HashMap<Type.BodyPart, DefaultKey<EulerAngle>>();
     private final DefaultKey<EntitySize> entitySize = new DefaultKey<EntitySize>(new EntitySize(0.5, 1.975));
+    protected WrappedAttribute.Builder scaleAttribute = WrappedAttribute.newBuilder().attributeKey("generic.scale").baseValue(0D);
     
     @SuppressWarnings("deprecation")
     public fArmorStand(Location loc, ObjectID obj) {
         super(loc, type, FurnitureLib.isNewVersion() ? 1 : type.getTypeId(), obj);
+        this.attribute.getIntegers().write(0, this.getEntityID());
         angle.put(BodyPart.BODY, new DefaultKey<EulerAngle>(BodyPart.BODY.getDefAngle()));
         angle.put(BodyPart.HEAD, new DefaultKey<EulerAngle>(BodyPart.HEAD.getDefAngle()));
         angle.put(BodyPart.LEFT_ARM, new DefaultKey<EulerAngle>(BodyPart.LEFT_ARM.getDefAngle()));
@@ -197,7 +205,9 @@ public class fArmorStand extends fContainerEntity implements SizeableEntity, Int
     	if(!this.gravity.isDefault()) setMetadata("Gravity", this.hasGravity());
     	if(this.marker.isDefault()) setMetadata("Marker", this.marker.getOrDefault());
     	if(!this.small.isDefault()) setMetadata("Small", this.isSmall());
-    	
+        if(this.scaleAttribute.build().getBaseValue() != this.scaleAttribute.build().getFinalValue()) {
+       	 setMetadata("generic_aScale", this.scaleAttribute.build().getFinalValue());
+       }
     	NBTTagCompound eulerAngle = new NBTTagCompound();
     	this.angle.entrySet().stream().filter(entry -> !entry.getValue().isDefault()).forEach(entry -> {
     		 EulerAngle angle = entry.getValue().getValue();
@@ -215,6 +225,7 @@ public class fArmorStand extends fContainerEntity implements SizeableEntity, Int
 	@Override
 	protected void readAdditionalSaveData(NBTTagCompound metadata) {
     	super.readInventorySaveData(metadata);
+    	this.setScale(metadata.getDouble("generic_aScale", 1d));
         if(metadata.hasKeyOfType("EulerAngle", 10)) {
         	NBTTagCompound euler = metadata.getCompound("EulerAngle");
         	euler.c().stream().forEach(entry -> {
@@ -292,6 +303,8 @@ public class fArmorStand extends fContainerEntity implements SizeableEntity, Int
 		return this.isMarker();
 	}
 	
+	private void sendMetadata(Player player) {}
+	
 //	public Optional<BoundingBox> getTipLocation(BodyPart bodyPart) {
 //		final Location entityLocation = this.getLocation().clone();
 //		entityLocation.setYaw(this.getLocation().getYaw() + 90);
@@ -345,4 +358,25 @@ public class fArmorStand extends fContainerEntity implements SizeableEntity, Int
 //        y = v.getX() * sin + v.getY() * cos;
 //        return v.setX(x).setY(y);
 //    }
+	
+	
+	public void setScale(double scale) {
+		if(MinecraftVersion.getCurrentVersion().isAtLeast(new MinecraftVersion("1.19.5"))) {
+			scaleAttribute.modifiers(Arrays.asList(WrappedAttributeModifier.newBuilder().operation(Operation.ADD_NUMBER).amount(scale).build()));
+    	}
+	}
+	
+	public double getAttributeScale() {
+		return this.scaleAttribute.build().getFinalValue();
+	}
+
+	@Override
+	protected PacketContainer additionalData() {
+		if(getAttributeScale() != 0D) {
+			this.attribute.getAttributeCollectionModifier().write(0, Arrays.asList(this.scaleAttribute.build()));
+		}else {
+			this.attribute.getAttributeCollectionModifier().write(0, Lists.newArrayList());
+		}
+		return this.attribute;
+	}
 }

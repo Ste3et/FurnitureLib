@@ -71,4 +71,9 @@ public class fGiant extends fContainerEntity{
 
 	@Override
 	protected void writeAdditionalSaveData() {}
+	
+	@Override
+	protected PacketContainer additionalData() {
+		return null;
+	}
 }

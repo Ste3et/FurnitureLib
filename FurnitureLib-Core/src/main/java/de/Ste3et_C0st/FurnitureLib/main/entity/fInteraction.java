@@ -7,6 +7,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Interaction;
 import org.bukkit.util.Vector;
 
+import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.Registry;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
@@ -85,5 +86,10 @@ public class fInteraction extends fSize implements Interactable{
 	public BoundingBox getBoundingBox() {
 		final double width = getWidth() / 2;
 		return BoundingBox.of(new Vector(-width, 0,-width), new Vector(width, getHeight(), width));
+	}
+	
+	@Override
+	protected PacketContainer additionalData() {
+		return null;
 	}
 }

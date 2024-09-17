@@ -1,6 +1,7 @@
 package de.Ste3et_C0st.FurnitureLib.Utilitis;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.Method;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -52,16 +53,21 @@ public class SkullMetaPatcher {
         					NBTTagCompound texturestring = textureCompound.get(0);
         					String base64String = texturestring.getString("Value");
         					WrappedGameProfile gameProfile = makeProfile(base64String);
-        					
         					try {
-        					    Field profileField = headMeta.getClass().getDeclaredField("profile");
-        					    profileField.setAccessible(true);
-        					    profileField.set(headMeta, gameProfile.getHandle());
-        					} catch (NoSuchFieldException | SecurityException e) {
+        						if(Class.forName("net.minecraft.world.item.component.ResolvableProfile") == null) {
+        							Field profileField = headMeta.getClass().getDeclaredField("profile"); //1.21.1 -> ResolvableProfile | com.mojang.authlib.GameProfile
+             					    profileField.setAccessible(true);
+             					    profileField.set(headMeta, gameProfile.getHandle());
+        						}else {
+        							Object object = Class.forName("net.minecraft.world.item.component.ResolvableProfile").getConstructor(gameProfile.getHandleType()).newInstance(gameProfile.getHandle());
+        							Method method = headMeta.getClass().getDeclaredMethod("setProfile", object.getClass());
+        							method.setAccessible(true);
+        							method.invoke(headMeta, object);
+        						}
+        					   
+        					} catch (Exception e) {
         					    e.printStackTrace();
-        					} catch (IllegalArgumentException | IllegalAccessException e) {
-        					    e.printStackTrace();
-        					} finally {
+        					}  finally {
         						stack.setItemMeta(headMeta);
         					}
         				}

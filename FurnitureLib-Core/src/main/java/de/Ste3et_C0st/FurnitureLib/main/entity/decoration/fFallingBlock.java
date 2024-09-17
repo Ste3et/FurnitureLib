@@ -10,6 +10,7 @@ import org.bukkit.entity.EntityType;
 import org.bukkit.entity.FallingBlock;
 import org.bukkit.persistence.PersistentDataContainer;
 
+import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.WrappedBlockData;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.Registry;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
@@ -55,5 +56,10 @@ public class fFallingBlock extends fEntity{
 	@Override
 	protected void writeAdditionalSaveData() {
 		if(!this.blockDefaultKey.isDefault()) setMetadata("block_state", this.blockDefaultKey.getOrDefault().getAsString());
+	}
+	
+	@Override
+	protected PacketContainer additionalData() {
+		return null;
 	}
 }

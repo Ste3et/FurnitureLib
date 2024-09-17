@@ -1,5 +1,6 @@
 package de.Ste3et_C0st.FurnitureLib.main.entity;
 
+import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.Registry;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
@@ -64,4 +65,9 @@ public class fCreeper extends fContainerEntity{
     	}
     	return this;
     }
+    
+    @Override
+	protected PacketContainer additionalData() {
+		return null;
+	}
 }

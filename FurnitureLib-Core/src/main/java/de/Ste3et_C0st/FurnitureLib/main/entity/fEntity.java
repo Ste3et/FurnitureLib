@@ -50,7 +50,6 @@ public abstract class fEntity extends fSerializer implements Cloneable{
     private final UUID entityUUID = UUID.randomUUID();
     private final PacketContainer mountPacketContainer = new PacketContainer(PacketType.Play.Server.MOUNT);
     private final PacketContainer destroy = new PacketContainer(PacketType.Play.Server.ENTITY_DESTROY);
-    private final PacketContainer attribute = new PacketContainer(PacketType.Play.Server.UPDATE_ATTRIBUTES);
     private static final BiFunction<PacketContainer, List<WrappedWatchableObject>, Void> metadataFunction;
     
     @Deprecated
@@ -61,7 +60,6 @@ public abstract class fEntity extends fSerializer implements Cloneable{
     private Location location;
     private DefaultKey<String> customName = new DefaultKey<String>("");
     private NBTTagCompound customNBT = new NBTTagCompound();
-    protected WrappedAttribute.Builder scaleAttribute = WrappedAttribute.newBuilder().attributeKey("generic.scale").baseValue(1D);
     protected DefaultKey<Boolean> fire = new DefaultKey<Boolean>(false), nameVisible = new DefaultKey<Boolean>(false), isPlayed = new DefaultKey<Boolean>(false);
     protected DefaultKey<Boolean> glowing = new DefaultKey<Boolean>(false), invisible = new DefaultKey<Boolean>(false), gravity = new DefaultKey<Boolean>(false);
     //protected DefaultKey<BoundingBox> boundingBox = new DefaultKey<BoundingBox>(new BoundingBox(0, 0, 0, 0, 0, 0));
@@ -96,8 +94,6 @@ public abstract class fEntity extends fSerializer implements Cloneable{
         if(FurnitureLib.getVersionInt() > 18) getHandle().getEntityTypeModifier().writeSafely(0, type);
         getHandle().getUUIDs().write(0, this.entityUUID);
         this.mountPacketContainer.getIntegers().write(0, this.entityID);
-        this.attribute.getIntegers().write(0, this.entityID);
-        this.attribute.getIntegers().write(1, 1);
         setLocation(loc);
     }
     
@@ -360,18 +356,20 @@ public abstract class fEntity extends fSerializer implements Cloneable{
             getManager().sendServerPacket(player, getHandle());
             this.sendMetadata(player);
             if(getPassenger().isEmpty() == false) getManager().sendServerPacket(player, this.mountPacketContainer); 
-            getManager().sendServerPacket(player, this.attribute);
         } catch (Exception e) {
             e.printStackTrace();
         }
     }
-
+    
+    protected abstract PacketContainer additionalData();
+    
     private void sendMetadata(Player player) {
         PacketContainer update = new PacketContainer(PacketType.Play.Server.ENTITY_METADATA);
         update.getIntegers().write(0, getEntityID());
         metadataFunction.apply(update, getWatcher().getWatchableObjects());
         try {
             getManager().sendServerPacket(player, update);
+            if(additionalData() != null) getManager().sendServerPacket(player, additionalData());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -490,8 +488,7 @@ public abstract class fEntity extends fSerializer implements Cloneable{
         this.setFire((metadata.getInt("Fire") == 1)); //Present in monjang
         this.setGlowing((metadata.getInt("Glowing") == 1)); //Present in monjang
         this.setInvisible((metadata.getInt("Invisible") == 1)); //Present in monjang
-        this.setScale(metadata.getDouble("generic_aScale", 1d));
-        
+
         metadata.getCompound("Rotation", NBTTagList.class, list -> {
         	Location location = getLocation();
         	location.setYaw(list.getFloat(0, location.getYaw()));
@@ -514,9 +511,6 @@ public abstract class fEntity extends fSerializer implements Cloneable{
         if(!this.glowing.isDefault()) setMetadata("Glowing", this.isGlowing());
         if(!this.invisible.isDefault()) setMetadata("Invisible", this.isInvisible());
         if(!this.getCustomNBT().isEmpty()) setMetadata("customnbt", getCustomNBT());
-        if(this.scaleAttribute.build().getBaseValue() != this.scaleAttribute.build().getFinalValue()) {
-        	 setMetadata("generic_aScale", this.scaleAttribute.build().getFinalValue());
-        }
         setMetadata(this.getLocation());
         writeAdditionalSaveData();
         return this.getNBTField();
@@ -547,16 +541,5 @@ public abstract class fEntity extends fSerializer implements Cloneable{
 
 	public NBTTagCompound getCustomNBT() {
 		return customNBT;
-	}
-	
-	public void setScale(double scale) {
-		if(MinecraftVersion.getCurrentVersion().isAtLeast(new MinecraftVersion("1.19.5"))) {
-			scaleAttribute.modifiers(Arrays.asList(WrappedAttributeModifier.newBuilder().operation(Operation.ADD_NUMBER).amount(scale).build()));
-			this.attribute.getAttributeCollectionModifier().write(0, Arrays.asList(this.scaleAttribute.build()));
-    	}
-	}
-	
-	public double getAttributeScale() {
-		return this.scaleAttribute.build().getFinalValue();
 	}
 }
