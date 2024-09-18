@@ -1,7 +1,6 @@
 package de.Ste3et_C0st.FurnitureLib.Utilitis;
 
 import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -54,20 +53,14 @@ public class SkullMetaPatcher {
         					String base64String = texturestring.getString("Value");
         					WrappedGameProfile gameProfile = makeProfile(base64String);
         					try {
-        						if(Class.forName("net.minecraft.world.item.component.ResolvableProfile") == null) {
-        							Field profileField = headMeta.getClass().getDeclaredField("profile"); //1.21.1 -> ResolvableProfile | com.mojang.authlib.GameProfile
-             					    profileField.setAccessible(true);
-             					    profileField.set(headMeta, gameProfile.getHandle());
-        						}else {
+        						Field field = headMeta.getClass().getDeclaredField("profile");
+        						field.setAccessible(true);
+        						
+        						if(field.getType().getSimpleName().contains("ResolvableProfile")) {
         							Object object = Class.forName("net.minecraft.world.item.component.ResolvableProfile").getConstructor(gameProfile.getHandleType()).newInstance(gameProfile.getHandle());
-        							
-        							Field field = headMeta.getClass().getDeclaredField("profile");
-        							field.setAccessible(true);
         							field.set(headMeta, object);
-        							
-//        							Method method = headMeta.getClass().getDeclaredMethod("setProfile", object.getClass());
-//        							method.setAccessible(true);
-//        							method.invoke(headMeta, object);
+        						}else {
+        							field.set(headMeta, gameProfile.getHandle());
         						}
         					   
         					} catch (Exception e) {
