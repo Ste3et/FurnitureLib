@@ -60,9 +60,14 @@ public class SkullMetaPatcher {
              					    profileField.set(headMeta, gameProfile.getHandle());
         						}else {
         							Object object = Class.forName("net.minecraft.world.item.component.ResolvableProfile").getConstructor(gameProfile.getHandleType()).newInstance(gameProfile.getHandle());
-        							Method method = headMeta.getClass().getDeclaredMethod("setProfile", object.getClass());
-        							method.setAccessible(true);
-        							method.invoke(headMeta, object);
+        							
+        							Field field = headMeta.getClass().getDeclaredField("profile");
+        							field.setAccessible(true);
+        							field.set(headMeta, object);
+        							
+//        							Method method = headMeta.getClass().getDeclaredMethod("setProfile", object.getClass());
+//        							method.setAccessible(true);
+//        							method.invoke(headMeta, object);
         						}
         					   
         					} catch (Exception e) {
