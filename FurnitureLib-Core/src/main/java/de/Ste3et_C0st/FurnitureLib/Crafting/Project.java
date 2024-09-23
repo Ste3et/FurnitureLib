@@ -14,14 +14,17 @@ import de.Ste3et_C0st.FurnitureLib.main.PermissionHandler;
 import de.Ste3et_C0st.FurnitureLib.main.Type.CenterType;
 import de.Ste3et_C0st.FurnitureLib.main.Type.PlaceableSide;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
+import de.Ste3et_C0st.FurnitureLib.main.entity.fContainerEntity;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.plugin.Plugin;
 import org.bukkit.util.Vector;
@@ -32,6 +35,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -346,6 +350,26 @@ public class Project {
 		}
 	}
 	
+	public void fixSkull(ObjectID objectID) {
+		if(Objects.nonNull(this.getModelschematic())) {
+			this.getModelschematic().getEntityMap(objectID.getStartLocation(), objectID.getBlockFace().getOppositeFace()).stream().filter(Objects::nonNull).forEach(source -> {
+				Optional<fEntity> actor = objectID.getEntityByVector(source.getLocation().toVector());
+				if(Objects.nonNull(source) && actor.isPresent()) {
+					fEntity actorEntity = actor.get();
+					if(actorEntity instanceof fContainerEntity) {
+						if(fContainerEntity.class.cast(actorEntity).containMaterial(Material.PLAYER_HEAD)) {
+							fContainerEntity sourceContainerEntity = (fContainerEntity) source;
+							fContainerEntity actorContainerEntity = (fContainerEntity) actorEntity;
+							sourceContainerEntity.getInventory().getStackMap().entrySet().stream().filter(entry -> Objects.nonNull(entry.getValue())).forEach(entry -> {
+								actorContainerEntity.getInventory().setSlot(entry.getKey().getSlot(), entry.getValue().clone());
+							});
+						}
+					}
+				}
+			});
+		}
+	}
+	
 	public ObjectID createObjectID(Location location) {
 		ObjectID objectID = new ObjectID(getName(), getPlugin().getName(), location);
 		return objectID;
@@ -357,5 +381,20 @@ public class Project {
 	
 	public String toString() {
 		return this.getSystemID();
+	}
+	
+	public boolean hasSkulls() {
+		if(Objects.nonNull(this.getModelschematic())) {
+			return this.getModelschematic().getEntityMap().values().stream().filter(entry -> {
+				if(entry instanceof fContainerEntity) {
+					fContainerEntity containerEntity = fContainerEntity.class.cast(entry);
+					if(containerEntity.containMaterial(Material.PLAYER_HEAD)) {
+						return true;
+					}
+				}
+				return false;
+			}).findFirst().isPresent();
+		}
+		return false;
 	}
 }

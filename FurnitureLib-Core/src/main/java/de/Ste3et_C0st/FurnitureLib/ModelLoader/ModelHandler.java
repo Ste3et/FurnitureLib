@@ -245,5 +245,4 @@ public class ModelHandler extends Modelschematic {
         }
         setSize(pos1, pos2);
     }
-
 }

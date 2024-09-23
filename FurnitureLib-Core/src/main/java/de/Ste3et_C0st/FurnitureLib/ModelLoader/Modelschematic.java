@@ -41,6 +41,7 @@ public abstract class Modelschematic{
 	protected Vector min = new Vector(), max = new Vector();
 	protected PlaceableSide placeableSide = PlaceableSide.TOP;
 	protected String name;
+	
 	//protected ExecuteTimer timer = new ExecuteTimer();
 	
 	public Modelschematic(InputStream stream, String fileHeader){

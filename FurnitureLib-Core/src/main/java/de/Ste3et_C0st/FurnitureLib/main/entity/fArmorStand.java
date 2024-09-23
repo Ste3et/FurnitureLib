@@ -225,7 +225,7 @@ public class fArmorStand extends fContainerEntity implements SizeableEntity, Int
 	@Override
 	protected void readAdditionalSaveData(NBTTagCompound metadata) {
     	super.readInventorySaveData(metadata);
-    	this.setScale(metadata.getDouble("generic_aScale", 1d));
+    	this.setScale(metadata.getDouble("generic_aScale", 0d));
         if(metadata.hasKeyOfType("EulerAngle", 10)) {
         	NBTTagCompound euler = metadata.getCompound("EulerAngle");
         	euler.c().stream().forEach(entry -> {

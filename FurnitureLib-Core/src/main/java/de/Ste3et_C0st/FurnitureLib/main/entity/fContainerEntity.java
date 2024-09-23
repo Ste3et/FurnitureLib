@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Objects;
 
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 import org.bukkit.inventory.EntityEquipment;
@@ -167,5 +168,15 @@ public abstract class fContainerEntity extends fEntity{
     public void update(Player player) {
     	super.update(player);
     	this.sendInventoryPacket(player);
+    }
+    
+    public boolean containMaterial(Material material) {
+    	if(Objects.isNull(material) || material.isAir()) return false;
+    	for(ItemStack stack : this.getInventory().getContents()) {
+    		if(Objects.nonNull(stack) && stack.getType() == material) {
+    			return true;
+    		}
+    	}
+    	return false;
     }
 }

@@ -8,16 +8,20 @@ import de.Ste3et_C0st.FurnitureLib.Utilitis.LanguageManager;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.RandomStringGenerator;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.SchedularHelper;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.Task;
+import de.Ste3et_C0st.FurnitureLib.main.FurnitureConfig;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
+import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
+
+import com.comphenix.protocol.concurrency.AbstractIntervalTree.Entry;
 import com.google.common.util.concurrent.AtomicDouble;
 
 import java.util.HashMap;
@@ -73,6 +77,18 @@ public class debugCommand extends iCommand {
             			CommandSender console = Bukkit.getConsoleSender();
                 		console.sendMessage("FurnitureLib: " + sender.getName() + " start the fixmodel mode");
                 		console.sendMessage("Please enter this command to confirm it: '/furniture debug fixmodel " + key + "' you have 60 secounds");
+            		}catch (Exception e) {
+						e.printStackTrace();
+					}
+                }else if(args[1].equalsIgnoreCase("fixskull")) {
+                	sender.sendMessage("Furniture ModelFile fixSkull mode Started");
+            		sender.sendMessage("Please look at the console for instructions");
+            		try {
+            			String key = RandomStringGenerator.generateRandomString(25, RandomStringGenerator.Mode.ALPHANUMERIC);
+            			debugMap.put(key, new ExecuteTimer());
+            			CommandSender console = Bukkit.getConsoleSender();
+                		console.sendMessage("FurnitureLib: " + sender.getName() + " start the fixSkull mode");
+                		console.sendMessage("Please enter this command to confirm it: '/furniture debug fixskull " + key + "' you have 60 secounds");
             		}catch (Exception e) {
 						e.printStackTrace();
 					}
@@ -180,6 +196,29 @@ public class debugCommand extends iCommand {
                         				Project project = FurnitureManager.getInstance().getProject(entry.getProject());
                         				if(Objects.nonNull(project)) {
                         					project.fixMetadata(entry);
+                            				entry.setSQLAction(SQLAction.UPDATE);
+                        				}
+                        			});
+                        			sender.sendMessage("finish after " + timer.getMilliString());
+                        			sender.sendMessage("please use /furniture save");
+                    			});
+                    		}
+            			}
+            		}
+            	}else if(args[1].equalsIgnoreCase("fixSkull")) {
+            		String key = args[2];
+            		if(debugMap.containsKey(key)) {
+            			long dif = debugMap.get(key).difference();
+            			if(dif < (60 * 1000)) {
+            				if(sender.hasPermission("furniture.debug.fixskull")) {
+                    			ExecuteTimer timer = new ExecuteTimer();
+                    			sender.sendMessage("try to fix §d" + FurnitureManager.getInstance().getAllExistObjectIDs().count() + " §fModels");
+                    			
+                    			SchedularHelper.runAsync(() -> {
+                    				FurnitureManager.getInstance().getAllExistObjectIDs().filter(Objects::nonNull).forEach(entry -> {
+                        				Project project = FurnitureManager.getInstance().getProject(entry.getProject());
+                        				if(Objects.nonNull(project) && project.hasSkulls()) {
+                        					project.fixSkull(entry);
                             				entry.setSQLAction(SQLAction.UPDATE);
                         				}
                         			});

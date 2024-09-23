@@ -53,6 +53,7 @@ public class SkullMetaPatcher {
         					String base64String = texturestring.getString("Value");
         					WrappedGameProfile gameProfile = makeProfile(base64String);
         					try {
+        						
         						Field field = headMeta.getClass().getDeclaredField("profile");
         						field.setAccessible(true);
         						

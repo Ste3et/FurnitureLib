@@ -16,7 +16,6 @@ public class InternalClassReader {
 	public static final String OBC = String.format("org.bukkit.craftbukkit%s", getPacketVersion().isEmpty() ? "" : "." + InternalClassReader.getPacketVersion());
 	
 	public InternalClassReader(String className) {
-		System.out.println(getPacketVersion());
 		this.className = className.contains("%s") ? String.format(className, getPacketVersion()) : className;
 		this.rawClassName = className;
 		
