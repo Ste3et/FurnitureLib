@@ -41,7 +41,7 @@ public class fArmorStand extends fContainerEntity implements SizeableEntity, Int
     private final PacketContainer attribute = new PacketContainer(PacketType.Play.Server.UPDATE_ATTRIBUTES);
     private HashMap<BodyPart, DefaultKey<EulerAngle>> angle = new HashMap<Type.BodyPart, DefaultKey<EulerAngle>>();
     private final DefaultKey<EntitySize> entitySize = new DefaultKey<EntitySize>(new EntitySize(0.5, 1.975));
-    protected WrappedAttribute.Builder scaleAttribute = WrappedAttribute.newBuilder().attributeKey("generic.scale").baseValue(0D);
+    protected WrappedAttribute.Builder scaleAttribute = FurnitureLib.isVersionOrAbove("1.20.5") ? WrappedAttribute.newBuilder().attributeKey("generic.scale").baseValue(0D) : null;
     
     @SuppressWarnings("deprecation")
     public fArmorStand(Location loc, ObjectID obj) {
@@ -205,7 +205,7 @@ public class fArmorStand extends fContainerEntity implements SizeableEntity, Int
     	if(!this.gravity.isDefault()) setMetadata("Gravity", this.hasGravity());
     	if(this.marker.isDefault()) setMetadata("Marker", this.marker.getOrDefault());
     	if(!this.small.isDefault()) setMetadata("Small", this.isSmall());
-        if(this.scaleAttribute.build().getBaseValue() != this.scaleAttribute.build().getFinalValue()) {
+        if(this.scaleAttribute != null && this.scaleAttribute.build().getBaseValue() != this.scaleAttribute.build().getFinalValue()) {
        	 setMetadata("generic_aScale", this.scaleAttribute.build().getFinalValue());
        }
     	NBTTagCompound eulerAngle = new NBTTagCompound();
@@ -361,17 +361,17 @@ public class fArmorStand extends fContainerEntity implements SizeableEntity, Int
 	
 	
 	public void setScale(double scale) {
-		if(MinecraftVersion.getCurrentVersion().isAtLeast(new MinecraftVersion("1.19.5"))) {
-			scaleAttribute.modifiers(Arrays.asList(WrappedAttributeModifier.newBuilder().operation(Operation.ADD_NUMBER).amount(scale).build()));
-    	}
+		if(this.scaleAttribute == null) return;
+		scaleAttribute.modifiers(Arrays.asList(WrappedAttributeModifier.newBuilder().operation(Operation.ADD_NUMBER).amount(scale).build()));
 	}
 	
 	public double getAttributeScale() {
-		return this.scaleAttribute.build().getFinalValue();
+		return this.scaleAttribute == null ? 0D : this.scaleAttribute.build().getFinalValue();
 	}
 
 	@Override
 	protected PacketContainer additionalData() {
+		if(this.scaleAttribute == null) return this.attribute;
 		if(getAttributeScale() != 0D) {
 			this.attribute.getAttributeCollectionModifier().write(0, Arrays.asList(this.scaleAttribute.build()));
 		}else {
