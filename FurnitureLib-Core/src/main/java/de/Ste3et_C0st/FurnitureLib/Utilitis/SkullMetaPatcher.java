@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.util.Objects;
 import java.util.UUID;
 
+import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.inventory.meta.SkullMeta;
@@ -47,33 +48,38 @@ public class SkullMetaPatcher {
         			if(skullCompound.hasKeyOfType("Properties", 10)) {
         				NBTTagCompound propertiesCompound = skullCompound.getCompound("Properties");
         				if(propertiesCompound.hasKeyOfType("textures", 9)) {
-        					ItemMeta headMeta = stack.getItemMeta();
         					NBTTagList textureCompound = propertiesCompound.getList("textures");
         					NBTTagCompound texturestring = textureCompound.get(0);
         					String base64String = texturestring.getString("Value");
         					WrappedGameProfile gameProfile = makeProfile(base64String);
-        					try {
-        						
-        						Field field = headMeta.getClass().getDeclaredField("profile");
-        						field.setAccessible(true);
-        						
-        						if(field.getType().getSimpleName().contains("ResolvableProfile")) {
-        							Object object = Class.forName("net.minecraft.world.item.component.ResolvableProfile").getConstructor(gameProfile.getHandleType()).newInstance(gameProfile.getHandle());
-        							field.set(headMeta, object);
-        						}else {
-        							field.set(headMeta, gameProfile.getHandle());
-        						}
-        					   
-        					} catch (Exception e) {
-        					    e.printStackTrace();
-        					}  finally {
-        						stack.setItemMeta(headMeta);
-        					}
+        					patch(stack, gameProfile);
         				}
         			}
         		}
         	}
     	}	
+		return stack;
+	}
+	
+	public static ItemStack patch(ItemStack stack, WrappedGameProfile gameProfile) {
+		ItemMeta headMeta = stack.getItemMeta();
+		try {
+			
+			Field field = headMeta.getClass().getDeclaredField("profile");
+			field.setAccessible(true);
+			
+			if(field.getType().getSimpleName().contains("ResolvableProfile")) {
+				Object object = Class.forName("net.minecraft.world.item.component.ResolvableProfile").getConstructor(gameProfile.getHandleType()).newInstance(gameProfile.getHandle());
+				field.set(headMeta, object);
+			}else {
+				field.set(headMeta, gameProfile.getHandle());
+			}
+		   
+		} catch (Exception e) {
+		    e.printStackTrace();
+		}  finally {
+			stack.setItemMeta(headMeta);
+		}
 		return stack;
 	}
 	
@@ -90,5 +96,11 @@ public class SkullMetaPatcher {
 		profile.getProperties().put("textures", new WrappedSignedProperty("textures", b64, "furniture"));
 		return profile;
 	}
+    
+    public static ItemStack createStack(String b64) {
+    	ItemStack stack = new ItemStack(Material.valueOf("PLAYER_HEAD"));
+    	patch(stack, makeProfile(b64));
+    	return stack;
+    }
 	
 }
