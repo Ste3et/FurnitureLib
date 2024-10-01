@@ -174,16 +174,17 @@ public class CraftingFile {
     }
 
     private boolean isKeyisKeyRegistered(org.bukkit.NamespacedKey key) {
-    	Iterator<Recipe> it = Bukkit.getServer().recipeIterator();
-    	while (it.hasNext()) {
-			Recipe recipe = it.next();
-			if(ShapedRecipe.class.isInstance(recipe)) {
-				if(ShapedRecipe.class.cast(recipe).getKey().equals(key)) {
-					return true;
-				}
-			}
-		}
-        return false;
+    	return Objects.nonNull(Bukkit.getRecipe(key));
+//    	Iterator<Recipe> it = Bukkit.getServer().recipeIterator();
+//    	while (it.hasNext()) {
+//			Recipe recipe = it.next();
+//			if(ShapedRecipe.class.isInstance(recipe)) {
+//				if(ShapedRecipe.class.cast(recipe).getKey().equals(key)) {
+//					return true;
+//				}
+//			}
+//		}
+//        return false;
     }
 
     public PlaceableSide getPlaceAbleSide(YamlConfiguration configuration) {
