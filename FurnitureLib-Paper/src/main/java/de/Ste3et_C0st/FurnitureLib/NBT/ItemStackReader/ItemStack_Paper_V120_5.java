@@ -59,7 +59,7 @@ public class ItemStack_Paper_V120_5 extends ItemStackReader{
 
 	@Override
 	public Object convertCompound(NBTTagCompound nbtTagCompound) throws Exception {
-		byte[] data = NBTCompressedStreamTools.toByte(nbtTagCompound);
+		byte[] data = NBTCompressedStreamTools.toByte(this.convertMaterial(nbtTagCompound));
         return clazz_nbttools_method_a_input.invoke(null, new ByteArrayInputStream(data), clazz_NBTReadLimiter.getMethod("unlimitedHeap").invoke(null));
 	}
 

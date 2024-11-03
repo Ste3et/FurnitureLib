@@ -140,7 +140,6 @@ public abstract class Modelschematic{
 					final fEntity entity = readNBTtag(entityData);
 					if(Objects.nonNull(vector) && Objects.nonNull(entity)) {
 						this.entityMap.put(vector, entity);
-						
 						if(entity instanceof fInteraction) {
 							fInteraction interaction = fInteraction.class.cast(entity);
 							

@@ -2,6 +2,8 @@ package de.Ste3et_C0st.FurnitureLib.NBT.ItemStackReader;
 
 import java.io.OutputStream;
 import java.lang.reflect.Method;
+import java.util.HashMap;
+
 import org.bukkit.inventory.ItemStack;
 
 import com.comphenix.protocol.utility.MinecraftVersion;
@@ -47,6 +49,14 @@ public abstract class ItemStackReader {
 	public abstract ItemStack getItemStack(NBTTagCompound nbtTagCompound);
 	public abstract NBTTagCompound getNBTTag(ItemStack stack) throws Exception;
 	
+	public NBTTagCompound convertMaterial(NBTTagCompound compound) {
+		final String material = compound.getString("id");
+		if(materialConverter.containsKey(material)) {
+			compound.setString("id", materialConverter.get(material));
+		}
+		return compound;
+	}
+	
 	static String getNbtFolder() {
 		return FurnitureLib.getVersionInt() > 16 ? InternalClassReader.NBT : "net.minecraft.server." + InternalClassReader.packetVersion;
 	}
@@ -56,4 +66,11 @@ public abstract class ItemStackReader {
 	}
     
     public abstract Object convertCompound(NBTTagCompound nbtTagCompound) throws Exception;
+    
+    private static final HashMap<String, String> materialConverter = new HashMap<String, String>(){{
+    	put("minecraft:tallgrass", "minecraft:tall_grass");
+    	put("minecraft:web", "minecraft:cobweb");
+    	put("minecraft:tripwire", "minecraft:tripwire_hook");
+    	put("minecraft:sign", "minecraft:oak_sign");
+    }};
 }

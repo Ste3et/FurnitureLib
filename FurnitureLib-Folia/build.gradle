@@ -14,7 +14,7 @@ java {
 
 dependencies {
     implementation project(':FurnitureLib-Core')
-    compileOnly group: 'dev.folia', name: 'folia-api', version: gradle.minecraftVersion
+    compileOnly group: 'dev.folia', name: 'folia-api', version: '1.20.6-R0.1-SNAPSHOT' //gradle.minecraftVersion
 }
 
 tasks {
