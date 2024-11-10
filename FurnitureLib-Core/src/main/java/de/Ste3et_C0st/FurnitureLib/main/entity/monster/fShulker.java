@@ -32,6 +32,7 @@ public class fShulker extends fContainerEntity implements SizeableEntity, Intera
 	private final PacketContainer attribute = new PacketContainer(PacketType.Play.Server.UPDATE_ATTRIBUTES);
 	private final DefaultKey<EntitySize> entitySize = new DefaultKey<EntitySize>(new EntitySize(1.0, 1.0));
 	private final WrappedAttribute.Builder scaleAttribute = FurnitureLib.isVersionOrAbove("1.20.5") ? FurnitureLib.isVersionOrAbove("1.21.3") ? WrappedAttribute.newBuilder().attributeKey("scale") : WrappedAttribute.newBuilder().attributeKey("generic.scale").baseValue(1D) : null;
+	private final DefaultKey<Double> scaleValue = new DefaultKey<Double>(0D);
 	
 	public fShulker(Location loc, ObjectID id) {
 		super(loc, type, 83, id);
@@ -45,7 +46,7 @@ public class fShulker extends fContainerEntity implements SizeableEntity, Intera
 
 	@Override
 	public BoundingBox getBoundingBox() {
-		return entitySize.getOrDefault().toBoundingBox();
+		return entitySize.getOrDefault().toBoundingBox().expand(getAttributeScale());
 	}
 
 	@Override
@@ -61,30 +62,33 @@ public class fShulker extends fContainerEntity implements SizeableEntity, Intera
 	@Override
 	protected void readAdditionalSaveData(NBTTagCompound metadata) {
 		super.readInventorySaveData(metadata);
-		this.setScale(metadata.getDouble("scaleAttribute", 0d));
+		this.setScale(metadata.getDouble("scaleAttribute", 0D));
 	}
 
 	@Override
 	protected void writeAdditionalSaveData() {
-		if(scaleAttribute != null && getAttributeScale() != 0D) setMetadata("scaleAttribute", scaleAttribute.build().getFinalValue());
+		if(!this.scaleValue.isDefault()) setMetadata("scaleAttribute", this.getAttributeScale());
 	}
 
 	@Override
 	protected PacketContainer additionalData() {
-		if(this.scaleAttribute == null) return this.attribute;
+		if(this.scaleAttribute == null) return null;
 		this.attribute.getAttributeCollectionModifier().write(0, Arrays.asList(scaleAttribute.build()));
 		return this.attribute;
 	}
 	
 	public void setScale(double scale) {
-		if(scale == 0D) {
-			scaleAttribute.modifiers(Lists.newArrayList());
-		}else {
-			scaleAttribute.modifiers(Arrays.asList(WrappedAttributeModifier.newBuilder(attributeUUID).operation(Operation.ADD_NUMBER).amount(scale).build()));
+		this.scaleValue.setValue(scale);
+		if(scale != 0D) {
+			scaleAttribute.baseValue(scale);
 		}
 	}
 	
+	public boolean canWriteScale() {
+		return this.scaleAttribute != null;
+	}
+	
 	public double getAttributeScale() {
-		return scaleAttribute == null ? 0D : scaleAttribute.build().getFinalValue();
+		return canWriteScale() ? this.scaleAttribute.build().getFinalValue() : 0D;
 	}
 }

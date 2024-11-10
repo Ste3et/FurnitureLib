@@ -4,12 +4,8 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.wrappers.Vector3F;
 import com.comphenix.protocol.wrappers.WrappedAttribute;
-import com.comphenix.protocol.wrappers.WrappedAttributeModifier;
-import com.comphenix.protocol.wrappers.WrappedAttributeModifier.Operation;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.Registry;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
-import com.google.common.collect.Lists;
-
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagList;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.BoundingBox;
@@ -30,12 +26,10 @@ import org.bukkit.util.EulerAngle;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Objects;
-import java.util.UUID;
 
 public class fArmorStand extends fContainerEntity implements SizeableEntity, Interactable{
 
     public static EntityType type = EntityType.ARMOR_STAND;
-    private static final UUID attributeUUID = UUID.fromString("f7669d2b-b9f5-4378-86db-6cdf787df246");
     
     private int armorstandID;
     private final DefaultKey<Boolean> arms = new DefaultKey<Boolean>(false), small = new DefaultKey<Boolean>(false), marker = new DefaultKey<Boolean>(true), basePlate = new DefaultKey<Boolean>(true);
@@ -43,6 +37,7 @@ public class fArmorStand extends fContainerEntity implements SizeableEntity, Int
     private final HashMap<BodyPart, DefaultKey<EulerAngle>> angle = new HashMap<Type.BodyPart, DefaultKey<EulerAngle>>();
     private final DefaultKey<EntitySize> entitySize = new DefaultKey<EntitySize>(new EntitySize(0.5, 1.975));
     private final WrappedAttribute.Builder scaleAttribute = FurnitureLib.isVersionOrAbove("1.20.5") ? FurnitureLib.isVersionOrAbove("1.21.3") ? WrappedAttribute.newBuilder().attributeKey("scale") : WrappedAttribute.newBuilder().attributeKey("generic.scale").baseValue(1D) : null;
+    private final DefaultKey<Double> scaleValue = new DefaultKey<Double>(0D);
     
     @SuppressWarnings("deprecation")
     public fArmorStand(Location loc, ObjectID obj) {
@@ -201,12 +196,13 @@ public class fArmorStand extends fContainerEntity implements SizeableEntity, Int
     @Override
     protected void writeAdditionalSaveData() {
     	super.writeInventoryData();
+    	if(!this.scaleValue.isDefault()) setMetadata("scaleAttribute", this.getAttributeScale());
     	if(!this.arms.isDefault()) setMetadata("ShowArms", this.hasArms());
     	if(!this.basePlate.isDefault()) setMetadata("NoBasePlate", this.hasBasePlate());
     	if(!this.gravity.isDefault()) setMetadata("Gravity", this.hasGravity());
     	if(this.marker.isDefault()) setMetadata("Marker", this.marker.getOrDefault());
     	if(!this.small.isDefault()) setMetadata("Small", this.isSmall());
-        if(scaleAttribute != null && getAttributeScale() != 0D) setMetadata("scaleAttribute", scaleAttribute.build().getFinalValue());
+    	
     	NBTTagCompound eulerAngle = new NBTTagCompound();
     	this.angle.entrySet().stream().filter(entry -> !entry.getValue().isDefault()).forEach(entry -> {
     		 EulerAngle angle = entry.getValue().getValue();
@@ -224,7 +220,8 @@ public class fArmorStand extends fContainerEntity implements SizeableEntity, Int
 	@Override
 	protected void readAdditionalSaveData(NBTTagCompound metadata) {
     	super.readInventorySaveData(metadata);
-    	this.setScale(metadata.getDouble("scaleAttribute", 0d));
+    	this.setScale(metadata.getDouble("scaleAttribute", 0D));
+    	
         if(metadata.hasKeyOfType("EulerAngle", 10)) {
         	NBTTagCompound euler = metadata.getCompound("EulerAngle");
         	euler.c().stream().forEach(entry -> {
@@ -360,10 +357,9 @@ public class fArmorStand extends fContainerEntity implements SizeableEntity, Int
 	
 	
 	public void setScale(double scale) {
-		if(scale == 0D) {
-			scaleAttribute.modifiers(Lists.newArrayList());
-		}else {
-			scaleAttribute.modifiers(Arrays.asList(WrappedAttributeModifier.newBuilder(attributeUUID).operation(Operation.ADD_NUMBER).amount(scale).build()));
+		this.scaleValue.setValue(scale);
+		if(scale != 0D) {
+			scaleAttribute.baseValue(scale);
 		}
 	}
 	
@@ -372,12 +368,12 @@ public class fArmorStand extends fContainerEntity implements SizeableEntity, Int
 	}
 	
 	public double getAttributeScale() {
-		return scaleAttribute == null ? 0D : scaleAttribute.build().getFinalValue();
+		return canWriteScale() ? this.scaleAttribute.build().getFinalValue() : 0D;
 	}
 
 	@Override
 	protected PacketContainer additionalData() {
-		if(this.scaleAttribute == null) return this.attribute;
+		if(this.scaleAttribute == null) return null;
 		this.attribute.getAttributeCollectionModifier().write(0, Arrays.asList(scaleAttribute.build()));
 		return this.attribute;
 	}
