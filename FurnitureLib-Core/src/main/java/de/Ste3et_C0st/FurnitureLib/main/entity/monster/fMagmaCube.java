@@ -19,8 +19,9 @@ import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.entity.Interactable;
 import de.Ste3et_C0st.FurnitureLib.main.entity.SizeableEntity;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fContainerEntity;
+import de.Ste3et_C0st.FurnitureLib.main.interfaces.ScaleableEntity;
 
-public class fMagmaCube extends fContainerEntity implements SizeableEntity, Interactable{
+public class fMagmaCube extends fContainerEntity implements SizeableEntity, ScaleableEntity, Interactable{
 
 	public static EntityType type = EntityType.MAGMA_CUBE;
 	
@@ -41,7 +42,7 @@ public class fMagmaCube extends fContainerEntity implements SizeableEntity, Inte
 
 	@Override
 	public BoundingBox getBoundingBox() {
-		return getEntitySize().toBoundingBox().expand(getAttributeScale());
+		return getEntitySize().toBoundingBox().expand(getScale());
 	}
 
 	@Override
@@ -63,7 +64,7 @@ public class fMagmaCube extends fContainerEntity implements SizeableEntity, Inte
 
 	@Override
 	protected void writeAdditionalSaveData() {
-		if(!this.scaleValue.isDefault()) setMetadata("scaleAttribute", this.getAttributeScale());
+		if(!this.scaleValue.isDefault()) setMetadata("scaleAttribute", this.getScale());
 		if(!this.slimeSize.isDefault()) setMetadata("slimeSize", this.getSize());
 	}
 
@@ -74,18 +75,19 @@ public class fMagmaCube extends fContainerEntity implements SizeableEntity, Inte
 		return this.attribute;
 	}
 	
-	public void setScale(double scale) {
+	public fMagmaCube setScale(double scale) {
 		this.scaleValue.setValue(scale);
 		if(scale != 0D) {
 			scaleAttribute.baseValue(scale);
 		}
+		return this;
 	}
 	
 	public boolean canWriteScale() {
 		return this.scaleAttribute != null;
 	}
 	
-	public double getAttributeScale() {
+	public double getScale() {
 		return canWriteScale() ? this.scaleAttribute.build().getFinalValue() : 0D;
 	}
 	

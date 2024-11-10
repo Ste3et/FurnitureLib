@@ -7,5 +7,4 @@ public interface SizeableEntity {
 
 	public BoundingBox getBoundingBox();
 	public EntitySize getEntitySize();
-	
 }

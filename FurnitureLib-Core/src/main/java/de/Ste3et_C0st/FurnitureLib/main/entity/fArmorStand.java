@@ -15,6 +15,7 @@ import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type;
 import de.Ste3et_C0st.FurnitureLib.main.Type.BodyPart;
+import de.Ste3et_C0st.FurnitureLib.main.interfaces.ScaleableEntity;
 
 import org.bukkit.Location;
 import org.bukkit.Material;
@@ -27,7 +28,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Objects;
 
-public class fArmorStand extends fContainerEntity implements SizeableEntity, Interactable{
+public class fArmorStand extends fContainerEntity implements SizeableEntity, ScaleableEntity, Interactable{
 
     public static EntityType type = EntityType.ARMOR_STAND;
     
@@ -196,7 +197,7 @@ public class fArmorStand extends fContainerEntity implements SizeableEntity, Int
     @Override
     protected void writeAdditionalSaveData() {
     	super.writeInventoryData();
-    	if(!this.scaleValue.isDefault()) setMetadata("scaleAttribute", this.getAttributeScale());
+    	if(!this.scaleValue.isDefault()) setMetadata("scaleAttribute", this.getScale());
     	if(!this.arms.isDefault()) setMetadata("ShowArms", this.hasArms());
     	if(!this.basePlate.isDefault()) setMetadata("NoBasePlate", this.hasBasePlate());
     	if(!this.gravity.isDefault()) setMetadata("Gravity", this.hasGravity());
@@ -356,18 +357,19 @@ public class fArmorStand extends fContainerEntity implements SizeableEntity, Int
 //    }
 	
 	
-	public void setScale(double scale) {
+	public fArmorStand setScale(double scale) {
 		this.scaleValue.setValue(scale);
 		if(scale != 0D) {
 			scaleAttribute.baseValue(scale);
 		}
+		return this;
 	}
 	
 	public boolean canWriteScale() {
 		return this.scaleAttribute != null;
 	}
 	
-	public double getAttributeScale() {
+	public double getScale() {
 		return canWriteScale() ? this.scaleAttribute.build().getFinalValue() : 0D;
 	}
 
