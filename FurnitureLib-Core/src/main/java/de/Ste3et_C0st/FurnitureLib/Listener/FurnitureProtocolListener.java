@@ -4,7 +4,6 @@ import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.ListenerPriority;
 import com.comphenix.protocol.events.PacketAdapter;
-import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.events.PacketListener;
 import com.comphenix.protocol.wrappers.EnumWrappers.EntityUseAction;
@@ -25,7 +24,6 @@ import org.bukkit.entity.Player;
 
 import java.util.List;
 import java.util.Objects;
-import java.util.Optional;
 
 public class FurnitureProtocolListener {
 
@@ -84,8 +82,8 @@ public class FurnitureProtocolListener {
 			public void onPacketReceiving(PacketEvent event) {
 				if (event.getPacketType() == PacketType.Play.Client.STEER_VEHICLE) {
 					final Player p = event.getPlayer();
-					EntityMoving moving = event.getPacket().getBooleans().read(1) ? EntityMoving.SNEAKING
-							: null;
+					EntityMoving moving = event.getPacket().getBooleans().readSafely(1) ? EntityMoving.SNEAKING : null;
+					
 					if (moving != null && moving.equals(EntityMoving.SNEAKING)) {
 						List<fEntity> e = FurnitureManager.getInstance().getArmorStandFromPassenger(p);
 						if (e != null && !e.isEmpty()) {

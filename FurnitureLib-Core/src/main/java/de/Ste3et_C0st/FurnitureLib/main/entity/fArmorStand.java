@@ -30,17 +30,19 @@ import org.bukkit.util.EulerAngle;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Objects;
+import java.util.UUID;
 
 public class fArmorStand extends fContainerEntity implements SizeableEntity, Interactable{
 
     public static EntityType type = EntityType.ARMOR_STAND;
-
+    private static final UUID attributeUUID = UUID.fromString("f7669d2b-b9f5-4378-86db-6cdf787df246");
+    
     private int armorstandID;
-    private DefaultKey<Boolean> arms = new DefaultKey<Boolean>(false), small = new DefaultKey<Boolean>(false), marker = new DefaultKey<Boolean>(true), basePlate = new DefaultKey<Boolean>(true);
+    private final DefaultKey<Boolean> arms = new DefaultKey<Boolean>(false), small = new DefaultKey<Boolean>(false), marker = new DefaultKey<Boolean>(true), basePlate = new DefaultKey<Boolean>(true);
     private final PacketContainer attribute = new PacketContainer(PacketType.Play.Server.UPDATE_ATTRIBUTES);
-    private HashMap<BodyPart, DefaultKey<EulerAngle>> angle = new HashMap<Type.BodyPart, DefaultKey<EulerAngle>>();
+    private final HashMap<BodyPart, DefaultKey<EulerAngle>> angle = new HashMap<Type.BodyPart, DefaultKey<EulerAngle>>();
     private final DefaultKey<EntitySize> entitySize = new DefaultKey<EntitySize>(new EntitySize(0.5, 1.975));
-    private WrappedAttribute.Builder scaleAttribute = FurnitureLib.isVersionOrAbove("1.20.5") ? FurnitureLib.isVersionOrAbove("1.21.3") ? WrappedAttribute.newBuilder().attributeKey("scale") : WrappedAttribute.newBuilder().attributeKey("generic.scale").baseValue(0D) : null;
+    private final WrappedAttribute.Builder scaleAttribute = FurnitureLib.isVersionOrAbove("1.20.5") ? FurnitureLib.isVersionOrAbove("1.21.3") ? WrappedAttribute.newBuilder().attributeKey("scale") : WrappedAttribute.newBuilder().attributeKey("generic.scale").baseValue(1D) : null;
     
     @SuppressWarnings("deprecation")
     public fArmorStand(Location loc, ObjectID obj) {
@@ -204,9 +206,7 @@ public class fArmorStand extends fContainerEntity implements SizeableEntity, Int
     	if(!this.gravity.isDefault()) setMetadata("Gravity", this.hasGravity());
     	if(this.marker.isDefault()) setMetadata("Marker", this.marker.getOrDefault());
     	if(!this.small.isDefault()) setMetadata("Small", this.isSmall());
-        if(scaleAttribute != null && scaleAttribute.build().getBaseValue() != scaleAttribute.build().getFinalValue()) {
-       	 setMetadata("generic_aScale", scaleAttribute.build().getFinalValue());
-       }
+        if(scaleAttribute != null && getAttributeScale() != 0D) setMetadata("scaleAttribute", scaleAttribute.build().getFinalValue());
     	NBTTagCompound eulerAngle = new NBTTagCompound();
     	this.angle.entrySet().stream().filter(entry -> !entry.getValue().isDefault()).forEach(entry -> {
     		 EulerAngle angle = entry.getValue().getValue();
@@ -224,7 +224,7 @@ public class fArmorStand extends fContainerEntity implements SizeableEntity, Int
 	@Override
 	protected void readAdditionalSaveData(NBTTagCompound metadata) {
     	super.readInventorySaveData(metadata);
-    	this.setScale(metadata.getDouble("generic_aScale", 0d));
+    	this.setScale(metadata.getDouble("scaleAttribute", 0d));
         if(metadata.hasKeyOfType("EulerAngle", 10)) {
         	NBTTagCompound euler = metadata.getCompound("EulerAngle");
         	euler.c().stream().forEach(entry -> {
@@ -360,8 +360,15 @@ public class fArmorStand extends fContainerEntity implements SizeableEntity, Int
 	
 	
 	public void setScale(double scale) {
-		if(scaleAttribute == null) return;
-		scaleAttribute.modifiers(Arrays.asList(WrappedAttributeModifier.newBuilder().operation(Operation.ADD_NUMBER).amount(scale).build()));
+		if(scale == 0D) {
+			scaleAttribute.modifiers(Lists.newArrayList());
+		}else {
+			scaleAttribute.modifiers(Arrays.asList(WrappedAttributeModifier.newBuilder(attributeUUID).operation(Operation.ADD_NUMBER).amount(scale).build()));
+		}
+	}
+	
+	public boolean canWriteScale() {
+		return this.scaleAttribute != null;
 	}
 	
 	public double getAttributeScale() {
@@ -371,11 +378,7 @@ public class fArmorStand extends fContainerEntity implements SizeableEntity, Int
 	@Override
 	protected PacketContainer additionalData() {
 		if(this.scaleAttribute == null) return this.attribute;
-		if(getAttributeScale() != 0D) {
-			this.attribute.getAttributeCollectionModifier().write(0, Arrays.asList(scaleAttribute.build()));
-		}else {
-			this.attribute.getAttributeCollectionModifier().write(0, Lists.newArrayList());
-		}
+		this.attribute.getAttributeCollectionModifier().write(0, Arrays.asList(scaleAttribute.build()));
 		return this.attribute;
 	}
 }

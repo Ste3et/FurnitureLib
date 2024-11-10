@@ -8,6 +8,7 @@ import de.Ste3et_C0st.FurnitureLib.Utilitis.Wrapper.packet.WrapperPlayServerEnti
 import de.Ste3et_C0st.FurnitureLib.async.WorldData;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 import de.Ste3et_C0st.FurnitureLib.main.entity.*;
+import de.Ste3et_C0st.FurnitureLib.main.entity.monster.fShulker;
 
 import org.bukkit.Location;
 import org.bukkit.World;
@@ -37,6 +38,10 @@ public class FurnitureManager extends ObjectIdManager{
         	packetClasses.put(EntityType.ITEM_DISPLAY, fItem_display::new);
         	packetClasses.put(EntityType.TEXT_DISPLAY, fText_display::new);
         	packetClasses.put(EntityType.INTERACTION, fInteraction::new);
+        	
+        }
+        if(FurnitureLib.getVersion(new MinecraftVersion("1.20.5"))) {
+        	packetClasses.put(EntityType.SHULKER, fShulker::new);
         }
     }
 
