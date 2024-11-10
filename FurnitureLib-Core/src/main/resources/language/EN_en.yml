@@ -169,7 +169,7 @@ command:
     - <gray>clean your <yellow>Database
   help:
     header:
-    - <gray><st>+-------------------<gray><st:false>[<dark_green><b>Furniture<gray>]<st>--------------------+'
+    - <gray><st>+----------------<gray><st:false>[<dark_green><b>Furniture<gray>]<st>----------------+'
     hover:
     - '<gray>version: <dark_green><version>'
     - '<gray>author: <dark_green><author>'
@@ -177,7 +177,7 @@ command:
     - '<gray> '
     - '<yellow><b>Tip: <gray>Try to <yellow><u>click <gray>or <yellow><u>hover<gray>
       the commands'
-    - <gray><u:false><st>+--------------------------------------------------+
+    - <gray><u:false><st>+-------------------------------------------+
   give:
     suggest: /furniture give [systemID]
     help_hover: <gray>Give a <yellow>model Item <gray>to a <yellow>Player

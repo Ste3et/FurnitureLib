@@ -9,6 +9,8 @@ import de.Ste3et_C0st.FurnitureLib.async.WorldData;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 import de.Ste3et_C0st.FurnitureLib.main.entity.*;
 import de.Ste3et_C0st.FurnitureLib.main.entity.monster.fMagmaCube;
+import de.Ste3et_C0st.FurnitureLib.main.entity.monster.fShulker;
+
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.block.Block;
@@ -41,6 +43,7 @@ public class FurnitureManager extends ObjectIdManager{
         }
         if(FurnitureLib.getVersion(new MinecraftVersion("1.20.5"))) {
         	packetClasses.put(EntityType.MAGMA_CUBE, fMagmaCube::new);
+        	packetClasses.put(EntityType.SHULKER, fShulker::new);
         }
     }
 
