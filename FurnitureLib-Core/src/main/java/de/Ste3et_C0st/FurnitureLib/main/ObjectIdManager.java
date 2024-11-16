@@ -89,6 +89,10 @@ public class ObjectIdManager {
 		}
 	}
 	
+	public void sendObject(ObjectID objectID) {
+		objectID.getPlayerList().stream().forEach(player -> objectID.updatePlayerView(player));
+	}
+	
 	public void updatePlayerView(Player player, int chunkX, int chunkZ) {
 		getAllExistObjectIDs().filter(entry -> entry.isInChunk(chunkX, chunkZ)).forEach(entry -> entry.updatePlayerView(player));
 	}

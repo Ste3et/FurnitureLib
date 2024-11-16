@@ -149,7 +149,7 @@ public class ObjectID extends ObjectData{
         if (getPacketList().isEmpty()) {
             return;
         }
-        if (getSQLAction().equals(SQLAction.REMOVE)) {
+        if (getSQLAction() == SQLAction.REMOVE) {
             return;
         }
         

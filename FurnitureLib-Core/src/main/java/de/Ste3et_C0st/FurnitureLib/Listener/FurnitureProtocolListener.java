@@ -2,6 +2,7 @@ package de.Ste3et_C0st.FurnitureLib.Listener;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.ProtocolLibrary;
+import com.comphenix.protocol.events.InternalStructure;
 import com.comphenix.protocol.events.ListenerPriority;
 import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketEvent;
@@ -20,6 +21,7 @@ import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
 import java.util.List;
@@ -82,7 +84,14 @@ public class FurnitureProtocolListener {
 			public void onPacketReceiving(PacketEvent event) {
 				if (event.getPacketType() == PacketType.Play.Client.STEER_VEHICLE) {
 					final Player p = event.getPlayer();
-					EntityMoving moving = event.getPacket().getBooleans().readSafely(1) ? EntityMoving.SNEAKING : null;
+					final EntityMoving moving;
+					
+					if(FurnitureLib.isVersionOrAbove("1.21.2")) {
+						final InternalStructure input = event.getPacket().getStructures().read(0);
+						moving = input.getBooleans().readSafely(5) ? EntityMoving.SNEAKING : null;
+					}else {
+						moving = event.getPacket().getBooleans().readSafely(1) ? EntityMoving.SNEAKING : null;
+					}
 					
 					if (moving != null && moving.equals(EntityMoving.SNEAKING)) {
 						List<fEntity> e = FurnitureManager.getInstance().getArmorStandFromPassenger(p);

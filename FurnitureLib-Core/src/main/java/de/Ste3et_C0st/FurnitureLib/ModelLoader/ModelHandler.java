@@ -4,6 +4,7 @@ import de.Ste3et_C0st.FurnitureLib.ModelLoader.Block.ModelBlock;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.BoundingBox;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.LocationUtil;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
+import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.CenterType;
 import de.Ste3et_C0st.FurnitureLib.main.Type.PlaceableSide;
@@ -56,7 +57,7 @@ public class ModelHandler extends Modelschematic {
         id.addEntities(addEntity(startLocation, direction, id));
         id.addBlockLocations(addBlocks(startLocation, direction));
         FurnitureLib.debug("FurnitureLib {ModelHandler} -> Spawn Send Models [" + id.getProject() + "]");
-        id.send(startLocation.getWorld().getPlayers());
+        FurnitureManager.getInstance().sendObject(id);
         FurnitureLib.debug("FurnitureLib {ModelHandler} -> Spawn Finish [" + id.getProject() + "]");
     }
     
