@@ -57,7 +57,7 @@ public class ModelHandler extends Modelschematic {
         id.addEntities(addEntity(startLocation, direction, id));
         id.addBlockLocations(addBlocks(startLocation, direction));
         FurnitureLib.debug("FurnitureLib {ModelHandler} -> Spawn Send Models [" + id.getProject() + "]");
-        FurnitureManager.getInstance().sendObject(id);
+        FurnitureManager.getInstance().sendObjectInRange(id);
         FurnitureLib.debug("FurnitureLib {ModelHandler} -> Spawn Finish [" + id.getProject() + "]");
     }
     

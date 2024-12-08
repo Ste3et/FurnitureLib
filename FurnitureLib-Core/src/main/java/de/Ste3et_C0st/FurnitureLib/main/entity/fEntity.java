@@ -1,23 +1,31 @@
 package de.Ste3et_C0st.FurnitureLib.main.entity;
 
 import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.events.InternalStructure;
 import com.comphenix.protocol.events.PacketContainer;
+import com.comphenix.protocol.injector.netty.WirePacket;
+import com.comphenix.protocol.utility.MinecraftReflection;
 import com.comphenix.protocol.utility.MinecraftVersion;
 import com.comphenix.protocol.wrappers.WrappedAttribute;
 import com.comphenix.protocol.wrappers.WrappedAttributeModifier;
 import com.comphenix.protocol.wrappers.WrappedAttributeModifier.Operation;
+import com.comphenix.protocol.wrappers.WrappedBlockData;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.google.common.collect.Lists;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.Registry;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
+import com.comphenix.protocol.wrappers.WrappedStreamCodec;
 import com.comphenix.protocol.wrappers.WrappedWatchableObject;
+import com.comphenix.protocol.wrappers.codecs.WrappedCodec;
+import com.comphenix.protocol.wrappers.codecs.WrappedDynamicOps;
 
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagList;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.DefaultKey;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.EntityID;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.LanguageConverter;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.Wrapper.WrappedPostionMoveRotation;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureConfig;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
@@ -321,13 +329,22 @@ public abstract class fEntity extends fSerializer implements Cloneable{
     public void teleport(Location loc) {
         if (isFire()) saveLight(getLocation(), loc);
         setLocation(loc);
-        PacketContainer c = new PacketContainer(PacketType.Play.Server.ENTITY_TELEPORT);
-        c.getIntegers().write(0, getEntityID());
-        c.getDoubles().write(0, this.positionX).write(1, this.positionY).write(2, this.positionZ);
-        c.getBytes().write(0, this.yaw).write(1, this.pitch);
+        
+        PacketContainer packet = new PacketContainer(PacketType.Play.Server.ENTITY_TELEPORT);
+        packet.getIntegers().write(0, getEntityID());
+        
+        if(MinecraftVersion.getCurrentVersion().isAtLeast(new MinecraftVersion("1.21.3"))) {
+        	packet.getIntegers().write(0, getEntityID());
+        	packet.getStructures().withType(WrappedPostionMoveRotation.getNMS()).write(0, new WrappedPostionMoveRotation(loc).build());
+        	
+        }else {
+        	packet.getDoubles().write(0, this.positionX).write(1, this.positionY).write(2, this.positionZ);
+        	packet.getBytes().write(0, this.yaw).write(1, this.pitch);
+        }
+        
         for (Player p : getObjID().getPlayerList()) {
             try {
-                getManager().sendServerPacket(p, c);
+                getManager().sendServerPacket(p, packet);
             } catch (Exception e) {
                 e.printStackTrace();
             }
