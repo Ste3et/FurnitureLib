@@ -15,7 +15,7 @@ public class Vec3 {
 	
 	static {
 		ZERO = new Vec3(0.0, 0.0, 0.0);
-		VEC3 = MinecraftReflection.getMinecraftClass("world.phys.Vec3", "Vec3");
+		VEC3 = MinecraftReflection.getMinecraftClass("world.phys.Vec3", "Vec3", "Vec3D", "world.phys.Vec3D");
 
 		try {
 			CONSTRUCTOR = VEC3.getConstructor(Double.TYPE, Double.TYPE, Double.TYPE);

@@ -13,6 +13,7 @@ import de.Ste3et_C0st.FurnitureLib.NBT.NBTCompressedStreamTools;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTReadLimiter;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.InternalClassReader;
+import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 
 public class ItemStackV120_5 extends ItemStackReader{
 
@@ -29,8 +30,14 @@ public class ItemStackV120_5 extends ItemStackReader{
 			//Get HolderLookup.a
 			Object craftServerObject = clazz_CraftServer.cast(Bukkit.getServer()); // Cast BukkitServer to CraftServer
 			Object nmsServer = craftServerObject.getClass().getMethod("getServer").invoke(craftServerObject); // Cast CraftServer to NMSServer
-			provider = nmsServer.getClass().getMethod("bc").invoke(nmsServer); // Get RegistryAccess.Frozen -> HolderLookup.a
+			
+			if(FurnitureLib.isVersionOrAbove("1.21.3")) { // Get RegistryAccess.Frozen -> HolderLookup.a
+				provider = nmsServer.getClass().getMethod("ba").invoke(nmsServer);
+			}else {
+				provider = nmsServer.getClass().getMethod("bc").invoke(nmsServer);
+			}
 			// finish
+			
 			
 			save = clazz_nms_item.getMethod("a", clazz_HolderLookup_a, clazz_nms_nbt);
 			asBukkitCopy = clazz_obc_CraftItemStack.getMethod("asBukkitCopy", clazz_nms_item);
@@ -43,7 +50,8 @@ public class ItemStackV120_5 extends ItemStackReader{
 	
 	public ItemStack getItemStack(NBTTagCompound nbt) {
         try {
-            Object nms_item = save.invoke(null, provider, convertCompound(nbt));
+        	final Object nmsNBT = convertCompound(nbt);
+            Object nms_item = save.invoke(null, provider, nmsNBT);
 			return (ItemStack) asBukkitCopy.invoke(null, nms_item);
         } catch (Exception e) {
             e.printStackTrace();
