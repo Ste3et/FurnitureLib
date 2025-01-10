@@ -15,6 +15,7 @@ public class PaperFunctions implements ServerFunction {
 	@Override
 	public void onEnable() {
 		FurnitureLib.debug("PaperFunctions created");
+		
 	}
 	
 	@Override
