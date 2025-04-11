@@ -40,7 +40,6 @@ public class ObjectData {
     protected BlockFace placedFace = BlockFace.NORTH;
     protected int chunkX, chunkZ;
     protected boolean finish = false, fixed = false, fromDatabase = false, Private = false;
-    protected final HashSet<Player> playerSet = new HashSet<Player>();
 	
     
     public String getWorldName() {

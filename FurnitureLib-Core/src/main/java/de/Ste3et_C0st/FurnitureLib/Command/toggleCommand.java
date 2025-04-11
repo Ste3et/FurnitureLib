@@ -66,8 +66,8 @@ public class toggleCommand extends iCommand {
     	}else {
     		sendFeedback(sender, player, "message.FurnitureToggleCMDOn");
 			int chunkX = player.getLocation().getBlockX() >> 4, chunkZ = player.getLocation().getBlockZ() >> 4;
-            FurnitureLib.getInstance().getFurnitureManager().updatePlayerView(player, chunkX, chunkZ);
-            FurnitureLib.getInstance().getFurnitureManager().getIgnoreList().removeIf(predicate);
+			FurnitureLib.getInstance().getFurnitureManager().getIgnoreList().removeIf(predicate);
+			FurnitureLib.getInstance().getFurnitureManager().updatePlayerView(player, chunkX, chunkZ);
     	}
     }
     

@@ -139,7 +139,7 @@ public class ObjectID extends ObjectData{
         packetList.add(packet);
     }
 
-    public void updatePlayerView(Player player) {
+    public void updatePlayerView(FurniturePlayer player) {
         if (FurnitureManager.getInstance().getIgnoreList().contains(player.getUniqueId())) {
             return;
         }
@@ -153,15 +153,13 @@ public class ObjectID extends ObjectData{
             return;
         }
         
-        if(isInWorld(player) == false) {
+        if(isInWorld(player.getPlayer()) == false) {
         	return;
         }
         this.sendArmorStands(player);
     }
     
-    private HashSet<Player> players = new HashSet<>();
-    
-    public void updatePlayerViewWithRange(Player player, Location location) {
+    public void updatePlayerViewWithRange(FurniturePlayer player, Location location) {
         if (FurnitureManager.getInstance().getIgnoreList().contains(player.getUniqueId())) {
             return;
         }
@@ -174,12 +172,12 @@ public class ObjectID extends ObjectData{
         if (getSQLAction().equals(SQLAction.REMOVE)) {
             return;
         }
-        if (!isInWorld(player)) {
-			players.remove(player);
+        if (!isInWorld(player.getPlayer())) {
+			player.removeRender(this);
             return;
         } else {
             if (isInRange(location)) {
-                if (players.contains(player)) {
+                if (player.containsObjectID(this)) {
                     return;
                 }
                 
@@ -190,24 +188,24 @@ public class ObjectID extends ObjectData{
                 
                 this.getFurnitureObjectOpt().ifPresent(entry -> {
                 	this.sendArmorStands(player);
-                	entry.receive(player);
+                	entry.receive(player.getPlayer());
                 });
                 
             } else {
-                if (!players.contains(player)) return;
+                if (!player.containsObjectID(this)) return;
                 this.removeArmorStands(player);
             }
         }
     }
     
-    public void sendArmorStands(Player player) {
-    	this.packetList.forEach(stand -> stand.send(player));
-        players.add(player);
+    public void sendArmorStands(FurniturePlayer player) {
+    	this.packetList.forEach(stand -> stand.send(player.getPlayer()));
+    	player.addToRender(this);
     }
     
-    public void removeArmorStands(Player player) {
-    	WrapperPlayServerEntityDestroy.destroyPackets(this, player);
-        players.remove(player);
+    public void removeArmorStands(FurniturePlayer player) {
+    	WrapperPlayServerEntityDestroy.destroyPackets(this, player.getPlayer());
+    	player.removeRender(this);
     }
 
     public fEntity getByID(int entityID) {
@@ -244,11 +242,10 @@ public class ObjectID extends ObjectData{
         if (getPacketList().isEmpty()) {
             return;
         }
-        if (getSQLAction().equals(SQLAction.REMOVE)) {
+        if (getSQLAction() == SQLAction.REMOVE) {
             return;
         }
         FurnitureManager.getInstance().killObject(this, player);
-        playerSet.remove(player);
     }
 
     public void addBlock(List<Block> locationList) {
@@ -355,8 +352,12 @@ public class ObjectID extends ObjectData{
     			location.getBlockZ() == entry.getBlockZ();
     	return this.locList.stream().filter(predicate).findFirst().orElse(null);
     }
-
+    
     public void send(Player p) {
+    	this.updatePlayerView(FurniturePlayer.wrap(p));
+    }
+
+    public void send(FurniturePlayer p) {
         updatePlayerView(p);
     }
     
@@ -381,16 +382,19 @@ public class ObjectID extends ObjectData{
         }
         
         HashSet<Player> actuallyPlayers = getPlayerList();
-        HashSet<Player> removePlayers = new HashSet<Player>(this.playerSet.stream().filter(entry -> actuallyPlayers.contains(entry) == false).collect(Collectors.toSet()));
+        HashSet<Player> removePlayers = new HashSet<Player>(FurniturePlayer.getFurniturePlayerColection().stream()
+        			.filter(entry -> actuallyPlayers.contains(entry.getPlayer()) == false)
+        			.map(FurniturePlayer::getPlayer)
+        			.collect(Collectors.toSet()));
         
-        for (Player p : actuallyPlayers) {
-            getPacketList().forEach(entity -> entity.update(p));
+        for (Player player : actuallyPlayers) {
+            getPacketList().forEach(entity -> entity.update(player));
         }
         
         WrapperPlayServerEntityDestroy.destroyPackets(this, removePlayers);
         
-        this.playerSet.addAll(actuallyPlayers);
-        this.playerSet.removeAll(removePlayers);
+        actuallyPlayers.stream().map(FurniturePlayer::wrap).forEach(player -> player.addToRender(this));
+        actuallyPlayers.stream().map(FurniturePlayer::wrap).forEach(player -> player.removeRender(this));
     }
 
     public void removeAll() {

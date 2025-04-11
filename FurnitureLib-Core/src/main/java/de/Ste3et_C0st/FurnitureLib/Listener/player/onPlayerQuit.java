@@ -10,16 +10,18 @@ import org.bukkit.event.player.PlayerQuitEvent;
 import de.Ste3et_C0st.FurnitureLib.Listener.EventLibrary;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.cache.DiceOfflinePlayer;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
+import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
+import de.Ste3et_C0st.FurnitureLib.main.FurniturePlayer;
 
 public class onPlayerQuit extends EventLibrary implements Listener {
     @EventHandler
     public void onPlayerQuitEvent(PlayerQuitEvent event) {
     	Player player = event.getPlayer();
         getFurnitureManager().removeFurniture(player);
+        FurniturePlayer.getFurniturePlayersMap().remove(player.getUniqueId());
         Optional<DiceOfflinePlayer> offlinePlayer = FurnitureLib.getInstance().getPlayerCache().getPlayer(player.getUniqueId());
         if(offlinePlayer.isPresent()) {
 			offlinePlayer.get().update(player);
         }
-        
     }
 }

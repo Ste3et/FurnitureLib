@@ -85,43 +85,43 @@ public class ObjectIdManager {
 
 	public void updatePlayerViewWithRange(Player player, Location location) {
 		if(player.isOnline()) {
-			getAllExistObjectIDs().forEach(entry -> entry.updatePlayerViewWithRange(player, location));
+			getAllExistObjectIDs().forEach(entry -> entry.updatePlayerViewWithRange(FurniturePlayer.wrap(player), location));
 		}
 	}
 	
 	public void sendObject(ObjectID objectID) {
-		objectID.getPlayerList().stream().forEach(player -> objectID.updatePlayerView(player));
+		objectID.getPlayerList().stream().forEach(player -> objectID.updatePlayerView(FurniturePlayer.wrap(player)));
 	}
 	
 	public void sendObjectInRange(ObjectID objectID) {
-		objectID.getPlayerList().stream().filter(player -> objectID.getWorldName().equalsIgnoreCase(player.getWorld().getName())).filter(player -> objectID.isInRange(player.getLocation())).forEach(player -> objectID.updatePlayerView(player));
+		objectID.getPlayerList().stream().filter(player -> objectID.getWorldName().equalsIgnoreCase(player.getWorld().getName())).filter(player -> objectID.isInRange(player.getLocation())).forEach(player -> objectID.updatePlayerView(FurniturePlayer.wrap(player)));
 	}
 	
 	public void updatePlayerView(Player player, int chunkX, int chunkZ) {
-		getAllExistObjectIDs().filter(entry -> entry.isInChunk(chunkX, chunkZ)).forEach(entry -> entry.updatePlayerView(player));
+		getAllExistObjectIDs().filter(entry -> entry.isInChunk(chunkX, chunkZ)).forEach(entry -> entry.updatePlayerView(FurniturePlayer.wrap(player)));
 	}
 
 	public void destroyChunkPlayerView(Player player, int chunkX, int chunkZ) {
-		getAllExistObjectIDs().filter(entry -> entry.isInChunk(chunkX, chunkZ)).forEach(entry -> entry.removeArmorStands(player));
+		getAllExistObjectIDs().filter(entry -> entry.isInChunk(chunkX, chunkZ)).forEach(entry -> entry.removeArmorStands(FurniturePlayer.wrap(player)));
 	}
 	
 	public void updatePlayerView(Player player, int chunkX, int chunkZ, World world) {
-		getObjectStreamFromWorld(world).filter(entry -> entry.isInChunk(chunkX, chunkZ)).forEach(entry -> entry.updatePlayerView(player));
+		getObjectStreamFromWorld(world).filter(entry -> entry.isInChunk(chunkX, chunkZ)).forEach(entry -> entry.updatePlayerView(FurniturePlayer.wrap(player)));
 	}
 
 	public void destroyChunkPlayerView(Player player, int chunkX, int chunkZ, World world) {
-		getObjectStreamFromWorld(world).filter(entry -> entry.isInChunk(chunkX, chunkZ)).forEach(entry -> entry.removeArmorStands(player));
+		getObjectStreamFromWorld(world).filter(entry -> entry.isInChunk(chunkX, chunkZ)).forEach(entry -> entry.removeArmorStands(FurniturePlayer.wrap(player)));
 	}
 	
 	public void sendAllInView(Player player) {
 		if(player.isOnline()) {
 			String worldName = player.getWorld().getName();
-			getAllExistObjectIDs().filter(entry -> entry.getWorldName().equalsIgnoreCase(worldName) && entry.isInRange(player)).forEach(entry -> entry.sendArmorStands(player));
+			getAllExistObjectIDs().filter(entry -> entry.getWorldName().equalsIgnoreCase(worldName) && entry.isInRange(player)).forEach(entry -> entry.sendArmorStands(FurniturePlayer.wrap(player)));
 		}
 	}
 	
 	public void removeAllNotInView(Player player) {
-		getAllExistObjectIDs().filter(entry -> entry.getPlayerList().contains(player)).forEach(entry -> entry.removeArmorStands(player));
+		getAllExistObjectIDs().filter(entry -> entry.getPlayerList().contains(player)).forEach(entry -> entry.removeArmorStands(FurniturePlayer.wrap(player)));
 	}
 	
 	
@@ -208,7 +208,6 @@ public class ObjectIdManager {
 	
 	public void removeFurniture(Player player) {
 		FurniturePlayer furniturePlayer = FurniturePlayer.wrap(player);
-		
 		if(Objects.nonNull(furniturePlayer)) {
 			furniturePlayer.getReceivedObjects().forEach(entry -> entry.removePacket(player));
 			furniturePlayer.clear();

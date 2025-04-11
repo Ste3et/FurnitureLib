@@ -7,6 +7,8 @@ import java.util.Objects;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionException;
+import java.util.function.Function;
+
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.entity.Player;
@@ -20,10 +22,15 @@ public class FurniturePlayer {
 	private HashSet<ObjectID> receivedObjects = new HashSet<ObjectID>();
 	private static final HashMap<UUID, FurniturePlayer> playerSet = new HashMap<UUID, FurniturePlayer>();
 	
-	public FurniturePlayer(Player player) {
+	private static Function<Player, FurniturePlayer> createNew = (player) -> {
+		final FurniturePlayer newPlayer = new FurniturePlayer(player);
+		playerSet.put(player.getUniqueId(), newPlayer);
+		return newPlayer;
+	};
+	
+	protected FurniturePlayer(Player player) {
 		this.player = player;
 		this.uuid = player.getUniqueId();
-		playerSet.put(this.uuid, this);
 	}
 
 	public Player getPlayer() {
@@ -42,7 +49,7 @@ public class FurniturePlayer {
 			
 			FurnitureManager.getInstance().getObjectStreamFromWorld(worldName).filter(entry -> entry.isInRange(location)).forEach(entry -> {
 				if(this.receivedObjects.contains(entry) == false) {
-					entry.sendArmorStands(player);
+					entry.sendArmorStands(this);
 					receivedObjects.add(entry);
 				}
 			});
@@ -50,6 +57,14 @@ public class FurniturePlayer {
 			this.receivedObjects.removeAll(destroyedObjects);
 			this.receivedObjects.addAll(receivedObjects);
 		});
+	}
+	
+	protected boolean addToRender(ObjectID objectID) {
+		return this.receivedObjects.add(objectID);
+	}
+	
+	protected boolean removeRender(ObjectID objectID) {
+		return this.receivedObjects.remove(objectID);
 	}
 	
 	public boolean isInWorld(World world) {
@@ -78,7 +93,7 @@ public class FurniturePlayer {
     }
 	
     public static FurniturePlayer wrap(Player player) {
-    	return playerSet.getOrDefault(player, new FurniturePlayer(player));
+    	return playerSet.containsKey(player.getUniqueId()) ? playerSet.get(player.getUniqueId()) : createNew.apply(player);
     }
     
     public boolean containsObjectID(ObjectID objectID) {
@@ -86,9 +101,7 @@ public class FurniturePlayer {
     }
     
     public HashSet<ObjectID> getReceivedObjects(){
-    	HashSet<ObjectID> objHashSet = new HashSet<ObjectID>();
-    	objHashSet.addAll(this.receivedObjects);
-    	return objHashSet;
+    	return new HashSet<ObjectID>(this.receivedObjects);
     }
     
     public void clear() {
@@ -96,13 +109,14 @@ public class FurniturePlayer {
     }
     
     public boolean isBedrockPlayer() {
-    	
-    	
-    	
     	FloodgateManager manager = FurnitureLib.getInstance().getFloodgateManager();
     	if(Objects.nonNull(manager)) {
     		manager.isBedrockPlayer(uuid);
     	}
     	return false;
     }
+
+	public UUID getUniqueId() {
+		return this.uuid;
+	}
 }
