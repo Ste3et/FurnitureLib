@@ -42,7 +42,6 @@ public class FurniturePlayer {
 		return makeFuture(() -> {
 			HashSet<ObjectID> receivedObjects = new HashSet<ObjectID>();
 			HashSet<ObjectID> destroyedObjects = new HashSet<ObjectID>();
-			
 			receivedObjects.stream().filter(entry -> entry.isInRange(location) == false).forEach(entry -> {
 				destroyedObjects.add(entry);
 			});
