@@ -319,8 +319,8 @@ public class FurnitureLib extends JavaPlugin {
         if (!getPluginManager().isPluginEnabled("ProtocolLib")) {
             this.disableFurnitureLib(Arrays.asList(
             		"<red>FurnitureLib <gray>can't be enabled",
-            		"<gray>Please <red>install <gray>the right <yellow>Protocollib version",
-            		"<gold>Download it here: <blue>https://www.spigotmc.org/resources/protocollib.1997/",
+            		"<gray>Please <red>install <gray>the right <red>Protocollib version",
+            		"<click:open_url:'https://www.spigotmc.org/resources/protocollib.1997/'><red>https://www.spigotmc.org/resources/protocollib.1997/</click>",
             		"<red>FurnitureLib is temporarily <dark_red>disabled"
             		));
             send("==========================================");

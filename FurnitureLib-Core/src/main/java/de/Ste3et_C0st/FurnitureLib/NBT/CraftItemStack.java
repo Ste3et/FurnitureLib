@@ -54,7 +54,7 @@ public class CraftItemStack {
 	}
 	
     public ItemStack getItemStack(NBTTagCompound nbtTagCompound) {
-        if(Objects.nonNull(READER)) {
+        if(Objects.nonNull(READER) && nbtTagCompound.isEmpty() == false) {
         	return READER.getItemStack(nbtTagCompound);
         }
         return null;

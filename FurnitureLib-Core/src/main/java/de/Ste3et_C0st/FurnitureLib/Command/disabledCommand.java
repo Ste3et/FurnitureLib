@@ -7,7 +7,9 @@ import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
 
+import de.Ste3et_C0st.FurnitureLib.Utilitis.LanguageManager;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
+import net.kyori.adventure.text.minimessage.MiniMessage;
 
 public class disabledCommand implements CommandExecutor {
 
@@ -21,7 +23,7 @@ public class disabledCommand implements CommandExecutor {
 	public boolean onCommand(CommandSender sender, Command command, String label, String[] args) {
 		if(command.getName().equalsIgnoreCase("furniture")) {
 			if(sender.hasPermission("furniture.admin")) {
-				instructions.stream().forEach(sender::sendMessage);
+				instructions.stream().map(MiniMessage.miniMessage()::deserialize).forEach(message -> LanguageManager.sendChatMessage(sender, message));
 			}
 			return true;
 		}

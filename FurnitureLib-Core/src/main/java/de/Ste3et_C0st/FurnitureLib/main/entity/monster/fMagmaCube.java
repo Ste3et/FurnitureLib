@@ -26,7 +26,7 @@ public class fMagmaCube extends fContainerEntity implements SizeableEntity, Scal
 	public static EntityType type = EntityType.MAGMA_CUBE;
 	
 	private final PacketContainer attribute = new PacketContainer(PacketType.Play.Server.UPDATE_ATTRIBUTES);
-	private final WrappedAttribute.Builder scaleAttribute = FurnitureLib.isVersionOrAbove("1.20.5") ? FurnitureLib.isVersionOrAbove("1.21.3") ? WrappedAttribute.newBuilder().attributeKey("scale") : WrappedAttribute.newBuilder().attributeKey("generic.scale").baseValue(1D) : null;
+	private final WrappedAttribute.Builder scaleAttribute = FurnitureLib.isVersionOrAbove("1.20.5") ? FurnitureLib.isVersionOrAbove("1.21.3") ? WrappedAttribute.newBuilder().attributeKey("scale").baseValue(1D) : WrappedAttribute.newBuilder().attributeKey("generic.scale").baseValue(1D) : null;
 	private final DefaultKey<Double> scaleValue = new DefaultKey<Double>(0D);
 	private final DefaultKey<Integer> slimeSize = new DefaultKey<Integer>(1);
 	
