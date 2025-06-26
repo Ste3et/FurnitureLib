@@ -126,9 +126,11 @@ public abstract class fContainerEntity extends fEntity{
     	final CraftItemStack craftItemStack = new CraftItemStack();
 
     	metadata.getCompound("Inventory", NBTTagCompound.class, inventory -> {
+    		//System.out.println(inventory);
     		inventory.c().stream().forEach(entry -> {
+    			
     			String name = (String) entry;
-    			if (inventory.getString(name).equalsIgnoreCase("NONE") == false) {
+    			if (inventory.hasKey(name) && inventory.getString(name).equalsIgnoreCase("NONE") == false) {
     				NBTTagCompound compound = inventory.getCompound(name);
                     ItemStack is = craftItemStack.getItemStack(compound);
                     if(Objects.nonNull(is)) {
