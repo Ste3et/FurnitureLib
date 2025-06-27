@@ -37,7 +37,7 @@ public class BlockDataConverter1_21_6 extends BlockDataReader{
 			}else {
 				calzz_gameProfile = Class.forName("net.minecraft.nbt.GameProfileSerializer");
 				iWorldReader = Class.forName("net.minecraft.world.level.IWorldReader");
-				regsitrie = registries.getDeclaredField("f").get(null);
+				regsitrie = registries.getDeclaredField("i").get(null);
 				holderLookup = iWorldReader.getMethod("a", resourceKeyClass);
 			}
 			
