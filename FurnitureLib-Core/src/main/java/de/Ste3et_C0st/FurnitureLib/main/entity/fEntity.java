@@ -1,25 +1,14 @@
 package de.Ste3et_C0st.FurnitureLib.main.entity;
 
 import com.comphenix.protocol.PacketType;
-import com.comphenix.protocol.events.InternalStructure;
 import com.comphenix.protocol.events.PacketContainer;
-import com.comphenix.protocol.injector.netty.WirePacket;
-import com.comphenix.protocol.utility.MinecraftReflection;
 import com.comphenix.protocol.utility.MinecraftVersion;
-import com.comphenix.protocol.wrappers.WrappedAttribute;
-import com.comphenix.protocol.wrappers.WrappedAttributeModifier;
-import com.comphenix.protocol.wrappers.WrappedAttributeModifier.Operation;
-import com.comphenix.protocol.wrappers.WrappedBlockData;
 import com.comphenix.protocol.wrappers.WrappedChatComponent;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import com.google.common.collect.Lists;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.Registry;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
-import com.comphenix.protocol.wrappers.WrappedStreamCodec;
 import com.comphenix.protocol.wrappers.WrappedWatchableObject;
-import com.comphenix.protocol.wrappers.codecs.WrappedCodec;
-import com.comphenix.protocol.wrappers.codecs.WrappedDynamicOps;
-
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagList;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.DefaultKey;
