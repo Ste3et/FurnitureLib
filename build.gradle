@@ -15,7 +15,7 @@ buildscript {
 }
 
 apply plugin: 'de.Ste3et_C0st.furniture.java-conventions'
-apply plugin: 'com.github.johnrengelman.shadow'
+apply plugin: 'com.gradleup.shadow'
 
 dependencies {
     implementation project(path: ':FurnitureLib-Core', configuration: 'shadow')

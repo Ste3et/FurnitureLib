@@ -15,7 +15,7 @@ buildscript {
   }
 }
 
-apply plugin: 'com.github.johnrengelman.shadow'
+apply plugin: 'com.gradleup.shadow'
 
 repositories {
     mavenLocal()
@@ -48,7 +48,8 @@ dependencies {
 
 shadowJar {
    mergeServiceFiles()
-   archiveBaseName.set('FurnitureLib-Core-shaded')
+   archiveBaseName.set('FurnitureLib-Core')
+   version= ""
    archiveClassifier.set('')
    
    relocate 'com.zaxxer.hikari', 'de.Ste3et_C0st.FurnitureLib.Database.com.zaxxer.hikari'
