@@ -111,6 +111,7 @@ public abstract class Database {
     
     public HashSet<ObjectID> loadQuery(SQLAction action, World bukkitWorld, String query){
     	final HashSet<ObjectID> idList = new HashSet<ObjectID>();
+    	final AtomicInteger failedId = new AtomicInteger(0);
     	if(Objects.isNull(query)) return idList;
         final String worldName = bukkitWorld.getName();
         if(Objects.nonNull(bukkitWorld)) {
@@ -125,6 +126,8 @@ public abstract class Database {
                                 if (Objects.nonNull(obj)) {
                                 	obj.setWorldName(worldName);
                                     idList.add(obj);
+                                }else {
+                                	failedId.incrementAndGet();
                                 }
                             }
             			} while (rs.next());

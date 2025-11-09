@@ -302,7 +302,7 @@ public class FurnitureLib extends JavaPlugin {
     	this.furnitureConfig = new FurnitureConfig(instance);
     	this.furnitureConfig.initLanguage();
         if (getVersionInt() < 12 || getVersionInt() > 21) {
-            this.disableFurnitureLib(Arrays.asList("<red>FurnitureLib only works on Spigot 1.12 - 1.21.5"));
+            this.disableFurnitureLib(Arrays.asList("<red>FurnitureLib only works on Spigot 1.12 - 1.21.10"));
             return;
         }
 

@@ -35,7 +35,7 @@ public class DeSerializer {
 			NBTTagCompound compound = NBTCompressedStreamTools.read(bin);
 			return Objects.isNull(compound) ? null : Deserialize(objId, compound, action, world);
 		}catch (Exception e) {
-			e.printStackTrace();
+			System.out.println("Furniture Model [" + objId + "] is broken");
 			return null;
 		}
 	}
