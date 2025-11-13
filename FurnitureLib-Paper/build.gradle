@@ -4,9 +4,6 @@ repositories {
     maven { url 'https://repo.papermc.io/repository/maven-public/' }
 }
 
-sourceCompatibility = '1.8'
-targetCompatibility = '1.8'
-
 dependencies {
 	implementation project(':FurnitureLib-Core')
     compileOnly ('com.destroystokyo.paper:paper-api:1.16.4-R0.1-SNAPSHOT')
@@ -16,6 +13,12 @@ tasks {
    jar {
 	   enabled = true
    }
+}
+
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(8)
+    }
 }
 
 description = 'FurnitureLib-Paper'

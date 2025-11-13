@@ -56,8 +56,11 @@ shadowJar {
    relocate 'net.kyori', 'de.Ste3et_C0st.FurnitureLib.Paper.net.kyori'
 }
 
-sourceCompatibility = '1.8'
-targetCompatibility = '1.8'
+java {
+    toolchain {
+        languageVersion = JavaLanguageVersion.of(8)
+    }
+}
 
 sourceSets {
     main {
