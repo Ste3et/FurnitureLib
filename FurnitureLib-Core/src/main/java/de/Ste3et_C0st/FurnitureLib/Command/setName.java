@@ -28,7 +28,7 @@ public class setName extends iCommand {
     			if(args.length > 2) {
     				final String name = Arrays.asList(args).stream().skip(2).collect(Collectors.joining(" "));
     				final Component component = getLHandler().stringConvert(name);
-    				project.getCraftingFile().setName(component);
+    				project.getCraftingFile().updateResult(component, null);
     				getLHandler().sendMessage(sender, "command.setname.success", new StringTranslator("model", project.getName()), new StringTranslator("name", component));
     				return;
     			}

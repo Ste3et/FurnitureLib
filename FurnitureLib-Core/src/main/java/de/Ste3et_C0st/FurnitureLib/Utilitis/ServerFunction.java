@@ -11,6 +11,8 @@ public interface ServerFunction {
 	public ItemStack displayName(ItemStack stack, BaseComponent[] baseComponent);
 	public ItemStack lore(ItemStack stack, List<BaseComponent[]> component);
 	
+	public BaseComponent[] displayName(ItemStack stack);
+	
 	public ItemMeta setDisplayName(ItemMeta meta, BaseComponent[] baseComponent);
 	public ItemMeta setLore(ItemMeta meta, List<BaseComponent[]> component);
 	

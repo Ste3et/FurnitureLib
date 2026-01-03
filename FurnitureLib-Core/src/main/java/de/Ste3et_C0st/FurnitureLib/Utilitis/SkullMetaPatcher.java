@@ -3,7 +3,6 @@ package de.Ste3et_C0st.FurnitureLib.Utilitis;
 import java.lang.reflect.Field;
 import java.util.Objects;
 import java.util.UUID;
-
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
@@ -69,8 +68,13 @@ public class SkullMetaPatcher {
 			field.setAccessible(true);
 			
 			if(field.getType().getSimpleName().contains("ResolvableProfile")) {
-				Object object = Class.forName("net.minecraft.world.item.component.ResolvableProfile").getConstructor(gameProfile.getHandleType()).newInstance(gameProfile.getHandle());
-				field.set(headMeta, object);
+				if(FurnitureLib.isVersionOrAbove("1.21.9")){
+					Object object = Class.forName("net.minecraft.world.item.component.ResolvableProfile").getDeclaredMethod("a", gameProfile.getHandleType()).invoke(null, gameProfile.getHandle());
+					field.set(headMeta, object);
+				}else {
+					Object object = Class.forName("net.minecraft.world.item.component.ResolvableProfile").getConstructor(gameProfile.getHandleType()).newInstance(gameProfile.getHandle());
+					field.set(headMeta, object);
+				}
 			}else {
 				field.set(headMeta, gameProfile.getHandle());
 			}

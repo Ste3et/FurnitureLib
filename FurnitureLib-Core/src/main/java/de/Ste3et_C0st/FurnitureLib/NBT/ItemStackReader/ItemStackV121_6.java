@@ -50,7 +50,7 @@ public class ItemStackV121_6 extends ItemStackReader{
 			final Object CODEC = NmsStack.getField("b").get(null);
 			final Object NbtOpsInstance = NbtOps.getField("a").get(null);
 			final Object obj = decode.invoke(CODEC, NbtOpsInstance, nmsNbt);
-			final Optional<?> optional = (Optional<?>) dataResult.invoke(obj, null);
+			final Optional<?> optional = (Optional<?>) dataResult.invoke(obj);
 			return optional.isPresent() ? asBukkitCopy(optional.get()) : new ItemStack(Material.AIR);
         } catch (Exception e) {
             e.printStackTrace();
@@ -77,7 +77,7 @@ public class ItemStackV121_6 extends ItemStackReader{
         	final Object CODEC = NmsStack.getField("b").get(null);
         	final Object NbtOpsInstance = NbtOps.getField("a").get(null);
         	final Object obj = encode.invoke(CODEC, nms_item, NbtOpsInstance, newTag);
-        	final Optional<?> optional = (Optional<?>) dataResult.invoke(obj, null);
+        	final Optional<?> optional = (Optional<?>) dataResult.invoke(obj);
         	
         	if(optional.isPresent()) {
         		ByteArrayOutputStream os = new ByteArrayOutputStream();

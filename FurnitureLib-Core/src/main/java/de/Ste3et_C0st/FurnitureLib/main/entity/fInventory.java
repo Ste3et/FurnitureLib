@@ -176,6 +176,7 @@ public class fInventory implements Cloneable {
 
     public void setSlot(String s, ItemStack item) {
         if (item == null) item = new ItemStack(Material.AIR, 1);
+        if (s.equalsIgnoreCase("SADDLE")) return;
         try {
         	s = s.replace("BODY", "CHEST");
             setSlot(EquipmentSlot.valueOf(s).getSlot(), item);

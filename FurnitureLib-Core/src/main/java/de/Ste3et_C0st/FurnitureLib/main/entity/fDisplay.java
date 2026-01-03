@@ -17,6 +17,7 @@ import org.joml.Vector3f;
 
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.utility.MinecraftVersion;
+import com.comphenix.protocol.wrappers.Vector3F;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.Registry;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
 
@@ -205,6 +206,10 @@ public abstract class fDisplay extends fSize implements SizeableEntity{
 		final Transformation transformation = getTransformation();
 
 		this.entitySize.getOrDefault().write(transformation.getScale());
+		
+//		getWatcher().setObject(new WrappedDataWatcherObject(displayField.getVersionIndex() + 10, Registry.getVectorSerializer()), Vector3F.getConverter().getSpecific(transformation.getTranslation()));
+//		getWatcher().setObject(new WrappedDataWatcherObject(displayField.getVersionIndex() + 11, Registry.getVectorSerializer()), Vector3F.getConverter().getSpecific(transformation.getScale()));
+		
 		getWatcher().setObject(new WrappedDataWatcherObject(displayField.getVersionIndex() + 10, Registry.get(Vector3f.class)), transformation.getTranslation());
 		getWatcher().setObject(new WrappedDataWatcherObject(displayField.getVersionIndex() + 11, Registry.get(Vector3f.class)), transformation.getScale());
 		getWatcher().setObject(new WrappedDataWatcherObject(displayField.getVersionIndex() + 12, Registry.get(Quaternionf.class)), transformation.getLeftRotation());

@@ -195,7 +195,21 @@ public class CraftingFile {
         return this.side;
     }
     
-    public void saveName(Component component) {
+    public void saveName(Component component, ItemStack stack) {
+    	YamlConfiguration configuration = YamlConfiguration.loadConfiguration(this.getFilePath());
+    	if(Objects.nonNull(stack)) configuration.set(header + ".spawnItemStack", stack);
+    	if(Objects.nonNull(component)) configuration.set(header + ".displayName", MiniMessage.miniMessage().serialize(component));
+    	
+    	this.displayName = component;
+    	try {
+			configuration.save(this.getFilePath());
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+    }
+    
+    public void saveItemStack(Component component) {
     	YamlConfiguration configuration = YamlConfiguration.loadConfiguration(this.getFilePath());
     	configuration.set(header + ".displayName", MiniMessage.miniMessage().serialize(component));
     	this.displayName = component;
@@ -205,18 +219,6 @@ public class CraftingFile {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
-    }
-
-    public void setName(Component component) {
-        ItemStack stack = getRecipe().getResult();
-        FurnitureLib.getInstance().getServerFunction().displayName(stack, BungeeComponentSerializer.get().serialize(component));
-        org.bukkit.NamespacedKey key = new org.bukkit.NamespacedKey(FurnitureLib.getInstance(), this.name.toLowerCase());
-        ShapedRecipe recipe = new ShapedRecipe(key, stack).shape(this.getRecipe().getShape());
-        this.recipe.getIngredientMap().entrySet().stream().filter(entry -> Objects.nonNull(entry.getValue())).forEach(entry -> recipe.setIngredient(entry.getKey(), entry.getValue().getData()));
-        this.recipe = recipe;
-        this.displayName = component;
-        this.saveName(component);
-        if (!isDisable) Bukkit.getServer().addRecipe(this.recipe);
     }
 
     private ItemStack returnResult(final String name,final YamlConfiguration configuration) {
@@ -254,6 +256,7 @@ public class CraftingFile {
         if (configuration.contains(header + ".spawnMaterial")) {
             String str = configuration.getString(header + ".spawnMaterial");
             if (!str.equalsIgnoreCase("383")) {
+            	
             	material = Material.getMaterial(str);
             }
         }
@@ -266,9 +269,7 @@ public class CraftingFile {
         FurnitureLib.getInstance().getServerFunction().setDisplayName(itemMeta, BungeeComponentSerializer.get().serialize(this.displayName));
         
         if (itemMeta.hasLore()) loreText.addAll(itemMeta.getLore());
-        
-        
-        
+
         if (configuration.contains(header + ".custommodeldata")) {
         	try{
         		itemMeta.setCustomModelData(configuration.getInt(header + ".custommodeldata"));
@@ -302,6 +303,7 @@ public class CraftingFile {
         itemMeta.addItemFlags(ItemFlag.HIDE_ATTRIBUTES, ItemFlag.HIDE_UNBREAKABLE, ItemFlag.HIDE_ATTRIBUTES);
         itemStack.setItemMeta(itemMeta);
         itemStack.setAmount(1);
+        
         return itemStack;
     }
 
@@ -402,5 +404,24 @@ public class CraftingFile {
 
 	public Component getDisplayName() {
 		return this.displayName;
+	}
+
+	public void updateResult(Component component, ItemStack stack) {
+		 if(Objects.isNull(stack)) stack = this.getItemstack().clone();
+		 if(Objects.nonNull(component)) {
+	    	 this.displayName = component;
+	    	 if(stack.hasItemMeta()) {
+	    		 ItemMeta meta = stack.getItemMeta();
+	    		 stack.setItemMeta(FurnitureLib.getInstance().getServerFunction().setDisplayName(meta, BungeeComponentSerializer.get().serialize(this.displayName)));
+	    	 }
+	     }
+		 
+	     org.bukkit.NamespacedKey key = new org.bukkit.NamespacedKey(FurnitureLib.getInstance(), this.name.toLowerCase());
+	     ShapedRecipe recipe = new ShapedRecipe(key, stack).shape(this.getRecipe().getShape());
+	     this.recipe.getIngredientMap().entrySet().stream().filter(entry -> Objects.nonNull(entry.getValue())).forEach(entry -> recipe.setIngredient(entry.getKey(), entry.getValue().getData()));
+	     this.recipe = recipe;
+	     
+	     this.saveName(this.displayName, stack.clone());
+	     if (!isDisable) Bukkit.getServer().addRecipe(this.recipe);
 	}
 }

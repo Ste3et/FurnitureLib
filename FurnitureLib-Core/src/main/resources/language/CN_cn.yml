@@ -48,6 +48,11 @@ message:
   reload: <gray>已重载<dark_green><b>FurnitureLib
   PurgeMarked: <green>你标记了<amount>件家具并从数据库中删除这些家具.
 command:
+  setitem:
+    help_hover: <gray>Change the Item Model
+    suggest: /furniture setitem
+    help_name: <gray>/furniture <yellow>setitem [id] [newName]
+    success: <gray>You have updatet model <model>.
   setname:
     help_hover: <gray>修改家具模型名称
     suggest: /furniture setname

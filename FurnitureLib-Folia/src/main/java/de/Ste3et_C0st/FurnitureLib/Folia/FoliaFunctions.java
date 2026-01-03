@@ -45,4 +45,9 @@ public class FoliaFunctions implements ServerFunction{
 		return meta;
 	}
 
+	@Override
+	public BaseComponent[] displayName(ItemStack stack) {
+		return stack.hasItemMeta() && stack.getItemMeta().hasDisplayName() ? stack.getItemMeta().getDisplayNameComponent() : null;
+	}
+
 }

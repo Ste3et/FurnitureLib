@@ -12,6 +12,7 @@ import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
+import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.md_5.bungee.api.chat.BaseComponent;
 
 public class SpigotFunctions implements ServerFunction{
@@ -63,6 +64,11 @@ public class SpigotFunctions implements ServerFunction{
 			meta.setLore(legacyLore);
 		}
 		return meta;
+	}
+
+	@Override
+	public BaseComponent[] displayName(ItemStack stack) {
+		return stack != null && stack.hasItemMeta() && stack.getItemMeta().hasDisplayName() ? BungeeComponentSerializer.get().serialize(PlainTextComponentSerializer.plainText().deserialize(stack.getItemMeta().getDisplayName())) : BungeeComponentSerializer.get().serialize(Component.empty());
 	}
 
 }

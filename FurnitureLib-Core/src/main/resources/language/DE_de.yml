@@ -60,6 +60,11 @@ message:
   reload: <gray>FurnitureLib wurde <rainbow>neu geladen
   PurgeMarked: Du hast <amount> Rüstungsständer zum Entfernen aus der DB makiert.
 command:
+  setitem:
+    help_hover: <gray>Ändert das Anzeige Symbol
+    suggest: /furniture setitem
+    help_name: <gray>/furniture <yellow>setitem [id] [newName]
+    success: <gray>Das Model <model> hat nun ein neues Spawnmaterial.
   setname:
     help_hover: <gray>Ändert den Anzeigenamen
     suggest: /furniture setname
