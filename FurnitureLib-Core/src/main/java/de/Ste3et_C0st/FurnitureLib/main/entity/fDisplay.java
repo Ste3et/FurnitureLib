@@ -13,7 +13,9 @@ import org.bukkit.util.Transformation;
 import org.bukkit.util.Vector;
 import org.joml.AxisAngle4f;
 import org.joml.Quaternionf;
+import org.joml.Quaternionfc;
 import org.joml.Vector3f;
+import org.joml.Vector3fc;
 
 import com.comphenix.protocol.events.PacketContainer;
 import com.comphenix.protocol.utility.MinecraftVersion;
@@ -210,10 +212,17 @@ public abstract class fDisplay extends fSize implements SizeableEntity{
 //		getWatcher().setObject(new WrappedDataWatcherObject(displayField.getVersionIndex() + 10, Registry.getVectorSerializer()), Vector3F.getConverter().getSpecific(transformation.getTranslation()));
 //		getWatcher().setObject(new WrappedDataWatcherObject(displayField.getVersionIndex() + 11, Registry.getVectorSerializer()), Vector3F.getConverter().getSpecific(transformation.getScale()));
 		
-		getWatcher().setObject(new WrappedDataWatcherObject(displayField.getVersionIndex() + 10, Registry.get(Vector3f.class)), transformation.getTranslation());
-		getWatcher().setObject(new WrappedDataWatcherObject(displayField.getVersionIndex() + 11, Registry.get(Vector3f.class)), transformation.getScale());
-		getWatcher().setObject(new WrappedDataWatcherObject(displayField.getVersionIndex() + 12, Registry.get(Quaternionf.class)), transformation.getLeftRotation());
-		getWatcher().setObject(new WrappedDataWatcherObject(displayField.getVersionIndex() + 13, Registry.get(Quaternionf.class)), transformation.getRightRotation());
+		if(FurnitureLib.isVersionOrAbove("1.21.11")) {
+			getWatcher().setObject(new WrappedDataWatcherObject(displayField.getVersionIndex() + 10, Registry.get(Vector3fc.class)), transformation.getTranslation());
+			getWatcher().setObject(new WrappedDataWatcherObject(displayField.getVersionIndex() + 11, Registry.get(Vector3fc.class)), transformation.getScale());
+			getWatcher().setObject(new WrappedDataWatcherObject(displayField.getVersionIndex() + 12, Registry.get(Quaternionfc.class)), transformation.getLeftRotation());
+			getWatcher().setObject(new WrappedDataWatcherObject(displayField.getVersionIndex() + 13, Registry.get(Quaternionfc.class)), transformation.getRightRotation());
+		}else {
+			getWatcher().setObject(new WrappedDataWatcherObject(displayField.getVersionIndex() + 10, Registry.get(Vector3f.class)), transformation.getTranslation());
+			getWatcher().setObject(new WrappedDataWatcherObject(displayField.getVersionIndex() + 11, Registry.get(Vector3f.class)), transformation.getScale());
+			getWatcher().setObject(new WrappedDataWatcherObject(displayField.getVersionIndex() + 12, Registry.get(Quaternionf.class)), transformation.getLeftRotation());
+			getWatcher().setObject(new WrappedDataWatcherObject(displayField.getVersionIndex() + 13, Registry.get(Quaternionf.class)), transformation.getRightRotation());
+		}
 	}
 	
 	public fDisplay setTransformation(Transformation transformation) {
