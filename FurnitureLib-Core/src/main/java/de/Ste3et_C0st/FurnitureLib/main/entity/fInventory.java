@@ -29,7 +29,7 @@ public class fInventory implements Cloneable {
     private static Function<fInventory, List<IEntityEquipment>> entityEquipmentFunction;
     
     static {
-    	if(FurnitureLib.getVersionInt() > 15) {
+    	if(FurnitureLib.isVersionOrAbove("1.15")) {
         	entityEquipmentFunction = fInventory -> {
         		List<IEntityEquipment> packetList = new ArrayList<IEntityEquipment>();
         		WrapperPlayServerEntityEquipmentNew equipmentInterface = new WrapperPlayServerEntityEquipmentNew().writeEntityID(fInventory.entityId);

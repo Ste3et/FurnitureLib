@@ -27,10 +27,10 @@ public abstract class ItemStackReader {
 				asNMSCopy = clazz_obc_CraftItemStack.getMethod("asNMSCopy", org.bukkit.inventory.ItemStack.class);
 				clazz_nms_item = Class.forName(getItemStackClass());
 				
-				clazz_nms_nbt  = Class.forName(getNbtFolder() + ".NBTTagCompound");
-				clazz_nbttools = Class.forName(getNbtFolder() +  ".NBTCompressedStreamTools");
+				clazz_nms_nbt  = Class.forName(getNbtFolder() + (FurnitureLib.isVersionOrAbove("26.1") ? ".CompoundTag" : ".NBTTagCompound"));
+				clazz_nbttools = Class.forName(getNbtFolder() + (FurnitureLib.isVersionOrAbove("26.1") ? ".NbtIo" : ".NBTCompressedStreamTools"));
 				
-				clazz_nbttools_method_a_output = clazz_nbttools.getMethod("a", clazz_nms_nbt, OutputStream.class);
+				clazz_nbttools_method_a_output = clazz_nbttools.getMethod(FurnitureLib.isVersionOrAbove("26.1") ? "writeCompressed" : "a", clazz_nms_nbt, OutputStream.class);
 			}else {
 				clazz_obc_CraftItemStack = Class.forName(InternalClassReader.OBC + ".inventory.CraftItemStack");
 				asNMSCopy = clazz_obc_CraftItemStack.getMethod("asNMSCopy", org.bukkit.inventory.ItemStack.class);
@@ -58,11 +58,11 @@ public abstract class ItemStackReader {
 	}
 	
 	static String getNbtFolder() {
-		return FurnitureLib.getVersionInt() > 16 ? InternalClassReader.NBT : "net.minecraft.server." + InternalClassReader.packetVersion;
+		return FurnitureLib.isVersionOrAbove("1.16") ? InternalClassReader.NBT : "net.minecraft.server." + InternalClassReader.packetVersion;
 	}
 	
     static String getItemStackClass() {
-    	return FurnitureLib.getVersionInt() > 16 ? "net.minecraft.world.item.ItemStack" : "net.minecraft.server." + InternalClassReader.packetVersion + ".ItemStack";
+    	return FurnitureLib.isVersionOrAbove("1.16") ? "net.minecraft.world.item.ItemStack" : "net.minecraft.server." + InternalClassReader.packetVersion + ".ItemStack";
 	}
     
     public abstract Object convertCompound(NBTTagCompound nbtTagCompound) throws Exception;

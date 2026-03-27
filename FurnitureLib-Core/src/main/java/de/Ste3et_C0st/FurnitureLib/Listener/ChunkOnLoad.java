@@ -59,7 +59,7 @@ public class ChunkOnLoad implements Listener {
     public static String getProjectString(ItemStack stack) {
     	if (Objects.isNull(stack)) return null;
     	if (stack.hasItemMeta() == false) return null;
-    	if(FurnitureLib.getVersionInt() > 13) {
+    	if(FurnitureLib.isVersionOrAbove("1.13")) {
     		ItemMeta meta = stack.getItemMeta();
     		if (meta.hasLore()) {
     			if(HiddenStringUtils.hasHiddenString(stack.getItemMeta().getLore().get(0))) {

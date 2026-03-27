@@ -131,7 +131,7 @@ public class FurnitureProtocolListener {
 						
 						EntityUseAction action = event.getPacket().getEntityUseActions().readSafely(0);
 
-						if (FurnitureLib.getVersionInt() > 16) {
+						if (FurnitureLib.isVersionOrAbove("1.16")) {
 							com.comphenix.protocol.wrappers.WrappedEnumEntityUseAction wrappedEnumEntityUseAction = event.getPacket().getEnumEntityUseActions().readSafely(0);
 							if(Objects.nonNull(wrappedEnumEntityUseAction)) {
 								action = wrappedEnumEntityUseAction.getAction();

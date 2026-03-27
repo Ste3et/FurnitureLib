@@ -1,6 +1,5 @@
 package de.Ste3et_C0st.FurnitureLib.main;
 
-import com.comphenix.protocol.utility.MinecraftVersion;
 import com.comphenix.protocol.wrappers.WrappedDataWatcher;
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.SchedularHelper;
@@ -34,14 +33,14 @@ public class FurnitureManager extends ObjectIdManager{
         packetClasses.put(EntityType.PIG, fPig::new);
         packetClasses.put(EntityType.CREEPER, fCreeper::new);
         packetClasses.put(EntityType.GIANT, fGiant::new);
-        if(FurnitureLib.getVersion(new MinecraftVersion("1.19.4"))) {
+        if(FurnitureLib.isVersionOrAbove("1.19.4")) {
         	packetClasses.put(EntityType.BLOCK_DISPLAY, fBlock_display::new);
         	packetClasses.put(EntityType.ITEM_DISPLAY, fItem_display::new);
         	packetClasses.put(EntityType.TEXT_DISPLAY, fText_display::new);
         	packetClasses.put(EntityType.INTERACTION, fInteraction::new);
         	
         }
-        if(FurnitureLib.getVersion(new MinecraftVersion("1.20.5"))) {
+        if(FurnitureLib.isVersionOrAbove("1.20.5")) {
         	packetClasses.put(EntityType.MAGMA_CUBE, fMagmaCube::new);
         	packetClasses.put(EntityType.SHULKER, fShulker::new);
         }

@@ -30,7 +30,7 @@ public class SQLManager {
 	private FurnitureLib plugin;
     private Task sqlSaveInterval = null;
     private Database database;
-    private static int versionInt = FurnitureLib.getVersionInt();
+    private static boolean isAbove1_11 = FurnitureLib.isVersionOrAbove("1.11");
     
     public SQLManager(FurnitureLib plugin) {
         this.plugin = plugin;
@@ -108,14 +108,14 @@ public class SQLManager {
                         removeList.add(obj);
                         //plugin.getFurnitureManager().deleteObjectID(obj);
                 	}else if(SQLAction.UPDATE == sqlAction) {
-                		if(versionInt > 11) {
+                		if(isAbove1_11) {
                 			saveList.add(obj);
                 		}else {
                 			save(obj);
                 		}
                 		j++;
                 	}else if(SQLAction.SAVE == sqlAction){
-                		if(versionInt > 11) {
+                		if(isAbove1_11) {
                 			saveList.add(obj);
                 		}else {
                 			save(obj);
@@ -169,14 +169,14 @@ public class SQLManager {
                         l++;
                         plugin.getFurnitureManager().deleteObjectID(obj);
                 	}else if(SQLAction.UPDATE == sqlAction) {
-                		if(versionInt > 11) {
+                		if(isAbove1_11) {
                 			saveList.add(obj);
                 		}else {
                 			save(obj);
                 		}
                 		j++;
                 	}else if(SQLAction.SAVE == sqlAction){
-                		if(versionInt > 11) {
+                		if(isAbove1_11) {
                 			saveList.add(obj);
                 		}else {
                 			save(obj);

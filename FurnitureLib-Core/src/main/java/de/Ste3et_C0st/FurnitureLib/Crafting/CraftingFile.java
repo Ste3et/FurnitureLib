@@ -233,7 +233,7 @@ public class CraftingFile {
         				loreText.addAll(meta.getLore());
         			}
         			
-        			if(FurnitureLib.getVersionInt() > 13) {
+        			if(FurnitureLib.isVersionOrAbove("1.13")) {
         				meta.getPersistentDataContainer().set(new org.bukkit.NamespacedKey(FurnitureLib.getInstance(), "model"), PersistentDataType.STRING, getSystemID());
         			}else {
         				loreText.add(HiddenStringUtils.encodeString(getSystemID()));
@@ -276,7 +276,7 @@ public class CraftingFile {
         	}catch (Exception e) {/* Method = setCustomModelData didn't exist (ignore Exception) */}
         }
 
-        if(FurnitureLib.getVersionInt() > 13) {
+        if(FurnitureLib.isVersionOrAbove("1.13")) {
         	itemMeta.getPersistentDataContainer().set(new org.bukkit.NamespacedKey(FurnitureLib.getInstance(), "model"), PersistentDataType.STRING, getSystemID());
 		}
         
@@ -290,7 +290,7 @@ public class CraftingFile {
         	FurnitureLib.getInstance().getServerFunction().setLore(itemMeta, componentList);
         }
         
-        if(FurnitureLib.getVersionInt() < 14) {
+        if(FurnitureLib.isVersionOrAbove("1.14") == false) {
         	List<String> legacyLores = new ArrayList<>();
         	legacyLores.add(HiddenStringUtils.encodeString(getSystemID()));
         	if(itemMeta.hasLore()) legacyLores.addAll(itemMeta.getLore());

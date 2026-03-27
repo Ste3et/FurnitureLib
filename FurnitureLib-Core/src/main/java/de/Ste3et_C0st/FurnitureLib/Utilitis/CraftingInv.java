@@ -178,7 +178,7 @@ public class CraftingInv implements Listener {
                         }
                     }
 
-                    if (FurnitureLib.getVersionInt() > 13) {
+                    if (FurnitureLib.isVersionOrAbove("1.13")) {
                         if (meta.hasCustomModelData()) conf.set(header + ".custommodeldata", meta.getCustomModelData());
                     }
                 }

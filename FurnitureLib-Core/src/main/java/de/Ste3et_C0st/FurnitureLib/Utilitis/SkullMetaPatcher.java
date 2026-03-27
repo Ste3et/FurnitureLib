@@ -69,7 +69,7 @@ public class SkullMetaPatcher {
 			
 			if(field.getType().getSimpleName().contains("ResolvableProfile")) {
 				if(FurnitureLib.isVersionOrAbove("1.21.9")){
-					Object object = Class.forName("net.minecraft.world.item.component.ResolvableProfile").getDeclaredMethod("a", gameProfile.getHandleType()).invoke(null, gameProfile.getHandle());
+					Object object = Class.forName("net.minecraft.world.item.component.ResolvableProfile").getDeclaredMethod(FurnitureLib.isVersionOrAbove("26.1") ? "createResolved" : "a", gameProfile.getHandleType()).invoke(null, gameProfile.getHandle());
 					field.set(headMeta, object);
 				}else {
 					Object object = Class.forName("net.minecraft.world.item.component.ResolvableProfile").getConstructor(gameProfile.getHandleType()).newInstance(gameProfile.getHandle());

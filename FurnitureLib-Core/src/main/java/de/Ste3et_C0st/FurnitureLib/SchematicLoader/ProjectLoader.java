@@ -77,12 +77,12 @@ public class ProjectLoader extends Furniture {
 
         if ((function || Objects.nonNull(this.inv)) && canInteract) {
             if (Objects.nonNull(this.inv)) {
-            	if(FurnitureLib.getVersionInt() > 16) player.swingMainHand();
+            	if(FurnitureLib.isVersionOrAbove("1.16")) player.swingMainHand();
                 this.inv.openInventory(player);
                 return;
             }
             if (runFunction(player)) {
-            	if(FurnitureLib.getVersionInt() > 16) player.swingMainHand();
+            	if(FurnitureLib.isVersionOrAbove("1.16")) player.swingMainHand();
                 update();
                 return;
             }

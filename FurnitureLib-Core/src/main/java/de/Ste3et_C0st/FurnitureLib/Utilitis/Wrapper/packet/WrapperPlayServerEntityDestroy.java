@@ -22,7 +22,7 @@ public class WrapperPlayServerEntityDestroy extends AbstractPacket{
 	public static final BiConsumer<ObjectID, Player[]> KILLFUNCTION;
 	
 	static {
-		if(FurnitureLib.getVersionInt() < 17) {
+		if(FurnitureLib.isVersionOrAbove("1.17") == false) {
 			KILLFUNCTION = (ObjectID, Player) -> {
 				int[] integers = ObjectID.getPacketList().stream().mapToInt(fEntity::getEntityID).toArray();
 				WrapperPlayServerEntityDestroy massDestruction = new WrapperPlayServerEntityDestroy();

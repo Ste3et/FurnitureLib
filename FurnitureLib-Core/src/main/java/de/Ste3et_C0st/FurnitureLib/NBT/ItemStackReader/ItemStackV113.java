@@ -21,7 +21,7 @@ public class ItemStackV113 extends ItemStackReader{
 			a = clazz_nms_item.getMethod("a", clazz_nms_nbt);
 			clazz_nbttools_method_a_input = clazz_nbttools.getMethod("a", InputStream.class);
 			asBukkitCopy = clazz_obc_CraftItemStack.getMethod("asBukkitCopy", clazz_nms_item);
-			method_save = clazz_nms_item.getMethod(FurnitureLib.getVersionInt() > 17 ? "b" : "save", clazz_nms_nbt);
+			method_save = clazz_nms_item.getMethod(FurnitureLib.isVersionOrAbove("1.17") ? "b" : "save", clazz_nms_nbt);
 		}catch(Exception ex) {
 			ex.printStackTrace();
 		}

@@ -29,7 +29,7 @@ public class AdventureHandling {
     }
 
 	public void sendActionBar(CommandSender sender, Component component) {
-		if(FurnitureLib.getVersionInt() < 16) {
+		if(FurnitureLib.isVersionOrAbove("1.16") == false) {
 			final String legacyString = LegacyComponentSerializer.legacySection().serialize(component);
 			component = LegacyComponentSerializer.legacySection().deserialize(legacyString);
 		}

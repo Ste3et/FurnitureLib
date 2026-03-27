@@ -24,7 +24,7 @@ public class fProtocol {
     private final static PacketType packetType;
     
     static {
-    	packetType = FurnitureLib.getVersionInt() > 18 ? PacketType.Play.Server.SPAWN_ENTITY : PacketType.Play.Server.SPAWN_ENTITY_LIVING;
+    	packetType = FurnitureLib.isVersionOrAbove("1.18") ? PacketType.Play.Server.SPAWN_ENTITY : PacketType.Play.Server.SPAWN_ENTITY_LIVING;
     }
 
     public fProtocol(EntityType type, ObjectID id) {

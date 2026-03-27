@@ -146,7 +146,7 @@ public class MaterialConverter {
     }
     
     public static String updateChangedMaterial(String string) {
-    	if(FurnitureLib.getVersionInt() > 16) {
+    	if(FurnitureLib.isVersionOrAbove("1.16")) {
     		string = string.replace("grass_path", "dirt_path");
     	}
     	return string;

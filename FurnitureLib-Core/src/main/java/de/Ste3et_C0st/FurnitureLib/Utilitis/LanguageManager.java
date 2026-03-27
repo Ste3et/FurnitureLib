@@ -190,7 +190,7 @@ public class LanguageManager {
         if (hash.isEmpty()) return "§cHash is empty";
         if (!hash.containsKey(a)) return "§fkey not found: §5" + a;
         String b = hash.get(a);
-        return FurnitureLib.getVersionInt() > 15 ? applyHexColors(hash.get(a)) : ChatColor.translateAlternateColorCodes('&', b);
+        return FurnitureLib.isVersionOrAbove("1.15") ? applyHexColors(hash.get(a)) : ChatColor.translateAlternateColorCodes('&', b);
     }
     
     public String applyHexColors(String message){
@@ -286,7 +286,7 @@ public class LanguageManager {
     	final TagResolver[] tags = getTagsArray(Arrays.asList(stringTranslators));
 		final Component returnMessage = MiniMessage.miniMessage().deserialize(rawString, tags);
 		
-		if(FurnitureLib.getVersionInt() < 16) {
+		if(FurnitureLib.isVersionOrAbove("1.16") == false) {
 			final String legacyString = LegacyComponentSerializer.legacySection().serialize(returnMessage);
 			sender.sendMessage(legacyString);
 			return;

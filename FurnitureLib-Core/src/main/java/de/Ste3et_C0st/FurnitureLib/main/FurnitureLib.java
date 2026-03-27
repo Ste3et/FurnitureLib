@@ -53,11 +53,10 @@ public class FurnitureLib extends JavaPlugin {
 
     private static FurnitureLib instance;
     private static List<FurniturePlugin> furniturePlugins = Lists.newArrayList();
-    private static int versionInt = 0;
     private static boolean enableDebug = false;
     private static int debugLevel = 0;
     
-    private static Boolean newVersion = null;
+    private static Boolean newVersion = false;
     public boolean enabled = true;
     public HashMap<Project, Long> deleteMap = new HashMap<>();
     public HashMap<UUID, Long> timeStampPlace = new HashMap<>();
@@ -81,7 +80,7 @@ public class FurnitureLib extends JavaPlugin {
     
     private ProjectManager pManager;
     private PermissionHandler permissionHandler;
-    private Material defMaterial = Material.valueOf(isNewVersion() ? "COW_SPAWN_EGG" : "MONSTER_EGG");
+    private Material defMaterial = Material.STONE;
     private OfflinePlayerCache cache;
     private boolean enabledPlugin = false;
     private FurnitureConfig furnitureConfig;
@@ -91,9 +90,7 @@ public class FurnitureLib extends JavaPlugin {
     private static boolean folia = false, paper = false;
     
     static {
-    	 versionInt = Integer.parseInt(getBukkitVersion());
-    	 newVersion = versionInt > 12;
-         folia = containsClass("io.papermc.paper.threadedregions.RegionizedServer");
+    	 folia = containsClass("io.papermc.paper.threadedregions.RegionizedServer");
          paper = containsClass("com.destroystokyo.paper.event.block.BlockDestroyEvent");
     }
     
@@ -115,7 +112,11 @@ public class FurnitureLib extends JavaPlugin {
     }
     
     public static String getBukkitVersion() {
-        return Bukkit.getServer().getBukkitVersion().replace(".", ",").replace("-", ",").split(",")[1];
+    	if(Bukkit.getServer().getBukkitVersion().startsWith("1.")) {
+    		return Bukkit.getServer().getBukkitVersion().replace(".", ",").replace("-", ",").split(",")[1];
+    	}else {
+    		return Bukkit.getServer().getBukkitVersion().split("-")[0];
+    	}
     }
 
     public static FurnitureLib getInstance() {
@@ -142,10 +143,6 @@ public class FurnitureLib extends JavaPlugin {
     
     public static void debug(List<String> str, int level) {
     	str.forEach(entry -> debug(entry, level));
-    }
-
-    public static int getVersionInt() {
-        return versionInt;
     }
 
     public static boolean isNewVersion() {
@@ -299,9 +296,18 @@ public class FurnitureLib extends JavaPlugin {
     public void onEnable() {
     	instance = this;
     	
+	   	if(isEnable("ProtocolLib")) {
+	   		 newVersion =  MinecraftVersion.getCurrentVersion().isAtLeast(MinecraftVersion.COLOR_UPDATE);
+	   	}else {
+	       	 newVersion = Integer.parseInt(getBukkitVersion()) > 12;
+	   	}
+    	
     	this.furnitureConfig = new FurnitureConfig(instance);
     	this.furnitureConfig.initLanguage();
-        if (getVersionInt() < 12 || getVersionInt() > 21) {
+	   	
+	   	this.defMaterial = Material.valueOf(isNewVersion() ? "COW_SPAWN_EGG" : "MONSTER_EGG");
+    	
+    	if (isVersionOrAbove("1.12") == false || isVersionOrAbove("26.2")) {
             this.disableFurnitureLib(Arrays.asList("<red>FurnitureLib only works on Spigot 1.12 - 1.21.10"));
             return;
         }
@@ -481,10 +487,14 @@ public class FurnitureLib extends JavaPlugin {
             }
         });
     }
+    
+    private static boolean isEnable(String plugin) {
+    	return Bukkit.getPluginManager().isPluginEnabled(plugin);
+    }
 
     private boolean isEnable(String plugin, boolean shutdown) {
         boolean b = getServer().getPluginManager().isPluginEnabled(plugin);
-        if (!b && shutdown)
+        if (!isEnable(plugin) && shutdown)
         	this.disableFurnitureLib(Arrays.asList("ProtocolLib is missing please install ProtocolLib","You can it download at: §6§lhttps://www.spigotmc.org/resources/protocollib.1997/"));
         return b;
     }

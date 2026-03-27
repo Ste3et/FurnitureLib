@@ -19,6 +19,7 @@ import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.entity.Player;
 
+import com.comphenix.protocol.utility.MinecraftVersion;
 import com.comphenix.protocol.wrappers.EnumWrappers;
 
 import de.Ste3et_C0st.FurnitureLib.Crafting.Project;
@@ -97,7 +98,7 @@ public class downloadCommand extends iCommand{
 					
 					PrintStream stream = new PrintStream(connection.getOutputStream());
 					stream.println("id=" + name);
-					stream.println("&spigot=1." + FurnitureLib.getVersionInt());
+					stream.println("&spigot=" + MinecraftVersion.getCurrentVersion().getVersion());
 					
 					BufferedReader reader = new BufferedReader(new InputStreamReader(connection.getInputStream()));
 					

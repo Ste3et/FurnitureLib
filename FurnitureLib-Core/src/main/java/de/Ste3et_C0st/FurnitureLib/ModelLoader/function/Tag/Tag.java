@@ -31,7 +31,7 @@ public class Tag {
         this.tagString = str;
         for (String q : query) {
             MaterialData data = null;
-            if (!q.chars().allMatch(Character::isLetter) && FurnitureLib.getVersionInt() < 13) {
+            if (!q.chars().allMatch(Character::isLetter) && FurnitureLib.isVersionOrAbove("1.13") == false) {
                 int id = 0;
                 int subId = 0;
                 if (q.contains(":")) {

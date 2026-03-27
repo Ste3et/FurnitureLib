@@ -60,7 +60,7 @@ public abstract class Limitation {
 		configuration.options().copyDefaults(true);
 		configuration.options().copyHeader(true);
 		if(headerList.isEmpty() == false) {
-			if(FurnitureLib.getVersionInt() > 18) {
+			if(FurnitureLib.isVersionOrAbove("1.18")) {
 				configuration.options().setHeader(headerList);
 			}else {
 				final String headerString = String.join("\n", headerList.toArray(new String[headerList.size()]));

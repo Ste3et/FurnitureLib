@@ -24,7 +24,7 @@ public class EntityID {
 		}
 		
 		try {
-			if(FurnitureLib.getVersionInt() < 17) {
+			if(FurnitureLib.isVersionOrAbove("1.17") == false) {
 				entityClass = Class.forName("net.minecraft.server." + getVersion() + "Entity");
 				entityCountField = entityClass.getDeclaredField("entityCount");
 				entityCountField.setAccessible(true);
@@ -64,7 +64,7 @@ public class EntityID {
     }
 
     public static int nextEntityId() {
-        if (FurnitureLib.getVersionInt() > 13) {
+        if (FurnitureLib.isVersionOrAbove("1.13")) {
             return nextEntityIdNew();
         } else {
             return nextEntityIdOld();

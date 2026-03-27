@@ -88,7 +88,7 @@ public abstract class fEntity extends fSerializer implements Cloneable{
         this.entityTypeID = entityID;
         getHandle().getModifier().writeDefaults();
         getHandle().getIntegers().write(0, this.entityID).write(1, entityTypeID);
-        if(FurnitureLib.getVersionInt() > 18) getHandle().getEntityTypeModifier().writeSafely(0, type);
+        if(FurnitureLib.isVersionOrAbove("1.18")) getHandle().getEntityTypeModifier().writeSafely(0, type);
         getHandle().getUUIDs().write(0, this.entityUUID);
         this.mountPacketContainer.getIntegers().write(0, this.entityID);
         setLocation(loc);
@@ -180,7 +180,7 @@ public abstract class fEntity extends fSerializer implements Cloneable{
             
             getHandle().getDoubles().write(0, this.positionX).write(1, this.positionY).write(2, this.positionZ);
             
-            if(FurnitureLib.getVersionInt() > 18) {
+            if(FurnitureLib.isVersionOrAbove("1.18")) {
             	getHandle().getBytes().write(0, this.pitch).write(1, this.yaw);
             }else {
             	getHandle().getBytes().write(0, this.yaw).write(1, this.pitch);
@@ -424,7 +424,7 @@ public abstract class fEntity extends fSerializer implements Cloneable{
 
     public void kill(Player p, boolean b) {
         this.destroy.getIntegerArrays().writeSafely(0, new int[]{getEntityID()});
-        if(FurnitureLib.getVersionInt() > 16) {
+        if(FurnitureLib.isVersionOrAbove("1.16")) {
         	this.destroy.getIntegers().writeSafely(0, getEntityID());
             this.destroy.getIntLists().writeSafely(0, Arrays.asList(getEntityID()));
         }

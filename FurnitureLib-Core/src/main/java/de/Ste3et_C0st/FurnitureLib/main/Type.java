@@ -8,6 +8,8 @@ import org.bukkit.inventory.meta.BannerMeta;
 import org.bukkit.inventory.meta.ItemMeta;
 import org.bukkit.util.EulerAngle;
 
+import com.comphenix.protocol.utility.MinecraftVersion;
+
 import java.util.Arrays;
 import java.util.EnumSet;
 import java.util.List;
@@ -16,7 +18,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 public class Type {
-    public static String version = "1." + FurnitureLib.getVersionInt();
+    public static String version = MinecraftVersion.getCurrentVersion().getVersion();
     public static ProtocolFields field = ProtocolFields.getField(version);
     private static LanguageManager lang = LanguageManager.getInstance();
     private static List<Material> swords, spades, axt, pickaxe, hoes, weapons, tools;
@@ -218,7 +220,7 @@ public class Type {
                 return Spigot115;
             }
             
-            if (s.startsWith("1.17") || s.startsWith("1.18") || s.startsWith("1.19") || s.startsWith("1.20") || s.startsWith("1.21")) {
+            if (FurnitureLib.isVersionOrAbove("1.17")) {
                 return Spigot117;
             }
             
