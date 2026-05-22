@@ -34,6 +34,7 @@ dependencies {
     implementation "net.kyori:adventure-platform-bukkit:4.4.1"
     implementation "net.kyori:adventure-text-serializer-legacy:4.25.0"
     implementation "net.kyori:adventure-text-serializer-plain:4.25.0"
+	//implementation("com.github.retrooper:packetevents-spigot:2.12.1")
 
     compileOnly 'com.github.MilkBowl:VaultAPI:1.7'
     compileOnly 'com.gitlab.Ste3et_C0st.protectionlib:Core:v1.4'
@@ -42,6 +43,7 @@ dependencies {
     compileOnly 'me.clip:placeholderapi:2.11.6'
     
     //temp local depenceys
+    
     compileOnly files('tempDependenys/ProtocolLib.jar')
     compileOnly files('tempDependenys/floodgateAPI.jar')
 }

@@ -1,6 +1,8 @@
 package de.Ste3et_C0st.FurnitureLib.Listener;
 
 import com.comphenix.protocol.PacketType;
+import com.comphenix.protocol.PacketType.Protocol;
+import com.comphenix.protocol.PacketType.Sender;
 import com.comphenix.protocol.ProtocolLibrary;
 import com.comphenix.protocol.events.InternalStructure;
 import com.comphenix.protocol.events.ListenerPriority;
@@ -8,6 +10,8 @@ import com.comphenix.protocol.events.PacketAdapter;
 import com.comphenix.protocol.events.PacketEvent;
 import com.comphenix.protocol.events.PacketListener;
 import com.comphenix.protocol.wrappers.EnumWrappers.EntityUseAction;
+import com.google.common.collect.Lists;
+
 import de.Ste3et_C0st.FurnitureLib.SchematicLoader.Events.ProjectBreakEvent;
 import de.Ste3et_C0st.FurnitureLib.SchematicLoader.Events.ProjectClickEvent;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.LanguageManager;
@@ -21,7 +25,6 @@ import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
 import org.bukkit.Bukkit;
 import org.bukkit.GameMode;
-import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
 import java.util.List;
@@ -30,8 +33,13 @@ import java.util.Objects;
 public class FurnitureProtocolListener {
 
 	private final PacketListener use_entity, steer_vehicle;
+	private final List<PacketType> packets = Lists.newArrayList();
+	
 	
 	public FurnitureProtocolListener() {
+		packets.add(PacketType.Play.Client.USE_ENTITY);
+		if(FurnitureLib.isVersionOrAbove("26.0")) packets.add(PacketType.findCurrent(Protocol.PLAY, Sender.CLIENT, "Attack"));
+		
 		this.use_entity = this.use_entity();
 		this.steer_vehicle = this.steer_vehicle();
 		this.init();
@@ -40,43 +48,45 @@ public class FurnitureProtocolListener {
 	private void init() {
 		ProtocolLibrary.getProtocolManager().addPacketListener(use_entity);
 		ProtocolLibrary.getProtocolManager().addPacketListener(steer_vehicle);
-		//ProtocolLibrary.getProtocolManager().addPacketListener(debug());
 	}
 	
 //	private PacketListener debug() {
-//		return new PacketAdapter(FurnitureLib.getInstance(), ListenerPriority.HIGHEST, PacketType.Play.Server.REL_ENTITY_MOVE) {
+//		return new PacketAdapter(FurnitureLib.getInstance(), ListenerPriority.HIGHEST, PacketType.Play.Client.ENTITY_ACTION) {
 //			
-//			public void onPacketReceiving(PacketEvent event) {
-//				final Player player = event.getPlayer();
-//				final PacketContainer container = event.getPacket();
-//				
-//				Optional.ofNullable(FurnitureManager.getInstance().getfArmorStandByID(container.getIntegers().read(0))).ifPresent(objectID -> {
-//					player.sendMessage("found receiving");
-//				});
-//			}
-//			
-//			
-//			public void onPacketSending(PacketEvent event) {
-//				final Player player = event.getPlayer();
-//				final PacketContainer container = event.getPacket();
-//				
-//				Optional.ofNullable(FurnitureManager.getInstance().getfArmorStandByID(container.getIntegers().read(0))).ifPresent(objectID -> {
-//					player.sendMessage("found sending");
-//				});
-//				
-//				//player.sendMessage(container.getIntegers().read(1) + " TypeEntityID");
-//				
-////				for(int i = 0; i < 100; i++) {
-////					NbtBase<?> base = container.getNbtModifier().readSafely(i);
-////					if(Objects.nonNull(base)) {
-////						player.sendMessage(base.getName());
-////					}else {
-////						return;
-////					}
-////				}
-//				
-//			}
 //		};
+////		return new PacketAdapter(FurnitureLib.getInstance(), ListenerPriority.HIGHEST, PacketType.Play.Server.REL_ENTITY_MOVE) {
+////			
+////			public void onPacketReceiving(PacketEvent event) {
+////				final Player player = event.getPlayer();
+////				final PacketContainer container = event.getPacket();
+////				
+////				Optional.ofNullable(FurnitureManager.getInstance().getfArmorStandByID(container.getIntegers().read(0))).ifPresent(objectID -> {
+////					player.sendMessage("found receiving");
+////				});
+////			}
+////			
+////			
+////			public void onPacketSending(PacketEvent event) {
+////				final Player player = event.getPlayer();
+////				final PacketContainer container = event.getPacket();
+////				
+////				Optional.ofNullable(FurnitureManager.getInstance().getfArmorStandByID(container.getIntegers().read(0))).ifPresent(objectID -> {
+////					player.sendMessage("found sending");
+////				});
+////				
+////				//player.sendMessage(container.getIntegers().read(1) + " TypeEntityID");
+////				
+//////				for(int i = 0; i < 100; i++) {
+//////					NbtBase<?> base = container.getNbtModifier().readSafely(i);
+//////					if(Objects.nonNull(base)) {
+//////						player.sendMessage(base.getName());
+//////					}else {
+//////						return;
+//////					}
+//////				}
+////				
+////			}
+////		};
 //	}
 	
 	private PacketListener steer_vehicle() {
@@ -108,49 +118,50 @@ public class FurnitureProtocolListener {
 	}
 	
 	private PacketListener use_entity() {
-		return new PacketAdapter(FurnitureLib.getInstance(), ListenerPriority.NORMAL, PacketType.Play.Client.USE_ENTITY) {
+		return new PacketAdapter(FurnitureLib.getInstance(), ListenerPriority.NORMAL, this.packets.stream().toArray(PacketType[]::new)) {
 			public void onPacketReceiving(PacketEvent event) {
-				if (event.getPacketType() == PacketType.Play.Client.USE_ENTITY) {
-					Integer PacketID = event.getPacket().getIntegers().read(0);
-					if (Objects.isNull(PacketID))
+				Integer PacketID = event.getPacket().getIntegers().read(0);
+				if (Objects.isNull(PacketID)) return;
+				ObjectID objID = FurnitureManager.getInstance().getfArmorStandByID(PacketID);
+				if (Objects.nonNull(objID)) {
+					event.setCancelled(true);
+					if (objID.getSQLAction().equals(SQLAction.REMOVE)) {
 						return;
-					ObjectID objID = FurnitureManager.getInstance().getfArmorStandByID(PacketID);
-					if (Objects.nonNull(objID)) {
-						event.setCancelled(true);
-						if (objID.getSQLAction().equals(SQLAction.REMOVE)) {
-							return;
-						}
-						if (objID.isPrivate()) {
-							return;
-						}
-
-						Player player = event.getPlayer();
-						if (Objects.isNull(player)) {
-							return;
-						}
-						
-						EntityUseAction action = event.getPacket().getEntityUseActions().readSafely(0);
-
-						if (FurnitureLib.isVersionOrAbove("1.16")) {
-							com.comphenix.protocol.wrappers.WrappedEnumEntityUseAction wrappedEnumEntityUseAction = event.getPacket().getEnumEntityUseActions().readSafely(0);
-							if(Objects.nonNull(wrappedEnumEntityUseAction)) {
-								action = wrappedEnumEntityUseAction.getAction();
-							}
-						}
-
-						switch (action) {
-						case ATTACK:
-							FurnitureLib.debug("FurnitureLib -> Attack furniture (" + objID.toString() + ").");
-							FurnitureProtocolListener.this.onLeftClick(player, objID);
-							break;
-						case INTERACT_AT:
-							FurnitureProtocolListener.this.onRightClick(player, objID);
-							break;
-						default:
-							break;
-						}
-
 					}
+					if (objID.isPrivate()) {
+						return;
+					}
+
+					Player player = event.getPlayer();
+					if (Objects.isNull(player)) {
+						return;
+					}
+					
+					EntityUseAction action = EntityUseAction.ATTACK;
+					
+					if (FurnitureLib.isVersionOrAbove("26.0")) {
+						if(event.getPacketType() == PacketType.Play.Client.USE_ENTITY) action = EntityUseAction.INTERACT_AT;
+					}else if (FurnitureLib.isVersionOrAbove("1.16")) {
+						com.comphenix.protocol.wrappers.WrappedEnumEntityUseAction wrappedEnumEntityUseAction = event.getPacket().getEnumEntityUseActions().readSafely(0);
+						if(Objects.nonNull(wrappedEnumEntityUseAction)) {
+							action = wrappedEnumEntityUseAction.getAction();
+						}else {
+							action = EntityUseAction.ATTACK;
+						}
+					}
+
+					switch (action) {
+					case ATTACK:
+						FurnitureLib.debug("FurnitureLib -> Attack furniture (" + objID.toString() + ").");
+						FurnitureProtocolListener.this.onLeftClick(player, objID);
+						break;
+					case INTERACT_AT:
+						FurnitureProtocolListener.this.onRightClick(player, objID);
+						break;
+					default:
+						break;
+					}
+
 				}
 			}
 		};

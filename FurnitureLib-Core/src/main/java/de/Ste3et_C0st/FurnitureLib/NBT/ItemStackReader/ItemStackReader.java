@@ -39,7 +39,7 @@ public abstract class ItemStackReader {
 				clazz_nms_nbt  = Class.forName(getNbtFolder() + ".CompoundTag");
 				clazz_nbttools = Class.forName(getNbtFolder() +  ".NbtIo");
 				
-				clazz_nbttools_method_a_output = clazz_nbttools.getMethod("a", clazz_nms_nbt, OutputStream.class);
+				clazz_nbttools_method_a_output = clazz_nbttools.getMethod(FurnitureLib.isVersionOrAbove("26.1") ? "writeCompressed" : "a", clazz_nms_nbt, OutputStream.class);
 			}
 		}catch(Exception ex) {
 			ex.printStackTrace();
