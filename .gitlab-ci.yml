@@ -3,18 +3,18 @@ stages:
   - bundle
 
 variables:
-GRADLE_USER_HOME: "$CI_PROJECT_DIR/.gradle"
+  GRADLE_USER_HOME: "$CI_PROJECT_DIR/.gradle"
 
 build-main:
   stage: build
   image: gradle:8.11-jdk17
   script:
   - chmod +x gradlew
-  - ./gradlew -PsnapshotVersion=$CI_COMMIT_SHORT_SHA :FurnitureLib-Core:build :FurnitureLib-Paper:build :FurnitureLib-1_19_4:build
+  - ./gradlew -PsnapshotVersion=$CI_COMMIT_SHORT_SHA :FurnitureLib-Paper:build :FurnitureLib-1_19_4:build
   artifacts:
-  paths:
-  - build/libs/*.jar
-  expire_in: 1 week
+    paths:
+    - build/libs/*.jar
+    expire_in: 1 week
 
 build-folia:
   stage: build
@@ -23,21 +23,22 @@ build-folia:
   - chmod +x gradlew
   - ./gradlew -PsnapshotVersion=$CI_COMMIT_SHORT_SHA :FurnitureLib-Folia:build
   artifacts:
-  paths:
-  - FurnitureLib-Folia/build/libs/*.jar
-  expire_in: 1 week
+    paths:
+    - FurnitureLib-Folia/build/libs/*.jar
+    expire_in: 1 week
 
 bundle:
   stage: bundle
   image: alpine:latest
   needs:
-  - build-main
-  - build-folia
+    - build-main
+    - build-folia
   script:
-  - mkdir bundle
-  - cp build/libs/*.jar bundle/ || true
-  - cp FurnitureLib-Folia/build/libs/*.jar bundle/ || true
-  - zip -r FurnitureLib-${CI_COMMIT_SHORT_SHA}.zip bundle/
+    - apk add --no-cache zip
+    - mkdir bundle
+    - cp build/libs/*.jar bundle/ || true
+    - cp FurnitureLib-Folia/build/libs/*.jar bundle/ || true
+    - zip -r FurnitureLib-${CI_COMMIT_SHORT_SHA}.zip bundle/
   artifacts:
-  paths:
-  - FurnitureLib-*.zip
+    paths:
+      - FurnitureLib-*.zip
