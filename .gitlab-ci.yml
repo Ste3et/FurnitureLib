@@ -1,19 +1,32 @@
-image: gradle:8.11-jdk17
-
 stages:
   - build
 
 before_script:
   - export GRADLE_USER_HOME=`pwd`/.gradle
 
-build:
+# 🟢 Java 17 Build (alles außer Folia)
+build-main:
   stage: build
-  script: 
-    - gradle -PsnapshotVersion=$CI_COMMIT_SHORT_SHA build
-    - gradle copyJarToBin
+  image: gradle:8.11-jdk17
+  script:
+    - ./gradlew -PsnapshotVersion=$CI_COMMIT_SHORT_SHA :FurnitureLib-Core:build :FurnitureLib-Paper:build :FurnitureLib-1_19_4:build
+    - ./gradlew copyJarToBin
   artifacts:
     paths:
       - build/libs/FurnitureLib.jar
+    expire_in: 1 week
+  only:
+    - master
+
+# 🔥 Java 21 Build (nur Folia)
+build-folia:
+  stage: build
+  image: gradle:8.11-jdk21
+  script:
+    - ./gradlew -PsnapshotVersion=$CI_COMMIT_SHORT_SHA :FurnitureLib-Folia:build
+  artifacts:
+    paths:
+      - FurnitureLib-Folia/build/libs/*.jar
     expire_in: 1 week
   only:
     - master
