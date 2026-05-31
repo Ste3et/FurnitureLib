@@ -21,11 +21,12 @@ build-main:
 build-folia:
   stage: build
   image: gradle:8.11-jdk21
-  dependencies:
-    - build-main
+  needs:
+    - job: build-main
+      artifacts: true
   script:
   - chmod +x gradlew
-  - ./gradlew -PsnapshotVersion=$CI_COMMIT_SHORT_SHA :FurnitureLib-Folia:build
+  - ./gradlew -PsnapshotVersion=$CI_COMMIT_SHORT_SHA -PcjavaVersion=21 :FurnitureLib-Folia:build
   artifacts:
     paths:
     - FurnitureLib-Folia/build/libs/*.jar
