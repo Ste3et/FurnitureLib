@@ -60,7 +60,7 @@ shadowJar {
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(project.hasProperty('cjavaVersion') ? project.getProperty('snapshotVersion') : 17)
+        languageVersion = JavaLanguageVersion.of(project.hasProperty('cjavaVersion') ? project.getProperty('cjavaVersion') : 17)
     }
 }
 
