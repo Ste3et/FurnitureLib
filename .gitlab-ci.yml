@@ -13,12 +13,15 @@ build-main:
   - ./gradlew -PsnapshotVersion=$CI_COMMIT_SHORT_SHA :FurnitureLib-Paper:build :FurnitureLib-1_19_4:build
   artifacts:
     paths:
-    - build/libs/*.jar
+    - FurnitureLib-Paper/build/libs/*.jar
+    - FurnitureLib-1_19_4/build/libs/*.jar
     expire_in: 1 week
 
 build-folia:
   stage: build
   image: gradle:8.11-jdk21
+  needs:
+    - build-main
   script:
   - chmod +x gradlew
   - ./gradlew -PsnapshotVersion=$CI_COMMIT_SHORT_SHA :FurnitureLib-Folia:build
