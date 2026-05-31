@@ -4,6 +4,7 @@ import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import net.kyori.adventure.text.minimessage.tag.resolver.TagResolver;
+import net.kyori.adventure.text.serializer.gson.GsonComponentSerializer;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 
@@ -13,6 +14,9 @@ import org.bukkit.Material;
 import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.file.YamlConfiguration;
 import org.bukkit.plugin.Plugin;
+
+import com.comphenix.protocol.wrappers.WrappedChatComponent;
+
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
@@ -310,6 +314,12 @@ public class LanguageManager {
     	final TagResolver[] tags = getTagsArray(Arrays.asList(stringTranslators));
 		final Component returnMessage = MiniMessage.miniMessage().deserialize(rawString, tags);
 		return returnMessage;
+    }
+    
+    public WrappedChatComponent getWrapped(String string) {
+    	final String workString = LanguageConverter.serializeLegacyColors(string);
+    	final Component component = MiniMessage.miniMessage().deserialize(workString);
+    	return WrappedChatComponent.fromJson(GsonComponentSerializer.gson().serialize(component));
     }
     
     public TagResolver[] getTagsArray(List<StringTranslator> stringTranslaters){

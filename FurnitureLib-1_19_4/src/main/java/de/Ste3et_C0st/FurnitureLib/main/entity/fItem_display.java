@@ -1,0 +1,126 @@
+package de.Ste3et_C0st.FurnitureLib.main.entity;
+
+import org.bukkit.Location;
+import org.bukkit.Material;
+import org.bukkit.entity.Entity;
+import org.bukkit.entity.EntityType;
+import org.bukkit.entity.ItemDisplay;
+import org.bukkit.entity.ItemDisplay.ItemDisplayTransform;
+import org.bukkit.inventory.ItemStack;
+
+import com.comphenix.protocol.wrappers.WrappedDataWatcher.Registry;
+import com.comphenix.protocol.wrappers.WrappedDataWatcher.WrappedDataWatcherObject;
+
+import de.Ste3et_C0st.FurnitureLib.NBT.CraftItemStack;
+import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.DefaultKey;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.EntitySize;
+import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
+import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
+import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
+import de.Ste3et_C0st.FurnitureLib.main.entity.interfaces.IItemStackHolder;
+
+public class fItem_display extends fDisplay implements IItemStackHolder{
+
+	public static EntityType type = EntityType.valueOf("ITEM_DISPLAY");
+	private final DefaultKey<EntitySize> entitySize = new DefaultKey<EntitySize>(new EntitySize(0, 0));
+	private final DefaultKey<ItemStack> stack = new DefaultKey<ItemStack>(new ItemStack(Material.AIR));
+	private final DefaultKey<ItemDisplayTransform> display = new DefaultKey<ItemDisplayTransform>(ItemDisplayTransform.NONE);
+	
+	static {
+		if(FurnitureLib.isVersionOrAbove("1.19.4")){
+			FurnitureManager.getInstance().addEntityClass(type, fItem_display::new);
+		}
+	}
+	
+	public fItem_display(Location loc, ObjectID id) {
+		super(loc, type, 0, id);
+	}
+
+	@Override
+	public fItem_display copyEntity(Entity entity) {
+		super.copyEntity(entity);
+		if(entity instanceof ItemDisplay) {
+			final ItemDisplay display = ItemDisplay.class.cast(entity);
+			this.setItemDisplay(display.getItemDisplayTransform());
+			this.setItemStack(display.getItemStack());
+		}
+		return this;
+	}
+	
+	public ItemStack getStack() {
+		return this.stack.getOrDefault();
+	}
+	
+	public ItemDisplayTransform getItemDisplay() {
+		return this.display.getOrDefault();
+	}
+	
+	public fItem_display setItemStack(final ItemStack stack) {
+		this.stack.setValue(stack);
+		getWatcher().setObject(new WrappedDataWatcherObject(displayField.getVersionIndex() + 22, Registry.getItemStackSerializer(false)), stack);
+		return this;
+	}
+	
+	public fItem_display setItemDisplay(ItemDisplayTransform display) {
+		this.display.setValue(display);
+		getWatcher().setObject(new WrappedDataWatcherObject(displayField.getVersionIndex() + 23, Registry.get(Byte.class)), (byte) display.ordinal());
+		return this;
+	}
+	
+	public EntitySize getEntitySize() {
+		return this.entitySize.getOrDefault();
+	}
+	
+	protected void writeAdditionalSaveData() {
+		super.writeDisplaySaveData();
+		if(!this.stack.isDefault()) setMetadata("item", getStack());
+		if(!this.display.isDefault()) setMetadata("item_display", this.display.getOrDefault().name());
+	}
+	
+	@Override
+	protected void readAdditionalSaveData(NBTTagCompound metadata) {
+		super.readDisplayData(metadata);
+        if(metadata.hasKeyOfType("stack", 10)) {
+        	try {
+        		final ItemStack stack = new CraftItemStack().getItemStack(metadata.getCompound("stack"));
+        		this.setItemStack(stack);
+        	}catch (Exception e) {
+				e.printStackTrace();
+			}
+        }else if(metadata.hasKeyOfType("item", 10)) {
+        	try {
+        		final ItemStack stack = new CraftItemStack().getItemStack(metadata.getCompound("item"));
+        		this.setItemStack(stack);
+        	}catch (Exception e) {
+				e.printStackTrace();
+			}
+        }
+        
+        if(metadata.hasKeyOfType("display", 8)) {
+        	try {
+        		final ItemDisplayTransform displayTransform = ItemDisplayTransform.valueOf(metadata.getString("display").toUpperCase());
+        		this.setItemDisplay(displayTransform);
+        	}catch (Exception e) {
+				e.printStackTrace();
+			}
+        }else if(metadata.hasKeyOfType("item_display", 8)) {
+        	try {
+        		final ItemDisplayTransform displayTransform = ItemDisplayTransform.valueOf(metadata.getString("item_display").toUpperCase());
+        		this.setItemDisplay(displayTransform);
+        	}catch (Exception e) {
+				e.printStackTrace();
+			}
+        }
+	}
+	
+	@Override
+	protected Material getDestroyMaterial() {
+		return getStack().getType().isBlock() ? getStack().getType() : Material.AIR;
+	}
+	
+	@Override
+	public void setDefaultItem(ItemStack stack) {
+		this.setItemStack(stack);
+	}
+}

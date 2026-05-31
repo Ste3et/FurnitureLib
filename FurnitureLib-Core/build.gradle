@@ -19,6 +19,7 @@ apply plugin: 'com.gradleup.shadow'
 
 repositories {
     mavenLocal()
+    mavenCentral()
     
     maven {
     	url = uri('https://repo.extendedclip.com/content/repositories/placeholderapi/')
@@ -41,10 +42,9 @@ dependencies {
     compileOnly 'com.github.BeYkeRYkt.LightAPI:lightapi-bukkit-common:5.1.0-Bukkit'
     compileOnly 'com.github.BeYkeRYkt.LightAPI:lightapi-bukkit-backward-support:5.1.0-Bukkit'
     compileOnly 'me.clip:placeholderapi:2.11.6'
+    compileOnly 'com.github.dmulloy2:ProtocolLib:5.2.0'
     
     //temp local depenceys
-    
-    compileOnly files('tempDependenys/ProtocolLib.jar')
     compileOnly files('tempDependenys/floodgateAPI.jar')
 }
 
@@ -60,7 +60,7 @@ shadowJar {
 
 java {
     toolchain {
-        languageVersion = JavaLanguageVersion.of(21)
+        languageVersion = JavaLanguageVersion.of(17)
     }
 }
 

@@ -2,7 +2,6 @@ package de.Ste3et_C0st.FurnitureLib.Utilitis;
 
 import org.apache.commons.lang.Validate;
 import org.bukkit.Location;
-import org.bukkit.Particle;
 import org.bukkit.World;
 import org.bukkit.Particle.DustOptions;
 import org.bukkit.block.Block;
@@ -11,7 +10,6 @@ import org.bukkit.configuration.serialization.SerializableAs;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.NumberConversions;
-import org.bukkit.util.RayTraceResult;
 import org.bukkit.util.Vector;
 
 import de.Ste3et_C0st.FurnitureLib.main.Type.BodyPart;

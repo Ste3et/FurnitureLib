@@ -41,7 +41,7 @@ public class Serializer {
         
         NBTTagCompound armorStands = new NBTTagCompound();
         obj.getPacketList().stream().filter(Objects::nonNull).forEach(packet -> {
-            armorStands.set(packet.getEntityID() + "", packet.getMetaData());
+            armorStands.set(String.valueOf(packet.getEntityID()), packet.getMetaData());
         });
         
         compound.set("entities", armorStands);

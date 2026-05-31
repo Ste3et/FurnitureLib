@@ -15,6 +15,7 @@ import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type;
 import de.Ste3et_C0st.FurnitureLib.main.Type.BodyPart;
+import de.Ste3et_C0st.FurnitureLib.main.entity.interfaces.IItemStackHolder;
 import de.Ste3et_C0st.FurnitureLib.main.interfaces.ScaleableEntity;
 
 import org.bukkit.Location;
@@ -23,12 +24,13 @@ import org.bukkit.entity.ArmorStand;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Objects;
 
-public class fArmorStand extends fContainerEntity implements SizeableEntity, ScaleableEntity, Interactable{
+public class fArmorStand extends fContainerEntity implements SizeableEntity, ScaleableEntity, Interactable, IItemStackHolder{
 
     public static EntityType type = EntityType.ARMOR_STAND;
     
@@ -378,5 +380,10 @@ public class fArmorStand extends fContainerEntity implements SizeableEntity, Sca
 		if(this.scaleAttribute == null) return null;
 		this.attribute.getAttributeCollectionModifier().write(0, Arrays.asList(scaleAttribute.build()));
 		return this.attribute;
+	}
+
+	@Override
+	public void setDefaultItem(ItemStack stack) {
+		this.setItemInMainHand(stack);
 	}
 }

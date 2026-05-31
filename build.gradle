@@ -19,6 +19,7 @@ apply plugin: 'com.gradleup.shadow'
 
 dependencies {
     implementation project(path: ':FurnitureLib-Core', configuration: 'shadow')
+    implementation project(path: ':FurnitureLib-1_19_4')
     implementation project(path: ':FurnitureLib-Paper')
     implementation project(path: ':FurnitureLib-Folia')
 }

@@ -52,16 +52,8 @@ public class DeSerializer {
 		}
 		
 		obj.setStartLocation(startLocation);
-		
-		if(compound.hasKeyOfType("EventType", 8)) {
-			EventType evType = EventType.valueOf(compound.getString("EventType"));
-			obj.setEventTypeAccess(evType);
-		}
-		
-		if(compound.hasKeyOfType("PublicMode", 8)) {
-			PublicMode pMode = PublicMode.valueOf(compound.getString("PublicMode"));
-			obj.setPublicMode(pMode);
-		}
+		obj.setEventTypeAccess(EventType.valueOf(compound.getString("EventType", FurnitureConfig.getFurnitureConfig().getDefaultEventType().name())));
+		obj.setPublicMode(PublicMode.valueOf(compound.getString("PublicMode", FurnitureConfig.getFurnitureConfig().getDefaultPublicType().name())));
 		
 		if(compound.hasKeyOfType("Members", 9)) {
 			HashSet<UUID> members = membersFetcher(compound.getList("Members"));

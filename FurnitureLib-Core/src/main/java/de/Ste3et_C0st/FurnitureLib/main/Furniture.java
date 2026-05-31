@@ -6,11 +6,9 @@ import de.Ste3et_C0st.FurnitureLib.SchematicLoader.functions.functionManager;
 import de.Ste3et_C0st.FurnitureLib.SchematicLoader.functions.projectFunction;
 import de.Ste3et_C0st.FurnitureLib.main.entity.SizeableEntity;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fArmorStand;
-import de.Ste3et_C0st.FurnitureLib.main.entity.fBlock_display;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fContainerEntity;
-import de.Ste3et_C0st.FurnitureLib.main.entity.fDisplay;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
-import de.Ste3et_C0st.FurnitureLib.main.entity.fItem_display;
+import de.Ste3et_C0st.FurnitureLib.main.entity.interfaces.IItemStackHolder;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -119,12 +117,11 @@ public abstract class Furniture extends FurnitureHelper implements Listener {
                                 stand.update();
                                 consumeItem(p);
                             }
-                    	}else if(stand instanceof fItem_display) {
-                    		fItem_display item_display = fItem_display.class.cast(stand);
+                    	}else if(stand instanceof IItemStackHolder) {
                     		if (Objects.nonNull(stack)) {
                                 ItemStack is = stack.clone();
                                 is.setAmount(1);
-                                item_display.setItemStack(is);
+                                IItemStackHolder.class.cast(stand).setDefaultItem(stack);
                                 stand.update();
                                 consumeItem(p);
                             }

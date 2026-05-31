@@ -33,13 +33,7 @@ public class FurnitureManager extends ObjectIdManager{
         packetClasses.put(EntityType.PIG, fPig::new);
         packetClasses.put(EntityType.CREEPER, fCreeper::new);
         packetClasses.put(EntityType.GIANT, fGiant::new);
-        if(FurnitureLib.isVersionOrAbove("1.19.4")) {
-        	packetClasses.put(EntityType.BLOCK_DISPLAY, fBlock_display::new);
-        	packetClasses.put(EntityType.ITEM_DISPLAY, fItem_display::new);
-        	packetClasses.put(EntityType.TEXT_DISPLAY, fText_display::new);
-        	packetClasses.put(EntityType.INTERACTION, fInteraction::new);
-        	
-        }
+        
         if(FurnitureLib.isVersionOrAbove("1.20.5")) {
         	packetClasses.put(EntityType.MAGMA_CUBE, fMagmaCube::new);
         	packetClasses.put(EntityType.SHULKER, fShulker::new);
@@ -51,6 +45,10 @@ public class FurnitureManager extends ObjectIdManager{
     private HashMap<String, Project> projects = new HashMap<>();
     private static final List<UUID> ignoreList = new ArrayList<>();
     private HashSet<WorldData> asyncWorldFiles = new HashSet<>();
+    
+    public void addEntityClass(EntityType type, BiFunction<Location, ObjectID, fEntity> function) {
+    	packetClasses.putIfAbsent(type, function);
+    }
     
     public FurnitureManager() {
         manager = this;
