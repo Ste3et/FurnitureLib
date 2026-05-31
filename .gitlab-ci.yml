@@ -37,4 +37,7 @@ bundle:
   - job: build-folia
     artifacts: true
   script:
+    - ls -la
+    - chmod +x ./gradlew || true
+    - ./gradlew --version
     - ./gradlew shadowJar
