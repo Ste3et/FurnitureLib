@@ -10,9 +10,10 @@ build-main:
   image: gradle:8.11-jdk17
   script:
   - chmod +x gradlew
-  - ./gradlew -PsnapshotVersion=$CI_COMMIT_SHORT_SHA :FurnitureLib-Paper:build :FurnitureLib-1_19_4:build
+  - ./gradlew -PsnapshotVersion=$CI_COMMIT_SHORT_SHA :FurnitureLib-Core:build :FurnitureLib-Paper:build :FurnitureLib-1_19_4:build
   artifacts:
     paths:
+    - FurnitureLib-Core/build/libs/*.jar
     - FurnitureLib-Paper/build/libs/*.jar
     - FurnitureLib-1_19_4/build/libs/*.jar
     expire_in: 1 week
