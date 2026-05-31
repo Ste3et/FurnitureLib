@@ -1,35 +1,43 @@
 stages:
   - build
+  - bundle
 
-before_script:
-  - export GRADLE_USER_HOME=`pwd`/.gradle
+variables:
+GRADLE_USER_HOME: "$CI_PROJECT_DIR/.gradle"
 
-# 🟢 Java 17 Build (alles außer Folia)
 build-main:
   stage: build
   image: gradle:8.11-jdk17
   script:
-    - ./gradlew -PsnapshotVersion=$CI_COMMIT_SHORT_SHA :FurnitureLib-Core:build :FurnitureLib-Paper:build :FurnitureLib-1_19_4:build
-    - ./gradlew copyJarToBin
+  - chmod +x gradlew
+  - ./gradlew -PsnapshotVersion=$CI_COMMIT_SHORT_SHA :FurnitureLib-Core:build :FurnitureLib-Paper:build :FurnitureLib-1_19_4:build
   artifacts:
-    paths:
-      - build/libs/FurnitureLib.jar
-    expire_in: 1 week
-  only:
-    - master
+  paths:
+  - build/libs/*.jar
+  expire_in: 1 week
 
-# 🔥 Java 21 Build (nur Folia)
 build-folia:
   stage: build
   image: gradle:8.11-jdk21
   script:
-    - ./gradlew -PsnapshotVersion=$CI_COMMIT_SHORT_SHA :FurnitureLib-Folia:build
+  - chmod +x gradlew
+  - ./gradlew -PsnapshotVersion=$CI_COMMIT_SHORT_SHA :FurnitureLib-Folia:build
   artifacts:
-    paths:
-      - FurnitureLib-Folia/build/libs/*.jar
-    expire_in: 1 week
-  only:
-    - master
+  paths:
+  - FurnitureLib-Folia/build/libs/*.jar
+  expire_in: 1 week
 
-after_script:
-  - echo "End CI"
+bundle:
+  stage: bundle
+  image: alpine:latest
+  needs:
+  - build-main
+  - build-folia
+  script:
+  - mkdir bundle
+  - cp build/libs/*.jar bundle/ || true
+  - cp FurnitureLib-Folia/build/libs/*.jar bundle/ || true
+  - zip -r FurnitureLib-${CI_COMMIT_SHORT_SHA}.zip bundle/
+  artifacts:
+  paths:
+  - FurnitureLib-*.zip
