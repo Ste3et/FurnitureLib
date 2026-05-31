@@ -21,9 +21,6 @@ build-main:
 build-folia:
   stage: build
   image: gradle:8.11-jdk21
-  needs:
-    - job: build-main
-      artifacts: true
   script:
   - chmod +x gradlew
   - ./gradlew -PsnapshotVersion=$CI_COMMIT_SHORT_SHA -PcjavaVersion=21 :FurnitureLib-Folia:build
@@ -31,21 +28,13 @@ build-folia:
     paths:
     - FurnitureLib-Folia/build/libs/*.jar
     expire_in: 1 week
-
 bundle:
   stage: bundle
-  image: alpine:latest
+  image: gradle:8.11-jdk17
   needs:
-    - build-main
-    - build-folia
+  - job: build-main
+    artifacts: true
+  - job: build-folia
+    artifacts: true
   script:
-    - apk add --no-cache zip
-    - mkdir bundle
-    - cp FurnitureLib-Core/build/libs/*.jar bundle/ || true
-    - cp FurnitureLib-Paper/build/libs/*.jar bundle/ || true
-    - cp FurnitureLib-1_19_4/build/libs/*.jar bundle/ || true
-    - cp FurnitureLib-Folia/build/libs/*.jar bundle/ || true
-    - zip -r FurnitureLib-${CI_COMMIT_SHORT_SHA}.zip bundle/
-  artifacts:
-    paths:
-      - FurnitureLib-*.zip
+    - ./gradlew shadowJar
