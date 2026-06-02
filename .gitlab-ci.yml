@@ -15,7 +15,6 @@ build-main:
     paths:
     - FurnitureLib-Core/build/libs/*.jar
     - FurnitureLib-Paper/build/libs/*.jar
-    - FurnitureLib-1_19_4/build/libs/*.jar
     expire_in: 1 week
 
 build-dispaly:
