@@ -38,9 +38,10 @@ build-folia:
     paths:
     - FurnitureLib-Folia/build/libs/*.jar
     expire_in: 1 week
+
 bundle:
   stage: bundle
-  image: gradle:8.11-jdk17
+  image: gradle:8.11-jdk11
   needs:
     - job: build-main
       artifacts: true
