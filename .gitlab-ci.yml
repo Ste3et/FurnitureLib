@@ -42,5 +42,5 @@ bundle:
     - ./gradlew shadowJar
   artifacts:
     paths:
-      - FurnitureLib/build/libs/FurnitureLib.jar
+      - build/libs/FurnitureLib.jar
     expire_in: 1 week
