@@ -10,7 +10,7 @@ build-main:
   image: gradle:8.11-jdk11
   script:
   - chmod +x gradlew
-  - ./gradle -PsnapshotVersion=$CI_COMMIT_SHORT_SHA :FurnitureLib-Core:build :FurnitureLib-Paper:build
+  - gradle -PsnapshotVersion=$CI_COMMIT_SHORT_SHA :FurnitureLib-Core:build :FurnitureLib-Paper:build
   artifacts:
     paths:
     - FurnitureLib-Core/build/libs/*.jar
@@ -23,7 +23,7 @@ build-dispaly:
   image: gradle:8.11-jdk17
   script:
   - chmod +x gradlew
-  - ./gradle -PsnapshotVersion=$CI_COMMIT_SHORT_SHA -PcjavaVersion=17 :FurnitureLib-1_19_4:build
+  - gradle -PsnapshotVersion=$CI_COMMIT_SHORT_SHA -PcjavaVersion=17 :FurnitureLib-1_19_4:build
   artifacts:
     paths:
     - FurnitureLib-1_19_4/build/libs/*.jar
@@ -34,7 +34,7 @@ build-folia:
   image: gradle:8.11-jdk21
   script:
   - chmod +x gradlew
-  - ./gradle -PsnapshotVersion=$CI_COMMIT_SHORT_SHA -PcjavaVersion=21 :FurnitureLib-Folia:build
+  - gradle -PsnapshotVersion=$CI_COMMIT_SHORT_SHA -PcjavaVersion=21 :FurnitureLib-Folia:build
   artifacts:
     paths:
     - FurnitureLib-Folia/build/libs/*.jar
@@ -51,8 +51,8 @@ bundle:
       artifacts: true
   script:
     - chmod +x ./gradlew || true
-    - ./gradle --version
-    - ./gradle shadowJar
+    - gradle --version
+    - gradle shadowJar
   artifacts:
     paths:
       - build/libs/FurnitureLib.jar
