@@ -276,7 +276,7 @@ public class CraftingFile {
         	}catch (Exception e) {/* Method = setCustomModelData didn't exist (ignore Exception) */}
         }
 
-        if(FurnitureLib.isVersionOrAbove("1.13")) {
+        if(FurnitureLib.isVersionOrAbove("1.14")) {
         	itemMeta.getPersistentDataContainer().set(new org.bukkit.NamespacedKey(FurnitureLib.getInstance(), "model"), PersistentDataType.STRING, getSystemID());
 		}
         
