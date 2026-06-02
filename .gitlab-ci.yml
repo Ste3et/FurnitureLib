@@ -32,12 +32,15 @@ bundle:
   stage: bundle
   image: gradle:8.11-jdk17
   needs:
-  - job: build-main
-    artifacts: true
-  - job: build-folia
-    artifacts: true
+    - job: build-main
+      artifacts: true
+    - job: build-folia
+      artifacts: true
   script:
-    - ls -la
     - chmod +x ./gradlew || true
     - ./gradlew --version
     - ./gradlew shadowJar
+  artifacts:
+    paths:
+      - FurnitureLib/build/libs/FurnitureLib.jar
+    expire_in: 1 week
