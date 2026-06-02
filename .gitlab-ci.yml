@@ -18,6 +18,17 @@ build-main:
     - FurnitureLib-1_19_4/build/libs/*.jar
     expire_in: 1 week
 
+build-dispaly:
+  stage: build
+  image: gradle:8.11-jdk11
+  script:
+  - chmod +x gradlew
+  - ./gradlew -PsnapshotVersion=$CI_COMMIT_SHORT_SHA -PcjavaVersion=11 :FurnitureLib-1_19_4:build
+  artifacts:
+    paths:
+    - FurnitureLib-1_19_4/build/libs/*.jar
+    expire_in: 1 week
+
 build-folia:
   stage: build
   image: gradle:8.11-jdk21
@@ -33,6 +44,8 @@ bundle:
   image: gradle:8.11-jdk17
   needs:
     - job: build-main
+      artifacts: true
+    - job: build-dispaly
       artifacts: true
     - job: build-folia
       artifacts: true

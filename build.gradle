@@ -19,9 +19,7 @@ apply plugin: 'com.gradleup.shadow'
 
 dependencies {
     implementation project(path: ':FurnitureLib-Core', configuration: 'shadow')
-    implementation project(path: ':FurnitureLib-1_19_4')
     implementation project(path: ':FurnitureLib-Paper')
-    //implementation project(path: ':FurnitureLib-Folia')
 }
 
 tasks {
@@ -44,6 +42,10 @@ def moduleJars = fileTree("$rootDir").matching {
 }
 
 def foliaJar = file("$rootDir/FurnitureLib-Folia/build/libs")
+    .listFiles()
+    ?.find { it.name.endsWith(".jar") && !it.name.contains("sources") && !it.name.contains("javadoc") }
+
+def displayFeature = file("$rootDir/FurnitureLib-1_19_4/build/libs")
     .listFiles()
     ?.find { it.name.endsWith(".jar") && !it.name.contains("sources") && !it.name.contains("javadoc") }
 
@@ -71,6 +73,13 @@ shadowJar {
         from(zipTree(foliaJar))
     } else {
         println ">>> WARNING: Folia JAR NOT FOUND"
+    }
+
+    if (displayFeature != null) {
+        println ">>> Including 1_19_4 JAR: $displayFeature"
+        from(zipTree(displayFeature))
+    } else {
+        println ">>> WARNING: 1_19_4 JAR NOT FOUND"
     }
 }
 
