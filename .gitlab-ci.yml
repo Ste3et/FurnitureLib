@@ -7,10 +7,10 @@ variables:
 
 build-main:
   stage: build
-  image: gradle:8.11-jdk17
+  image: gradle:8.11-jdk11
   script:
   - chmod +x gradlew
-  - ./gradlew -PsnapshotVersion=$CI_COMMIT_SHORT_SHA :FurnitureLib-Core:build :FurnitureLib-Paper:build :FurnitureLib-1_19_4:build
+  - ./gradlew -PsnapshotVersion=$CI_COMMIT_SHORT_SHA :FurnitureLib-Core:build :FurnitureLib-Paper:build
   artifacts:
     paths:
     - FurnitureLib-Core/build/libs/*.jar
@@ -20,10 +20,10 @@ build-main:
 
 build-dispaly:
   stage: build
-  image: gradle:8.11-jdk11
+  image: gradle:8.11-jdk17
   script:
   - chmod +x gradlew
-  - ./gradlew -PsnapshotVersion=$CI_COMMIT_SHORT_SHA -PcjavaVersion=11 :FurnitureLib-1_19_4:build
+  - ./gradlew -PsnapshotVersion=$CI_COMMIT_SHORT_SHA -PcjavaVersion=17 :FurnitureLib-1_19_4:build
   artifacts:
     paths:
     - FurnitureLib-1_19_4/build/libs/*.jar
