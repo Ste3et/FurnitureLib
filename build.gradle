@@ -81,7 +81,7 @@ shadowJar {
             println ">>> CI MODE"
 
             jars = fileTree("$rootDir").matching {
-                include "**/*.jar"
+                include "FurnitureLib-*/build/libs/*.jar"
             }.files.findAll {
                 it.name.endsWith(".jar") &&
                 !it.name.contains("sources") &&
