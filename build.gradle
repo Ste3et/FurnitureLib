@@ -71,6 +71,8 @@ shadowJar {
         exclude(dependency('com.zaxxer:.*'))
         exclude(dependency('net.kyori:.*'))
     }
+    
+    zip64 true
 
     doFirst {
         def jars
