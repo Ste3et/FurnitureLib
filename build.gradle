@@ -50,12 +50,14 @@ def displayFeature = file("$rootDir/FurnitureLib-1_19_4/build/libs")
     ?.find { it.name.endsWith(".jar") && !it.name.contains("sources") && !it.name.contains("javadoc") }
 
 tasks.shadowJar {
-    dependsOn(
-        ":FurnitureLib-Core:build",
-        ":FurnitureLib-Paper:build",
-        ":FurnitureLib-1_19_4:build",
-        ":FurnitureLib-Folia:build"
-    )
+    if (System.getenv("CI") == null) {
+        dependsOn(
+            ":FurnitureLib-Core:build",
+            ":FurnitureLib-Paper:build",
+            ":FurnitureLib-1_19_4:build",
+            ":FurnitureLib-Folia:build"
+        )
+    }
 }
 
 shadowJar {
@@ -76,7 +78,6 @@ shadowJar {
         if (System.getenv("CI") != null) {
             println ">>> CI MODE"
 
-            // GitLab: alles was als Artifact reinkommt
             jars = fileTree("$rootDir").matching {
                 include "**/*.jar"
             }.files.findAll {
@@ -89,7 +90,6 @@ shadowJar {
         } else {
             println ">>> LOCAL MODE"
 
-            // Lokal: deine Module
             jars = fileTree("$rootDir").matching {
                 include "FurnitureLib-*/build/libs/*.jar"
             }.files.findAll {
