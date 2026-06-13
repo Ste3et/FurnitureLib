@@ -380,6 +380,7 @@ public class FurnitureLib extends JavaPlugin {
     		excpetion.printStackTrace();
     	}
     	if(this.serverFunction == null) this.serverFunction = new SpigotFunctions();
+    	
     	this.serverFunction.onEnable();
     }
     

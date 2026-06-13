@@ -22,12 +22,6 @@ public class fInteraction extends fSize implements Interactable{
 	public static EntityType type = EntityType.valueOf("INTERACTION");
 	private final DefaultKey<Boolean> response = new DefaultKey<Boolean>(false);
 	
-	static {
-		if(FurnitureLib.isVersionOrAbove("1.19.4")){
-			FurnitureManager.getInstance().addEntityClass(type, fInteraction::new);
-		}
-	}
-	
 	public fInteraction(Location loc, ObjectID id) {
 		super(loc, type, 0, id, 1F, 1F);
 	}

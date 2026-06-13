@@ -31,12 +31,6 @@ public class fText_display extends fDisplay {
 	private final DefaultKey<TextAlignment> style_flags = new DefaultKey<TextAlignment>(TextAlignment.CENTER);
 	private final DefaultKey<String> text = new DefaultKey<String>("");
 	private final DefaultKey<Boolean> shadowed = new DefaultKey<Boolean>(false), seeThrough = new DefaultKey<Boolean>(false), defaultBackground = new DefaultKey<Boolean>(true);
-
-	static {
-		if(FurnitureLib.isVersionOrAbove("1.19.4")){
-			FurnitureManager.getInstance().addEntityClass(type, fText_display::new);
-		}
-	}
 	
 	public fText_display(Location loc, ObjectID id) {
 		super(loc, type, 0, id);

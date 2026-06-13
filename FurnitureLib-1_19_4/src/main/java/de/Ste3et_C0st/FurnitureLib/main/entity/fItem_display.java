@@ -27,12 +27,6 @@ public class fItem_display extends fDisplay implements IItemStackHolder{
 	private final DefaultKey<ItemStack> stack = new DefaultKey<ItemStack>(new ItemStack(Material.AIR));
 	private final DefaultKey<ItemDisplayTransform> display = new DefaultKey<ItemDisplayTransform>(ItemDisplayTransform.NONE);
 	
-	static {
-		if(FurnitureLib.isVersionOrAbove("1.19.4")){
-			FurnitureManager.getInstance().addEntityClass(type, fItem_display::new);
-		}
-	}
-	
 	public fItem_display(Location loc, ObjectID id) {
 		super(loc, type, 0, id);
 	}

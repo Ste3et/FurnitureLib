@@ -23,12 +23,6 @@ public class fBlock_display extends fDisplay{
 
 	public static EntityType type = EntityType.valueOf("BLOCK_DISPLAY");
 	
-	static {
-		if(FurnitureLib.isVersionOrAbove("1.19.4")){
-			FurnitureManager.getInstance().addEntityClass(type, fBlock_display::new);
-		}
-	}
-	
 	private final DefaultKey<BlockData> blockDefaultKey = new DefaultKey<BlockData>(Material.AIR.createBlockData());
 	
 	public fBlock_display(Location loc, ObjectID id) {

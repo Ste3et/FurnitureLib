@@ -18,6 +18,8 @@ import org.bukkit.entity.Entity;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
+import java.lang.reflect.Constructor;
+import java.lang.reflect.InvocationTargetException;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.function.BiFunction;
@@ -33,6 +35,13 @@ public class FurnitureManager extends ObjectIdManager{
         packetClasses.put(EntityType.PIG, fPig::new);
         packetClasses.put(EntityType.CREEPER, fCreeper::new);
         packetClasses.put(EntityType.GIANT, fGiant::new);
+        
+        if(FurnitureLib.isVersionOrAbove("1.19.4")) {
+        	addEntityClazz(EntityType.valueOf("BLOCK_DISPLAY"), "fBlock_display");
+        	addEntityClazz(EntityType.valueOf("INTERACTION"), "fInteraction");
+        	addEntityClazz(EntityType.valueOf("ITEM_DISPLAY"), "fItem_display");
+        	addEntityClazz(EntityType.valueOf("TEXT_DISPLAY"), "fText_display");
+        }
         
         if(FurnitureLib.isVersionOrAbove("1.20.5")) {
         	packetClasses.put(EntityType.MAGMA_CUBE, fMagmaCube::new);
@@ -217,5 +226,25 @@ public class FurnitureManager extends ObjectIdManager{
 
 	public HashSet<WorldData> getAsyncWorldFiles() {
 		return asyncWorldFiles;
+	}
+	
+	private static void addEntityClazz(EntityType type, String name) {
+		name = name.startsWith("de.Ste3et_C0st") ? name : "de.Ste3et_C0st.FurnitureLib.main.entity." + name;
+		try {
+			if(Objects.nonNull(Class.forName(name)) && fEntity.class.isAssignableFrom(Class.forName(name))) {
+				final Class<? extends fEntity> clazz = (Class<? extends fEntity>) Class.forName(name);
+				final Constructor<? extends fEntity> constructor = clazz.getDeclaredConstructor(Location.class, ObjectID.class);
+				packetClasses.put(type, (location, objectID) -> {
+					try {
+						return constructor.newInstance(location, objectID);
+					} catch (Exception e) {
+						e.printStackTrace();
+					}
+					return null;
+				});
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
 	}
 }
