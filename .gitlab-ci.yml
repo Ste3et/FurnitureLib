@@ -46,7 +46,7 @@ bundle:
   needs:
     - job: build-main
       artifacts: true
-    - job: build-dispaly
+    - job: build-display
       artifacts: true
     - job: build-folia
       artifacts: true
