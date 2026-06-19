@@ -79,6 +79,6 @@ publish-github:
       artifacts: true
   script:
     - chmod +x ./gradlew || true
-    - ./gradlew publish
+    - gradle publish
   only:
     - tags
