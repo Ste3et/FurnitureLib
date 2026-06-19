@@ -42,6 +42,7 @@ public abstract class Database {
         this.plugin = instance;
         this.logger = instance.getLogger();
         this.config = config;
+        
         this.dataSource = new HikariDataSource(config);
         this.converter = new Converter(this);
     }

@@ -28,6 +28,8 @@ import de.Ste3et_C0st.FurnitureLib.Utilitis.DefaultKey;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.ProtocolFieldsDisplay;
+import de.Ste3et_C0st.FurnitureLib.main.entity.SizeableEntity;
+import de.Ste3et_C0st.FurnitureLib.main.entity.fSize;
 
 public abstract class fDisplay extends fSize implements SizeableEntity{
 	

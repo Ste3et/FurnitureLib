@@ -1,4 +1,4 @@
-package de.Ste3et_C0st.FurnitureLib.Folia;
+package de.Ste3et_C0st.FurnitureLib.main.addons.folia;
 
 import java.util.concurrent.TimeUnit;
 

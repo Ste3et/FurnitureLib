@@ -41,7 +41,7 @@ public class BlockManager implements Listener {
     		if(FurnitureLib.isPaper()) {
     			isPaper = true;
     			try {
-    				Class<?> clazz = Class.forName("de.Ste3et_C0st.FurnitureLib.Paper.PaperEvents");
+    				Class<?> clazz = Class.forName("de.Ste3et_C0st.FurnitureLib.main.addons.paper.PaperEvents");
     				listener.add((Listener) clazz.newInstance());
     			}catch (Exception e) {
 					e.printStackTrace();

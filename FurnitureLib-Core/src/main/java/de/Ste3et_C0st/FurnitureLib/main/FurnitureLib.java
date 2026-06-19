@@ -25,6 +25,8 @@ import de.Ste3et_C0st.FurnitureLib.Utilitis.inventory.InventoryManager;
 import de.Ste3et_C0st.FurnitureLib.async.listener.onChunkChange;
 import de.Ste3et_C0st.FurnitureLib.main.Protection.ProtectionManager;
 import de.Ste3et_C0st.FurnitureLib.main.Type.*;
+import de.Ste3et_C0st.FurnitureLib.main.addons.Modulnterface;
+import de.Ste3et_C0st.FurnitureLib.main.addons.ServerFunction;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
@@ -372,16 +374,15 @@ public class FurnitureLib extends JavaPlugin {
     private void loadServerFunctions() {
     	try {
     		if(isPaper()) {
-        		this.serverFunction = (ServerFunction) Class.forName("de.Ste3et_C0st.FurnitureLib.Paper.PaperFunctions").newInstance();
+        		this.serverFunction = (ServerFunction) Class.forName("de.Ste3et_C0st.FurnitureLib.main.addons.paper.PaperFunctions").newInstance();
         	}else if(isFolia()) {
-        		this.serverFunction = (ServerFunction) Class.forName("de.Ste3et_C0st.FurnitureLib.Folia.FoliaFunctions").newInstance();
+        		this.serverFunction = (ServerFunction) Class.forName("de.Ste3et_C0st.FurnitureLib.main.addons.folia.FoliaFunctions").newInstance();
         	}
     	}catch (Exception excpetion) {
     		excpetion.printStackTrace();
     	}
     	if(this.serverFunction == null) this.serverFunction = new SpigotFunctions();
-    	
-    	this.serverFunction.onEnable();
+    	if(this.serverFunction instanceof Modulnterface) Modulnterface.class.cast(this.serverFunction).onLoad();
     }
     
     private void registerEvents() {

@@ -9,18 +9,20 @@ import org.bukkit.inventory.ItemStack;
 import org.bukkit.inventory.meta.ItemMeta;
 
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
+import de.Ste3et_C0st.FurnitureLib.main.addons.Modulnterface;
+import de.Ste3et_C0st.FurnitureLib.main.addons.ServerFunction;
 import net.kyori.adventure.text.Component;
 import net.kyori.adventure.text.serializer.bungeecord.BungeeComponentSerializer;
 import net.kyori.adventure.text.serializer.legacy.LegacyComponentSerializer;
 import net.kyori.adventure.text.serializer.plain.PlainTextComponentSerializer;
 import net.md_5.bungee.api.chat.BaseComponent;
 
-public class SpigotFunctions implements ServerFunction{
+public class SpigotFunctions implements Modulnterface, ServerFunction{
 
 	private static final LegacyComponentSerializer COMPONENT_SERIALIZER = LegacyComponentSerializer.legacySection().toBuilder().useUnusualXRepeatedCharacterHexFormat().hexColors().build();
 	
 	@Override
-	public void onEnable() {
+	public void onLoad() {
 		FurnitureLib.debug("SpigotFunctions created");
 	}
 	

@@ -16,6 +16,8 @@ import de.Ste3et_C0st.FurnitureLib.Utilitis.DefaultKey;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
+import de.Ste3et_C0st.FurnitureLib.main.entity.Interactable;
+import de.Ste3et_C0st.FurnitureLib.main.entity.fSize;
 
 public class fInteraction extends fSize implements Interactable{
 
