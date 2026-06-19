@@ -18,7 +18,7 @@ build-main:
     - FurnitureLib-Paper/build/libs/*.jar
     expire_in: 1 week
 
-build-dispaly:
+build-display:
   stage: build
   image: gradle:8.11-jdk17
   script:
@@ -68,5 +68,17 @@ release-modrinth:
   script:
     - chmod +x ./gradlew || true
     - gradle modrinth
+  only:
+    - tags
+
+publish-github:
+  stage: release
+  image: gradle:8.11-jdk11
+  needs:
+    - job: bundle
+      artifacts: true
+  script:
+    - chmod +x ./gradlew || true
+    - ./gradlew publish
   only:
     - tags
