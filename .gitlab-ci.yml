@@ -1,6 +1,7 @@
 stages:
   - build
   - bundle
+  - release
 
 variables:
   GRADLE_USER_HOME: "$CI_PROJECT_DIR/.gradle"
