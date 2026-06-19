@@ -40,13 +40,9 @@ Please pay attention to download the right versions for your Server Version!
 ```xml
 
 	<dependency>
-
 		<groupId>de.ste3et</groupId>
-
 		<artifactId>furniturelib</artifactId>
-
 		<version>latest</version>
-
 	</dependency>
 
 ```
