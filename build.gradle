@@ -115,7 +115,7 @@ modrinth {
     uploadFile = shadowJar
 
     gameVersions = ["1.20.4"]
-    loaders = ["paper", "spigot"]
+    loaders = ["paper", "spigot", "folia"]
 }
 
 subprojects.each {
