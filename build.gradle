@@ -120,7 +120,7 @@ gitChangelog {
 }
 
 tasks.modrinth {
-    dependsOn shadowJar
+    dependsOn = []
 }
 
 modrinth {
