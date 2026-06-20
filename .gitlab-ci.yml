@@ -68,8 +68,6 @@ release-modrinth:
   script:
     - chmod +x ./gradlew || true
     - gradle modrinth
-  only:
-    - tags
 
 publish-github:
   stage: release
