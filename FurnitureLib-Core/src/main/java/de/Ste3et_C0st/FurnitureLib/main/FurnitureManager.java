@@ -47,6 +47,8 @@ public class FurnitureManager extends ObjectIdManager{
         	packetClasses.put(EntityType.MAGMA_CUBE, fMagmaCube::new);
         	packetClasses.put(EntityType.SHULKER, fShulker::new);
         }
+        
+        if(FurnitureLib.isVersionOrAbove("26.2")) addEntityClazz(EntityType.valueOf("SULFUR_CUBE"), "fSulfurCube");
     }
 
     public WrappedDataWatcher watcher = null;

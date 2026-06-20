@@ -6,6 +6,7 @@ plugins {
 	id "maven-publish"
     id "com.gradleup.shadow" version "9.1.0"
     id "com.modrinth.minotaur" version "2.+"
+    id 'se.bjurr.gitchangelog.git-changelog-gradle-plugin' version '2.2.0'
 }
 
 apply plugin: 'de.Ste3et_C0st.furniture.java-conventions'
@@ -29,6 +30,7 @@ def moduleJars = fileTree("$rootDir").matching {
     include "FurnitureLib-Core/build/libs/*.jar"
     include "FurnitureLib-Paper/build/libs/*.jar"
     include "FurnitureLib-1_19_4/build/libs/*.jar"
+    include "FurnitureLib-26_2/build/libs/*.jar"
     include "FurnitureLib-Folia/build/libs/*.jar"
     exclude "*-sources.jar"
     exclude "*-javadoc.jar"
@@ -41,6 +43,10 @@ def foliaJar = file("$rootDir/FurnitureLib-Folia/build/libs")
 def displayFeature = file("$rootDir/FurnitureLib-1_19_4/build/libs")
     .listFiles()
     ?.find { it.name.endsWith(".jar") && !it.name.contains("sources") && !it.name.contains("javadoc") }
+    
+def currentTag = System.getenv("CI_COMMIT_TAG") ?: "git describe --tags --abbrev=0".execute().text.trim()
+def previousTag = "git describe --tags --abbrev=0 ${currentTag}^".execute().text.trim()
+def isTag = System.getenv("CI_COMMIT_TAG") != null
 
 tasks.shadowJar {
     if (System.getenv("CI") == null) {
@@ -48,6 +54,7 @@ tasks.shadowJar {
             ":FurnitureLib-Core:build",
             ":FurnitureLib-Paper:build",
             ":FurnitureLib-1_19_4:build",
+            ":FurnitureLib-26_2:build",
             ":FurnitureLib-Folia:build"
         )
     }
@@ -106,27 +113,25 @@ shadowJar {
     }
 }
 
+gitChangelog {
+    fromRef = previousTag
+    toRef = currentTag
+    file = file("CHANGELOG.md")
+}
+
 modrinth {
     token = System.getenv("MODRINTH_TOKEN")
     projectId = "DqcgUFzu"
     versionNumber = project.version
-    versionType = "release"
-
+    if(isTag){
+    	versionType = "release"
+    } else {
+    	versionType = "beta"
+    	versionNumber = "${project.version}-dev-${System.getenv("CI_COMMIT_SHORT_SHA")}"
+    }
     uploadFile = shadowJar
-    
-    gameVersions = [
-	    "1.14", "1.14.1", "1.14.2", "1.14.3", "1.14.4",
-	    "1.15", "1.15.1", "1.15.2",
-	    "1.16", "1.16.1", "1.16.2", "1.16.3", "1.16.4", "1.16.5",
-	    "1.17", "1.17.1",
-	    "1.18", "1.18.1", "1.18.2",
-	    "1.19", "1.19.1", "1.19.2", "1.19.3", "1.19.4",
-	    "1.20", "1.20.1", "1.20.2", "1.20.3", "1.20.4", "1.20.5", "1.20.6",
-	    "1.21", "1.21.1", "1.21.2", "1.21.3", "1.21.4",
-	    "1.21.5", "1.21.6", "1.21.7", "1.21.8", "1.21.9", "1.21.10", "1.21.11",
-	    "26.1", "26.1.1", "26.1.2"
-	]
-    
+    gameVersions = gradle.mcVersions
+    changelog = file("CHANGELOG.md").text
     loaders = ["paper", "spigot", "folia"]
 }
 
