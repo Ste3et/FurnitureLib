@@ -119,6 +119,10 @@ gitChangelog {
     file = file("CHANGELOG.md")
 }
 
+tasks.modrinth {
+    dependsOn shadowJar
+}
+
 modrinth {
     token = System.getenv("MODRINTH_TOKEN")
     projectId = "DqcgUFzu"
@@ -129,7 +133,7 @@ modrinth {
     	versionType = "beta"
     	versionNumber = "${project.version}-dev-${System.getenv("CI_COMMIT_SHORT_SHA")}"
     }
-    uploadFile = shadowJar
+    uploadFile = shadowJar.archiveFile
     gameVersions = gradle.mcVersions
     changelog = file("CHANGELOG.md").exists() ? file("CHANGELOG.md").text : "test"
     loaders = ["paper", "spigot", "folia"]
