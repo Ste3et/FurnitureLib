@@ -309,8 +309,8 @@ public class FurnitureLib extends JavaPlugin {
 	   	
 	   	this.defMaterial = Material.valueOf(isNewVersion() ? "COW_SPAWN_EGG" : "MONSTER_EGG");
     	
-    	if (isVersionOrAbove("1.14") == false || isVersionOrAbove("26.2")) {
-            this.disableFurnitureLib(Arrays.asList("<red>FurnitureLib only works on Spigot 1.14 - 26.1.2"));
+    	if (isVersionOrAbove("1.14") == false || isVersionOrAbove("26.2.1")) {
+            this.disableFurnitureLib(Arrays.asList("<red>FurnitureLib only works on Spigot 1.14 - 26.2"));
             return;
         }
 

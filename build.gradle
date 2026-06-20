@@ -123,6 +123,10 @@ tasks.modrinth {
     dependsOn = []
 }
 
+tasks.publish {
+    dependsOn = []
+}
+
 modrinth {
     token = System.getenv("MODRINTH_TOKEN")
     projectId = "DqcgUFzu"
@@ -146,7 +150,7 @@ publishing {
             groupId = "de.ste3et"
             artifactId = "furniturelib"
             version = project.version
-            artifacts = [tasks.shadowJar]
+            artifact(file("$buildDir/libs/FurnitureLib.jar"))
         }
     }
 
