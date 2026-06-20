@@ -40,6 +40,17 @@ build-folia:
     - FurnitureLib-Folia/build/libs/*.jar
     expire_in: 1 week
 
+build-sulfur:
+  stage: build
+  image: gradle:8.11-jdk25
+  script:
+  - chmod +x gradlew
+  - gradle -PsnapshotVersion=$CI_COMMIT_SHORT_SHA -PcjavaVersion=25 :FurnitureLib-26_2:build
+  artifacts:
+    paths:
+    - FurnitureLib-26_2/build/libs/*.jar
+    expire_in: 1 week
+
 bundle:
   stage: bundle
   image: gradle:8.11-jdk11
@@ -50,6 +61,8 @@ bundle:
       artifacts: true
     - job: build-folia
       artifacts: true
+    - job: build-sulfur
+      artifacts: true   
   script:
     - chmod +x ./gradlew || true
     - gradle --version
