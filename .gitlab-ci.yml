@@ -42,7 +42,7 @@ build-folia:
 
 build-sulfur:
   stage: build
-  image: gradle:8.11-jdk25
+  image: gradle:9.1-jdk25
   script:
   - chmod +x gradlew
   - gradle -PsnapshotVersion=$CI_COMMIT_SHORT_SHA -PcjavaVersion=25 :FurnitureLib-26_2:build

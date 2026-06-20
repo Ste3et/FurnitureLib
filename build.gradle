@@ -131,7 +131,7 @@ modrinth {
     }
     uploadFile = shadowJar
     gameVersions = gradle.mcVersions
-    changelog = file("CHANGELOG.md").text
+    changelog = file("CHANGELOG.md").exists() ? file("CHANGELOG.md").text : "test"
     loaders = ["paper", "spigot", "folia"]
 }
 
