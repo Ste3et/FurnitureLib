@@ -80,7 +80,7 @@ release-modrinth:
       artifacts: true
   script:
     - chmod +x ./gradlew || true
-    - gradle modrinth
+    - gradle modrinth --no-build
 
 publish-github:
   stage: release
