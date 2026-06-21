@@ -169,7 +169,7 @@ modrinth {
 publishing {
     publications {
         mavenJava(MavenPublication) {
-            artifact(tasks.shadowJar)
+            artifact(shadowJar.archiveFile.get().asFile)
             groupId = "de.ste3et"
             artifactId = "furniturelib"
             version = project.version
