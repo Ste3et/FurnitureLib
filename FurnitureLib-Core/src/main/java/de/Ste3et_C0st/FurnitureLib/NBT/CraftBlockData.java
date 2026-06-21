@@ -3,6 +3,7 @@ package de.Ste3et_C0st.FurnitureLib.NBT;
 import de.Ste3et_C0st.FurnitureLib.NBT.BlockDataReader.BlockDataConverter1_20;
 import de.Ste3et_C0st.FurnitureLib.NBT.BlockDataReader.BlockDataConverter1_20_5;
 import de.Ste3et_C0st.FurnitureLib.NBT.BlockDataReader.BlockDataConverter1_21_6;
+import de.Ste3et_C0st.FurnitureLib.NBT.BlockDataReader.BlockDataConverter26_2;
 import de.Ste3et_C0st.FurnitureLib.NBT.BlockDataReader.BlockDataReader;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 
@@ -18,7 +19,9 @@ public class CraftBlockData {
 	private final static BlockDataReader READER;
 	
 	static {
-		if(FurnitureLib.getVersion(new MinecraftVersion("1.21.6"))) {
+		if(FurnitureLib.getVersion(new MinecraftVersion("26.2"))) {
+			READER = new BlockDataConverter26_2();
+		}else if(FurnitureLib.getVersion(new MinecraftVersion("1.21.6"))) {
 			READER = new BlockDataConverter1_21_6();
 		}else if(FurnitureLib.getVersion(new MinecraftVersion("1.20.5"))) {
 			READER = new BlockDataConverter1_20_5();
