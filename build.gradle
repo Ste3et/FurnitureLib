@@ -113,7 +113,7 @@ shadowJar {
 }
 
 def getChangelog = {
-	if(!isTag){
+	if(isTag){
 		def process = ["git", "log", previousTag + ".." + currentTag, "--pretty=- %s"].execute()
 	    process.waitFor()
 	    return process.text.trim()	
