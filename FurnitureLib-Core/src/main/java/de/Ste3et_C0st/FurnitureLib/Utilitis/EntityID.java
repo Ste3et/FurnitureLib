@@ -2,11 +2,15 @@ package de.Ste3et_C0st.FurnitureLib.Utilitis;
 
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import org.bukkit.Bukkit;
+import org.bukkit.World;
 
 import java.lang.reflect.Field;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.util.Arrays;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Function;
 
 public class EntityID {
 
@@ -29,7 +33,7 @@ public class EntityID {
 				entityCountField = entityClass.getDeclaredField("entityCount");
 				entityCountField.setAccessible(true);
 			}else {
-				entityClass =  Class.forName("net.minecraft.world.entity.Entity");
+				entityClass = FurnitureLib.isVersionOrAbove("26.2") ? Class.forName("net.minecraft.server.level.ServerLevel") : Class.forName("net.minecraft.world.entity.Entity");
 				Optional<Field> field = Arrays.asList(entityClass.getDeclaredFields()).stream().filter(entry -> entry.getType().equals(AtomicInteger.class)).findFirst();
 				if(field.isPresent()) {
 					entityCountField = field.get();

@@ -18,7 +18,7 @@ import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 public class fSulfurCube extends fEntity{
 
 	public static EntityType type = EntityType.valueOf("SULFUR_CUBE");
-	private DefaultKey<BlockData> blockDefaultKey = new DefaultKey<BlockData>(Material.STONE.createBlockData());
+	private DefaultKey<BlockData> blockDefaultKey = new DefaultKey<BlockData>(Material.AIR.createBlockData());
 	
 	public fSulfurCube(Location loc, ObjectID id) {
 		super(loc, type, 0, id);

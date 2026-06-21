@@ -6,7 +6,6 @@ plugins {
 	id "maven-publish"
     id "com.gradleup.shadow" version "9.1.0"
     id "com.modrinth.minotaur" version "2.+"
-    id 'se.bjurr.gitchangelog.git-changelog-gradle-plugin' version '2.1.2'
 }
 
 apply plugin: 'de.Ste3et_C0st.furniture.java-conventions'
@@ -113,10 +112,16 @@ shadowJar {
     }
 }
 
-gitChangelog {
-    fromRef = previousTag
-    toRef = currentTag
-    file = file("CHANGELOG.md")
+def getChangelog = {
+	if(!isTag){
+		def process = ["git", "log", previousTag + ".." + currentTag, "--pretty=- %s"].execute()
+	    process.waitFor()
+	    return process.text.trim()	
+	}else{
+		def process = ["git", "log", "HEAD~1..HEAD", "--pretty=- %s"].execute()
+	    process.waitFor()
+	    return process.text.trim()
+	}
 }
 
 tasks.modrinth {
@@ -139,7 +144,7 @@ modrinth {
     }
     uploadFile = file("$buildDir/libs/FurnitureLib.jar")
     gameVersions = gradle.mcVersions
-    changelog = file("CHANGELOG.md").exists() ? file("CHANGELOG.md").text : "test"
+    changelog = getChangelog()
     loaders = ["paper", "spigot", "folia"]
 }
 

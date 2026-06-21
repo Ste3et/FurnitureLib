@@ -17,6 +17,7 @@ import org.bukkit.Bukkit;
 import org.bukkit.Location;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
+import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
 
 import com.google.common.util.concurrent.AtomicDouble;
@@ -93,6 +94,11 @@ public class debugCommand extends iCommand {
                 	new LanguageConverter(getLHandler(), FurnitureLib.getInstance());
                 	sender.sendMessage("languageConvertet");
                 	return;
+                }else if(args[1].equalsIgnoreCase("test")) {
+                	FurnitureManager.getInstance().getAllExistObjectIDs().findFirst().ifPresent(obj -> {
+                		System.out.println(obj.toString() + " found: try to spawn SULFUR_CUBE");
+                		FurnitureManager.getInstance().spawnEntity(EntityType.valueOf("SULFUR_CUBE"), Player.class.cast(sender).getLocation(), obj);
+                	});
                 }
             }
         } else if(args.length == 3) {

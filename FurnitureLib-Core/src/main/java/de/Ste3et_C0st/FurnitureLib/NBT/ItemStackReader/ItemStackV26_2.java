@@ -14,7 +14,7 @@ import de.Ste3et_C0st.FurnitureLib.NBT.NBTCompressedStreamTools;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTReadLimiter;
 import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
 
-public class ItemStackV26_1 extends ItemStackReader{
+public class ItemStackV26_2 extends ItemStackReader{
 	
 	private static Class<?> NbtIo, NbtAccounter, InputStreamClass, NmsStack, NbtOps, NbtCompoundTag, Mojangpair;
 	private static Method readCompressed, decode, encode, dataResult, mojangPairgetFirst, asBukkitCopy;
