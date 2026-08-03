@@ -15,7 +15,7 @@ import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.DefaultKey;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 
-public class fSulfurCube extends fEntity{
+public class fSulfurCube extends fContainerEntity{
 
 	public static EntityType type = EntityType.valueOf("SULFUR_CUBE");
 	private DefaultKey<BlockData> blockDefaultKey = new DefaultKey<BlockData>(Material.AIR.createBlockData());
@@ -31,7 +31,8 @@ public class fSulfurCube extends fEntity{
 
 	public void setBlockData(BlockData blockData) {
 		this.blockDefaultKey.setValue(blockData);
-		getWatcher().setObject(new WrappedDataWatcherObject(8, Registry.getBlockDataSerializer(false)), WrappedBlockData.createData(blockData));
+		//getWatcher().setObject(new WrappedDataWatcherObject(8, Registry.getBlockDataSerializer(false)), WrappedBlockData.createData(blockData));
+		this.setChestPlate(blockData.getMaterial().asItemType().createItemStack());
 	}
 
 	public BlockData getBlockData() {
@@ -49,6 +50,7 @@ public class fSulfurCube extends fEntity{
 
 	@Override
 	protected void writeAdditionalSaveData() {
+		super.writeInventoryData();
 		if(!this.blockDefaultKey.isDefault()) setMetadata("block_state", this.blockDefaultKey.getOrDefault().getAsString());
 	}
 	

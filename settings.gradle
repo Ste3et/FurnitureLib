@@ -5,7 +5,7 @@
 rootProject.name = 'FurnitureLib'
 include(':FurnitureLib-Core', ':FurnitureLib-Paper', ':FurnitureLib-Folia', ':FurnitureLib-1_19_4', ':FurnitureLib-26_2')
 
-gradle.ext.furnitureLibVersion = '3.3.1'
+gradle.ext.furnitureLibVersion = '3.3.2'
 gradle.ext.minecraftVersion = '1.18.1-R0.1-SNAPSHOT'
 gradle.ext.mcVersions = [
 	    "1.14", "1.14.1", "1.14.2", "1.14.3", "1.14.4",
@@ -17,5 +17,5 @@ gradle.ext.mcVersions = [
 	    "1.20", "1.20.1", "1.20.2", "1.20.3", "1.20.4", "1.20.5", "1.20.6",
 	    "1.21", "1.21.1", "1.21.2", "1.21.3", "1.21.4",
 	    "1.21.5", "1.21.6", "1.21.7", "1.21.8", "1.21.9", "1.21.10", "1.21.11",
-	    "26.1", "26.1.1", "26.1.2"
+	    "26.1", "26.1.1", "26.1.2", "26.2"
 ]

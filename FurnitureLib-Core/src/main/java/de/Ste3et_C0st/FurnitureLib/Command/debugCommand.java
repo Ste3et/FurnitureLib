@@ -12,13 +12,16 @@ import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureManager;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.Type.SQLAction;
+import de.Ste3et_C0st.FurnitureLib.main.entity.fContainerEntity;
 import net.kyori.adventure.text.minimessage.MiniMessage;
 import org.bukkit.Bukkit;
 import org.bukkit.Location;
+import org.bukkit.Material;
 import org.bukkit.World;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.EntityType;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 import com.google.common.util.concurrent.AtomicDouble;
 
@@ -97,7 +100,8 @@ public class debugCommand extends iCommand {
                 }else if(args[1].equalsIgnoreCase("test")) {
                 	FurnitureManager.getInstance().getAllExistObjectIDs().findFirst().ifPresent(obj -> {
                 		System.out.println(obj.toString() + " found: try to spawn SULFUR_CUBE");
-                		FurnitureManager.getInstance().spawnEntity(EntityType.valueOf("SULFUR_CUBE"), Player.class.cast(sender).getLocation(), obj);
+                		fContainerEntity entity = (fContainerEntity) FurnitureManager.getInstance().spawnEntity(EntityType.valueOf("SULFUR_CUBE"), Player.class.cast(sender).getLocation(), obj);
+                		entity.setChestPlate(new ItemStack(Material.STONE));
                 	});
                 }
             }
