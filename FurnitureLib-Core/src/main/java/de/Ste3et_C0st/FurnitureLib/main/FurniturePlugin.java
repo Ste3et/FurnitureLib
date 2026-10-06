@@ -5,7 +5,7 @@ import org.bukkit.plugin.Plugin;
 
 import java.io.*;
 import java.util.Objects;
-
+//test
 public abstract class FurniturePlugin {
 
     private Plugin pluginInstance;
