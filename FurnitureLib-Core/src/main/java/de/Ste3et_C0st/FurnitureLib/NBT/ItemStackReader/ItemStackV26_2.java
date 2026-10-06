@@ -6,6 +6,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.lang.reflect.Method;
 import java.util.Optional;
+import java.util.stream.Stream;
 
 import org.bukkit.Material;
 import org.bukkit.inventory.ItemStack;
@@ -16,7 +17,7 @@ import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
 
 public class ItemStackV26_2 extends ItemStackReader{
 	
-	private static Class<?> NbtIo, NbtAccounter, InputStreamClass, NmsStack, NbtOps, NbtCompoundTag, Mojangpair;
+	private static Class<?> NbtIo, NbtAccounter, InputStreamClass, NmsStack, NmsInstance, NbtOps, NbtCompoundTag, Mojangpair;
 	private static Method readCompressed, decode, encode, dataResult, mojangPairgetFirst, asBukkitCopy;
 	
 	static{
@@ -29,6 +30,7 @@ public class ItemStackV26_2 extends ItemStackReader{
 			
 			
 			NmsStack = Class.forName(getItemStackClass());
+			NmsInstance = Class.forName("net.minecraft.world.item.ItemInstance");
 			InputStreamClass = InputStream.class;
 			
 			readCompressed = NbtIo.getMethod("readCompressed", InputStreamClass, NbtAccounter);
@@ -36,7 +38,8 @@ public class ItemStackV26_2 extends ItemStackReader{
 			mojangPairgetFirst = Mojangpair.getMethod("getFirst");
 			decode = Class.forName("com.mojang.serialization.Decoder").getMethod("decode", Class.forName("com.mojang.serialization.DynamicOps"), Object.class);
 			encode = Class.forName("com.mojang.serialization.Encoder").getMethod("encode", Object.class, Class.forName("com.mojang.serialization.DynamicOps"), Object.class);
-			asBukkitCopy = clazz_obc_CraftItemStack.getDeclaredMethod("asBukkitCopy", NmsStack);
+			
+			asBukkitCopy = clazz_obc_CraftItemStack.getDeclaredMethod("asBukkitCopy", NmsInstance);
 			asBukkitCopy.setAccessible(true);
 		}catch (Exception e) {
 			e.printStackTrace();
