@@ -75,6 +75,16 @@ public abstract class fContainerEntity extends fEntity{
         getInventory().setChestPlate(is);
         return this;
     }
+    
+    public fEntity setBody(ItemStack is) {
+    	getInventory().setSlot(6, is);
+    	return this;
+    }
+    
+    public fEntity getBody() {
+    	getInventory().getSlot(6);
+    	return this;
+    }
 
     public ItemStack getLeggings() {
         return getInventory().getLeggings();

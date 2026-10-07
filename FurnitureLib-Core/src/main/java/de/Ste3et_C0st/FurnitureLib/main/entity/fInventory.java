@@ -22,18 +22,20 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class fInventory implements Cloneable {
-
-    private ItemStack[] items = new ItemStack[6];
+	
+	private final static int inventorySize;
+    private ItemStack[] items = new ItemStack[inventorySize];
     private final int entityId;
     
     private static Function<fInventory, List<IEntityEquipment>> entityEquipmentFunction;
     
     static {
     	if(FurnitureLib.isVersionOrAbove("1.15")) {
+    		inventorySize = 8;
         	entityEquipmentFunction = fInventory -> {
         		List<IEntityEquipment> packetList = new ArrayList<IEntityEquipment>();
         		WrapperPlayServerEntityEquipmentNew equipmentInterface = new WrapperPlayServerEntityEquipmentNew().writeEntityID(fInventory.entityId);
-            	for(int i = 0; i < 6; i++) {
+            	for(int i = 0; i < inventorySize; i++) {
             		ItemStack stack = fInventory.getSlot(i);
             		EquipmentSlot slot = EquipmentSlot.values()[i];
             		equipmentInterface.setItem(slot.getItemSlot(), stack);
@@ -42,9 +44,10 @@ public class fInventory implements Cloneable {
             	return packetList;
         	};
         }else {
+        	inventorySize = 6;
         	entityEquipmentFunction = fInventory -> {
         		List<IEntityEquipment> packetList = new ArrayList<IEntityEquipment>();
-        		for (int i = 0; i < 6; i++) {
+        		for (int i = 0; i < inventorySize; i++) {
         			WrapperPlayServerEntityEquipmentOld equipmentInterface = new WrapperPlayServerEntityEquipmentOld().writeEntityID(fInventory.entityId);
                     ItemStack stack = fInventory.getSlot(i);
             		EquipmentSlot slot = EquipmentSlot.values()[i];
@@ -141,8 +144,6 @@ public class fInventory implements Cloneable {
     }
 
     public ItemStack getSlot(String s) {
-    	s = s.replace("BODY", "CHEST");
-    	s = s.replace("SADDLE", "CHEST");
         try {
             return getSlot(EquipmentSlot.valueOf(s).getSlot());
         } catch (Exception e) {
@@ -176,9 +177,7 @@ public class fInventory implements Cloneable {
 
     public void setSlot(String s, ItemStack item) {
         if (item == null) item = new ItemStack(Material.AIR, 1);
-        if (s.equalsIgnoreCase("SADDLE")) return;
         try {
-        	s = s.replace("BODY", "CHEST");
             setSlot(EquipmentSlot.valueOf(s).getSlot(), item);
         } catch (Exception e) {
             e.printStackTrace();
@@ -213,8 +212,10 @@ public class fInventory implements Cloneable {
         FEET(2, ItemSlot.FEET),
         LEGS(3, ItemSlot.LEGS),
         CHEST(4, ItemSlot.CHEST),
-        HEAD(5, ItemSlot.HEAD);
-    	//No enum constant de.Ste3et_C0st.FurnitureLib.main.entity.fInventory.EquipmentSlot.BODY
+        HEAD(5, ItemSlot.HEAD),
+    	BODY(6, ItemSlot.valueOf("BODY")),
+    	SADDLE(7, ItemSlot.valueOf("SADDLE"));
+    	
         private int slot;
         private ItemSlot itemSlot;
         
@@ -237,6 +238,7 @@ public class fInventory implements Cloneable {
         		case OFFHAND: return BodyPart.LEFT_ARM;
         		case HEAD: return BodyPart.HEAD;
         		case CHEST: return BodyPart.BODY;
+        		case BODY: return BodyPart.BODY;
         		default: return BodyPart.RIGHT_LEG;
         	}
         }
