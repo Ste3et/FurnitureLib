@@ -97,12 +97,6 @@ public class debugCommand extends iCommand {
                 	new LanguageConverter(getLHandler(), FurnitureLib.getInstance());
                 	sender.sendMessage("languageConvertet");
                 	return;
-                }else if(args[1].equalsIgnoreCase("test")) {
-                	FurnitureManager.getInstance().getAllExistObjectIDs().findFirst().ifPresent(obj -> {
-                		System.out.println(obj.toString() + " found: try to spawn SULFUR_CUBE");
-                		fContainerEntity entity = (fContainerEntity) FurnitureManager.getInstance().spawnEntity(EntityType.valueOf("SULFUR_CUBE"), Player.class.cast(sender).getLocation(), obj);
-                		entity.setChestPlate(new ItemStack(Material.STONE));
-                	});
                 }
             }
         } else if(args.length == 3) {

@@ -2,14 +2,16 @@ package de.Ste3et_C0st.FurnitureLib.SchematicLoader.functions;
 
 import com.google.gson.JsonObject;
 
+import de.Ste3et_C0st.FurnitureLib.Utilitis.EquipmentStack;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureConfig;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fContainerEntity;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fEntity;
-import de.Ste3et_C0st.FurnitureLib.main.entity.fInventory.EquipmentSlot;
+
 import org.bukkit.GameMode;
 import org.bukkit.Material;
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.List;
@@ -47,7 +49,7 @@ public abstract class projectFunction {
     }
 
     public List<fEntity> searchEntityByMaterialName(final String str, EquipmentSlot slot, ObjectID obj) {
-        return searchEntityByMaterialName(str, slot.getSlot(), obj);
+        return searchEntityByMaterialName(str, EquipmentStack.getEquipmentStack(slot).getSlotNumber(), obj);
     }
 
     public List<fEntity> searchEntityByMaterial(Material mat, int slot, ObjectID obj) {
@@ -55,7 +57,7 @@ public abstract class projectFunction {
     }
 
     public List<fEntity> searchEntityByMaterial(Material mat, EquipmentSlot slot, ObjectID obj) {
-        return searchEntityByMaterialName(mat.name(), slot.getSlot(), obj);
+        return searchEntityByMaterialName(mat.name(), EquipmentStack.getEquipmentStack(slot).getSlotNumber(), obj);
     }
 
     public List<fEntity> searchEntityByMaterialName(final String str, int slot, ObjectID obj) {
@@ -79,7 +81,7 @@ public abstract class projectFunction {
             k = Integer.parseInt(st);
         } catch (NumberFormatException e) {
             try {
-                k = EquipmentSlot.valueOf(st.toUpperCase()).getSlot();
+                k = EquipmentStack.getEquipmentStack(st.toUpperCase()).getSlotNumber();
             } catch (Exception ex) {
                 ex.printStackTrace();
             }

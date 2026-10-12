@@ -7,6 +7,7 @@ import org.bukkit.Particle.DustOptions;
 import org.bukkit.block.Block;
 import org.bukkit.configuration.serialization.ConfigurationSerializable;
 import org.bukkit.configuration.serialization.SerializableAs;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 import org.bukkit.util.EulerAngle;
 import org.bukkit.util.NumberConversions;
@@ -14,7 +15,6 @@ import org.bukkit.util.Vector;
 
 import de.Ste3et_C0st.FurnitureLib.main.Type.BodyPart;
 import de.Ste3et_C0st.FurnitureLib.main.entity.fArmorStand;
-import de.Ste3et_C0st.FurnitureLib.main.entity.fInventory.EquipmentSlot;
 
 import java.awt.Color;
 import java.util.ArrayList;
@@ -45,7 +45,8 @@ public class BoundingBox implements Cloneable, ConfigurationSerializable {
     	final double x = 0D, y = 0D, z = 0D;
     	final HashMap<EquipmentSlot, ItemStack> stackMap = stand.getInventory().getStackMap();
     	stackMap.entrySet().stream().forEach(entry -> {
-    		final BodyPart part = entry.getKey().toBodyPart();
+    		final EquipmentStack stack = EquipmentStack.getEquipmentStack(entry.getKey());
+    		final BodyPart part = stack.toBodyPart();
     		final EulerAngle angle = stand.getPose(part);
     		
     	});

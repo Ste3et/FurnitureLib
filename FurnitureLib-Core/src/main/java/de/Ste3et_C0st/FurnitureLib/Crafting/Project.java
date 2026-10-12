@@ -5,6 +5,7 @@ import com.google.gson.JsonObject;
 import de.Ste3et_C0st.FurnitureLib.ModelLoader.ModelHandler;
 import de.Ste3et_C0st.FurnitureLib.SchematicLoader.ProjectLoader;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.BoundingBox;
+import de.Ste3et_C0st.FurnitureLib.Utilitis.EquipmentStack;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.LanguageManager;
 import de.Ste3et_C0st.FurnitureLib.main.Furniture;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
@@ -358,7 +359,7 @@ public class Project {
 							fContainerEntity sourceContainerEntity = (fContainerEntity) source;
 							fContainerEntity actorContainerEntity = (fContainerEntity) actorEntity;
 							sourceContainerEntity.getInventory().getStackMap().entrySet().stream().filter(entry -> Objects.nonNull(entry.getValue())).forEach(entry -> {
-								actorContainerEntity.getInventory().setSlot(entry.getKey().getSlot(), entry.getValue().clone());
+								actorContainerEntity.getInventory().setSlot(EquipmentStack.getEquipmentStack(entry.getKey()).getSlotNumber(), entry.getValue().clone());
 							});
 						}
 					}

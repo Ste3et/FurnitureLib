@@ -1,15 +1,11 @@
 package de.Ste3et_C0st.FurnitureLib.main.entity;
 
 import com.comphenix.protocol.events.PacketContainer;
-import com.comphenix.protocol.wrappers.EnumWrappers.ItemSlot;
-
+import de.Ste3et_C0st.FurnitureLib.Utilitis.EquipmentStack;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.Wrapper.IEntityEquipment;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.Wrapper.WrapperPlayServerEntityEquipmentNew;
-import de.Ste3et_C0st.FurnitureLib.Utilitis.Wrapper.WrapperPlayServerEntityEquipmentOld;
-import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
-import de.Ste3et_C0st.FurnitureLib.main.Type.BodyPart;
-
 import org.bukkit.Material;
+import org.bukkit.inventory.EquipmentSlot;
 import org.bukkit.inventory.ItemStack;
 
 import java.util.ArrayList;
@@ -30,33 +26,18 @@ public class fInventory implements Cloneable {
     private static Function<fInventory, List<IEntityEquipment>> entityEquipmentFunction;
     
     static {
-    	if(FurnitureLib.isVersionOrAbove("1.15")) {
-    		inventorySize = 8;
-        	entityEquipmentFunction = fInventory -> {
-        		List<IEntityEquipment> packetList = new ArrayList<IEntityEquipment>();
-        		WrapperPlayServerEntityEquipmentNew equipmentInterface = new WrapperPlayServerEntityEquipmentNew().writeEntityID(fInventory.entityId);
-            	for(int i = 0; i < inventorySize; i++) {
-            		ItemStack stack = fInventory.getSlot(i);
-            		EquipmentSlot slot = EquipmentSlot.values()[i];
-            		equipmentInterface.setItem(slot.getItemSlot(), stack);
-            	}
-            	packetList.add(equipmentInterface);
-            	return packetList;
-        	};
-        }else {
-        	inventorySize = 6;
-        	entityEquipmentFunction = fInventory -> {
-        		List<IEntityEquipment> packetList = new ArrayList<IEntityEquipment>();
-        		for (int i = 0; i < inventorySize; i++) {
-        			WrapperPlayServerEntityEquipmentOld equipmentInterface = new WrapperPlayServerEntityEquipmentOld().writeEntityID(fInventory.entityId);
-                    ItemStack stack = fInventory.getSlot(i);
-            		EquipmentSlot slot = EquipmentSlot.values()[i];
-            		equipmentInterface.setItem(slot.getItemSlot(), stack);
-            		packetList.add(equipmentInterface);
-        		}
-        		return packetList;
-        	};
-        }
+    	inventorySize = org.bukkit.inventory.EquipmentSlot.values().length;
+    	entityEquipmentFunction = fInventory -> {
+    		List<IEntityEquipment> packetList = new ArrayList<IEntityEquipment>();
+    		WrapperPlayServerEntityEquipmentNew equipmentInterface = new WrapperPlayServerEntityEquipmentNew().writeEntityID(fInventory.entityId);
+    		for(org.bukkit.inventory.EquipmentSlot slot : org.bukkit.inventory.EquipmentSlot.values()) {
+    			final EquipmentStack equipmentStack = EquipmentStack.getEquipmentStack(slot);
+    			final ItemStack stack = fInventory.getSlot(equipmentStack.getSlotNumber());
+    			equipmentInterface.setItem(equipmentStack.getItemSlot(), stack);
+    		}
+    		packetList.add(equipmentInterface);
+        	return packetList;
+    	};
     }
     
     public fInventory(int entityId) {
@@ -126,12 +107,12 @@ public class fInventory implements Cloneable {
     
     public HashMap<EquipmentSlot, ItemStack> getStackMap(){
     	final Predicate<ItemStack> stackPredicate = stack -> Objects.nonNull(stack) && stack.getType() != Material.AIR;
-    	final HashMap<EquipmentSlot, ItemStack> result = new HashMap<fInventory.EquipmentSlot, ItemStack>();
+    	final HashMap<EquipmentSlot, ItemStack> result = new HashMap<EquipmentSlot, ItemStack>();
     	EnumSet.allOf(EquipmentSlot.class).stream()
-    		.filter(entry -> stackPredicate.test(getSlot(entry.getSlot())))
+    		.filter(entry -> stackPredicate.test(getSlot(EquipmentStack.getEquipmentStack(entry).getSlotNumber())))
     		.forEach(entry -> {
-    			result.put(entry, getSlot(entry.getSlot()));
-    		});
+    			result.put(entry, getSlot(EquipmentStack.getEquipmentStack(entry).getSlotNumber()));
+    	});
     	return result;
     }
 
@@ -145,7 +126,7 @@ public class fInventory implements Cloneable {
 
     public ItemStack getSlot(String s) {
         try {
-            return getSlot(EquipmentSlot.valueOf(s).getSlot());
+            return getSlot(EquipmentStack.getEquipmentStack(s).getSlotNumber());
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -178,7 +159,7 @@ public class fInventory implements Cloneable {
     public void setSlot(String s, ItemStack item) {
         if (item == null) item = new ItemStack(Material.AIR, 1);
         try {
-            setSlot(EquipmentSlot.valueOf(s).getSlot(), item);
+            setSlot(EquipmentStack.getEquipmentStack(s.toUpperCase()).getSlotNumber(), item);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -204,43 +185,5 @@ public class fInventory implements Cloneable {
             inv.setSlot(i, this.getSlot(i));
         }
         return inv;
-    }
-
-    public enum EquipmentSlot {
-        MAINHAND(0, ItemSlot.MAINHAND),
-        OFFHAND(1, ItemSlot.OFFHAND),
-        FEET(2, ItemSlot.FEET),
-        LEGS(3, ItemSlot.LEGS),
-        CHEST(4, ItemSlot.CHEST),
-        HEAD(5, ItemSlot.HEAD),
-    	BODY(6, ItemSlot.valueOf("BODY")),
-    	SADDLE(7, ItemSlot.valueOf("SADDLE"));
-    	
-        private int slot;
-        private ItemSlot itemSlot;
-        
-        EquipmentSlot(int i, ItemSlot slot) {
-            this.slot = i;
-            this.itemSlot = slot;
-        }
-
-        public int getSlot() {
-            return this.slot;
-        }
-        
-        public ItemSlot getItemSlot() {
-        	return this.itemSlot;
-        }
-        
-        public BodyPart toBodyPart() {
-        	switch(this) {
-        		case MAINHAND: return BodyPart.RIGHT_ARM;
-        		case OFFHAND: return BodyPart.LEFT_ARM;
-        		case HEAD: return BodyPart.HEAD;
-        		case CHEST: return BodyPart.BODY;
-        		case BODY: return BodyPart.BODY;
-        		default: return BodyPart.RIGHT_LEG;
-        	}
-        }
     }
 }

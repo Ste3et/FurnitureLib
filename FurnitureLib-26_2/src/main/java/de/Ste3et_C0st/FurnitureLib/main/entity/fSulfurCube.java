@@ -7,6 +7,7 @@ import org.bukkit.Location;
 import org.bukkit.Material;
 import org.bukkit.block.data.BlockData;
 import org.bukkit.entity.EntityType;
+import org.bukkit.inventory.ItemStack;
 
 import com.comphenix.protocol.PacketType;
 import com.comphenix.protocol.events.PacketContainer;
@@ -18,15 +19,16 @@ import de.Ste3et_C0st.FurnitureLib.NBT.NBTTagCompound;
 import de.Ste3et_C0st.FurnitureLib.Utilitis.DefaultKey;
 import de.Ste3et_C0st.FurnitureLib.main.FurnitureLib;
 import de.Ste3et_C0st.FurnitureLib.main.ObjectID;
+import de.Ste3et_C0st.FurnitureLib.main.interfaces.ScaleableEntity;
 
-public class fSulfurCube extends fContainerEntity{
+public class fSulfurCube extends fContainerEntity implements ScaleableEntity{
 
 	public static EntityType type = EntityType.valueOf("SULFUR_CUBE");
 	private DefaultKey<Boolean> babyState = new DefaultKey<Boolean>(Boolean.TRUE);
 	private final PacketContainer attribute = new PacketContainer(PacketType.Play.Server.UPDATE_ATTRIBUTES);
 	private final WrappedAttribute.Builder scaleAttribute = FurnitureLib.isVersionOrAbove("1.20.5") ? FurnitureLib.isVersionOrAbove("1.21.3") ? WrappedAttribute.newBuilder().attributeKey("scale").baseValue(1D) : WrappedAttribute.newBuilder().attributeKey("generic.scale").baseValue(1D) : null;
 	private final DefaultKey<Double> scaleValue = new DefaultKey<Double>(0D);
-	private final DefaultKey<Integer> sizeValue = new DefaultKey<Integer>(1);
+	private final DefaultKey<Integer> sizeValue = new DefaultKey<Integer>(0);
 	
 	public fSulfurCube(Location loc, ObjectID id) {
 		super(loc, type, 0, id);
@@ -46,6 +48,16 @@ public class fSulfurCube extends fContainerEntity{
 	public boolean isBaby() {
 		return this.babyState.getOrDefault();
 	}
+	
+	public fSulfurCube setBlockData(ItemStack stack) {
+		return this.setBlockData(Objects.isNull(stack) ? new ItemStack(Material.STONE) : stack);
+	}
+	
+	public fSulfurCube setBlockData(Material material) {
+		material = material == null ? Material.STONE : material.isAir() ? Material.STONE : material.isBlock() == false ? Material.STONE : material;
+		this.setBlockData(material.createBlockData());
+		return this;
+	}
 
 	public void setBlockData(BlockData blockData) {
 		this.setBody(blockData.getMaterial().asItemType().createItemStack());
@@ -56,16 +68,20 @@ public class fSulfurCube extends fContainerEntity{
 	}
 	
 	public void setSize(int i) {
-		i = i < 0 ? 0 : i > 3 ? 3 : i;
+		i = i < 0 ? 0 : i > 2 ? 2 : i;
 		getWatcher().setObject(new WrappedDataWatcherObject(18, Registry.get(Integer.class)), i);
 		this.sizeValue.setValue(i);
+	}
+	
+	public int getSize() {
+		return this.sizeValue.getOrDefault();
 	}
 
 	@Override
 	protected void readAdditionalSaveData(NBTTagCompound metadata) {
 		super.readInventorySaveData(metadata);
 		this.setBaby(metadata.getInt("IsBaby", 1) == 1);
-		this.setSize(metadata.getInt("Size", 1));
+		this.setSize(metadata.getInt("Size", 0));
 		this.setScale(metadata.getDouble("scaleAttribute", 0D));
 	}
 
@@ -73,7 +89,7 @@ public class fSulfurCube extends fContainerEntity{
 	protected void writeAdditionalSaveData() {
 		super.writeInventoryData();
 		if(!this.scaleValue.isDefault()) setMetadata("scaleAttribute", this.getScale());
-		if(!this.sizeValue.isDefault()) setMetadata("Size", this.getScale());
+		if(!this.sizeValue.isDefault()) setMetadata("Size", this.getSize());
 		if(!this.babyState.isDefault()) setMetadata("IsBaby", this.babyState.getOrDefault());
 	}
 	
